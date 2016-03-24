@@ -1,0 +1,4 @@
+org\gobiiproject\gobiiweb\controllers\ExtractController.class
+org\gobiiproject\gobiiweb\security\TokenAuthenticationFilter.class
+org\gobiiproject\gobiiweb\security\TokenAuthenticationSuccessHandler.class
+org\gobiiproject\gobiiweb\security\UnAuthenticatedEntryPoint.class

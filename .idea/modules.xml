@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/gobii-dao/gobii-dao.iml" filepath="$PROJECT_DIR$/gobii-dao/gobii-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gobii-domain/gobii-domain.iml" filepath="$PROJECT_DIR$/gobii-domain/gobii-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gobii-model/gobii-model.iml" filepath="$PROJECT_DIR$/gobii-model/gobii-model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gobii-process/gobii-process.iml" filepath="$PROJECT_DIR$/gobii-process/gobii-process.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gobii-web/gobii-web.iml" filepath="$PROJECT_DIR$/gobii-web/gobii-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gobiiproject.iml" filepath="$PROJECT_DIR$/gobiiproject.iml" />
+    </modules>
+  </component>
+</project>
