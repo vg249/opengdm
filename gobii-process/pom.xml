@@ -5,11 +5,13 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>org.gobiiproject</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${gobii-version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>org.gobiiproject</groupId>
     <artifactId>gobii-process</artifactId>
+    <version>${gobii-version}</version>
 
 
     <dependencies>
@@ -17,13 +19,13 @@
         <dependency>
             <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-model</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${gobii-version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-domain</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${gobii-version}</version>
         </dependency>
 
 

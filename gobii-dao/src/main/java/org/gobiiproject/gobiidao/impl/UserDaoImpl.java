@@ -7,8 +7,10 @@ package org.gobiiproject.gobiidao.impl;
 
 import org.gobiiproject.gobiidao.UserDao;
 import org.gobiiproject.gobiimodel.entity.User;
+import org.gobiiproject.gobiimodel.types.SystemUserDetail;
+import org.gobiiproject.gobiimodel.types.SystemUsers;
 import org.springframework.stereotype.Component;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
+
 /**
  * This is domain DAO to access users. Kinda fake here.
  */
@@ -19,33 +21,38 @@ public class UserDaoImpl implements UserDao {
 
         User returnVal = null;
 
-        switch (login) {
-            case "reader":
-                returnVal = new User("reader", "Administrator", "reader", "READER");
-                break;
-            case "admin":
-                returnVal = new User("admin", "Administrator", "admin", "ADMIN");
-                break;
-            case "special":
-                returnVal = new User("special", "Special Expert", "special", "ROLE_SPECIAL");
-                break;
-            case "user1":
-                returnVal = new User("user1", "User Uno", "user1");
-                break;
-            case "Aladdin":
-                returnVal = new User("Aladdin", "Aladdin", "open sesame");
-                break;
-            case "lokesh":
-                returnVal = new User("lokesh", "lockesh", "password1", "NOBODY");
-                break;
-            case "reader_guy":
-                returnVal = new User("reader_guy", "can only read", "password1", "READER");
-                break;
-            case "USER_IMPORTER":
-                returnVal = new User(SystemUserNames.USER_IMPORTER.toString(), "password2", "ADMIN");
-                break;
-            default:
-                returnVal = null;
+        SystemUsers systemUsers = new SystemUsers();
+
+        SystemUserDetail userDetail = systemUsers.getDetail(login);
+
+        // we are in the process of migrating to the system user map
+        if (null != userDetail) {
+            returnVal = new User(userDetail.getUserName(), userDetail.getUserName(), userDetail.getPassword(), userDetail.getRoles());
+        } else {
+
+            // parameter order for user: String login, String name, String password, String... roles
+            switch (login) {
+                case "admin":
+                    returnVal = new User("admin", "Administrator", "admin", "ADMIN");
+                    break;
+                case "special":
+                    returnVal = new User("special", "Special Expert", "special", "ROLE_SPECIAL");
+                    break;
+                case "user1":
+                    returnVal = new User("user1", "User Uno", "user1");
+                    break;
+                case "Aladdin":
+                    returnVal = new User("Aladdin", "Aladdin", "open sesame");
+                    break;
+                case "lokesh":
+                    returnVal = new User("lokesh", "lockesh", "password1", "NOBODY");
+                    break;
+                case "reader_guy":
+                    returnVal = new User("reader_guy", "can only read", "password1", "READER");
+                    break;
+                default:
+                    returnVal = null;
+            }
         }
 
         return (returnVal);

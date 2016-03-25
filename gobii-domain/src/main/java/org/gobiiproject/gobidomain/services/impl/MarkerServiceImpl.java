@@ -23,7 +23,7 @@ public class MarkerServiceImpl implements MarkerService {
     private MarkerDao markerDao = null;
 
     @Override
-    public MarkerGroupDTO getMarkers(List<String> Chromosomes) {
+    public MarkerGroupDTO getMarkers(List<String> chromosomes) {
 
         MarkerGroupDTO returnVal = new MarkerGroupDTO();
 

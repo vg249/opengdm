@@ -24,7 +24,7 @@ public class ExtractorProcess {
 
             MarkerService markerService = springContextLoader.getApplicationContext().getBean(MarkerService.class);
             MarkerGroupDTO markerGroupDTO = markerService.getMarkers(null);
-            LOGGER.info("Got markers: " + markerGroupDTO.getMarkerGroups().toString());
+            LOGGER.info("Got markers: " + markerGroupDTO.getMarkerGroups());
 
         } catch (Exception exception) {
             LOGGER.error(exception.getMessage());

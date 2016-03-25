@@ -7,3 +7,5 @@ org\gobiiproject\gobiimodel\dto\container\MarkerGroupDTO.class
 org\gobiiproject\gobiimodel\dto\header\DtoHeaderResponse$StatusLevel.class
 org\gobiiproject\gobiimodel\dto\header\DtoHeaderResponse.class
 org\gobiiproject\gobiimodel\dto\header\HeaderStatusMessage.class
+org\gobiiproject\gobiimodel\types\SystemUsers.class
+org\gobiiproject\gobiimodel\types\SystemUserDetail.class

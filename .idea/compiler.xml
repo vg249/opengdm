@@ -22,6 +22,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="gobii-client" />
         <module name="gobii-dao" />
         <module name="gobii-domain" />
         <module name="gobii-model" />
@@ -30,6 +31,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="gobii-client" target="1.8" />
       <module name="gobii-dao" target="1.8" />
       <module name="gobii-domain" target="1.8" />
       <module name="gobii-model" target="1.8" />

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/gobii-client/gobii-client.iml" filepath="$PROJECT_DIR$/gobii-client/gobii-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/gobii-dao/gobii-dao.iml" filepath="$PROJECT_DIR$/gobii-dao/gobii-dao.iml" />
       <module fileurl="file://$PROJECT_DIR$/gobii-domain/gobii-domain.iml" filepath="$PROJECT_DIR$/gobii-domain/gobii-domain.iml" />
       <module fileurl="file://$PROJECT_DIR$/gobii-model/gobii-model.iml" filepath="$PROJECT_DIR$/gobii-model/gobii-model.iml" />

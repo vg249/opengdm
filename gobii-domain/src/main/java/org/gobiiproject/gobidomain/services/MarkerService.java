@@ -13,5 +13,5 @@ import java.util.List;
  */
 public interface MarkerService {
 
-    MarkerGroupDTO getMarkers(List<String> Chromosomes);
+    MarkerGroupDTO getMarkers(List<String> chromosomes);
 }

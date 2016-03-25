@@ -2,9 +2,74 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b6318cd1-4528-41a5-afa1-4d218f0683bd" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gobiiproject-conf.zip" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/README.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_code_gson_gson_2_6_2.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gobii-client/gobii-client.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gobii-client/pom.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/core/RestRequest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/core/Urls.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/dtorequests/DtoRequestMarkers.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gobii-client/src/test/java/org/gobiiproject/gobiiclient/dtorequests/DtoRequestMarkersTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/types/SystemUserDetail.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/types/SystemUsers.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/META-INF/MANIFEST.MF" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-dao/target/classes/org/gobiiproject/gobiidao/impl/UserDaoImpl.class" afterPath="$PROJECT_DIR$/gobii-dao/target/classes/org/gobiiproject/gobiidao/impl/UserDaoImpl.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-dao/target/classes/org/gobiiproject/gobiidao/impl/db/MarkerDaoImplDb.class" afterPath="$PROJECT_DIR$/gobii-dao/target/classes/org/gobiiproject/gobiidao/impl/db/MarkerDaoImplDb.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-dao/target/classes/org/gobiiproject/gobiidao/impl/mock/MarkerDaoImplMock.class" afterPath="$PROJECT_DIR$/gobii-dao/target/classes/org/gobiiproject/gobiidao/impl/mock/MarkerDaoImplMock.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-dao/target/gobii-dao-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/gobii-dao/target/gobii-dao-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/security/RoleNames.class" afterPath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/security/RoleNames.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/security/TokenInfo.class" afterPath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/security/TokenInfo.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/security/UserContextLoader.class" afterPath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/security/UserContextLoader.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/security/impl/TokenManagerSingle.class" afterPath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/security/impl/TokenManagerSingle.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/security/impl/UserContext.class" afterPath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/security/impl/UserContext.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/services/impl/AuthenticationServiceDefault.class" afterPath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/services/impl/AuthenticationServiceDefault.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/services/impl/MarkerServiceImpl.class" afterPath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/services/impl/MarkerServiceImpl.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/services/impl/UserDetailsServiceImpl.class" afterPath="$PROJECT_DIR$/gobii-domain/target/classes/org/gobiiproject/gobidomain/services/impl/UserDetailsServiceImpl.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/target/gobii-domain-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/gobii-domain/target/gobii-domain-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/target/classes/org/gobiiproject/gobiimodel/dto/DtoMetaData.class" afterPath="$PROJECT_DIR$/gobii-model/target/classes/org/gobiiproject/gobiimodel/dto/DtoMetaData.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/target/classes/org/gobiiproject/gobiimodel/dto/container/ContentTypeDTO.class" afterPath="$PROJECT_DIR$/gobii-model/target/classes/org/gobiiproject/gobiimodel/dto/container/ContentTypeDTO.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/target/classes/org/gobiiproject/gobiimodel/dto/container/MarkerGroupDTO.class" afterPath="$PROJECT_DIR$/gobii-model/target/classes/org/gobiiproject/gobiimodel/dto/container/MarkerGroupDTO.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/target/classes/org/gobiiproject/gobiimodel/dto/header/DtoHeaderResponse.class" afterPath="$PROJECT_DIR$/gobii-model/target/classes/org/gobiiproject/gobiimodel/dto/header/DtoHeaderResponse.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/target/classes/org/gobiiproject/gobiimodel/entity/User.class" afterPath="$PROJECT_DIR$/gobii-model/target/classes/org/gobiiproject/gobiimodel/entity/User.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/target/classes/org/gobiiproject/gobiimodel/types/SystemUserNames.class" afterPath="$PROJECT_DIR$/gobii-model/target/classes/org/gobiiproject/gobiimodel/types/SystemUserNames.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/target/gobii-model-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/gobii-model/target/gobii-model-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-process/target/classes/org/gobiiproject/gobiiprocess/ExtractorProcess.class" afterPath="$PROJECT_DIR$/gobii-process/target/classes/org/gobiiproject/gobiiprocess/ExtractorProcess.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-process/target/classes/org/gobiiproject/gobiiprocess/SpringContextLoader.class" afterPath="$PROJECT_DIR$/gobii-process/target/classes/org/gobiiproject/gobiiprocess/SpringContextLoader.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-process/target/gobii-process-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/gobii-process/target/gobii-process-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/classes/org/gobiiproject/gobiiweb/controllers/ExtractController.class" afterPath="$PROJECT_DIR$/gobii-web/target/classes/org/gobiiproject/gobiiweb/controllers/ExtractController.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/classes/org/gobiiproject/gobiiweb/security/TokenAuthenticationFilter.class" afterPath="$PROJECT_DIR$/gobii-web/target/classes/org/gobiiproject/gobiiweb/security/TokenAuthenticationFilter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/classes/org/gobiiproject/gobiiweb/security/TokenAuthenticationSuccessHandler.class" afterPath="$PROJECT_DIR$/gobii-web/target/classes/org/gobiiproject/gobiiweb/security/TokenAuthenticationSuccessHandler.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/classes/org/gobiiproject/gobiiweb/security/UnAuthenticatedEntryPoint.class" afterPath="$PROJECT_DIR$/gobii-web/target/classes/org/gobiiproject/gobiiweb/security/UnAuthenticatedEntryPoint.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT.war" afterPath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT.war" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/classes/org/gobiiproject/gobiiweb/controllers/ExtractController.class" afterPath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/classes/org/gobiiproject/gobiiweb/controllers/ExtractController.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/classes/org/gobiiproject/gobiiweb/security/TokenAuthenticationFilter.class" afterPath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/classes/org/gobiiproject/gobiiweb/security/TokenAuthenticationFilter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/classes/org/gobiiproject/gobiiweb/security/TokenAuthenticationSuccessHandler.class" afterPath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/classes/org/gobiiproject/gobiiweb/security/TokenAuthenticationSuccessHandler.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/classes/org/gobiiproject/gobiiweb/security/UnAuthenticatedEntryPoint.class" afterPath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/classes/org/gobiiproject/gobiiweb/security/UnAuthenticatedEntryPoint.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/lib/gobii-dao-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/lib/gobii-dao-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/lib/gobii-domain-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/lib/gobii-domain-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/lib/gobii-model-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/gobii-web/target/gobii-web-1.0-SNAPSHOT/WEB-INF/lib/gobii-model-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-dao/pom.xml" afterPath="$PROJECT_DIR$/gobii-dao/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-dao/src/main/java/org/gobiiproject/gobiidao/impl/UserDaoImpl.java" afterPath="$PROJECT_DIR$/gobii-dao/src/main/java/org/gobiiproject/gobiidao/impl/UserDaoImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-dao/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/gobii-dao/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/pom.xml" afterPath="$PROJECT_DIR$/gobii-domain/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/MarkerService.java" afterPath="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/MarkerService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/impl/MarkerServiceImpl.java" afterPath="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/impl/MarkerServiceImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-domain/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/gobii-domain/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/pom.xml" afterPath="$PROJECT_DIR$/gobii-model/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/container/MarkerGroupDTO.java" afterPath="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/container/MarkerGroupDTO.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderResponse.java" afterPath="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderResponse.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/types/SystemUserNames.java" afterPath="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/types/SystemUserNames.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/gobii-model/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterPath="$PROJECT_DIR$/gobii-model/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-model/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="$PROJECT_DIR$/gobii-model/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-process/pom.xml" afterPath="$PROJECT_DIR$/gobii-process/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-process/src/main/java/org/gobiiproject/gobiiprocess/ExtractorProcess.java" afterPath="$PROJECT_DIR$/gobii-process/src/main/java/org/gobiiproject/gobiiprocess/ExtractorProcess.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-process/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/gobii-process/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/pom.xml" afterPath="$PROJECT_DIR$/gobii-web/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gobii-web/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/gobii-web/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
     </list>
     <ignored path="gobiiproject.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -16,6 +81,7 @@
     <ignored path="$PROJECT_DIR$/gobii-dao/target/" />
     <ignored path="$PROJECT_DIR$/gobii-domain/target/" />
     <ignored path="$PROJECT_DIR$/gobii-process/target/" />
+    <ignored path="$PROJECT_DIR$/gobii-client/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -33,12 +99,100 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="README.txt" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/README.txt">
+      <file leaf-file-name="web.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gobii-web/src/main/webapp/WEB-INF/web.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-334">
-              <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
+            <state relative-caret-position="34">
+              <caret line="2" column="24" selection-start-line="2" selection-start-column="24" selection-end-line="2" selection-end-column="24" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DtoRequestMarkers.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/dtorequests/DtoRequestMarkers.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="103">
+              <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#1773#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DtoRequestMarkersTest.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/gobii-client/src/test/java/org/gobiiproject/gobiiclient/dtorequests/DtoRequestMarkersTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#937#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RestRequest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/core/RestRequest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="28" column="13" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="13" />
+              <folding>
+                <element signature="e#0#8977#0" expanded="true" />
+                <element signature="e#987#1017#0" expanded="true" />
+                <element signature="e#1061#1062#0" expanded="true" />
+                <element signature="e#1103#1104#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Urls.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/core/Urls.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#387#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="mvc-dispatcher-servlet.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gobii-web/src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="195">
+              <caret line="48" column="73" selection-start-line="48" selection-start-column="73" selection-end-line="48" selection-end-column="96" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MarkerGroupDTO.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/container/MarkerGroupDTO.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="425">
+              <caret line="29" column="42" selection-start-line="29" selection-start-column="42" selection-end-line="29" selection-end-column="42" />
+              <folding>
+                <element signature="e#0#884#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#866#867#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DtoHeaderResponse.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderResponse.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="578">
+              <caret line="42" column="5" selection-start-line="42" selection-start-column="5" selection-end-line="42" selection-end-column="5" />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -46,35 +200,21 @@
       <file leaf-file-name="ExtractorProcess.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gobii-process/src/main/java/org/gobiiproject/gobiiprocess/ExtractorProcess.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="25" column="75" selection-start-line="25" selection-start-column="75" selection-end-line="25" selection-end-column="75" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="4" selection-end-column="75" />
               <folding>
-                <element signature="e#0#1144#0" expanded="true" />
-                <element signature="imports" expanded="true" />
+                <element signature="e#0#1133#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application-config.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gobii-web/src/main/resources/spring/application-config.xml">
+      <file leaf-file-name="ReflectiveCallable.class" pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/junit/junit/4.11/junit-4.11.jar!/org/junit/internal/runners/model/ReflectiveCallable.class">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="100">
-              <caret line="24" column="75" selection-start-line="24" selection-start-column="75" selection-end-line="24" selection-end-column="75" />
+            <state relative-caret-position="238">
+              <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MarkerServiceImpl.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/impl/MarkerServiceImpl.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="212">
-              <caret line="25" column="52" selection-start-line="25" selection-start-column="52" selection-end-line="25" selection-end-column="52" />
-              <folding>
-                <element signature="e#0#1075#0" expanded="true" />
-                <element signature="imports" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -86,6 +226,7 @@
       <list>
         <option value="Interface" />
         <option value="Class" />
+        <option value="Enum" />
       </list>
     </option>
   </component>
@@ -100,32 +241,14 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/dto/header/HeaderStatusMessage.java" />
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/dto/container/MarkerGroupDTO.java" />
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/gobiimodel/dto/container/MarkerGroupDTO.java" />
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/impl/DtoHeaderResponseImpl.java" />
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/impl/DtoHeaderAuthImpl.java" />
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderAuthImpl.java" />
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderResponseImpl.java" />
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/HeaderStatusMessage.java" />
-        <option value="$PROJECT_DIR$/gobii-model/pom.xml" />
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/AbstractDto.java" />
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderAuth.java" />
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderResponse.java" />
-        <option value="$PROJECT_DIR$/gobii-dao/pom.xml" />
         <option value="$PROJECT_DIR$/gobii-web/src/main/java/org/gobiiproject/gobiiweb/security/UserContextLoader.java" />
-        <option value="$PROJECT_DIR$/gobii-domain/pom.xml" />
         <option value="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/AuthenticationServiceDefault.java" />
         <option value="$PROJECT_DIR$/gobii-web/src/main/java/org/gobiiproject/gobiiweb/services/impl/UserDetailsServiceImpl.java" />
         <option value="$PROJECT_DIR$/gobii-web/src/main/java/org/gobiiproject/gobiiweb/services/ExtractController.java" />
         <option value="$PROJECT_DIR$/gobii-web/src/main/resources/spring/application-config.xml" />
         <option value="$PROJECT_DIR$/gobii-process/src/main/resources/spring/application-config.xml" />
-        <option value="$PROJECT_DIR$/gobii-web/pom.xml" />
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/gobii-process/pom.xml" />
         <option value="$PROJECT_DIR$/gobii-dao/src/main/java/org/gobiiproject/gobiidao/MarkerDao.java" />
         <option value="$PROJECT_DIR$/gobii-dao/src/main/java/org/gobiiproject/gobiidao/UserDao.java" />
-        <option value="$PROJECT_DIR$/gobii-dao/src/main/java/org/gobiiproject/gobiidao/impl/UserDaoImpl.java" />
         <option value="$PROJECT_DIR$/gobii-dao/src/main/java/org/gobiiproject/gobiidao/impl/db/MarkerDaoImplDb.java" />
         <option value="$PROJECT_DIR$/gobii-dao/src/main/java/org/gobiiproject/gobiidao/impl/mock/MarkerDaoImplMock.java" />
         <option value="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/security/RoleNames.java" />
@@ -135,22 +258,40 @@
         <option value="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/security/impl/TokenManagerSingle.java" />
         <option value="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/security/impl/UserContext.java" />
         <option value="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/AuthenticationService.java" />
-        <option value="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/MarkerService.java" />
         <option value="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/impl/AuthenticationServiceDefault.java" />
         <option value="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/impl/MarkerServiceImpl.java" />
         <option value="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/impl/UserDetailsServiceImpl.java" />
         <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/DtoMetaData.java" />
         <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/container/ContentTypeDTO.java" />
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/container/MarkerGroupDTO.java" />
         <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/entity/User.java" />
-        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/types/SystemUserNames.java" />
-        <option value="$PROJECT_DIR$/gobii-process/src/main/java/org/gobiiproject/gobiiprocess/ExtractorProcess.java" />
         <option value="$PROJECT_DIR$/gobii-process/src/main/java/org/gobiiproject/gobiiprocess/SpringContextLoader.java" />
         <option value="$PROJECT_DIR$/gobii-web/src/main/java/org/gobiiproject/gobiiweb/controllers/ExtractController.java" />
         <option value="$PROJECT_DIR$/gobii-web/src/main/java/org/gobiiproject/gobiiweb/security/TokenAuthenticationFilter.java" />
         <option value="$PROJECT_DIR$/gobii-web/src/main/java/org/gobiiproject/gobiiweb/security/TokenAuthenticationSuccessHandler.java" />
         <option value="$PROJECT_DIR$/gobii-web/src/main/java/org/gobiiproject/gobiiweb/security/UnAuthenticatedEntryPoint.java" />
         <option value="$PROJECT_DIR$/README.txt" />
+        <option value="$PROJECT_DIR$/gobii-web/src/test/java/org/gobiiproject/gobiiweb/controllers/ExtractControllerTest.java" />
+        <option value="$PROJECT_DIR$/gobii-model/pom.xml" />
+        <option value="$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/Urls.java" />
+        <option value="$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/RestRequest.java" />
+        <option value="$PROJECT_DIR$/gobii-dao/pom.xml" />
+        <option value="$PROJECT_DIR$/gobii-domain/pom.xml" />
+        <option value="$PROJECT_DIR$/gobii-process/pom.xml" />
+        <option value="$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/MarkerService.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/gobii-web/pom.xml" />
+        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/types/SystemUserNames.java" />
+        <option value="$PROJECT_DIR$/gobii-dao/src/main/java/org/gobiiproject/gobiidao/impl/UserDaoImpl.java" />
+        <option value="$PROJECT_DIR$/gobii-client/pom.xml" />
+        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderResponse.java" />
+        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/types/SystemUserDetail.java" />
+        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/types/SystemUsers.java" />
+        <option value="$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/container/MarkerGroupDTO.java" />
+        <option value="$PROJECT_DIR$/gobii-process/src/main/java/org/gobiiproject/gobiiprocess/ExtractorProcess.java" />
+        <option value="$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/core/RestRequest.java" />
+        <option value="$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/core/Urls.java" />
+        <option value="$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/dtorequests/DtoRequestMarkers.java" />
+        <option value="$PROJECT_DIR$/gobii-client/src/test/java/org/gobiiproject/gobiiclient/dtorequests/DtoRequestMarkersTest.java" />
       </list>
     </option>
   </component>
@@ -178,6 +319,40 @@
           <option name="myItemId" value="" />
           <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
         </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="parent" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="parent" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Lifecycle" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$LifecycleNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="gobii-web" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
       </PATH>
     </treeState>
   </component>
@@ -185,10 +360,10 @@
     <option name="skipTests" value="true" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-1278" />
-    <option name="y" value="297" />
-    <option name="width" value="1288" />
-    <option name="height" value="685" />
+    <option name="x" value="-2115" />
+    <option name="y" value="721" />
+    <option name="width" value="1683" />
+    <option name="height" value="884" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -215,6 +390,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -230,20 +408,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="gobiiproject" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gobiiproject" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gobiiproject" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gobii-web" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -276,6 +440,10 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -331,11 +499,156 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiproject" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiproject" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobii-domain" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiproject" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiproject" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobii-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiproject" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiproject" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobii-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dtorequests" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiproject" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiproject" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobii-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiproject" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiproject" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobii-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiclient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dtorequests" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiproject" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiproject" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobii-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gobiiclient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -345,7 +658,7 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.General" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
   </component>
   <component name="RecentsManager">
@@ -354,11 +667,11 @@
       <recent name="C:\phil-source\IntelliJ\gobiiproject\gobii-model\src\main\java" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.gobiiproject.gobiiclient" />
+      <recent name="org.gobiiproject.gobiiweb.controllers" />
       <recent name="org.gobiiproject.gobiidao.impl.db" />
       <recent name="org.gobiiproject.gobiiweb.dto" />
       <recent name="org.gobiiproject.gobiiweb.services.impl" />
-      <recent name="org.gobiiproject.gobiiweb.services" />
-      <recent name="org.gobiiproject.gobiiweb.dao.impl" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\phil-source\IntelliJ\gobiiproject\gobii-web" />
@@ -368,7 +681,7 @@
       <recent name="C:\phil-source\IntelliJ\gobiiproject\gobii-web\src\main\java\security\impl" />
     </key>
   </component>
-  <component name="RunManager" selected="Tomcat Server.gobii-web">
+  <component name="RunManager" selected="JUnit.DtoRequestMarkersTest">
     <configuration default="false" name="ExtractorProcess" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -387,6 +700,56 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="gobii-process" />
       <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="DtoRequestMarkersTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="org.gobiiproject.gobiiclient.dtorequests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="gobii-client" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="org.gobiiproject.gobiiclient.dtorequests" />
+      <option name="MAIN_CLASS_NAME" value="org.gobiiproject.gobiiclient.dtorequests.DtoRequestMarkersTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="false" name="parent [install]" type="MavenRunConfiguration" factoryName="Maven" temporary="true">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="install" />
+              </list>
+            </option>
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
       <method />
     </configuration>
     <configuration default="true" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" ALTERNATIVE_JRE_ENABLED="false">
@@ -898,13 +1261,17 @@
         </option>
       </method>
     </configuration>
-    <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="Application.ExtractorProcess" />
-      <item index="1" class="java.lang.String" itemvalue="Tomcat Server.gobii-web" />
+    <list size="4">
+      <item index="0" class="java.lang.String" itemvalue="Tomcat Server.gobii-web" />
+      <item index="1" class="java.lang.String" itemvalue="Application.ExtractorProcess" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.DtoRequestMarkersTest" />
+      <item index="3" class="java.lang.String" itemvalue="Maven.parent [install]" />
     </list>
     <recent_temporary>
-      <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="Application.ExtractorProcess" />
+      <list size="3">
+        <item index="0" class="java.lang.String" itemvalue="JUnit.DtoRequestMarkersTest" />
+        <item index="1" class="java.lang.String" itemvalue="Maven.parent [install]" />
+        <item index="2" class="java.lang.String" itemvalue="Application.ExtractorProcess" />
       </list>
     </recent_temporary>
   </component>
@@ -922,41 +1289,74 @@
       <option name="presentableId" value="Default" />
       <updated>1458751655950</updated>
       <workItem from="1458751659375" duration="15019000" />
-      <workItem from="1458784427582" duration="26885000" />
+      <workItem from="1458784427582" duration="45450000" />
+      <workItem from="1458930938566" duration="5345000" />
     </task>
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="DtoRequestMarkersTest - 2016.03.25 at 15h 57m 43s.xml">
+      <configuration name="DtoRequestMarkersTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DtoRequestMarkersTest - 2016.03.25 at 15h 58m 51s.xml">
+      <configuration name="DtoRequestMarkersTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DtoRequestMarkersTest - 2016.03.25 at 16h 03m 58s.xml">
+      <configuration name="DtoRequestMarkersTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DtoRequestMarkersTest - 2016.03.25 at 16h 05m 41s.xml">
+      <configuration name="DtoRequestMarkersTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DtoRequestMarkersTest - 2016.03.25 at 16h 08m 19s.xml">
+      <configuration name="DtoRequestMarkersTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DtoRequestMarkersTest - 2016.03.25 at 16h 09m 30s.xml">
+      <configuration name="DtoRequestMarkersTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DtoRequestMarkersTest - 2016.03.25 at 16h 24m 08s.xml">
+      <configuration name="DtoRequestMarkersTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DtoRequestMarkersTest - 2016.03.25 at 16h 27m 38s.xml">
+      <configuration name="DtoRequestMarkersTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DtoRequestMarkersTest - 2016.03.25 at 16h 29m 42s.xml">
+      <configuration name="DtoRequestMarkersTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DtoRequestMarkersTest - 2016.03.25 at 16h 31m 18s.xml">
+      <configuration name="DtoRequestMarkersTest" configurationId="JUnit" />
+    </history-entry>
+  </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="41904000" />
+    <option name="totallyTimeSpent" value="65814000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1278" y="297" width="1288" height="685" extended-state="0" />
+    <frame x="-2115" y="721" width="1683" height="884" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24588086" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2591876" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294423" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14332248" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.06844106" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34347275" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10844116" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.055555556" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32275862" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3159609" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28280962" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13181242" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18471953" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24967575" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.58048165" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3462069" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1008,231 +1408,28 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="6" />
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="27" />
     </breakpoint-manager>
-    <watches-manager />
+    <watches-manager>
+      <configuration name="JUnit">
+        <watch expression="Arrays.asList(roles)" />
+        <watch expression="returnVal.getMarkerGroups()" language="JAVA" custom="" />
+        <watch expression="this.getClass()" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderResponse.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderAuth.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding>
-            <element signature="e#313#314#0" expanded="false" />
-            <element signature="e#353#354#0" expanded="false" />
-            <element signature="e#393#394#0" expanded="false" />
-            <element signature="e#431#432#0" expanded="false" />
-            <element signature="e#484#485#0" expanded="false" />
-            <element signature="e#524#525#0" expanded="false" />
-            <element signature="e#564#565#0" expanded="false" />
-            <element signature="e#602#603#0" expanded="false" />
-            <element signature="e#649#650#0" expanded="false" />
-            <element signature="e#683#684#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-web/src/main/webapp/WEB-INF/view/showMessage.jsp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-web/src/main/java/org/gobiiproject/gobiiweb/services.java" />
-    <entry file="file://$PROJECT_DIR$/gobii-web/src/main/webapp/css/styles.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-14">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-web/src/main/webapp/pages/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="39" selection-start-line="21" selection-start-column="39" selection-end-line="21" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-web/4.0.3.RELEASE/spring-web-4.0.3.RELEASE.jar!/org/springframework/web/method/support/InvocableHandlerMethod.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="776">
-          <caret line="72" column="52" selection-start-line="72" selection-start-column="52" selection-end-line="72" selection-end-column="52" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-web/src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="79" selection-start-line="12" selection-start-column="79" selection-end-line="12" selection-end-column="79" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-web/src/main/webapp/WEB-INF/web.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderResponse.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderAuth.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/HeaderStatusMessage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="31" column="8" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderAuth.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="8" column="51" selection-start-line="8" selection-start-column="51" selection-end-line="8" selection-end-column="51" />
-          <folding>
-            <element signature="e#313#314#0" expanded="false" />
-            <element signature="e#353#354#0" expanded="false" />
-            <element signature="e#393#394#0" expanded="false" />
-            <element signature="e#431#432#0" expanded="false" />
-            <element signature="e#484#485#0" expanded="false" />
-            <element signature="e#524#525#0" expanded="false" />
-            <element signature="e#564#565#0" expanded="false" />
-            <element signature="e#602#603#0" expanded="false" />
-            <element signature="e#649#650#0" expanded="false" />
-            <element signature="e#683#684#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderResponse.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-model/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="67">
-          <caret line="11" column="40" selection-start-line="11" selection-start-column="40" selection-end-line="11" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-dao/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-web/src/main/resources/spring/spring-security.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="23" column="44" selection-start-line="23" selection-start-column="39" selection-end-line="23" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-domain/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="33" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-web/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="145" column="21" selection-start-line="132" selection-start-column="0" selection-end-line="145" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-process/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="57" column="21" selection-start-line="57" selection-start-column="21" selection-end-line="57" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-process/src/main/resources/spring/application-config.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="32" column="75" selection-start-line="32" selection-start-column="75" selection-end-line="32" selection-end-column="75" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-dao/src/main/java/org/gobiiproject/gobiidao/MarkerDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gobii-dao/src/main/java/org/gobiiproject/gobiidao/UserDao.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-dao/src/main/java/org/gobiiproject/gobiidao/impl/UserDaoImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1240,7 +1437,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1248,7 +1444,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1256,7 +1451,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1264,7 +1458,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1272,7 +1465,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1280,7 +1472,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1288,9 +1479,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1298,7 +1486,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1306,17 +1493,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/MarkerService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1324,9 +1500,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1334,17 +1507,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/DtoMetaData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1352,34 +1514,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/container/MarkerGroupDTO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/entity/User.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding>
-            <element signature="e#882#883#0" expanded="true" />
-            <element signature="e#901#902#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/types/SystemUserNames.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1393,23 +1527,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gobii-web/src/main/java/org/gobiiproject/gobiiweb/controllers/ExtractController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gobii-web/src/main/java/org/gobiiproject/gobiiweb/security/TokenAuthenticationFilter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1417,9 +1538,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="3" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1427,10 +1545,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#1229#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1439,8 +1553,8 @@
         <state relative-caret-position="212">
           <caret line="25" column="52" selection-start-line="25" selection-start-column="52" selection-end-line="25" selection-end-column="52" />
           <folding>
-            <element signature="e#0#1075#0" expanded="true" />
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#1075#0" expanded="false" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1453,22 +1567,276 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-334">
+          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-web/src/test/java/org/gobiiproject/gobiiweb/controllers/ExtractControllerTest.java" />
+    <entry file="file://$PROJECT_DIR$/gobii-web/src/main/java/org/gobiiproject/gobiiweb/controllers/ExtractController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="8" selection-start-line="5" selection-start-column="8" selection-end-line="5" selection-end-column="45" />
+          <folding>
+            <element signature="e#0#4589#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-process/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="27" column="47" selection-start-line="27" selection-start-column="47" selection-end-line="27" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-model/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-204">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-domain/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="349">
+          <caret line="35" column="20" selection-start-line="35" selection-start-column="20" selection-end-line="35" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-dao/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="21" column="47" selection-start-line="21" selection-start-column="47" selection-end-line="21" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-domain/src/main/java/org/gobiiproject/gobidomain/services/MarkerService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="30" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#509#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/entity/User.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="17" column="16" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="75" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="39" column="22" selection-start-line="39" selection-start-column="22" selection-end-line="39" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/types/SystemUserNames.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-dao/src/main/java/org/gobiiproject/gobiidao/impl/UserDaoImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="427">
+          <caret line="52" column="24" selection-start-line="52" selection-start-column="24" selection-end-line="52" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#3156#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-web/4.0.3.RELEASE/spring-web-4.0.3.RELEASE.jar!/org/springframework/web/filter/OncePerRequestFilter.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-web/3.2.1.RELEASE/spring-security-web-3.2.1.RELEASE.jar!/org/springframework/security/web/context/SecurityContextPersistenceFilter.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="37" column="123" selection-start-line="37" selection-start-column="123" selection-end-line="37" selection-end-column="123" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-web/3.2.1.RELEASE/spring-security-web-3.2.1.RELEASE.jar!/org/springframework/security/web/FilterChainProxy.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="76" column="5" selection-start-line="76" selection-start-column="5" selection-end-line="76" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_73/jre/lib/deploy.jar!/com/sun/deploy/util/StringUtils.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="5" column="8" selection-start-line="5" selection-start-column="8" selection-end-line="5" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/junit/junit/4.11/junit-4.11.jar!/org/junit/runners/ParentRunner.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="161" column="5" selection-start-line="161" selection-start-column="5" selection-end-line="161" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-web/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4981">
+          <caret line="293" column="0" selection-start-line="279" selection-start-column="0" selection-end-line="293" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-client/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1564">
+          <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-web/src/main/webapp/WEB-INF/web.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="24" selection-start-line="2" selection-start-column="24" selection-end-line="2" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/header/DtoHeaderResponse.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="42" column="5" selection-start-line="42" selection-start-column="5" selection-end-line="42" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/DtoMetaData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="17" column="62" selection-start-line="17" selection-start-column="62" selection-end-line="17" selection-end-column="62" />
+          <folding>
+            <element signature="e#0#1146#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/types/SystemUsers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#956#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/types/SystemUserDetail.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="28" selection-start-line="15" selection-start-column="28" selection-end-line="15" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-web/src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="48" column="73" selection-start-line="48" selection-start-column="73" selection-end-line="48" selection-end-column="96" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-model/src/main/java/org/gobiiproject/gobiimodel/dto/container/MarkerGroupDTO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="29" column="42" selection-start-line="29" selection-start-column="42" selection-end-line="29" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#884#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#866#867#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/junit/junit/4.11/junit-4.11.jar!/org/junit/internal/runners/model/ReflectiveCallable.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/gobii-process/src/main/java/org/gobiiproject/gobiiprocess/ExtractorProcess.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="25" column="75" selection-start-line="25" selection-start-column="75" selection-end-line="25" selection-end-column="75" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="4" selection-end-column="75" />
           <folding>
-            <element signature="e#0#1144#0" expanded="true" />
+            <element signature="e#0#1133#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/core/Urls.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#387#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/core/RestRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="28" column="13" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#8977#0" expanded="true" />
+            <element signature="e#987#1017#0" expanded="true" />
+            <element signature="e#1061#1062#0" expanded="true" />
+            <element signature="e#1103#1104#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gobii-client/src/main/java/org/gobiiproject/gobiiclient/dtorequests/DtoRequestMarkers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="103">
+          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#1773#0" expanded="true" />
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.txt">
+    <entry file="file://$PROJECT_DIR$/gobii-client/src/test/java/org/gobiiproject/gobiiclient/dtorequests/DtoRequestMarkersTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-334">
-          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
-          <folding />
+        <state relative-caret-position="289">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#937#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

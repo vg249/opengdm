@@ -12,30 +12,34 @@ public class DtoHeaderResponse implements Serializable {
 
     public enum StatusLevel {Error, Warning, Info, Ok}
 
-    private boolean succeded = true;
+    private boolean succeeded = true;
     private ArrayList<HeaderStatusMessage> statusMessages = new ArrayList<>();
 
-
     public void addException(Exception exception) {
-        succeded = false;
+        succeeded = false;
         addStatusMessage(StatusLevel.Error, exception.getMessage() + ": " + exception.getStackTrace());
     }
 
 
     public void addStatusMessage(StatusLevel statusLevel, String message) {
-        succeded = (StatusLevel.Error != statusLevel);
+        succeeded = (StatusLevel.Error != statusLevel);
         statusMessages.add(new HeaderStatusMessage(statusLevel, message));
     }
 
-
-    public List<HeaderStatusMessage> getStatusMessages() {
-        return (statusMessages);
+    public boolean isSucceeded() {
+        return succeeded;
     }
 
-
-    public boolean getSucceeded() {
-        return (succeded);
+    public void setSucceeded(boolean succeeded) {
+        this.succeeded = succeeded;
     }
 
+    public ArrayList<HeaderStatusMessage> getStatusMessages() {
+        return statusMessages;
+    }
+
+    public void setStatusMessages(ArrayList<HeaderStatusMessage> statusMessages) {
+        this.statusMessages = statusMessages;
+    }
 
 }//DtoHeaderResponse
