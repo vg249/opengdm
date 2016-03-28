@@ -1,5 +1,5 @@
-org\gobiiproject\gobiidao\MarkerDao.class
-org\gobiiproject\gobiidao\impl\UserDaoImpl.class
-org\gobiiproject\gobiidao\UserDao.class
-org\gobiiproject\gobiidao\impl\db\MarkerDaoImplDb.class
-org\gobiiproject\gobiidao\impl\mock\MarkerDaoImplMock.class
+org\gobiiproject\gobiidao\access\MarkerDao.class
+org\gobiiproject\gobiidao\access\impl\UserDaoImpl.class
+org\gobiiproject\gobiidao\access\impl\mock\MarkerDaoImplMock.class
+org\gobiiproject\gobiidao\access\impl\db\MarkerDaoImplDb.class
+org\gobiiproject\gobiidao\access\UserDao.class

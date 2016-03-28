@@ -5,21 +5,19 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>org.gobiiproject</groupId>
-        <version>${gobii-version}</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.gobiiproject</groupId>
     <artifactId>gobii-dao</artifactId>
-    <version>${gobii-version}</version>
 
     <dependencies>
-
         <!-- gobii dependencies -->
         <dependency>
             <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-model</artifactId>
-            <version>${gobii-version}</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <!-- Spring and Transactions -->
@@ -28,6 +26,7 @@
             <artifactId>spring-context</artifactId>
             <version>${spring-framework.version}</version>
         </dependency>
+
     </dependencies>
 
 </project>

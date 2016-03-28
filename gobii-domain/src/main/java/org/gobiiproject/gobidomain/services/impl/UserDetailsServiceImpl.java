@@ -6,7 +6,7 @@
 package org.gobiiproject.gobidomain.services.impl;
 
 
-import org.gobiiproject.gobiidao.UserDao;
+import org.gobiiproject.gobiidao.access.UserDao;
 import org.gobiiproject.gobiimodel.entity.User;
 import org.gobiiproject.gobidomain.security.impl.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
