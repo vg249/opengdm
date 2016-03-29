@@ -41,6 +41,7 @@
 
         <!-- Hibernate / JPA -->
         <hibernate.version>4.3.5.Final</hibernate.version>
+        <maven-hibernate-plugin.version>2.2</maven-hibernate-plugin.version>
 
         <!-- Hibernate / JPA -->
         <postgres.version>9.4-1200-jdbc41</postgres.version>

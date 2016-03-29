@@ -27,6 +27,57 @@
             <version>${spring-framework.version}</version>
         </dependency>
 
+        <!-- Hibernate -->
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>hibernate3-maven-plugin</artifactId>
+            <version>${maven-hibernate-plugin.version}</version>
+        </dependency>
+
+
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>hibernate3-maven-plugin</artifactId>
+                <version>${maven-hibernate-plugin.version}</version>
+                <configuration>
+                    <components>
+                        <component>
+                            <name>hbm2hbmxml</name>
+                            <implementation>jdbcconfiguration</implementation>
+                            <outputDirectory>target/generated-resources/hibernate</outputDirectory>
+                        </component>
+                        <component>
+                            <name>hbm2java</name>
+                            <implementation>jdbcconfiguration</implementation>
+                            <outputDirectory>target/generated-sources/hibernate</outputDirectory>
+                        </component>
+                    </components>
+                    <componentProperties>
+                        <revengfile>src/main/resources/reveng.xml</revengfile>
+                        <propertyfile>src/main/resources/hibernate.properties</propertyfile>
+                        <packagename>org.gobiiproject.gobiidao.entities</packagename>
+                        <jdk5>false</jdk5>
+                        <ejb3>true</ejb3>
+                    </componentProperties>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>cglib</groupId>
+                        <artifactId>cglib</artifactId>
+                        <version>${cglib.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>${postgres.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
