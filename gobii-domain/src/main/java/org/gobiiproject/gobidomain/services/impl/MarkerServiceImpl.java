@@ -6,10 +6,12 @@
 package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.services.MarkerService;
-import org.gobiiproject.gobiidao.access.MarkerDao;
+import org.gobiiproject.gobiidao.entityaccess.MarkerDao;
+import org.gobiiproject.gobiidtomapping.DtoMapMarker;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,16 +21,12 @@ import java.util.Map;
 public class MarkerServiceImpl implements MarkerService {
 
     @Autowired
-    private MarkerDao markerDao = null;
+    private DtoMapMarker dtoMapMarker;
 
     @Override
     public MarkerGroupDTO getMarkers(List<String> chromosomes) {
 
-        MarkerGroupDTO returnVal = new MarkerGroupDTO();
-
-        Map<String, List<String>> markerMap = markerDao.getMarkers(null);
-        returnVal.setMarkerMap(markerMap);
-        return returnVal;
+        return dtoMapMarker.getMarkers(new ArrayList<>());
 
     } // getMarkers()
 

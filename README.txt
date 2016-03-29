@@ -63,7 +63,20 @@ Setup instructions:
       meaningful result:
       curl -i -H "Accept: application/json" -H "Content-Type: application/json"  -H "Cache-Control: no-cache, no-store, must-revalidate" -d "{\"name\":\"article\",\"scope\":\"dumb scope\"}" http://localhost:8181/resource/search/bycontenttype
 
-    * Set up a run configuration for org/gobiiproject/gobiiprocess/ExtractorProcess.java;
-      when you run it, you should see that the service call it uses logs a meaningful result.
+4) Set up a run configuration for org/gobiiproject/gobiiprocess/ExtractorProcess.java;
+   when you run it, you should see that the service call it uses logs a meaningful result.
+
+5) Set up a maven run configuration in the dao project as follows:
+
+   Commandline: clean hibernate3:hbm2hbmxml hibernate3:hbm2java compile
+   Working directory: <physical-path-to-module> (e.g., C:/phil-source/IntelliJ/gobiiproject/gobii-dao)
+
+   In order for this to work, you also have to modify resources/hibernate.properties in order
+   connect to the database. Upon completion, this run task will create jpa/hibernate entity
+   classes from the database tables.
+
+   After you run the task, you will also have to do Generate Sources/Update Folders in order
+   for the classes to be seen by the IDE compiler.
+
 
 

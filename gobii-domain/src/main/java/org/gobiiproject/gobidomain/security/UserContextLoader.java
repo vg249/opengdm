@@ -6,7 +6,7 @@
 package org.gobiiproject.gobidomain.security;
 
 
-import org.gobiiproject.gobiidao.access.UserDao;
+import org.gobiiproject.gobiidao.entityaccess.UserDao;
 import org.gobiiproject.gobiimodel.entity.User;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

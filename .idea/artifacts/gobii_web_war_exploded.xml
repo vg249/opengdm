@@ -13,6 +13,9 @@
           <element id="archive" name="gobii-domain-1.0-SNAPSHOT.jar">
             <element id="module-output" name="gobii-domain" />
           </element>
+          <element id="archive" name="gobii-dtomapping-1.0-SNAPSHOT.jar">
+            <element id="module-output" name="gobii-dtomapping" />
+          </element>
           <element id="archive" name="gobii-dao-1.0-SNAPSHOT.jar">
             <element id="module-output" name="gobii-dao" />
           </element>

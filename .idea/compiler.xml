@@ -25,6 +25,7 @@
         <module name="gobii-client" />
         <module name="gobii-dao" />
         <module name="gobii-domain" />
+        <module name="gobii-dtomapping" />
         <module name="gobii-model" />
         <module name="gobii-process" />
         <module name="gobii-web" />
@@ -34,6 +35,7 @@
       <module name="gobii-client" target="1.8" />
       <module name="gobii-dao" target="1.8" />
       <module name="gobii-domain" target="1.8" />
+      <module name="gobii-dtomapping" target="1.8" />
       <module name="gobii-model" target="1.8" />
       <module name="gobii-process" target="1.8" />
       <module name="gobii-web" target="1.8" />

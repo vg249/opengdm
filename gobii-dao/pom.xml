@@ -39,6 +39,22 @@
 
     <build>
         <plugins>
+
+            <!--
+                This plugin will generate Hibernate entity classes from the database specified
+                at resources/hibernate.properties.
+                For this to work, you have to set up a maven run configuration as follows:
+                Commandline: clean hibernate3:hbm2hbmxml hibernate3:hbm2java compile
+                Working directory: <physical-path-to-module> (e.g., C:/phil-source/IntelliJ/gobiiproject/gobii-dao)
+
+                This goal has to be run whenever changes are made to the database schema.
+                These files are dumped into src/main/java because otherwise (if they are dumped
+                to target) the maven compiler does not see them (the maven compile plugin could
+                probably be configured to do otherwise). In order for the IDE to see the changes,
+                you have to do generate sources).
+
+
+            -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>hibernate3-maven-plugin</artifactId>
@@ -48,18 +64,18 @@
                         <component>
                             <name>hbm2hbmxml</name>
                             <implementation>jdbcconfiguration</implementation>
-                            <outputDirectory>target/generated-resources/hibernate</outputDirectory>
+                            <outputDirectory>src/main/resources</outputDirectory>
                         </component>
                         <component>
                             <name>hbm2java</name>
                             <implementation>jdbcconfiguration</implementation>
-                            <outputDirectory>target/generated-sources/hibernate</outputDirectory>
+                            <outputDirectory>src/main/java</outputDirectory>
                         </component>
                     </components>
                     <componentProperties>
                         <revengfile>src/main/resources/reveng.xml</revengfile>
                         <propertyfile>src/main/resources/hibernate.properties</propertyfile>
-                        <packagename>org.gobiiproject.gobiidao.entities</packagename>
+                        <packagename>org.gobiiproject.gobiidao.generated.entities</packagename>
                         <jdk5>false</jdk5>
                         <ejb3>true</ejb3>
                     </componentProperties>

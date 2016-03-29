@@ -14,9 +14,10 @@
 
     <dependencies>
         <!-- gobii dependencies -->
+
         <dependency>
             <groupId>org.gobiiproject</groupId>
-            <artifactId>gobii-dao</artifactId>
+            <artifactId>gobii-dtomapping</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

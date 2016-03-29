@@ -63,7 +63,7 @@
 
             <!--
             **** Ideally we would want to prevent the transitive dependency of gobii-domain on gobii-dao from bringing
-            **** the gobii-dao project into the web context: we always want access to the dao layer to go through the
+            **** the gobii-dao project into the web context: we always want entityaccess to the dao layer to go through the
             **** service layer (which is implemented in the domain). However, if we exclude the dependency, spring
             **** security filter chain initialization fails because the framework class that's consuming the
             **** user detail service can't get supply the user detail service with user dao class. So we're all on

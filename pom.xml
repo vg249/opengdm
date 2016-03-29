@@ -57,6 +57,7 @@
         <module>gobii-domain</module>
         <module>gobii-process</module>
         <module>gobii-client</module>
+        <module>gobii-dtomapping</module>
     </modules>
 
 
