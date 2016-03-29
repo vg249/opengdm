@@ -6,6 +6,7 @@
 package org.gobiiproject.gobiidao.access.impl.mock;
 
 import org.gobiiproject.gobiidao.access.MarkerDao;
+import org.gobiiproject.gobiidao.entities.Marker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,4 +32,23 @@ public class MarkerDaoImplMock implements MarkerDao {
 
     } // getMarkers()
 
+    @Override
+    public Marker create(Marker marker) {
+        return null;
+    }
+
+    @Override
+    public void delete(Object id) {
+
+    }
+
+    @Override
+    public Marker find(Object id) {
+        return null;
+    }
+
+    @Override
+    public Marker update(Marker marker) {
+        return null;
+    }
 } // MarkerDaoImplMock

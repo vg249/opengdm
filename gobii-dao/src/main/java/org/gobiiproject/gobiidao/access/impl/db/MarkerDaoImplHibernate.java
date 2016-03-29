@@ -5,8 +5,10 @@
 // ************************************************************************
 
 package org.gobiiproject.gobiidao.access.impl.db;
-
+import org.gobiiproject.gobiidao.core.impl.DaoImplHibernate;
 import org.gobiiproject.gobiidao.access.MarkerDao;
+import org.gobiiproject.gobiidao.core.impl.DaoImplHibernate;
+import org.gobiiproject.gobiidao.entities.Marker;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
@@ -15,10 +17,10 @@ import java.util.Map;
 /**
  * Created by Phil on 3/24/2016.
  */
-public class MarkerDaoImplDb implements MarkerDao {
+public class MarkerDaoImplHibernate extends DaoImplHibernate<Marker> implements MarkerDao  {
 
     @Override
-    public Map<String, List<String>> getMarkers(List<String> chromoSomes) {
+    public Map<String, List<String>> getMarkers(List<String> chromosomes) {
 
         throw new NotImplementedException();
     }
