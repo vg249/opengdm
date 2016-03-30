@@ -113,10 +113,6 @@
                     <groupId>org.jboss.logging</groupId>
                     <artifactId>jboss-logging-annotations</artifactId>
                 </exclusion>
-                <!--<exclusion>-->
-                    <!--<groupId>org.hibernate.javax.persistence</groupId>-->
-                    <!--<artifactId>hibernate-jpa-2.0-api</artifactId>-->
-                <!--</exclusion>-->
             </exclusions>
         </dependency>
 
