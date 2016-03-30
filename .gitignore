@@ -1,4 +1,5 @@
 .idea
+*.iml
 gobii-client/target
 gobii-dao/target
 gobii-domain/target
