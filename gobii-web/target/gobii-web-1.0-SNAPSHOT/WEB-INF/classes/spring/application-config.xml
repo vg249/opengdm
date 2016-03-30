@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:security ="http://www.springframework.org/schema/security"
+       xmlns:security="http://www.springframework.org/schema/security"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
@@ -25,13 +25,14 @@
          You want to use the bean defintiions below so that you can swap in
          arbitrary implementions of interfaces as system needs evolve-->
     <context:annotation-config/>
-    <context:component-scan base-package="org.gobiiproject.gobiidao.impl"/>
+    <context:component-scan base-package="org.gobiiproject.gobiidao.core"/>
     <context:component-scan base-package="org.gobiiproject.gobidomain.security"/>
     <context:component-scan base-package="org.gobiiproject.gobiiweb.controllers"/>
 
 
     <!-- ******************** explicitly defined beans  ****************-->
-    <bean id="markerDao" class="org.gobiiproject.gobiidao.entityaccess.impl.mock.MarkerDaoImplMock"/>
+    <bean id="markerDao" class="org.gobiiproject.gobiidao.entityaccess.impl.db.MarkerDaoImplHibernate"/>
+    <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>
     <bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
 
     <!-- ************************ DATA ACCESS BEANS ************************* -->
@@ -39,62 +40,33 @@
     <-- Hibernate/JDBC connection properties -->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
           destroy-method="close">
-
         <property name="driverClassName" value="org.postgresql.Driver"/>
         <property name="url" value="jdbc:postgresql://localhost:5432/flatmeta"/>
         <property name="username" value="appuser"/>
         <property name="password" value="appuser"/>
     </bean>
 
-
-    <!-- Hibernate 4 SessionFactory Bean definition -->
-    <bean id="sessionFactory"
-          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="annotatedClasses">
-            <list>
-                <value>org.gobiiproject.gobiidao.entities.Analysis</value>
-                <value>org.gobiiproject.gobiidao.entities.Contact</value>
-                <value>org.gobiiproject.gobiidao.entities.Dataset</value>
-                <value>org.gobiiproject.gobiidao.entities.DatasetDnarun</value>
-                <value>org.gobiiproject.gobiidao.entities.DatasetMarker</value>
-                <value>org.gobiiproject.gobiidao.entities.Dnarun</value>
-                <value>org.gobiiproject.gobiidao.entities.DnarunProp</value>
-                <value>org.gobiiproject.gobiidao.entities.Dnasample</value>
-                <value>org.gobiiproject.gobiidao.entities.DnasampleProp</value>
-                <value>org.gobiiproject.gobiidao.entities.Experiment</value>
-                <value>org.gobiiproject.gobiidao.entities.Germplasm</value>
-                <value>org.gobiiproject.gobiidao.entities.GermplasmProp</value>
-                <value>org.gobiiproject.gobiidao.entities.Manifest</value>
-                <value>org.gobiiproject.gobiidao.entities.Map</value>
-                <value>org.gobiiproject.gobiidao.entities.MapProp</value>
-                <value>org.gobiiproject.gobiidao.entities.Marker</value>
-                <value>org.gobiiproject.gobiidao.entities.MarkerGroup</value>
-                <value>org.gobiiproject.gobiidao.entities.MarkerMap</value>
-                <value>org.gobiiproject.gobiidao.entities.MarkerProp</value>
-                <value>org.gobiiproject.gobiidao.entities.Platform</value>
-                <value>org.gobiiproject.gobiidao.entities.PlatformProp</value>
-                <value>org.gobiiproject.gobiidao.entities.Project</value>
-                <value>org.gobiiproject.gobiidao.entities.ProjectProp</value>
-                <value>org.gobiiproject.gobiidao.entities.Role</value>
-                <value>org.gobiiproject.gobiidao.entities.TableDisplay</value>
-                <value>org.gobiiproject.gobiidao.entities.Variant</value>
-            </list>
+        <property name="packagesToScan" value="org.gobiiproject.gobiidao.generated.entities"/>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>
-        <property name="hibernateProperties">
+        <property name="jpaProperties">
             <props>
+                <!--<prop key="hibernate.hbm2ddl.auto">create-drop</prop>-->
                 <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop>
-                <!-- DO NOT USE: CAUSES TRANSACTIONBUG <prop key="hibernate.current_session_context_class">thread</prop> -->
-                <prop key="hibernate.hbm2ddl.auto">none</prop>
-                <prop key="show_sql">false</prop>
             </props>
         </property>
     </bean>
 
-    <bean id="transactionManager"
-          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory"></property>
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
+    <tx:annotation-driven/>
+
+    <bean id="persistenceExceptionTranslationPostProcessor"
+          class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
     <!-- ***********************************************
             SECURITY CONFIGURATION

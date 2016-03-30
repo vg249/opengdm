@@ -59,6 +59,7 @@ public class ExtractController {
 //    }//getByContentType()
 
 
+
     @RequestMapping(value = "/search/bycontenttype", method = RequestMethod.POST)
     @ResponseBody
     public MarkerGroupDTO getByContentType(@RequestBody ContentTypeDTO contentTypeDTO) {

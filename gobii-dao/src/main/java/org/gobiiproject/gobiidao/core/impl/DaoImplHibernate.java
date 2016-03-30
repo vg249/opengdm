@@ -2,9 +2,8 @@ package org.gobiiproject.gobiidao.core.impl;
 
 import org.gobiiproject.gobiidao.core.Dao;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,6 +15,7 @@ import java.util.Map;
 
 /**
  * Created by Phil on 3/29/2016.
+ * Based on: http://www.codeproject.com/Articles/251166/The-Generic-DAO-pattern-in-Java-with-Spring-3-and
  */
 public abstract class DaoImplHibernate<T> implements Dao<T> {
 
@@ -30,6 +30,7 @@ public abstract class DaoImplHibernate<T> implements Dao<T> {
         type = (Class) pt.getActualTypeArguments()[0];
     }
 
+//    @Transactional
 //    @Override
 //    public long countAll(final Map<String, Object> params) {
 //
@@ -37,7 +38,8 @@ public abstract class DaoImplHibernate<T> implements Dao<T> {
 //                "SELECT count(o) from ");
 //
 //        queryString.append(type.getSimpleName()).append(" o ");
-//        queryString.append(this.em.getQueryClauses(params, null));
+//        queryString.append(this.getQueryClauses(params, null));
+//
 //
 //        final Query query = this.em.createQuery(queryString.toString());
 //
@@ -45,22 +47,26 @@ public abstract class DaoImplHibernate<T> implements Dao<T> {
 //
 //    }
 
+    @Transactional
     @Override
     public T create(final T t) {
         this.em.persist(t);
         return t;
     }
 
+    @Transactional
     @Override
     public void delete(final Object id) {
         this.em.remove(this.em.getReference(type, id));
     }
 
+    @Transactional
     @Override
     public T find(final Object id) {
         return (T) this.em.find(type, id);
     }
 
+    @Transactional
     @Override
     public T update(final T t) {
         return this.em.merge(t);

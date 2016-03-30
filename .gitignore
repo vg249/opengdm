@@ -1,0 +1,8 @@
+.idea
+gobii-client/target
+gobii-dao/target
+gobii-domain/target
+gobii-dtomapping/target
+gobii-model/target
+gobii-process/target
+gobii-web/target

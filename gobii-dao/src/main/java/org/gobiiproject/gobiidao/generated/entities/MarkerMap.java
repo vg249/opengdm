@@ -1,5 +1,5 @@
 package org.gobiiproject.gobiidao.generated.entities;
-// Generated Mar 29, 2016 4:12:56 PM by Hibernate Tools 3.2.2.GA
+// Generated Mar 30, 2016 11:56:04 AM by Hibernate Tools 3.2.2.GA
 
 
 import javax.persistence.Column;
