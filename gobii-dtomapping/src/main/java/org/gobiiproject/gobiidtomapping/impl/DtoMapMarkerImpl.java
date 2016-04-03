@@ -19,11 +19,11 @@ public class DtoMapMarkerImpl implements DtoMapMarker {
     private MarkerDao markerDao;
 
     @Override
-    public MarkerGroupDTO getMarkers(List<String> chromoSomes) {
+    public MarkerGroupDTO getMarkers(List<Integer> markerIds) {
 
         MarkerGroupDTO returnVal = new MarkerGroupDTO();
 
-        Map<String, List<String>> markerGroups = markerDao.getMarkers(new ArrayList<>());
+        Map<String, List<String>> markerGroups = markerDao.getMarkers(markerIds);
 
         returnVal.setMarkerMap(markerGroups);
 

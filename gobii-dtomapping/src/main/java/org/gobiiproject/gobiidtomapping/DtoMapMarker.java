@@ -10,6 +10,6 @@ import java.util.Map;
  */
 public interface DtoMapMarker {
 
-    MarkerGroupDTO getMarkers(List<String> chromosomes );
+    MarkerGroupDTO getMarkers(List<Integer> chromosomes );
 
 }

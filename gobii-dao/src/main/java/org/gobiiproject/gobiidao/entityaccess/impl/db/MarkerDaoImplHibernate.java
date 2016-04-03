@@ -9,8 +9,7 @@ package org.gobiiproject.gobiidao.entityaccess.impl.db;
 
 import org.gobiiproject.gobiidao.core.impl.DaoImplHibernate;
 import org.gobiiproject.gobiidao.entityaccess.MarkerDao;
-import org.gobiiproject.gobiidao.generated.entities.Marker;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.gobiiproject.gobiidao.entities.Marker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +22,16 @@ import java.util.Map;
 public class MarkerDaoImplHibernate extends DaoImplHibernate<Marker> implements MarkerDao  {
 
     @Override
-    public Map<String, List<String>> getMarkers(List<String> chromosomes) {
+    public Map<String, List<String>> getMarkers(List<Integer> markerIds ) {
+
+        // Ths is completely the wrong way to do this with JPA/Hibernate
+        // It is just a hello world to getting data out of the database
+        List<Marker> markers = new ArrayList<>();
+        for( Integer currentMarkerId : markerIds  ) {
+
+            Marker currentMarker = this.find(currentMarkerId);
+            markers.add(currentMarker);
+        }
 
         Map<String,List<String>> returnVal = new HashMap<>();
 
@@ -35,6 +43,6 @@ public class MarkerDaoImplHibernate extends DaoImplHibernate<Marker> implements 
         returnVal.put("Group 2", arrayList);
 
         return returnVal;
-    }
+    } // getMarkers()
 
 }
