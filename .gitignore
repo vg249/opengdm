@@ -7,3 +7,8 @@ gobii-dtomapping/target
 gobii-model/target
 gobii-process/target
 gobii-web/target
+/bin/
+
+.settings
+.classpath
+.project
