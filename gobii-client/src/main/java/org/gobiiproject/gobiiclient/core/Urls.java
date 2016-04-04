@@ -9,13 +9,14 @@ public class Urls {
 
 
     public final static String HOST = "localhost";
-    public final static Integer PORT = 8181;
+    public final static Integer PORT = 8080;
 
-    private final static String CTRLR_EXTRACT = "/extract/";
-    private final static String CTRLR_LOAD = "/load/";
+    private final static String APP_ROOT = "/gobii-web/";
+    private final static String CTRLR_EXTRACT = "extract/";
+    private final static String CTRLR_LOAD = "load/";
 
-    public final static String URL_MARKERS = CTRLR_EXTRACT  + "search/bycontenttype";
-    public final static String URL_PING_EXTRACT =  CTRLR_EXTRACT + "ping";
-    public final static String URL_PING_LOAD =  CTRLR_LOAD +  "ping";
+    public final static String URL_MARKERS = APP_ROOT + CTRLR_EXTRACT  + "search/bycontenttype";
+    public final static String URL_PING_EXTRACT =  APP_ROOT + CTRLR_EXTRACT + "ping";
+    public final static String URL_PING_LOAD =  APP_ROOT + CTRLR_LOAD +  "ping";
 
 } // Urls
