@@ -6,8 +6,11 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.MarkerService;
+import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobiimodel.dto.container.ContentTypeDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.logutils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.AccessDeniedException;
@@ -23,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Scope(value = "request")
 @Controller
-@RequestMapping("/resource")
+@RequestMapping("/extract")
 public class ExtractController {
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExtractController.class);
@@ -32,6 +35,8 @@ public class ExtractController {
     private MarkerService markerService = null;
 
 
+    @Autowired
+    private PingService pingService = null;
 //    @Autowired
 //    ResourceService resourceService;
 //
@@ -59,6 +64,26 @@ public class ExtractController {
 //    }//getByContentType()
 
 
+    @RequestMapping(value = "/ping", method = RequestMethod.POST)
+    @ResponseBody
+    public PingDTO getPingResponse(@RequestBody PingDTO pingDTORequest) {
+
+        PingDTO returnVal = null;
+        //PingDTO pingDTORequest = new PingDTO();
+        try {
+            returnVal = pingService.getPings(pingDTORequest);
+            String newResponseString = LineUtils.wrapLine("Extractor controller responded");
+            returnVal.getPingResponses().add(newResponseString);
+        } catch (AccessDeniedException e) {
+
+            String msg = e.getMessage();
+            String tmp = msg;
+            throw (e);
+        }
+        return (returnVal);
+
+    }//getByContentType()
+
 
     @RequestMapping(value = "/search/bycontenttype", method = RequestMethod.POST)
     @ResponseBody
@@ -67,7 +92,7 @@ public class ExtractController {
 //        MarkerGroupDTO returnVal = new MarkerGroupDTO();
         MarkerGroupDTO returnVal = null;
         try {
-             //returnVal = resourceService.getResourcesByContentType(contentTypeDTO);
+            //returnVal = resourceService.getResourcesByContentType(contentTypeDTO);
             returnVal = markerService.getMarkers(null);
         } catch (AccessDeniedException e) {
 

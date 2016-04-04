@@ -26,7 +26,6 @@
             <version>1.0.2</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -39,11 +38,41 @@
             <version>${spring-framework.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging-annotations</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgres.version}</version>
+        </dependency>
+
+
         <!-- Hibernate -->
     </dependencies>
 
-    <build>
-        <plugins>
+    <!-- DO NOT USE THIS PLUGIN FOR NOW.
+         IT WAS USED TO GENERATE INITIAL VERSIONS OF THE ENTITIES.
+         HOWEVER, JSONB SERIALIZATION REQUIRES MODIFICAITON OF THE ENTITIES.
+         THERE IS ALMOST CERTAINLY A WAY TO BAKE THESE MODIFICATIONS INTO THE
+         ENTITY GENERATION PROCESS USING THE reveng.xml FILE. HOWEVER, WE DON'T
+         HAVE TIME FOR THAT NOW
+         -->
+    <!--<build>-->
+        <!--<plugins>-->
 
             <!--
                 This plugin will generate Hibernate entity classes from the database specified
@@ -60,44 +89,44 @@
 
 
             -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>hibernate3-maven-plugin</artifactId>
-                <version>${maven-hibernate-plugin.version}</version>
-                <configuration>
-                    <components>
-                        <component>
-                            <name>hbm2hbmxml</name>
-                            <implementation>jdbcconfiguration</implementation>
-                            <outputDirectory>src/main/resources</outputDirectory>
-                        </component>
-                        <component>
-                            <name>hbm2java</name>
-                            <implementation>jdbcconfiguration</implementation>
-                            <outputDirectory>src/main/java</outputDirectory>
-                        </component>
-                    </components>
-                    <componentProperties>
-                        <revengfile>src/main/resources/reveng.xml</revengfile>
-                        <propertyfile>src/main/resources/hibernate.properties</propertyfile>
-                        <packagename>org.gobiiproject.gobiidao.generated.entities</packagename>
-                        <jdk5>false</jdk5>
-                        <ejb3>true</ejb3>
-                    </componentProperties>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>cglib</groupId>
-                        <artifactId>cglib</artifactId>
-                        <version>${cglib.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>${postgres.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>hibernate3-maven-plugin</artifactId>-->
+                <!--<version>${maven-hibernate-plugin.version}</version>-->
+                <!--<configuration>-->
+                    <!--<components>-->
+                        <!--<component>-->
+                            <!--<name>hbm2hbmxml</name>-->
+                            <!--<implementation>jdbcconfiguration</implementation>-->
+                            <!--<outputDirectory>src/main/resources</outputDirectory>-->
+                        <!--</component>-->
+                        <!--<component>-->
+                            <!--<name>hbm2java</name>-->
+                            <!--<implementation>jdbcconfiguration</implementation>-->
+                            <!--<outputDirectory>src/main/java</outputDirectory>-->
+                        <!--</component>-->
+                    <!--</components>-->
+                    <!--<componentProperties>-->
+                        <!--<revengfile>src/main/resources/reveng.xml</revengfile>-->
+                        <!--<propertyfile>src/main/resources/hibernate.properties</propertyfile>-->
+                        <!--<packagename>org.gobiiproject.gobiidao.generated.entities</packagename>-->
+                        <!--<jdk5>false</jdk5>-->
+                        <!--<ejb3>true</ejb3>-->
+                    <!--</componentProperties>-->
+                <!--</configuration>-->
+                <!--<dependencies>-->
+                    <!--<dependency>-->
+                        <!--<groupId>cglib</groupId>-->
+                        <!--<artifactId>cglib</artifactId>-->
+                        <!--<version>${cglib.version}</version>-->
+                    <!--</dependency>-->
+                    <!--<dependency>-->
+                        <!--<groupId>org.postgresql</groupId>-->
+                        <!--<artifactId>postgresql</artifactId>-->
+                        <!--<version>${postgres.version}</version>-->
+                    <!--</dependency>-->
+                <!--</dependencies>-->
+            <!--</plugin>-->
+        <!--</plugins>-->
+    <!--</build>-->
 </project>

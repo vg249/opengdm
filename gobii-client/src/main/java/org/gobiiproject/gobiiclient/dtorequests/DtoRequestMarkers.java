@@ -34,13 +34,13 @@ public class DtoRequestMarkers {
 
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
 
-        RestRequest<MarkerGroupDTO> restRequest = new RestRequest<>(MarkerGroupDTO.class);
+        RestRequest<MarkerGroupDTO> restRequest = new RestRequest<>(MarkerGroupDTO.class, Urls.HOST, Urls.PORT);
         String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
         returnVal = restRequest.getTypedHtppResponse(Urls.URL_MARKERS, markerRequestJson, token);
 
         return returnVal;
 
-    } // getmMarkerGroup()
+    } // getPingFromExtractController()
 
 } // DtoRequestMarkers()

@@ -30,17 +30,28 @@
     <context:component-scan base-package="org.gobiiproject.gobiiweb.controllers"/>
 
 
+    <!-- ******************** ******************************************-->
     <!-- ******************** explicitly defined beans  ****************-->
-    <bean id="markerDao" class="org.gobiiproject.gobiidao.entityaccess.impl.db.MarkerDaoImplHibernate"/>
+
+    <!-- **** Security Beans ***************************************-->
+    <bean id="UserDao " class="org.gobiiproject.gobiidao.entityaccess.impl.UserDaoImpl"/>
+
+
+    <!-- **** Ping Beans ***************************************-->
+    <bean id="pingDao" class="org.gobiiproject.gobiidao.entityaccess.impl.mock.PingDaoImplMock"/>
+    <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.impl.DtoMapPingImpl"/>
+    <bean id="pingService" class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl"/>
+
+
+    <!-- **** Marker Beans ***************************************-->
+    <bean id="markerDao" class="org.gobiiproject.gobiidao.entityaccess.impl.mock.MarkerDaoImplMock"/>
     <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>
     <bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
-    <bean id="UserDao " class="org.gobiiproject.gobiidao.entityaccess.impl.UserDaoImpl"/>
 
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
     <!-- Hibernate/JDBC connection properties -->
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-          destroy-method="close">
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
         <property name="url" value="jdbc:postgresql://localhost:5432/flatmeta"/>
         <property name="username" value="appuser"/>
@@ -50,13 +61,13 @@
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="packagesToScan" value="org.gobiiproject.gobiidao.generated.entities"/>
+        <property name="packagesToScan" value="org.gobiiproject.gobiidao.entities"/>
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop>
+                <prop key="hibernate.dialect">org.gobiiproject.gobiidao.usertypes.JSONBPostgreSQLDialect</prop>
             </props>
         </property>
     </bean>

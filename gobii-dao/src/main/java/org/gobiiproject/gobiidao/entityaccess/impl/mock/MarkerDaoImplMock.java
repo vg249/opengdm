@@ -7,7 +7,7 @@ package org.gobiiproject.gobiidao.entityaccess.impl.mock;
 
 import org.gobiiproject.gobiidao.core.impl.DaoImplHibernate;
 import org.gobiiproject.gobiidao.entityaccess.MarkerDao;
-import org.gobiiproject.gobiidao.generated.entities.Marker;
+import org.gobiiproject.gobiidao.entities.Marker;
 
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class MarkerDaoImplMock extends DaoImplHibernate<Marker> implements MarkerDao {
 
     @Override
-    public Map<String, List<String>> getMarkers(List<String> chromoSomes) {
+    public Map<String, List<String>> getMarkers(List<Integer> markerIds) {
 
         Map<String, List<String>> returnVal = new HashMap<>();
         List<String> testList1 = new ArrayList<>();

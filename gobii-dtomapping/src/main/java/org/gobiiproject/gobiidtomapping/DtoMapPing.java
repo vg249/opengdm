@@ -1,15 +1,15 @@
 package org.gobiiproject.gobiidtomapping;
 
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Phil on 3/29/2016.
  */
-public interface DtoMapMarker {
+public interface DtoMapPing {
 
-    MarkerGroupDTO getMarkers(List<Integer> chromosomes );
+    PingDTO getPings(PingDTO pingDTO);
 
 }

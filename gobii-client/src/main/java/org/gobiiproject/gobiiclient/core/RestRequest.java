@@ -28,11 +28,18 @@ import java.net.URI;
 
 public class RestRequest<T> {
 
+
+
     private final Class<T> paramType;
+    private String host = null;
+    private Integer port = null;
 
     @SuppressWarnings("unchecked")
-    public RestRequest(Class<T> paramType) {
+    public RestRequest(Class<T> paramType, String host, Integer port) {
+
         this.paramType = paramType;
+        this.host = host;
+        this.port = port;
     } // ctor
 
     Logger LOGGER = LoggerFactory.getLogger(RestRequest.class);
@@ -49,8 +56,8 @@ public class RestRequest<T> {
 
     private URIBuilder getBaseBuilder() throws Exception {
         return (new URIBuilder().setScheme("http")
-                .setHost("localhost")
-                .setPort(8181));
+                .setHost(host)
+                .setPort(port));
     }
 
     private URI makeUri(String url) throws Exception {
@@ -196,6 +203,11 @@ public class RestRequest<T> {
         HttpPost postRequest = new HttpPost(uri);
         returnVal = submitUriRequest(postRequest, userName, password, null);
 
+        if( HTTP_STATUS_CODE_OK !=  returnVal.getStatusLine().getStatusCode()) {
+            throw new Exception( "Request did not succeed: " + returnVal.getStatusLine().getStatusCode()  );
+        }
+
+
         logRequestHeaders(postRequest, returnVal, " Authenticate with user " + userName);
 
         return (returnVal);
@@ -252,6 +264,11 @@ public class RestRequest<T> {
 
         httpResponse = submitUriRequest(postRequest, "", "", token);
 
+        if( HTTP_STATUS_CODE_OK !=  httpResponse.getStatusLine().getStatusCode()) {
+            throw new Exception( "Request did not succeed: " + httpResponse.getStatusLine().getStatusCode()  );
+        }
+
+
         BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader((httpResponse.getEntity().getContent())));
 
@@ -263,7 +280,8 @@ public class RestRequest<T> {
 
 
         JsonParser parser = new JsonParser();
-        returnVal = parser.parse(stringBuilder.toString()).getAsJsonObject();
+        String jsonAsString = stringBuilder.toString();
+        returnVal = parser.parse(jsonAsString).getAsJsonObject();
 
         return returnVal;
 

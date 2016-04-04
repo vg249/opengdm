@@ -3,18 +3,17 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
-package org.gobiiproject.gobiidao.entityaccess;
+package org.gobiiproject.gobidomain.services;
 
-import org.gobiiproject.gobiidao.core.Dao;
-import org.gobiiproject.gobiidao.entities.Marker;
-
+import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Phil on 3/24/2016.
  */
-public interface MarkerDao extends Dao<Marker> {
-    Map<String, List<String>> getMarkers(List<Integer> markerIds );
+public interface PingService {
+
+    PingDTO getPings(PingDTO pingDTO);
 }

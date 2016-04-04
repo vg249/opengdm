@@ -24,9 +24,13 @@ public class MarkerServiceImpl implements MarkerService {
     private DtoMapMarker dtoMapMarker;
 
     @Override
-    public MarkerGroupDTO getMarkers(List<String> chromosomes) {
+    public MarkerGroupDTO getMarkers(List<String> markerIds ) {
 
-        return dtoMapMarker.getMarkers(new ArrayList<>());
+        List<Integer> newMarkerIds = new ArrayList<>();
+        newMarkerIds.add(1);
+        newMarkerIds.add(2);
+        newMarkerIds.add(3);
+        return dtoMapMarker.getMarkers(newMarkerIds);
 
     } // getMarkers()
 
