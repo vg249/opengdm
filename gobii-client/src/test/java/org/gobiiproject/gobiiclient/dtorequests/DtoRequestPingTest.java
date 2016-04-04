@@ -14,8 +14,9 @@ import java.util.List;
 
 public class DtoRequestPingTest {
 
+
     @Test
-    public void testGetPing() throws Exception {
+    public void testGetPingFromExtractController() throws Exception {
 
         List<String> requestStrings = new ArrayList<>();
 
@@ -23,7 +24,7 @@ public class DtoRequestPingTest {
         requestStrings.add("Test String 2");
 
         DtoRequestPing dtoRequestPing = new DtoRequestPing();
-        PingDTO pingDTO = dtoRequestPing.getPing(requestStrings);
+        PingDTO pingDTO = dtoRequestPing.getPingFromExtractController(requestStrings);
 
         Assert.assertNotEquals(null, pingDTO);
         Assert.assertNotEquals(null, pingDTO.getPingRequests());
@@ -31,4 +32,23 @@ public class DtoRequestPingTest {
         Assert.assertTrue(pingDTO.getPingResponses().size() >= requestStrings.size());
 
     } // testGetMarkers()
+
+    @Test
+    public void testGetPingFromLoadController() throws Exception {
+
+        List<String> requestStrings = new ArrayList<>();
+
+        requestStrings.add("Test String 1");
+        requestStrings.add("Test String 2");
+
+        DtoRequestPing dtoRequestPing = new DtoRequestPing();
+        PingDTO pingDTO = dtoRequestPing.getPingFromLoadController(requestStrings);
+
+        Assert.assertNotEquals(null, pingDTO);
+        Assert.assertNotEquals(null, pingDTO.getPingRequests());
+        Assert.assertNotEquals(null, pingDTO.getPingResponses());
+        Assert.assertTrue(pingDTO.getPingResponses().size() >= requestStrings.size());
+
+    } // testGetMarkers()
+
 }

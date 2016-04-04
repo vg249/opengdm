@@ -28,11 +28,18 @@ import java.net.URI;
 
 public class RestRequest<T> {
 
+
+
     private final Class<T> paramType;
+    private String host = null;
+    private Integer port = null;
 
     @SuppressWarnings("unchecked")
-    public RestRequest(Class<T> paramType) {
+    public RestRequest(Class<T> paramType, String host, Integer port) {
+
         this.paramType = paramType;
+        this.host = host;
+        this.port = port;
     } // ctor
 
     Logger LOGGER = LoggerFactory.getLogger(RestRequest.class);
@@ -49,8 +56,8 @@ public class RestRequest<T> {
 
     private URIBuilder getBaseBuilder() throws Exception {
         return (new URIBuilder().setScheme("http")
-                .setHost("localhost")
-                .setPort(8181));
+                .setHost(host)
+                .setPort(port));
     }
 
     private URI makeUri(String url) throws Exception {

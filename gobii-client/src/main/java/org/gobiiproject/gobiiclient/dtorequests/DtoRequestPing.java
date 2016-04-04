@@ -23,10 +23,9 @@ public class DtoRequestPing {
     private final String JSON_PROP_PINGREQUESTS = "pingRequests";
 
 
-    public PingDTO getPing(List<String> requestStrings) throws Exception {
+    private PingDTO getPing(List<String> requestStrings, String uri) throws Exception {
 
         PingDTO returnVal = null;
-
 
         JsonArray requestArray = new JsonArray();
 
@@ -38,16 +37,27 @@ public class DtoRequestPing {
         pingRequestJson.add(JSON_PROP_PINGREQUESTS, requestArray);
 
 
-        RestRequest<PingDTO> restRequest = new RestRequest<>(PingDTO.class);
+        RestRequest<PingDTO> restRequest = new RestRequest<>(PingDTO.class, Urls.HOST, Urls.PORT);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
         String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponse(Urls.URL_PING, pingRequestJson, token);
+        returnVal = restRequest.getTypedHtppResponse(uri, pingRequestJson, token);
 
         return returnVal;
 
     } // getPing()
+
+
+    public PingDTO getPingFromExtractController(List<String> requestStrings) throws Exception {
+        return this.getPing(requestStrings,Urls.URL_PING_EXTRACT);
+    } // getPingFromExtractController()
+
+    public PingDTO getPingFromLoadController(List<String> requestStrings) throws Exception {
+        return this.getPing(requestStrings,Urls.URL_PING_LOAD);
+    } // getPingFromExtractController()
+
+
 
 } // DtoRequestMarkers()
