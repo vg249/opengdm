@@ -30,11 +30,23 @@
     <context:component-scan base-package="org.gobiiproject.gobiiweb.controllers"/>
 
 
+    <!-- ******************** ******************************************-->
     <!-- ******************** explicitly defined beans  ****************-->
+
+    <!-- **** Security Beans ***************************************-->
+    <bean id="UserDao " class="org.gobiiproject.gobiidao.entityaccess.impl.UserDaoImpl"/>
+
+
+    <!-- **** Ping Beans ***************************************-->
+    <bean id="pingDao" class="org.gobiiproject.gobiidao.entityaccess.impl.mock.PingDaoImplMock"/>
+    <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.impl.DtoMapPingImpl"/>
+    <bean id="pingService" class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl"/>
+
+
+    <!-- **** Marker Beans ***************************************-->
     <bean id="markerDao" class="org.gobiiproject.gobiidao.entityaccess.impl.mock.MarkerDaoImplMock"/>
     <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>
     <bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
-    <bean id="UserDao " class="org.gobiiproject.gobiidao.entityaccess.impl.UserDaoImpl"/>
 
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 

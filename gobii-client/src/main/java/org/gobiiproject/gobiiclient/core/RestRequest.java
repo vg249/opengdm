@@ -196,6 +196,11 @@ public class RestRequest<T> {
         HttpPost postRequest = new HttpPost(uri);
         returnVal = submitUriRequest(postRequest, userName, password, null);
 
+        if( HTTP_STATUS_CODE_OK !=  returnVal.getStatusLine().getStatusCode()) {
+            throw new Exception( "Request did not succeed: " + returnVal.getStatusLine().getStatusCode()  );
+        }
+
+
         logRequestHeaders(postRequest, returnVal, " Authenticate with user " + userName);
 
         return (returnVal);
@@ -252,6 +257,11 @@ public class RestRequest<T> {
 
         httpResponse = submitUriRequest(postRequest, "", "", token);
 
+        if( HTTP_STATUS_CODE_OK !=  httpResponse.getStatusLine().getStatusCode()) {
+            throw new Exception( "Request did not succeed: " + httpResponse.getStatusLine().getStatusCode()  );
+        }
+
+
         BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader((httpResponse.getEntity().getContent())));
 
@@ -263,7 +273,8 @@ public class RestRequest<T> {
 
 
         JsonParser parser = new JsonParser();
-        returnVal = parser.parse(stringBuilder.toString()).getAsJsonObject();
+        String jsonAsString = stringBuilder.toString();
+        returnVal = parser.parse(jsonAsString).getAsJsonObject();
 
         return returnVal;
 

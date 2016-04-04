@@ -7,7 +7,8 @@ package org.gobiiproject.gobiiclient.core;
 
 public class Urls {
 
-    public final static String URL_MARKERS = "/resource/search/bycontenttype";
+    public final static String URL_MARKERS = "/extract/search/bycontenttype";
+    public final static String URL_PING = "/extract/ping";
 
 
 }

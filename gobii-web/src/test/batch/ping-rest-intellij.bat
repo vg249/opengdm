@@ -1,0 +1,5 @@
+rem curl -i -H "Accept: application/json" -H "Content-Type: application/json"  -H "Cache-Control: no-cache, no-store, must-revalidate" -d "{\"name\":\"article\",\"scope\":\"dumb scope\"}" http://localhost:8181/resource/search/bycontenttype
+rem curl -i -H "Accept: application/json" -H "Content-Type: application/json"  -H "Cache-Control: no-cache, no-store, must-revalidate" -d "{\"name\":\"article\",\"scope\":\"dumb scope\"}" http://localhost:8181/extract/ping
+rem curl -i -H "Accept: application/json" -H "Content-Type: application/json"  -H "Cache-Control: no-cache, no-store, must-revalidate" -d "{\"pingRequests\":[\"Ping request from curl 1\",\"Ping request from curl 2\"],\"pingResponses\":[\"Ping request from curl 1\",\"Ping request from curl 2\"]}" http://localhost:8181/extract/ping
+curl -i -H "Accept: application/json" -H "Content-Type: application/json"  -H "Cache-Control: no-cache, no-store, must-revalidate" -d "{\"pingRequests\":[\"Ping request from curl 1\",\"Ping request from curl 2\"],\"pingResponses\":[]}" http://localhost:8181/extract/ping
+

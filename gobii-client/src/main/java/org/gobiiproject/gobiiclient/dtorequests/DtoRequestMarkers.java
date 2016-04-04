@@ -41,6 +41,6 @@ public class DtoRequestMarkers {
 
         return returnVal;
 
-    } // getmMarkerGroup()
+    } // getPing()
 
 } // DtoRequestMarkers()
