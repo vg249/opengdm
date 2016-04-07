@@ -134,7 +134,7 @@
                     <!--<componentProperties>-->
                         <!--<revengfile>src/main/resources/reveng.xml</revengfile>-->
                         <!--<propertyfile>src/main/resources/hibernate.properties</propertyfile>-->
-                        <!--<packagename>org.gobiiproject.gobiidao.generated.entities</packagename>-->
+                        <!--<packagename>org.gobiiproject.gobiidao.generated.entity</packagename>-->
                         <!--<jdk5>false</jdk5>-->
                         <!--<ejb3>true</ejb3>-->
                     <!--</componentProperties>-->

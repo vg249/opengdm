@@ -2,6 +2,6 @@
 <!DOCTYPE hibernate-reverse-engineering SYSTEM "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
 <hibernate-reverse-engineering>
 
-    <table-filter match-name=".*" package="org.gobiiproject.gobiidao.entities"/>
+    <table-filter match-name=".*" package="org.gobiiproject.gobiidao.entity"/>
 
 </hibernate-reverse-engineering>

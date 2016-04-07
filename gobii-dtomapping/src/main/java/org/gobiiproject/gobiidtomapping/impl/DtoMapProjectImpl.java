@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import org.gobiiproject.gobiidao.entities.pojos.Contact;
-import org.gobiiproject.gobiidao.entities.access.ContactDao;
+import org.gobiiproject.gobiidao.entity.pojos.Contact;
+import org.gobiiproject.gobiidao.entity.access.ContactEntityDao;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 public class DtoMapProjectImpl implements DtoMapProject {
 
     @Autowired
-    ContactDao contactDao = null;
+    ContactEntityDao contactEntityDao = null;
 
     public ProjectDTO getProject() {
 
         ProjectDTO returnVal = new ProjectDTO();
 
-        List<String> primaryInvestigators = contactDao.getContactsByRoleType("PI")
+        List<String> primaryInvestigators = contactEntityDao.getContactsByRoleType("PI")
                 .stream()
                 .map(Contact::getLastname)
                 .collect(Collectors.toList());

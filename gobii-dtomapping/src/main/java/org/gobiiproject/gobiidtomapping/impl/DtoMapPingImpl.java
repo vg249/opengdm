@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import org.gobiiproject.gobiidao.entities.access.PingDao;
+import org.gobiiproject.gobiidao.entity.access.PingEntityDao;
 import org.gobiiproject.gobiidtomapping.DtoMapPing;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.logutils.LineUtils;
@@ -14,13 +14,13 @@ import java.util.List;
 public class DtoMapPingImpl implements DtoMapPing {
 
     @Autowired
-    PingDao pingDao = null;
+    PingEntityDao pingEntityDao = null;
 
     @Override
     public PingDTO getPings(PingDTO pingDTO) {
 
 
-        List<String> pingResponses = pingDao.getPingResponses(pingDTO.getPingRequests());
+        List<String> pingResponses = pingEntityDao.getPingResponses(pingDTO.getPingRequests());
         String newPingMessage = LineUtils.wrapLine("Mapping layer responded");
         pingResponses.add(newPingMessage);
         pingDTO.setPingResponses(pingResponses);

@@ -34,23 +34,23 @@
     <!-- ******************** explicitly defined beans  ****************-->
 
     <!-- **** Security Beans ***************************************-->
-    <bean id="UserDao" class="org.gobiiproject.gobiidao.entities.access.impl.UserDaoImpl"/>
+    <bean id="UserDao" class="org.gobiiproject.gobiidao.entity.access.impl.UserDaoImpl"/>
     <bean id="dtoMapProject" class="org.gobiiproject.gobiidtomapping.impl.DtoMapProjectImpl"/>
     <bean id="projectService" class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
 
     <!-- **** Ping Beans ***************************************-->
-    <bean id="pingDao" class="org.gobiiproject.gobiidao.entities.access.impl.mock.PingDaoImplMock"/>
+    <bean id="pingDao" class="org.gobiiproject.gobiidao.entity.access.impl.mock.PingEntityDaoImplMock"/>
     <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.impl.DtoMapPingImpl"/>
     <bean id="pingService" class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl"/>
 
 
     <!-- **** Marker Beans ***************************************-->
-    <bean id="markerDao" class="org.gobiiproject.gobiidao.entities.access.impl.mock.MarkerDaoImplMock"/>
+    <bean id="markerDao" class="org.gobiiproject.gobiidao.entity.access.impl.mock.MarkerEntityDaoImplMock"/>
     <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>
     <bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
 
     <!-- **** Contact Beans ***************************************-->
-    <bean id="contactDao" class="org.gobiiproject.gobiidao.entities.access.impl.db.ContactDaoImplHibernate"/>
+    <bean id="contactDao" class="org.gobiiproject.gobiidao.entity.access.impl.db.ContactEntityDaoImplHibernate"/>
     <!--<bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>-->
     <!--<bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>-->
 
@@ -67,7 +67,7 @@
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="packagesToScan" value="org.gobiiproject.gobiidao.entities"/>
+        <property name="packagesToScan" value="org.gobiiproject.gobiidao.entity"/>
         <property name="mappingResources" value="META_INF/mapping.xml"/>
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
