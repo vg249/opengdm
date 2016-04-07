@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Mar 31, 2016 1:44:36 PM by Hibernate Tools 3.2.2.GA -->
 <hibernate-mapping>
-    <class name="org.gobiiproject.gobiidao.entities.DnasampleProp" table="dnasample_prop" schema="public">
+    <class name="org.gobiiproject.gobiidao.entities.pojos.DnasampleProp" table="dnasample_prop" schema="public">
         <id name="dnasamplePropId" type="int">
             <column name="dnasample_prop_id" />
             <generator class="assigned" />

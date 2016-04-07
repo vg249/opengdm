@@ -31,7 +31,7 @@
 
 
     <!-- ******************** explicitly defined beans  ****************-->
-    <bean id="markerDao" class="org.gobiiproject.gobiidao.entityaccess.impl.mock.MarkerDaoImplMock"/>
+    <bean id="markerDao" class="org.gobiiproject.gobiidao.entities.access.impl.mock.MarkerDaoImplMock"/>
     <bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
 
     <!-- ************************ DATA ACCESS BEANS ************************* -->

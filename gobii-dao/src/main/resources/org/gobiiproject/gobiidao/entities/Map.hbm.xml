@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Mar 31, 2016 1:44:36 PM by Hibernate Tools 3.2.2.GA -->
 <hibernate-mapping>
-    <class name="org.gobiiproject.gobiidao.entities.Map" table="map" schema="public">
+    <class name="org.gobiiproject.gobiidao.entities.pojos.Map" table="map" schema="public">
         <id name="mapId" type="int">
             <column name="map_id" />
             <generator class="assigned" />

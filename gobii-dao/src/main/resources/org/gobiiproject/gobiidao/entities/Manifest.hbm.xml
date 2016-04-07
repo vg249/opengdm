@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Mar 31, 2016 1:44:36 PM by Hibernate Tools 3.2.2.GA -->
 <hibernate-mapping>
-    <class name="org.gobiiproject.gobiidao.entities.Manifest" table="manifest" schema="public">
+    <class name="org.gobiiproject.gobiidao.entities.pojos.Manifest" table="manifest" schema="public">
         <id name="manifestId" type="int">
             <column name="manifest_id" />
             <generator class="assigned" />

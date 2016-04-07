@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import org.gobiiproject.gobiidao.entities.Contact;
-import org.gobiiproject.gobiidao.entityaccess.ContactDao;
+import org.gobiiproject.gobiidao.entities.pojos.Contact;
+import org.gobiiproject.gobiidao.entities.access.ContactDao;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;

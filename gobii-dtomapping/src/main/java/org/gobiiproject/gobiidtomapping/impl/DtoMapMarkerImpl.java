@@ -1,12 +1,10 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import org.gobiiproject.gobiidao.entityaccess.MarkerDao;
+import org.gobiiproject.gobiidao.entities.access.MarkerDao;
 import org.gobiiproject.gobiidtomapping.DtoMapMarker;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

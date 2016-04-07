@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Mar 31, 2016 1:44:36 PM by Hibernate Tools 3.2.2.GA -->
 <hibernate-mapping>
-    <class name="org.gobiiproject.gobiidao.entities.Variant" table="variant" schema="public">
+    <class name="org.gobiiproject.gobiidao.entities.pojos.Variant" table="variant" schema="public">
         <id name="variantId" type="int">
             <column name="variant_id" />
             <generator class="assigned" />

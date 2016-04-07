@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Mar 31, 2016 1:44:36 PM by Hibernate Tools 3.2.2.GA -->
 <hibernate-mapping>
-    <class name="org.gobiiproject.gobiidao.entities.DatasetDnarun" table="dataset_dnarun" schema="public">
+    <class name="org.gobiiproject.gobiidao.entities.pojos.DatasetDnarun" table="dataset_dnarun" schema="public">
         <id name="datasetDnarunId" type="int">
             <column name="dataset_dnarun_id" />
             <generator class="assigned" />
