@@ -41,7 +41,8 @@
         <junit.version>4.11</junit.version>
 
         <!-- Hibernate / JPA -->
-        <hibernate.version>4.3.5.Final</hibernate.version>
+        <hibernate.version>4.3.10.Final</hibernate.version>
+        <hibernate.javax.version>1.0.0.Final</hibernate.javax.version>
         <maven-hibernate-plugin.version>2.2</maven-hibernate-plugin.version>
 
         <!-- Hibernate / JPA -->

@@ -6,7 +6,6 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 
 import java.util.*;

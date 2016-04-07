@@ -6,7 +6,9 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.PingService;
+import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.logutils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -31,6 +33,9 @@ public class LoadController {
     @Autowired
     private PingService pingService = null;
 
+    @Autowired
+    private ProjectService projectService = null;
+
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
@@ -50,7 +55,26 @@ public class LoadController {
         }
         return (returnVal);
 
-    }//getByContentType()
+    }//getPingResponse()
+
+
+    @RequestMapping(value = "/project", method = RequestMethod.POST)
+    @ResponseBody
+    public ProjectDTO getPingResponse(@RequestBody ProjectDTO projectDTO) {
+
+        ProjectDTO returnVal = null;
+        //PingDTO pingDTORequest = new PingDTO();
+        try {
+            returnVal = projectService.getProject(projectDTO);
+        } catch (AccessDeniedException e) {
+
+            String msg = e.getMessage();
+            String tmp = msg;
+            throw (e);
+        }
+        return (returnVal);
+
+    }//getPingResponse()
 
 
 

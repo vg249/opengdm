@@ -18,5 +18,6 @@ public class Urls {
     public final static String URL_MARKERS = APP_ROOT + CTRLR_EXTRACT  + "search/bycontenttype";
     public final static String URL_PING_EXTRACT =  APP_ROOT + CTRLR_EXTRACT + "ping";
     public final static String URL_PING_LOAD =  APP_ROOT + CTRLR_LOAD +  "ping";
+    public final static String URL_PING_PROJECT =  APP_ROOT + CTRLR_LOAD +  "project";
 
 } // Urls

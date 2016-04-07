@@ -34,8 +34,9 @@
     <!-- ******************** explicitly defined beans  ****************-->
 
     <!-- **** Security Beans ***************************************-->
-    <bean id="UserDao " class="org.gobiiproject.gobiidao.entityaccess.impl.UserDaoImpl"/>
-
+    <bean id="UserDao" class="org.gobiiproject.gobiidao.entityaccess.impl.UserDaoImpl"/>
+    <bean id="dtoMapProject" class="org.gobiiproject.gobiidtomapping.impl.DtoMapProjectImpl"/>
+    <bean id="projectService" class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
 
     <!-- **** Ping Beans ***************************************-->
     <bean id="pingDao" class="org.gobiiproject.gobiidao.entityaccess.impl.mock.PingDaoImplMock"/>
@@ -47,6 +48,11 @@
     <bean id="markerDao" class="org.gobiiproject.gobiidao.entityaccess.impl.mock.MarkerDaoImplMock"/>
     <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>
     <bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
+
+    <!-- **** Contact Beans ***************************************-->
+    <bean id="contactDao" class="org.gobiiproject.gobiidao.entityaccess.impl.db.ContactDaoImplHibernate"/>
+    <!--<bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>-->
+    <!--<bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>-->
 
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
@@ -62,12 +68,13 @@
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="packagesToScan" value="org.gobiiproject.gobiidao.entities"/>
+        <property name="mappingResources" value="META_INF/mapping.xml"/>
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.dialect">org.gobiiproject.gobiidao.usertypes.JSONBPostgreSQLDialect</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop>
             </props>
         </property>
     </bean>

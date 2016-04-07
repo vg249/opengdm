@@ -33,6 +33,7 @@ public class Role  implements java.io.Serializable {
         this.roleName = roleName;
         this.roleCode = roleCode;
     }
+
     public Role(int roleId, String roleName, String roleCode, Serializable readTables, Serializable writeTables) {
        this.roleId = roleId;
        this.roleName = roleName;
