@@ -53,10 +53,10 @@
     <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>
     <bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
 
-    <!-- **** Contact Beans ***************************************-->
+    <!-- **** NameIdList Beans ***************************************-->
     <bean id="rsContact" class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactSpImpl"/>
-    <!--<bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>-->
-    <!--<bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>-->
+    <bean id="dtoMapNameIdList" class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl"/>
+    <bean id="nameIdListService" class="org.gobiiproject.gobidomain.services.impl.NameIdListServiceImpl"/>
 
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 

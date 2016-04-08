@@ -3,6 +3,8 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsContact;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.core.StoredProcUtils;
+import org.gobiiproject.gobiidao.resultset.spworkers.SpGetContactNamesByRoleName;
 import org.gobiiproject.gobiidao.resultset.spworkers.SpGetContactsByRoleName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,9 +26,35 @@ public class RsContactSpImpl implements RsContact {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<String> getContactNamesForRoleName(String roleName) throws GobiiDaoException {
+    public List<Map<String,Object>> getContactNamesForRoleName(String roleName) throws GobiiDaoException {
 
-        List<String> returnVal = new ArrayList<>();
+        List<Map<String,Object>> returnVal = new ArrayList<>();
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("roleName", roleName);
+            SpGetContactNamesByRoleName spGetContactNamesByRoleName = new SpGetContactNamesByRoleName(parameters);
+
+            storedProcExec.doWithConnection(spGetContactNamesByRoleName);
+
+            ResultSet resultSet = spGetContactNamesByRoleName.getResultSet();
+
+            returnVal = StoredProcUtils.convertResultSetToList(resultSet);
+
+        } catch (SQLException e) {
+            throw( new GobiiDaoException(e) );
+        }
+
+        return returnVal;
+
+    } // getContactNamesForRoleName
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public List<Map<String,Object>> getContactsForRoleName(String roleName) throws GobiiDaoException {
+
+        List<Map<String,Object>> returnVal = new ArrayList<>();
 
         try {
 
@@ -37,12 +65,10 @@ public class RsContactSpImpl implements RsContact {
             storedProcExec.doWithConnection(spGetContactsByRoleName);
 
             ResultSet resultSet = spGetContactsByRoleName.getResultSet();
-            while (resultSet.next()) {
-                String lastName = resultSet.getString("lastname");
-                String firstName = resultSet.getString("firstname");
-                returnVal.add(lastName + "," + firstName);
 
-            }
+            returnVal = StoredProcUtils.convertResultSetToList(resultSet);
+
+
         } catch (SQLException e) {
             throw( new GobiiDaoException(e) );
         }

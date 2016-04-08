@@ -9,34 +9,37 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiclient.core.RestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
-import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
 
-import java.util.List;
-
-public class DtoRequestProject {
+public class DtoRequestNameIdList {
 
 
-    private final String JSON_PROP_INVESTIGATORS = "principleInvestigators";
+    private final String JSON_PROP_NAMESBYID = "namesById";
+    private final String JSON_PROP_ENTITYNAME = "entityName";
+    private final String JSON_PROP_FILTER = "filter";
 
 
-    public ProjectDTO getProject() throws Exception {
+    public NameIdListDTO getContactsById( String Type ) throws Exception {
 
-        ProjectDTO returnVal = null;
+        NameIdListDTO returnVal = null;
 
-        JsonObject projectRequestJson = new JsonObject();
-        projectRequestJson.add(JSON_PROP_INVESTIGATORS, new JsonObject());
 
-        RestRequest<ProjectDTO> restRequest = new RestRequest<>(ProjectDTO.class, Urls.HOST, Urls.PORT);
+        JsonObject ContactsByRoleJson = new JsonObject();
+        ContactsByRoleJson.add(JSON_PROP_NAMESBYID, new JsonObject());
+        ContactsByRoleJson.addProperty(JSON_PROP_ENTITYNAME,"contact");
+        ContactsByRoleJson.addProperty(JSON_PROP_FILTER,Type);
+
+        RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class, Urls.HOST, Urls.PORT);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
         String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponse(Urls.URL_PING_PROJECT, projectRequestJson, token);
+        returnVal = restRequest.getTypedHtppResponse(Urls.URL_NAME_ID_LIST, ContactsByRoleJson, token);
 
         return returnVal;
 

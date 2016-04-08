@@ -5,8 +5,10 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.controllers;
 
+import org.gobiiproject.gobidomain.services.NameIdListService;
 import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.logutils.LineUtils;
@@ -36,6 +38,9 @@ public class LoadController {
     @Autowired
     private ProjectService projectService = null;
 
+    @Autowired
+    private NameIdListService nameIdListService = null;
+
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
@@ -47,12 +52,12 @@ public class LoadController {
             returnVal = pingService.getPings(pingDTORequest);
             String newResponseString = LineUtils.wrapLine("Loader controller responded");
             returnVal.getPingResponses().add(newResponseString);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
-            String msg = e.getMessage();
-            String tmp = msg;
-            throw (e);
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
         }
+
         return (returnVal);
 
     }//getPingResponse()
@@ -68,10 +73,28 @@ public class LoadController {
             returnVal = projectService.getProject(projectDTO);
         } catch (AccessDeniedException e) {
 
-            String msg = e.getMessage();
-            String tmp = msg;
-            throw (e);
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
         }
+        return (returnVal);
+
+    }//getPingResponse()
+
+
+    @RequestMapping(value = "/nameidlist", method = RequestMethod.POST)
+    @ResponseBody
+    public NameIdListDTO getNameIdList(@RequestBody NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+            returnVal = nameIdListService.getNameIdList(nameIdListDTO);
+        } catch (AccessDeniedException e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
         return (returnVal);
 
     }//getPingResponse()

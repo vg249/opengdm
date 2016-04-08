@@ -6,17 +6,23 @@ import org.gobiiproject.gobiidao.entity.access.ContactEntityDao;
 import org.gobiiproject.gobiidao.resultset.access.RsContact;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 4/6/2016.
  */
 public class DtoMapProjectImpl implements DtoMapProject {
+
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdListImpl.class);
 
     @Autowired
     private RsContact rsContact = null;
@@ -27,10 +33,16 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         try {
 
-            List<String> primaryInvestigators = rsContact.getContactNamesForRoleName("PI");
+            Map<String,String> primaryInvestigators = new HashMap<>();
+
+            List<Map<String,Object>>  rows = rsContact.getContactNamesForRoleName("PI");
+
             returnVal.setPrincipleInvestigators(primaryInvestigators);
+
         } catch(GobiiDaoException e ) {
 
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
         }
 
         return returnVal;

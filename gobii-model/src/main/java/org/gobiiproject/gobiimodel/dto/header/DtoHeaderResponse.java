@@ -13,6 +13,8 @@ public class DtoHeaderResponse implements Serializable {
     public enum StatusLevel {Error, Warning, Info, Ok}
 
     private boolean succeeded = true;
+
+
     private ArrayList<HeaderStatusMessage> statusMessages = new ArrayList<>();
 
     public void addException(Exception exception) {

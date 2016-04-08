@@ -2,8 +2,8 @@ package org.gobiiproject.gobiidao.resultset.access;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 
-import java.sql.ResultSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Phil on 4/7/2016.
@@ -11,5 +11,6 @@ import java.util.List;
 public interface RsContact {
 
 
-    List<String> getContactNamesForRoleName(String roleName) throws GobiiDaoException;
+    List<Map<String,Object>> getContactNamesForRoleName(String roleName) throws GobiiDaoException;
+    List<Map<String,Object>> getContactsForRoleName(String roleName) throws GobiiDaoException;
 }
