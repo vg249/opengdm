@@ -1,11 +1,15 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.entity.pojos.Contact;
 import org.gobiiproject.gobiidao.entity.access.ContactEntityDao;
+import org.gobiiproject.gobiidao.resultset.access.RsContact;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,18 +19,19 @@ import java.util.stream.Collectors;
 public class DtoMapProjectImpl implements DtoMapProject {
 
     @Autowired
-    ContactEntityDao contactEntityDao = null;
+    private RsContact rsContact = null;
 
     public ProjectDTO getProject() {
 
         ProjectDTO returnVal = new ProjectDTO();
 
-        List<String> primaryInvestigators = contactEntityDao.getContactsByRoleType("PI")
-                .stream()
-                .map(Contact::getLastname)
-                .collect(Collectors.toList());
+        try {
 
-        returnVal.setPrincipleInvestigators(primaryInvestigators);
+            List<String> primaryInvestigators = rsContact.getContactNamesForRoleName("PI");
+            returnVal.setPrincipleInvestigators(primaryInvestigators);
+        } catch(GobiiDaoException e ) {
+
+        }
 
         return returnVal;
     }

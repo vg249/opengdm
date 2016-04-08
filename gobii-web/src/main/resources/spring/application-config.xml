@@ -38,6 +38,10 @@
     <bean id="dtoMapProject" class="org.gobiiproject.gobiidtomapping.impl.DtoMapProjectImpl"/>
     <bean id="projectService" class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
 
+    <!-- **** Helper Beans ***************************************-->
+    <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>
+
+
     <!-- **** Ping Beans ***************************************-->
     <bean id="pingDao" class="org.gobiiproject.gobiidao.entity.access.impl.mock.PingEntityDaoImplMock"/>
     <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.impl.DtoMapPingImpl"/>
@@ -50,7 +54,7 @@
     <bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
 
     <!-- **** Contact Beans ***************************************-->
-    <bean id="contactDao" class="org.gobiiproject.gobiidao.entity.access.impl.db.ContactEntityDaoImplHibernate"/>
+    <bean id="rsContact" class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactSpImpl"/>
     <!--<bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>-->
     <!--<bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>-->
 
