@@ -5,6 +5,7 @@ import org.gobiiproject.gobiidao.entity.pojos.Contact;
 import org.gobiiproject.gobiidao.entity.access.ContactEntityDao;
 import org.gobiiproject.gobiidao.resultset.access.RsContact;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
+import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,4 +48,5 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         return returnVal;
     }
+
 }

@@ -2,6 +2,7 @@ package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsContact;
+import org.gobiiproject.gobiidao.resultset.access.RsProject;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
@@ -24,23 +25,47 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     @Autowired
     private RsContact rsContact = null;
 
+    @Autowired
+    private RsProject rsProject = null;
+
     private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) throws GobiiDaoException {
 
         NameIdListDTO returnVal = new NameIdListDTO();
 
+
         List<Map<String, Object>> contactList = rsContact.getContactNamesForRoleName(nameIdListDTO.getFilter());
 
-        Map<String, String> contactNameIdList = new HashMap<>();
+        Map<String, String> contactNamesById = new HashMap<>();
         for (Map<String, Object> currentRow : contactList) {
 
             Integer contactId = (Integer) currentRow.get("contact_id");
             String lastName = currentRow.get("lastname").toString();
             String firstName = currentRow.get("firstname").toString();
             String name = lastName + ", " + firstName;
-            contactNameIdList.put(contactId.toString(),name);
+            contactNamesById.put(contactId.toString(), name);
+
         }
 
-        returnVal.setNamesById(contactNameIdList);
+        returnVal.setNamesById(contactNamesById);
+
+        return (returnVal);
+
+    } // getNameIdListForContacts()
+
+    private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) throws GobiiDaoException {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        List<Map<String, Object>> projectList = rsProject.getProjectNamesForContactId(Integer.parseInt(nameIdListDTO.getFilter()));
+
+        Map<String, String> projectNameIdList = new HashMap<>();
+        for (Map<String, Object> currentRow : projectList) {
+            Integer projectId = (Integer) currentRow.get("project_id");
+            String name = currentRow.get("name").toString();
+            projectNameIdList.put(projectId.toString(), name);
+        }
+
+        returnVal.setNamesById(projectNameIdList);
 
         return (returnVal);
 
@@ -59,6 +84,11 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                 case "contact":
                     returnVal = getNameIdListForContacts(nameIdListDTO);
                     break;
+
+                case "project":
+                    returnVal = getNameIdListForProjects(nameIdListDTO);
+                    break;
+
                 default:
                     returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.Error,
                             "Unsupported entity for list request: " + nameIdListDTO.getEntityName());

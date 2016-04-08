@@ -43,7 +43,33 @@ public class DtoRequestNameIdList {
 
         return returnVal;
 
-    } // getPing()
+    } // getContactsById()
+
+
+    public NameIdListDTO getProjectNamesByContact( Integer contactId) throws Exception {
+
+        NameIdListDTO returnVal = null;
+
+
+        JsonObject projectNamesByContactJson = new JsonObject();
+        projectNamesByContactJson.add(JSON_PROP_NAMESBYID, new JsonObject());
+        projectNamesByContactJson.addProperty(JSON_PROP_ENTITYNAME,"project");
+        projectNamesByContactJson.addProperty(JSON_PROP_FILTER,contactId.toString());
+
+        RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class, Urls.HOST, Urls.PORT);
+
+        SystemUsers systemUsers = new SystemUsers();
+        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
+        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+
+        returnVal = restRequest.getTypedHtppResponse(Urls.URL_NAME_ID_LIST, projectNamesByContactJson, token);
+
+        return returnVal;
+
+    } // getContactsById()
+
+
+
 
 
 } // DtoRequestMarkers()

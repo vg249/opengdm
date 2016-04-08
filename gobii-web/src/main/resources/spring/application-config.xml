@@ -55,6 +55,7 @@
 
     <!-- **** NameIdList Beans ***************************************-->
     <bean id="rsContact" class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactSpImpl"/>
+    <bean id="rsProject" class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectImpl"/>
     <bean id="dtoMapNameIdList" class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl"/>
     <bean id="nameIdListService" class="org.gobiiproject.gobidomain.services.impl.NameIdListServiceImpl"/>
 
