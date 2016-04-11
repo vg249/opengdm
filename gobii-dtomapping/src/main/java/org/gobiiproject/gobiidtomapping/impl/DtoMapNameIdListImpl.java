@@ -30,7 +30,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     @Autowired
     private RsProject rsProject = null;
 
-    private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) throws GobiiDaoException {
+    private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
 
@@ -54,6 +54,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         } catch (SQLException e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
         }
 
 
@@ -61,7 +64,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     } // getNameIdListForContacts()
 
-    private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) throws GobiiDaoException {
+    private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
 
@@ -81,8 +84,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         } catch (SQLException e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
         }
-
 
         return returnVal;
 
@@ -93,27 +98,21 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         NameIdListDTO returnVal = new NameIdListDTO();
 
-        try {
 
+        switch (nameIdListDTO.getEntityName()) {
 
-            switch (nameIdListDTO.getEntityName()) {
+            case "contact":
+                returnVal = getNameIdListForContacts(nameIdListDTO);
+                break;
 
-                case "contact":
-                    returnVal = getNameIdListForContacts(nameIdListDTO);
-                    break;
+            case "project":
+                returnVal = getNameIdListForProjects(nameIdListDTO);
+                break;
 
-                case "project":
-                    returnVal = getNameIdListForProjects(nameIdListDTO);
-                    break;
-
-                default:
-                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.Error,
-                            "Unsupported entity for list request: " + nameIdListDTO.getEntityName());
-            } // switch on entity name
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        }
+            default:
+                returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.Error,
+                        "Unsupported entity for list request: " + nameIdListDTO.getEntityName());
+        } // switch on entity name
 
         return returnVal;
 

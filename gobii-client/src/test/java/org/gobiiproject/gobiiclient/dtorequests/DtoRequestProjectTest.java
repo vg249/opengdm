@@ -21,12 +21,10 @@ public class DtoRequestProjectTest {
 
 
         DtoRequestProject dtoRequestProject = new DtoRequestProject();
-        ProjectDTO projectDTO = dtoRequestProject.getProject();
+        ProjectDTO projectDTO = dtoRequestProject.getProject(1);
 
         Assert.assertNotEquals(null, projectDTO);
-//        Assert.assertNotEquals(null, pingDTO.getPingRequests());
-//        Assert.assertNotEquals(null, pingDTO.getPingResponses());
-//        Assert.assertTrue(pingDTO.getPingResponses().size() >= requestStrings.size());
+        Assert.assertNotEquals(null, projectDTO.getProjectName());
 
     } // testGetMarkers()
 

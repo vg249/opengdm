@@ -13,4 +13,5 @@ public interface RsProject {
 
 
     ResultSet getProjectNamesForContactId(Integer contactId) throws GobiiDaoException;
+    ResultSet getProjectDetailsForProjectId(Integer projectId ) throws GobiiDaoException;
 }

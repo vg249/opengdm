@@ -14,7 +14,7 @@ import java.util.Map;
 public class StoredProcUtils {
 
     // This method may be a bad idea. We would end up adding an extra data copy, which
-    // is going to add unnecessary load to the server. 
+    // is going to add unnecessary load to the server.
     public static List<Map<String,Object>> convertResultSetToList(ResultSet rs) throws SQLException {
 
         List<Map<String,Object>> listReturnVal = new ArrayList<>();

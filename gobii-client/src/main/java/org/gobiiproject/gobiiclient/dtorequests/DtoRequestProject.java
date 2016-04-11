@@ -21,14 +21,16 @@ public class DtoRequestProject {
 
 
     private final String JSON_PROP_INVESTIGATORS = "principleInvestigators";
+    private final String JSON_PROP_PROJECTID = "projectId";
 
 
-    public ProjectDTO getProject() throws Exception {
+    public ProjectDTO getProject(Integer projectId) throws Exception {
 
         ProjectDTO returnVal = null;
 
         JsonObject projectRequestJson = new JsonObject();
         projectRequestJson.add(JSON_PROP_INVESTIGATORS, new JsonObject());
+        projectRequestJson.addProperty(JSON_PROP_PROJECTID,projectId);
 
         RestRequest<ProjectDTO> restRequest = new RestRequest<>(ProjectDTO.class, Urls.HOST, Urls.PORT);
 

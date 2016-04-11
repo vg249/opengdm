@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcUtils;
 import org.gobiiproject.gobiidao.resultset.spworkers.SpGetContactNamesByRoleName;
 import org.gobiiproject.gobiidao.resultset.spworkers.SpGetProjecttNamesByContactId;
+import org.gobiiproject.gobiidao.resultset.viewworkers.SpGetProjectDetailsByProjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,4 +43,23 @@ public class RsProjectImpl implements RsProject {
         return returnVal;
 
     }
-}
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getProjectDetailsForProjectId(Integer projectId) throws GobiiDaoException {
+        ResultSet returnVal;
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("projectId", projectId);
+        SpGetProjectDetailsByProjectId spGetProjectDetailsByProjectId = new SpGetProjectDetailsByProjectId(parameters);
+        storedProcExec.doWithConnection(spGetProjectDetailsByProjectId);
+        returnVal = spGetProjectDetailsByProjectId.getResultSet();
+
+        return returnVal;
+
+    } // getProjectDetailsForProjectId()
+
+
+    
+
+} // RsProjectImpl
