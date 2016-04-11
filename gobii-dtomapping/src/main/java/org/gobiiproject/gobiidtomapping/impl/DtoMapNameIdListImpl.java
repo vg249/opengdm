@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,21 +34,28 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         NameIdListDTO returnVal = new NameIdListDTO();
 
+        try {
 
-        List<Map<String, Object>> contactList = rsContact.getContactNamesForRoleName(nameIdListDTO.getFilter());
+            ResultSet contactList = rsContact.getContactNamesForRoleName(nameIdListDTO.getFilter());
 
-        Map<String, String> contactNamesById = new HashMap<>();
-        for (Map<String, Object> currentRow : contactList) {
+            Map<String, String> contactNamesById = new HashMap<>();
+            while (contactList.next()) {
 
-            Integer contactId = (Integer) currentRow.get("contact_id");
-            String lastName = currentRow.get("lastname").toString();
-            String firstName = currentRow.get("firstname").toString();
-            String name = lastName + ", " + firstName;
-            contactNamesById.put(contactId.toString(), name);
+                Integer contactId = contactList.getInt("contact_id");
+                String lastName = contactList.getString("lastname");
+                String firstName = contactList.getString("firstname");
+                String name = lastName + ", " + firstName;
+                contactNamesById.put(contactId.toString(), name);
 
+            }
+
+            returnVal.setNamesById(contactNamesById);
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
         }
 
-        returnVal.setNamesById(contactNamesById);
 
         return (returnVal);
 
@@ -56,18 +65,26 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         NameIdListDTO returnVal = new NameIdListDTO();
 
-        List<Map<String, Object>> projectList = rsProject.getProjectNamesForContactId(Integer.parseInt(nameIdListDTO.getFilter()));
+        try {
 
-        Map<String, String> projectNameIdList = new HashMap<>();
-        for (Map<String, Object> currentRow : projectList) {
-            Integer projectId = (Integer) currentRow.get("project_id");
-            String name = currentRow.get("name").toString();
-            projectNameIdList.put(projectId.toString(), name);
+            ResultSet resultSet = rsProject.getProjectNamesForContactId(Integer.parseInt(nameIdListDTO.getFilter()));
+
+            Map<String, String> projectNameIdList = new HashMap<>();
+
+            while (resultSet.next()) {
+                Integer projectId = resultSet.getInt("project_id");
+                String name = resultSet.getString("name").toString();
+                projectNameIdList.put(projectId.toString(), name);
+            }
+
+            returnVal.setNamesById(projectNameIdList);
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
         }
 
-        returnVal.setNamesById(projectNameIdList);
 
-        return (returnVal);
+        return returnVal;
 
     } // getNameIdListForContacts()
 

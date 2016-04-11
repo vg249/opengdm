@@ -27,24 +27,17 @@ public class RsProjectImpl implements RsProject {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<Map<String, Object>> getProjectNamesForContactId(Integer contactId ) throws GobiiDaoException {
-        List<Map<String,Object>> returnVal = new ArrayList<>();
+    public ResultSet getProjectNamesForContactId(Integer contactId) throws GobiiDaoException {
 
-        try {
+        ResultSet returnVal = null;
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("contactId", contactId);
+        SpGetProjecttNamesByContactId spGetProjecttNamesByContactId = new SpGetProjecttNamesByContactId(parameters);
 
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("contactId", contactId);
-            SpGetProjecttNamesByContactId spGetProjecttNamesByContactId = new SpGetProjecttNamesByContactId(parameters);
+        storedProcExec.doWithConnection(spGetProjecttNamesByContactId);
 
-            storedProcExec.doWithConnection(spGetProjecttNamesByContactId );
+        returnVal = spGetProjecttNamesByContactId.getResultSet();
 
-            ResultSet resultSet = spGetProjecttNamesByContactId .getResultSet();
-
-            returnVal = StoredProcUtils.convertResultSetToList(resultSet);
-
-        } catch (SQLException e) {
-            throw( new GobiiDaoException(e) );
-        }
 
         return returnVal;
 

@@ -32,19 +32,12 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         ProjectDTO returnVal = new ProjectDTO();
 
-        try {
-
             Map<String,String> primaryInvestigators = new HashMap<>();
 
-            List<Map<String,Object>>  rows = rsContact.getContactNamesForRoleName("PI");
+//            List<Map<String,Object>>  rows = rsContact.getContactNamesForRoleName("PI");
 
             returnVal.setPrincipleInvestigators(primaryInvestigators);
 
-        } catch(GobiiDaoException e ) {
-
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        }
 
         return returnVal;
     }

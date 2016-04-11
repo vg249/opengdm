@@ -26,25 +26,18 @@ public class RsContactSpImpl implements RsContact {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<Map<String,Object>> getContactNamesForRoleName(String roleName) throws GobiiDaoException {
+    public ResultSet getContactNamesForRoleName(String roleName) throws GobiiDaoException {
 
-        List<Map<String,Object>> returnVal = new ArrayList<>();
+        ResultSet returnVal = null;
 
-        try {
 
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("roleName", roleName);
-            SpGetContactNamesByRoleName spGetContactNamesByRoleName = new SpGetContactNamesByRoleName(parameters);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("roleName", roleName);
+        SpGetContactNamesByRoleName spGetContactNamesByRoleName = new SpGetContactNamesByRoleName(parameters);
 
-            storedProcExec.doWithConnection(spGetContactNamesByRoleName);
+        storedProcExec.doWithConnection(spGetContactNamesByRoleName);
 
-            ResultSet resultSet = spGetContactNamesByRoleName.getResultSet();
-
-            returnVal = StoredProcUtils.convertResultSetToList(resultSet);
-
-        } catch (SQLException e) {
-            throw( new GobiiDaoException(e) );
-        }
+        returnVal = spGetContactNamesByRoleName.getResultSet();
 
         return returnVal;
 
@@ -52,26 +45,18 @@ public class RsContactSpImpl implements RsContact {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<Map<String,Object>> getContactsForRoleName(String roleName) throws GobiiDaoException {
+    public ResultSet getContactsForRoleName(String roleName) throws GobiiDaoException {
 
-        List<Map<String,Object>> returnVal = new ArrayList<>();
-
-        try {
-
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("roleName", roleName);
-            SpGetContactsByRoleName spGetContactsByRoleName = new SpGetContactsByRoleName(parameters);
-
-            storedProcExec.doWithConnection(spGetContactsByRoleName);
-
-            ResultSet resultSet = spGetContactsByRoleName.getResultSet();
-
-            returnVal = StoredProcUtils.convertResultSetToList(resultSet);
+        ResultSet returnVal = null;
 
 
-        } catch (SQLException e) {
-            throw( new GobiiDaoException(e) );
-        }
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("roleName", roleName);
+        SpGetContactsByRoleName spGetContactsByRoleName = new SpGetContactsByRoleName(parameters);
+
+        storedProcExec.doWithConnection(spGetContactsByRoleName);
+
+        returnVal = spGetContactsByRoleName.getResultSet();
 
         return returnVal;
     }
