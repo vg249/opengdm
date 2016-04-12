@@ -5,9 +5,11 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.controllers;
 
+import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
 import org.gobiiproject.gobidomain.services.NameIdListService;
 import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
@@ -41,6 +43,8 @@ public class LoadController {
     @Autowired
     private NameIdListService nameIdListService = null;
 
+    @Autowired
+    private LoaderInstructionFilesService loaderInstructionFilesService = null;
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
@@ -89,6 +93,24 @@ public class LoadController {
 
         try {
             returnVal = nameIdListService.getNameIdList(nameIdListDTO);
+        } catch (AccessDeniedException e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return (returnVal);
+
+    }//getPingResponse()
+
+    @RequestMapping(value = "/instructions", method = RequestMethod.POST)
+    @ResponseBody
+    public LoaderInstructionFilesDTO loadInstructions(@RequestBody LoaderInstructionFilesDTO loaderInstructionFilesDTO) {
+
+        LoaderInstructionFilesDTO returnVal = new LoaderInstructionFilesDTO();
+
+        try {
+            returnVal = loaderInstructionFilesService.getSampleLoaderFileInstructions();
         } catch (AccessDeniedException e) {
 
             returnVal.getDtoHeaderResponse().addException(e);

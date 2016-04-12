@@ -185,13 +185,15 @@ public class RestRequest<T> {
         String output;
         stringBuilder.append("****************");
         stringBuilder.append("****************");
-        stringBuilder.append("*****************Response Body content");
+        stringBuilder.append("********** *******Response Body content");
         while ((output = bufferedReader.readLine()) != null) {
             stringBuilder.append(output);
         }
 
         stringBuilder.append("============================================ END  TEST " + testName + "==================================");
 
+
+        LOGGER.info(stringBuilder.toString());
 
     }//logRequestHeaders()
 
@@ -229,6 +231,26 @@ public class RestRequest<T> {
         return returnVal;
 
     } // getTokenForUser()
+
+
+
+    public T getTypedHtppResponseForDto(String url,
+                                        T dtoInstance,
+                                        String token) throws Exception {
+
+        T returnVal = null;
+
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String dtoAsJson = objectMapper.writeValueAsString(dtoInstance);
+
+        returnVal = objectMapper.readValue(dtoAsJson, paramType);
+
+        return returnVal;
+
+
+    } // getTypedHtppResponseForDto()
+
 
 
     public T getTypedHtppResponse(String url,

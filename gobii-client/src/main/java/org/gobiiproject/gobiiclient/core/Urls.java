@@ -20,5 +20,6 @@ public class Urls {
     public final static String URL_PING_LOAD =  APP_ROOT + CTRLR_LOAD +  "ping";
     public final static String URL_PING_PROJECT =  APP_ROOT + CTRLR_LOAD +  "project";
     public final static String URL_NAME_ID_LIST =  APP_ROOT + CTRLR_LOAD +  "nameidlist";
+    public final static String URL_FILE_LOAD_INSTRUCTIONS =  APP_ROOT + CTRLR_LOAD +  "instructions";
 
 } // Urls

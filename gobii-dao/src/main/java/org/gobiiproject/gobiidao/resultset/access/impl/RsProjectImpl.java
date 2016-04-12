@@ -60,6 +60,6 @@ public class RsProjectImpl implements RsProject {
     } // getProjectDetailsForProjectId()
 
 
-    
+
 
 } // RsProjectImpl
