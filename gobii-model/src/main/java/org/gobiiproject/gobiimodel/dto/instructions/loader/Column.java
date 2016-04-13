@@ -5,7 +5,16 @@ package org.gobiiproject.gobiimodel.dto.instructions.loader;
  */
 public class Column {
 
-    public enum ColumnType {CSV_COLUMN, CSV_ROW, CSV_BOTH, VCF_SAMPLE, VCF_MARKER, VCF_VARIANT, VCF_METADATA}
+    public enum ColumnType {
+        CSV_COLUMN,
+        CSV_ROW,
+        CSV_BOTH,
+        VCF_SAMPLE,
+        VCF_MARKER,
+        VCF_VARIANT,
+        VCF_METADATA,
+        CONSTANT
+    }
 
 
     private ColumnType columnType = null;
@@ -14,6 +23,9 @@ public class Column {
     private String name = null;
     private String filterFrom = null;
     private String filterTo = null;
+    private String constantValue = null;
+
+    private String metaDataId = null;
 
     public ColumnType getColumnType() {
         return columnType;
@@ -69,5 +81,19 @@ public class Column {
         return this;
     }
 
+    public String getConstantValue() {
+        return constantValue;
+    }
 
+    public void setConstantValue(String constantValue) {
+        this.constantValue = constantValue;
+    }
+
+    public String getMetaDataId() {
+        return metaDataId;
+    }
+
+    public void setMetaDataId(String metaDataId) {
+        this.metaDataId = metaDataId;
+    }
 }
