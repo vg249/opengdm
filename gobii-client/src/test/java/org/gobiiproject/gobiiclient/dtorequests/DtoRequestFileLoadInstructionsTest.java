@@ -6,7 +6,6 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.Column;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.File;
@@ -14,10 +13,6 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstruction;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.Console;
 
 public class DtoRequestFileLoadInstructionsTest {
 
@@ -39,47 +34,49 @@ public class DtoRequestFileLoadInstructionsTest {
     public void testSendInstructionFile() throws Exception {
 
 
-        LoaderInstruction loaderInstructionOne = new LoaderInstruction();
-
         LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
 
+        LoaderInstruction loaderInstructionOne = new LoaderInstruction();
         loaderInstructionOne.setTable("foo_table");
 
         // column one
-        Column columnOne = new Column();
-        columnOne.setCCoord(1);
-        columnOne.setrCoord((1));
-        columnOne.setColumnType(Column.ColumnType.VCF_MARKER);
-        columnOne.setFilterFrom(".*");
-        columnOne.setFilterTo(".*");
-        columnOne.setName("my_foo");
+        Column columnOne = new Column()
+                .setCCoord(1)
+                .setRCoord((1))
+                .setColumnType(Column.ColumnType.VCF_MARKER)
+                .setFilterFrom(".*")
+                .setFilterTo(".*")
+                .setName("my_foo");
 
         // column two
-        Column columnTwo = new Column();
-        columnTwo.setCCoord(1);
-        columnTwo.setrCoord(1);
-        columnTwo.setColumnType(Column.ColumnType.CSV_COLUMN);
-        columnTwo.setFilterFrom(".*");
-        columnTwo.setFilterTo(".*");
-        columnTwo.setName("my_bar");
+        Column columnTwo = new Column()
+                .setCCoord(1)
+                .setRCoord(1)
+                .setColumnType(Column.ColumnType.CSV_COLUMN)
+                .setFilterFrom(".*")
+                .setFilterTo(".*")
+                .setName("my_bar");
 
         loaderInstructionOne.getColumns().add(columnOne);
         loaderInstructionOne.getColumns().add(columnTwo);
 
         // File Config
-        loaderInstructionOne.getFile().setDelimiter(",");
-        loaderInstructionOne.getFile().setSource("c:\\your-dir");
-        loaderInstructionOne.getFile().setDestination("c:\\mydir");
-        loaderInstructionOne.getFile().setFileType(File.FileType.VCF);
+        loaderInstructionOne.getFile().setDelimiter(",")
+                .setSource("c:\\your-dir")
+                .setDestination("c:\\mydir")
+                .setFileType(File.FileType.VCF);
 
         // VCF Parameters
-        loaderInstructionOne.getVcfParameters().setMaf(1.1f);
-        loaderInstructionOne.getVcfParameters().setMinDp(1.1f);
-        loaderInstructionOne.getVcfParameters().setMinQ(1.1f);
-        loaderInstructionOne.getVcfParameters().setRemoveIndels(true);
-        loaderInstructionOne.getVcfParameters().setToIupac(true);
+        loaderInstructionOne.getVcfParameters()
+                .setMaf(1.1f)
+                .setMinDp(1.1f)
+                .setMinQ(1.1f)
+                .setRemoveIndels(true)
+                .setToIupac(true);
 
-        loaderInstructionFilesDTOToSend.getLoaderInstructions().add(loaderInstructionOne);
+        loaderInstructionFilesDTOToSend
+                .getLoaderInstructions()
+                .add(loaderInstructionOne);
 
 
         // INSTRUCTION ONE END
@@ -95,7 +92,7 @@ public class DtoRequestFileLoadInstructionsTest {
         // column one
         columnOne = new Column();
         columnOne.setCCoord(1);
-        columnOne.setrCoord(1);
+        columnOne.setRCoord(1);
         columnOne.setColumnType(Column.ColumnType.VCF_MARKER);
         columnOne.setFilterFrom(".*");
         columnOne.setFilterTo(".*");
@@ -104,7 +101,7 @@ public class DtoRequestFileLoadInstructionsTest {
         // column two
         columnTwo = new Column();
         columnTwo.setCCoord(1);
-        columnTwo.setrCoord((1));
+        columnTwo.setRCoord((1));
         columnTwo.setColumnType(Column.ColumnType.CSV_COLUMN);
         columnTwo.setFilterFrom(".*");
         columnTwo.setFilterTo(".*");

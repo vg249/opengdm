@@ -16,31 +16,35 @@ public class File {
         return source;
     }
 
-    public void setSource(String source) {
+    public File setSource(String source) {
         this.source = source;
+        return this;
     }
 
     public String getDestination() {
         return destination;
     }
 
-    public void setDestination(String destination) {
+    public File setDestination(String destination) {
         this.destination = destination;
+        return this;
     }
 
     public String getDelimiter() {
         return delimiter;
     }
 
-    public void setDelimiter(String delimiter) {
+    public File setDelimiter(String delimiter) {
         this.delimiter = delimiter;
+        return this;
     }
 
     public FileType getFileType() {
         return fileType;
     }
 
-    public void setFileType(FileType fileType) {
+    public File setFileType(FileType fileType) {
         this.fileType = fileType;
+        return this;
     }
 }

@@ -19,48 +19,54 @@ public class Column {
         return columnType;
     }
 
-    public void setColumnType(ColumnType columnType) {
+    public Column setColumnType(ColumnType columnType) {
         this.columnType = columnType;
+        return this;
     }
 
     public Integer getrCoord() {
         return rCoord;
     }
 
-    public void setrCoord(Integer rCoord) {
+    public Column setRCoord(Integer rCoord) {
         this.rCoord = rCoord;
+        return this;
     }
 
     public Integer getcCoord() {
         return cCoord;
     }
 
-    public void setCCoord(Integer cCoord) {
+    public Column setCCoord(Integer cCoord) {
         this.cCoord = cCoord;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public Column setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getFilterFrom() {
         return filterFrom;
     }
 
-    public void setFilterFrom(String filterFrom) {
+    public Column setFilterFrom(String filterFrom) {
         this.filterFrom = filterFrom;
+        return this;
     }
 
     public String getFilterTo() {
         return filterTo;
     }
 
-    public void setFilterTo(String filterTo) {
+    public Column setFilterTo(String filterTo) {
         this.filterTo = filterTo;
+        return this;
     }
 
 

@@ -88,7 +88,7 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         // column one
         Column columnOne = new Column();
         columnOne.setCCoord(1);
-        columnOne.setrCoord((1));
+        columnOne.setRCoord((1));
         columnOne.setColumnType(Column.ColumnType.VCF_MARKER);
         columnOne.setFilterFrom(".*");
         columnOne.setFilterTo(".*");
@@ -97,7 +97,7 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         // column two
         Column columnTwo = new Column();
         columnTwo.setCCoord(1);
-        columnTwo.setrCoord(1);
+        columnTwo.setRCoord(1);
         columnTwo.setColumnType(Column.ColumnType.CSV_COLUMN);
         columnTwo.setFilterFrom(".*");
         columnTwo.setFilterTo(".*");
@@ -133,7 +133,7 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         // column one
         columnOne = new Column();
         columnOne.setCCoord(1);
-        columnOne.setrCoord(1);
+        columnOne.setRCoord(1);
         columnOne.setColumnType(Column.ColumnType.VCF_MARKER);
         columnOne.setFilterFrom(".*");
         columnOne.setFilterTo(".*");
@@ -142,7 +142,7 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         // column two
         columnTwo = new Column();
         columnTwo.setCCoord(1);
-        columnTwo.setrCoord((1));
+        columnTwo.setRCoord((1));
         columnTwo.setColumnType(Column.ColumnType.CSV_COLUMN);
         columnTwo.setFilterFrom(".*");
         columnTwo.setFilterTo(".*");

@@ -11,36 +11,43 @@ public class LoaderInstruction {
     private File file = new File();
     private String table = null;
     private List<Column> columns = new ArrayList<>();
-    private VcfParameters vcfParameters = new VcfParameters();;
+    private VcfParameters vcfParameters = new VcfParameters();
+    ;
 
     public File getFile() {
         return file;
     }
-    public void setFile(File file) {
+
+    public LoaderInstruction setFile(File file) {
+
         this.file = file;
+        return this;
     }
 
     public String getTable() {
         return table;
     }
 
-    public void setTable(String table) {
+    public LoaderInstruction setTable(String table) {
         this.table = table;
+        return this;
     }
 
     public List<Column> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<Column> columns) {
+    public LoaderInstruction  setColumns(List<Column> columns) {
         this.columns = columns;
+        return this;
     }
 
     public VcfParameters getVcfParameters() {
         return vcfParameters;
     }
 
-    public void setVcfParameters(VcfParameters vcfParameters) {
+    public LoaderInstruction  setVcfParameters(VcfParameters vcfParameters) {
         this.vcfParameters = vcfParameters;
+        return this;
     }
 }

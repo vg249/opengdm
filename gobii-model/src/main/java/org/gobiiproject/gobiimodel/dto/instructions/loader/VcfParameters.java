@@ -15,39 +15,44 @@ public class VcfParameters {
         return maf;
     }
 
-    public void setMaf(Float maf) {
+    public VcfParameters setMaf(Float maf) {
         this.maf = maf;
+        return this;
     }
 
     public Float getMinQ() {
         return minQ;
     }
 
-    public void setMinQ(Float minQ) {
+    public VcfParameters setMinQ(Float minQ) {
         this.minQ = minQ;
+        return this;
     }
 
     public Float getMinDp() {
         return minDp;
     }
 
-    public void setMinDp(Float minDp) {
+    public VcfParameters setMinDp(Float minDp) {
         this.minDp = minDp;
+        return this;
     }
 
     public boolean isRemoveIndels() {
         return removeIndels;
     }
 
-    public void setRemoveIndels(boolean removeIndels) {
+    public VcfParameters setRemoveIndels(boolean removeIndels) {
         this.removeIndels = removeIndels;
+        return this;
     }
 
     public boolean isToIupac() {
         return toIupac;
     }
 
-    public void setToIupac(boolean toIupac) {
+    public VcfParameters setToIupac(boolean toIupac) {
         this.toIupac = toIupac;
+        return this;
     }
 }
