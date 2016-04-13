@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by Phil on 4/7/2016.
  */
-public interface RsProject {
+public interface RsProjectDao {
 
 
     ResultSet getProjectNamesForContactId(Integer contactId) throws GobiiDaoException;

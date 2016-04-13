@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 /**
  * Created by Phil on 4/7/2016.
  */
-public interface RsPlatform {
+public interface RsPlatformDao {
 
 
     ResultSet getPlatformNames() throws GobiiDaoException;

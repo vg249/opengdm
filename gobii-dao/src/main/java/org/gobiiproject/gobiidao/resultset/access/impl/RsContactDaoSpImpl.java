@@ -1,9 +1,8 @@
 package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.resultset.access.RsContact;
+import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.core.StoredProcUtils;
 import org.gobiiproject.gobiidao.resultset.spworkers.SpGetContactNamesByRoleName;
 import org.gobiiproject.gobiidao.resultset.spworkers.SpGetContactsByRoleName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,15 +10,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Phil on 4/7/2016.
  */
-public class RsContactSpImpl implements RsContact {
+public class RsContactDaoSpImpl implements RsContactDao {
 
     @Autowired
     private StoredProcExec storedProcExec = null;
