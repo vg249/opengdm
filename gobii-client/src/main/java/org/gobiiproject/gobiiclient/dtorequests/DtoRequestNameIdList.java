@@ -23,15 +23,15 @@ public class DtoRequestNameIdList {
     private final String JSON_PROP_FILTER = "filter";
 
 
-    public NameIdListDTO getContactsById( String Type ) throws Exception {
+    public NameIdListDTO getContactsById(String Type) throws Exception {
 
         NameIdListDTO returnVal = null;
 
 
         JsonObject ContactsByRoleJson = new JsonObject();
         ContactsByRoleJson.add(JSON_PROP_NAMESBYID, new JsonObject());
-        ContactsByRoleJson.addProperty(JSON_PROP_ENTITYNAME,"contact");
-        ContactsByRoleJson.addProperty(JSON_PROP_FILTER,Type);
+        ContactsByRoleJson.addProperty(JSON_PROP_ENTITYNAME, "contact");
+        ContactsByRoleJson.addProperty(JSON_PROP_FILTER, Type);
 
         RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class);
 
@@ -46,15 +46,15 @@ public class DtoRequestNameIdList {
     } // getContactsById()
 
 
-    public NameIdListDTO getProjectNamesByContact( Integer contactId) throws Exception {
+    public NameIdListDTO getProjectNamesById(Integer contactId) throws Exception {
 
         NameIdListDTO returnVal = null;
 
 
         JsonObject projectNamesByContactJson = new JsonObject();
         projectNamesByContactJson.add(JSON_PROP_NAMESBYID, new JsonObject());
-        projectNamesByContactJson.addProperty(JSON_PROP_ENTITYNAME,"project");
-        projectNamesByContactJson.addProperty(JSON_PROP_FILTER,contactId.toString());
+        projectNamesByContactJson.addProperty(JSON_PROP_ENTITYNAME, "project");
+        projectNamesByContactJson.addProperty(JSON_PROP_FILTER, contactId.toString());
 
         RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class);
 
@@ -69,7 +69,21 @@ public class DtoRequestNameIdList {
     } // getContactsById()
 
 
+    public NameIdListDTO getNamesById(NameIdListDTO nameIdListDTORequest) throws Exception {
 
+        NameIdListDTO returnVal = null;
+
+        RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class);
+
+        SystemUsers systemUsers = new SystemUsers();
+        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
+        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+
+        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_NAME_ID_LIST, nameIdListDTORequest, token);
+
+        return returnVal;
+
+    } // getContactsById()
 
 
 } // DtoRequestMarkers()

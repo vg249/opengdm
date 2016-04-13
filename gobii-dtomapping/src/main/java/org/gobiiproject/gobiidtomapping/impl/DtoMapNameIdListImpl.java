@@ -2,6 +2,7 @@ package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsContact;
+import org.gobiiproject.gobiidao.resultset.access.RsPlatform;
 import org.gobiiproject.gobiidao.resultset.access.RsProject;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
@@ -30,6 +31,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     @Autowired
     private RsProject rsProject = null;
 
+    @Autowired
+    private RsPlatform rsPlatform = null;
+
     private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -46,7 +50,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                 String firstName = contactList.getString("firstname");
                 String name = lastName + ", " + firstName;
                 contactNamesById.put(contactId.toString(), name);
-
             }
 
             returnVal.setNamesById(contactNamesById);
@@ -63,6 +66,36 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return (returnVal);
 
     } // getNameIdListForContacts()
+
+    private NameIdListDTO getNameIdListForPlatforms(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsPlatform.getPlatformNames();
+            Map<String, String> platformNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer platformId = resultSet.getInt("platform_id");
+                String platformName = resultSet.getString("name");
+                platformNamesById.put(platformId.toString(), platformName);
+            }
+
+
+            returnVal.setNamesById(platformNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
 
     private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
 
@@ -107,6 +140,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             case "project":
                 returnVal = getNameIdListForProjects(nameIdListDTO);
+                break;
+
+            case "platform":
+                returnVal = getNameIdListForPlatforms(nameIdListDTO);
                 break;
 
             default:
