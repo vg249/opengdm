@@ -33,7 +33,7 @@ public class DtoRequestNameIdList {
         ContactsByRoleJson.addProperty(JSON_PROP_ENTITYNAME,"contact");
         ContactsByRoleJson.addProperty(JSON_PROP_FILTER,Type);
 
-        RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class, Urls.HOST, Urls.PORT);
+        RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
@@ -56,7 +56,7 @@ public class DtoRequestNameIdList {
         projectNamesByContactJson.addProperty(JSON_PROP_ENTITYNAME,"project");
         projectNamesByContactJson.addProperty(JSON_PROP_FILTER,contactId.toString());
 
-        RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class, Urls.HOST, Urls.PORT);
+        RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());

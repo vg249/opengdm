@@ -37,7 +37,7 @@ public class DtoRequestPing {
         pingRequestJson.add(JSON_PROP_PINGREQUESTS, requestArray);
 
 
-        RestRequest<PingDTO> restRequest = new RestRequest<>(PingDTO.class, Urls.HOST, Urls.PORT);
+        RestRequest<PingDTO> restRequest = new RestRequest<>(PingDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());

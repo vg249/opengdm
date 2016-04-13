@@ -17,10 +17,12 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import org.gobiiproject.gobiimodel.ConfigurationSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.ParameterizedType;
 import java.net.URI;
@@ -35,11 +37,33 @@ public class RestRequest<T> {
     private Integer port = null;
 
     @SuppressWarnings("unchecked")
-    public RestRequest(Class<T> paramType, String host, Integer port) {
+    public RestRequest(Class<T> paramType) {
 
         this.paramType = paramType;
-        this.host = host;
-        this.port = port;
+
+        try {
+            ConfigurationSettings configurationSettings = new ConfigurationSettings();
+
+            String host = configurationSettings.getPropValue("servicedomain");
+            if( null != host ) {
+                this.host = host;
+            } else {
+                this.host = "localhost";
+                LOGGER.info("servicedomain property is not specified in configuration; setting domain to localhost");
+            }
+
+            String port = configurationSettings.getPropValue("serviceport");
+            if( null != port ) {
+                this.port = Integer.parseInt(port);
+            } else {
+                this.port = 8080;
+                LOGGER.info("serviceport property is not specified in configuration; setting port to 8080");
+            }
+
+
+        } catch( IOException e) {
+            LOGGER.error(e.getMessage());
+        }
     } // ctor
 
     Logger LOGGER = LoggerFactory.getLogger(RestRequest.class);

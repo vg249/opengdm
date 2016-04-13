@@ -5,14 +5,8 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.controllers;
 
-import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
-import org.gobiiproject.gobidomain.services.NameIdListService;
-import org.gobiiproject.gobidomain.services.PingService;
-import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
-import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobidomain.services.*;
+import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.logutils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -45,6 +39,9 @@ public class LoadController {
 
     @Autowired
     private LoaderInstructionFilesService loaderInstructionFilesService = null;
+
+    @Autowired
+    private DisplayService displayService = null;
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
@@ -101,7 +98,7 @@ public class LoadController {
 
         return (returnVal);
 
-    }//getPingResponse()
+    }
 
     @RequestMapping(value = "/instructions", method = RequestMethod.POST)
     @ResponseBody
@@ -119,8 +116,25 @@ public class LoadController {
 
         return (returnVal);
 
-    }//getPingResponse()
+    }
 
+    @RequestMapping(value = "/display", method = RequestMethod.POST)
+    @ResponseBody
+    public DisplayDTO loadInstructions(@RequestBody DisplayDTO displayDTO) {
+
+        DisplayDTO returnVal = new DisplayDTO();
+
+        try {
+            returnVal = displayService.getDisplayNames(displayDTO);
+        } catch (AccessDeniedException e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return (returnVal);
+
+    }
 
 
 }// LoadController

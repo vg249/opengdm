@@ -8,9 +8,6 @@ package org.gobiiproject.gobiiclient.core;
 public class Urls {
 
 
-    public final static String HOST = "localhost";
-    public final static Integer PORT = 8080;
-
     private final static String APP_ROOT = "/gobii-web/";
     private final static String CTRLR_EXTRACT = "extract/";
     private final static String CTRLR_LOAD = "load/";
@@ -21,5 +18,6 @@ public class Urls {
     public final static String URL_PING_PROJECT =  APP_ROOT + CTRLR_LOAD +  "project";
     public final static String URL_NAME_ID_LIST =  APP_ROOT + CTRLR_LOAD +  "nameidlist";
     public final static String URL_FILE_LOAD_INSTRUCTIONS =  APP_ROOT + CTRLR_LOAD +  "instructions";
+    public final static String URL_DISPLAY =  APP_ROOT + CTRLR_LOAD +  "display";
 
 } // Urls

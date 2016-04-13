@@ -64,6 +64,11 @@
     <bean id="dtoMapLoaderInstructions" class="org.gobiiproject.gobiidtomapping.impl.DtoMapLoaderInstructionsImpl"/>
     <bean id="loaderInstructionFilesService" class="org.gobiiproject.gobidomain.services.impl.LoaderInstructionFileServiceImpl"/>
 
+    <!-- **** Display Beans  ***************************************-->
+    <bean id="rsDisplayDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDisplayDaoImpl"/>
+    <bean id="dtoMapDisplay" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDisplayImpl"/>
+    <bean id="displayService" class="org.gobiiproject.gobidomain.services.impl.DisplayServiceImpl"/>
+
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
     <!-- Hibernate/JDBC connection properties -->

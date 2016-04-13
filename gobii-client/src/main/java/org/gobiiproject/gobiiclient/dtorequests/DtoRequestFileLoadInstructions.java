@@ -37,7 +37,7 @@ public class DtoRequestFileLoadInstructions {
         contactsByRoleJson.addProperty(JSON_PROP_FILTER, "foo");
 
 
-        RestRequest<LoaderInstructionFilesDTO> restRequest = new RestRequest<>(LoaderInstructionFilesDTO.class, Urls.HOST, Urls.PORT);
+        RestRequest<LoaderInstructionFilesDTO> restRequest = new RestRequest<>(LoaderInstructionFilesDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
@@ -63,7 +63,7 @@ public class DtoRequestFileLoadInstructions {
 //        JsonObject projectRequestJson = new JsonObject();
 //        projectRequestJson.add(LOADER_INSTRUCTIONS, new JsonObject());
 
-        RestRequest<LoaderInstructionFilesDTO> restRequest = new RestRequest<>(LoaderInstructionFilesDTO.class, Urls.HOST, Urls.PORT);
+        RestRequest<LoaderInstructionFilesDTO> restRequest = new RestRequest<>(LoaderInstructionFilesDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
