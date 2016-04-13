@@ -25,12 +25,8 @@ public class DtoRequestDisplayTest {
         DisplayDTO displayDTOResponse = dtoRequestDisplay.getDisplayNames(displayDTORequest);
 
         Assert.assertNotEquals(displayDTOResponse,null);
+        Assert.assertTrue(displayDTOResponse.getDisplayNamesByColumn().size() > 0);
 
-//        // Assumes rice data with seed script is loaded
-//        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-//        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getContactsById("PI");
-//
-//
 //        Assert.assertNotEquals(null, nameIdListDTO);
 //        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
 //        Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
