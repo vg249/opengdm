@@ -110,7 +110,7 @@ public class LoadController {
         LoaderInstructionFilesDTO returnVal = new LoaderInstructionFilesDTO();
 
         try {
-            returnVal = loaderInstructionFilesService.getSampleLoaderFileInstructions();
+            returnVal = loaderInstructionFilesService.writeSampleLoaderFileInstructions(loaderInstructionFilesDTO);
         } catch (AccessDeniedException e) {
 
             returnVal.getDtoHeaderResponse().addException(e);

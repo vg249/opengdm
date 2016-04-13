@@ -11,6 +11,7 @@
 
     <groupId>org.gobiiproject</groupId>
     <artifactId>gobii-domain</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <!-- gobii dependencies -->

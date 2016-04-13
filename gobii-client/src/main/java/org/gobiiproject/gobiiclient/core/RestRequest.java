@@ -242,9 +242,10 @@ public class RestRequest<T> {
 
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String dtoAsJson = objectMapper.writeValueAsString(dtoInstance);
+        String dtoRequestJson = objectMapper.writeValueAsString(dtoInstance);
+        JsonObject responseJson = getResponseBody(url, dtoRequestJson, token);
 
-        returnVal = objectMapper.readValue(dtoAsJson, paramType);
+        returnVal = objectMapper.readValue(responseJson.toString(), paramType);
 
         return returnVal;
 
@@ -259,7 +260,7 @@ public class RestRequest<T> {
 
         T returnVal = null;
 
-        JsonObject responseJson = getResponseBody(url, requestJson, token);
+        JsonObject responseJson = getResponseBody(url, requestJson.toString(), token);
 
         ObjectMapper objectMapper = new ObjectMapper();
         returnVal = objectMapper.readValue(responseJson.toString(), paramType);
@@ -270,7 +271,7 @@ public class RestRequest<T> {
 
 
     public JsonObject getResponseBody(String url,
-                                      JsonObject jsonObject,
+                                      String jsonString,
                                       String token) throws Exception {
 
         JsonObject returnVal = null;
@@ -280,7 +281,7 @@ public class RestRequest<T> {
         URI uri = makeUri(url);
 
         HttpPost postRequest = new HttpPost(uri);
-        String jsonString = jsonObject.toString();
+//        String jsonString = jsonObject.toString();
         StringEntity input = new StringEntity(jsonString);
         postRequest.setEntity(input);
 

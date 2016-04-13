@@ -9,7 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>org.gobiiproject</groupId>
     <artifactId>gobii-dtomapping</artifactId>
+    <packaging>jar</packaging>
+
 
     <dependencies>
         <dependency>

@@ -1,17 +1,78 @@
 package org.gobiiproject.gobiidao.filesystem.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.LoaderFileDAO;
+import org.gobiiproject.gobiimodel.ConfigurationSettings;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.Column;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.File;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstruction;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Phil on 4/12/2016.
  */
 public class LoaderFileDAOImpl implements LoaderFileDAO {
+
+    private final String LOADER_FILE_EXT = ".json";
+
+    @Override
+    public String writeInstructions(String fileUniqueId, List<LoaderInstruction> instructions) throws GobiiDaoException {
+
+        String returnVal = null;
+
+        try {
+
+
+            ConfigurationSettings configurationSettings = new ConfigurationSettings();
+
+            String laoderFilePath = configurationSettings.getPropValue("loaderfilepath");
+            if (! laoderFilePath.substring(laoderFilePath.length() - 1).equals("\\")) {
+                laoderFilePath += "\\";
+            }
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            String dateTimeForFileName =
+                    String.format("%02d", calendar.get(Calendar.YEAR)) +
+                            "-" +
+                            String.format("%02d", calendar.get(Calendar.MONTH) + 1) +
+                            "-" +
+                            String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH)) +
+                            "_" +
+                            String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY)) +
+                            "-" +
+                            String.format("%02d", calendar.get(Calendar.MINUTE)) +
+                            "-" +
+                            String.format("%02d", calendar.get(Calendar.SECOND));
+
+            String fileFQPN = laoderFilePath + fileUniqueId + "_" + dateTimeForFileName + LOADER_FILE_EXT;
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String instructionsAsJson = objectMapper.writeValueAsString(instructions);
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileFQPN));
+            bufferedWriter.write(instructionsAsJson);
+            bufferedWriter.flush();
+            bufferedWriter.close();
+
+            returnVal = fileFQPN; // set this last in case we got an exception
+
+
+        } catch (IOException e) {
+            throw new GobiiDaoException(e);
+        }
+
+        return returnVal;
+
+    } // writeInstructions
+
 
     @Override
     public List<LoaderInstruction> getSampleInstructions() {
@@ -107,7 +168,7 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         // INSTRUCTION TWO END
         // **********************************************************************        
 
-        return  returnVal;
+        return returnVal;
 
     } // getSampleInstructions()
 

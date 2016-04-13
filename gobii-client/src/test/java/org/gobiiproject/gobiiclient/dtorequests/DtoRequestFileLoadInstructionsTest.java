@@ -7,15 +7,22 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.Column;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.File;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstruction;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Console;
 
 public class DtoRequestFileLoadInstructionsTest {
 
 
+    @Ignore
     public void testGetSampleInstructionFile() throws Exception {
 
 
@@ -30,7 +37,6 @@ public class DtoRequestFileLoadInstructionsTest {
 
     @Test
     public void testSendInstructionFile() throws Exception {
-
 
 
         LoaderInstruction loaderInstructionOne = new LoaderInstruction();
@@ -121,6 +127,7 @@ public class DtoRequestFileLoadInstructionsTest {
         loaderInstructionTwo.getVcfParameters().setToIupac(true);
 
         loaderInstructionFilesDTOToSend.getLoaderInstructions().add(loaderInstructionTwo);
+        loaderInstructionFilesDTOToSend.setUserName("foo_user");
 
 
         DtoRequestFileLoadInstructions dtoRequestFileLoadInstructions = new DtoRequestFileLoadInstructions();
@@ -128,7 +135,16 @@ public class DtoRequestFileLoadInstructionsTest {
 
 
         Assert.assertNotEquals(null, loaderInstructionFilesDTOResponse);
-//        Assert.assertNotEquals(null, projectDTO.getProjectName());
+
+        if (!loaderInstructionFilesDTOResponse.getDtoHeaderResponse().isSucceeded()) {
+            System.out.println();
+            System.out.println("*** Header errors: ");
+            for (HeaderStatusMessage currentStatusMesage : loaderInstructionFilesDTOResponse.getDtoHeaderResponse().getStatusMessages()) {
+                System.out.println(currentStatusMesage.getMessage());
+            }
+        }
+        Assert.assertTrue(loaderInstructionFilesDTOResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertNotEquals(null, loaderInstructionFilesDTOResponse.getOutputFileId());
 
     } // testGetMarkers()
 

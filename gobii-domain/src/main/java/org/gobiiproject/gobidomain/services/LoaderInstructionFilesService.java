@@ -7,4 +7,6 @@ import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
  */
 public interface LoaderInstructionFilesService {
     LoaderInstructionFilesDTO getSampleLoaderFileInstructions();
+
+    LoaderInstructionFilesDTO writeSampleLoaderFileInstructions(LoaderInstructionFilesDTO loaderInstructionFilesDTO);
 }

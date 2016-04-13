@@ -9,5 +9,7 @@ import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 
 
 public interface DtoMapLoaderInstructions {
+
+    LoaderInstructionFilesDTO writeInstructions(LoaderInstructionFilesDTO loaderInstructionFilesDTO);
     LoaderInstructionFilesDTO getSampleLoaderFileInstructions();
 }

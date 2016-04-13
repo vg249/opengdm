@@ -7,6 +7,8 @@ public class HeaderStatusMessage implements Serializable {
     private DtoHeaderResponse.StatusLevel statusLevel;
     private String Message;
 
+    public HeaderStatusMessage() {};
+
     public HeaderStatusMessage(DtoHeaderResponse.StatusLevel statusLevel, String message) {
         this.statusLevel = statusLevel;
         Message = message;

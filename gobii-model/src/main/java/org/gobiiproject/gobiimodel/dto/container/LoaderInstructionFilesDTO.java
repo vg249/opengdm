@@ -13,6 +13,10 @@ import java.util.Map;
  */
 public class LoaderInstructionFilesDTO extends DtoMetaData {
 
+    private List<LoaderInstruction> loaderInstructions = new ArrayList<>();
+    String userName = null;
+    String outputFileId = null;
+
     public List<LoaderInstruction> getLoaderInstructions() {
         return loaderInstructions;
     }
@@ -21,5 +25,19 @@ public class LoaderInstructionFilesDTO extends DtoMetaData {
         this.loaderInstructions = loaderInstructions;
     }
 
-    private List<LoaderInstruction> loaderInstructions  = new ArrayList<>();
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getOutputFileId() {
+        return outputFileId;
+    }
+
+    public void setOutputFileId(String outputFileId) {
+        this.outputFileId = outputFileId;
+    }
 }

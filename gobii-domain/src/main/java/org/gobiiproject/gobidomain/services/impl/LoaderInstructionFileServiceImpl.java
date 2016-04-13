@@ -17,4 +17,10 @@ public class LoaderInstructionFileServiceImpl implements LoaderInstructionFilesS
     public LoaderInstructionFilesDTO getSampleLoaderFileInstructions() {
         return dtoMapLoaderInstructions.getSampleLoaderFileInstructions();
     }
-}
+
+    @Override
+    public LoaderInstructionFilesDTO writeSampleLoaderFileInstructions(LoaderInstructionFilesDTO loaderInstructionFilesDTO) {
+        return dtoMapLoaderInstructions.writeInstructions(loaderInstructionFilesDTO);
+    } // writeSampleLoaderFileInstructions
+
+} // LoaderInstructionFileServiceImpl
