@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.entityZ.TableColDisplay;
+import org.gobiiproject.gobiimodel.entity.TableColDisplay;
 
 import java.util.HashMap;
 import java.util.List;
