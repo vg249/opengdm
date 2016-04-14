@@ -5,6 +5,8 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import java.util.Map.Entry;
+
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.junit.Assert;
@@ -14,19 +16,22 @@ public class DtoRequestDisplayTest {
 
 
     @Test
-    public void testGetContactsByIdForContactType() throws Exception {
+    public void testGetTableDisplayNamesWithColDisplay() throws Exception {
 
         DtoRequestDisplay dtoRequestDisplay = new DtoRequestDisplay();
 
         DisplayDTO displayDTORequest = new DisplayDTO();
-        displayDTORequest.setTableName("project");
+        displayDTORequest.getTableNamesWithColDisplay();
 
 
         DisplayDTO displayDTOResponse = dtoRequestDisplay.getDisplayNames(displayDTORequest);
 
         Assert.assertNotEquals(displayDTOResponse,null);
-        Assert.assertTrue(displayDTOResponse.getDisplayNamesByColumn().size() > 0);
+        Assert.assertTrue(displayDTOResponse.getTableNamesWithColDisplay().size() > 0);
 
+        for(Entry e : displayDTOResponse.getTableNamesWithColDisplay().entrySet()){
+            System.out.println(e.getKey().toString());
+        }
 //        Assert.assertNotEquals(null, nameIdListDTO);
 //        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
 //        Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);

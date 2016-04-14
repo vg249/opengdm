@@ -2,7 +2,7 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.resultset.access.RsDisplayDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.viewworkers.SpGetDisplayNamesForTable;
+import org.gobiiproject.gobiidao.resultset.viewworkers.SpGetTableDisplayNames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,15 +21,13 @@ public class RsDisplayDaoImpl implements RsDisplayDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public ResultSet getDisplayColumns(String tableName) {
+    public ResultSet getTableDisplayNames() {
 
         ResultSet returnVal = null;
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("tableName", tableName);
-        SpGetDisplayNamesForTable spGetDisplayNamesForTable = new SpGetDisplayNamesForTable(parameters);
-        storedProcExec.doWithConnection(spGetDisplayNamesForTable);
-        returnVal = spGetDisplayNamesForTable.getResultSet();
+        SpGetTableDisplayNames spGetTableDisplayNames = new SpGetTableDisplayNames();
+        storedProcExec.doWithConnection(spGetTableDisplayNames);
+        returnVal = spGetTableDisplayNames.getResultSet();
 
         return returnVal;
     }

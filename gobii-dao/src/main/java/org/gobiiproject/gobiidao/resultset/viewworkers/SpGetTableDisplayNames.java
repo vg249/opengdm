@@ -7,14 +7,12 @@ import java.util.Map;
 
 /**
  * Created by Phil on 4/7/2016.
+ * Edited by Angel on 4/14/2016.
  */
-public class SpGetDisplayNamesForTable implements Work {
+public class SpGetTableDisplayNames implements Work {
 
-    private Map<String,Object> parameters = null;
-    public SpGetDisplayNamesForTable(Map<String,Object> parameters ) {
-        this.parameters = parameters;
+    public SpGetTableDisplayNames() {
     }
-
 
     private ResultSet resultSet = null;
 
@@ -29,11 +27,11 @@ public class SpGetDisplayNamesForTable implements Work {
                 "column_name,\n" +
                 "display_name\n" +
                 "from display\n" +
-                "where lower(table_name) = ?";
+                " order by lower(table_name), lower(column_name)";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-        String tableName = parameters.get("tableName").toString().toLowerCase();
-        preparedStatement.setString(1, tableName);
+//        String tableName = parameters.get("tableName").toString().toLowerCase();
+//        preparedStatement.setString(1, tableName);
         resultSet = preparedStatement.executeQuery();
 
     } // execute()

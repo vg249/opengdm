@@ -16,7 +16,6 @@ public class DtoRequestIdNameIdListTest {
     @Test
     public void testGetContactsByIdForContactType() throws Exception {
 
-
         // Assumes rice data with seed script is loaded
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getContactsById("PI");
