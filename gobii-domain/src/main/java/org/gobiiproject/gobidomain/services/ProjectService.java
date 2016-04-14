@@ -5,8 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobidomain.services;
 
-import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
 
 /**
  * Created by Phil on 3/24/2016.

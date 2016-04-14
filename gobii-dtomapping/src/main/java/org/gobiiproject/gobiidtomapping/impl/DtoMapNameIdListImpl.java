@@ -1,8 +1,9 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.resultset.access.RsContact;
-import org.gobiiproject.gobiidao.resultset.access.RsProject;
+import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
+import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
+import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,10 +25,13 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
 
     @Autowired
-    private RsContact rsContact = null;
+    private RsContactDao rsContactDao = null;
 
     @Autowired
-    private RsProject rsProject = null;
+    private RsProjectDao rsProjectDao = null;
+
+    @Autowired
+    private RsPlatformDao rsPlatformDao = null;
 
     private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
 
@@ -36,7 +39,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         try {
 
-            ResultSet contactList = rsContact.getContactNamesForRoleName(nameIdListDTO.getFilter());
+            ResultSet contactList = rsContactDao.getContactNamesForRoleName(nameIdListDTO.getFilter());
 
             Map<String, String> contactNamesById = new HashMap<>();
             while (contactList.next()) {
@@ -46,7 +49,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                 String firstName = contactList.getString("firstname");
                 String name = lastName + ", " + firstName;
                 contactNamesById.put(contactId.toString(), name);
-
             }
 
             returnVal.setNamesById(contactNamesById);
@@ -64,13 +66,43 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     } // getNameIdListForContacts()
 
+    private NameIdListDTO getNameIdListForPlatforms(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsPlatformDao.getPlatformNames();
+            Map<String, String> platformNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer platformId = resultSet.getInt("platform_id");
+                String platformName = resultSet.getString("name");
+                platformNamesById.put(platformId.toString(), platformName);
+            }
+
+
+            returnVal.setNamesById(platformNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
+
     private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
 
         try {
 
-            ResultSet resultSet = rsProject.getProjectNamesForContactId(Integer.parseInt(nameIdListDTO.getFilter()));
+            ResultSet resultSet = rsProjectDao.getProjectNamesForContactId(Integer.parseInt(nameIdListDTO.getFilter()));
 
             Map<String, String> projectNameIdList = new HashMap<>();
 
@@ -107,6 +139,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             case "project":
                 returnVal = getNameIdListForProjects(nameIdListDTO);
+                break;
+
+            case "platform":
+                returnVal = getNameIdListForPlatforms(nameIdListDTO);
                 break;
 
             default:

@@ -13,6 +13,7 @@ public class Column {
         VCF_MARKER,
         VCF_VARIANT,
         VCF_METADATA,
+        VCF_INFO,
         CONSTANT
     }
 

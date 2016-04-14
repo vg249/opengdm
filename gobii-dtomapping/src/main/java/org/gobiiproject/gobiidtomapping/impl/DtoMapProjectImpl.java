@@ -1,25 +1,18 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.entity.pojos.Contact;
-import org.gobiiproject.gobiidao.entity.access.ContactEntityDao;
-import org.gobiiproject.gobiidao.resultset.access.RsContact;
-import org.gobiiproject.gobiidao.resultset.access.RsProject;
+import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.container.project.ProjectProperty;
+import org.jboss.jandex.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 4/6/2016.
@@ -29,7 +22,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
     Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdListImpl.class);
 
     @Autowired
-    private RsProject rsProject;
+    private RsProjectDao rsProjectDao;
 
     public ProjectDTO getProject(ProjectDTO projectDTO) throws GobiiDtoMappingException {
 
@@ -38,7 +31,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         try {
 
-            ResultSet resultSet = rsProject.getProjectDetailsForProjectId(projectDTO.getProjectId());
+            ResultSet resultSet = rsProjectDao.getProjectDetailsForProjectId(projectDTO.getProjectId());
 
             boolean retrievedOneRecord = false;
             while (resultSet.next()) {
@@ -61,6 +54,19 @@ public class DtoMapProjectImpl implements DtoMapProject {
                 returnVal.setProjectCode(projectCode);
                 returnVal.setProjectDescription(projectDescription);
                 returnVal.setPiContact(piContact);
+            }
+
+
+            ResultSet propertyResultSet = rsProjectDao.getPropertiesForProject(projectDTO.getProjectId());
+            while(propertyResultSet
+
+                    .next()) {
+                Integer propertyId = propertyResultSet.getInt("property_id");
+                String propertyName = propertyResultSet.getString("property_name");
+                String propertyValue = propertyResultSet.getString("property_value");
+
+                ProjectProperty currentPropejectProperty = new ProjectProperty(propertyId,propertyName,propertyValue);
+                returnVal.getProperties().add(currentPropejectProperty);
             }
 
 

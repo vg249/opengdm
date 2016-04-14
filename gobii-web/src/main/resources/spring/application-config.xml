@@ -54,8 +54,9 @@
     <bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
 
     <!-- **** NameIdList Beans ***************************************-->
-    <bean id="rsContact" class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactSpImpl"/>
-    <bean id="rsProject" class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectImpl"/>
+    <bean id="rsContact" class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoSpImpl"/>
+    <bean id="rsProject" class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>
+    <bean id="rsPlatform" class="org.gobiiproject.gobiidao.resultset.access.impl.RsPlatformDaoImpl"/>
     <bean id="dtoMapNameIdList" class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl"/>
     <bean id="nameIdListService" class="org.gobiiproject.gobidomain.services.impl.NameIdListServiceImpl"/>
 

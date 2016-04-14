@@ -29,7 +29,7 @@ public class DtoRequestDisplayTest {
 
 //        Assert.assertNotEquals(null, nameIdListDTO);
 //        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
-//        Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
+//        Assert.assertTrue(nameIdListDTO.getProjectNamesById().size() >= 0);
 
     } // testGetMarkers()
 

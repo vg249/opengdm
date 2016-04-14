@@ -6,7 +6,6 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 
 /**
  * Created by Phil on 3/24/2016.

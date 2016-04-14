@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.spworkers;
+package org.gobiiproject.gobiidao.resultset.sqlworkers;
 
 import org.hibernate.jdbc.Work;
 
@@ -24,11 +24,13 @@ public class SpGetProjecttNamesByContactId implements Work {
 
     @Override
     public void execute(Connection dbConnection) throws SQLException {
-        String getDBUSERCursorSql = "{call get_project_names_by_pi(?,?)}";
-        CallableStatement callableStatement = dbConnection.prepareCall(getDBUSERCursorSql);
-        callableStatement.setInt(1, (Integer) parameters.get("contactId"));
-        callableStatement.registerOutParameter(2, Types.OTHER);
-        callableStatement.executeUpdate();
-        resultSet = (ResultSet) callableStatement.getObject(2);
+
+        String sql = "select p.project_id, \n" +
+                "\t\t\t\t\tp.name \n" +
+                "\t\t\tfrom project p\n" +
+                "\t\t\twhere p.pi_contact= ? ";
+        PreparedStatement preparedStatement = dbConnection.prepareCall(sql);
+        preparedStatement.setInt(1, (Integer) parameters.get("contactId"));
+        resultSet = preparedStatement.executeQuery();
     } // execute()
 }

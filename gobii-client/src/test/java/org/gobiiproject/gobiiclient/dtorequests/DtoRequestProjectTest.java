@@ -5,13 +5,9 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DtoRequestProjectTest {
 
@@ -25,6 +21,7 @@ public class DtoRequestProjectTest {
 
         Assert.assertNotEquals(null, projectDTO);
         Assert.assertNotEquals(null, projectDTO.getProjectName());
+        Assert.assertTrue(projectDTO.getProperties().size() > 0);
 
     } // testGetMarkers()
 
