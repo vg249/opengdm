@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.viewworkers;
+package org.gobiiproject.gobiidao.resultset.sqlworkers;
 
 import org.hibernate.jdbc.Work;
 
@@ -28,7 +28,7 @@ public class SpGetProjectDetailsByProjectId implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String Sql = "select * from project_view where project_id = ?";
+        String Sql = "select * from project where project_id = ?";
         PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
         Integer projectId = (Integer) parameters.get("projectId");
         preparedStatement.setInt(1, projectId);

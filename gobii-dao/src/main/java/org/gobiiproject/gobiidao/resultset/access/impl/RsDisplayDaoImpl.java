@@ -2,7 +2,7 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.resultset.access.RsDisplayDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.viewworkers.SpGetDisplayNamesForTable;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.SpGetDisplayNamesForTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

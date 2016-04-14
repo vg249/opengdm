@@ -4,7 +4,9 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.container.project.ProjectProperty;
+import org.jboss.jandex.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,19 @@ public class DtoMapProjectImpl implements DtoMapProject {
                 returnVal.setProjectCode(projectCode);
                 returnVal.setProjectDescription(projectDescription);
                 returnVal.setPiContact(piContact);
+            }
+
+
+            ResultSet propertyResultSet = rsProjectDao.getPropertiesForProject(projectDTO.getProjectId());
+            while(propertyResultSet
+
+                    .next()) {
+                Integer propertyId = propertyResultSet.getInt("property_id");
+                String propertyName = propertyResultSet.getString("property_name");
+                String propertyValue = propertyResultSet.getString("property_value");
+
+                ProjectProperty currentPropejectProperty = new ProjectProperty(propertyId,propertyName,propertyValue);
+                returnVal.getProperties().add(currentPropejectProperty);
             }
 
 

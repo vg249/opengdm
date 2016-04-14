@@ -1,7 +1,8 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.dto.container.project;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,15 @@ public class ProjectDTO extends DtoMetaData {
     private String projectDescription;
     private int piContact;
     private Map<String,String> principleInvestigators = null;
+    private List<ProjectProperty> properties = new ArrayList<>();
+
+    public List<ProjectProperty> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<ProjectProperty> properties) {
+        this.properties = properties;
+    }
 
     public int getProjectId() {
         return projectId;

@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.viewworkers;
+package org.gobiiproject.gobiidao.resultset.sqlworkers;
 
 import org.hibernate.jdbc.Work;
 

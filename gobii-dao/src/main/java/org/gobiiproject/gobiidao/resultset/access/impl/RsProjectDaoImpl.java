@@ -3,8 +3,9 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.spworkers.SpGetProjecttNamesByContactId;
-import org.gobiiproject.gobiidao.resultset.viewworkers.SpGetProjectDetailsByProjectId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.SpGetProjecttNamesByContactId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.SpGetPropertiesForProject;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.SpGetProjectDetailsByProjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +55,21 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
     } // getProjectDetailsForProjectId()
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getPropertiesForProject(Integer projectId ) throws GobiiDaoException {
 
+        ResultSet returnVal = null;
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("projectId", projectId);
+        SpGetPropertiesForProject spGetPropertiesForProject = new SpGetPropertiesForProject (parameters);
+        storedProcExec.doWithConnection(spGetPropertiesForProject);
+        returnVal = spGetPropertiesForProject.getResultSet();
+
+        return returnVal;
+
+    } // getPropertiesForProject
 
 
 } // RsProjectDaoImpl

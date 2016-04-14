@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiidtomapping;
 
-import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
 
 /**
  * Created by Phil on 4/6/2016.
