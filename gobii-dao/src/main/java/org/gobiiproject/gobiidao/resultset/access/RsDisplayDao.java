@@ -7,5 +7,5 @@ import java.sql.ResultSet;
  */
 public interface RsDisplayDao {
 
-    ResultSet getDisplayColumns(String tableName );
+	ResultSet getTableDisplayNames();
 }
