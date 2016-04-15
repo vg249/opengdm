@@ -56,6 +56,7 @@
     <!-- **** NameIdList Beans ***************************************-->
     <bean id="rsContact" class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoSpImpl"/>
     <bean id="rsProject" class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>
+    <!--<bean id="rsCvTerm" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvTermDaoImpl"/>-->
     <bean id="rsPlatform" class="org.gobiiproject.gobiidao.resultset.access.impl.RsPlatformDaoImpl"/>
     <bean id="dtoMapNameIdList" class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl"/>
     <bean id="nameIdListService" class="org.gobiiproject.gobidomain.services.impl.NameIdListServiceImpl"/>

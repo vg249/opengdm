@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.metamodel.EntityType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -131,24 +132,32 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         NameIdListDTO returnVal = new NameIdListDTO();
 
 
-        switch (nameIdListDTO.getEntityName()) {
+        if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
+            switch (nameIdListDTO.getEntityName()) {
 
-            case "contact":
-                returnVal = getNameIdListForContacts(nameIdListDTO);
-                break;
+                case "contact":
+                    returnVal = getNameIdListForContacts(nameIdListDTO);
+                    break;
 
-            case "project":
-                returnVal = getNameIdListForProjects(nameIdListDTO);
-                break;
+                case "project":
+                    returnVal = getNameIdListForProjects(nameIdListDTO);
+                    break;
 
-            case "platform":
-                returnVal = getNameIdListForPlatforms(nameIdListDTO);
-                break;
+                case "platform":
+                    returnVal = getNameIdListForPlatforms(nameIdListDTO);
+                    break;
 
-            default:
-                returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.Error,
-                        "Unsupported entity for list request: " + nameIdListDTO.getEntityName());
-        } // switch on entity name
+                default:
+                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.Error,
+                            "Unsupported entity for list request: " + nameIdListDTO.getEntityName());
+            } // switch on entity name
+        } else if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.CVTERM) {
+
+            // getNamedIdListFromCvList(nameIDListDTO) // getEntityName() == group name
+            //select cv_id,term
+            //from cv
+            // where cv.group= ?
+        }
 
         return returnVal;
 

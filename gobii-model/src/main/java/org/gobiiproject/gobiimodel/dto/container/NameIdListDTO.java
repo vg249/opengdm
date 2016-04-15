@@ -10,9 +10,19 @@ import java.util.Map;
  */
 public class NameIdListDTO extends DtoMetaData {
 
+    public enum EntityType {DBTABLE, CVTERM};
+    private EntityType entityType = EntityType.DBTABLE;
     private String entityName = null;
-    private Map<String,String> namesById = new HashMap<>();
+    private Map<String, String> namesById = new HashMap<>();
     private String filter = null;
+
+    public EntityType getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(EntityType entityType) {
+        this.entityType = entityType;
+    }
 
     public String getFilter() {
         return filter;
