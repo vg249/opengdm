@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,19 +58,48 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public ResultSet getPropertiesForProject(Integer projectId ) throws GobiiDaoException {
+    public ResultSet getPropertiesForProject(Integer projectId) throws GobiiDaoException {
 
         ResultSet returnVal = null;
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("projectId", projectId);
-        SpGetPropertiesForProject spGetPropertiesForProject = new SpGetPropertiesForProject (parameters);
+        SpGetPropertiesForProject spGetPropertiesForProject = new SpGetPropertiesForProject(parameters);
         storedProcExec.doWithConnection(spGetPropertiesForProject);
         returnVal = spGetPropertiesForProject.getResultSet();
 
         return returnVal;
 
     } // getPropertiesForProject
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Integer createProject(String projectName,
+                                 String projectCode,
+                                 String projectDescription,
+                                 Integer piContact,
+                                 Integer createdBy,
+                                 Date createdDate,
+                                 Integer modifiedby,
+                                 Date modifiedDate,
+                                 Integer projectStatus) throws GobiiDaoException {
+
+        Integer returnVal = null;
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("projectName", projectName);
+        parameters.put("projectCode", projectCode);
+        parameters.put("projectDescription", projectDescription);
+        parameters.put("piContact", piContact);
+        parameters.put("createdBy", createdBy);
+        parameters.put("createdDate", createdDate);
+        parameters.put("modifiedby", modifiedby);
+        parameters.put("modifiedDate", modifiedDate);
+        parameters.put("projectStatus", projectStatus);
+
+        return  returnVal;
+
+    } // createProject
 
 
 } // RsProjectDaoImpl
