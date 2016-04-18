@@ -9,12 +9,22 @@ import org.gobiiproject.gobiimodel.dto.header.DtoHeaderAuth;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 
 import java.io.Serializable;
+import java.sql.SQLType;
 
 /**
  * Created by Phil on 3/24/2016.
  */
 abstract public class DtoMetaData implements Serializable {
 
+    public DtoMetaData() {}
+
+    public DtoMetaData(ProcessType processType) {
+        this.processType = processType;
+    }
+
+    public enum ProcessType {CREATE, READ, UPDATE, DELETE}
+
+    private ProcessType processType = ProcessType.READ;
     private DtoHeaderAuth dtoHeaderAuth = new DtoHeaderAuth();
     private DtoHeaderResponse dtoHeaderResponse = new DtoHeaderResponse();
 
@@ -29,4 +39,14 @@ abstract public class DtoMetaData implements Serializable {
     public DtoHeaderResponse getDtoHeaderResponse() {
         return dtoHeaderResponse;
     }
+
+    public ProcessType getProcessType() {
+        return processType;
+    }
+
+    public void setProcessType(ProcessType processType) {
+        this.processType = processType;
+    }
+
+
 } // DtoMetaData

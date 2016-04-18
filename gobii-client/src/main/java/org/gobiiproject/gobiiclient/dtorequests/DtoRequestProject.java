@@ -40,5 +40,21 @@ public class DtoRequestProject {
 
     } // getPing()
 
+    public ProjectDTO updateProject(ProjectDTO projectDTO) throws Exception {
+
+        ProjectDTO returnVal = null;
+
+        RestRequest<ProjectDTO> restRequest = new RestRequest<>(ProjectDTO.class);
+
+        SystemUsers systemUsers = new SystemUsers();
+        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
+        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+
+        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_PING_PROJECT, projectDTO, token);
+
+        return returnVal;
+
+    } // getPing()
+
 
 } // DtoRequestMarkers()

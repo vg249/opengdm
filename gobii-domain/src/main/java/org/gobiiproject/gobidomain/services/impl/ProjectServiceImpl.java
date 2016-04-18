@@ -1,9 +1,11 @@
 package org.gobiiproject.gobidomain.services.impl;
 
+import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 
+import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +28,24 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectDTO returnVal = null;
         try {
 
-            returnVal  = dtoMapProject.getProject(projectDTO);
+            switch (projectDTO.getProcessType()) {
+
+                case READ:
+                    returnVal = dtoMapProject.getProject(projectDTO);
+                    break;
+
+                case CREATE:
+                    returnVal = dtoMapProject.createProject(projectDTO);
+                    break;
+
+                default:
+                    GobiiDomainException gobiiDomainException = new GobiiDomainException("Unsupported process type: " + projectDTO.getProcessType().toString());
+                    returnVal.getDtoHeaderResponse().addException(gobiiDomainException);
+                    LOGGER.error(gobiiDomainException.getMessage());
+                    break;
+
+            } // switch
+
 
         } catch (GobiiDtoMappingException e) {
 
@@ -34,8 +53,9 @@ public class ProjectServiceImpl implements ProjectService {
             LOGGER.error(e.getMessage());
         }
 
-        return  returnVal;
+        return returnVal;
 
     } // getProject
+
 
 } // ProjectServiceImpl
