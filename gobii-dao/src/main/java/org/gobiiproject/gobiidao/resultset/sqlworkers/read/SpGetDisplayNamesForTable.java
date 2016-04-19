@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.modify;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.read;
 
 import org.hibernate.jdbc.Work;
 
@@ -7,12 +7,14 @@ import java.util.Map;
 
 /**
  * Created by Phil on 4/7/2016.
- * Edited by Angel on 4/14/2016.
  */
-public class SpGetTableDisplayNames implements Work {
+public class SpGetDisplayNamesForTable implements Work {
 
-    public SpGetTableDisplayNames() {
+    private Map<String,Object> parameters = null;
+    public SpGetDisplayNamesForTable(Map<String,Object> parameters ) {
+        this.parameters = parameters;
     }
+
 
     private ResultSet resultSet = null;
 
@@ -27,11 +29,11 @@ public class SpGetTableDisplayNames implements Work {
                 "column_name,\n" +
                 "display_name\n" +
                 "from display\n" +
-                " order by lower(table_name), lower(column_name)";
+                "where lower(table_name) = ?";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-//        String tableName = parameters.get("tableName").toString().toLowerCase();
-//        preparedStatement.setString(1, tableName);
+        String tableName = parameters.get("tableName").toString().toLowerCase();
+        preparedStatement.setString(1, tableName);
         resultSet = preparedStatement.executeQuery();
 
     } // execute()

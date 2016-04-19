@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.read;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.modify;
 
 import org.gobiiproject.gobiidao.resultset.core.SpDef;
 import org.gobiiproject.gobiidao.resultset.core.SpParamDef;

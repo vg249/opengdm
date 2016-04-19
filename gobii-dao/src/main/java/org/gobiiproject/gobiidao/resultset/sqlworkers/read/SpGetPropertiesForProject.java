@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.modify;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.read;
 
 import org.hibernate.jdbc.Work;
 
@@ -8,10 +8,10 @@ import java.util.Map;
 /**
  * Created by Phil on 4/7/2016.
  */
-public class SpGetContactNamesByRoleName implements Work {
+public class SpGetPropertiesForProject implements Work {
 
     private Map<String,Object> parameters = null;
-    public SpGetContactNamesByRoleName(Map<String,Object> parameters ) {
+    public SpGetPropertiesForProject(Map<String,Object> parameters ) {
         this.parameters = parameters;
     }
 
@@ -24,14 +24,9 @@ public class SpGetContactNamesByRoleName implements Work {
 
     @Override
     public void execute(Connection dbConnection) throws SQLException {
-        String sql = "SELECT c.contact_id,\n" +
-                "\t\t\t\tc.lastname,\n" +
-                "\t\t\t\tc.firstname\n" +
-                "\t\tfrom contact c\n" +
-                "\t\tjoin role r on (r.role_id=ANY(c.roles))\n" +
-                "\t\twhere r.role_name= ?";
+        String sql = "select * from getallpropertiesofproject(?)";
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-        preparedStatement .setString(1, (String) parameters.get("roleName"));
+        preparedStatement.setInt(1, (Integer) parameters.get("projectId"));
         resultSet = preparedStatement.executeQuery();
     } // execute()
 }

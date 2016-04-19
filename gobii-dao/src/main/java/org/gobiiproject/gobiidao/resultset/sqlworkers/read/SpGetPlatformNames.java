@@ -1,18 +1,21 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers.modify;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.read;
 
 import org.hibernate.jdbc.Work;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Map;
 
 /**
  * Created by Phil on 4/7/2016.
  */
-public class SpGetPropertiesForProject implements Work {
+public class SpGetPlatformNames implements Work {
 
-    private Map<String,Object> parameters = null;
-    public SpGetPropertiesForProject(Map<String,Object> parameters ) {
-        this.parameters = parameters;
+    private Map<String, Object> parameters = null;
+
+    public SpGetPlatformNames() {
     }
 
 
@@ -24,9 +27,12 @@ public class SpGetPropertiesForProject implements Work {
 
     @Override
     public void execute(Connection dbConnection) throws SQLException {
-        String sql = "select * from getallpropertiesofproject(?)";
+
+        String sql = "select platform_id, name from platform";
+
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-        preparedStatement.setInt(1, (Integer) parameters.get("projectId"));
+
         resultSet = preparedStatement.executeQuery();
+
     } // execute()
 }
