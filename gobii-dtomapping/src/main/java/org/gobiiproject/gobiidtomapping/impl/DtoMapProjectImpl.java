@@ -3,6 +3,8 @@ package org.gobiiproject.gobiidtomapping.impl;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamUtils;
+import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpInsProject;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
@@ -90,13 +92,23 @@ public class DtoMapProjectImpl implements DtoMapProject {
         ProjectDTO returnVal = projectDTO;
 
         try {
+
             Map<String, Object> parameters = ParamUtils.makeParamVals(projectDTO);
-            String foo = "";
+            SpRunnerCallable spRunnerCallable =
+                    new SpRunnerCallable(new SpInsProject(), parameters);
+
+            if (spRunnerCallable.run()) {
+                returnVal.setProjectId(spRunnerCallable.getResult());
+            } else {
+                returnVal.getDtoHeaderResponse()
+                        .addException(new GobiiDtoMappingException(spRunnerCallable.getErrorString()));
+            }
+
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
         }
 
-        return projectDTO;
+        return returnVal;
     }
 }

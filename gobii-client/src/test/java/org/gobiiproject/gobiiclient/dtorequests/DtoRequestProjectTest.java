@@ -5,6 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
 import org.junit.Assert;
@@ -39,7 +40,10 @@ public class DtoRequestProjectTest {
 
         ProjectDTO projectDTOResponse = dtoRequestProject.updateProject(projectDTORequest);
 
-//        Assert.assertNotEquals(null, projectDTOResponse);
+        Assert.assertNotEquals(null, projectDTOResponse);
+
+        TestUtils.checkAndPrintHeaderMessages(projectDTOResponse);
+
 //        Assert.assertNotEquals(null, projectDTOResponse.getProjectName());
 //        Assert.assertTrue(projectDTOResponse.getProperties().size() > 0);
 

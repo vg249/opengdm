@@ -5,6 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.Column;
@@ -133,13 +134,8 @@ public class DtoRequestFileLoadInstructionsTest {
 
         Assert.assertNotEquals(null, loaderInstructionFilesDTOResponse);
 
-        if (!loaderInstructionFilesDTOResponse.getDtoHeaderResponse().isSucceeded()) {
-            System.out.println();
-            System.out.println("*** Header errors: ");
-            for (HeaderStatusMessage currentStatusMesage : loaderInstructionFilesDTOResponse.getDtoHeaderResponse().getStatusMessages()) {
-                System.out.println(currentStatusMesage.getMessage());
-            }
-        }
+        TestUtils.checkAndPrintHeaderMessages(loaderInstructionFilesDTOResponse);
+
         Assert.assertTrue(loaderInstructionFilesDTOResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertNotEquals(null, loaderInstructionFilesDTOResponse.getOutputFileId());
 

@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiidao.resultset.sqlworkers;
+package org.gobiiproject.gobiidao.resultset.sqlworkers.modify;
 
 import org.hibernate.jdbc.Work;
 
@@ -8,10 +8,10 @@ import java.util.Map;
 /**
  * Created by Phil on 4/7/2016.
  */
-public class SpGetPropertiesForProject implements Work {
+public class SpGetDisplayNamesForTable implements Work {
 
     private Map<String,Object> parameters = null;
-    public SpGetPropertiesForProject(Map<String,Object> parameters ) {
+    public SpGetDisplayNamesForTable(Map<String,Object> parameters ) {
         this.parameters = parameters;
     }
 
@@ -24,9 +24,17 @@ public class SpGetPropertiesForProject implements Work {
 
     @Override
     public void execute(Connection dbConnection) throws SQLException {
-        String sql = "select * from getallpropertiesofproject(?)";
+
+        String sql = "select table_name,\n" +
+                "column_name,\n" +
+                "display_name\n" +
+                "from display\n" +
+                "where lower(table_name) = ?";
+
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-        preparedStatement.setInt(1, (Integer) parameters.get("projectId"));
+        String tableName = parameters.get("tableName").toString().toLowerCase();
+        preparedStatement.setString(1, tableName);
         resultSet = preparedStatement.executeQuery();
+
     } // execute()
 }
