@@ -16,13 +16,5 @@ public interface RsProjectDao {
     ResultSet getProjectNamesForContactId(Integer contactId) throws GobiiDaoException;
     ResultSet getProjectDetailsForProjectId(Integer projectId ) throws GobiiDaoException;
     ResultSet getPropertiesForProject(Integer projectId ) throws GobiiDaoException;
-    Integer createProject(String projectName,
-                          String projectCode,
-                          String projectDescription,
-                          Integer piContact,
-                          Integer createdBy,
-                          Date createdDate,
-                          Integer modifiedBy,
-                          Date modifiedDate,
-                          Integer projectStatus) throws GobiiDaoException;
+    Integer createProject(Map<String,Object> parameters) throws GobiiDaoException;
 }

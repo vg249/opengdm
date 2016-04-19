@@ -3,8 +3,6 @@ package org.gobiiproject.gobiidtomapping.impl;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamUtils;
-import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
@@ -12,7 +10,6 @@ import org.gobiiproject.gobiimodel.dto.container.project.ProjectProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,9 +24,6 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
     @Autowired
     private RsProjectDao rsProjectDao;
-
-    @Autowired
-    private SpRunnerCallable spRunnerCallable;
 
     public ProjectDTO getProject(ProjectDTO projectDTO) throws GobiiDtoMappingException {
 
@@ -90,7 +84,6 @@ public class DtoMapProjectImpl implements DtoMapProject {
     }
 
 
-    @Transactional
     @Override
     public ProjectDTO createProject(ProjectDTO projectDTO) throws GobiiDtoMappingException {
 
@@ -100,12 +93,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
             Map<String, Object> parameters = ParamUtils.makeParamVals(projectDTO);
 
-            if (spRunnerCallable.run(new SpInsProject(), parameters)) {
-                returnVal.setProjectId(spRunnerCallable.getResult());
-            } else {
-                returnVal.getDtoHeaderResponse()
-                        .addException(new GobiiDtoMappingException(spRunnerCallable.getErrorString()));
-            }
+            Integer projectId = rsProjectDao.createProject(parameters);
+            returnVal.setProjectId(projectId);
 
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);

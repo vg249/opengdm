@@ -2,7 +2,9 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
+import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjecttNamesByContactId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPropertiesForProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectDetailsByProjectId;
@@ -22,6 +24,10 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
     @Autowired
     private StoredProcExec storedProcExec = null;
+
+    @Autowired
+    private SpRunnerCallable spRunnerCallable;
+
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
@@ -74,28 +80,19 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Integer createProject(String projectName,
-                                 String projectCode,
-                                 String projectDescription,
-                                 Integer piContact,
-                                 Integer createdBy,
-                                 Date createdDate,
-                                 Integer modifiedby,
-                                 Date modifiedDate,
-                                 Integer projectStatus) throws GobiiDaoException {
+    public Integer createProject(Map<String,Object> parameters) throws GobiiDaoException {
 
         Integer returnVal = null;
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("projectName", projectName);
-        parameters.put("projectCode", projectCode);
-        parameters.put("projectDescription", projectDescription);
-        parameters.put("piContact", piContact);
-        parameters.put("createdBy", createdBy);
-        parameters.put("createdDate", createdDate);
-        parameters.put("modifiedby", modifiedby);
-        parameters.put("modifiedDate", modifiedDate);
-        parameters.put("projectStatus", projectStatus);
+        if (spRunnerCallable.run(new SpInsProject(), parameters)) {
+
+            returnVal = spRunnerCallable.getResult();
+
+        } else {
+
+            throw new GobiiDaoException(spRunnerCallable.getErrorString());
+
+        }
 
         return  returnVal;
 

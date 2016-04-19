@@ -5,6 +5,10 @@ package org.gobiiproject.gobiidao;
  */
 public class GobiiDaoException extends Exception {
 
+    public GobiiDaoException(String message) {
+        super(message);
+    }
+
     public GobiiDaoException(Exception e) {
         super(e);
     }
