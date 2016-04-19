@@ -3,7 +3,7 @@ package org.gobiiproject.gobiidao.entity.access.impl.mock;
 import org.gobiiproject.gobiidao.entity.access.PingEntityDao;
 import org.gobiiproject.gobiidao.entity.core.impl.DaoImplHibernate;
 import org.gobiiproject.gobiidao.entity.pojos.Marker;
-import org.gobiiproject.gobiimodel.logutils.LineUtils;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -8,8 +8,12 @@ import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
  */
 public class TestUtils {
 
-    public static void checkAndPrintHeaderMessages(DtoMetaData dtoMetaData ) {
+    public static boolean  checkAndPrintHeaderMessages(DtoMetaData dtoMetaData ) {
+
+        boolean returnVal = false;
+
         if (!dtoMetaData.getDtoHeaderResponse().isSucceeded()) {
+            returnVal = true;
             System.out.println();
             System.out.println("*** Header errors: ");
             for (HeaderStatusMessage currentStatusMesage : dtoMetaData.getDtoHeaderResponse().getStatusMessages()) {
@@ -17,5 +21,6 @@ public class TestUtils {
             }
         }
 
+        return returnVal;
     }
 }

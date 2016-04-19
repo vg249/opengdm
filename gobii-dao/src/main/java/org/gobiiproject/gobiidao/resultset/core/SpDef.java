@@ -20,7 +20,7 @@ public abstract class SpDef {
 
         SpParamDef returnVal = new SpParamDef(paramName,paramType);
         spParamDefs.add(returnVal);
-        returnVal.setOrderIdx(spParamDefs.size() - 1);
+        returnVal.setOrderIdx(spParamDefs.size()); // sp indices are 1 based anyway
         return returnVal;
 
     }

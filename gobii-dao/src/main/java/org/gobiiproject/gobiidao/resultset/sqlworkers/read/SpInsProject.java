@@ -35,7 +35,7 @@ public class SpInsProject extends SpDef {
                 .setNullable(false);
 
         this.addParamDef("modifiedBy", Integer.class)
-                .setNullable(true);
+                .setNullable(false);
 
         this.addParamDef("modifiedDate", Date.class)
                 .setNullable(true);

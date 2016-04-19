@@ -13,6 +13,7 @@ import org.jboss.jandex.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,6 +28,9 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
     @Autowired
     private RsProjectDao rsProjectDao;
+
+    @Autowired
+    private SpRunnerCallable spRunnerCallable;
 
     public ProjectDTO getProject(ProjectDTO projectDTO) throws GobiiDtoMappingException {
 
@@ -86,6 +90,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
         return returnVal;
     }
 
+
+    @Transactional
     @Override
     public ProjectDTO createProject(ProjectDTO projectDTO) throws GobiiDtoMappingException {
 
@@ -94,10 +100,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
         try {
 
             Map<String, Object> parameters = ParamUtils.makeParamVals(projectDTO);
-            SpRunnerCallable spRunnerCallable =
-                    new SpRunnerCallable(new SpInsProject(), parameters);
 
-            if (spRunnerCallable.run()) {
+            if (spRunnerCallable.run(new SpInsProject(), parameters)) {
                 returnVal.setProjectId(spRunnerCallable.getResult());
             } else {
                 returnVal.getDtoHeaderResponse()

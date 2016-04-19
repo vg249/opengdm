@@ -12,17 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Created by Phil on 4/18/2016.
  */
 public class SpRunnerCallable implements Work {
 
-    public SpRunnerCallable(SpDef spDef, Map<String, Object> paramVals) {
+    Logger LOGGER = LoggerFactory.getLogger(SpRunnerCallable.class);
 
-        this.spDef = spDef;
-        this.paramVals = paramVals;
-
-    }  // ctor
 
     @PersistenceContext
     protected EntityManager em;
@@ -40,7 +39,7 @@ public class SpRunnerCallable implements Work {
     public String getErrorString() {
         String returnVal = null;
 
-        for(String currentMessage : errors ) {
+        for (String currentMessage : errors) {
             returnVal += currentMessage + "; ";
         }
 
@@ -51,61 +50,79 @@ public class SpRunnerCallable implements Work {
         return result;
     }
 
-    public boolean run() {
+    public boolean run(SpDef spDef, Map<String, Object> paramVals) {
 
         boolean returnVal = true;
 
-        // first do validation checking
-        List<SpParamDef> paramDefs = spDef.getSpParamDefs();
-        for (int idx = 0; idx < paramDefs.size() && returnVal; idx++) {
+        try {
+            this.spDef = spDef;
+            this.paramVals = paramVals;
 
-            SpParamDef currentParamDef = paramDefs.get(idx);
-            String currentParamName = currentParamDef.getParamName();
 
-            if (paramVals.containsKey(currentParamName)) {
+            // first do validation checking
+            List<SpParamDef> paramDefs = spDef.getSpParamDefs();
+            for (int idx = 0; idx < paramDefs.size() && returnVal; idx++) {
 
-                Object currentParamVal = paramVals.get(currentParamName);
-                if (null == currentParamVal && !currentParamDef.isNullable()) {
-                    errors.add("Parameter is not allowed to be null " + currentParamName);
-                } else if (!currentParamVal.getClass().equals(currentParamDef.getParamType())) {
-                    errors.add("Parameter " + currentParamName + " should be of type " + currentParamDef.getParamType());
-                } else {
-                    if (null != currentParamVal) {
-                        currentParamDef.setCurrentValue(currentParamVal);
+                SpParamDef currentParamDef = paramDefs.get(idx);
+                String currentParamName = currentParamDef.getParamName();
+
+                if (paramVals.containsKey(currentParamName)) {
+
+                    Object currentParamVal = paramVals.get(currentParamName);
+                    if (null == currentParamVal && !currentParamDef.isNullable()) {
+                        errors.add("Parameter is not allowed to be null ; " + currentParamName);
+                    } else if (null != currentParamVal && !currentParamVal.getClass().equals(currentParamDef.getParamType())) {
+                        errors.add("Parameter " + currentParamName + " should be of type " + currentParamDef.getParamType() + "; ");
                     } else {
-                        currentParamDef.setCurrentValue(currentParamDef.getDefaultValue());
+                        if (null != currentParamVal) {
+                            currentParamDef.setCurrentValue(currentParamVal);
+                        } else {
+                            currentParamDef.setCurrentValue(currentParamDef.getDefaultValue());
+                        }
                     }
+
+                } else {
+                    returnVal = false;
+                    String message = "There is no value param entry for parameter " + currentParamName + ";";
+                    errors.add(message);
+                    LOGGER.error(message);
                 }
 
-            } else {
-                returnVal = false;
-                errors.add("There is no value param entry for parameter " + currentParamName);
+            } // iterate param defs
+
+
+            returnVal = errors.size() == 0;
+
+            if (returnVal) {
+
+                try {
+                    Session session = (Session) em.getDelegate();
+                    session.doWork(this);
+
+                } catch (Exception e) {
+                    returnVal = false;
+                    String message = "Exception executing stored proc " + spDef.getCallString();
+                    errors.add(message + ": " + e.getMessage() + "; cased by: " + e.getCause());
+                    LOGGER.error(message, e);
+                }
             }
+        } catch (Exception e) {
+            LOGGER.error("Erro running stored procedure", e);
+            throw e;
+        } finally {
+            this.spDef = null;
+            this.paramVals = null;
 
-
-        } // iterate param defs
-
-
-        returnVal = errors.size() == 0;
-
-        if (returnVal) {
-            try {
-                Session session = (Session) em.getDelegate();
-                session.doWork(this);
-
-            } catch (Exception e) {
-                returnVal = false;
-                errors.add("Exception executing stored proc " + spDef.getCallString() + ": " + e.getMessage());
-
-            }
         }
 
         return returnVal;
 
     } // run()
 
+
     @Override
     public void execute(Connection connection) throws SQLException {
+
 
         CallableStatement callableStatement = connection.prepareCall(spDef.getCallString());
 
@@ -114,24 +131,49 @@ public class SpRunnerCallable implements Work {
         for (SpParamDef currentParamDef : paramDefs) {
 
             Integer currentParamIndex = currentParamDef.getOrderIdx();
-            String nameCurrentParamname = currentParamDef.getParamName();
+            String currentParamname = currentParamDef.getParamName();
             Type currentParamType = currentParamDef.getParamType();
             Object currentParamValue = currentParamDef.getCurrentValue();
 
-            if (currentParamType.equals(String.class)) {
-                callableStatement.setString(currentParamIndex, (String) currentParamValue);
-            } else if (currentParamType.equals(Integer.class)) {
-                callableStatement.setInt(currentParamIndex, (Integer) currentParamValue);
-            } else if (currentParamType.equals(Date.class)) {
-                callableStatement.setDate(currentParamIndex, (Date) currentParamValue);
-            } else {
-                throw new SQLException("Unsupported param type: " + Type.class.toString());
+            try {
+                if (currentParamType.equals(String.class)) {
+                    if (null != currentParamValue) {
+                        callableStatement.setString(currentParamIndex, (String) currentParamValue);
+                    } else {
+                        callableStatement.setNull(currentParamIndex, Types.VARCHAR);
+                    }
+                } else if (currentParamType.equals(Integer.class)) {
+                    if (null != currentParamValue) {
+                        callableStatement.setInt(currentParamIndex, (Integer) currentParamValue);
+                    } else {
+                        callableStatement.setNull(currentParamIndex, Types.INTEGER);
+                    }
+                } else if (currentParamType.equals(Date.class)) {
+                    if (null != currentParamValue) {
+                        callableStatement.setDate(currentParamIndex, (Date) currentParamValue);
+                    } else {
+                        callableStatement.setNull(currentParamIndex, Types.DATE);
+                    }
+
+                } else {
+                    throw new SQLException("Unsupported param type: " + Type.class.toString());
+                }
+
+            } catch (Exception e) {
+                String message = "Error executing stored procedure " + spDef.getCallString() + " with " +
+                        "Param Name: " + currentParamname + "; " +
+                        "Param Value: " + currentParamValue + "; " +
+                        "Param Type: " + currentParamType.toString() + "; ";
+                throw new SQLException(message);
             }
         }
 
-        callableStatement.registerOutParameter(paramDefs.size() + 1, Types.INTEGER);
+        Integer resultOutParamIdx = paramDefs.size();
+        callableStatement.registerOutParameter(resultOutParamIdx, Types.INTEGER);
 
-        result = callableStatement.executeUpdate();
+        callableStatement.executeUpdate();
+
+        result = callableStatement.getInt(resultOutParamIdx);
 
     } // execute
 }

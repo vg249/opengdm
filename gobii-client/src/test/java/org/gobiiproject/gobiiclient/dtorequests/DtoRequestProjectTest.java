@@ -37,15 +37,16 @@ public class DtoRequestProjectTest {
         projectDTORequest.setProjectName("foo project");
         projectDTORequest.setProjectDescription("foo description");
         projectDTORequest.setProjectCode("foo codez");
+        projectDTORequest.setProjectStatus(1);
+        projectDTORequest.setModifiedBy(1);
+        projectDTORequest.setPiContact(1);
 
         ProjectDTO projectDTOResponse = dtoRequestProject.updateProject(projectDTORequest);
 
         Assert.assertNotEquals(null, projectDTOResponse);
-
-        TestUtils.checkAndPrintHeaderMessages(projectDTOResponse);
-
-//        Assert.assertNotEquals(null, projectDTOResponse.getProjectName());
-//        Assert.assertTrue(projectDTOResponse.getProperties().size() > 0);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(projectDTOResponse));
+        Assert.assertNotEquals(null, projectDTOResponse.getProjectId());
+        Assert.assertTrue(projectDTOResponse.getProjectId() > 0);
 
     } // testGetMarkers()
 

@@ -3,7 +3,7 @@ package org.gobiiproject.gobiidtomapping.impl;
 import org.gobiiproject.gobiidao.entity.access.PingEntityDao;
 import org.gobiiproject.gobiidtomapping.DtoMapPing;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.logutils.LineUtils;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

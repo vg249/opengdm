@@ -10,7 +10,7 @@ import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobiimodel.dto.container.ContentTypeDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.logutils.LineUtils;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.access.AccessDeniedException;

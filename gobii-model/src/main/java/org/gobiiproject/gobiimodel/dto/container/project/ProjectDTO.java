@@ -3,8 +3,8 @@ package org.gobiiproject.gobiimodel.dto.container.project;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.annotations.StoredProcParamVal;
 
+import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +83,7 @@ public class ProjectDTO extends DtoMetaData {
         this.projectId = projectId;
     }
 
-    @StoredProcParamVal(paramName = "projectname")
+    @StoredProcParamVal(paramName = "projectName")
     public String getProjectName() {
         return projectName;
     }

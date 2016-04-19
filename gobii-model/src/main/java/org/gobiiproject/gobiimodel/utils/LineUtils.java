@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.logutils;
+package org.gobiiproject.gobiimodel.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
