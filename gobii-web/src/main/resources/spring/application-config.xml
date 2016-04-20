@@ -69,6 +69,11 @@
     <bean id="rsDisplayDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDisplayDaoImpl"/>
     <bean id="dtoMapDisplay" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDisplayImpl"/>
     <bean id="displayService" class="org.gobiiproject.gobidomain.services.impl.DisplayServiceImpl"/>
+    
+     <!-- **** Experiment Beans  ***************************************-->
+    <bean id="rsExperimentDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsExperimentDaoImpl"/>
+    <bean id="dtoMapExperiment" class="org.gobiiproject.gobiidtomapping.impl.DtoMapExperimentImpl"/>
+    <bean id="ExperimentService" class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
 
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 

@@ -40,7 +40,20 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
 
     }
+    
+    @Test
+    public void testGetExperimentNamesByProjectId() throws Exception {
 
+
+        // Assumes rice data with seed script is loaded
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getExperimentNamesById(1);
+
+        Assert.assertNotEquals(null, nameIdListDTO);
+        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
+
+    }
     @Test
     public void testGetPlatformNames() throws Exception {
 
