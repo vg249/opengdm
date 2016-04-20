@@ -64,8 +64,10 @@ public class DtoMapProjectImpl implements DtoMapProject {
             while (propertyResultSet.next()) {
                 String propertyName = propertyResultSet.getString("property_name");
                 String propertyValue = propertyResultSet.getString("property_value");
+                Integer propertyId = propertyResultSet.getInt("property_id");
                 ProjectProperty currentProjectProperty =
                         new ProjectProperty(projectDTO.getProjectId(),
+                                propertyId,
                                 propertyName,
                                 propertyValue);
                 returnVal.getProperties().add(currentProjectProperty);
@@ -106,8 +108,9 @@ public class DtoMapProjectImpl implements DtoMapProject {
                 spParamsParameters.put("propertyName", currentProperty.getPropertyName());
                 spParamsParameters.put("propertyValue", currentProperty.getPropertyValue());
 
-                rsProjectDao.createUpdateProperty(spParamsParameters);
+                Integer propertyId = rsProjectDao.createUpdateProperty(spParamsParameters);
                 currentProperty.setProjectId(projectId);
+                currentProperty.setPropertyId(propertyId);
             }
 
         } catch (GobiiDaoException e) {

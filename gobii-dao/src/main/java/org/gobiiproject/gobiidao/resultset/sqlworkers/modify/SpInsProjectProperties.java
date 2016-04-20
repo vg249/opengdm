@@ -11,7 +11,7 @@ public class SpInsProjectProperties extends SpDef {
 
     public SpInsProjectProperties() {
 
-        super("{call upsertprojectpropertybyname(?,?,?)}", false);
+        super("{call upsertprojectpropertybyname(?,?,?)}");
 
         this.addParamDef("projectId", Integer.class)
                 .setNullable(false);

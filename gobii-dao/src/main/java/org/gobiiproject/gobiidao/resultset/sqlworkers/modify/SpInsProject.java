@@ -14,7 +14,7 @@ public class SpInsProject extends SpDef {
 
     public SpInsProject() {
 
-        super("{call createproject(?,?,?,?,?,?,?,?,?)}", true);
+        super("{call createproject(?,?,?,?,?,?,?,?,?)}");
 
         this.addParamDef("projectName", String.class)
                 .setNullable(false);

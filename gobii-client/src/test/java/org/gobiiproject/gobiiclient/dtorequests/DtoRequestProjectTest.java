@@ -44,9 +44,9 @@ public class DtoRequestProjectTest {
         projectDTORequest.setModifiedBy(1);
         projectDTORequest.setPiContact(1);
 
-        projectDTORequest.getProperties().add(new ProjectProperty(null, "division", "foo division"));
-        projectDTORequest.getProperties().add(new ProjectProperty(null, "study_name", "foo study name"));
-        projectDTORequest.getProperties().add(new ProjectProperty(null, "genotyping_purpose", "foo purpose"));
+        projectDTORequest.getProperties().add(new ProjectProperty(null,null, "division", "foo division"));
+        projectDTORequest.getProperties().add(new ProjectProperty(null, null, "study_name", "foo study name"));
+        projectDTORequest.getProperties().add(new ProjectProperty(null, null, "genotyping_purpose", "foo purpose"));
 
         ProjectDTO projectDTOResponse = dtoRequestProject.updateProject(projectDTORequest);
 
@@ -66,6 +66,7 @@ public class DtoRequestProjectTest {
                 .get(0);
 
         Assert.assertTrue(divisionProperty.getProjectId() == projectDTOResponse.getProjectId());
+        Assert.assertTrue(divisionProperty.getPropertyId() > 0);
 
     } // testGetMarkers()
 

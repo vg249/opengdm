@@ -100,9 +100,14 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public void createUpdateProperty(Map<String, Object> parameters) throws GobiiDaoException {
+    public Integer createUpdateProperty(Map<String, Object> parameters) throws GobiiDaoException {
+
+        Integer returnVal = 0;
 
         spRunnerCallable.run(new SpInsProjectProperties(), parameters);
+        returnVal = spRunnerCallable.getResult();
+
+        return returnVal;
 
     } // createUpdateProperty
 

@@ -170,17 +170,11 @@ public class SpRunnerCallable implements Work {
 
         Integer resultOutParamIdx = paramDefs.size();
 
-        if( spDef.isHasIntReturn() ) {
-            callableStatement.registerOutParameter(resultOutParamIdx, Types.INTEGER);
-        }
+        callableStatement.registerOutParameter(resultOutParamIdx, Types.INTEGER);
 
         callableStatement.executeUpdate();
 
-        if( spDef.isHasIntReturn() ) {
-            result = callableStatement.getInt(resultOutParamIdx);
-        } else {
-            result = null;
-        }
+        result = callableStatement.getInt(resultOutParamIdx);
 
     } // execute
 }
