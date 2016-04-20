@@ -15,25 +15,27 @@ import org.junit.Test;
 
 public class DtoRequestExperimentTest {
 
-	   @Test
-	    public void testGetExperimentNamesByProjectId() throws Exception {
-
-	        DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
-
-	        ExperimentDTO experimentDTO = new ExperimentDTO();
-	        dtoRequestExperiment.getExperimentNames(experimentDTO);
 
 
-	        ExperimentDTO experimentDTOResponse = dtoRequestExperiment.getExperimentNames(experimentDTO);
-
-	        Assert.assertNotEquals(experimentDTOResponse,null);
-
-	        System.out.println(experimentDTOResponse.getExperimentName());
-//	        Assert.assertNotEquals(null, nameIdListDTO);
-//	        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
-//	        Assert.assertTrue(nameIdListDTO.getProjectNamesById().size() >= 0);
-
-	    } // testGetMarkers()
+//	   @Test
+//	    public void testGetExperimentNamesByProjectId() throws Exception {
+//
+//	        DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
+//
+//	        ExperimentDTO experimentDTO = new ExperimentDTO();
+//	        dtoRequestExperiment.getExperimentNames(experimentDTO);
+//
+//
+//	        ExperimentDTO experimentDTOResponse = dtoRequestExperiment.getExperimentNames(experimentDTO);
+//
+//	        Assert.assertNotEquals(experimentDTOResponse,null);
+//
+//	        System.out.println(experimentDTOResponse.getExperimentName());
+////	        Assert.assertNotEquals(null, nameIdListDTO);
+////	        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
+////	        Assert.assertTrue(nameIdListDTO.getProjectNamesById().size() >= 0);
+//
+//	    } // testGetMarkers()
 
 
 }

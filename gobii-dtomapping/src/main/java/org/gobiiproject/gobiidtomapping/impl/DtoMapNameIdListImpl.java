@@ -2,6 +2,7 @@ package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
+import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
@@ -32,6 +33,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     @Autowired
     private RsPlatformDao rsPlatformDao = null;
+
+    @Autowired
+    private RsExperimentDao rsExperimentDao = null;
 
     private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
 
@@ -125,6 +129,35 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     } // getNameIdListForContacts()
 
+    private NameIdListDTO getNameIdListForExperiment(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsExperimentDao.getProjectNamesForContactId(Integer.parseInt(nameIdListDTO.getFilter()));
+
+            Map<String, String> projectNameIdList = new HashMap<>();
+
+            while (resultSet.next()) {
+                Integer projectId = resultSet.getInt("project_id");
+                String name = resultSet.getString("name").toString();
+                projectNameIdList.put(projectId.toString(), name);
+            }
+
+            returnVal.setNamesById(projectNameIdList);
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+
+    } // getNameIdListForContacts()
+
     @Override
     public NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO) {
 
@@ -143,6 +176,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             case "platform":
                 returnVal = getNameIdListForPlatforms(nameIdListDTO);
+                break;
+
+            case "experiment":
+                returnVal = getNameIdListForExperiment(nameIdListDTO);
                 break;
 
             default:

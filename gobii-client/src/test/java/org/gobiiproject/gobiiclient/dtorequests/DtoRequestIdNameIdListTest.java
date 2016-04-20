@@ -47,7 +47,10 @@ public class DtoRequestIdNameIdListTest {
 
         // Assumes rice data with seed script is loaded
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getExperimentNamesById(1);
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("experiment");
+        nameIdListDTORequest.setFilter("1");
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
 
         Assert.assertNotEquals(null, nameIdListDTO);
         Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
