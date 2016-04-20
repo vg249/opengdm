@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,15 +61,14 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
 
             ResultSet propertyResultSet = rsProjectDao.getPropertiesForProject(projectDTO.getProjectId());
-            while (propertyResultSet
-
-                    .next()) {
-                Integer propertyId = propertyResultSet.getInt("property_id");
+            while (propertyResultSet.next()) {
                 String propertyName = propertyResultSet.getString("property_name");
                 String propertyValue = propertyResultSet.getString("property_value");
-
-                ProjectProperty currentPropejectProperty = new ProjectProperty(propertyId, propertyName, propertyValue);
-                returnVal.getProperties().add(currentPropejectProperty);
+                ProjectProperty currentProjectProperty =
+                        new ProjectProperty(projectDTO.getProjectId(),
+                                propertyName,
+                                propertyValue);
+                returnVal.getProperties().add(currentProjectProperty);
             }
 
 
@@ -95,6 +96,19 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
             Integer projectId = rsProjectDao.createProject(parameters);
             returnVal.setProjectId(projectId);
+
+            List<ProjectProperty> projectProperties = projectDTO.getProperties();
+
+            for (ProjectProperty currentProperty : projectProperties) {
+
+                Map<String, Object> spParamsParameters = new HashMap<>();
+                spParamsParameters.put("projectId", projectId);
+                spParamsParameters.put("propertyName", currentProperty.getPropertyName());
+                spParamsParameters.put("propertyValue", currentProperty.getPropertyValue());
+
+                rsProjectDao.createUpdateProperty(spParamsParameters);
+                currentProperty.setProjectId(projectId);
+            }
 
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);

@@ -5,17 +5,17 @@ import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjecttNamesByContactId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPropertiesForProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectDetailsByProjectId;
+import org.gobiiproject.gobiimodel.dto.container.project.ProjectProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Phil on 4/8/2016.
@@ -80,7 +80,7 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Integer createProject(Map<String,Object> parameters) throws GobiiDaoException {
+    public Integer createProject(Map<String, Object> parameters) throws GobiiDaoException {
 
         Integer returnVal = null;
 
@@ -94,9 +94,17 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
         }
 
-        return  returnVal;
+        return returnVal;
 
     } // createProject
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void createUpdateProperty(Map<String, Object> parameters) throws GobiiDaoException {
+
+        spRunnerCallable.run(new SpInsProjectProperties(), parameters);
+
+    } // createUpdateProperty
 
 
 } // RsProjectDaoImpl

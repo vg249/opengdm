@@ -9,11 +9,14 @@ import java.util.List;
  */
 public abstract class SpDef {
 
-    public SpDef(String callString) {
+    public SpDef(String callString, boolean hasIntReturn)
+    {
         this.callString = callString;
+        this.hasIntReturn = hasIntReturn;
     }
 
     private String callString;
+    private boolean hasIntReturn = true;
     private List<SpParamDef> spParamDefs = new ArrayList<>();
 
     public SpParamDef addParamDef(String paramName, Type paramType) {
@@ -27,6 +30,10 @@ public abstract class SpDef {
 
     public String getCallString() {
         return callString;
+    }
+
+    public boolean isHasIntReturn() {
+        return hasIntReturn;
     }
 
     public List<SpParamDef> getSpParamDefs() {

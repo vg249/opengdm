@@ -5,26 +5,28 @@ package org.gobiiproject.gobiimodel.dto.container.project;
  */
 public class ProjectProperty {
 
-    private  Integer propertyId = null;
+    private Integer projectId = null;
     private String propertyName = null;
     private String propertyValue = null;
 
-    public ProjectProperty(){
+    public ProjectProperty() {
 
     }
 
-    public ProjectProperty(Integer propertyId, String propertyName, String propertyValue) {
-        this.propertyId = propertyId;
+    public ProjectProperty(Integer projectId,
+                           String propertyName,
+                           String propertyValue) {
+        this.projectId = projectId;
         this.propertyName = propertyName;
         this.propertyValue = propertyValue;
     }
 
-    public Integer getPropertyId() {
-        return propertyId;
+    public Integer getProjectId() {
+        return projectId;
     }
 
-    public void setPropertyId(Integer propertyId) {
-        this.propertyId = propertyId;
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
     public String getPropertyName() {
@@ -42,4 +44,5 @@ public class ProjectProperty {
     public void setPropertyValue(String propertyValue) {
         this.propertyValue = propertyValue;
     }
+
 }
