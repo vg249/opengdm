@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.SpGetProjecttNamesByContactId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.SpGetPropertiesForProject;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.SpGetExperimentDetailsByExperimentId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.SpGetExperimentNamesByProjectId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.SpGetProjectDetailsByProjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,23 +25,6 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
     @Autowired
     private StoredProcExec storedProcExec = null;
 
-//    @Transactional(propagation = Propagation.REQUIRED)
-//    @Override
-//    public ResultSet getProjectNamesForContactId(Integer contactId) throws GobiiDaoException {
-//
-//        ResultSet returnVal = null;
-//        Map<String, Object> parameters = new HashMap<>();
-//        parameters.put("contactId", contactId);
-//        SpGetProjecttNamesByContactId spGetProjecttNamesByContactId = new SpGetProjecttNamesByContactId(parameters);
-//
-//        storedProcExec.doWithConnection(spGetProjecttNamesByContactId);
-//
-//        returnVal = spGetProjecttNamesByContactId.getResultSet();
-//
-//
-//        return returnVal;
-//
-//    }
     @Transactional(propagation = Propagation.REQUIRED)
 	@Override
 	public ResultSet getExperimentNamesByProjectId(Integer projectId) throws GobiiDaoException {
@@ -58,6 +42,8 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
       return returnVal;
 	}
 
+
+    @Transactional(propagation = Propagation.REQUIRED)
 	@Override
 	public ResultSet getExperimentDetailsForExperimentId(int experimentId) {
 		// TODO Auto-generated method stub
@@ -65,9 +51,9 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
 	        Map<String, Object> parameters = new HashMap<>();
 	        parameters.put("experimentId", experimentId);
-//	        SpGetExperimentDetailsByExperimentId spGetExperimentDetailsByExperimentId = new SpGetExperimentDetailsByExperimentId(parameters);
-//	        storedProcExec.doWithConnection(spGetExperimentDetailsByExperimentId);
-//	        returnVal = spGetExperimentDetailsByExperimentId.getResultSet();
+	        SpGetExperimentDetailsByExperimentId spGetExperimentDetailsByExperimentId = new SpGetExperimentDetailsByExperimentId(parameters);
+	        storedProcExec.doWithConnection(spGetExperimentDetailsByExperimentId);
+	        returnVal = spGetExperimentDetailsByExperimentId.getResultSet();
 
 	        return returnVal;
 	}

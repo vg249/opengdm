@@ -64,44 +64,44 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
         return returnVal;
     }
     
-    
-    public ExperimentDTO getExperimentNamesByProjectId(ExperimentDTO experimentDTO) throws GobiiDtoMappingException {
-
-
-    	ExperimentDTO returnVal = new ExperimentDTO();
-
-        try {
-
-            ResultSet resultSet = rsExperimentDao.getExperimentNamesByProjectId(experimentDTO.getExperimentId());
-
-            boolean retrievedOneRecord = false;
-            while (resultSet.next()) {
-
-                if (true == retrievedOneRecord) {
-                    throw (new GobiiDtoMappingException("There are more than one project records for project id: " + experimentDTO.getExperimentId()));
-                }
-                
-                retrievedOneRecord = true;
-
-                int experimentId = resultSet.getInt("experiment_id");
-                String experimentName = resultSet.getString("name");
-                String experimentCode = resultSet.getString("code");
-                String experimentDataFile = resultSet.getString("data_file");
-
-                returnVal.setExperimentId(experimentId);
-                returnVal.setExperimentName(experimentName);
-                returnVal.setExperimentCode(experimentCode);
-                returnVal.setExperimentDataFile(experimentDataFile);
-            }
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-
-        return returnVal;
-    }
+//    
+//    public ExperimentDTO getExperimentNamesByProjectId(ExperimentDTO experimentDTO) throws GobiiDtoMappingException {
+//
+//
+//    	ExperimentDTO returnVal = new ExperimentDTO();
+//
+//        try {
+//
+//            ResultSet resultSet = rsExperimentDao.getExperimentNamesByProjectId(experimentDTO.getExperimentId());
+//
+//            boolean retrievedOneRecord = false;
+//            while (resultSet.next()) {
+//
+//                if (true == retrievedOneRecord) {
+//                    throw (new GobiiDtoMappingException("There are more than one project records for project id: " + experimentDTO.getExperimentId()));
+//                }
+//                
+//                retrievedOneRecord = true;
+//
+//                int experimentId = resultSet.getInt("experiment_id");
+//                String experimentName = resultSet.getString("name");
+//                String experimentCode = resultSet.getString("code");
+//                String experimentDataFile = resultSet.getString("data_file");
+//
+//                returnVal.setExperimentId(experimentId);
+//                returnVal.setExperimentName(experimentName);
+//                returnVal.setExperimentCode(experimentCode);
+//                returnVal.setExperimentDataFile(experimentDataFile);
+//            }
+//        } catch (SQLException e) {
+//            returnVal.getDtoHeaderResponse().addException(e);
+//            LOGGER.error(e.getMessage());
+//        } catch (GobiiDaoException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//
+//        return returnVal;
+//    }
 }

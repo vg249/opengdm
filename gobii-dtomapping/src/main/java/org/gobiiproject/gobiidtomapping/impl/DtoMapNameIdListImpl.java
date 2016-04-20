@@ -38,7 +38,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     private RsExperimentDao rsExperimentDao = null;
 
     private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
-
         NameIdListDTO returnVal = new NameIdListDTO();
 
         try {
@@ -135,17 +134,17 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         try {
 
-            ResultSet resultSet = rsExperimentDao.getProjectNamesForContactId(Integer.parseInt(nameIdListDTO.getFilter()));
+            ResultSet resultSet = rsExperimentDao.getExperimentNamesByProjectId(Integer.parseInt(nameIdListDTO.getFilter()));
 
-            Map<String, String> projectNameIdList = new HashMap<>();
+            Map<String, String> experimentNameIdList = new HashMap<>();
 
             while (resultSet.next()) {
-                Integer projectId = resultSet.getInt("project_id");
+                Integer experimentId = resultSet.getInt("experiment_id");
                 String name = resultSet.getString("name").toString();
-                projectNameIdList.put(projectId.toString(), name);
+                experimentNameIdList.put(experimentId.toString(), name);
             }
 
-            returnVal.setNamesById(projectNameIdList);
+            returnVal.setNamesById(experimentNameIdList);
         } catch (SQLException e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
