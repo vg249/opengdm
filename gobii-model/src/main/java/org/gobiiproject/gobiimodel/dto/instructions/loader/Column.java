@@ -25,6 +25,9 @@ public class Column {
     private String filterFrom = null;
     private String filterTo = null;
     private String constantValue = null;
+    private String index = null;
+    private boolean subcolumn = false;
+    private String subcolumnDelimiter = null;
 
     private String metaDataId = null;
 
@@ -97,4 +100,30 @@ public class Column {
     public void setMetaDataId(String metaDataId) {
         this.metaDataId = metaDataId;
     }
+
+
+    public String getIndex() {
+        return index;
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
+    }
+
+    public boolean isSubcolumn() {
+        return subcolumn;
+    }
+
+    public void setSubcolumn(boolean subcolumn) {
+        this.subcolumn = subcolumn;
+    }
+
+    public String getSubcolumnDelimiter() {
+        return subcolumnDelimiter;
+    }
+
+    public void setSubcolumnDelimiter(String subcolumnDelimiter) {
+        this.subcolumnDelimiter = subcolumnDelimiter;
+    }
+
 }
