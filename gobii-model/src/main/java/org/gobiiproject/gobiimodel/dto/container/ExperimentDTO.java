@@ -17,9 +17,9 @@ public class ExperimentDTO extends DtoMetaData {
     	private String experimentCode = null;
     	private String experimentDataFile = null;
 
-		private Map<String,String> projects = null;
-		private Map<String,String> platforms = null;
-		private Map<String,String> manifest = null;
+		private int projectId;
+		private int platformId;
+		private int manifestId;
 		
 
 		
@@ -47,24 +47,25 @@ public class ExperimentDTO extends DtoMetaData {
 		public void setExperimentDataFile(String dataFile) {
 			this.experimentDataFile = dataFile;
 		}
-		public Map<String, String> getProjects() {
-			return projects;
+		public int getProjectId() {
+			return projectId;
 		}
-		public void setProjects(Map<String, String> projects) {
-			this.projects = projects;
+		public void setProjectId(int projectId) {
+			this.projectId = projectId;
 		}
-		public Map<String, String> getPlatforms() {
-			return platforms;
+		public int getPlatformId() {
+			return platformId;
 		}
-		public void setPlatforms(Map<String, String> platforms) {
-			this.platforms = platforms;
+		public void setPlatformId(int platformId) {
+			this.platformId = platformId;
 		}
-		public Map<String, String> getManifest() {
-			return manifest;
+		public int getManifestId() {
+			return manifestId;
 		}
-		public void setManifest(Map<String, String> manifest) {
-			this.manifest = manifest;
+		public void setManifestId(int manifestId) {
+			this.manifestId = manifestId;
 		}
+		
 		
 		
 		

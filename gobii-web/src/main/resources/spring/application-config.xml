@@ -75,6 +75,14 @@
     <bean id="dtoMapExperiment" class="org.gobiiproject.gobiidtomapping.impl.DtoMapExperimentImpl"/>
     <bean id="ExperimentService" class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
 
+    
+     <!-- **** Manifest Beans  ***************************************-->
+    <bean id="rsManifestDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl"/>
+    
+    <!-- 
+    <bean id="dtoMapManifest" class="org.gobiiproject.gobiidtomapping.impl.DtoMapManifestImpl"/>
+    <bean id="ManifestService" class="org.gobiiproject.gobidomain.services.impl.ManifestServiceImpl"/>
+    -->
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
     <!-- Hibernate/JDBC connection properties -->

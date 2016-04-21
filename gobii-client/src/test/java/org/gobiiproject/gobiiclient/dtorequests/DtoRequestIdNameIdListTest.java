@@ -5,6 +5,8 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import java.util.Map.Entry;
+
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -67,11 +69,31 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
 
+        
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
 
     } // testGetMarkers()
+    
+    @Test
+    public void testGetManifestNames() throws Exception {
 
+
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("manifest");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+        
+        for (Entry entry : nameIdListDtoResponse.getNamesById().entrySet()){ //add project on list
+			System.out.println((String) entry.getValue());//project name
+		}
+
+    }
 
 }

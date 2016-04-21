@@ -3,6 +3,7 @@ package org.gobiiproject.gobiidtomapping.impl;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
+import org.gobiiproject.gobiidao.resultset.access.RsManifestDao;
 import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
@@ -37,6 +38,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     @Autowired
     private RsExperimentDao rsExperimentDao = null;
 
+    @Autowired
+    private RsManifestDao rsManifestDao = null;
+    
     private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
         NameIdListDTO returnVal = new NameIdListDTO();
 
@@ -98,7 +102,36 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         return returnVal;
     }
+    
+    private NameIdListDTO getNameIdListForManifest(NameIdListDTO nameIdListDTO) {
 
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsManifestDao.getManifestNames();
+            Map<String, String> manifestNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer manifestId = resultSet.getInt("manifest_id");
+                String manifestName = resultSet.getString("name");
+                manifestNamesById.put(manifestId.toString(), manifestName);
+            }
+
+
+            returnVal.setNamesById(manifestNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }//getNameIdListForManifest
     private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -177,6 +210,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                 returnVal = getNameIdListForPlatforms(nameIdListDTO);
                 break;
 
+            case "manifest":
+                returnVal = getNameIdListForManifest(nameIdListDTO);
+                break;
+                
             case "experiment":
                 returnVal = getNameIdListForExperiment(nameIdListDTO);
                 break;
