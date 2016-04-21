@@ -89,16 +89,18 @@ public class Column {
         return constantValue;
     }
 
-    public void setConstantValue(String constantValue) {
+    public Column setConstantValue(String constantValue) {
         this.constantValue = constantValue;
+        return this;
     }
 
     public String getMetaDataId() {
         return metaDataId;
     }
 
-    public void setMetaDataId(String metaDataId) {
+    public Column setMetaDataId(String metaDataId) {
         this.metaDataId = metaDataId;
+        return this;
     }
 
 
@@ -106,24 +108,27 @@ public class Column {
         return index;
     }
 
-    public void setIndex(String index) {
+    public Column setIndex(String index) {
         this.index = index;
+        return this;
     }
 
     public boolean isSubcolumn() {
         return subcolumn;
     }
 
-    public void setSubcolumn(boolean subcolumn) {
+    public Column setSubcolumn(boolean subcolumn) {
         this.subcolumn = subcolumn;
+        return this;
     }
 
     public String getSubcolumnDelimiter() {
         return subcolumnDelimiter;
     }
 
-    public void setSubcolumnDelimiter(String subcolumnDelimiter) {
+    public Column setSubcolumnDelimiter(String subcolumnDelimiter) {
         this.subcolumnDelimiter = subcolumnDelimiter;
+        return this;
     }
 
 }
