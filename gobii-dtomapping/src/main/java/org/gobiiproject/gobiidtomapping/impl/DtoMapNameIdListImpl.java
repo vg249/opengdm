@@ -1,11 +1,7 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
-import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
-import org.gobiiproject.gobiidao.resultset.access.RsManifestDao;
-import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
-import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
+import org.gobiiproject.gobiidao.resultset.access.*;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
@@ -41,6 +37,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     @Autowired
     private RsManifestDao rsManifestDao = null;
+
+    @Autowired
+    private RsDataSetDao rsDataSetDao = null;
 
     private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -192,6 +191,36 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     } // getNameIdListForContacts()
 
+    private NameIdListDTO getNameIdListForDataSet(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsDataSetDao.getDatasetFileNamesByExperimentId(Integer.parseInt(nameIdListDTO.getFilter()));
+
+            Map<String, String> experimentNameIdList = new HashMap<>();
+
+            while (resultSet.next()) {
+                Integer dataSetId = resultSet.getInt("dataset_id");
+                String dataFileName = resultSet.getString("data_file").toString();
+                experimentNameIdList.put(dataSetId.toString(), dataFileName);
+            }
+
+            returnVal.setNamesById(experimentNameIdList);
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+
+    } // getNameIdListForDataSet()
+
     @Override
     public NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO) {
 
@@ -219,6 +248,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
                 case "experiment":
                     returnVal = getNameIdListForExperiment(nameIdListDTO);
+                    break;
+
+                case "dataset":
+                    returnVal = getNameIdListForDataSet(nameIdListDTO);
                     break;
 
                 default:

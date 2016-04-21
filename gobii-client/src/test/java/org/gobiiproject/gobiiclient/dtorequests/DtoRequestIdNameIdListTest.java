@@ -96,4 +96,26 @@ public class DtoRequestIdNameIdListTest {
 
     }
 
+
+    @Test
+    public void testGetDataSetFileNames() throws Exception {
+
+
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("dataset");
+        nameIdListDTORequest.setFilter("2");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+
+        for (Entry entry : nameIdListDtoResponse.getNamesById().entrySet()){ //add project on list
+            System.out.println((String) entry.getValue());//project name
+        }
+
+    }
+
 }

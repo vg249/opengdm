@@ -77,8 +77,13 @@
     <bean id="dtoMapExperiment" class="org.gobiiproject.gobiidtomapping.impl.DtoMapExperimentImpl"/>
     <bean id="ExperimentService" class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
 
-    
-     <!-- **** Manifest Beans  ***************************************-->
+    <!-- **** Project Beans  ***************************************-->
+    <bean id="rsDataSetDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDataSetDaoImpl"/>
+    <!--<bean id="dtoMapDataSet" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDataSetImpl"/>-->
+    <!--<bean id="DataSetService" class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl"/>-->
+
+
+    <!-- **** Manifest Beans  ***************************************-->
     <bean id="rsManifestDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl"/>
     
     <!-- 
