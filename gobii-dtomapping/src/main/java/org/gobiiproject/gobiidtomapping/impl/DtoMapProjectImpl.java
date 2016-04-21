@@ -5,8 +5,8 @@ import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamUtils;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.container.project.ProjectProperty;
+import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +65,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
                 String propertyName = propertyResultSet.getString("property_name");
                 String propertyValue = propertyResultSet.getString("property_value");
                 Integer propertyId = propertyResultSet.getInt("property_id");
-                ProjectProperty currentProjectProperty =
-                        new ProjectProperty(projectDTO.getProjectId(),
+                EntityPropertyDTO currentProjectProperty =
+                        new EntityPropertyDTO(projectDTO.getProjectId(),
                                 propertyId,
                                 propertyName,
                                 propertyValue);
@@ -99,9 +99,9 @@ public class DtoMapProjectImpl implements DtoMapProject {
             Integer projectId = rsProjectDao.createProject(parameters);
             returnVal.setProjectId(projectId);
 
-            List<ProjectProperty> projectProperties = projectDTO.getProperties();
+            List<EntityPropertyDTO> projectProperties = projectDTO.getProperties();
 
-            for (ProjectProperty currentProperty : projectProperties) {
+            for (EntityPropertyDTO currentProperty : projectProperties) {
 
                 Map<String, Object> spParamsParameters = new HashMap<>();
                 spParamsParameters.put("projectId", projectId);
@@ -109,7 +109,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
                 spParamsParameters.put("propertyValue", currentProperty.getPropertyValue());
 
                 Integer propertyId = rsProjectDao.createUpdateProperty(spParamsParameters);
-                currentProperty.setProjectId(projectId);
+                currentProperty.setEntityIdId(projectId);
                 currentProperty.setPropertyId(propertyId);
             }
 

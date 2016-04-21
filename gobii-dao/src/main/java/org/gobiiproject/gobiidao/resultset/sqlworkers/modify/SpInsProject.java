@@ -47,7 +47,7 @@ public class SpInsProject extends SpDef {
     } // ctor
 
 //    public Integer projectId = null;
-//    public Integer getProjectId() {
+//    public Integer getEntityIdId() {
 //        return projectId;
 //    }
 

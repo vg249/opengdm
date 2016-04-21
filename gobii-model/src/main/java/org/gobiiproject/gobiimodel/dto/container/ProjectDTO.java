@@ -1,7 +1,8 @@
-package org.gobiiproject.gobiimodel.dto.container.project;
+package org.gobiiproject.gobiimodel.dto.container;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.annotations.StoredProcParamVal;
+import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -125,11 +126,11 @@ public class ProjectDTO extends DtoMetaData {
         this.principleInvestigators = principleInvestigators;
     }
 
-    private List<ProjectProperty> properties = new ArrayList<>();
-    public List<ProjectProperty> getProperties() {
+    private List<EntityPropertyDTO> properties = new ArrayList<>();
+    public List<EntityPropertyDTO> getProperties() {
         return properties;
     }
-    public void setProperties(List<ProjectProperty> properties) {
+    public void setProperties(List<EntityPropertyDTO> properties) {
         this.properties = properties;
     }
 

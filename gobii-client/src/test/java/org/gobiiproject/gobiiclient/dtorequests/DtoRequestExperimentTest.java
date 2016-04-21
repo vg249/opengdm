@@ -5,11 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import java.util.Map.Entry;
-
-import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
 import org.junit.Assert;
 import org.junit.Test;
 

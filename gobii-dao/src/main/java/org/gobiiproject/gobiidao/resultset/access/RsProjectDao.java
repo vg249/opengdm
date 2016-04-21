@@ -1,11 +1,8 @@
 package org.gobiiproject.gobiidao.resultset.access;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.dto.container.project.ProjectProperty;
 
 import java.sql.ResultSet;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**

@@ -8,7 +8,7 @@ package org.gobiiproject.gobiiclient.dtorequests;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiclient.core.RestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
-import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;

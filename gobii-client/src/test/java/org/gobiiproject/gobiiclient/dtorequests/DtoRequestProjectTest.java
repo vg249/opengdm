@@ -7,8 +7,8 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.container.project.ProjectProperty;
+import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,9 +44,9 @@ public class DtoRequestProjectTest {
         projectDTORequest.setModifiedBy(1);
         projectDTORequest.setPiContact(1);
 
-        projectDTORequest.getProperties().add(new ProjectProperty(null,null, "division", "foo division"));
-        projectDTORequest.getProperties().add(new ProjectProperty(null, null, "study_name", "foo study name"));
-        projectDTORequest.getProperties().add(new ProjectProperty(null, null, "genotyping_purpose", "foo purpose"));
+        projectDTORequest.getProperties().add(new EntityPropertyDTO(null,null, "division", "foo division"));
+        projectDTORequest.getProperties().add(new EntityPropertyDTO(null, null, "study_name", "foo study name"));
+        projectDTORequest.getProperties().add(new EntityPropertyDTO(null, null, "genotyping_purpose", "foo purpose"));
 
         ProjectDTO projectDTOResponse = dtoRequestProject.updateProject(projectDTORequest);
 
@@ -58,14 +58,14 @@ public class DtoRequestProjectTest {
         Assert.assertNotEquals(null, projectDTOResponse.getProperties());
         Assert.assertTrue(projectDTOResponse.getProperties().size() > 0);
 
-        ProjectProperty divisionProperty = projectDTOResponse
+        EntityPropertyDTO divisionProperty = projectDTOResponse
                 .getProperties()
                 .stream()
                 .filter(p -> p.getPropertyName().equals("division"))
                 .collect(Collectors.toList())
                 .get(0);
 
-        Assert.assertTrue(divisionProperty.getProjectId() == projectDTOResponse.getProjectId());
+        Assert.assertTrue(divisionProperty.getEntityIdId() == projectDTOResponse.getProjectId());
         Assert.assertTrue(divisionProperty.getPropertyId() > 0);
 
     } // testGetMarkers()

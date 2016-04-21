@@ -1,35 +1,35 @@
-package org.gobiiproject.gobiimodel.dto.container.project;
+package org.gobiiproject.gobiimodel.dto.container;
 
 /**
  * Created by Phil on 4/14/2016.
  */
-public class ProjectProperty {
+public class EntityPropertyDTO {
 
-    private Integer projectId = null;
+    private Integer entityIdId = null;
     private Integer propertyId = null;
     private String propertyName = null;
     private String propertyValue = null;
 
-    public ProjectProperty() {
+    public EntityPropertyDTO() {
 
     }
 
-    public ProjectProperty(Integer projectId,
-                           Integer propertyId,
-                           String propertyName,
-                           String propertyValue) {
-        this.projectId = projectId;
+    public EntityPropertyDTO(Integer entityIdId,
+                             Integer propertyId,
+                             String propertyName,
+                             String propertyValue) {
+        this.entityIdId = entityIdId;
         this.propertyId = propertyId;
         this.propertyName = propertyName;
         this.propertyValue = propertyValue;
     }
 
-    public Integer getProjectId() {
-        return projectId;
+    public Integer getEntityIdId() {
+        return entityIdId;
     }
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
+    public void setEntityIdId(Integer entityIdId) {
+        this.entityIdId = entityIdId;
     }
 
     public String getPropertyName() {

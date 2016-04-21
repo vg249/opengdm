@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.container.project;
+package org.gobiiproject.gobiimodel.dto.container;
 
 import java.io.Serializable;
 import java.util.Date;

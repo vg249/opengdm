@@ -6,7 +6,6 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.container.project.ProjectDTO;
 
 /**
  * Created by Angel on 4/19/2016.
