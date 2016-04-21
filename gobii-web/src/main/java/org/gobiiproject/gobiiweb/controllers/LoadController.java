@@ -34,6 +34,9 @@ public class LoadController {
 
     @Autowired
     private ProjectService projectService = null;
+    
+    @Autowired
+    private ExperimentService experimentService = null;
 
     @Autowired
     private NameIdListService nameIdListService = null;
@@ -65,6 +68,23 @@ public class LoadController {
     }//getPingResponse()
 
 
+    @RequestMapping(value = "/experiment", method = RequestMethod.POST)
+    @ResponseBody
+    public ExperimentDTO getPingResponse(@RequestBody ExperimentDTO experimentDTO) {
+
+        ExperimentDTO returnVal = null;
+        //PingDTO pingDTORequest = new PingDTO();
+        try {
+            returnVal = experimentService.getExperiment(experimentDTO);
+        } catch (AccessDeniedException e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+        return (returnVal);
+
+    }//getPingResponse()
+    
     @RequestMapping(value = "/project", method = RequestMethod.POST)
     @ResponseBody
     public ProjectDTO getPingResponse(@RequestBody ProjectDTO projectDTO) {

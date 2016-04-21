@@ -65,8 +65,31 @@ public class DtoRequestNameIdList {
         return returnVal;
 
     } // getContactsById()
+    
+    public NameIdListDTO getExperimentNamesById(Integer projectId) throws Exception {
+
+        NameIdListDTO returnVal = null;
 
 
+        JsonObject experimentNamesByProjectJson = new JsonObject();
+        experimentNamesByProjectJson.add(JSON_PROP_NAMESBYID, new JsonObject());
+        experimentNamesByProjectJson.addProperty(JSON_PROP_ENTITYNAME, "experiment");
+        experimentNamesByProjectJson.addProperty(JSON_PROP_FILTER, projectId.toString());
+
+        RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class);
+
+        SystemUsers systemUsers = new SystemUsers();
+        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
+        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+
+        returnVal = restRequest.getTypedHtppResponse(Urls.URL_NAME_ID_LIST, experimentNamesByProjectJson, token);
+
+        return returnVal;
+
+    } // getContactsById()
+
+
+    
     public NameIdListDTO getNamesById(NameIdListDTO nameIdListDTORequest) throws Exception {
 
         NameIdListDTO returnVal = null;
@@ -82,6 +105,5 @@ public class DtoRequestNameIdList {
         return returnVal;
 
     } // getContactsById()
-
 
 } // DtoRequestMarkers()

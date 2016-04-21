@@ -19,5 +19,6 @@ public class Urls {
     public final static String URL_NAME_ID_LIST =  APP_ROOT + CTRLR_LOAD +  "nameidlist";
     public final static String URL_FILE_LOAD_INSTRUCTIONS =  APP_ROOT + CTRLR_LOAD +  "instructions";
     public final static String URL_DISPLAY =  APP_ROOT + CTRLR_LOAD +  "display";
+    public final static String URL_EXPERIMENT =  APP_ROOT + CTRLR_LOAD +  "experiment";
 
 } // Urls

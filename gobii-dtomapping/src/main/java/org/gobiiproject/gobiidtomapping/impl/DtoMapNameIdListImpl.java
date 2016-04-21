@@ -2,6 +2,8 @@ package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
+import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
+import org.gobiiproject.gobiidao.resultset.access.RsManifestDao;
 import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
@@ -34,8 +36,13 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     @Autowired
     private RsPlatformDao rsPlatformDao = null;
 
-    private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
+    @Autowired
+    private RsExperimentDao rsExperimentDao = null;
 
+    @Autowired
+    private RsManifestDao rsManifestDao = null;
+
+    private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
         NameIdListDTO returnVal = new NameIdListDTO();
 
         try {
@@ -97,6 +104,36 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
     }
 
+    private NameIdListDTO getNameIdListForManifest(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsManifestDao.getManifestNames();
+            Map<String, String> manifestNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer manifestId = resultSet.getInt("manifest_id");
+                String manifestName = resultSet.getString("name");
+                manifestNamesById.put(manifestId.toString(), manifestName);
+            }
+
+
+            returnVal.setNamesById(manifestNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }//getNameIdListForManifest
+
     private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -126,13 +163,42 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     } // getNameIdListForContacts()
 
+    private NameIdListDTO getNameIdListForExperiment(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsExperimentDao.getExperimentNamesByProjectId(Integer.parseInt(nameIdListDTO.getFilter()));
+
+            Map<String, String> experimentNameIdList = new HashMap<>();
+
+            while (resultSet.next()) {
+                Integer experimentId = resultSet.getInt("experiment_id");
+                String name = resultSet.getString("name").toString();
+                experimentNameIdList.put(experimentId.toString(), name);
+            }
+
+            returnVal.setNamesById(experimentNameIdList);
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+
+    } // getNameIdListForContacts()
+
     @Override
     public NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
 
-
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
+
             switch (nameIdListDTO.getEntityName()) {
 
                 case "contact":
@@ -147,16 +213,19 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     returnVal = getNameIdListForPlatforms(nameIdListDTO);
                     break;
 
+                case "manifest":
+                    returnVal = getNameIdListForManifest(nameIdListDTO);
+                    break;
+
+                case "experiment":
+                    returnVal = getNameIdListForExperiment(nameIdListDTO);
+                    break;
+
                 default:
                     returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.Error,
                             "Unsupported entity for list request: " + nameIdListDTO.getEntityName());
-            } // switch on entity name
-        } else if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.CVTERM) {
+            }
 
-            // getNamedIdListFromCvList(nameIDListDTO) // getEntityName() == group name
-            //select cv_id,term
-            //from cv
-            // where cv.group= ?
         }
 
         return returnVal;
