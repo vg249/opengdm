@@ -37,7 +37,7 @@ public class DtoRequestProjectTest {
         DtoRequestProject dtoRequestProject = new DtoRequestProject();
         ProjectDTO projectDTORequest = new ProjectDTO(DtoMetaData.ProcessType.CREATE);
         projectDTORequest.setCreatedBy(1);
-        projectDTORequest.setProjectName("foo project");
+        projectDTORequest.setProjectName("foo projects");
         projectDTORequest.setProjectDescription("foo description");
         projectDTORequest.setProjectCode("foo codez");
         projectDTORequest.setProjectStatus(1);

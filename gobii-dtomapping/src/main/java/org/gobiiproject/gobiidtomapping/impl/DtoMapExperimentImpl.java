@@ -43,11 +43,18 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
                 String experimentName = resultSet.getString("name");
                 String experimentCode = resultSet.getString("code");
                 String experimentDataFile = resultSet.getString("data_file");
+                int platformId =  resultSet.getInt("platform_id");
+                int manifestId = resultSet.getInt("manifest_id");
+                int projectId = resultSet.getInt("project_id");
 
                 returnVal.setExperimentId(experimentId);
                 returnVal.setExperimentName(experimentName);
                 returnVal.setExperimentCode(experimentCode);
                 returnVal.setExperimentDataFile(experimentDataFile);
+                returnVal.setManifestId(manifestId);
+                returnVal.setPlatformId(platformId);
+                returnVal.setProjectId(projectId);
+                
             }
         } catch (SQLException e) {
             returnVal.getDtoHeaderResponse().addException(e);
