@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
+import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.annotations.StoredProcParamVal;
 
 import java.util.Date;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/21/2016.
  */
-public class AnalysisDTO {
+public class AnalysisDTO extends DtoMetaData {
 
     private int analysisId;
     private String analysisName;

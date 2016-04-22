@@ -29,10 +29,14 @@ public class DtoRequestDataSetTest {
         Assert.assertNotEquals(null, dataSetDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dataSetDTOResponse));
         Assert.assertNotEquals(null, dataSetDTOResponse.getDataFile());
+
+        if (dataSetDTOResponse.getAnalyses() != null && dataSetDTOResponse.getAnalyses().size() > 0) {
+            Assert.assertNotEquals(null, dataSetDTOResponse.getAnalyses().get(0).getAnalysisId());
+            Assert.assertTrue(dataSetDTOResponse.getAnalyses().get(0).getAnalysisId() > 0);
+        }
 //        Assert.assertTrue(dataSetDTOResponse.getProperties().size() > 0);
 
     } // testGetMarkers()
-
 
 
 }

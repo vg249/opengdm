@@ -47,6 +47,7 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ResultSet getDataSetDetailsByDataSetId(Integer dataSetId) throws GobiiDaoException {
+
         ResultSet returnVal = null;
 
         Map<String, Object> parameters = new HashMap<>();

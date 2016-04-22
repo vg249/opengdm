@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
 import org.gobiiproject.gobiidao.resultset.access.RsDataSetDao;
 import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
@@ -10,7 +11,9 @@ import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -23,8 +26,12 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
 
     @Autowired
-    RsDataSetDao rsDataSetDao;
+    private RsDataSetDao rsDataSetDao;
 
+    @Autowired
+    private RsAnalysisDao rsAnalysisDao;
+
+    @Transactional
     @Override
     public DataSetDTO getDataSetDetails(DataSetDTO dataSetDTO) throws GobiiDtoMappingException {
 
@@ -56,6 +63,19 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
                     returnVal.setCallingAnalysis(analysisDTO);
                 }
 
+                Array sqlArray = resultSet.getArray("analyses");
+                if (!resultSet.wasNull()) {
+                    Integer[] anayses = (Integer[]) sqlArray.getArray();
+                    for (int idx = 0; idx < anayses.length; idx++) {
+                        Integer currentAnalysisId = anayses[idx];
+                        ResultSet analysisResultSet = rsAnalysisDao.getAnalysisDetailsByAnalysisId(currentAnalysisId);
+                        if( analysisResultSet.next() ) {
+                            AnalysisDTO analysisDTO = DtoFieldMapperAnalysis.make(analysisResultSet);
+                            returnVal.getAnalyses().add(analysisDTO);
+                        }
+                    }
+                }
+
 //                resultSet.getString("scores"));
 //                 returnVal.set resultSet.getString("callinganalysis_id"));
 //                 resultSet.getString("analyses"));
@@ -64,10 +84,10 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Error mapping result set to DTO", e);
         } catch (SQLException e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Error mapping result set to DTO", e);
         }
 
         return returnVal;

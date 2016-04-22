@@ -82,6 +82,11 @@
     <bean id="dtoMapDataSet" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDataSetImpl"/>
     <bean id="DataSetService" class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl"/>
 
+    <!-- **** Project Beans  ***************************************-->
+    <bean id="rsAnalysisDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsAnalysisDaoImpl"/>
+    <bean id="dtoMapAnalysis" class="org.gobiiproject.gobiidtomapping.impl.DtoMapAnalysisImpl"/>
+    <!--<bean id="AnalysisService" class="org.gobiiproject.gobidomain.services.impl.AnalysisServiceImpl"/>-->
+
 
     <!-- **** Manifest Beans  ***************************************-->
     <bean id="rsManifestDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl"/>
