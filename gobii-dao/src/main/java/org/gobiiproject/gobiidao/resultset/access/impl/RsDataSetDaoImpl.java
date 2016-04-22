@@ -7,10 +7,7 @@ import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectProperties;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetDatasetFileNamesByExperimentId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectDetailsByProjectId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjecttNamesByContactId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPropertiesForProject;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +42,23 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
 
         returnVal = spGetDatasetFileNamesByExperimentId.getResultSet();
 
+
+        return returnVal;
+
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getDataSetDetailsByDataSetId(Integer dataSetId) throws GobiiDaoException {
+        ResultSet returnVal = null;
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("dataSetId", dataSetId);
+        SpGetDatasetDetailsByExperimentId spGetDatasetDetailsByExperimentId = new SpGetDatasetDetailsByExperimentId(parameters);
+
+        storedProcExec.doWithConnection(spGetDatasetDetailsByExperimentId);
+
+        returnVal = spGetDatasetDetailsByExperimentId.getResultSet();
 
         return returnVal;
 

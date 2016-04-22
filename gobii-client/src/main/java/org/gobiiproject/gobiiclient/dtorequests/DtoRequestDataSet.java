@@ -1,37 +1,36 @@
 // ************************************************************************
-// (c) 2016 GOBii Project
+// (c) 2016 GOBii DataSet
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import com.google.gson.JsonObject;
+
 import org.gobiiproject.gobiiclient.core.RestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
-import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
+import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
 
-public class DtoRequestDisplay {
+public class DtoRequestDataSet {
 
 
-    public DisplayDTO getDisplayNames(DisplayDTO displayDTO) throws Exception {
+    public DataSetDTO getDataSetDetails(DataSetDTO DataSetDTO) throws Exception {
 
+        DataSetDTO returnVal = null;
 
-        DisplayDTO returnVal = null;
-
-        RestRequest<DisplayDTO> restRequest = new RestRequest<>(DisplayDTO.class);
+        RestRequest<DataSetDTO> restRequest = new RestRequest<>(DataSetDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
         String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_DISPLAY, displayDTO, token);
+        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_DATASET, DataSetDTO, token);
 
         return returnVal;
 
-    } //
+    } // getPing()
 
 
 } // DtoRequestMarkers()

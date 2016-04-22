@@ -3,7 +3,7 @@ package org.gobiiproject.gobiimodel.dto.container;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.annotations.StoredProcParamVal;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class DataSetDTO extends DtoMetaData {
 
     private int datasetId;
     private int experimentId;
-    private int callinganalysisId;
+    private AnalysisDTO callingAnalysis;
     private String dataTable;
     private String dataFile;
     private String qualityTable;
@@ -24,8 +24,8 @@ public class DataSetDTO extends DtoMetaData {
     private String modifiedBy;
     private Date modifiedDate;
     private Integer status;
-    private List<Integer> analyses;
-    private List<Integer> scores;
+    private List<Integer> analyses = new ArrayList<>();
+    private List<Integer> scores = new ArrayList<>();
 
     @StoredProcParamVal(paramName = "datasetId")
     public int getDatasetId() {
@@ -46,12 +46,12 @@ public class DataSetDTO extends DtoMetaData {
     }
 
     @StoredProcParamVal(paramName = "callAnalysisId")
-    public int getCallinganalysisId() {
-        return callinganalysisId;
-    }
 
-    public void setCallinganalysisId(int callinganalysisId) {
-        this.callinganalysisId = callinganalysisId;
+    public AnalysisDTO getCallingAnalysis() {
+        return callingAnalysis;
+    }
+    public void setCallingAnalysis(AnalysisDTO callingAnalysis) {
+        this.callingAnalysis = callingAnalysis;
     }
 
     @StoredProcParamVal(paramName = "dataTable")

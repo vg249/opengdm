@@ -10,4 +10,5 @@ import java.sql.ResultSet;
 public interface RsDataSetDao {
 
     ResultSet getDatasetFileNamesByExperimentId(Integer experimentId) throws GobiiDaoException;
+    ResultSet getDataSetDetailsByDataSetId(Integer projectId) throws GobiiDaoException;
 }
