@@ -2,11 +2,8 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsDataSetDao;
-import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
@@ -54,7 +51,7 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("dataSetId", dataSetId);
-        SpGetDatasetDetailsByExperimentId spGetDatasetDetailsByExperimentId = new SpGetDatasetDetailsByExperimentId(parameters);
+        SpGetDatasetDetailsByDataSetId spGetDatasetDetailsByExperimentId = new SpGetDatasetDetailsByDataSetId(parameters);
 
         storedProcExec.doWithConnection(spGetDatasetDetailsByExperimentId);
 

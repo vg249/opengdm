@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 public class DtoRequestDataSetTest {
 
 
-    @Ignore
+    @Test
     public void testGetDataSet() throws Exception {
 
 
         DtoRequestDataSet dtoRequestDataSet = new DtoRequestDataSet();
         DataSetDTO dataSetDTORequest = new DataSetDTO();
-        dataSetDTORequest.setExperimentId(2);
+        dataSetDTORequest.setDatasetId(2);
         DataSetDTO dataSetDTOResponse = dtoRequestDataSet.getDataSetDetails(dataSetDTORequest);
 
         Assert.assertNotEquals(null, dataSetDTOResponse);

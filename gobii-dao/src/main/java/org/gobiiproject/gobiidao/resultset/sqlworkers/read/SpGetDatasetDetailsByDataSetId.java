@@ -11,10 +11,10 @@ import java.util.Map;
 /**
  * Created by Angel on 4/19/2016.
  */
-public class SpGetDatasetDetailsByExperimentId implements Work {
+public class SpGetDatasetDetailsByDataSetId implements Work {
 
     private Map<String,Object> parameters = null;
-    public SpGetDatasetDetailsByExperimentId(Map<String,Object> parameters ) {
+    public SpGetDatasetDetailsByDataSetId(Map<String,Object> parameters ) {
         this.parameters = parameters;
     }
 
@@ -56,7 +56,8 @@ public class SpGetDatasetDetailsByExperimentId implements Work {
                 "\ta.sourceuri,\n" +
                 "\ta.reference_id,\n" +
                 "\ta.status,\n" +
-                "\ta.\"name\"\n" +
+                "\ta.\"name\",\n" +
+                "\ta.timeexecuted\n" +
                 "from dataset ds\n" +
                 "left outer join analysis a on (a.analysis_id=ds.callinganalysis_id) " +
                 "where dataset_id=?";
