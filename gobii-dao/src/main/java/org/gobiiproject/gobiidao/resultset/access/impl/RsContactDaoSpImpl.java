@@ -5,6 +5,8 @@ import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactNamesByRoleName;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactsByRoleName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,8 @@ import java.util.Map;
  */
 public class RsContactDaoSpImpl implements RsContactDao {
 
+    Logger LOGGER = LoggerFactory.getLogger(RsContactDaoSpImpl.class);
+
     @Autowired
     private StoredProcExec storedProcExec = null;
 
@@ -27,14 +31,20 @@ public class RsContactDaoSpImpl implements RsContactDao {
 
         ResultSet returnVal = null;
 
+        try {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("roleName", roleName);
+            SpGetContactNamesByRoleName spGetContactNamesByRoleName = new SpGetContactNamesByRoleName(parameters);
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("roleName", roleName);
-        SpGetContactNamesByRoleName spGetContactNamesByRoleName = new SpGetContactNamesByRoleName(parameters);
+            storedProcExec.doWithConnection(spGetContactNamesByRoleName);
 
-        storedProcExec.doWithConnection(spGetContactNamesByRoleName);
+            returnVal = spGetContactNamesByRoleName.getResultSet();
+        } catch (Exception e) {
 
-        returnVal = spGetContactNamesByRoleName.getResultSet();
+            LOGGER.error("Error retrieving contact names", e);
+            throw (new GobiiDaoException(e));
+
+        }
 
         return returnVal;
 
@@ -46,14 +56,20 @@ public class RsContactDaoSpImpl implements RsContactDao {
 
         ResultSet returnVal = null;
 
+        try {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("roleName", roleName);
+            SpGetContactsByRoleName spGetContactsByRoleName = new SpGetContactsByRoleName(parameters);
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("roleName", roleName);
-        SpGetContactsByRoleName spGetContactsByRoleName = new SpGetContactsByRoleName(parameters);
+            storedProcExec.doWithConnection(spGetContactsByRoleName);
 
-        storedProcExec.doWithConnection(spGetContactsByRoleName);
+            returnVal = spGetContactsByRoleName.getResultSet();
 
-        returnVal = spGetContactsByRoleName.getResultSet();
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving contacts", e);
+            throw (new GobiiDaoException(e));
+        }
 
         return returnVal;
     }

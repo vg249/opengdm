@@ -6,6 +6,8 @@ import org.gobiiproject.gobiidao.resultset.access.RsReferenceDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetReferenceNames;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,8 @@ import java.sql.ResultSet;
  * Created by Phil on 4/7/2016.
  */
 public class RsReferenceDaoImpl implements RsReferenceDao {
+
+    Logger LOGGER = LoggerFactory.getLogger(RsReferenceDao.class);
 
     @Autowired
     private StoredProcExec storedProcExec = null;

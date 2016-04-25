@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiidao.resultset.access;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
+
 import java.sql.ResultSet;
 
 /**
@@ -7,5 +9,5 @@ import java.sql.ResultSet;
  */
 public interface RsDisplayDao {
 
-	ResultSet getTableDisplayNames();
+	ResultSet getTableDisplayNames() throws GobiiDaoException;
 }

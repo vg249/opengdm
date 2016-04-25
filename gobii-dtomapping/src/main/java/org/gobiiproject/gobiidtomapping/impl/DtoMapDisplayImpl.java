@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsDisplayDao;
 import org.gobiiproject.gobiidtomapping.DtoMapDisplay;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
@@ -18,87 +19,90 @@ import java.util.List;
  */
 public class DtoMapDisplayImpl implements DtoMapDisplay {
 
-	Logger LOGGER = LoggerFactory.getLogger(DtoMapDisplayImpl.class);
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapDisplayImpl.class);
 
 
-	@Autowired
-	private RsDisplayDao rsDisplayDao = null;
+    @Autowired
+    private RsDisplayDao rsDisplayDao = null;
 
-	@Override
-	public DisplayDTO getDisplayNames(DisplayDTO displayDTO) {
+    @Override
+    public DisplayDTO getDisplayNames(DisplayDTO displayDTO) {
 
-		DisplayDTO returnVal = new DisplayDTO();
+        DisplayDTO returnVal = new DisplayDTO();
 
-		try {
+        try {
 
-			String tableName = "";
-			List<TableColDisplay> colDisplay = new ArrayList<TableColDisplay>();
-			ResultSet resultSet = rsDisplayDao.getTableDisplayNames();
+            String tableName = "";
+            List<TableColDisplay> colDisplay = new ArrayList<TableColDisplay>();
+            ResultSet resultSet = rsDisplayDao.getTableDisplayNames();
 
-			while (resultSet.next()) {
+            while (resultSet.next()) {
 
-				String newTableName = resultSet.getString("table_name");
+                String newTableName = resultSet.getString("table_name");
 
-				if(tableName.equals("")){ //if first table name from query
-					tableName = newTableName; //set table name if first table name frm query
-				}else if(!tableName.equals(newTableName)){ //if new name
-					returnVal.getTableNamesWithColDisplay().put(tableName, colDisplay); 
-					colDisplay = new ArrayList<TableColDisplay>();
-					tableName = newTableName;
-				}
-			
-				TableColDisplay tableColDisplay = new TableColDisplay();
-				tableColDisplay.setColumnName(resultSet.getString("column_name"));
-				tableColDisplay.setDisplayName(resultSet.getString("display_name"));
-				colDisplay.add(tableColDisplay);
-			}
+                if (tableName.equals("")) { //if first table name from query
+                    tableName = newTableName; //set table name if first table name frm query
+                } else if (!tableName.equals(newTableName)) { //if new name
+                    returnVal.getTableNamesWithColDisplay().put(tableName, colDisplay);
+                    colDisplay = new ArrayList<TableColDisplay>();
+                    tableName = newTableName;
+                }
 
-			//            returnVal.setTableName(displayDTO.);
+                TableColDisplay tableColDisplay = new TableColDisplay();
+                tableColDisplay.setColumnName(resultSet.getString("column_name"));
+                tableColDisplay.setDisplayName(resultSet.getString("display_name"));
+                colDisplay.add(tableColDisplay);
+            }
 
-		} catch (SQLException e) {
-			returnVal.getDtoHeaderResponse().addException(e);
-			LOGGER.error(e.getMessage());
-		}
+            //            returnVal.setTableName(displayDTO.);
 
-		return returnVal;
-	}
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
 
 
-	//
-	//    private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
-	//
-	//        NameIdListDTO returnVal = new NameIdListDTO();
-	//
-	//        try {
-	//
-	//            ResultSet contactList = rsContact.getContactNamesForRoleName(nameIdListDTO.getFilter());
-	//
-	//            Map<String, String> contactNamesById = new HashMap<>();
-	//            while (contactList.next()) {
-	//
-	//                Integer contactId = contactList.getInt("contact_id");
-	//                String lastName = contactList.getString("lastname");
-	//                String firstName = contactList.getString("firstname");
-	//                String name = lastName + ", " + firstName;
-	//                contactNamesById.put(contactId.toString(), name);
-	//
-	//            }
-	//
-	//            returnVal.setNamesById(contactNamesById);
-	//
-	//        } catch (SQLException e) {
-	//            returnVal.getDtoHeaderResponse().addException(e);
-	//            LOGGER.error(e.getMessage());
-	//        } catch (GobiiDaoException e) {
-	//            returnVal.getDtoHeaderResponse().addException(e);
-	//            LOGGER.error(e.getMessage());
-	//        }
-	//
-	//
-	//        return (returnVal);
-	//
-	//    } // getNameIdListForContacts()
-	//
-	//
+    //
+    //    private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
+    //
+    //        NameIdListDTO returnVal = new NameIdListDTO();
+    //
+    //        try {
+    //
+    //            ResultSet contactList = rsContact.getContactNamesForRoleName(nameIdListDTO.getFilter());
+    //
+    //            Map<String, String> contactNamesById = new HashMap<>();
+    //            while (contactList.next()) {
+    //
+    //                Integer contactId = contactList.getInt("contact_id");
+    //                String lastName = contactList.getString("lastname");
+    //                String firstName = contactList.getString("firstname");
+    //                String name = lastName + ", " + firstName;
+    //                contactNamesById.put(contactId.toString(), name);
+    //
+    //            }
+    //
+    //            returnVal.setNamesById(contactNamesById);
+    //
+    //        } catch (SQLException e) {
+    //            returnVal.getDtoHeaderResponse().addException(e);
+    //            LOGGER.error(e.getMessage());
+    //        } catch (GobiiDaoException e) {
+    //            returnVal.getDtoHeaderResponse().addException(e);
+    //            LOGGER.error(e.getMessage());
+    //        }
+    //
+    //
+    //        return (returnVal);
+    //
+    //    } // getNameIdListForContacts()
+    //
+    //
 
 } // DtoMapNameIdListImpl

@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
@@ -56,7 +57,11 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
                 returnVal.setProjectId(projectId);
                 
             }
-        } catch (SQLException e) {
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+        catch (SQLException e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
         }

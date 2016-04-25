@@ -4,6 +4,8 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsManifestDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetManifestNames;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,8 @@ import java.sql.ResultSet;
  */
 public class RsManifestDaoImpl implements RsManifestDao {
 
+    Logger LOGGER = LoggerFactory.getLogger(RsManifestDaoImpl.class);
+
     @Autowired
     private StoredProcExec storedProcExec = null;
 
@@ -24,49 +28,21 @@ public class RsManifestDaoImpl implements RsManifestDao {
 
         ResultSet returnVal = null;
 
-        SpGetManifestNames spGetManifestNames = new SpGetManifestNames();
-        storedProcExec.doWithConnection(spGetManifestNames);
-        returnVal = spGetManifestNames.getResultSet();
+        try {
+
+            SpGetManifestNames spGetManifestNames = new SpGetManifestNames();
+            storedProcExec.doWithConnection(spGetManifestNames);
+            returnVal = spGetManifestNames.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving manifest names", e);
+            throw (new GobiiDaoException(e));
+
+        }
 
         return returnVal;
 
     }
 
-
-//    @Transactional(propagation = Propagation.REQUIRED)
-//    @Override
-//    public ResultSet getContactNamesForRoleName(String roleName) throws GobiiDaoException {
-//
-//        ResultSet returnVal = null;
-//
-//
-//        Map<String, Object> parameters = new HashMap<>();
-//        parameters.put("roleName", roleName);
-//        SpGetContactNamesByRoleName spGetContactNamesByRoleName = new SpGetContactNamesByRoleName(parameters);
-//
-//        storedProcExec.doWithConnection(spGetContactNamesByRoleName);
-//
-//        returnVal = spGetContactNamesByRoleName.getResultSet();
-//
-//        return returnVal;
-//
-//    } // getContactNamesForRoleName
-//
-//    @Transactional(propagation = Propagation.REQUIRED)
-//    @Override
-//    public ResultSet getContactsForRoleName(String roleName) throws GobiiDaoException {
-//
-//        ResultSet returnVal = null;
-//
-//
-//        Map<String, Object> parameters = new HashMap<>();
-//        parameters.put("roleName", roleName);
-//        SpGetContactsByRoleName spGetContactsByRoleName = new SpGetContactsByRoleName(parameters);
-//
-//        storedProcExec.doWithConnection(spGetContactsByRoleName);
-//
-//        returnVal = spGetContactsByRoleName.getResultSet();
-//
-//        return returnVal;
-//    }
 }

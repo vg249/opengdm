@@ -13,6 +13,6 @@ public interface RsExperimentDao {
 
     ResultSet getExperimentNamesByProjectId(Integer experimentId) throws GobiiDaoException;
 
-	ResultSet getExperimentDetailsForExperimentId(int experimentId);
+	ResultSet getExperimentDetailsForExperimentId(int experimentId) throws GobiiDaoException;
 
 }

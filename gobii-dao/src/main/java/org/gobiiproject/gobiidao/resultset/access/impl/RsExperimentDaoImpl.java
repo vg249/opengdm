@@ -5,6 +5,8 @@ import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentDetailsByExperimentId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNamesByProjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,41 +20,59 @@ import java.util.Map;
  */
 public class RsExperimentDaoImpl implements RsExperimentDao {
 
+
+    Logger LOGGER = LoggerFactory.getLogger(RsExperimentDao.class);
+
     @Autowired
     private StoredProcExec storedProcExec = null;
 
     @Transactional(propagation = Propagation.REQUIRED)
-	@Override
-	public ResultSet getExperimentNamesByProjectId(Integer projectId) throws GobiiDaoException {
+    @Override
+    public ResultSet getExperimentNamesByProjectId(Integer projectId) throws GobiiDaoException {
 
-      ResultSet returnVal = null;
-      Map<String, Object> parameters = new HashMap<>();
-      parameters.put("projectId", projectId);
-      SpGetExperimentNamesByProjectId spGetExperimentNamesByProjectId = new SpGetExperimentNamesByProjectId(parameters);
+        ResultSet returnVal = null;
 
-      storedProcExec.doWithConnection(spGetExperimentNamesByProjectId);
+        try {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("projectId", projectId);
+            SpGetExperimentNamesByProjectId spGetExperimentNamesByProjectId = new SpGetExperimentNamesByProjectId(parameters);
 
-      returnVal = spGetExperimentNamesByProjectId.getResultSet();
+            storedProcExec.doWithConnection(spGetExperimentNamesByProjectId);
+
+            returnVal = spGetExperimentNamesByProjectId.getResultSet();
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving experiment names", e);
+            throw (new GobiiDaoException(e));
+
+        }
 
 
-      return returnVal;
-	}
+        return returnVal;
+    }
 
 
     @Transactional(propagation = Propagation.REQUIRED)
-	@Override
-	public ResultSet getExperimentDetailsForExperimentId(int experimentId) {
-		// TODO Auto-generated method stub
-		 ResultSet returnVal = null;
+    @Override
+    public ResultSet getExperimentDetailsForExperimentId(int experimentId) throws GobiiDaoException {
 
-	        Map<String, Object> parameters = new HashMap<>();
-	        parameters.put("experimentId", experimentId);
-	        SpGetExperimentDetailsByExperimentId spGetExperimentDetailsByExperimentId = new SpGetExperimentDetailsByExperimentId(parameters);
-	        storedProcExec.doWithConnection(spGetExperimentDetailsByExperimentId);
-	        returnVal = spGetExperimentDetailsByExperimentId.getResultSet();
+        ResultSet returnVal = null;
 
-	        return returnVal;
-	}
+        try {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("experimentId", experimentId);
+            SpGetExperimentDetailsByExperimentId spGetExperimentDetailsByExperimentId = new SpGetExperimentDetailsByExperimentId(parameters);
+            storedProcExec.doWithConnection(spGetExperimentDetailsByExperimentId);
+            returnVal = spGetExperimentDetailsByExperimentId.getResultSet();
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving experiment details", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+    }
 
 
 } // RsProjectDaoImpl
