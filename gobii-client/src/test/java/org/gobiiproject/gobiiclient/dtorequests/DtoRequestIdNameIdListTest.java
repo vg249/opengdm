@@ -77,8 +77,22 @@ public class DtoRequestIdNameIdListTest {
     } // testGetMarkers()
     
     @Test
-    public void testGetManifestNames() throws Exception {
+    public void testGetMapNames() throws Exception {
 
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("map");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+    } // testGetMarkers()
+    
+    @Test
+    public void testGetManifestNames() throws Exception {
 
         // Assumes rice data with seed script is loaded
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();

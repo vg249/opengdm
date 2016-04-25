@@ -27,19 +27,26 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     private RsContactDao rsContactDao = null;
 
     @Autowired
-    private RsProjectDao rsProjectDao = null;
-
-    @Autowired
-    private RsPlatformDao rsPlatformDao = null;
-
+    private RsDataSetDao rsDataSetDao = null;
+    
     @Autowired
     private RsExperimentDao rsExperimentDao = null;
 
     @Autowired
     private RsManifestDao rsManifestDao = null;
+    
+    @Autowired
+    private RsMapDao rsMapDao = null;
 
     @Autowired
-    private RsDataSetDao rsDataSetDao = null;
+    private RsPlatformDao rsPlatformDao = null;
+    
+    @Autowired
+    private RsProjectDao rsProjectDao = null;
+
+
+
+
 
     private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -132,7 +139,37 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         return returnVal;
     }//getNameIdListForManifest
+    
+    private NameIdListDTO getNameIdListForMap(NameIdListDTO nameIdListDTO) {
 
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsMapDao.getMapNames();
+            Map<String, String> mapNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer mapId = resultSet.getInt("map_id");
+                String mapName = resultSet.getString("name");
+                mapNamesById.put(mapId.toString(), mapName);
+            }
+
+
+            returnVal.setNamesById(mapNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }//getNameIdListForMap
+    
     private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -246,6 +283,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     returnVal = getNameIdListForManifest(nameIdListDTO);
                     break;
 
+                case "map":
+                    returnVal = getNameIdListForMap(nameIdListDTO);
+                    break;
+                    
                 case "experiment":
                     returnVal = getNameIdListForExperiment(nameIdListDTO);
                     break;

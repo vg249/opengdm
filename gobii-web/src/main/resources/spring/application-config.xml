@@ -95,6 +95,14 @@
     <bean id="dtoMapManifest" class="org.gobiiproject.gobiidtomapping.impl.DtoMapManifestImpl"/>
     <bean id="ManifestService" class="org.gobiiproject.gobidomain.services.impl.ManifestServiceImpl"/>
     -->
+    
+    <!-- **** Map Beans  ***************************************-->
+    <bean id="rsMapDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapDaoImpl"/>
+    
+    <!-- 
+    <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/>
+    <bean id="MapService" class="org.gobiiproject.gobidomain.services.impl.MapServiceImpl"/>
+    -->
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
     <!-- Hibernate/JDBC connection properties -->
