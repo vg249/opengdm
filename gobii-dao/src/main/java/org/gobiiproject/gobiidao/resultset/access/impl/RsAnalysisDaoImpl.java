@@ -6,6 +6,8 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisDetailsByAnalysisId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,30 +21,44 @@ import java.util.Map;
  */
 public class RsAnalysisDaoImpl implements RsAnalysisDao {
 
+
+    Logger LOGGER = LoggerFactory.getLogger(RsAnalysisDaoImpl.class);
+
     @Autowired
     private StoredProcExec storedProcExec = null;
 
 
+    @Transactional
     @Override
     public ResultSet getAnalysisDetailsByAnalysisId(Integer analysisId) throws GobiiDaoException {
 
         ResultSet returnVal = null;
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("analysisId", analysisId);
-        SpGetAnalysisDetailsByAnalysisId spGetDatasetDetailsByExperimentId = new SpGetAnalysisDetailsByAnalysisId(parameters);
+        try {
 
-        storedProcExec.doWithConnection(spGetDatasetDetailsByExperimentId);
 
-        returnVal = spGetDatasetDetailsByExperimentId.getResultSet();
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("analysisId", analysisId);
+            SpGetAnalysisDetailsByAnalysisId spGetDatasetDetailsByExperimentId = new SpGetAnalysisDetailsByAnalysisId(parameters);
+
+            storedProcExec.doWithConnection(spGetDatasetDetailsByExperimentId);
+
+            returnVal = spGetDatasetDetailsByExperimentId.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving analysis details", e);
+            throw (new GobiiDaoException(e));
+
+        }
 
         return returnVal;
 
     } // getAnalysisDetailsByAnalysisId()
 
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public ResultSet getAnalysisNames() {
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ResultSet getAnalysisNames() {
 
         ResultSet returnVal = null;
 
