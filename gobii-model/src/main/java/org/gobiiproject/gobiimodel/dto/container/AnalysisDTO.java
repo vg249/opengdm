@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
 import java.util.Date;
@@ -11,10 +12,10 @@ import java.util.List;
  */
 public class AnalysisDTO extends DtoMetaData {
 
-    private int analysisId;
+    private Integer analysisId;
     private String analysisName;
     private String analysisDescription;
-    private int anlaysisTypeId;
+    private Integer anlaysisTypeId;
     private String program;
     private String programVersion;
     private String algorithm;
@@ -23,15 +24,16 @@ public class AnalysisDTO extends DtoMetaData {
     private String sourceUri;
     private Integer referenceId;
     private Date timeExecuted;
-    private int status;
+    private Integer status;
     private List<EntityPropertyDTO> parameters;
 
     @GobiiEntityParam(paramName="analysisId")
-    public int getAnalysisId() {
+    public Integer getAnalysisId() {
         return analysisId;
     }
 
-    public void setAnalysisId(int analysisId) {
+    @GobiiEntityColumn(columnName = "analysis_id")
+    public void setAnalysisId(Integer analysisId) {
         this.analysisId = analysisId;
     }
 
@@ -40,6 +42,7 @@ public class AnalysisDTO extends DtoMetaData {
         return analysisName;
     }
 
+    @GobiiEntityColumn(columnName = "name")
     public void setAnalysisName(String analysisName) {
         this.analysisName = analysisName;
     }
@@ -49,16 +52,18 @@ public class AnalysisDTO extends DtoMetaData {
         return analysisDescription;
     }
 
+    @GobiiEntityColumn(columnName = "description")
     public void setAnalysisDescription(String analysisDescription) {
         this.analysisDescription = analysisDescription;
     }
 
     @GobiiEntityParam(paramName="analysisTypeId")
-    public int getAnlaysisTypeId() {
+    public Integer getAnlaysisTypeId() {
         return anlaysisTypeId;
     }
 
-    public void setAnlaysisTypeId(int anlaysisTypeId) {
+    @GobiiEntityColumn(columnName = "type_id")
+    public void setAnlaysisTypeId(Integer anlaysisTypeId) {
         this.anlaysisTypeId = anlaysisTypeId;
     }
 
@@ -67,6 +72,7 @@ public class AnalysisDTO extends DtoMetaData {
         return program;
     }
 
+    @GobiiEntityColumn(columnName = "program")
     public void setProgram(String program) {
         this.program = program;
     }
@@ -76,6 +82,7 @@ public class AnalysisDTO extends DtoMetaData {
         return programVersion;
     }
 
+    @GobiiEntityColumn(columnName = "programversion")
     public void setProgramVersion(String programVersion) {
         this.programVersion = programVersion;
     }
@@ -85,6 +92,7 @@ public class AnalysisDTO extends DtoMetaData {
         return algorithm;
     }
 
+    @GobiiEntityColumn(columnName = "algorithm")
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
     }
@@ -94,6 +102,7 @@ public class AnalysisDTO extends DtoMetaData {
         return sourceName;
     }
 
+    @GobiiEntityColumn(columnName = "sourcename")
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
     }
@@ -103,6 +112,7 @@ public class AnalysisDTO extends DtoMetaData {
         return sourceVersion;
     }
 
+    @GobiiEntityColumn(columnName = "sourceversion")
     public void setSourceVersion(String sourceVersion) {
         this.sourceVersion = sourceVersion;
     }
@@ -112,6 +122,7 @@ public class AnalysisDTO extends DtoMetaData {
         return sourceUri;
     }
 
+    @GobiiEntityColumn(columnName = "sourceuri")
     public void setSourceUri(String sourceUri) {
         this.sourceUri = sourceUri;
     }
@@ -121,6 +132,7 @@ public class AnalysisDTO extends DtoMetaData {
         return referenceId;
     }
 
+    @GobiiEntityColumn(columnName = "reference_id")
     public void setReferenceId(Integer referenceId) {
         this.referenceId = referenceId;
     }
@@ -130,16 +142,18 @@ public class AnalysisDTO extends DtoMetaData {
         return timeExecuted;
     }
 
+    @GobiiEntityColumn(columnName = "timeexecuted")
     public void setTimeExecuted(Date timeExecuted) {
         this.timeExecuted = timeExecuted;
     }
 
     @GobiiEntityParam(paramName="status")
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    @GobiiEntityColumn(columnName = "status")
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

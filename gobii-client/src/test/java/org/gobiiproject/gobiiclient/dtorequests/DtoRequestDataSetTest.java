@@ -23,7 +23,7 @@ public class DtoRequestDataSetTest {
 
         DtoRequestDataSet dtoRequestDataSet = new DtoRequestDataSet();
         DataSetDTO dataSetDTORequest = new DataSetDTO();
-        dataSetDTORequest.setDatasetId(1);
+        dataSetDTORequest.setDatasetId(2);
         DataSetDTO dataSetDTOResponse = dtoRequestDataSet.getDataSetDetails(dataSetDTORequest);
 
         Assert.assertNotEquals(null, dataSetDTOResponse);
