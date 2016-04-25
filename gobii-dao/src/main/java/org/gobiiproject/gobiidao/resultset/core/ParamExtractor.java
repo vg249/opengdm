@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidao.resultset.core;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.dto.annotations.StoredProcParamVal;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
 import javax.persistence.StoredProcedureParameter;
 import java.lang.annotation.Annotation;
@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Created by Phil on 4/18/2016.
  */
-public class ParamUtils {
+public class ParamExtractor {
 
     public static Map<String, Object> makeParamVals(Object dtoInstance) throws GobiiDaoException {
 
@@ -23,10 +23,10 @@ public class ParamUtils {
         try {
             for (Method currentMethod : dtoInstance.getClass().getDeclaredMethods()) {
 
-                StoredProcParamVal storedProcParamVal = currentMethod.getAnnotation(StoredProcParamVal.class);
-                if (null != storedProcParamVal) {
+                GobiiEntityParam gobiiEntityParam = currentMethod.getAnnotation(GobiiEntityParam.class);
+                if (null != gobiiEntityParam) {
 
-                    String paramName = storedProcParamVal.paramName();
+                    String paramName = gobiiEntityParam.paramName();
                     Object paramVal = currentMethod.invoke(dtoInstance);
                     returnVal.put(paramName, paramVal);
 
@@ -43,22 +43,5 @@ public class ParamUtils {
 
     } // makeParamVals()
 
-
-    private static Annotation getTargetAnnotation(Field field) {
-        Annotation returnVal = null;
-
-        Annotation[] annotations = field.getDeclaredAnnotations();
-        for (int idx = 0; idx < annotations.length && null == returnVal; idx++) {
-
-            Annotation currentAnotation = annotations[idx];
-
-            if (currentAnotation instanceof StoredProcedureParameter) {
-                returnVal = currentAnotation;
-            }
-        }
-
-        return returnVal;
-    }
-
-} // ParamUtils
+} // ParamExtractor
 

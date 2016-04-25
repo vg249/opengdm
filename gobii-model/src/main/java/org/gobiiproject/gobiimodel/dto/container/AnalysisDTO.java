@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.annotations.StoredProcParamVal;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
 import java.util.Date;
 import java.util.List;
@@ -26,7 +26,7 @@ public class AnalysisDTO extends DtoMetaData {
     private int status;
     private List<EntityPropertyDTO> parameters;
 
-    @StoredProcParamVal(paramName="analysisId")
+    @GobiiEntityParam(paramName="analysisId")
     public int getAnalysisId() {
         return analysisId;
     }
@@ -35,7 +35,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.analysisId = analysisId;
     }
 
-    @StoredProcParamVal(paramName="analysisName")
+    @GobiiEntityParam(paramName="analysisName")
     public String getAnalysisName() {
         return analysisName;
     }
@@ -44,7 +44,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.analysisName = analysisName;
     }
 
-    @StoredProcParamVal(paramName="analysisDescription")
+    @GobiiEntityParam(paramName="analysisDescription")
     public String getAnalysisDescription() {
         return analysisDescription;
     }
@@ -53,7 +53,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.analysisDescription = analysisDescription;
     }
 
-    @StoredProcParamVal(paramName="analysisTypeId")
+    @GobiiEntityParam(paramName="analysisTypeId")
     public int getAnlaysisTypeId() {
         return anlaysisTypeId;
     }
@@ -62,7 +62,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.anlaysisTypeId = anlaysisTypeId;
     }
 
-    @StoredProcParamVal(paramName="program")
+    @GobiiEntityParam(paramName="program")
     public String getProgram() {
         return program;
     }
@@ -71,7 +71,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.program = program;
     }
 
-    @StoredProcParamVal(paramName="programVersion")
+    @GobiiEntityParam(paramName="programVersion")
     public String getProgramVersion() {
         return programVersion;
     }
@@ -80,7 +80,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.programVersion = programVersion;
     }
 
-    @StoredProcParamVal(paramName="algorithm")
+    @GobiiEntityParam(paramName="algorithm")
     public String getAlgorithm() {
         return algorithm;
     }
@@ -89,7 +89,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.algorithm = algorithm;
     }
 
-    @StoredProcParamVal(paramName="sourceName")
+    @GobiiEntityParam(paramName="sourceName")
     public String getSourceName() {
         return sourceName;
     }
@@ -98,7 +98,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.sourceName = sourceName;
     }
 
-    @StoredProcParamVal(paramName="sourceVersion")
+    @GobiiEntityParam(paramName="sourceVersion")
     public String getSourceVersion() {
         return sourceVersion;
     }
@@ -107,7 +107,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.sourceVersion = sourceVersion;
     }
 
-    @StoredProcParamVal(paramName="sourceUri")
+    @GobiiEntityParam(paramName="sourceUri")
     public String getSourceUri() {
         return sourceUri;
     }
@@ -116,7 +116,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.sourceUri = sourceUri;
     }
 
-    @StoredProcParamVal(paramName="referenceId")
+    @GobiiEntityParam(paramName="referenceId")
     public Integer getReferenceId() {
         return referenceId;
     }
@@ -125,7 +125,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.referenceId = referenceId;
     }
 
-    @StoredProcParamVal(paramName="timeExecuted")
+    @GobiiEntityParam(paramName="timeExecuted")
     public Date getTimeExecuted() {
         return timeExecuted;
     }
@@ -134,7 +134,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.timeExecuted = timeExecuted;
     }
 
-    @StoredProcParamVal(paramName="status")
+    @GobiiEntityParam(paramName="status")
     public int getStatus() {
         return status;
     }

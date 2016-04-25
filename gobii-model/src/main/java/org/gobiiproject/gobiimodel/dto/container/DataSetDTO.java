@@ -1,7 +1,8 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.annotations.StoredProcParamVal;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,8 +13,9 @@ import java.util.List;
  */
 public class DataSetDTO extends DtoMetaData {
 
-    private int datasetId;
-    private int experimentId;
+    private Integer datasetId;
+    private Integer experimentId;
+    private Integer callingAnalysisId;
     private AnalysisDTO callingAnalysis;
     private String dataTable;
     private String dataFile;
@@ -29,25 +31,25 @@ public class DataSetDTO extends DtoMetaData {
     private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
 
-    @StoredProcParamVal(paramName = "datasetId")
-    public int getDatasetId() {
+    @GobiiEntityParam(paramName = "datasetId")
+    public Integer getDatasetId() {
         return datasetId;
     }
 
-    public void setDatasetId(int datasetId) {
+    @GobiiEntityColumn(columnName = "dataset_id")
+    public void setDatasetId(Integer datasetId) {
         this.datasetId = datasetId;
     }
 
-    @StoredProcParamVal(paramName = "experimentId")
-    public int getExperimentId() {
+    @GobiiEntityParam(paramName = "experimentId")
+    public Integer getExperimentId() {
         return experimentId;
     }
 
-    public void setExperimentId(int experimentId) {
+    @GobiiEntityColumn(columnName = "experiment_id")
+    public void setExperimentId(Integer experimentId) {
         this.experimentId = experimentId;
     }
-
-    @StoredProcParamVal(paramName = "callAnalysisId")
 
     public AnalysisDTO getCallingAnalysis() {
         return callingAnalysis;
@@ -56,93 +58,114 @@ public class DataSetDTO extends DtoMetaData {
         this.callingAnalysis = callingAnalysis;
     }
 
-    @StoredProcParamVal(paramName = "dataTable")
+    @GobiiEntityParam(paramName = "callinganalysis_id")
+    public Integer getCallingAnalysisId() {
+        return callingAnalysisId;
+    }
+
+    @GobiiEntityColumn(columnName = "callinganalysis_id")
+    public void setCallingAnalysisId(Integer callingAnalysisId) {
+        this.callingAnalysisId = callingAnalysisId;
+    }
+
+
+    @GobiiEntityParam(paramName = "dataTable")
     public String getDataTable() {
         return dataTable;
     }
 
+    @GobiiEntityColumn(columnName = "data_table")
     public void setDataTable(String dataTable) {
         this.dataTable = dataTable;
     }
 
-    @StoredProcParamVal(paramName = "dataFile")
+    @GobiiEntityParam(paramName = "dataFile")
     public String getDataFile() {
         return dataFile;
     }
 
+    @GobiiEntityColumn(columnName = "data_file")
     public void setDataFile(String dataFile) {
         this.dataFile = dataFile;
     }
 
-    @StoredProcParamVal(paramName = "qualityTable")
+    @GobiiEntityParam(paramName = "qualityTable")
     public String getQualityTable() {
         return qualityTable;
     }
 
+    @GobiiEntityColumn(columnName = "quality_table")
     public void setQualityTable(String qualityTable) {
         this.qualityTable = qualityTable;
     }
 
-    @StoredProcParamVal(paramName = "qualityFile")
+    @GobiiEntityParam(paramName = "qualityFile")
     public String getQualityFile() {
         return qualityFile;
     }
 
+    @GobiiEntityColumn(columnName = "quality_file")
     public void setQualityFile(String qualityFile) {
         this.qualityFile = qualityFile;
     }
 
-    @StoredProcParamVal(paramName = "createdBy")
+    @GobiiEntityParam(paramName = "createdBy")
     public String getCreatedBy() {
         return createdBy;
     }
 
+    @GobiiEntityColumn(columnName = "created_by")
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
-    @StoredProcParamVal(paramName = "createdDate")
+    @GobiiEntityParam(paramName = "createdDate")
     public Date getCreatedDate() {
         return createdDate;
     }
 
+    @GobiiEntityColumn(columnName = "created_date")
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
-    @StoredProcParamVal(paramName = "modifiedBy")
+    @GobiiEntityParam(paramName = "modifiedBy")
     public String getModifiedBy() {
         return modifiedBy;
     }
 
+    @GobiiEntityColumn(columnName = "modified_by")
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
 
-    @StoredProcParamVal(paramName = "modifiedDate")
+    @GobiiEntityParam(paramName = "modifiedDate")
     public Date getModifiedDate() {
         return modifiedDate;
     }
 
+    @GobiiEntityColumn(columnName = "modified_date")
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
 
-    @StoredProcParamVal(paramName = "status")
+    @GobiiEntityParam(paramName = "status")
     public Integer getStatus() {
         return status;
     }
 
+    @GobiiEntityColumn(columnName = "status")
     public void setStatus(Integer status) {
         this.status = status;
     }
 
 
-    @StoredProcParamVal(paramName = "datasetanalyses")
+    @GobiiEntityParam(paramName = "datasetanalyses")
     public List<Integer> getAnalysesIds() {
         return analysesIds;
     }
 
+    @GobiiEntityColumn(columnName = "analyses")
     public void setAnalysesIds(List<Integer> analysesIds) {
         this.analysesIds = analysesIds;
     }

@@ -42,24 +42,8 @@ public class SpGetDatasetDetailsByDataSetId implements Work {
                 "\tds.created_date,\n" +
                 "\tds.modified_by,\n" +
                 "\tds.modified_date,\n" +
-                "\tds.status,\n" +
-                "\ta.analysis_id,\n" +
-                "\ta.\"name\",\n" +
-                "\ta.\"name\",\n" +
-                "\ta.description,\n" +
-                "\ta.type_id,\n" +
-                "\ta.program,\n" +
-                "\ta.programversion,\n" +
-                "\ta.algorithm,\n" +
-                "\ta.sourcename,\n" +
-                "\ta.sourceversion,\n" +
-                "\ta.sourceuri,\n" +
-                "\ta.reference_id,\n" +
-                "\ta.status,\n" +
-                "\ta.\"name\",\n" +
-                "\ta.timeexecuted\n" +
-                "from dataset ds\n" +
-                "left outer join analysis a on (a.analysis_id=ds.callinganalysis_id) " +
+                "\tds.status \n" +
+                "from dataset ds \n" +
                 "where dataset_id=?";
 
         PreparedStatement preparedStatement = dbConnection.prepareCall(sql);

@@ -1,8 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.annotations.StoredProcParamVal;
-import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public class ProjectDTO extends DtoMetaData {
     private Date modifiedDate;
     private Integer projectStatus;
 
-    @StoredProcParamVal(paramName = "createdBy")
+    @GobiiEntityParam(paramName = "createdBy")
     public Integer getCreatedBy() {
         return createdBy;
     }
@@ -43,7 +42,7 @@ public class ProjectDTO extends DtoMetaData {
         this.createdBy = createdBy;
     }
 
-    @StoredProcParamVal(paramName = "createdDate")
+    @GobiiEntityParam(paramName = "createdDate")
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -52,7 +51,7 @@ public class ProjectDTO extends DtoMetaData {
     }
 
 
-    @StoredProcParamVal(paramName = "modifiedBy")
+    @GobiiEntityParam(paramName = "modifiedBy")
     public Integer getModifiedBy() {
         return modifiedBy;
     }
@@ -60,7 +59,7 @@ public class ProjectDTO extends DtoMetaData {
         this.modifiedBy = modifiedBy;
     }
 
-    @StoredProcParamVal(paramName = "modifiedDate")
+    @GobiiEntityParam(paramName = "modifiedDate")
     public Date getModifiedDate() {
         return modifiedDate;
     }
@@ -68,7 +67,7 @@ public class ProjectDTO extends DtoMetaData {
         this.modifiedDate = modifiedDate;
     }
 
-    @StoredProcParamVal(paramName = "projectStatus")
+    @GobiiEntityParam(paramName = "projectStatus")
     public Integer getProjectStatus() {
         return projectStatus;
     }
@@ -76,7 +75,7 @@ public class ProjectDTO extends DtoMetaData {
         this.projectStatus = projectStatus;
     }
 
-    @StoredProcParamVal(paramName = "projectId")
+    @GobiiEntityParam(paramName = "projectId")
     public int getProjectId() {
         return projectId;
     }
@@ -84,7 +83,7 @@ public class ProjectDTO extends DtoMetaData {
         this.projectId = projectId;
     }
 
-    @StoredProcParamVal(paramName = "projectName")
+    @GobiiEntityParam(paramName = "projectName")
     public String getProjectName() {
         return projectName;
     }
@@ -92,7 +91,7 @@ public class ProjectDTO extends DtoMetaData {
         this.projectName = projectName;
     }
 
-    @StoredProcParamVal(paramName = "projectCode")
+    @GobiiEntityParam(paramName = "projectCode")
     public String getProjectCode() {
         return projectCode;
     }
@@ -100,7 +99,7 @@ public class ProjectDTO extends DtoMetaData {
         this.projectCode = projectCode;
     }
 
-    @StoredProcParamVal(paramName = "projectDescription")
+    @GobiiEntityParam(paramName = "projectDescription")
     public String getProjectDescription() {
         return projectDescription;
     }
@@ -108,7 +107,7 @@ public class ProjectDTO extends DtoMetaData {
         this.projectDescription = projectDescription;
     }
 
-    @StoredProcParamVal(paramName = "piContact")
+    @GobiiEntityParam(paramName = "piContact")
     public int getPiContact() {
         return piContact;
     }

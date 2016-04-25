@@ -2,7 +2,7 @@ package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
-import org.gobiiproject.gobiidao.resultset.core.ParamUtils;
+import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
@@ -94,7 +94,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         try {
 
-            Map<String, Object> parameters = ParamUtils.makeParamVals(projectDTO);
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(projectDTO);
 
             Integer projectId = rsProjectDao.createProject(parameters);
             returnVal.setProjectId(projectId);
