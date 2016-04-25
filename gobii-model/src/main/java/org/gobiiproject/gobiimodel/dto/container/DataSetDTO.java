@@ -24,6 +24,8 @@ public class DataSetDTO extends DtoMetaData {
     private String modifiedBy;
     private Date modifiedDate;
     private Integer status;
+    private List<Integer> analysesIds = new ArrayList<>();
+
     private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
 
@@ -134,6 +136,18 @@ public class DataSetDTO extends DtoMetaData {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+
+    @StoredProcParamVal(paramName = "datasetanalyses")
+    public List<Integer> getAnalysesIds() {
+        return analysesIds;
+    }
+
+    public void setAnalysesIds(List<Integer> analysesIds) {
+        this.analysesIds = analysesIds;
+    }
+
+
 
     public List<AnalysisDTO> getAnalyses() {
         return analyses;

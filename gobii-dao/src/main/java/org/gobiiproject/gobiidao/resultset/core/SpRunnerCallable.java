@@ -154,7 +154,17 @@ public class SpRunnerCallable implements Work {
                     } else {
                         callableStatement.setNull(currentParamIndex, Types.DATE);
                     }
+                } else if (currentParamType.equals(List.class)) {
+                    if (null != currentParamValue) {
 
+                        List<Integer> list = (List<Integer>) currentParamValue;
+                        Integer[] intArray = new Integer[list.size()];
+                        intArray = list.toArray(intArray);
+                        Array sqlArray = connection.createArrayOf("integer", intArray);
+                        callableStatement.setArray(currentParamIndex, sqlArray);
+                    } else {
+                        callableStatement.setNull(currentParamIndex, Types.ARRAY);
+                    }
                 } else {
                     throw new SQLException("Unsupported param type: " + Type.class.toString());
                 }
