@@ -85,7 +85,7 @@
     <!-- **** Project Beans  ***************************************-->
     <bean id="rsAnalysisDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsAnalysisDaoImpl"/>
     <bean id="dtoMapAnalysis" class="org.gobiiproject.gobiidtomapping.impl.DtoMapAnalysisImpl"/>
-    <!--<bean id="AnalysisService" class="org.gobiiproject.gobidomain.services.impl.AnalysisServiceImpl"/>-->
+    <bean id="AnalysisService" class="org.gobiiproject.gobidomain.services.impl.AnalysisServiceImpl"/>
 
 
     <!-- **** Manifest Beans  ***************************************-->
@@ -103,6 +103,15 @@
     <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/>
     <bean id="MapService" class="org.gobiiproject.gobidomain.services.impl.MapServiceImpl"/>
     -->
+    
+     <!-- **** Reference Beans  ***************************************-->
+    <bean id="rsReferenceDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsReferenceDaoImpl"/>
+    
+    <!-- 
+    <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/>
+    <bean id="MapService" class="org.gobiiproject.gobidomain.services.impl.MapServiceImpl"/>
+    -->
+    
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
     <!-- Hibernate/JDBC connection properties -->

@@ -36,6 +36,9 @@ public class LoadController {
     private ProjectService projectService = null;
     
     @Autowired
+    private AnalysisService analysisService = null;
+    
+    @Autowired
     private ExperimentService experimentService = null;
 
     @Autowired
@@ -178,5 +181,21 @@ public class LoadController {
 
     }
 
+    @RequestMapping(value = "/analysis", method = RequestMethod.POST)
+    @ResponseBody
+    public AnalysisDTO loadInstructions(@RequestBody AnalysisDTO analysisDTO) {
 
+        AnalysisDTO returnVal = new AnalysisDTO();
+
+        try {
+            returnVal = analysisService.getAnalysisDetails(analysisDTO);
+        } catch (AccessDeniedException e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return (returnVal);
+
+    }
 }// LoadController

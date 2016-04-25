@@ -9,4 +9,6 @@ import java.sql.ResultSet;
  */
 public interface RsAnalysisDao {
     ResultSet getAnalysisDetailsByAnalysisId(Integer analysisId) throws GobiiDaoException;
+
+	ResultSet getAnalysisNames();
 }

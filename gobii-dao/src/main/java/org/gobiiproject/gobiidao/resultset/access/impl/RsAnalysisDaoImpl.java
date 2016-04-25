@@ -4,7 +4,11 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisDetailsByAnalysisId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.util.HashMap;
@@ -35,5 +39,19 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
         return returnVal;
 
     } // getAnalysisDetailsByAnalysisId()
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public ResultSet getAnalysisNames() {
+
+        ResultSet returnVal = null;
+
+        SpGetAnalysisNames spGetAnalysisNames = new SpGetAnalysisNames();
+        storedProcExec.doWithConnection(spGetAnalysisNames);
+        returnVal = spGetAnalysisNames.getResultSet();
+
+        return returnVal;
+
+    }
 
 }

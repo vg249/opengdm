@@ -20,290 +20,355 @@ import java.util.Map;
  */
 public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdListImpl.class);
+	Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdListImpl.class);
 
 
-    @Autowired
-    private RsContactDao rsContactDao = null;
+	@Autowired
+	private RsAnalysisDao rsAnalysisDao = null;
 
-    @Autowired
-    private RsDataSetDao rsDataSetDao = null;
-    
-    @Autowired
-    private RsExperimentDao rsExperimentDao = null;
+	@Autowired
+	private RsContactDao rsContactDao = null;
 
-    @Autowired
-    private RsManifestDao rsManifestDao = null;
-    
-    @Autowired
-    private RsMapDao rsMapDao = null;
+	@Autowired
+	private RsProjectDao rsProjectDao = null;
 
-    @Autowired
-    private RsPlatformDao rsPlatformDao = null;
-    
-    @Autowired
-    private RsProjectDao rsProjectDao = null;
+	@Autowired
+	private RsPlatformDao rsPlatformDao = null;
 
+	@Autowired
+	private RsReferenceDao rsReferenceDao = null;
+	
+	@Autowired
+	private RsMapDao rsMapDao = null;
 
+	@Autowired
+	private RsExperimentDao rsExperimentDao = null;
 
+	@Autowired
+	private RsManifestDao rsManifestDao = null;
 
+	@Autowired
+	private RsDataSetDao rsDataSetDao = null;
+	
+	private NameIdListDTO getNameIdListForAnalysis(NameIdListDTO nameIdListDTO) {
 
-    private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
-        NameIdListDTO returnVal = new NameIdListDTO();
+		NameIdListDTO returnVal = new NameIdListDTO();
 
-        try {
+		try {
 
-            ResultSet contactList = rsContactDao.getContactNamesForRoleName(nameIdListDTO.getFilter());
+			ResultSet resultSet =rsAnalysisDao.getAnalysisNames();
+			Map<String, String> analysisNamesById = new HashMap<>();
+			while (resultSet.next()) {
 
-            Map<String, String> contactNamesById = new HashMap<>();
-            while (contactList.next()) {
+				Integer analysisId = resultSet.getInt("analysis_id");
+				String name = resultSet.getString("name");
+				analysisNamesById.put(analysisId.toString(), name);
+			}
 
-                Integer contactId = contactList.getInt("contact_id");
-                String lastName = contactList.getString("lastname");
-                String firstName = contactList.getString("firstname");
-                String name = lastName + ", " + firstName;
-                contactNamesById.put(contactId.toString(), name);
-            }
 
-            returnVal.setNamesById(contactNamesById);
+			returnVal.setNamesById(analysisNamesById);
 
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        }
 
+		} catch (SQLException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		}
 
-        return (returnVal);
+		return returnVal;
+	}
 
-    } // getNameIdListForContacts()
 
-    private NameIdListDTO getNameIdListForPlatforms(NameIdListDTO nameIdListDTO) {
+	private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
+		NameIdListDTO returnVal = new NameIdListDTO();
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+		try {
 
-        try {
+			ResultSet contactList = rsContactDao.getContactNamesForRoleName(nameIdListDTO.getFilter());
 
-            ResultSet resultSet = rsPlatformDao.getPlatformNames();
-            Map<String, String> platformNamesById = new HashMap<>();
-            while (resultSet.next()) {
+			Map<String, String> contactNamesById = new HashMap<>();
+			while (contactList.next()) {
 
-                Integer platformId = resultSet.getInt("platform_id");
-                String platformName = resultSet.getString("name");
-                platformNamesById.put(platformId.toString(), platformName);
-            }
+				Integer contactId = contactList.getInt("contact_id");
+				String lastName = contactList.getString("lastname");
+				String firstName = contactList.getString("firstname");
+				String name = lastName + ", " + firstName;
+				contactNamesById.put(contactId.toString(), name);
+			}
 
+			returnVal.setNamesById(contactNamesById);
 
-            returnVal.setNamesById(platformNamesById);
+		} catch (SQLException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		} catch (GobiiDaoException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		}
 
 
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        }
+		return (returnVal);
 
-        return returnVal;
-    }
+	} // getNameIdListForContacts()
 
-    private NameIdListDTO getNameIdListForManifest(NameIdListDTO nameIdListDTO) {
+	private NameIdListDTO getNameIdListForPlatforms(NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+		NameIdListDTO returnVal = new NameIdListDTO();
 
-        try {
+		try {
 
-            ResultSet resultSet = rsManifestDao.getManifestNames();
-            Map<String, String> manifestNamesById = new HashMap<>();
-            while (resultSet.next()) {
+			ResultSet resultSet = rsPlatformDao.getPlatformNames();
+			Map<String, String> platformNamesById = new HashMap<>();
+			while (resultSet.next()) {
 
-                Integer manifestId = resultSet.getInt("manifest_id");
-                String manifestName = resultSet.getString("name");
-                manifestNamesById.put(manifestId.toString(), manifestName);
-            }
+				Integer platformId = resultSet.getInt("platform_id");
+				String platformName = resultSet.getString("name");
+				platformNamesById.put(platformId.toString(), platformName);
+			}
 
 
-            returnVal.setNamesById(manifestNamesById);
+			returnVal.setNamesById(platformNamesById);
 
 
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        }
+		} catch (SQLException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		} catch (GobiiDaoException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		}
 
-        return returnVal;
-    }//getNameIdListForManifest
-    
-    private NameIdListDTO getNameIdListForMap(NameIdListDTO nameIdListDTO) {
+		return returnVal;
+	}
+	
+	private NameIdListDTO getNameIdListForReference(NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+		NameIdListDTO returnVal = new NameIdListDTO();
 
-        try {
+		try {
 
-            ResultSet resultSet = rsMapDao.getMapNames();
-            Map<String, String> mapNamesById = new HashMap<>();
-            while (resultSet.next()) {
+			ResultSet resultSet = rsReferenceDao.getReferenceNames();
+			Map<String, String> referenceNamesById = new HashMap<>();
+			while (resultSet.next()) {
 
-                Integer mapId = resultSet.getInt("map_id");
-                String mapName = resultSet.getString("name");
-                mapNamesById.put(mapId.toString(), mapName);
-            }
+				Integer referenceId = resultSet.getInt("reference_id");
+				String referenceName = resultSet.getString("name");
+				referenceNamesById.put(referenceId.toString(), referenceName);
+			}
 
 
-            returnVal.setNamesById(mapNamesById);
+			returnVal.setNamesById(referenceNamesById);
 
 
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        }
+		} catch (SQLException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		} catch (GobiiDaoException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		}
 
-        return returnVal;
-    }//getNameIdListForMap
-    
-    private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
+		return returnVal;
+	}
+	
+	private NameIdListDTO getNameIdListForMap(NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+		NameIdListDTO returnVal = new NameIdListDTO();
 
-        try {
+		try {
 
-            ResultSet resultSet = rsProjectDao.getProjectNamesForContactId(Integer.parseInt(nameIdListDTO.getFilter()));
+			ResultSet resultSet = rsMapDao.getMapNames();
+			Map<String, String> mapNamesById = new HashMap<>();
+			while (resultSet.next()) {
 
-            Map<String, String> projectNameIdList = new HashMap<>();
+				Integer mapId = resultSet.getInt("map_id");
+				String mapName = resultSet.getString("name");
+				mapNamesById.put(mapId.toString(), mapName);
+			}
 
-            while (resultSet.next()) {
-                Integer projectId = resultSet.getInt("project_id");
-                String name = resultSet.getString("name").toString();
-                projectNameIdList.put(projectId.toString(), name);
-            }
+			returnVal.setNamesById(mapNamesById);
 
-            returnVal.setNamesById(projectNameIdList);
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        }
 
-        return returnVal;
+		} catch (SQLException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		} catch (GobiiDaoException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		}
 
-    } // getNameIdListForContacts()
+		return returnVal;
+	}
+	private NameIdListDTO getNameIdListForManifest(NameIdListDTO nameIdListDTO) {
 
-    private NameIdListDTO getNameIdListForExperiment(NameIdListDTO nameIdListDTO) {
+		NameIdListDTO returnVal = new NameIdListDTO();
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+		try {
 
-        try {
+			ResultSet resultSet = rsManifestDao.getManifestNames();
+			Map<String, String> manifestNamesById = new HashMap<>();
+			while (resultSet.next()) {
 
-            ResultSet resultSet = rsExperimentDao.getExperimentNamesByProjectId(Integer.parseInt(nameIdListDTO.getFilter()));
+				Integer manifestId = resultSet.getInt("manifest_id");
+				String manifestName = resultSet.getString("name");
+				manifestNamesById.put(manifestId.toString(), manifestName);
+			}
 
-            Map<String, String> experimentNameIdList = new HashMap<>();
 
-            while (resultSet.next()) {
-                Integer experimentId = resultSet.getInt("experiment_id");
-                String name = resultSet.getString("name").toString();
-                experimentNameIdList.put(experimentId.toString(), name);
-            }
+			returnVal.setNamesById(manifestNamesById);
 
-            returnVal.setNamesById(experimentNameIdList);
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        }
 
-        return returnVal;
+		} catch (SQLException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		} catch (GobiiDaoException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		}
 
-    } // getNameIdListForContacts()
+		return returnVal;
+	}//getNameIdListForManifest
 
-    private NameIdListDTO getNameIdListForDataSet(NameIdListDTO nameIdListDTO) {
+	private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+		NameIdListDTO returnVal = new NameIdListDTO();
 
-        try {
+		try {
 
-            ResultSet resultSet = rsDataSetDao.getDatasetFileNamesByExperimentId(Integer.parseInt(nameIdListDTO.getFilter()));
+			ResultSet resultSet = rsProjectDao.getProjectNamesForContactId(Integer.parseInt(nameIdListDTO.getFilter()));
 
-            Map<String, String> experimentNameIdList = new HashMap<>();
+			Map<String, String> projectNameIdList = new HashMap<>();
 
-            while (resultSet.next()) {
-                Integer dataSetId = resultSet.getInt("dataset_id");
-                String dataFileName = resultSet.getString("data_file").toString();
-                experimentNameIdList.put(dataSetId.toString(), dataFileName);
-            }
+			while (resultSet.next()) {
+				Integer projectId = resultSet.getInt("project_id");
+				String name = resultSet.getString("name").toString();
+				projectNameIdList.put(projectId.toString(), name);
+			}
 
-            returnVal.setNamesById(experimentNameIdList);
+			returnVal.setNamesById(projectNameIdList);
+		} catch (SQLException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		} catch (GobiiDaoException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		}
 
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        }
+		return returnVal;
 
-        return returnVal;
+	} // getNameIdListForContacts()
 
-    } // getNameIdListForDataSet()
+	private NameIdListDTO getNameIdListForExperiment(NameIdListDTO nameIdListDTO) {
 
-    @Override
-    public NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO) {
+		NameIdListDTO returnVal = new NameIdListDTO();
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+		try {
 
-        if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
+			ResultSet resultSet = rsExperimentDao.getExperimentNamesByProjectId(Integer.parseInt(nameIdListDTO.getFilter()));
 
-            switch (nameIdListDTO.getEntityName()) {
+			Map<String, String> experimentNameIdList = new HashMap<>();
 
-                case "contact":
-                    returnVal = getNameIdListForContacts(nameIdListDTO);
-                    break;
+			while (resultSet.next()) {
+				Integer experimentId = resultSet.getInt("experiment_id");
+				String name = resultSet.getString("name").toString();
+				experimentNameIdList.put(experimentId.toString(), name);
+			}
 
-                case "project":
-                    returnVal = getNameIdListForProjects(nameIdListDTO);
-                    break;
+			returnVal.setNamesById(experimentNameIdList);
+		} catch (SQLException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		} catch (GobiiDaoException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		}
 
-                case "platform":
-                    returnVal = getNameIdListForPlatforms(nameIdListDTO);
-                    break;
+		return returnVal;
 
-                case "manifest":
-                    returnVal = getNameIdListForManifest(nameIdListDTO);
-                    break;
+	} // getNameIdListForContacts()
 
-                case "map":
-                    returnVal = getNameIdListForMap(nameIdListDTO);
-                    break;
-                    
-                case "experiment":
-                    returnVal = getNameIdListForExperiment(nameIdListDTO);
-                    break;
+	private NameIdListDTO getNameIdListForDataSet(NameIdListDTO nameIdListDTO) {
 
-                case "dataset":
-                    returnVal = getNameIdListForDataSet(nameIdListDTO);
-                    break;
+		NameIdListDTO returnVal = new NameIdListDTO();
 
-                default:
-                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.Error,
-                            "Unsupported entity for list request: " + nameIdListDTO.getEntityName());
-            }
+		try {
 
-        }
+			ResultSet resultSet = rsDataSetDao.getDatasetFileNamesByExperimentId(Integer.parseInt(nameIdListDTO.getFilter()));
 
-        return returnVal;
+			Map<String, String> experimentNameIdList = new HashMap<>();
 
-    } // getNameIdList()
+			while (resultSet.next()) {
+				Integer dataSetId = resultSet.getInt("dataset_id");
+				String dataFileName = resultSet.getString("data_file").toString();
+				experimentNameIdList.put(dataSetId.toString(), dataFileName);
+			}
+
+			returnVal.setNamesById(experimentNameIdList);
+
+		} catch (SQLException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		} catch (GobiiDaoException e) {
+			returnVal.getDtoHeaderResponse().addException(e);
+			LOGGER.error(e.getMessage());
+		}
+
+		return returnVal;
+
+	} // getNameIdListForDataSet()
+
+	@Override
+	public NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO) {
+
+		NameIdListDTO returnVal = new NameIdListDTO();
+
+		if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
+
+			switch (nameIdListDTO.getEntityName()) {
+			case "analysis":
+				returnVal = getNameIdListForAnalysis(nameIdListDTO);
+				break;
+
+			case "contact":
+				returnVal = getNameIdListForContacts(nameIdListDTO);
+				break;
+
+			case "project":
+				returnVal = getNameIdListForProjects(nameIdListDTO);
+				break;
+
+			case "platform":
+				returnVal = getNameIdListForPlatforms(nameIdListDTO);
+				break;
+
+			case "manifest":
+				returnVal = getNameIdListForManifest(nameIdListDTO);
+				break;
+
+			case "map":
+				returnVal = getNameIdListForMap(nameIdListDTO);
+				break;
+
+			case "experiment":
+				returnVal = getNameIdListForExperiment(nameIdListDTO);
+				break;
+
+			case "dataset":
+				returnVal = getNameIdListForDataSet(nameIdListDTO);
+				break;
+
+			case "reference":
+				returnVal = getNameIdListForReference(nameIdListDTO);
+				break;
+				
+			default:
+				returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.Error,
+						"Unsupported entity for list request: " + nameIdListDTO.getEntityName());
+			}
+
+		}
+
+		return returnVal;
+
+	} // getNameIdList()
 
 } // DtoMapNameIdListImpl
