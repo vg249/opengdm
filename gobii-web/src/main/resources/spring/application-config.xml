@@ -97,7 +97,7 @@
     -->
     
     <!-- **** Map Beans  ***************************************-->
-    <bean id="rsMapDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapDaoImpl"/>
+    <bean id="rsMapDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapSetDaoImpl"/>
     
     <!-- 
     <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/>

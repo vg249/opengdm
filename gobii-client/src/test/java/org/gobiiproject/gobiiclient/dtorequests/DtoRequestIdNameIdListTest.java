@@ -7,6 +7,7 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 import java.util.Map.Entry;
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -104,7 +105,7 @@ public class DtoRequestIdNameIdListTest {
 
         
         Assert.assertNotEquals(null, nameIdListDtoResponse);
-        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
     } // testGetMarkers()
     

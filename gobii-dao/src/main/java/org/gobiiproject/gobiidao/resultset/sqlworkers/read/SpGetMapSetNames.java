@@ -11,11 +11,11 @@ import java.util.Map;
 /**
  * Created by Phil on 4/7/2016.
  */
-public class SpGetMapNames implements Work {
+public class SpGetMapSetNames implements Work {
 
     private Map<String, Object> parameters = null;
 
-    public SpGetMapNames() {
+    public SpGetMapSetNames() {
     }
 
 
@@ -28,7 +28,7 @@ public class SpGetMapNames implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select map_id, name from map";
+        String sql = "select mapset_id, name from mapset";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
 

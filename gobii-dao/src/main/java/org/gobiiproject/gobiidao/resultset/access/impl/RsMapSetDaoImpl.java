@@ -1,11 +1,9 @@
 package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.resultset.access.RsMapDao;
-import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
+import org.gobiiproject.gobiidao.resultset.access.RsMapSetDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMapNames;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMapSetNames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +13,7 @@ import java.sql.ResultSet;
 /**
  * Created by Phil on 4/7/2016.
  */
-public class RsMapDaoImpl implements RsMapDao {
+public class RsMapSetDaoImpl implements RsMapSetDao {
 
     @Autowired
     private StoredProcExec storedProcExec = null;
@@ -26,9 +24,9 @@ public class RsMapDaoImpl implements RsMapDao {
 
         ResultSet returnVal = null;
 
-        SpGetMapNames spGetMapNames = new SpGetMapNames();
-        storedProcExec.doWithConnection(spGetMapNames);
-        returnVal = spGetMapNames.getResultSet();
+        SpGetMapSetNames spGetMapSetNames = new SpGetMapSetNames();
+        storedProcExec.doWithConnection(spGetMapSetNames);
+        returnVal = spGetMapSetNames.getResultSet();
 
         return returnVal;
 

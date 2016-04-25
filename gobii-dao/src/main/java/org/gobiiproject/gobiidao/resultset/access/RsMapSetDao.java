@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 /**
  * Created by Phil on 4/7/2016.
  */
-public interface RsMapDao {
+public interface RsMapSetDao {
 
 
     ResultSet getMapNames() throws GobiiDaoException;
