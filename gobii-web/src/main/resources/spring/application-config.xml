@@ -120,7 +120,7 @@
     <!-- Hibernate/JDBC connection properties -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="url" value="jdbc:postgresql://localhost:5432/gobii_rice"/>
+        <property name="url" value="jdbc:postgresql://localhost:5432/flatmeta"/>
         <property name="username" value="appuser"/>
         <property name="password" value="appuser"/>
     </bean>
