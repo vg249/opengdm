@@ -7,7 +7,7 @@
          http://www.springframework.org/schema/security
 	     http:/www.springframework.org/schema/security/spring-security-3.2.xsd"
          id="WebApp_ID" version="2.5">
-    <display-name>advocacydb-web</display-name>
+    <display-name>gobii-web</display-name>
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
