@@ -39,7 +39,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     @Autowired
     private RsMapSetDao rsMapSetDao = null;
-
+    
+    @Autowired
+    private RsCvDao rsCvDao = null;
+    
     @Autowired
     private RsExperimentDao rsExperimentDao = null;
 
@@ -169,6 +172,34 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
     }
 
+    private NameIdListDTO getNameIdListForMapByTypeId(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsMapSetDao.getMapNamesByTypeId(Integer.parseInt(nameIdListDTO.getFilter()));
+            Map<String, String> mapNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer mapId = resultSet.getInt("map_id");
+                String mapName = resultSet.getString("name");
+                mapNamesById.put(mapId.toString(), mapName);
+            }
+
+            returnVal.setNamesById(mapNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
     private NameIdListDTO getNameIdListForMap(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -179,7 +210,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             Map<String, String> mapNamesById = new HashMap<>();
             while (resultSet.next()) {
 
-                Integer mapId = resultSet.getInt("mapset_id");
+                Integer mapId = resultSet.getInt("map_id");
                 String mapName = resultSet.getString("name");
                 mapNamesById.put(mapId.toString(), mapName);
             }
@@ -285,7 +316,64 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
 
     } // getNameIdListForContacts()
+    
+    private NameIdListDTO getNameIdListForCvGroups(NameIdListDTO nameIdListDTO) {
 
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsCvDao.getCvGroups();
+
+            Map<String, String> cvGroupTermList = new HashMap<>();
+
+            while (resultSet.next()) {
+                Integer cvId = resultSet.getInt("cv_id");
+                String name = resultSet.getString("lower").toString();
+                cvGroupTermList.put(cvId.toString(), name);
+            }
+
+            returnVal.setNamesById(cvGroupTermList);
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+
+    } // getNameIdListForCvTypes
+    
+    private NameIdListDTO getNameIdListForCvGroupTerms(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsCvDao.getCvTermsByGroup(nameIdListDTO.getFilter());
+
+            Map<String, String> cvGroupTermList = new HashMap<>();
+
+            while (resultSet.next()) {
+                Integer cvId = resultSet.getInt("cv_id");
+                String name = resultSet.getString("term").toString();
+                cvGroupTermList.put(cvId.toString(), name);
+            }
+
+            returnVal.setNamesById(cvGroupTermList);
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+
+    } // getNameIdListForCvGroupTerms()
     private NameIdListDTO getNameIdListForDataSet(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -349,18 +437,29 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     returnVal = getNameIdListForMap(nameIdListDTO);
                     break;
 
+                case "mapNameByTypeId":
+                    returnVal = getNameIdListForMapByTypeId(nameIdListDTO);
+                    break;
                 case "experiment":
                     returnVal = getNameIdListForExperiment(nameIdListDTO);
                     break;
-
+                    
+                case "cvgroupterms":
+                    returnVal = getNameIdListForCvGroupTerms(nameIdListDTO);
+                    break;
+                    
+                case "cvgroups":
+                    returnVal = getNameIdListForCvGroups(nameIdListDTO);
+                    break;
+                    
                 case "dataset":
                     returnVal = getNameIdListForDataSet(nameIdListDTO);
                     break;
-
+                    
                 case "reference":
                     returnVal = getNameIdListForReference(nameIdListDTO);
                     break;
-
+                
                 default:
                     returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.Error,
                             "Unsupported entity for list request: " + nameIdListDTO.getEntityName());

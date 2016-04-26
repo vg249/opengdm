@@ -112,6 +112,9 @@
     <bean id="MapService" class="org.gobiiproject.gobidomain.services.impl.MapServiceImpl"/>
     -->
     
+     <!-- **** CvTerms Beans  ***************************************-->
+    <bean id="rsCvDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvDaoImpl"/>
+    
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
     <!-- Hibernate/JDBC connection properties -->

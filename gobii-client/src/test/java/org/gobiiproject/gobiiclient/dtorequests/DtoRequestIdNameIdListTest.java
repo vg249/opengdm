@@ -60,6 +60,23 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
 
     }
+    
+    @Test
+    public void testGetCvTermsByGroup() throws Exception {
+
+
+        // Assumes rice data with seed script is loaded
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("cvgroupterms");
+        nameIdListDTORequest.setFilter("map_type");
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        Assert.assertNotEquals(null, nameIdListDTO);
+        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
+
+    }
     @Test
     public void testGetPlatformNames() throws Exception {
 
@@ -100,6 +117,37 @@ public class DtoRequestIdNameIdListTest {
         // Assumes rice data with seed script is loaded
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("map");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+    } // testGetMarkers()
+    
+    @Test
+    public void testGetCvTypes() throws Exception {
+
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("cvgroups");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+    } // testGetMarkers()
+    
+    @Test
+    public void testGetMapNamesByType() throws Exception {
+
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("mapNameByTypeId");
+        nameIdListDTORequest.setFilter("19");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
 

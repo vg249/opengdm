@@ -3,6 +3,8 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsMapSetDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetDatasetFileNamesByExperimentId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMapNamesByTypeId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMapSetNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +13,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Phil on 4/7/2016.
@@ -26,7 +30,6 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public ResultSet getMapNames() throws GobiiDaoException {
-
         ResultSet returnVal = null;
 
         try {
@@ -44,4 +47,30 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
         return returnVal;
 
     }
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public ResultSet getMapNamesByTypeId(int typeId) throws GobiiDaoException {
+		// TODO Auto-generated method stub
+
+        ResultSet returnVal = null;
+
+        try {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("typeId", typeId);
+            SpGetMapNamesByTypeId spGetMapNamesByTypeId = new SpGetMapNamesByTypeId(parameters);
+
+            storedProcExec.doWithConnection(spGetMapNamesByTypeId);
+
+            returnVal = spGetMapNamesByTypeId.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving map names", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+	}
 }
