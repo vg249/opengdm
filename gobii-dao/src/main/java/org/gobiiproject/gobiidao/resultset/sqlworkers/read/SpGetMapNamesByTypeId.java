@@ -9,15 +9,14 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * Created by Phil on 4/7/2016.
+ * Created by Angel on 4/19/2016.
  */
-public class SpGetMapSetNames implements Work {
+public class SpGetMapNamesByTypeId implements Work {
 
-    private Map<String, Object> parameters = null;
-
-    public SpGetMapSetNames() {
+    private Map<String,Object> parameters = null;
+    public SpGetMapNamesByTypeId(Map<String,Object> parameters ) {
+        this.parameters = parameters;
     }
-
 
     private ResultSet resultSet = null;
 
@@ -28,11 +27,10 @@ public class SpGetMapSetNames implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select map_id, name from map";
-
-        PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-
+        String Sql = "select ms.map_id, ms.name from map ms where ms.type = ?";
+        PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
+        Integer typeId = (Integer) parameters.get("typeId");
+        preparedStatement.setInt(1, typeId);
         resultSet = preparedStatement.executeQuery();
-
     } // execute()
 }
