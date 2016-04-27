@@ -10,6 +10,10 @@ import java.util.Map;
  */
 public interface RsAnalysisDao {
     ResultSet getAnalysisDetailsByAnalysisId(Integer analysisId) throws GobiiDaoException;
+    
 	ResultSet getAnalysisNames() throws GobiiDaoException;
+	
     Integer createAnalysis(Map<String, Object> parameters) throws GobiiDaoException;
+    
+	ResultSet getAnalysisNamesByTypeId(int i) throws GobiiDaoException;
 }

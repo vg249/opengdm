@@ -41,6 +41,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     private RsMapSetDao rsMapSetDao = null;
     
     @Autowired
+    private RsMarkerGroupDao rsMarkerGroupDao = null;
+    
+    @Autowired
     private RsCvDao rsCvDao = null;
     
     @Autowired
@@ -51,7 +54,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     @Autowired
     private RsDataSetDao rsDataSetDao = null;
-
+    
+    @Autowired
+    private RsRoleDao rsRoleDao = null;
+    
     private NameIdListDTO getNameIdListForAnalysis(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -59,6 +65,36 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsAnalysisDao.getAnalysisNames();
+            Map<String, String> analysisNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer analysisId = resultSet.getInt("analysis_id");
+                String name = resultSet.getString("name");
+                analysisNamesById.put(analysisId.toString(), name);
+            }
+
+
+            returnVal.setNamesById(analysisNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
+
+    private NameIdListDTO getNameIdListForAnalysisNameByTypeId(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsAnalysisDao.getAnalysisNamesByTypeId(Integer.parseInt(nameIdListDTO.getFilter()));
             Map<String, String> analysisNamesById = new HashMap<>();
             while (resultSet.next()) {
 
@@ -114,7 +150,37 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return (returnVal);
 
     } // getNameIdListForContacts()
+    
+    private NameIdListDTO getNameIdListForMarkerGroups(NameIdListDTO nameIdListDTO) {
 
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsMarkerGroupDao.getMarkerGroupNames();
+            Map<String, String> markerGroupNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer markerGroupId = resultSet.getInt("marker_group_id");
+                String markerGroupName = resultSet.getString("name");
+                markerGroupNamesById.put(markerGroupId.toString(), markerGroupName);
+            }
+
+
+            returnVal.setNamesById(markerGroupNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }//getNameIdListForMarkerGroups
+    
     private NameIdListDTO getNameIdListForPlatforms(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -162,6 +228,35 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
 
             returnVal.setNamesById(referenceNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
+    private NameIdListDTO getNameIdListForRole(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsRoleDao.getContactRoleNames();
+            Map<String, String> roleNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer roleId = resultSet.getInt("role_id");
+                String roleName = resultSet.getString("role_name");
+                roleNamesById.put(roleId.toString(), roleName);
+            }
+
+
+            returnVal.setNamesById(roleNamesById);
 
 
         } catch (SQLException e) {
@@ -415,9 +510,13 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
 
             switch (nameIdListDTO.getEntityName()) {
-
+            
                 case "analysis":
                     returnVal = getNameIdListForAnalysis(nameIdListDTO);
+                    break;
+
+                case "analysisNameByTypeId":
+                    returnVal = getNameIdListForAnalysisNameByTypeId(nameIdListDTO);
                     break;
 
                 case "contact":
@@ -443,6 +542,11 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                 case "mapNameByTypeId":
                     returnVal = getNameIdListForMapByTypeId(nameIdListDTO);
                     break;
+                    
+                case "markergroup":
+                    returnVal = getNameIdListForMarkerGroups(nameIdListDTO);
+                    break;
+                    
                 case "experiment":
                     returnVal = getNameIdListForExperiment(nameIdListDTO);
                     break;
@@ -462,7 +566,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                 case "reference":
                     returnVal = getNameIdListForReference(nameIdListDTO);
                     break;
-                
+
+                case "role":
+                    returnVal = getNameIdListForRole(nameIdListDTO);
+                    break;
                 default:
                     returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.Error,
                             "Unsupported entity for list request: " + nameIdListDTO.getEntityName());

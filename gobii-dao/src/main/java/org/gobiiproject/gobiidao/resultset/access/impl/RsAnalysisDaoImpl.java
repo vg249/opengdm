@@ -8,6 +8,8 @@ import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysis;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisDetailsByAnalysisId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisNamesByTypeId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvTermsByGroup;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,4 +103,30 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
 
         return returnVal;
     }
+    
+    @Transactional(propagation = Propagation.REQUIRED)
+	@Override
+	public ResultSet getAnalysisNamesByTypeId(int typeId) throws GobiiDaoException {
+		// TODO Auto-generated method stub
+
+        ResultSet returnVal = null;
+
+        try {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("typeId", typeId);
+            SpGetAnalysisNamesByTypeId spGetAnalysisNamesByTypeId = new SpGetAnalysisNamesByTypeId(parameters);
+
+            storedProcExec.doWithConnection(spGetAnalysisNamesByTypeId);
+
+            returnVal = spGetAnalysisNamesByTypeId.getResultSet();
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving Analysis Names by type", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+
+        return returnVal;
+	}
 }

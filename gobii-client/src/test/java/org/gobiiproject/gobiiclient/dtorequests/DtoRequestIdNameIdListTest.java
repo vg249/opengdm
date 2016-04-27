@@ -21,7 +21,7 @@ public class DtoRequestIdNameIdListTest {
 
         // Assumes rice data with seed script is loaded
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getContactsById("PI");
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getContactsById("Curator");
 
 
         Assert.assertNotEquals(null, nameIdListDTO);
@@ -95,6 +95,22 @@ public class DtoRequestIdNameIdListTest {
     } // testGetMarkers()
     
     @Test
+    public void testGetMarkerGroupNames() throws Exception {
+
+
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("markergroup");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+
+    } // testGetMarkerGroupNames()
+    @Test
     public void testGetReferenceNames() throws Exception {
 
 
@@ -141,6 +157,21 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
     } // testGetMarkers()
     
+    @Test
+    public void testGetRoles() throws Exception {
+
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("role");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+    } // testGetMarkers()
+    
     @Ignore
     public void testGetMapNamesByType() throws Exception {
 
@@ -170,8 +201,23 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-    } // testGetMarkers()
+    } // testGetAnalysisNames()
     
+    @Test
+    public void testGetAnalysisNamesByTypeId() throws Exception {
+
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("analysisNameByTypeId");
+        nameIdListDTORequest.setFilter("33");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+    } 
     @Test
     public void testGetManifestNames() throws Exception {
 
