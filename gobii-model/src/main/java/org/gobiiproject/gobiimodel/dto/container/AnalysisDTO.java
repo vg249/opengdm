@@ -12,6 +12,13 @@ import java.util.List;
  */
 public class AnalysisDTO extends DtoMetaData {
 
+    public AnalysisDTO() {
+    }
+
+    public AnalysisDTO(ProcessType processType) {
+        super(processType);
+    }
+
     private Integer analysisId;
     private String analysisName;
     private String analysisDescription;
@@ -27,7 +34,6 @@ public class AnalysisDTO extends DtoMetaData {
     private Integer status;
     private List<EntityPropertyDTO> parameters;
 
-    @GobiiEntityParam(paramName="analysisId")
     public Integer getAnalysisId() {
         return analysisId;
     }
@@ -37,7 +43,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.analysisId = analysisId;
     }
 
-    @GobiiEntityParam(paramName="analysisName")
+    @GobiiEntityParam(paramName = "analysisName")
     public String getAnalysisName() {
         return analysisName;
     }
@@ -47,7 +53,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.analysisName = analysisName;
     }
 
-    @GobiiEntityParam(paramName="analysisDescription")
+    @GobiiEntityParam(paramName = "analysisDescription")
     public String getAnalysisDescription() {
         return analysisDescription;
     }
@@ -57,7 +63,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.analysisDescription = analysisDescription;
     }
 
-    @GobiiEntityParam(paramName="analysisTypeId")
+    @GobiiEntityParam(paramName = "analysisTypeId")
     public Integer getAnlaysisTypeId() {
         return anlaysisTypeId;
     }
@@ -67,7 +73,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.anlaysisTypeId = anlaysisTypeId;
     }
 
-    @GobiiEntityParam(paramName="program")
+    @GobiiEntityParam(paramName = "program")
     public String getProgram() {
         return program;
     }
@@ -77,7 +83,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.program = program;
     }
 
-    @GobiiEntityParam(paramName="programVersion")
+    @GobiiEntityParam(paramName = "programVersion")
     public String getProgramVersion() {
         return programVersion;
     }
@@ -87,7 +93,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.programVersion = programVersion;
     }
 
-    @GobiiEntityParam(paramName="algorithm")
+    @GobiiEntityParam(paramName = "algorithm")
     public String getAlgorithm() {
         return algorithm;
     }
@@ -97,7 +103,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.algorithm = algorithm;
     }
 
-    @GobiiEntityParam(paramName="sourceName")
+    @GobiiEntityParam(paramName = "sourceName")
     public String getSourceName() {
         return sourceName;
     }
@@ -107,7 +113,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.sourceName = sourceName;
     }
 
-    @GobiiEntityParam(paramName="sourceVersion")
+    @GobiiEntityParam(paramName = "sourceVersion")
     public String getSourceVersion() {
         return sourceVersion;
     }
@@ -117,7 +123,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.sourceVersion = sourceVersion;
     }
 
-    @GobiiEntityParam(paramName="sourceUri")
+    @GobiiEntityParam(paramName = "sourceUri")
     public String getSourceUri() {
         return sourceUri;
     }
@@ -127,7 +133,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.sourceUri = sourceUri;
     }
 
-    @GobiiEntityParam(paramName="referenceId")
+    @GobiiEntityParam(paramName = "referenceId")
     public Integer getReferenceId() {
         return referenceId;
     }
@@ -137,7 +143,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.referenceId = referenceId;
     }
 
-    @GobiiEntityParam(paramName="timeExecuted")
+    @GobiiEntityParam(paramName = "timeExecuted")
     public Date getTimeExecuted() {
         return timeExecuted;
     }
@@ -147,7 +153,7 @@ public class AnalysisDTO extends DtoMetaData {
         this.timeExecuted = timeExecuted;
     }
 
-    @GobiiEntityParam(paramName="status")
+    @GobiiEntityParam(paramName = "status")
     public Integer getStatus() {
         return status;
     }

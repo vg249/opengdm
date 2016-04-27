@@ -2,8 +2,7 @@ package org.gobiiproject.gobiidao.resultset.sqlworkers.modify;
 
 import org.gobiiproject.gobiidao.resultset.core.SpDef;
 
-import java.sql.Date;
-import java.util.List;
+import java.util.Date;
 
 /**
  * Created by Phil on 4/7/2016.
@@ -12,23 +11,21 @@ public class SpInsAnalysis extends SpDef {
 
     public SpInsAnalysis() {
 
-        super("{call createanalysis(?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+        super("{call createanalysis(?,?,?,?,?,?,?,?,?,?,?,?)}");
 
-//        this.addParamDef("experimentid", Integer.class).setNullable(false);
-//        this.addParamDef("callinganalysisid", Integer.class).setNullable(false);
-//        this.addParamDef("datasetanalyses", List.class).setNullable(true);
-//        this.addParamDef("datatable", String.class).setNullable(false);
-//        this.addParamDef("datafile", String.class).setNullable(false);
-//        this.addParamDef("qualitytable", String.class).setNullable(true);
-//        this.addParamDef("qualityfile", String.class).setNullable(true);
-//        this.addParamDef("datasetscores", String.class).setNullable(true); //jsonb!!!
-//        this.addParamDef("createdby", Integer.class).setNullable(true);
-//        this.addParamDef("createdDate.class", Date.class).setNullable(true);
-//        this.addParamDef("modifiedby", Integer.class).setNullable(true);
-//        this.addParamDef("modifiedDate.class", Date.class).setNullable(true);
-//        this.addParamDef("datasetstatus", Integer.class).setNullable(false);
-
+        this.addParamDef("analysisName",String.class).setNullable(true);
+        this.addParamDef("analysisDescription",String.class).setNullable(true);
+        this.addParamDef("analysisTypeId",Integer.class).setNullable(true);
+        this.addParamDef("program",String.class).setNullable(true);
+        this.addParamDef("programVersion",String.class).setNullable(true);
+        this.addParamDef("algorithm",String.class).setNullable(true);
+        this.addParamDef("sourceName",String.class).setNullable(true);
+        this.addParamDef("sourceVersion",String.class).setNullable(true);
+        this.addParamDef("sourceUri",String.class).setNullable(true);
+        this.addParamDef("referenceId",Integer.class).setNullable(true);
+//        this.addParamDef("parameters",String.class).setNullable(true);
+        this.addParamDef("timeExecuted",Date.class).setNullable(true);
+        this.addParamDef("status",Integer.class).setNullable(true);
 
     } // ctor
-
 }

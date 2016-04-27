@@ -2,7 +2,10 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
+import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysis;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisDetailsByAnalysisId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
@@ -27,6 +30,8 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
     @Autowired
     private StoredProcExec storedProcExec = null;
 
+    @Autowired
+    private SpRunnerCallable spRunnerCallable;
 
     @Transactional
     @Override
@@ -70,4 +75,30 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
 
     }
 
+    @Transactional
+    @Override
+    public Integer createAnalysis(Map<String, Object> parameters) throws GobiiDaoException {
+        Integer returnVal = null;
+
+        try {
+
+            if (spRunnerCallable.run(new SpInsAnalysis(), parameters)) {
+
+                returnVal = spRunnerCallable.getResult();
+
+            } else {
+
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating analysis", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+    }
 }

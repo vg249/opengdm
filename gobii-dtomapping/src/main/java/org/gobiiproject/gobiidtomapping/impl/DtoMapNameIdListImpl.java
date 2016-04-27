@@ -74,6 +74,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         } catch (SQLException e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
         }
 
         return returnVal;

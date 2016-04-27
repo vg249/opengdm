@@ -9,4 +9,6 @@ import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 public interface DtoMapAnalysis {
 
     AnalysisDTO getAnalysisDetails(AnalysisDTO  analysisDTO) throws GobiiDtoMappingException;
+    AnalysisDTO createAnalysis(AnalysisDTO  analysisDTO) throws GobiiDtoMappingException;
+
 }

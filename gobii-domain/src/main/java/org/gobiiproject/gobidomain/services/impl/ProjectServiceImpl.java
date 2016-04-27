@@ -38,7 +38,6 @@ public class ProjectServiceImpl implements ProjectService {
                     break;
 
                 case CREATE:
-
                     projectDTO.setCreatedDate(Date.valueOf(LocalDate.now()));
                     projectDTO.setModifiedDate(Date.valueOf(LocalDate.now()));
                     returnVal = dtoMapProject.createProject(projectDTO);

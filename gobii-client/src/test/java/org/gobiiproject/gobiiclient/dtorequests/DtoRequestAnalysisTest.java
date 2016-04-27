@@ -7,12 +7,15 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 public class DtoRequestAnalysisTest {
@@ -38,6 +41,30 @@ public class DtoRequestAnalysisTest {
 //        Assert.assertTrue(dataSetDTOResponse.getProperties().size() > 0);
 
     } // testGetMarkers()
+
+    @Test
+    public void testAnalysisCreate() throws Exception {
+
+        DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
+        AnalysisDTO analysisDTORequest = new AnalysisDTO(DtoMetaData.ProcessType.CREATE);
+        analysisDTORequest.setAnalysisName("foo analysis");
+        analysisDTORequest.setTimeExecuted(null);
+        analysisDTORequest.setSourceUri("foo URL");
+        analysisDTORequest.setAlgorithm("foo algorithm");
+        analysisDTORequest.setSourceName("foo source");
+        analysisDTORequest.setAnalysisDescription("my analysis description");
+        analysisDTORequest.setProgram("foo program");
+        analysisDTORequest.setProgramVersion("foo version");
+        analysisDTORequest.setAnlaysisTypeId(1);
+        analysisDTORequest.setStatus(1);
+
+        AnalysisDTO analysisDTOResponse = dtoRequestAnalysis.getAnalysisDetails(analysisDTORequest);
+
+        Assert.assertNotEquals(null, analysisDTOResponse);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));
+
+
+    } // testAnalysisCreate
 
 
 }
