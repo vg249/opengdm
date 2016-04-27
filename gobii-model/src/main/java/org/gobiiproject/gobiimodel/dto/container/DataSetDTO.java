@@ -120,7 +120,7 @@ public class DataSetDTO extends DtoMetaData {
         return createdBy;
     }
 
-    //    @GobiiEntityColumn(columnName = "created_by")
+    @GobiiEntityColumn(columnName = "created_by")
     public void setCreatedBy(Integer createdBy) {
         this.createdBy = createdBy;
     }
@@ -140,7 +140,7 @@ public class DataSetDTO extends DtoMetaData {
         return modifiedBy;
     }
 
-    // @GobiiEntityColumn(columnName = "modified_by")
+     @GobiiEntityColumn(columnName = "modified_by")
     public void setModifiedBy(Integer modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
