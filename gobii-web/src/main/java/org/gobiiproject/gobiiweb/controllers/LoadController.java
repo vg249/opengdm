@@ -129,7 +129,7 @@ public class LoadController {
 
     @RequestMapping(value = "/instructions", method = RequestMethod.POST)
     @ResponseBody
-    public LoaderInstructionFilesDTO loadInstructions(@RequestBody LoaderInstructionFilesDTO loaderInstructionFilesDTO) {
+    public LoaderInstructionFilesDTO processDataset(@RequestBody LoaderInstructionFilesDTO loaderInstructionFilesDTO) {
 
         LoaderInstructionFilesDTO returnVal = new LoaderInstructionFilesDTO();
 
@@ -147,7 +147,7 @@ public class LoadController {
 
     @RequestMapping(value = "/display", method = RequestMethod.POST)
     @ResponseBody
-    public DisplayDTO loadInstructions(@RequestBody DisplayDTO displayDTO) {
+    public DisplayDTO processDataset(@RequestBody DisplayDTO displayDTO) {
 
         DisplayDTO returnVal = new DisplayDTO();
 
@@ -165,12 +165,12 @@ public class LoadController {
 
     @RequestMapping(value = "/dataset", method = RequestMethod.POST)
     @ResponseBody
-    public DataSetDTO loadInstructions(@RequestBody DataSetDTO dataSetDTO) {
+    public DataSetDTO processDataset(@RequestBody DataSetDTO dataSetDTO) {
 
         DataSetDTO returnVal = new DataSetDTO();
 
         try {
-            returnVal = dataSetService.getDataSetDetails(dataSetDTO);
+            returnVal = dataSetService.processDataSet(dataSetDTO);
         } catch (AccessDeniedException e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
@@ -183,7 +183,7 @@ public class LoadController {
 
     @RequestMapping(value = "/analysis", method = RequestMethod.POST)
     @ResponseBody
-    public AnalysisDTO loadInstructions(@RequestBody AnalysisDTO analysisDTO) {
+    public AnalysisDTO processDataset(@RequestBody AnalysisDTO analysisDTO) {
 
         AnalysisDTO returnVal = new AnalysisDTO();
 

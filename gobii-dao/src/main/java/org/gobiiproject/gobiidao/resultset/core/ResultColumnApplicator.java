@@ -4,6 +4,8 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,6 +24,8 @@ import java.util.Map;
  * Created by Phil on 4/18/2016.
  */
 public class ResultColumnApplicator {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(ResultColumnApplicator.class);
 
     public static void applyColumnValues(ResultSet resultSet, Object dtoInstance) throws GobiiDaoException {
 
@@ -66,7 +70,7 @@ public class ResultColumnApplicator {
                             List<Integer> intList = new ArrayList<>();
                             Array sqlArray = resultSet.getArray(currentColumnName);
 
-                            if( null != sqlArray ) {
+                            if (null != sqlArray) {
 
                                 Integer[] integerList = (Integer[]) sqlArray.getArray();
                                 for (int idx = 0; idx < integerList.length; idx++) {
@@ -91,12 +95,21 @@ public class ResultColumnApplicator {
 
             } // iterate all fields
 
-        } catch (IllegalAccessException e) {
-            throw new GobiiDaoException(e);
-        } catch (InvocationTargetException e) {
-            throw new GobiiDaoException(e);
-        } catch (SQLException e) {
-            throw new GobiiDaoException(e);
+        } catch (Exception e) {
+            String message = "error applying value of column "
+                    + currentColumnName
+                    + " to setter labeleled as "
+                    + currentParameterName
+                    + " in class  "
+                    + dtoInstance.getClass()
+                    + ": "
+                    + e.getMessage();
+            if (null != e.getCause()) {
+                message += " caused by: " + e.getCause();
+            }
+
+            LOGGER.error(message, e);
+            throw new GobiiDaoException(message);
         }
 
     } // applyColumnValues()

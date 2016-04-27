@@ -62,7 +62,7 @@ public class SpRunnerCallable implements Work {
         boolean returnVal = true;
         errors.clear();
 
-        if(spDef.getSpParamDefs().size() == paramVals.size() ) {
+        if (spDef.getSpParamDefs().size() == paramVals.size()) {
 
             try {
                 this.spDef = spDef;
@@ -172,7 +172,7 @@ public class SpRunnerCallable implements Work {
                     } else {
                         callableStatement.setNull(currentParamIndex, Types.DATE);
                     }
-                } else if (currentParamType.equals(List.class)) {
+                } else if (currentParamType.equals(ArrayList.class)) {
                     if (null != currentParamValue) {
 
                         List<Integer> list = (List<Integer>) currentParamValue;
@@ -196,6 +196,7 @@ public class SpRunnerCallable implements Work {
             }
         }
 
+
         Integer resultOutParamIdx = paramDefs.size();
 
         callableStatement.registerOutParameter(resultOutParamIdx, Types.INTEGER);
@@ -203,6 +204,7 @@ public class SpRunnerCallable implements Work {
         callableStatement.executeUpdate();
 
         result = callableStatement.getInt(resultOutParamIdx);
+
 
     } // execute
 }

@@ -20,12 +20,21 @@ public class DataSetServiceImpl implements DataSetService {
     DtoMapDataSet dtoMapDataSet = null;
 
     @Override
-    public DataSetDTO getDataSetDetails(DataSetDTO dataSetDTO) {
+    public DataSetDTO processDataSet(DataSetDTO datasetDTO) {
 
         DataSetDTO returnVal = new DataSetDTO();
 
         try {
-            returnVal = dtoMapDataSet.getDataSetDetails(dataSetDTO);
+
+            switch(datasetDTO.getProcessType()) {
+                case READ:
+                    returnVal = dtoMapDataSet.getDataSetDetails(datasetDTO);
+                    break;
+
+                case CREATE:
+                    returnVal = dtoMapDataSet.createDataset(datasetDTO);
+
+            }
 
         } catch (GobiiDtoMappingException e) {
 

@@ -6,18 +6,12 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
-import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.stream.Collectors;
 
 public class DtoRequestAnalysisTest {
 
@@ -29,7 +23,7 @@ public class DtoRequestAnalysisTest {
     	DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
         AnalysisDTO analysisDTORequest = new AnalysisDTO();
         analysisDTORequest.setAnalysisId(1);
-        AnalysisDTO analysisDTOResponse = dtoRequestAnalysis.getAnalysisDetails(analysisDTORequest);
+        AnalysisDTO analysisDTOResponse = dtoRequestAnalysis.process(analysisDTORequest);
 
         Assert.assertNotEquals(null, analysisDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));
@@ -47,24 +41,8 @@ public class DtoRequestAnalysisTest {
     public void testAnalysisCreate() throws Exception {
 
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
-        AnalysisDTO analysisDTORequest = new AnalysisDTO(DtoMetaData.ProcessType.CREATE);
-        analysisDTORequest.setAnalysisName("foo analysis");
-        analysisDTORequest.setTimeExecuted(new Date());
-        analysisDTORequest.setSourceUri("foo URL");
-        analysisDTORequest.setAlgorithm("foo algorithm");
-        analysisDTORequest.setSourceName("foo source");
-        analysisDTORequest.setAnalysisDescription("my analysis description");
-        analysisDTORequest.setProgram("foo program");
-        analysisDTORequest.setProgramVersion("foo version");
-        analysisDTORequest.setAnlaysisTypeId(1);
-        analysisDTORequest.setStatus(1);
-
-        analysisDTORequest.getParameters().add(new EntityPropertyDTO(null,null,"foo param","foo val"));
-        analysisDTORequest.getParameters().add(new EntityPropertyDTO(null,null,"bar param","bar val"));
-        analysisDTORequest.getParameters().add(new EntityPropertyDTO(null,null,"bar param","bar val"));
-
-
-        AnalysisDTO analysisDTOResponse = dtoRequestAnalysis.getAnalysisDetails(analysisDTORequest);
+        AnalysisDTO analysisDTORequest = TestDtoFactory.makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE,1);
+        AnalysisDTO analysisDTOResponse = dtoRequestAnalysis.process(analysisDTORequest);
 
         Assert.assertNotEquals(null, analysisDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));

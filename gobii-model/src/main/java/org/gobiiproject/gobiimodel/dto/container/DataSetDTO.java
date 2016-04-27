@@ -13,6 +13,13 @@ import java.util.List;
  */
 public class DataSetDTO extends DtoMetaData {
 
+    public DataSetDTO() {
+    }
+
+    public DataSetDTO(ProcessType processType) {
+        super(processType);
+    }
+
     private Integer datasetId;
     private Integer experimentId;
     private Integer callingAnalysisId;
@@ -21,13 +28,12 @@ public class DataSetDTO extends DtoMetaData {
     private String dataFile;
     private String qualityTable;
     private String qualityFile;
-    private String createdBy;
+    private Integer createdBy;
     private Date createdDate;
-    private String modifiedBy;
+    private Integer modifiedBy;
     private Date modifiedDate;
     private Integer status;
     private List<Integer> analysesIds = new ArrayList<>();
-
     private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
 
@@ -53,6 +59,7 @@ public class DataSetDTO extends DtoMetaData {
     public AnalysisDTO getCallingAnalysis() {
         return callingAnalysis;
     }
+
     public void setCallingAnalysis(AnalysisDTO callingAnalysis) {
         this.callingAnalysis = callingAnalysis;
     }
@@ -109,12 +116,12 @@ public class DataSetDTO extends DtoMetaData {
     }
 
     @GobiiEntityParam(paramName = "createdBy")
-    public String getCreatedBy() {
+    public Integer getCreatedBy() {
         return createdBy;
     }
 
-    @GobiiEntityColumn(columnName = "created_by")
-    public void setCreatedBy(String createdBy) {
+    //    @GobiiEntityColumn(columnName = "created_by")
+    public void setCreatedBy(Integer createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -129,12 +136,12 @@ public class DataSetDTO extends DtoMetaData {
     }
 
     @GobiiEntityParam(paramName = "modifiedBy")
-    public String getModifiedBy() {
+    public Integer getModifiedBy() {
         return modifiedBy;
     }
 
-    @GobiiEntityColumn(columnName = "modified_by")
-    public void setModifiedBy(String modifiedBy) {
+    // @GobiiEntityColumn(columnName = "modified_by")
+    public void setModifiedBy(Integer modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
 
@@ -168,7 +175,6 @@ public class DataSetDTO extends DtoMetaData {
     public void setAnalysesIds(List<Integer> analysesIds) {
         this.analysesIds = analysesIds;
     }
-
 
 
     public List<AnalysisDTO> getAnalyses() {

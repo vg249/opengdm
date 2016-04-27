@@ -8,6 +8,6 @@ import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
  */
 public interface DataSetService {
 
-    DataSetDTO getDataSetDetails(DataSetDTO dataSetDTO);
+    DataSetDTO processDataSet(DataSetDTO dataSetDTO);
 
 }

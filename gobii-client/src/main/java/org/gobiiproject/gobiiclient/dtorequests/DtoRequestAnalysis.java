@@ -17,7 +17,7 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
 public class DtoRequestAnalysis {
 
 
-    public AnalysisDTO getAnalysisDetails(AnalysisDTO analysisDTO) throws Exception {
+    public AnalysisDTO process(AnalysisDTO analysisDTO) throws Exception {
 
         AnalysisDTO returnVal = null;
 

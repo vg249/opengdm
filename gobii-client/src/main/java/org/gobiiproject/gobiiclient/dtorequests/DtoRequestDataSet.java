@@ -16,7 +16,7 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
 public class DtoRequestDataSet {
 
 
-    public DataSetDTO getDataSetDetails(DataSetDTO DataSetDTO) throws Exception {
+    public DataSetDTO process(DataSetDTO DataSetDTO) throws Exception {
 
         DataSetDTO returnVal = null;
 

@@ -5,8 +5,10 @@ import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
 import org.gobiiproject.gobiidao.resultset.access.RsDataSetDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidtomapping.DtoMapAnalysis;
 import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.slf4j.Logger;
@@ -31,6 +33,9 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
     @Autowired
     private RsAnalysisDao rsAnalysisDao;
+
+    @Autowired
+    private DtoMapAnalysis dtoMapAnalysis;
 
     @Transactional
     @Override
@@ -88,6 +93,18 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
         DataSetDTO returnVal = dataSetDTO;
 
         try {
+
+            AnalysisDTO analysisDTOCalling = returnVal.getCallingAnalysis();
+            if(DtoMetaData.ProcessType.CREATE == analysisDTOCalling.getProcessType()) {
+                dtoMapAnalysis.createAnalysis(analysisDTOCalling);
+            }
+
+            returnVal.setCallingAnalysisId(analysisDTOCalling.getAnalysisId());
+
+            for(AnalysisDTO currentAnalysisDTO : returnVal.getAnalyses() ) {
+                dtoMapAnalysis.createAnalysis(currentAnalysisDTO);
+                returnVal.getAnalysesIds().add(currentAnalysisDTO.getAnalysisId());
+            }
 
             Map<String, Object> parameters = ParamExtractor.makeParamVals(dataSetDTO);
             Integer datasetId = rsDataSetDao.createDataset(parameters);

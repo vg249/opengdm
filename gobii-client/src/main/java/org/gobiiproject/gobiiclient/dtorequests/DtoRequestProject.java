@@ -54,7 +54,7 @@ public class DtoRequestProject {
 
         return returnVal;
 
-    } // getPing()
+    }
 
 
 } // DtoRequestMarkers()
