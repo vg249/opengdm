@@ -12,21 +12,20 @@ public class SpInsDataSet extends SpDef {
 
     public SpInsDataSet() {
 
-        super("{call createdataset(?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+        super("{call createdataset(?,?,?,?,?,?,?,?,?,?,?,?)}");
 
-        this.addParamDef("experimentid", Integer.class).setNullable(false);
-        this.addParamDef("callinganalysisid", Integer.class).setNullable(false);
-        this.addParamDef("datasetanalyses", List.class).setNullable(true);
-        this.addParamDef("datatable", String.class).setNullable(false);
-        this.addParamDef("datafile", String.class).setNullable(false);
-        this.addParamDef("qualitytable", String.class).setNullable(true);
-        this.addParamDef("qualityfile", String.class).setNullable(true);
-        this.addParamDef("datasetscores", String.class).setNullable(true); //jsonb!!!
-        this.addParamDef("createdby", Integer.class).setNullable(true);
-        this.addParamDef("createdDate.class", Date.class).setNullable(true);
-        this.addParamDef("modifiedby", Integer.class).setNullable(true);
-        this.addParamDef("modifiedDate.class", Date.class).setNullable(true);
-        this.addParamDef("datasetstatus", Integer.class).setNullable(false);
+        this.addParamDef("experimentId", Integer.class).setNullable(false);
+        this.addParamDef("callinganalysisId", Integer.class).setNullable(false);
+        this.addParamDef("datasetAnalysIds", List.class).setNullable(true);
+        this.addParamDef("dataTable", String.class).setNullable(false);
+        this.addParamDef("dataFile", String.class).setNullable(false);
+        this.addParamDef("qualityTable", String.class).setNullable(true);
+        this.addParamDef("qualityFile", String.class).setNullable(true);
+        this.addParamDef("createdBy", Integer.class).setNullable(true);
+        this.addParamDef("createdDate", Date.class).setNullable(true);
+        this.addParamDef("modifiedBy", Integer.class).setNullable(true);
+        this.addParamDef("modifiedDate", Date.class).setNullable(true);
+        this.addParamDef("status", Integer.class).setNullable(false);
 
 
     } // ctor

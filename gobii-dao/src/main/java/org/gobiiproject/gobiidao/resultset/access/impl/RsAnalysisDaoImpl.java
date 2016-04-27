@@ -5,7 +5,9 @@ import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysis;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysisParameters;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisDetailsByAnalysisId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
@@ -78,6 +80,7 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
     @Transactional
     @Override
     public Integer createAnalysis(Map<String, Object> parameters) throws GobiiDaoException {
+
         Integer returnVal = null;
 
         try {
@@ -101,4 +104,26 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
 
         return returnVal;
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Integer createUpdateParameter(Map<String, Object> parameters) throws GobiiDaoException {
+
+        Integer returnVal = 0;
+
+        try {
+            spRunnerCallable.run(new SpInsAnalysisParameters(), parameters);
+            returnVal = spRunnerCallable.getResult();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error updating project property", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+
+    } // createUpdateProperty
+
 }

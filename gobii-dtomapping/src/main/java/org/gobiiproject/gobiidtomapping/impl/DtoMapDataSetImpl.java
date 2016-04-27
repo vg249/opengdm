@@ -3,6 +3,7 @@ package org.gobiiproject.gobiidtomapping.impl;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
 import org.gobiiproject.gobiidao.resultset.access.RsDataSetDao;
+import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * Created by Phil on 4/21/2016.
@@ -80,4 +82,23 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
         return returnVal;
 
     }
+
+    @Override
+    public DataSetDTO createDataset(DataSetDTO dataSetDTO) throws GobiiDtoMappingException {
+        DataSetDTO returnVal = dataSetDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(dataSetDTO);
+            Integer datasetId = rsDataSetDao.createDataset(parameters);
+            returnVal.setDatasetId(datasetId);
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error("Error mapping result set to DTO", e);
+        }
+
+        return returnVal;
+    }
+
 }

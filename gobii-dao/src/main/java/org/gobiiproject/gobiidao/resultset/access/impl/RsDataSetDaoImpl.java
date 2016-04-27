@@ -4,6 +4,8 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsDataSetDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysis;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsDataSet;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +84,39 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
         return returnVal;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Integer createDataset(Map<String, Object> parameters) throws GobiiDaoException {
+
+        Integer returnVal = null;
+
+        try {
+
+            if (spRunnerCallable.run(new SpInsDataSet(), parameters)) {
+
+                returnVal = spRunnerCallable.getResult();
+
+            } else {
+
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating dataset", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Integer createUpdateParameter(Map<String, Object> parameters) throws GobiiDaoException {
+        return null;
+    }
 
 
 } // RsProjectDaoImpl

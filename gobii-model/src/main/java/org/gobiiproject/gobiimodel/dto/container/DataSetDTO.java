@@ -31,7 +31,6 @@ public class DataSetDTO extends DtoMetaData {
     private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
 
-    @GobiiEntityParam(paramName = "datasetId")
     public Integer getDatasetId() {
         return datasetId;
     }
@@ -58,7 +57,7 @@ public class DataSetDTO extends DtoMetaData {
         this.callingAnalysis = callingAnalysis;
     }
 
-    @GobiiEntityParam(paramName = "callinganalysis_id")
+    @GobiiEntityParam(paramName = "callinganalysisId")
     public Integer getCallingAnalysisId() {
         return callingAnalysisId;
     }
@@ -160,7 +159,7 @@ public class DataSetDTO extends DtoMetaData {
     }
 
 
-    @GobiiEntityParam(paramName = "datasetanalyses")
+    @GobiiEntityParam(paramName = "datasetAnalysIds")
     public List<Integer> getAnalysesIds() {
         return analysesIds;
     }
