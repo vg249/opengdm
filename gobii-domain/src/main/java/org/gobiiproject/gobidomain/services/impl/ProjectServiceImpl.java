@@ -10,8 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import java.util.Date;
 
 
 /**
@@ -38,8 +37,8 @@ public class ProjectServiceImpl implements ProjectService {
                     break;
 
                 case CREATE:
-                    projectDTO.setCreatedDate(Date.valueOf(LocalDate.now()));
-                    projectDTO.setModifiedDate(Date.valueOf(LocalDate.now()));
+                    projectDTO.setCreatedDate(new Date());
+                    projectDTO.setModifiedDate(new Date());
                     returnVal = dtoMapProject.createProject(projectDTO);
                     break;
 

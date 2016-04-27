@@ -3,7 +3,7 @@ package org.gobiiproject.gobiimodel.dto.container;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +75,6 @@ public class ProjectDTO extends DtoMetaData {
         this.projectStatus = projectStatus;
     }
 
-    @GobiiEntityParam(paramName = "projectId")
     public int getProjectId() {
         return projectId;
     }

@@ -48,7 +48,7 @@ public class DtoRequestAnalysisTest {
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
         AnalysisDTO analysisDTORequest = new AnalysisDTO(DtoMetaData.ProcessType.CREATE);
         analysisDTORequest.setAnalysisName("foo analysis");
-        analysisDTORequest.setTimeExecuted(null);
+        analysisDTORequest.setTimeExecuted(new Date());
         analysisDTORequest.setSourceUri("foo URL");
         analysisDTORequest.setAlgorithm("foo algorithm");
         analysisDTORequest.setSourceName("foo source");
