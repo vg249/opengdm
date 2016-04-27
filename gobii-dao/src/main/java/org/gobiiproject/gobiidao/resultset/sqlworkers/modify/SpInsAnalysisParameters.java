@@ -9,7 +9,7 @@ public class SpInsAnalysisParameters extends SpDef {
 
     public SpInsAnalysisParameters() {
 
-        super("{call upsertanalysisparameter(?,?,?)}");
+        super("{call upsertanalysisparameter(?,?,?)}", false);
 
         this.addParamDef("analysisId", Integer.class)
                 .setNullable(false);

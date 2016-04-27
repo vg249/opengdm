@@ -65,18 +65,19 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
             Integer analysisId = rsAnalysisDao.createAnalysis(parameters);
             returnVal.setAnalysisId(analysisId);
 
-//            List<EntityPropertyDTO> analysisParameters = analysisDTO.getParameters();
-//            for (EntityPropertyDTO currentProperty : analysisParameters) {
-//
-//                Map<String, Object> spParamsParameters = new HashMap<>();
-//                spParamsParameters.put("analysisId", analysisId);
-//                spParamsParameters.put("parameterName", currentProperty.getPropertyName());
-//                spParamsParameters.put("parameterValue", currentProperty.getPropertyValue());
-//
-//                Integer propertyId = rsAnalysisDao.createUpdateParameter(spParamsParameters);
-//                currentProperty.setEntityIdId(analysisId);
-//                currentProperty.setPropertyId(propertyId);
-//            }
+            List<EntityPropertyDTO> analysisParameters = analysisDTO.getParameters();
+            for (EntityPropertyDTO currentProperty : analysisParameters) {
+
+                Map<String, Object> spParamsParameters = new HashMap<>();
+                spParamsParameters.put("analysisId", analysisId);
+                spParamsParameters.put("parameterName", currentProperty.getPropertyName());
+                spParamsParameters.put("parameterValue", currentProperty.getPropertyValue());
+
+                //Integer propertyId = rsAnalysisDao.createUpdateParameter(spParamsParameters);
+                rsAnalysisDao.createUpdateParameter(spParamsParameters);
+                currentProperty.setEntityIdId(analysisId);
+                //currentProperty.setPropertyId(propertyId);
+            }
 
 
         } catch (GobiiDaoException e) {

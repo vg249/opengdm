@@ -9,12 +9,21 @@ import java.util.List;
  */
 public abstract class SpDef {
 
-    public SpDef(String callString)
+    public SpDef(String callString, boolean returnsKey)
     {
         this.callString = callString;
+        this.returnsKey = returnsKey;
+    } // SpDef()
+
+    public SpDef(String callString) {
+        this.callString = callString;
+        this.returnsKey = true;
     }
 
-    private String callString;
+
+    protected String callString;
+    private boolean returnsKey = true;
+
     private List<SpParamDef> spParamDefs = new ArrayList<>();
 
     public SpParamDef addParamDef(String paramName, Type paramType) {
@@ -33,4 +42,9 @@ public abstract class SpDef {
     public List<SpParamDef> getSpParamDefs() {
         return spParamDefs;
     }
+
+    public boolean isReturnsKey() {
+        return returnsKey;
+    }
+
 }

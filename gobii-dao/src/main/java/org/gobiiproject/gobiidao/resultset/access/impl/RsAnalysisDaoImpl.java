@@ -107,13 +107,13 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Integer createUpdateParameter(Map<String, Object> parameters) throws GobiiDaoException {
+    public void createUpdateParameter(Map<String, Object> parameters) throws GobiiDaoException {
 
-        Integer returnVal = 0;
+//        Integer returnVal = 0;
 
         try {
             spRunnerCallable.run(new SpInsAnalysisParameters(), parameters);
-            returnVal = spRunnerCallable.getResult();
+//            returnVal = spRunnerCallable.getResult();
 
         } catch (Exception e) {
 
@@ -122,7 +122,7 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
 
         }
 
-        return returnVal;
+  //      return returnVal;
 
     } // createUpdateProperty
 
