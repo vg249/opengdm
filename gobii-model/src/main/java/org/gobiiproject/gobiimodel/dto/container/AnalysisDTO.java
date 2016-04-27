@@ -4,6 +4,7 @@ import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class AnalysisDTO extends DtoMetaData {
     private Integer referenceId;
     private Date timeExecuted;
     private Integer status;
-    private List<EntityPropertyDTO> parameters;
+    private List<EntityPropertyDTO> parameters = new ArrayList<>();
 
     public Integer getAnalysisId() {
         return analysisId;

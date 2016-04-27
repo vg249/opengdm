@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -58,11 +59,16 @@ public class DtoRequestAnalysisTest {
         analysisDTORequest.setAnlaysisTypeId(1);
         analysisDTORequest.setStatus(1);
 
+        analysisDTORequest.getParameters().add(new EntityPropertyDTO(null,null,"foo param","foo val"));
+        analysisDTORequest.getParameters().add(new EntityPropertyDTO(null,null,"bar param","bar val"));
+        analysisDTORequest.getParameters().add(new EntityPropertyDTO(null,null,"bar param","bar val"));
+
+
         AnalysisDTO analysisDTOResponse = dtoRequestAnalysis.getAnalysisDetails(analysisDTORequest);
 
         Assert.assertNotEquals(null, analysisDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));
-
+        Assert.assertTrue(analysisDTOResponse.getAnalysisId() > 1);
 
     } // testAnalysisCreate
 
