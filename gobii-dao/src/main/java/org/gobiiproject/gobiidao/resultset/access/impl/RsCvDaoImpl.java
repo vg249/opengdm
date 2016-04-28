@@ -5,6 +5,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvGroups;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvTerms;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvTermsByGroup;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentDetailsByExperimentId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNamesByProjectId;
@@ -67,6 +68,30 @@ public class RsCvDaoImpl implements RsCvDao {
 	            storedProcExec.doWithConnection(spGetCvGroups);
 
 	            returnVal = spGetCvGroups.getResultSet();
+	        } catch (Exception e) {
+
+	            LOGGER.error("Error retrieving CV groups", e);
+	            throw (new GobiiDaoException(e));
+
+	        }
+
+
+	        return returnVal;
+	}
+
+	@Override
+    @Transactional(propagation = Propagation.REQUIRED)
+	public ResultSet getCvNames() throws GobiiDaoException {
+		// TODO Auto-generated method stub
+		 ResultSet returnVal = null;
+
+	        try {
+	            Map<String, Object> parameters = new HashMap<>();
+	            SpGetCvTerms spGetCvTerms = new SpGetCvTerms();
+
+	            storedProcExec.doWithConnection(spGetCvTerms);
+
+	            returnVal = spGetCvTerms.getResultSet();
 	        } catch (Exception e) {
 
 	            LOGGER.error("Error retrieving CV groups", e);
