@@ -34,9 +34,9 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
             ConfigurationSettings configurationSettings = new ConfigurationSettings();
 
             String laoderFilePath = configurationSettings.getPropValue("loaderfilepath");
-            if (! laoderFilePath.substring(laoderFilePath.length() - 1).equals("\\")) {
-                laoderFilePath += "\\";
-            }
+//            if (! laoderFilePath.substring(laoderFilePath.length() - 1).equals("\\")) {
+//                laoderFilePath += "\\";
+//            }
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
