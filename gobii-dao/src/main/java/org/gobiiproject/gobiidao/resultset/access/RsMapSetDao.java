@@ -14,4 +14,6 @@ public interface RsMapSetDao {
 //    ResultSet getContactsForRoleName(String roleName) throws GobiiDaoException;
 
 	ResultSet getMapNamesByTypeId(int typeId) throws GobiiDaoException;
+
+    ResultSet getMapsetDetailsByMapsetId(int mapSetId) throws GobiiDaoException;
 }

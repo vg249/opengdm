@@ -55,6 +55,9 @@ public class LoadController {
 
     @Autowired
     private PlatformService platformService = null;
+    
+    @Autowired 
+    private MapsetService mapsetService;
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
@@ -210,6 +213,24 @@ public class LoadController {
 
         try {
             returnVal = platformService.processPlatform(platformDTO);
+        } catch (AccessDeniedException e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/mapset", method = RequestMethod.POST)
+    @ResponseBody
+    public MapsetDTO processDataset(@RequestBody MapsetDTO MapsetDTO) {
+
+        MapsetDTO returnVal = new MapsetDTO();
+
+        try {
+            returnVal = mapsetService.processMapset(MapsetDTO);
         } catch (AccessDeniedException e) {
 
             returnVal.getDtoHeaderResponse().addException(e);

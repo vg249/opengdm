@@ -125,6 +125,8 @@
     <!-- **** Map Beans *************************************** -->
     <bean id="rsMapDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapSetDaoImpl"/>
+    <bean id="dtoMapMapset" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapsetImpl"/>
+    <bean id="MapsetService" class="org.gobiiproject.gobidomain.services.impl.MapsetServiceImpl"/>
 
     <!-- <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/>
         <bean id="MapService" class="org.gobiiproject.gobidomain.services.impl.MapServiceImpl"/> -->
@@ -159,7 +161,7 @@
     <bean id="dataSource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="url" value="jdbc:postgresql://localhost:5432/gobii_rice"/>
+        <property name="url" value="jdbc:postgresql://localhost:5432/flatmeta"/>
         <property name="username" value="appuser"/>
         <property name="password" value="appuser"/>
     </bean>

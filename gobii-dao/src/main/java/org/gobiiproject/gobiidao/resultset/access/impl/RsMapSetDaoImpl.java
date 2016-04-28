@@ -6,6 +6,8 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetDatasetFileNamesByExperimentId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMapNamesByTypeId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMapSetNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMapsetDetailsByMapsetId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformDetailsByPlatformId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,4 +75,29 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
 
         return returnVal;
 	}
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getMapsetDetailsByMapsetId(int mapSetId) throws GobiiDaoException {
+        ResultSet returnVal = null;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("mapSetId", mapSetId);
+            SpGetMapsetDetailsByMapsetId spGetMapsetDetailsByMapsetId= new SpGetMapsetDetailsByMapsetId(parameters);
+
+            storedProcExec.doWithConnection(spGetMapsetDetailsByMapsetId);
+
+            returnVal = spGetMapsetDetailsByMapsetId.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving mapset details", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+    }
 }
