@@ -11,5 +11,6 @@ public interface RsPlatformDao {
 
 
     ResultSet getPlatformNames() throws GobiiDaoException;
-//    ResultSet getContactsForRoleName(String roleName) throws GobiiDaoException;
+    ResultSet getPlatformDetailsByPlatformId(Integer platformId) throws GobiiDaoException;
+
 }

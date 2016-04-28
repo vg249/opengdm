@@ -22,5 +22,6 @@ public class Urls {
     public final static String URL_EXPERIMENT =  APP_ROOT + CTRLR_LOAD +  "experiment";
     public final static String URL_DATASET =  APP_ROOT + CTRLR_LOAD +  "dataset";
     public final static String URL_ANALYSIS =  APP_ROOT + CTRLR_LOAD +  "analysis";
+    public final static String URL_PLATFORM =  APP_ROOT + CTRLR_LOAD +  "platform";
 
 } // Urls

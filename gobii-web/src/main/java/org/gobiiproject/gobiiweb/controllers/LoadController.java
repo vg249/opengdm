@@ -53,6 +53,9 @@ public class LoadController {
     @Autowired
     private DataSetService dataSetService = null;
 
+    @Autowired
+    private PlatformService platformService = null;
+
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
     public PingDTO getPingResponse(@RequestBody PingDTO pingDTORequest) {
@@ -198,4 +201,23 @@ public class LoadController {
         return (returnVal);
 
     }
+
+    @RequestMapping(value = "/platform", method = RequestMethod.POST)
+    @ResponseBody
+    public PlatformDTO processDataset(@RequestBody PlatformDTO platformDTO) {
+
+        PlatformDTO returnVal = new PlatformDTO();
+
+        try {
+            returnVal = platformService.processPlatform(platformDTO);
+        } catch (AccessDeniedException e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return (returnVal);
+
+    }
+
 }// LoadController

@@ -26,13 +26,17 @@ public class DataSetServiceImpl implements DataSetService {
 
         try {
 
-            switch(datasetDTO.getProcessType()) {
+            switch (datasetDTO.getProcessType()) {
                 case READ:
                     returnVal = dtoMapDataSet.getDataSetDetails(datasetDTO);
                     break;
 
                 case CREATE:
                     returnVal = dtoMapDataSet.createDataset(datasetDTO);
+                    break;
+
+                default:
+                    throw new GobiiDtoMappingException("Unsupported process type " + datasetDTO.getProcessType().toString());
 
             }
 

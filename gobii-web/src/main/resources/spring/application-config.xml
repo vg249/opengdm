@@ -58,7 +58,6 @@
     <bean id="rsContact" class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoSpImpl"/>
     <bean id="rsProject" class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>
     <!--<bean id="rsCvTerm" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvTermDaoImpl"/>-->
-    <bean id="rsPlatform" class="org.gobiiproject.gobiidao.resultset.access.impl.RsPlatformDaoImpl"/>
     <bean id="dtoMapNameIdList" class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl"/>
     <bean id="nameIdListService" class="org.gobiiproject.gobidomain.services.impl.NameIdListServiceImpl"/>
 
@@ -77,16 +76,20 @@
     <bean id="dtoMapExperiment" class="org.gobiiproject.gobiidtomapping.impl.DtoMapExperimentImpl"/>
     <bean id="ExperimentService" class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
 
-    <!-- **** Project Beans  ***************************************-->
+    <!-- **** DataSet Beans  ***************************************-->
     <bean id="rsDataSetDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDataSetDaoImpl"/>
     <bean id="dtoMapDataSet" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDataSetImpl"/>
     <bean id="DataSetService" class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl"/>
 
-    <!-- **** Project Beans  ***************************************-->
+    <!-- **** Analysis Beans  ***************************************-->
     <bean id="rsAnalysisDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsAnalysisDaoImpl"/>
     <bean id="dtoMapAnalysis" class="org.gobiiproject.gobiidtomapping.impl.DtoMapAnalysisImpl"/>
     <bean id="AnalysisService" class="org.gobiiproject.gobidomain.services.impl.AnalysisServiceImpl"/>
 
+    <!-- **** Platform Beans  ***************************************-->
+    <bean id="rsPlatformDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsPlatformDaoImpl"/>
+    <bean id="dtoMapPlatform" class="org.gobiiproject.gobiidtomapping.impl.DtoMapPlatformImpl"/>
+    <bean id="platformService" class="org.gobiiproject.gobidomain.services.impl.PlatformServiceImpl"/>
 
     <!-- **** Manifest Beans  ***************************************-->
     <bean id="rsManifestDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl"/>
