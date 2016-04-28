@@ -95,14 +95,14 @@
 	<bean id="ExperimentService"
 		class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl" />
 
-	<!-- **** Project Beans *************************************** -->
+	<!-- **** Dataset Beans *************************************** -->
 	<bean id="rsDataSetDao"
 		class="org.gobiiproject.gobiidao.resultset.access.impl.RsDataSetDaoImpl" />
 	<bean id="dtoMapDataSet" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDataSetImpl" />
 	<bean id="DataSetService"
 		class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl" />
 
-	<!-- **** Project Beans *************************************** -->
+	<!-- **** Analysis Beans *************************************** -->
 	<bean id="rsAnalysisDao"
 		class="org.gobiiproject.gobiidao.resultset.access.impl.RsAnalysisDaoImpl" />
 	<bean id="dtoMapAnalysis"
@@ -140,11 +140,15 @@
 	<!-- **** MarkerGroup Beans *************************************** -->
 	<bean id="rsMarkerGroupDao"
 		class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerGroupDaoImpl" />
-		
+
 	<!-- **** Role Beans *************************************** -->
 	<bean id="rsRoleDao"
 		class="org.gobiiproject.gobiidao.resultset.access.impl.RsRoleDaoImpl" />
 		
+	<!-- **** Project Beans *************************************** -->
+	<bean id="rsProjectDao"
+		class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl" />
+
 	<!-- ************************ DATA ACCESS BEANS ************************* -->
 
 	<!-- Hibernate/JDBC connection properties -->

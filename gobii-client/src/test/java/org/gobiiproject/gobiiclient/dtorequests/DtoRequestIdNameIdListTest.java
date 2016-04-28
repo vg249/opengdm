@@ -127,12 +127,12 @@ public class DtoRequestIdNameIdListTest {
 
     } // testGetMarkers()
     
-    @Ignore
+    @Test
     public void testGetMapNames() throws Exception {
 
         // Assumes rice data with seed script is loaded
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("map");
+        nameIdListDTORequest.setEntityName("mapset");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
 
@@ -158,6 +158,21 @@ public class DtoRequestIdNameIdListTest {
     } // testGetMarkers()
     
     @Test
+    public void testGetCvNames() throws Exception {
+
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("cvnames");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+    } // testGetMarkers()
+    
+    @Test
     public void testGetRoles() throws Exception {
 
         // Assumes rice data with seed script is loaded
@@ -172,7 +187,7 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
     } // testGetMarkers()
     
-    @Ignore
+    @Test
     public void testGetMapNamesByType() throws Exception {
 
         // Assumes rice data with seed script is loaded

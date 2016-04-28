@@ -16,7 +16,6 @@ public class DtoRequestMarkersTest {
     @Test
     public void testGetMarkers() throws Exception {
 
-
         DtoRequestMarkers dtoRequestMarkers = new DtoRequestMarkers();
         MarkerGroupDTO markerGroupDTO = dtoRequestMarkers.getmMarkerGroup(new ArrayList<String>());
 
