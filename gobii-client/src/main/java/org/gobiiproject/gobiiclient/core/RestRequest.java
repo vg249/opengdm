@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.ParameterizedType;
 import java.net.URI;
 
 
@@ -92,19 +91,6 @@ public class RestRequest<T> {
 
         return (returnVal);
 
-    }//byContentTypeUri()
-
-    private URI getMarkerUri() throws Exception {
-        return (makeUri(Urls.URL_MARKERS));
-    } // getMarkerUri()
-
-    private URI resourceUri() throws Exception {
-
-        URI returnVal = getBaseBuilder()
-                .setPath("/resource")
-                .build();
-
-        return (returnVal);
     }//byContentTypeUri()
 
     private URI logoutURI() throws Exception {
@@ -225,7 +211,7 @@ public class RestRequest<T> {
 
         HttpResponse returnVal = null;
 
-        URI uri = getMarkerUri();
+        URI uri = makeUri(Urls.URL_AUTH);
         HttpPost postRequest = new HttpPost(uri);
         returnVal = submitUriRequest(postRequest, userName, password, null);
 

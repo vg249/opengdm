@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
+
 
 /**
  * Created by MrPhil on 7/6/2015.
@@ -78,6 +80,23 @@ public class LoadController {
         return (returnVal);
 
     }//getPingResponse()
+
+    @RequestMapping(value = "/auth", method = RequestMethod.POST)
+    @ResponseBody
+    public String authenticate(@RequestBody String noContentExpected) {
+
+        String returnVal = null;
+        try {
+            returnVal = "Authenticated: " +  (new Date()).toString();
+        } catch (AccessDeniedException e) {
+            String msg = e.getMessage();
+            String tmp = msg;
+            throw (e);
+        }
+
+        return (returnVal);
+
+    }//getByContentType()
 
 
     @RequestMapping(value = "/experiment", method = RequestMethod.POST)
