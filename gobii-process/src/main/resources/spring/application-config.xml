@@ -31,8 +31,12 @@
 
 
     <!-- ******************** explicitly defined beans  ****************-->
-    <bean id="markerDao" class="org.gobiiproject.gobiidao.entity.access.impl.mock.MarkerEntityDaoImplMock"/>
-    <bean id="markerService" class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
+    <!-- **** Ping Beans *************************************** -->
+    <bean id="pingDao"
+          class="org.gobiiproject.gobiidao.entity.access.impl.mock.PingEntityDaoImplMock"/>
+    <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.impl.DtoMapPingImpl"/>
+    <bean id="pingService"
+          class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl"/>
 
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 

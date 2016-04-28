@@ -29,4 +29,4 @@ public class PingServiceImpl implements PingService {
         return pingDTO;
     } // getMarkers()
 
-} // MarkerServiceImpl
+}

@@ -57,8 +57,6 @@
     <bean id="markerDao"
           class="org.gobiiproject.gobiidao.entity.access.impl.mock.MarkerEntityDaoImplMock"/>
     <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>
-    <bean id="markerService"
-          class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
 
     <!-- **** NameIdList Beans *************************************** -->
     <bean id="rsContact"

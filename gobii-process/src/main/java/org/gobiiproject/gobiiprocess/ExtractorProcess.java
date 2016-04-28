@@ -5,10 +5,13 @@
 // ************************************************************************
 package org.gobiiproject.gobiiprocess;
 
-import org.gobiiproject.gobidomain.services.MarkerService;
-import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
+import org.gobiiproject.gobidomain.services.PingService;
+import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Phil on 3/24/2016.
@@ -22,9 +25,16 @@ public class ExtractorProcess {
 
         try {
 
-            MarkerService markerService = springContextLoader.getApplicationContext().getBean(MarkerService.class);
-            MarkerGroupDTO markerGroupDTO = markerService.getMarkers(null);
-            LOGGER.info("Got markers: " + markerGroupDTO.getMarkerGroups());
+            PingService pingService = springContextLoader.getApplicationContext().getBean(PingService.class);
+
+            List<String> requestStrings = new ArrayList<>();
+            requestStrings.add("Test String 1");
+            requestStrings.add("Test String 2");
+            PingDTO pingDtoRequest = new PingDTO();
+            pingDtoRequest.setPingRequests(requestStrings);
+
+            PingDTO pingDTOResponse = pingService.getPings(pingDtoRequest);
+            LOGGER.info("Got response : " + pingDTOResponse.getPingResponses());
 
         } catch (Exception exception) {
             LOGGER.error(exception.getMessage());
