@@ -15,4 +15,6 @@ public interface RsExperimentDao {
 
 	ResultSet getExperimentDetailsForExperimentId(int experimentId) throws GobiiDaoException;
 
+	ResultSet getExperimentNames() throws GobiiDaoException;
+
 }

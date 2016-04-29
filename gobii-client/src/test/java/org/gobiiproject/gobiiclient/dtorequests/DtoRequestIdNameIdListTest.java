@@ -58,7 +58,20 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertNotEquals(null, nameIdListDTO);
         Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
+    }
+    
+    @Test
+    public void testGetExperimentNames() throws Exception {
 
+        // Assumes rice data with seed script is loaded
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("experimentnames");
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        Assert.assertNotEquals(null, nameIdListDTO);
+        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
     }
     
     @Test
@@ -93,7 +106,23 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
 
     } // testGetMarkers()
-    
+
+    @Test
+    public void testGetProjectNames() throws Exception {
+
+
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("projectnames");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+
+    } // testGetMarkers()
     @Test
     public void testGetMarkerGroupNames() throws Exception {
 
@@ -265,10 +294,19 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
 
-        for (Entry entry : nameIdListDtoResponse.getNamesById().entrySet()){ //add project on list
-            System.out.println((String) entry.getValue());//project name
-        }
-
     }
 
+    @Test
+    public void testGetDataSetNames() throws Exception {
+
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("datasetnames");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+    }
 }

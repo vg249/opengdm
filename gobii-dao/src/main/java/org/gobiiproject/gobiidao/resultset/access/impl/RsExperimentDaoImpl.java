@@ -4,6 +4,7 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentDetailsByExperimentId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNamesByProjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,28 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
         return returnVal;
     }
+
+
+    @Transactional(propagation = Propagation.REQUIRED)
+	@Override
+	public ResultSet getExperimentNames() throws GobiiDaoException {
+		// TODO Auto-generated method stub
+
+        ResultSet returnVal = null;
+
+        try {
+            SpGetExperimentNames spGetExperimentNames = new SpGetExperimentNames();
+            storedProcExec.doWithConnection(spGetExperimentNames);
+            returnVal = spGetExperimentNames.getResultSet();
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving all experiment names", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+	}
 
 
 } // RsProjectDaoImpl

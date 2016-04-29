@@ -4,11 +4,13 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvDetailsByCvId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvGroups;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvTerms;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvTermsByGroup;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentDetailsByExperimentId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNamesByProjectId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectDetailsByProjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +103,30 @@ public class RsCvDaoImpl implements RsCvDao {
 
 
 	        return returnVal;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public ResultSet getDetailsForCvId(Integer cvId) throws GobiiDaoException {
+		// TODO Auto-generated method stub
+
+        ResultSet returnVal;
+
+        try {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("cvId", cvId);
+            SpGetCvDetailsByCvId spGetCvDetailsByCvId = new SpGetCvDetailsByCvId(parameters);
+            storedProcExec.doWithConnection(spGetCvDetailsByCvId);
+            returnVal = spGetCvDetailsByCvId.getResultSet();
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving project details", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+
+        return returnVal;
 	}
 
 

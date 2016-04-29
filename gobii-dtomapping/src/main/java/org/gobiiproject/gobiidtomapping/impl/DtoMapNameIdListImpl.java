@@ -181,6 +181,64 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
     }//getNameIdListForMarkerGroups
     
+    private NameIdListDTO getNameIdListForExperiment(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsExperimentDao.getExperimentNames();
+            Map<String, String> experimentNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer experimentId = resultSet.getInt("experiment_id");
+                String experimentName = resultSet.getString("name");
+                experimentNamesById.put(experimentId.toString(), experimentName);
+            }
+
+
+            returnVal.setNamesById(experimentNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
+    private NameIdListDTO getNameIdListForDataSet(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsDataSetDao.getDatasetFileNames();
+            Map<String, String> datasetNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer datasetId = resultSet.getInt("dataset_id");
+                String dataFileName = resultSet.getString("data_file").toString();
+                datasetNamesById.put(datasetId.toString(), dataFileName);
+            }
+
+
+            returnVal.setNamesById(datasetNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
     private NameIdListDTO getNameIdListForPlatforms(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -210,7 +268,37 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         return returnVal;
     }
+    
+    private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
 
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsProjectDao.getProjectNames();
+            Map<String, String> projectNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer projectId = resultSet.getInt("project_id");
+                String projectName = resultSet.getString("name");
+                projectNamesById.put(projectId.toString(), projectName);
+            }
+
+
+            returnVal.setNamesById(projectNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
+    
     private NameIdListDTO getNameIdListForReference(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -357,7 +445,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
     }//getNameIdListForManifest
 
-    private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
+    private NameIdListDTO getNameIdListForProjectNameByContact(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
 
@@ -386,7 +474,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     } // getNameIdListForContacts()
 
-    private NameIdListDTO getNameIdListForExperiment(NameIdListDTO nameIdListDTO) {
+    private NameIdListDTO getNameIdListForExperimentByProjectId(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
 
@@ -501,7 +589,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
 
     } // getNameIdListForCvGroupTerms()
-    private NameIdListDTO getNameIdListForDataSet(NameIdListDTO nameIdListDTO) {
+    private NameIdListDTO getNameIdListForDataSetByExperimentId(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
 
@@ -547,9 +635,13 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                 case "analysisNameByTypeId":
                     returnVal = getNameIdListForAnalysisNameByTypeId(nameIdListDTO);
                     break;
-
+                    
                 case "contact":
                     returnVal = getNameIdListForContacts(nameIdListDTO);
+                    break;
+
+                case "datasetnames":
+                    returnVal = getNameIdListForDataSet(nameIdListDTO);
                     break;
 
                 case "cvnames":
@@ -557,9 +649,13 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     break;
                     
                 case "project":
+                    returnVal = getNameIdListForProjectNameByContact(nameIdListDTO);
+                    break;
+                    
+                case "projectnames":
                     returnVal = getNameIdListForProjects(nameIdListDTO);
                     break;
-
+                    
                 case "platform":
                     returnVal = getNameIdListForPlatforms(nameIdListDTO);
                     break;
@@ -581,6 +677,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     break;
                     
                 case "experiment":
+                    returnVal = getNameIdListForExperimentByProjectId(nameIdListDTO);
+                    break;
+                    
+                case "experimentnames":
                     returnVal = getNameIdListForExperiment(nameIdListDTO);
                     break;
                     
@@ -593,7 +693,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     break;
                     
                 case "dataset":
-                    returnVal = getNameIdListForDataSet(nameIdListDTO);
+                    returnVal = getNameIdListForDataSetByExperimentId(nameIdListDTO);
                     break;
                     
                 case "reference":

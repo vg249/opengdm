@@ -51,6 +51,9 @@ public class LoadController {
 
     @Autowired
     private DisplayService displayService = null;
+    
+    @Autowired
+    private CvService cvService = null;
 
     @Autowired
     private DataSetService dataSetService = null;
@@ -98,6 +101,23 @@ public class LoadController {
 
     }//getByContentType()
 
+
+    @RequestMapping(value = "/cv", method = RequestMethod.POST)
+    @ResponseBody
+    public CvDTO getPingResponse(@RequestBody CvDTO CvDTO) {
+
+    	CvDTO returnVal = null;
+        //PingDTO pingDTORequest = new PingDTO();
+        try {
+            returnVal = cvService.getCvNames(CvDTO);
+        } catch (AccessDeniedException e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+        return (returnVal);
+
+    }//getPingResponse()
 
     @RequestMapping(value = "/experiment", method = RequestMethod.POST)
     @ResponseBody

@@ -9,6 +9,7 @@ import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectPropert
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjecttNamesByContactId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPropertiesForProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectDetailsByProjectId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,6 +159,32 @@ public class RsProjectDaoImpl implements RsProjectDao {
         return returnVal;
 
     } // createUpdateProperty
+
+    @Transactional(propagation = Propagation.REQUIRED)
+	@Override
+	public ResultSet getProjectNames() throws GobiiDaoException {
+		// TODO Auto-generated method stub
+
+        ResultSet returnVal = null;
+
+        try {
+            Map<String, Object> parameters = new HashMap<>();
+            SpGetProjectNames spGetProjectNames = new SpGetProjectNames();
+
+            storedProcExec.doWithConnection(spGetProjectNames);
+
+            returnVal = spGetProjectNames.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving project names", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+
+	}
 
 
 } // RsProjectDaoImpl

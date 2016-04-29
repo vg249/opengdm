@@ -118,5 +118,29 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
         return null;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+	@Override
+	public ResultSet getDatasetFileNames() throws GobiiDaoException {
+		// TODO Auto-generated method stub
+
+        ResultSet returnVal = null;
+
+        try {
+            SpGetDatasetFileNames spGetDatasetFileNames = new SpGetDatasetFileNames();
+
+            storedProcExec.doWithConnection(spGetDatasetFileNames);
+
+            returnVal = spGetDatasetFileNames.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving dataset file names", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+	}
+
 
 } // RsProjectDaoImpl
