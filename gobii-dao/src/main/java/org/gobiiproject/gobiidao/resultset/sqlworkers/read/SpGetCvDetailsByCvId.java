@@ -28,7 +28,7 @@ public class SpGetCvDetailsByCvId implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String Sql = "select * from project where cv_id = ?";
+        String Sql = "select * from cv where cv_id = ?";
         PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
         Integer projectId = (Integer) parameters.get("cvId");
         preparedStatement.setInt(1, projectId);
