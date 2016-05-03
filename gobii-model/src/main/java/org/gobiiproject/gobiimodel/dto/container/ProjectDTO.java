@@ -75,6 +75,7 @@ public class ProjectDTO extends DtoMetaData {
         this.projectStatus = projectStatus;
     }
 
+    @GobiiEntityParam(paramName = "projectId")
     public int getProjectId() {
         return projectId;
     }

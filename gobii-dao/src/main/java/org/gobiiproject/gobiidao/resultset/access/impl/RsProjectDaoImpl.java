@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectProperties;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectByNameAndPIContact;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjecttNamesByContactId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPropertiesForProject;
@@ -165,10 +166,22 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
     } // createProject
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Integer updateProject(Map<String, Object> parameters) throws GobiiDaoException {
+    public void updateProject(Map<String, Object> parameters) throws GobiiDaoException {
 
-        return null;
+        try {
+
+            if (!spRunnerCallable.run(new SpUpdProject(), parameters)) {
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating project", e);
+            throw (new GobiiDaoException(e));
+
+        }
 
     }
 
@@ -194,9 +207,9 @@ public class RsProjectDaoImpl implements RsProjectDao {
     } // createUpdateProperty
 
     @Transactional(propagation = Propagation.REQUIRED)
-	@Override
-	public ResultSet getProjectNames() throws GobiiDaoException {
-		// TODO Auto-generated method stub
+    @Override
+    public ResultSet getProjectNames() throws GobiiDaoException {
+        // TODO Auto-generated method stub
 
         ResultSet returnVal = null;
 
@@ -217,7 +230,7 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
         return returnVal;
 
-	}
+    }
 
 
 } // RsProjectDaoImpl

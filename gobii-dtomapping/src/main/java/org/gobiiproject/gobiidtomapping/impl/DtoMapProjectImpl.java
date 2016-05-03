@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,15 +55,19 @@ public class DtoMapProjectImpl implements DtoMapProject {
                 String projectDescription = resultSet.getString("description");
                 int piContact = resultSet.getInt("pi_contact");
                 int modifiedBy = resultSet.getInt("modified_by");
+                Date modifiedDate = resultSet.getDate("modified_date");
                 int createdBy = resultSet.getInt("created_by");
                 int projectStatus = resultSet.getInt("status");
+                Date createdDate = resultSet.getDate("created_date");
 
                 returnVal.setProjectId(projectId);
                 returnVal.setProjectName(projectName);
                 returnVal.setProjectCode(projectCode);
                 returnVal.setProjectDescription(projectDescription);
                 returnVal.setPiContact(piContact);
+                returnVal.setModifiedDate(modifiedDate);
                 returnVal.setModifiedBy(modifiedBy);
+                returnVal.setCreatedDate(createdDate);
                 returnVal.setCreatedBy(createdBy);
                 returnVal.setProjectStatus(projectStatus);
             }
@@ -95,6 +100,39 @@ public class DtoMapProjectImpl implements DtoMapProject {
     }
 
 
+    private boolean validateProjectRequest(ProjectDTO projectDTO) {
+
+        boolean returnVal = true;
+
+        try {
+
+            String projectName = projectDTO.getProjectName();
+            Integer piContactId = projectDTO.getPiContact();
+            ResultSet resultSetExistingProject =
+                    rsProjectDao.getProjectsByNameAndPiContact(projectName, piContactId);
+
+            if (resultSetExistingProject.next()) {
+                projectDTO.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.OK,
+                        DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
+                        "A project with name " + projectName + " and contact id " + piContactId + "already exists");
+            }
+
+        } catch (SQLException e) {
+            projectDTO.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+            returnVal = false;
+
+        } catch (GobiiDaoException e) {
+            projectDTO.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+            returnVal = false;
+        }
+
+
+        return returnVal;
+
+    }
+
     @Override
     public ProjectDTO createProject(ProjectDTO projectDTO) throws GobiiDtoMappingException {
 
@@ -103,12 +141,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
         try {
 
 
-            String projectName = returnVal.getProjectName();
-            Integer piContactId = returnVal.getPiContact();
-            ResultSet resultSetExistingProject =
-                    rsProjectDao.getProjectsByNameAndPiContact(projectName, piContactId);
-
-            if (!resultSetExistingProject.next()) {
+            if (validateProjectRequest(returnVal)) {
 
                 Map<String, Object> parameters = ParamExtractor.makeParamVals(projectDTO);
 
@@ -117,26 +150,9 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
                 List<EntityPropertyDTO> projectProperties = projectDTO.getProperties();
 
-                for (EntityPropertyDTO currentProperty : projectProperties) {
+                upsertProjectProperties(projectId, projectProperties);
 
-                    Map<String, Object> spParamsParameters = new HashMap<>();
-                    spParamsParameters.put("projectId", projectId);
-                    spParamsParameters.put("propertyName", currentProperty.getPropertyName());
-                    spParamsParameters.put("propertyValue", currentProperty.getPropertyValue());
-
-                    Integer propertyId = rsProjectDao.createUpdateProperty(spParamsParameters);
-                    currentProperty.setEntityIdId(projectId);
-                    currentProperty.setPropertyId(propertyId);
-                }
-            } else {
-                returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.OK,
-                        DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
-                        "A project with name " + projectName + " and contact id " +  piContactId + "already exists");
             }
-
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
 
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -146,37 +162,41 @@ public class DtoMapProjectImpl implements DtoMapProject {
         return returnVal;
     }
 
+    private void upsertProjectProperties(Integer projectId, List<EntityPropertyDTO> projectProperties) throws GobiiDaoException {
+
+        for (EntityPropertyDTO currentProperty : projectProperties) {
+
+            Map<String, Object> spParamsParameters = new HashMap<>();
+            spParamsParameters.put("projectId", projectId);
+            spParamsParameters.put("propertyName", currentProperty.getPropertyName());
+            spParamsParameters.put("propertyValue", currentProperty.getPropertyValue());
+
+            Integer propertyId = rsProjectDao.createUpdateProperty(spParamsParameters);
+            currentProperty.setEntityIdId(projectId);
+            currentProperty.setPropertyId(propertyId);
+        }
+
+    }
+
     @Override
     public ProjectDTO updateProject(ProjectDTO projectDTO) throws GobiiDtoMappingException {
 
         ProjectDTO returnVal = projectDTO;
 
-//        try {
-//
-//
-//            Map<String, Object> parameters = ParamExtractor.makeParamVals(projectDTO);
-//
-//            Integer projectId = rsProjectDao.createProject(parameters);
-//            returnVal.setProjectId(projectId);
-//
-//            List<EntityPropertyDTO> projectProperties = projectDTO.getProperties();
-//
-//            for (EntityPropertyDTO currentProperty : projectProperties) {
-//
-//                Map<String, Object> spParamsParameters = new HashMap<>();
-//                spParamsParameters.put("projectId", projectId);
-//                spParamsParameters.put("propertyName", currentProperty.getPropertyName());
-//                spParamsParameters.put("propertyValue", currentProperty.getPropertyValue());
-//
-//                Integer propertyId = rsProjectDao.createUpdateProperty(spParamsParameters);
-//                currentProperty.setEntityIdId(projectId);
-//                currentProperty.setPropertyId(propertyId);
-//            }
+        try {
 
-//        } catch (GobiiDaoException e) {
-//            returnVal.getDtoHeaderResponse().addException(e);
-//            LOGGER.error(e.getMessage());
-//        }
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(projectDTO);
+            rsProjectDao.updateProject(parameters);
+
+            List<EntityPropertyDTO> projectProperties = projectDTO.getProperties();
+
+            upsertProjectProperties(returnVal.getProjectId(), projectProperties);
+
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
 
         return returnVal;
 

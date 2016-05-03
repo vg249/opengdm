@@ -62,7 +62,7 @@ public class SpRunnerCallable implements Work {
         boolean returnVal = true;
         errors.clear();
 
-        if (spDef.getSpParamDefs().size() == paramVals.size()) {
+//        if (spDef.getSpParamDefs().size() == paramVals.size()) {
 
             try {
                 this.spDef = spDef;
@@ -122,12 +122,12 @@ public class SpRunnerCallable implements Work {
                 this.spDef = null;
                 this.paramVals = null;
             }
-        } else {
-            returnVal = false;
-            String message = "Param def size and input parameters size do not match";
-            errors.add(message);
-            LOGGER.error(message);
-        }
+//        } else {
+//            returnVal = false;
+//            String message = "Param def size and input parameters size do not match";
+//            errors.add(message);
+//            LOGGER.error(message);
+//        }
 
         return returnVal;
 

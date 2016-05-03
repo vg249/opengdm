@@ -23,7 +23,7 @@ public class DtoRequestProjectTest {
 
 
     @Test
-    public void testGetProject() throws Exception {
+    public void testGetProjectDetails() throws Exception {
 
 
         DtoRequestProject dtoRequestProject = new DtoRequestProject();
@@ -100,11 +100,32 @@ public class DtoRequestProjectTest {
         Assert.assertNotNull(headerStatusMessages);
         Assert.assertTrue(headerStatusMessages.size() > 0);
         HeaderStatusMessage headerStatusMessageValidation = headerStatusMessages.get(0);
-        Assert.assertTrue(headerStatusMessageValidation .getMessage().toLowerCase().contains("contact"));
-        Assert.assertTrue(headerStatusMessageValidation .getMessage().toLowerCase().contains("name"));
+        Assert.assertTrue(headerStatusMessageValidation.getMessage().toLowerCase().contains("contact"));
+        Assert.assertTrue(headerStatusMessageValidation.getMessage().toLowerCase().contains("name"));
 
 
     } // testCreateProject()
+
+    @Test
+    public void testUpdateProject() throws Exception {
+
+        DtoRequestProject dtoRequestProject = new DtoRequestProject();
+        ProjectDTO projectDTORequest = dtoRequestProject.getProject(1);
+
+        projectDTORequest.setProcessType(DtoMetaData.ProcessType.UPDATE);
+
+        String newDescription = UUID.randomUUID().toString();
+
+        projectDTORequest.setProjectDescription(newDescription);
+
+        ProjectDTO projectDTOResponse = dtoRequestProject.process(projectDTORequest);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(projectDTOResponse));
+
+
+        ProjectDTO dtoRequestProjectProjectReRetrieved = dtoRequestProject.getProject(1);
+        Assert.assertTrue(dtoRequestProjectProjectReRetrieved.getProjectDescription().equals(newDescription));
+
+    }
 
 
 }
