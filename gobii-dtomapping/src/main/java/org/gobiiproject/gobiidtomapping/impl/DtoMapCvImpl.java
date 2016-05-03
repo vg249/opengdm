@@ -36,7 +36,7 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         try {
 
-            ResultSet resultSet = rsCvDao.getDetailsForCvId(cvDTO.getCv_id());
+            ResultSet resultSet = rsCvDao.getDetailsForCvId(cvDTO.getCvId());
 
             if (resultSet.next()) {
 

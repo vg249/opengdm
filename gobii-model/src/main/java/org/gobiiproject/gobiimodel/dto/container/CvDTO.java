@@ -15,19 +15,19 @@ import java.util.Map;
  */
 public class CvDTO extends DtoMetaData {
 
-	private int cv_id;
+	private Integer cv_id;
 	private String group;
 	private String term;
 	private String definition;
-	private int rank;
+	private Integer rank;
 
 	@GobiiEntityParam(paramName = "cvId")
-	public int getCvId() {
+	public Integer getCvId() {
 		return cv_id;
 	}
 
 	@GobiiEntityColumn(columnName = "cv_id")
-	public void setcvId(int cv_id) {
+	public void setcvId(Integer cv_id) {
 		this.cv_id = cv_id;
 	}
 
@@ -62,12 +62,12 @@ public class CvDTO extends DtoMetaData {
 	}
 
 	@GobiiEntityParam(paramName = "rank")
-	public int getRank() {
+	public Integer getRank() {
 		return rank;
 	}
 
 	@GobiiEntityColumn(columnName = "rank")
-	public void setRank(int rank) {
+	public void setRank(Integer rank) {
 		this.rank = rank;
 	}
 

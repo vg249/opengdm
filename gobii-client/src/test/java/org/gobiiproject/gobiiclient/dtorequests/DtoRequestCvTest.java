@@ -25,9 +25,8 @@ public class DtoRequestCvTest {
 	        Assert.assertNotEquals(cvDTOResponse,null);
 		    Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResponse));
 
-//	        Assert.assertNotEquals(null, nameIdListDTO);
-//	        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
-//	        Assert.assertTrue(nameIdListDTO.getProjectNamesById().size() >= 0);
+	        Assert.assertNotEquals(null, cvDTOResponse);
+	        Assert.assertTrue(cvDTOResponse.getCvId() >= 0);
 
 	    } // testGetMarkers()
 
