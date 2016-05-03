@@ -40,7 +40,7 @@ public class DtoRequestProject {
 
     } // getPing()
 
-    public ProjectDTO updateProject(ProjectDTO projectDTO) throws Exception {
+    public ProjectDTO process(ProjectDTO projectDTO) throws Exception {
 
         ProjectDTO returnVal = null;
 

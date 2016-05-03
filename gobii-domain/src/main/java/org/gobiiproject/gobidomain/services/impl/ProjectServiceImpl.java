@@ -27,13 +27,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectDTO getProject(ProjectDTO projectDTO) {
 
-        ProjectDTO returnVal = null;
+        ProjectDTO returnVal = projectDTO;
         try {
 
             switch (projectDTO.getProcessType()) {
 
                 case READ:
-                    returnVal = dtoMapProject.getProject(projectDTO);
+                    returnVal = dtoMapProject.getProjectDetail(projectDTO);
                     break;
 
                 case CREATE:
@@ -43,7 +43,7 @@ public class ProjectServiceImpl implements ProjectService {
                     break;
 
                 default:
-                    GobiiDomainException gobiiDomainException = new GobiiDomainException("Unsupported procesCv type: " + projectDTO.getProcessType().toString());
+                    GobiiDomainException gobiiDomainException = new GobiiDomainException("Unsupported process type: " + projectDTO.getProcessType().toString());
                     returnVal.getDtoHeaderResponse().addException(gobiiDomainException);
                     LOGGER.error(gobiiDomainException.getMessage());
                     break;
@@ -59,7 +59,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         return returnVal;
 
-    } // getProject
+    } // getProjectDetail
 
 
 } // ProjectServiceImpl

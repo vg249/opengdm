@@ -704,7 +704,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     returnVal = getNameIdListForRole(nameIdListDTO);
                     break;
                 default:
-                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.Error,
+                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
                             "Unsupported entity for list request: " + nameIdListDTO.getEntityName());
             }
 

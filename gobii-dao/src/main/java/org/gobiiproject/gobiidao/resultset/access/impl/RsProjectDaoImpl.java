@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectProperties;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectByNameAndPIContact;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjecttNamesByContactId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPropertiesForProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectDetailsByProjectId;
@@ -112,6 +113,31 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
+    public ResultSet getProjectsByNameAndPiContact(String projectName, Integer piContactId) throws GobiiDaoException {
+        ResultSet returnVal = null;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("piContactId", piContactId);
+            parameters.put("projectName", getProjectNames());
+            SpGetProjectByNameAndPIContact spGetProjectByNameAndPIContact = new SpGetProjectByNameAndPIContact(parameters);
+            storedProcExec.doWithConnection(spGetProjectByNameAndPIContact);
+            returnVal = spGetProjectByNameAndPIContact.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving projects", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
     public Integer createProject(Map<String, Object> parameters) throws GobiiDaoException {
 
         Integer returnVal = null;
@@ -138,6 +164,13 @@ public class RsProjectDaoImpl implements RsProjectDao {
         return returnVal;
 
     } // createProject
+
+    @Override
+    public Integer updateProject(Map<String, Object> parameters) throws GobiiDaoException {
+
+        return null;
+
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override

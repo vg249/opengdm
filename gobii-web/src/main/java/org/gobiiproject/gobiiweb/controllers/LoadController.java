@@ -68,8 +68,8 @@ public class LoadController {
     @ResponseBody
     public PingDTO getPingResponse(@RequestBody PingDTO pingDTORequest) {
 
-        PingDTO returnVal = null;
-        //PingDTO pingDTORequest = new PingDTO();
+        PingDTO returnVal = new PingDTO();
+
         try {
             returnVal = pingService.getPings(pingDTORequest);
             String newResponseString = LineUtils.wrapLine("Loader controller responded");
@@ -107,7 +107,7 @@ public class LoadController {
     public CvDTO getPingResponse(@RequestBody CvDTO CvDTO) {
 
     	CvDTO returnVal = new CvDTO();
-        //PingDTO pingDTORequest = new PingDTO();
+
         try {
             returnVal = cvService.procesCv(CvDTO);
         } catch (AccessDeniedException e) {
@@ -124,7 +124,7 @@ public class LoadController {
     public ExperimentDTO getPingResponse(@RequestBody ExperimentDTO experimentDTO) {
 
         ExperimentDTO returnVal = null;
-        //PingDTO pingDTORequest = new PingDTO();
+
         try {
             returnVal = experimentService.getExperiment(experimentDTO);
         } catch (AccessDeniedException e) {
@@ -138,10 +138,10 @@ public class LoadController {
     
     @RequestMapping(value = "/project", method = RequestMethod.POST)
     @ResponseBody
-    public ProjectDTO getPingResponse(@RequestBody ProjectDTO projectDTO) {
+    public ProjectDTO processProject(@RequestBody ProjectDTO projectDTO) {
 
         ProjectDTO returnVal = null;
-        //PingDTO pingDTORequest = new PingDTO();
+
         try {
             returnVal = projectService.getProject(projectDTO);
         } catch (AccessDeniedException e) {
