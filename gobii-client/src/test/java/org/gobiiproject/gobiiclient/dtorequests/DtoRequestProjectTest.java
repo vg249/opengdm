@@ -15,6 +15,8 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class DtoRequestProjectTest {
@@ -40,7 +42,7 @@ public class DtoRequestProjectTest {
         DtoRequestProject dtoRequestProject = new DtoRequestProject();
         ProjectDTO projectDTORequest = new ProjectDTO(DtoMetaData.ProcessType.CREATE);
         projectDTORequest.setCreatedBy(1);
-        projectDTORequest.setProjectName("foo projects");
+        projectDTORequest.setProjectName(UUID.randomUUID().toString());
         projectDTORequest.setProjectDescription("foo description");
         projectDTORequest.setProjectCode("foo codez");
         projectDTORequest.setProjectStatus(1);
@@ -73,33 +75,33 @@ public class DtoRequestProjectTest {
 
     } // testGetMarkers()
 
-    @Ignore
+    @Test
     public void testCreateExistingProject() throws Exception {
 
         DtoRequestProject dtoRequestProject = new DtoRequestProject();
         ProjectDTO projectDTOExisting = dtoRequestProject.getProject(1);
-        projectDTOExisting.setProcessType(DtoMetaData.ProcessType.UPDATE);
+        projectDTOExisting.setProcessType(DtoMetaData.ProcessType.CREATE);
 
 
         ProjectDTO projectDTOResponse = dtoRequestProject.process(projectDTOExisting);
 
 
-
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(projectDTOResponse));
 
 
-        HeaderStatusMessage headerStatusMessage = projectDTOResponse
+        List<HeaderStatusMessage> headerStatusMessages = projectDTOResponse
                 .getDtoHeaderResponse()
                 .getStatusMessages()
                 .stream()
                 .filter(m -> m.getValidationStatusType() == DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE)
-                .collect(Collectors.toList())
-                .get(0);
+                .collect(Collectors.toList());
 
-        Assert.assertNotNull(headerStatusMessage);
-        Assert.assertTrue(headerStatusMessage.getMessage().toLowerCase().contains("contact"));
-        Assert.assertTrue(headerStatusMessage.getMessage().toLowerCase().contains("name"));
 
+        Assert.assertNotNull(headerStatusMessages);
+        Assert.assertTrue(headerStatusMessages.size() > 0);
+        HeaderStatusMessage headerStatusMessageValidation = headerStatusMessages.get(0);
+        Assert.assertTrue(headerStatusMessageValidation .getMessage().toLowerCase().contains("contact"));
+        Assert.assertTrue(headerStatusMessageValidation .getMessage().toLowerCase().contains("name"));
 
 
     } // testCreateProject()

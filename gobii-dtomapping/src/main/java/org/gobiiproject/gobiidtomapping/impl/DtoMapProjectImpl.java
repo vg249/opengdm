@@ -53,12 +53,18 @@ public class DtoMapProjectImpl implements DtoMapProject {
                 String projectCode = resultSet.getString("code");
                 String projectDescription = resultSet.getString("description");
                 int piContact = resultSet.getInt("pi_contact");
+                int modifiedBy = resultSet.getInt("modified_by");
+                int createdBy = resultSet.getInt("created_by");
+                int projectStatus = resultSet.getInt("status");
 
                 returnVal.setProjectId(projectId);
                 returnVal.setProjectName(projectName);
                 returnVal.setProjectCode(projectCode);
                 returnVal.setProjectDescription(projectDescription);
                 returnVal.setPiContact(piContact);
+                returnVal.setModifiedBy(modifiedBy);
+                returnVal.setCreatedBy(createdBy);
+                returnVal.setProjectStatus(projectStatus);
             }
 
 

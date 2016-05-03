@@ -120,7 +120,7 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("piContactId", piContactId);
-            parameters.put("projectName", getProjectNames());
+            parameters.put("projectName", projectName);
             SpGetProjectByNameAndPIContact spGetProjectByNameAndPIContact = new SpGetProjectByNameAndPIContact(parameters);
             storedProcExec.doWithConnection(spGetProjectByNameAndPIContact);
             returnVal = spGetProjectByNameAndPIContact.getResultSet();

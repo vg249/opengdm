@@ -38,7 +38,7 @@ public class SpGetProjectByNameAndPIContact implements Work {
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
         Integer piContactId = (Integer) parameters.get("piContactId");
-        String projectName = (String) parameters.get("contactName");
+        String projectName = (String) parameters.get("projectName");
 
         preparedStatement.setString(1,projectName);
         preparedStatement.setInt(2, piContactId);
