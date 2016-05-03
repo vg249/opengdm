@@ -14,5 +14,5 @@ import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
  */
 public interface CvService {
 
-    CvDTO getCvNames(CvDTO cvDTO);
+    CvDTO procesCv(CvDTO cvDTO);
 }

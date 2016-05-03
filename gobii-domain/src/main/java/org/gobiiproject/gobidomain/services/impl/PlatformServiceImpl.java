@@ -31,7 +31,7 @@ public class PlatformServiceImpl implements PlatformService {
                     break;
 
                 default:
-                    throw new GobiiDtoMappingException("Unsupported process type " + platformDTO.getProcessType().toString());
+                    throw new GobiiDtoMappingException("Unsupported procesCv type " + platformDTO.getProcessType().toString());
 
             } // switch()
 

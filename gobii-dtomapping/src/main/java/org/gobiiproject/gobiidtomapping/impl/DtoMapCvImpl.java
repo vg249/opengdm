@@ -3,6 +3,7 @@ package org.gobiiproject.gobiidtomapping.impl;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidao.resultset.access.RsDisplayDao;
+import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapCv;
 import org.gobiiproject.gobiidtomapping.DtoMapDisplay;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
@@ -29,7 +30,7 @@ public class DtoMapCvImpl implements DtoMapCv {
     private RsCvDao rsCvDao = null;
 
     @Override
-    public CvDTO getCvNames(CvDTO cvDTO) throws GobiiDtoMappingException {
+    public CvDTO getCvDetails(CvDTO cvDTO) throws GobiiDtoMappingException {
 
         CvDTO returnVal = new CvDTO();
 
@@ -37,34 +38,19 @@ public class DtoMapCvImpl implements DtoMapCv {
 
             ResultSet resultSet = rsCvDao.getDetailsForCvId(cvDTO.getCv_id());
 
-            boolean retrievedOneRecord = false;
-            while (resultSet.next()) {
+            if (resultSet.next()) {
 
-                if (true == retrievedOneRecord) {
-                    throw (new GobiiDtoMappingException("There are more than one cv records for cv id: " +cvDTO.getCv_id()));
-                }
-                
-                retrievedOneRecord = true;
+                // apply cv values
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
 
-                int cvId = resultSet.getInt("cv_id");
-                String cvGroup = resultSet.getString("group");
-                String cvTerm = resultSet.getString("term");
-                String cvDefinition = resultSet.getString("definition");
-                int cvRank =  resultSet.getInt("rank");
-
-                returnVal.setCv_id(cvId);
-                returnVal.setDefinition(cvTerm);
-                returnVal.setGroup(cvGroup);
-                returnVal.setRank(cvRank);
-                returnVal.setTerm(cvTerm);
             }
+
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-        catch (SQLException e) {
+            LOGGER.error("Error mapping result set to DTO", e);
+        } catch (SQLException e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Error mapping result set to DTO", e);
         }
 
         return returnVal;

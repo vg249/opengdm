@@ -32,7 +32,7 @@ public class MapsetServiceImpl implements MapsetService {
                     break;
 
                 default:
-                    throw new GobiiDtoMappingException("Unsupported process type " + returnVal.getProcessType().toString());
+                    throw new GobiiDtoMappingException("Unsupported procesCv type " + returnVal.getProcessType().toString());
 
             } // switch()
 

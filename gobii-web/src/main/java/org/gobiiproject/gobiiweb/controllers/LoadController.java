@@ -106,10 +106,10 @@ public class LoadController {
     @ResponseBody
     public CvDTO getPingResponse(@RequestBody CvDTO CvDTO) {
 
-    	CvDTO returnVal = null;
+    	CvDTO returnVal = new CvDTO();
         //PingDTO pingDTORequest = new PingDTO();
         try {
-            returnVal = cvService.getCvNames(CvDTO);
+            returnVal = cvService.procesCv(CvDTO);
         } catch (AccessDeniedException e) {
 
             returnVal.getDtoHeaderResponse().addException(e);

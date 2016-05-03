@@ -7,22 +7,23 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
 import org.junit.Assert;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.junit.Test;
 
 public class DtoRequestCvTest {
  
 	   @Test
-	    public void testGetExperimentDetailsByExperimentId() throws Exception {
+	    public void testGetCvDetailsByCvId() throws Exception {
 	        DtoRequestCv dtoRequestCv = new DtoRequestCv();
 
-	        CvDTO cvDTO = new CvDTO();
-	        cvDTO.setCv_id(2);
-	        dtoRequestCv.geCvNames(cvDTO);
+	        CvDTO cvDTORequest = new CvDTO();
+		   cvDTORequest.setcvId(2);
 
 
-	        CvDTO cvDTORsponse = dtoRequestCv.geCvNames(cvDTO);
+	        CvDTO cvDTOResponse = dtoRequestCv.process(cvDTORequest);
 
-	        Assert.assertNotEquals(cvDTORsponse,null);
+	        Assert.assertNotEquals(cvDTOResponse,null);
+		    Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResponse));
 
 //	        Assert.assertNotEquals(null, nameIdListDTO);
 //	        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());

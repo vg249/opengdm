@@ -43,7 +43,7 @@ public class ProjectServiceImpl implements ProjectService {
                     break;
 
                 default:
-                    GobiiDomainException gobiiDomainException = new GobiiDomainException("Unsupported process type: " + projectDTO.getProcessType().toString());
+                    GobiiDomainException gobiiDomainException = new GobiiDomainException("Unsupported procesCv type: " + projectDTO.getProcessType().toString());
                     returnVal.getDtoHeaderResponse().addException(gobiiDomainException);
                     LOGGER.error(gobiiDomainException.getMessage());
                     break;

@@ -36,7 +36,7 @@ public class DataSetServiceImpl implements DataSetService {
                     break;
 
                 default:
-                    throw new GobiiDtoMappingException("Unsupported process type " + datasetDTO.getProcessType().toString());
+                    throw new GobiiDtoMappingException("Unsupported procesCv type " + datasetDTO.getProcessType().toString());
 
             }
 

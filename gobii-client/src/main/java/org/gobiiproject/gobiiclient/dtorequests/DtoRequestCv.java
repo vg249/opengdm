@@ -17,7 +17,7 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
 public class DtoRequestCv {
 
 
-    public CvDTO geCvNames(CvDTO cvDTO) throws Exception {
+    public CvDTO process(CvDTO cvDTO) throws Exception {
 
 
     	CvDTO returnVal = null;
