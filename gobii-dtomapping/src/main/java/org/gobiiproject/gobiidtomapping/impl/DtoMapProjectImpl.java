@@ -1,9 +1,11 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectDetailsByProjectId;
+import org.gobiiproject.gobiidtomapping.DtoMapCv;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
@@ -73,19 +75,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
             }
 
 
-            ResultSet propertyResultSet = rsProjectDao.getPropertiesForProject(projectDTO.getProjectId());
-            while (propertyResultSet.next()) {
-                String propertyName = propertyResultSet.getString("property_name");
-                String propertyValue = propertyResultSet.getString("property_value");
-                Integer propertyId = propertyResultSet.getInt("property_id");
-                EntityPropertyDTO currentProjectProperty =
-                        new EntityPropertyDTO(projectDTO.getProjectId(),
-                                propertyId,
-                                propertyName,
-                                propertyValue);
-                returnVal.getProperties().add(currentProjectProperty);
-            }
-
+            addPropertiesToProject(returnVal);
 
         } catch (SQLException e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -99,6 +89,22 @@ public class DtoMapProjectImpl implements DtoMapProject {
         return returnVal;
     }
 
+    private void addPropertiesToProject(ProjectDTO projectDTO) throws GobiiDaoException, SQLException {
+
+        ResultSet propertyResultSet = rsProjectDao.getPropertiesForProject(projectDTO.getProjectId());
+        while (propertyResultSet.next()) {
+            String propertyName = propertyResultSet.getString("property_name");
+            String propertyValue = propertyResultSet.getString("property_value");
+            Integer propertyId = propertyResultSet.getInt("property_id");
+            EntityPropertyDTO currentProjectProperty =
+                    new EntityPropertyDTO(projectDTO.getProjectId(),
+                            propertyId,
+                            propertyName,
+                            propertyValue);
+            projectDTO.getProperties().add(currentProjectProperty);
+        }
+
+    }
 
     private boolean validateProjectRequest(ProjectDTO projectDTO) {
 

@@ -118,12 +118,33 @@ public class DtoRequestProjectTest {
 
         projectDTORequest.setProjectDescription(newDescription);
 
+        String divisionPropertyNewValue = UUID.randomUUID().toString();
+        EntityPropertyDTO divisionProperty = projectDTORequest
+                .getProperties()
+                .stream()
+                .filter(p -> p.getPropertyName().equals("division"))
+                .collect(Collectors.toList())
+                .get(0);
+
+        divisionProperty.setPropertyValue(divisionPropertyNewValue);
+
+
         ProjectDTO projectDTOResponse = dtoRequestProject.process(projectDTORequest);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(projectDTOResponse));
 
 
         ProjectDTO dtoRequestProjectProjectReRetrieved = dtoRequestProject.getProject(1);
         Assert.assertTrue(dtoRequestProjectProjectReRetrieved.getProjectDescription().equals(newDescription));
+
+        EntityPropertyDTO divisionPropertyReceived = dtoRequestProjectProjectReRetrieved
+                .getProperties()
+                .stream()
+                .filter(p -> p.getPropertyName().equals("division"))
+                .collect(Collectors.toList())
+                .get(0);
+
+        Assert.assertTrue(divisionPropertyReceived.getPropertyValue().equals(divisionPropertyNewValue));
+
 
     }
 
