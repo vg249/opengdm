@@ -6,6 +6,8 @@ import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsDataSet;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsExperiment;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdExperiment;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentByNameProjectIdPlatformId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentDetailsByExperimentId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNames;
@@ -131,6 +133,24 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
         return returnVal;
 
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateExperiment(Map<String, Object> parameters) throws GobiiDaoException {
+
+        try {
+
+            if (!spRunnerCallable.run(new SpUpdExperiment(), parameters)) {
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating experiment", e);
+            throw (new GobiiDaoException(e));
+
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

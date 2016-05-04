@@ -12,5 +12,6 @@ import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
  */
 public interface ExperimentService {
 
-    ExperimentDTO getExperiment(ExperimentDTO experimentDTO);
+    ExperimentDTO processExperiment(ExperimentDTO experimentDTO);
+
 }

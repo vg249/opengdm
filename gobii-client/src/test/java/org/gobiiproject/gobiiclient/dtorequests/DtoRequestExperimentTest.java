@@ -100,7 +100,7 @@ public class DtoRequestExperimentTest {
 
     } // testCreateExperiment()
 
-    @Ignore
+    @Test
     public void testUpdateExperiment() throws Exception {
 
         DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
@@ -116,34 +116,16 @@ public class DtoRequestExperimentTest {
 
         experimentDTOReceived.setExperimentDataFile(newDataFile);
 
-//        String divisionPropertyNewValue = UUID.randomUUID().toString();
-//        EntityPropertyDTO divisionProperty = experimentDTOReceived
-//                .getProperties()
-//                .stream()
-//                .filter(p -> p.getPropertyName().equals("division"))
-//                .collect(Collectors.toList())
-//                .get(0);
-//
-//        divisionProperty.setPropertyValue(divisionPropertyNewValue);
-
-
         ExperimentDTO experimentDTOResponse = dtoRequestExperiment.process(experimentDTOReceived);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(experimentDTOResponse));
 
 
-        ExperimentDTO dtoRequestExperimentExperimentReRetrieved = new ExperimentDTO();
-        dtoRequestExperimentExperimentReRetrieved.setExperimentId(2);
+        ExperimentDTO dtoRequestExperimentExperimentReRetrieved =
+                dtoRequestExperiment.process(experimentDTORequest);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestExperimentExperimentReRetrieved));
+
         Assert.assertTrue(dtoRequestExperimentExperimentReRetrieved.getExperimentDataFile().equals(newDataFile));
-
-//        EntityPropertyDTO divisionPropertyReceived = dtoRequestExperimentExperimentReRetrieved
-//                .getProperties()
-//                .stream()
-//                .filter(p -> p.getPropertyName().equals("division"))
-//                .collect(Collectors.toList())
-//                .get(0);
-//
-//        Assert.assertTrue(divisionPropertyReceived.getPropertyValue().equals(divisionPropertyNewValue));
-
 
     }
 

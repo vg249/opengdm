@@ -9,5 +9,6 @@ import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
 public interface DtoMapExperiment {
     ExperimentDTO getExperiment( ExperimentDTO experimentDTO) throws GobiiDtoMappingException;
     ExperimentDTO createExperiment(ExperimentDTO experimentDTO) throws GobiiDtoMappingException;
-    
+    ExperimentDTO updateExperiment(ExperimentDTO experimentDTO) throws GobiiDtoMappingException;
+
 }

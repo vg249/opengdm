@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -122,4 +124,22 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
         return returnVal;
     }
 
+    @Override
+    public ExperimentDTO updateExperiment(ExperimentDTO experimentDTO) throws GobiiDtoMappingException {
+
+        ExperimentDTO returnVal = experimentDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            rsExperimentDao.updateExperiment(parameters);
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+
+    }
 }

@@ -25,7 +25,7 @@ public class ProjectServiceImpl implements ProjectService {
     private DtoMapProject dtoMapProject = null;
 
     @Override
-    public ProjectDTO getProject(ProjectDTO projectDTO) {
+    public ProjectDTO processProject(ProjectDTO projectDTO) {
 
         ProjectDTO returnVal = projectDTO;
         try {

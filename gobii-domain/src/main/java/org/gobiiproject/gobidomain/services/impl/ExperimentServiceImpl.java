@@ -27,7 +27,7 @@ public class ExperimentServiceImpl implements ExperimentService {
 
 
 	@Override
-	public ExperimentDTO getExperiment(ExperimentDTO experimentDTO) {
+	public ExperimentDTO processExperiment(ExperimentDTO experimentDTO) {
 		// TODO Auto-generated method stub
 
         ExperimentDTO returnVal = experimentDTO;
@@ -42,6 +42,11 @@ public class ExperimentServiceImpl implements ExperimentService {
                     returnVal.setCreatedDate(new Date());
                     returnVal.setModifiedDate(new Date());
                     returnVal = dtoMapExperiment.createExperiment(returnVal);
+                    break;
+
+                case UPDATE:
+                    returnVal.setModifiedDate(new Date());
+                    returnVal = dtoMapExperiment.updateExperiment(returnVal);
                     break;
 
                 default:

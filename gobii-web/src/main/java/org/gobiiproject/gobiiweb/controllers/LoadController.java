@@ -132,7 +132,7 @@ public class LoadController {
         ExperimentDTO returnVal = null;
 
         try {
-            returnVal = experimentService.getExperiment(experimentDTO);
+            returnVal = experimentService.processExperiment(experimentDTO);
         } catch (AccessDeniedException e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
@@ -149,7 +149,7 @@ public class LoadController {
         ProjectDTO returnVal = null;
 
         try {
-            returnVal = projectService.getProject(projectDTO);
+            returnVal = projectService.processProject(projectDTO);
         } catch (AccessDeniedException e) {
 
             returnVal.getDtoHeaderResponse().addException(e);

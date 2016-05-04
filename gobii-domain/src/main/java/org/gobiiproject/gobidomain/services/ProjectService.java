@@ -12,5 +12,5 @@ import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
  */
 public interface ProjectService {
 
-    ProjectDTO getProject(ProjectDTO projectDTO);
+    ProjectDTO processProject(ProjectDTO projectDTO);
 }

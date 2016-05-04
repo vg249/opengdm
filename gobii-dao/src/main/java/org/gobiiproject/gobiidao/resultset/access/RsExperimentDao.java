@@ -19,6 +19,8 @@ public interface RsExperimentDao {
 
     Integer createExperiment(Map<String, Object> parameters) throws GobiiDaoException;
 
+    void updateExperiment(Map<String, Object> parameters) throws GobiiDaoException;
+
     ResultSet getExperimentsByNameProjectidPlatformId(String experimentName,
                                                       Integer projectId,
                                                       Integer platformId) throws GobiiDaoException;
