@@ -59,7 +59,7 @@
 
 	<!-- **** NameIdList Beans *************************************** -->
 	<bean id="rsContact"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoSpImpl" />
+		class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoImpl" />
 	<bean id="rsProject"
 		class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl" />
 	<!--<bean id="rsCvTerm" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvTermDaoImpl"/> -->
@@ -77,6 +77,10 @@
 		class="org.gobiiproject.gobiidtomapping.impl.DtoMapLoaderInstructionsImpl" />
 	<bean id="loaderInstructionFilesService"
 		class="org.gobiiproject.gobidomain.services.impl.LoaderInstructionFileServiceImpl" />
+
+	<!-- **** Contact Beans *************************************** -->
+	<bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.impl.DtoMapContactImpl" />
+	<bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl" />
 
 	<!-- **** Display Beans *************************************** -->
 	<bean id="rsDisplayDao"
@@ -140,9 +144,8 @@
 	<!-- **** Reference Beans *************************************** -->
 	<bean id="rsReferenceDao"
 		class="org.gobiiproject.gobiidao.resultset.access.impl.RsReferenceDaoImpl" />
-
-	<!-- <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/> 
-		<bean id="MapService" class="org.gobiiproject.gobidomain.services.impl.MapServiceImpl"/> -->
+	<bean id="dtoMapReference" class="org.gobiiproject.gobiidtomapping.impl.DtoMapReferenceImpl"/>
+	<bean id="ReferenceService" class="org.gobiiproject.gobidomain.services.impl.ReferenceServiceImpl"/>
 
 	<!-- **** CvTerms Beans *************************************** -->
 	<bean id="rsCvDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvDaoImpl" />

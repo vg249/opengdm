@@ -36,7 +36,13 @@ public class LoadController {
 
     @Autowired
     private ProjectService projectService = null;
-    
+
+    @Autowired
+    private ContactService contactService = null;
+
+    @Autowired
+    private ReferenceService referenceService = null;
+
     @Autowired
     private AnalysisService analysisService = null;
     
@@ -153,6 +159,40 @@ public class LoadController {
 
     }//getPingResponse()
 
+    @RequestMapping(value = "/contact", method = RequestMethod.POST)
+    @ResponseBody
+    public ContactDTO processContact(@RequestBody ContactDTO contactDTO) {
+
+        ContactDTO returnVal = new ContactDTO();
+        //PingDTO pingDTORequest = new PingDTO();
+        try {
+            returnVal = contactService.processContact(contactDTO);
+        } catch (AccessDeniedException e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+        return (returnVal);
+
+    }//processCOntact
+
+
+    @RequestMapping(value = "/reference", method = RequestMethod.POST)
+    @ResponseBody
+    public ReferenceDTO processReference(@RequestBody ReferenceDTO referenceDTO) {
+
+        ReferenceDTO returnVal = new ReferenceDTO();
+        //PingDTO pingDTORequest = new PingDTO();
+        try {
+            returnVal = referenceService.processReference(referenceDTO);
+        } catch (AccessDeniedException e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+        return (returnVal);
+
+    }//processReference
 
     @RequestMapping(value = "/nameidlist", method = RequestMethod.POST)
     @ResponseBody
@@ -264,7 +304,7 @@ public class LoadController {
 
     @RequestMapping(value = "/mapset", method = RequestMethod.POST)
     @ResponseBody
-    public MapsetDTO processDataset(@RequestBody MapsetDTO MapsetDTO) {
+    public MapsetDTO processMapset(@RequestBody MapsetDTO MapsetDTO) {
 
         MapsetDTO returnVal = new MapsetDTO();
 

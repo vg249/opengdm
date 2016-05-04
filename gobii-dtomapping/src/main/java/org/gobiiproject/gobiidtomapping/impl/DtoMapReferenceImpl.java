@@ -1,49 +1,48 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.resultset.access.RsMapSetDao;
+import org.gobiiproject.gobiidao.resultset.access.RsReferenceDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
-import org.gobiiproject.gobiidtomapping.DtoMapMapset;
+import org.gobiiproject.gobiidtomapping.DtoMapReference;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * Created by Phil on 4/21/2016.
+ * Created by Angel on 5/4/2016.
  */
-public class DtoMapMapsetImpl implements DtoMapMapset {
+public class DtoMapReferenceImpl implements DtoMapReference {
 
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapMapsetImpl.class);
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapReferenceImpl.class);
 
 
     @Autowired
-    private RsMapSetDao rsMapSetDao;
+    private RsReferenceDao rsReferenceDao;
 
+    @Transactional
     @Override
-    public MapsetDTO getMapsetDetails(MapsetDTO mapsetDTO) throws GobiiDtoMappingException {
+    public ReferenceDTO getReferenceDetails(ReferenceDTO referenceDTO) throws GobiiDtoMappingException {
 
-        MapsetDTO returnVal = mapsetDTO;
+        ReferenceDTO returnVal = referenceDTO;
 
         try {
 
-            ResultSet resultSet = rsMapSetDao.getMapsetDetailsByMapsetId(mapsetDTO.getMapsetId());
+            ResultSet resultSet = rsReferenceDao.getReferenceDetailsByReferenceId(referenceDTO.getReferenceId());
 
             if (resultSet.next()) {
 
-                // apply dataset values
+                // apply reference values
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
 
-
-            } // if result set has a row
+            } // iterate resultSet
 
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -53,19 +52,19 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
             LOGGER.error("Error mapping result set to DTO", e);
         }
 
-
         return returnVal;
+
     }
 
     @Override
-    public MapsetDTO createMapset(MapsetDTO mapsetDTO) throws GobiiDtoMappingException {
-        MapsetDTO returnVal = mapsetDTO;
+    public ReferenceDTO createReference(ReferenceDTO referenceDTO) throws GobiiDtoMappingException {
+        ReferenceDTO returnVal = referenceDTO;
 
         try {
 
-            Map<String, Object> parameters = ParamExtractor.makeParamVals(mapsetDTO);
-            Integer mapsetId = rsMapSetDao.createMapset(parameters);
-            returnVal.setMapsetId(mapsetId);
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(referenceDTO);
+            Integer referenceId = rsReferenceDao.createReference(parameters);
+            returnVal.setReferenceId(referenceId);
 
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -74,4 +73,5 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
 
         return returnVal;
     }
+
 }

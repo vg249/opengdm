@@ -16,7 +16,7 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
 public class DtoRequestMapset {
 
 
-    public MapsetDTO process(MapsetDTO MapsetDTO) throws Exception {
+    public MapsetDTO processMapset(MapsetDTO MapsetDTO) throws Exception {
 
         MapsetDTO returnVal = null;
 
@@ -31,6 +31,7 @@ public class DtoRequestMapset {
         return returnVal;
 
     } // getPing()
+
 
 
 }
