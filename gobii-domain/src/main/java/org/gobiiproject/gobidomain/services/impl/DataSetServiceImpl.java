@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
+
 /**
  * Created by Phil on 4/21/2016.
  */
@@ -32,6 +34,8 @@ public class DataSetServiceImpl implements DataSetService {
                     break;
 
                 case CREATE:
+                    returnVal.setCreatedDate(new Date());
+                    returnVal.setModifiedDate(new Date());
                     returnVal = dtoMapDataSet.createDataset(datasetDTO);
                     break;
 

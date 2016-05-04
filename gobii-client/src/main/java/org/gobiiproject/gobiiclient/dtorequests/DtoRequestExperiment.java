@@ -16,7 +16,7 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
 
 public class DtoRequestExperiment {
 
-    public ExperimentDTO getExperiment(ExperimentDTO experimentDTO) throws Exception {
+    public ExperimentDTO process(ExperimentDTO experimentDTO) throws Exception {
 
     	  ExperimentDTO returnVal = null;
 

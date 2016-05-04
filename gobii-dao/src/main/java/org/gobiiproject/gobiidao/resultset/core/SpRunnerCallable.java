@@ -79,7 +79,7 @@ public class SpRunnerCallable implements Work {
 
                         Object currentParamVal = paramVals.get(currentParamName);
                         if (null == currentParamVal && !currentParamDef.isNullable()) {
-                            errors.add("Parameter is not allowed to be null ; " + currentParamName);
+                            errors.add("Parameter is not allowed to be null : " + currentParamName);
                         } else if (null != currentParamVal && !currentParamVal.getClass().equals(currentParamDef.getParamType())) {
                             errors.add("Parameter " + currentParamName + " should be of type " + currentParamDef.getParamType() + "; ");
                         } else {

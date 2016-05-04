@@ -2,7 +2,10 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
+import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsDataSet;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsExperiment;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentDetailsByExperimentId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNamesByProjectId;
@@ -26,6 +29,10 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
     @Autowired
     private StoredProcExec storedProcExec = null;
+
+    @Autowired
+    private SpRunnerCallable spRunnerCallable;
+
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
@@ -96,6 +103,34 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
         return returnVal;
 	}
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Integer createExperiment(Map<String, Object> parameters) throws GobiiDaoException {
+        Integer returnVal = null;
+
+        try {
+
+            if (spRunnerCallable.run(new SpInsExperiment(), parameters)) {
+
+                returnVal = spRunnerCallable.getResult();
+
+            } else {
+
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating dataset", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+
+    }
 
 
 } // RsProjectDaoImpl
