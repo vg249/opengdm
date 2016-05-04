@@ -35,6 +35,7 @@ public class AnalysisDTO extends DtoMetaData {
     private Integer status;
     private List<EntityPropertyDTO> parameters = new ArrayList<>();
 
+    @GobiiEntityParam(paramName = "analysisId")
     public Integer getAnalysisId() {
         return analysisId;
     }

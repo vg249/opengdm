@@ -8,6 +8,7 @@ import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectDetailsBy
 import org.gobiiproject.gobiidtomapping.DtoMapCv;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.core.EntityProperties;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
@@ -92,17 +93,10 @@ public class DtoMapProjectImpl implements DtoMapProject {
     private void addPropertiesToProject(ProjectDTO projectDTO) throws GobiiDaoException, SQLException {
 
         ResultSet propertyResultSet = rsProjectDao.getPropertiesForProject(projectDTO.getProjectId());
-        while (propertyResultSet.next()) {
-            String propertyName = propertyResultSet.getString("property_name");
-            String propertyValue = propertyResultSet.getString("property_value");
-            Integer propertyId = propertyResultSet.getInt("property_id");
-            EntityPropertyDTO currentProjectProperty =
-                    new EntityPropertyDTO(projectDTO.getProjectId(),
-                            propertyId,
-                            propertyName,
-                            propertyValue);
-            projectDTO.getProperties().add(currentProjectProperty);
-        }
+        List<EntityPropertyDTO> projectProperties =
+                EntityProperties.resultSetToProperties(projectDTO.getProjectId(),propertyResultSet);
+
+        projectDTO.setProperties(projectProperties);
 
     }
 
@@ -172,10 +166,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         for (EntityPropertyDTO currentProperty : projectProperties) {
 
-            Map<String, Object> spParamsParameters = new HashMap<>();
-            spParamsParameters.put("projectId", projectId);
-            spParamsParameters.put("propertyName", currentProperty.getPropertyName());
-            spParamsParameters.put("propertyValue", currentProperty.getPropertyValue());
+            Map<String, Object> spParamsParameters =
+                    EntityProperties.propertiesToParams(projectId,currentProperty);
 
             Integer propertyId = rsProjectDao.createUpdateProperty(spParamsParameters);
             currentProperty.setEntityIdId(projectId);

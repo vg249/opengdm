@@ -8,6 +8,7 @@ import org.gobiiproject.gobiidtomapping.DtoMapAnalysis;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,24 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error("Error mapping result set to DTO", e);
+        }
+
+        return returnVal;
+    }
+
+    @Override
+    public AnalysisDTO updateAnalysis(AnalysisDTO analysisDTO) throws GobiiDtoMappingException {
+
+        AnalysisDTO returnVal = analysisDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            rsAnalysisDao.updateAnalysis(parameters);
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
         }
 
         return returnVal;

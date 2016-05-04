@@ -8,6 +8,8 @@ import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysis;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysisParameters;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectProperties;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdAnalysis;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdExperiment;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisDetailsByAnalysisId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisNamesByTypeId;
@@ -107,7 +109,24 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
         return returnVal;
     }
 
-@Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateAnalysis(Map<String, Object> parameters) throws GobiiDaoException {
+
+        try {
+
+            if (!spRunnerCallable.run(new SpUpdAnalysis(), parameters)) {
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating analysis", e);
+            throw (new GobiiDaoException(e));
+        }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void createUpdateParameter(Map<String, Object> parameters) throws GobiiDaoException {
 

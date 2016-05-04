@@ -10,5 +10,6 @@ public interface DtoMapAnalysis {
 
     AnalysisDTO getAnalysisDetails(AnalysisDTO  analysisDTO) throws GobiiDtoMappingException;
     AnalysisDTO createAnalysis(AnalysisDTO  analysisDTO) throws GobiiDtoMappingException;
+    AnalysisDTO updateAnalysis(AnalysisDTO  analysisDTO) throws GobiiDtoMappingException;
 
 }
