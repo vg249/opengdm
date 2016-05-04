@@ -31,6 +31,7 @@ public class RsContactDaoImpl implements RsContactDao {
     @Autowired
     private SpRunnerCallable spRunnerCallable;
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ResultSet getContactNamesForRoleName(String roleName) throws GobiiDaoException {
 
