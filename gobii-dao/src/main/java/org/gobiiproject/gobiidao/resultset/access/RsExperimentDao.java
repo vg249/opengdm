@@ -12,8 +12,15 @@ import java.util.Map;
 public interface RsExperimentDao {
 
     ResultSet getExperimentNamesByProjectId(Integer experimentId) throws GobiiDaoException;
-	ResultSet getExperimentDetailsForExperimentId(int experimentId) throws GobiiDaoException;
-	ResultSet getExperimentNames() throws GobiiDaoException;
-	Integer createExperiment(Map<String,Object> parameters) throws GobiiDaoException;
+
+    ResultSet getExperimentDetailsForExperimentId(int experimentId) throws GobiiDaoException;
+
+    ResultSet getExperimentNames() throws GobiiDaoException;
+
+    Integer createExperiment(Map<String, Object> parameters) throws GobiiDaoException;
+
+    ResultSet getExperimentsByNameProjectidPlatformId(String experimentName,
+                                                      Integer projectId,
+                                                      Integer platformId) throws GobiiDaoException;
 
 }

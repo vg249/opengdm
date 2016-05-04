@@ -47,7 +47,7 @@ public class ExperimentServiceImpl implements ExperimentService {
                 default:
                     throw new GobiiDtoMappingException("Unsupported process type " + experimentDTO.getProcessType().toString());
 
-            } // switch() 
+            } // switch()
 
         } catch (GobiiDtoMappingException e) {
 

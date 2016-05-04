@@ -8,10 +8,15 @@ package org.gobiiproject.gobiiclient.dtorequests;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DtoRequestExperimentTest {
 
@@ -58,6 +63,40 @@ public class DtoRequestExperimentTest {
         Assert.assertTrue(experimentDTOResponse.getExperimentId() > 0);
 
     } // testGetMarkers()
+
+    @Test
+    public void testCreateExistingExperiment() throws Exception {
+
+        DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
+        ExperimentDTO experimentDTORequest = new ExperimentDTO();
+        experimentDTORequest.setExperimentId(2);
+        ExperimentDTO ExperimentDTOExisting = dtoRequestExperiment.process(experimentDTORequest);
+        ExperimentDTOExisting.setProcessType(DtoMetaData.ProcessType.CREATE);
+
+
+        ExperimentDTO ExperimentDTOResponse = dtoRequestExperiment.process(ExperimentDTOExisting);
+
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(ExperimentDTOResponse));
+
+
+        List<HeaderStatusMessage> headerStatusMessages = ExperimentDTOResponse
+                .getDtoHeaderResponse()
+                .getStatusMessages()
+                .stream()
+                .filter(m -> m.getValidationStatusType() == DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE)
+                .collect(Collectors.toList());
+
+
+        Assert.assertNotNull(headerStatusMessages);
+        Assert.assertTrue(headerStatusMessages.size() > 0);
+        HeaderStatusMessage headerStatusMessageValidation = headerStatusMessages.get(0);
+        Assert.assertTrue(headerStatusMessageValidation.getMessage().toLowerCase().contains("name"));
+        Assert.assertTrue(headerStatusMessageValidation.getMessage().toLowerCase().contains("project"));
+        Assert.assertTrue(headerStatusMessageValidation.getMessage().toLowerCase().contains("platform"));
+
+
+    } // testCreateExperiment()
 
 
 }

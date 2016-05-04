@@ -107,6 +107,7 @@ public class ExperimentDTO extends DtoMetaData {
         return createdBy;
     }
 
+    @GobiiEntityColumn(columnName = "created_by")
     public void setCreatedBy(Integer createdBy) {
         this.createdBy = createdBy;
     }
@@ -116,6 +117,7 @@ public class ExperimentDTO extends DtoMetaData {
         return createdDate;
     }
 
+    @GobiiEntityColumn(columnName = "created_date")
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
@@ -125,6 +127,7 @@ public class ExperimentDTO extends DtoMetaData {
         return modifiedBy;
     }
 
+    @GobiiEntityColumn(columnName = "modified_by")
     public void setModifiedBy(Integer modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
@@ -134,6 +137,7 @@ public class ExperimentDTO extends DtoMetaData {
         return modifiedDate;
     }
 
+    @GobiiEntityColumn(columnName = "modified_date")
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
@@ -143,6 +147,7 @@ public class ExperimentDTO extends DtoMetaData {
         return status;
     }
 
+    @GobiiEntityColumn(columnName = "status")
     public void setStatus(Integer status) {
         this.status = status;
     }
