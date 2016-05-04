@@ -48,7 +48,7 @@ public class ContactDTO extends DtoMetaData {
 
     @GobiiEntityColumn(columnName = "lastname")
     public void setLastName(String projectName) {
-        this.lastName = lastName;
+        this.lastName = projectName;
     }
 
     @GobiiEntityParam(paramName = "firstName")
