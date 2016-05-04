@@ -33,7 +33,7 @@ public class CvServiceImpl implements CvService {
 					break;
 
 				default:
-					throw new GobiiDtoMappingException("Unsupported procesCv type " + cvDTO.getProcessType().toString());
+					throw new GobiiDtoMappingException("Unsupported proces Cv type " + cvDTO.getProcessType().toString());
 
 			}
 

@@ -34,7 +34,7 @@ public class ContactServiceImpl implements ContactService {
                     break;
 
                 default:
-                    throw new GobiiDtoMappingException("Unsupported procesCv type " + contactDTO.getProcessType().toString());
+                    throw new GobiiDtoMappingException("Unsupported proces contact type " + contactDTO.getProcessType().toString());
 
             }
 

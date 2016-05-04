@@ -31,8 +31,12 @@ public class MapsetServiceImpl implements MapsetService {
                     returnVal = dtoMapMapset.getMapsetDetails(returnVal);
                     break;
 
+                case CREATE:
+                    returnVal = dtoMapMapset.createMapset(mapsetDTO);
+                    break;
+
                 default:
-                    throw new GobiiDtoMappingException("Unsupported procesCv type " + returnVal.getProcessType().toString());
+                    throw new GobiiDtoMappingException("Unsupported proces mapset type " + returnVal.getProcessType().toString());
 
             } // switch()
 

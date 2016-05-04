@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.dto.container;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
 import java.util.Date;
 
@@ -10,6 +11,12 @@ import java.util.Date;
  * Created by Angel on 4/13/2016.
  */
 public class MapsetDTO extends DtoMetaData {
+
+	public MapsetDTO() {}
+
+	public MapsetDTO(ProcessType processType) {
+		super(processType);
+	}
 
 	private Integer mapsetId;
 	private String name;
@@ -32,6 +39,8 @@ public class MapsetDTO extends DtoMetaData {
 		this.mapsetId = mapsetId;
 	}
 
+
+	@GobiiEntityParam(paramName = "name")
 	public String getName() {
 		return name;
 	}
@@ -41,6 +50,7 @@ public class MapsetDTO extends DtoMetaData {
 		this.name = name;
 	}
 
+	@GobiiEntityParam(paramName = "code")
 	public String getCode() {
 		return code;
 	}
@@ -50,6 +60,7 @@ public class MapsetDTO extends DtoMetaData {
 		this.code = code;
 	}
 
+	@GobiiEntityParam(paramName = "description")
 	public String getDescription() {
 		return description;
 	}
@@ -59,6 +70,7 @@ public class MapsetDTO extends DtoMetaData {
 		this.description = description;
 	}
 
+	@GobiiEntityParam(paramName = "referenceId")
 	public Integer getReferenceId() {
 		return referenceId;
 	}
@@ -68,6 +80,7 @@ public class MapsetDTO extends DtoMetaData {
 		this.referenceId = referenceId;
 	}
 
+	@GobiiEntityParam(paramName = "mapType")
 	public Integer getMapType() {
 		return mapType;
 	}
@@ -77,6 +90,7 @@ public class MapsetDTO extends DtoMetaData {
 		this.mapType = mapType;
 	}
 
+	@GobiiEntityParam(paramName = "createdBy")
 	public Integer getCreatedBy() {
 		return createdBy;
 	}
@@ -86,6 +100,7 @@ public class MapsetDTO extends DtoMetaData {
 		this.createdBy = createdBy;
 	}
 
+	@GobiiEntityParam(paramName = "createdDate")
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -95,6 +110,7 @@ public class MapsetDTO extends DtoMetaData {
 		this.createdDate = createdDate;
 	}
 
+	@GobiiEntityParam(paramName = "modifiedBy")
 	public Integer getModifiedBy() {
 		return modifiedBy;
 	}
@@ -104,6 +120,7 @@ public class MapsetDTO extends DtoMetaData {
 		this.modifiedBy = modifiedBy;
 	}
 
+	@GobiiEntityParam(paramName = "modifiedDate")
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
@@ -113,6 +130,7 @@ public class MapsetDTO extends DtoMetaData {
 		this.modifiedDate = modifiedDate;
 	}
 
+	@GobiiEntityParam(paramName = "status")
 	public Integer getStatus() {
 		return status;
 	}

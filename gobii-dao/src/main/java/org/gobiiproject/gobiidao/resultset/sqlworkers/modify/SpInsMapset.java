@@ -6,19 +6,24 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by Angel on 5/4/2016.
+ * Created by Phil on 4/7/2016.
  */
-public class SpInsReference extends SpDef {
+public class SpInsMapset extends SpDef {
 
-    public SpInsReference() {
+    public SpInsMapset() {
 
-        super("{call createreference(?,?,?,?)}");
+        super("{call createmapset(?,?,?,?,?,?,?,?,?,?)}");
 
         this.addParamDef("name", String.class).setNullable(false);
-        this.addParamDef("version", String.class).setNullable(false);
-        this.addParamDef("link", String.class).setNullable(true);
-        this.addParamDef("filePath", String.class).setNullable(true);
-
+        this.addParamDef("code", String.class).setNullable(false);
+        this.addParamDef("description", String.class).setNullable(true);
+        this.addParamDef("referenceId", Integer.class).setNullable(true);
+        this.addParamDef("mapType", Integer.class).setNullable(false);
+        this.addParamDef("createdBy", Integer.class).setNullable(false);
+        this.addParamDef("createdDate", java.util.Date.class).setNullable(false);
+        this.addParamDef("modifiedBy", Integer.class).setNullable(true);
+        this.addParamDef("modifiedDate", java.util.Date.class).setNullable(true);
+        this.addParamDef("status", Integer.class).setNullable(false);
 
     } // ctor
 

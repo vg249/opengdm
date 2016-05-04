@@ -45,6 +45,7 @@ public class ContactDTO extends DtoMetaData {
     public String getLastName() {
         return lastName;
     }
+
     @GobiiEntityColumn(columnName = "lastname")
     public void setLastName(String projectName) {
         this.lastName = lastName;
@@ -54,6 +55,7 @@ public class ContactDTO extends DtoMetaData {
     public String getFirstName() {
         return firstName;
     }
+
     @GobiiEntityColumn(columnName = "firstname")
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -63,6 +65,7 @@ public class ContactDTO extends DtoMetaData {
     public String getCode() {
         return code;
     }
+
     @GobiiEntityColumn(columnName = "code")
     public void setCode(String code) {
         this.code = code;
@@ -70,6 +73,7 @@ public class ContactDTO extends DtoMetaData {
 
     @GobiiEntityParam(paramName = "email")
     public String getEmail() {return email;}
+
     @GobiiEntityColumn(columnName = "email")
     public void setEmail(String email) {
         this.email = email;
@@ -77,6 +81,7 @@ public class ContactDTO extends DtoMetaData {
 
     @GobiiEntityParam(paramName = "roles")
     public  List<Integer> getRoles() { return roles;}
+
     @GobiiEntityColumn(columnName = "roles")
     public void setRoles( List<Integer> roles) {
         this.roles = roles;
@@ -86,6 +91,7 @@ public class ContactDTO extends DtoMetaData {
     public Integer getCreatedBy() {
         return createdBy;
     }
+
     @GobiiEntityColumn(columnName = "created_by")
     public void setCreatedBy(Integer createdBy) {
         this.createdBy = createdBy;
@@ -95,6 +101,7 @@ public class ContactDTO extends DtoMetaData {
     public Date getCreatedDate() {
         return createdDate;
     }
+
     @GobiiEntityColumn(columnName = "created_date")
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
@@ -104,6 +111,7 @@ public class ContactDTO extends DtoMetaData {
     public Integer getModifiedBy() {
         return modifiedBy;
     }
+
     @GobiiEntityColumn(columnName = "modified_by")
     public void setModifiedBy(Integer modifiedBy) {
         this.modifiedBy = modifiedBy;
@@ -113,6 +121,7 @@ public class ContactDTO extends DtoMetaData {
     public Date getModifiedDate() {
         return modifiedDate;
     }
+
     @GobiiEntityColumn(columnName = "modified_date")
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;

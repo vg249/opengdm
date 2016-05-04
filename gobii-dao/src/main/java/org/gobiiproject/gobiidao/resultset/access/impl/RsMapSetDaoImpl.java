@@ -2,7 +2,9 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsMapSetDao;
+import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMapset;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetDatasetFileNamesByExperimentId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMapNamesByTypeId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMapSetNames;
@@ -24,6 +26,9 @@ import java.util.Map;
 public class RsMapSetDaoImpl implements RsMapSetDao {
 
     Logger LOGGER = LoggerFactory.getLogger(RsMapSetDaoImpl.class);
+
+    @Autowired
+    private SpRunnerCallable spRunnerCallable;
 
 
     @Autowired
@@ -94,6 +99,34 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
         } catch (Exception e) {
 
             LOGGER.error("Error retrieving mapset details", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Integer createMapset(Map<String, Object> parameters) throws GobiiDaoException {
+
+        Integer returnVal = null;
+
+        try {
+
+            if (spRunnerCallable.run(new SpInsMapset(), parameters)) {
+
+                returnVal = spRunnerCallable.getResult();
+
+            } else {
+
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating contact", e);
             throw (new GobiiDaoException(e));
 
         }

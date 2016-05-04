@@ -34,7 +34,7 @@ public class ReferenceServiceImpl implements ReferenceService {
                     break;
 
                 default:
-                    throw new GobiiDtoMappingException("Unsupported procesReference type " + referenceDTO.getProcessType().toString());
+                    throw new GobiiDtoMappingException("Unsupported proces Reference type " + referenceDTO.getProcessType().toString());
 
             }
 

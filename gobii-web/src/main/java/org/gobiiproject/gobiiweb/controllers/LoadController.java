@@ -304,7 +304,7 @@ public class LoadController {
 
     @RequestMapping(value = "/mapset", method = RequestMethod.POST)
     @ResponseBody
-    public MapsetDTO processDataset(@RequestBody MapsetDTO MapsetDTO) {
+    public MapsetDTO processMapset(@RequestBody MapsetDTO MapsetDTO) {
 
         MapsetDTO returnVal = new MapsetDTO();
 
