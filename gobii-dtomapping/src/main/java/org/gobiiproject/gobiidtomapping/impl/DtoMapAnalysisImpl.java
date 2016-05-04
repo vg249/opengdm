@@ -6,9 +6,11 @@ import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapAnalysis;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.core.EntityProperties;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,18 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
 
     }
 
+    private void upsertAnalysisProperties(Integer analysisId, List<EntityPropertyDTO> analysisProperties) throws GobiiDaoException {
+
+        for (EntityPropertyDTO currentProperty : analysisProperties) {
+
+            Map<String, Object> spParamsParameters =
+                    EntityProperties.propertiesToParams(analysisId, currentProperty);
+
+            currentProperty.setEntityIdId(analysisId);
+        }
+
+    }
+
     @Override
     public AnalysisDTO createAnalysis(AnalysisDTO analysisDTO) throws GobiiDtoMappingException {
 
@@ -67,19 +81,7 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
             returnVal.setAnalysisId(analysisId);
 
             List<EntityPropertyDTO> analysisParameters = analysisDTO.getParameters();
-            for (EntityPropertyDTO currentProperty : analysisParameters) {
-
-                Map<String, Object> spParamsParameters = new HashMap<>();
-                spParamsParameters.put("analysisId", analysisId);
-                spParamsParameters.put("parameterName", currentProperty.getPropertyName());
-                spParamsParameters.put("parameterValue", currentProperty.getPropertyValue());
-
-                //Integer propertyId = rsAnalysisDao.createUpdateParameter(spParamsParameters);
-                rsAnalysisDao.createUpdateParameter(spParamsParameters);
-                currentProperty.setEntityIdId(analysisId);
-                //currentProperty.setPropertyId(propertyId);
-            }
-
+            upsertAnalysisProperties(analysisDTO.getAnalysisId(), analysisParameters);
 
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);

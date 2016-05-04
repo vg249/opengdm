@@ -6,10 +6,12 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -19,16 +21,15 @@ import java.util.UUID;
 
 public class DtoRequestAnalysisTest {
 
-
     @Test
     public void testAnalysisSet() throws Exception {
 
 
-    	DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
+        DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
         AnalysisDTO analysisDTORequest = new AnalysisDTO();
         analysisDTORequest.setAnalysisId(1);
         AnalysisDTO analysisDTOResponse = dtoRequestAnalysis.process(analysisDTORequest);
- 
+
         Assert.assertNotEquals(null, analysisDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));
         Assert.assertNotEquals(null, analysisDTOResponse.getProgram());
@@ -40,12 +41,22 @@ public class DtoRequestAnalysisTest {
     public void testAnalysisCreate() throws Exception {
 
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
-        AnalysisDTO analysisDTORequest = TestDtoFactory.makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE,1);
+
+
+        EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
+        AnalysisDTO analysisDTORequest = TestDtoFactory
+                .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
+
         AnalysisDTO analysisDTOResponse = dtoRequestAnalysis.process(analysisDTORequest);
 
         Assert.assertNotEquals(null, analysisDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));
         Assert.assertTrue(analysisDTOResponse.getAnalysisId() > 1);
+
+        Assert.assertNotEquals(null, analysisDTOResponse.getParameters());
+        Assert.assertTrue(analysisDTOResponse.getParameters().size() > 0);
+        Assert.assertTrue("Parameter values do not match",
+                entityParamValues.compare(analysisDTOResponse.getParameters()));
 
     } // testAnalysisCreate
 
@@ -56,7 +67,6 @@ public class DtoRequestAnalysisTest {
         AnalysisDTO AnalysisDTORequest = new AnalysisDTO();
         AnalysisDTORequest.setAnalysisId(2);
         AnalysisDTO AnalysisDTOReceived = dtoRequestAnalysis.process(AnalysisDTORequest);
-
 
 
         AnalysisDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);

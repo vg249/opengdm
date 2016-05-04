@@ -10,28 +10,40 @@ import java.util.Date;
  * Created by Phil on 4/27/2016.
  */
 public class TestDtoFactory {
-    
-    public static AnalysisDTO makePopulatedAnalysisDTO(DtoMetaData.ProcessType processType, Integer uniqueStem) {
+
+    public static EntityParamValues makeArbitraryEntityParams() {
+
+        EntityParamValues returnVal = new EntityParamValues();
+
+
+        returnVal.add("fooparam","fooval");
+        returnVal.add("barparam","barval");
+        returnVal.add("foobarparam","foobarval");
+
+        return returnVal;
+    }
+
+    public static AnalysisDTO makePopulatedAnalysisDTO(DtoMetaData.ProcessType processType,
+                                                       Integer uniqueStem,
+                                                       EntityParamValues entityParamValues) {
 
         AnalysisDTO returnVal = new AnalysisDTO(processType);
 
         String uniqueStemString = uniqueStem.toString();
-        returnVal.setAnalysisName(uniqueStem +": analysis");
+        returnVal.setAnalysisName(uniqueStem + ": analysis");
         returnVal.setTimeExecuted(new Date());
-        returnVal.setSourceUri(uniqueStem +":  foo URL");
-        returnVal.setAlgorithm(uniqueStem +":  foo algorithm");
-        returnVal.setSourceName(uniqueStem +":  foo source");
-        returnVal.setAnalysisDescription(uniqueStem +":  my analysis description");
-        returnVal.setProgram(uniqueStem +":  foo program");
-        returnVal.setProgramVersion(uniqueStem +":  foo version");
+        returnVal.setSourceUri(uniqueStem + ":  foo URL");
+        returnVal.setAlgorithm(uniqueStem + ":  foo algorithm");
+        returnVal.setSourceName(uniqueStem + ":  foo source");
+        returnVal.setAnalysisDescription(uniqueStem + ":  my analysis description");
+        returnVal.setProgram(uniqueStem + ":  foo program");
+        returnVal.setProgramVersion(uniqueStem + ":  foo version");
         returnVal.setAnlaysisTypeId(1);
         returnVal.setStatus(1);
 
-        returnVal.getParameters().add(new EntityPropertyDTO(null,null,"foo param","foo val"));
-        returnVal.getParameters().add(new EntityPropertyDTO(null,null,"bar param","bar val"));
-        returnVal.getParameters().add(new EntityPropertyDTO(null,null,"bar param","bar val"));
+        returnVal.setParameters(entityParamValues.getProperties());
 
-        return  returnVal;
-       
+        return returnVal;
+
     }
 }

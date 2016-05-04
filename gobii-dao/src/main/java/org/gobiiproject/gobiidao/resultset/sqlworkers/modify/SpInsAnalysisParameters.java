@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidao.resultset.sqlworkers.modify;
 
+import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
 import org.gobiiproject.gobiidao.resultset.core.SpDef;
 
 /**
@@ -9,15 +10,15 @@ public class SpInsAnalysisParameters extends SpDef {
 
     public SpInsAnalysisParameters() {
 
-        super("{call upsertanalysisparameter(?,?,?)}", false);
+        super("{call upsertanalysisparameter(?,?,?)}",false);
 
-        this.addParamDef("analysisId", Integer.class)
+        this.addParamDef(EntityPropertyParamNames.PROPPCOLARAMNAME_ENTITY_ID, Integer.class)
                 .setNullable(false);
 
-        this.addParamDef("parameterName",String.class)
+        this.addParamDef(EntityPropertyParamNames.PROPPCOLARAMNAME_NAME, String.class)
                 .setNullable(false);
 
-        this.addParamDef("parameterValue",String.class)
+        this.addParamDef(EntityPropertyParamNames.PROPPCOLARAMNAME_VALUE, String.class)
                 .setNullable(true);
 
     } // ctor

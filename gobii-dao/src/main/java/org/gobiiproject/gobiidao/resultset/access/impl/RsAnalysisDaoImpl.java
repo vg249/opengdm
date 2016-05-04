@@ -130,11 +130,8 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
     @Override
     public void createUpdateParameter(Map<String, Object> parameters) throws GobiiDaoException {
 
-//        Integer returnVal = 0;
-
         try {
             spRunnerCallable.run(new SpInsAnalysisParameters(), parameters);
-//            returnVal = spRunnerCallable.getResult();
 
         } catch (Exception e) {
 
@@ -142,10 +139,8 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
             throw (new GobiiDaoException(e));
 
         }
-
-  //      return returnVal;
-
     } // createUpdateProperty
+
     @Transactional(propagation = Propagation.REQUIRED)
 	@Override
 	public ResultSet getAnalysisNamesByTypeId(int typeId) throws GobiiDaoException {

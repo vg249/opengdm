@@ -6,6 +6,7 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
@@ -48,22 +49,27 @@ public class DtoRequestDataSetTest {
         DtoRequestDataSet dtoRequestDataSet = new DtoRequestDataSet();
         DataSetDTO dataSetDTORequest = new DataSetDTO(DtoMetaData.ProcessType.CREATE);
 
+        EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
 
         // set the big-ticket items
         Integer analysisUniqueStem = 0;
         dataSetDTORequest.setCallingAnalysis(TestDtoFactory.makePopulatedAnalysisDTO(
                 DtoMetaData.ProcessType.CREATE,
-                ++analysisUniqueStem));
+                ++analysisUniqueStem,
+                entityParamValues));
 
         dataSetDTORequest.getAnalyses().add(TestDtoFactory.makePopulatedAnalysisDTO(
                 DtoMetaData.ProcessType.CREATE,
-                ++analysisUniqueStem));
+                ++analysisUniqueStem,
+                entityParamValues));
         dataSetDTORequest.getAnalyses().add(TestDtoFactory.makePopulatedAnalysisDTO(
                 DtoMetaData.ProcessType.CREATE,
-                ++analysisUniqueStem));
+                ++analysisUniqueStem,
+                entityParamValues));
         dataSetDTORequest.getAnalyses().add(TestDtoFactory.makePopulatedAnalysisDTO(
                 DtoMetaData.ProcessType.CREATE,
-                ++analysisUniqueStem));
+                ++analysisUniqueStem,
+                entityParamValues));
 
         dataSetDTORequest.getScores().add(1);
         dataSetDTORequest.getScores().add(2);
