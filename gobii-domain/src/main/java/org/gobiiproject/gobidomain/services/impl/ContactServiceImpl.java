@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
+
 /**
  * Created by Angel on 5/4/2016.
  */
@@ -31,6 +33,8 @@ public class ContactServiceImpl implements ContactService {
 
                 case CREATE:
                     returnVal = dtoMapContact.createContact(contactDTO);
+                    returnVal.setCreatedDate(new Date());
+                    returnVal.setModifiedDate(new Date());
                     break;
 
                 default:
