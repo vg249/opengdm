@@ -30,6 +30,10 @@ public class PlatformServiceImpl implements PlatformService {
                     returnVal = dtoMapPlatform.getPlatformDetails(returnVal);
                     break;
 
+                case CREATE:
+                    returnVal = dtoMapPlatform.createPlatform(platformDTO);
+                    break;
+
                 default:
                     throw new GobiiDtoMappingException("Unsupported procesCv type " + platformDTO.getProcessType().toString());
 

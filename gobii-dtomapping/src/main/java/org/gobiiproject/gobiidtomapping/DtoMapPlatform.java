@@ -9,5 +9,6 @@ import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 public interface DtoMapPlatform {
 
     PlatformDTO getPlatformDetails(PlatformDTO platformDTO) throws GobiiDtoMappingException;
+    PlatformDTO createPlatform(PlatformDTO platformDTO) throws GobiiDtoMappingException;
 
 }

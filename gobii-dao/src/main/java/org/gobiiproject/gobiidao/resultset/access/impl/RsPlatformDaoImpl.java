@@ -2,8 +2,10 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
+import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetDatasetDetailsByDataSetId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsPlatform;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformDetailsByPlatformId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformDetailsByPlatformId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
 import org.slf4j.Logger;
@@ -25,6 +27,9 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
 
     @Autowired
     private StoredProcExec storedProcExec = null;
+
+    @Autowired
+    private SpRunnerCallable spRunnerCallable;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
@@ -68,7 +73,7 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
 
         } catch (Exception e) {
 
-            LOGGER.error("Error retrieving dataset details", e);
+            LOGGER.error("Error retrieving platform details", e);
             throw (new GobiiDaoException(e));
 
         }
@@ -76,4 +81,33 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
         return returnVal;
 
     } // getPlatformDetailsByPlatformId()
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Integer createPlatform(Map<String, Object> parameters) throws GobiiDaoException {
+
+        Integer returnVal = null;
+
+        try {
+
+            if (spRunnerCallable.run(new SpInsPlatform(), parameters)) {
+
+                returnVal = spRunnerCallable.getResult();
+
+            } else {
+
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating platform", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+    }
+
 }
