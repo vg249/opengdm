@@ -7,11 +7,13 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -97,6 +99,53 @@ public class DtoRequestExperimentTest {
 
 
     } // testCreateExperiment()
+
+    @Ignore
+    public void testUpdateExperiment() throws Exception {
+
+        DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
+        ExperimentDTO experimentDTORequest = new ExperimentDTO();
+        experimentDTORequest.setExperimentId(2);
+        ExperimentDTO experimentDTOReceived = dtoRequestExperiment.process(experimentDTORequest);
+
+
+
+        experimentDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
+
+        String newDataFile = UUID.randomUUID().toString();
+
+        experimentDTOReceived.setExperimentDataFile(newDataFile);
+
+//        String divisionPropertyNewValue = UUID.randomUUID().toString();
+//        EntityPropertyDTO divisionProperty = experimentDTOReceived
+//                .getProperties()
+//                .stream()
+//                .filter(p -> p.getPropertyName().equals("division"))
+//                .collect(Collectors.toList())
+//                .get(0);
+//
+//        divisionProperty.setPropertyValue(divisionPropertyNewValue);
+
+
+        ExperimentDTO experimentDTOResponse = dtoRequestExperiment.process(experimentDTOReceived);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(experimentDTOResponse));
+
+
+        ExperimentDTO dtoRequestExperimentExperimentReRetrieved = new ExperimentDTO();
+        dtoRequestExperimentExperimentReRetrieved.setExperimentId(2);
+        Assert.assertTrue(dtoRequestExperimentExperimentReRetrieved.getExperimentDataFile().equals(newDataFile));
+
+//        EntityPropertyDTO divisionPropertyReceived = dtoRequestExperimentExperimentReRetrieved
+//                .getProperties()
+//                .stream()
+//                .filter(p -> p.getPropertyName().equals("division"))
+//                .collect(Collectors.toList())
+//                .get(0);
+//
+//        Assert.assertTrue(divisionPropertyReceived.getPropertyValue().equals(divisionPropertyNewValue));
+
+
+    }
 
 
 }
