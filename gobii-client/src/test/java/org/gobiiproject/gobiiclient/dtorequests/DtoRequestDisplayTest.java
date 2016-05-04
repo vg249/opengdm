@@ -29,13 +29,6 @@ public class DtoRequestDisplayTest {
         Assert.assertNotEquals(displayDTOResponse,null);
         Assert.assertTrue(displayDTOResponse.getTableNamesWithColDisplay().size() > 0);
 
-        for(Entry e : displayDTOResponse.getTableNamesWithColDisplay().entrySet()){
-            System.out.println(e.getKey().toString());
-        }
-//        Assert.assertNotEquals(null, nameIdListDTO);
-//        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
-//        Assert.assertTrue(nameIdListDTO.getProjectNamesById().size() >= 0);
-
     } // testGetMarkers()
 
 

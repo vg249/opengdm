@@ -112,6 +112,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
                     rsProjectDao.getProjectsByNameAndPiContact(projectName, piContactId);
 
             if (resultSetExistingProject.next()) {
+                returnVal = false;
                 projectDTO.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.OK,
                         DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
                         "A project with name " + projectName + " and contact id " + piContactId + "already exists");
