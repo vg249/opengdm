@@ -76,6 +76,8 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
                     rsExperimentDao.getExperimentsByNameProjectidPlatformId(experimentName, projectId, platformId);
 
             if (resultSetExistingProject.next()) {
+
+                returnVal = false;
                 experimentDTO.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.OK,
                         DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
                         "An experiment with name "

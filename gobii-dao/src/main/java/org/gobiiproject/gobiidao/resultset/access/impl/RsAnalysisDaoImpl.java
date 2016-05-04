@@ -2,6 +2,7 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
+import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysis;
@@ -15,6 +16,8 @@ import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisNamesByTypeId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvTermsByGroup;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPropertiesForAnalysis;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPropertiesForProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,6 +143,30 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
 
         }
     } // createUpdateProperty
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getParameters(Integer analysisId) throws GobiiDaoException {
+        ResultSet returnVal = null;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put(EntityPropertyParamNames.PROPPCOLARAMNAME_ENTITY_ID, analysisId);
+            SpGetPropertiesForAnalysis spGetPropertiesForAnalysis = new SpGetPropertiesForAnalysis(parameters);
+            storedProcExec.doWithConnection(spGetPropertiesForAnalysis);
+            returnVal = spGetPropertiesForAnalysis.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving project properties", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+
+        return returnVal;
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
 	@Override

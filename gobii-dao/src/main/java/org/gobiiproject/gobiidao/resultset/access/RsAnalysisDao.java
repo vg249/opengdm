@@ -9,6 +9,7 @@ import java.util.Map;
  * Created by Phil on 4/22/2016.
  */
 public interface RsAnalysisDao {
+
     ResultSet getAnalysisDetailsByAnalysisId(Integer analysisId) throws GobiiDaoException;
     
 	ResultSet getAnalysisNames() throws GobiiDaoException;
@@ -20,5 +21,7 @@ public interface RsAnalysisDao {
 	ResultSet getAnalysisNamesByTypeId(int i) throws GobiiDaoException;
 
     void createUpdateParameter(Map<String, Object> parameters) throws GobiiDaoException;
+
+    ResultSet getParameters(Integer analysisId ) throws GobiiDaoException;
 
 }

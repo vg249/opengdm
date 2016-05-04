@@ -45,6 +45,13 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
             }
 
+            ResultSet propertyResultSet = rsAnalysisDao.getParameters(analysisDTO.getAnalysisId());
+            List<EntityPropertyDTO> entityPropertyDTOs =
+                    EntityProperties.resultSetToProperties(analysisDTO.getAnalysisId(),propertyResultSet);
+
+            analysisDTO.setParameters(entityPropertyDTOs);
+
+
         } catch (SQLException e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error("Error mapping result set to DTO", e);
@@ -63,6 +70,8 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
 
             Map<String, Object> spParamsParameters =
                     EntityProperties.propertiesToParams(analysisId, currentProperty);
+
+            rsAnalysisDao.createUpdateParameter(spParamsParameters);
 
             currentProperty.setEntityIdId(analysisId);
         }

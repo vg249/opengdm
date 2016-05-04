@@ -25,6 +25,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class RestRequest<T> {
@@ -149,61 +151,58 @@ public class RestRequest<T> {
 
     private void logRequestHeaders(HttpUriRequest httpUriRequest, HttpResponse httpResponse, String testName) throws Exception {
 
-        StringBuilder stringBuilder = new StringBuilder();
+        
+
+        logInfo("============================================ BEGIN TEST " + testName + "==================================");
+        logInfo("");
+        logInfo("");
+        logInfo("");
+        logInfo("****************");
+        logInfo("****************");
+        logInfo("****************** Request URL");
+        logInfo(httpUriRequest.getURI().toString());
 
 
-        stringBuilder.append("============================================ BEGIN TEST " + testName + "==================================");
-        stringBuilder.append("");
-        stringBuilder.append("");
-        stringBuilder.append("");
-        stringBuilder.append("****************");
-        stringBuilder.append("****************");
-        stringBuilder.append("****************** Request URL");
-        stringBuilder.append(httpUriRequest.getURI().toString());
-
-
-        stringBuilder.append("");
-        stringBuilder.append("");
-        stringBuilder.append("");
-        stringBuilder.append("****************");
-        stringBuilder.append("****************");
-        stringBuilder.append("****************** Request Headers");
+        logInfo("");
+        logInfo("");
+        logInfo("");
+        logInfo("****************");
+        logInfo("****************");
+        logInfo("****************** Request Headers");
         logHeaders(httpUriRequest.getAllHeaders());
 
-        stringBuilder.append("");
-        stringBuilder.append("");
-        stringBuilder.append("");
-        stringBuilder.append("****************");
-        stringBuilder.append("****************");
-        stringBuilder.append("****************** Response  Headers");
+        logInfo("");
+        logInfo("");
+        logInfo("");
+        logInfo("****************");
+        logInfo("****************");
+        logInfo("****************** Response  Headers");
         logHeaders(httpResponse.getAllHeaders());
 
-        stringBuilder.append("");
-        stringBuilder.append("");
-        stringBuilder.append("");
-        stringBuilder.append("****************");
-        stringBuilder.append("****************");
-        stringBuilder.append("****************** Response  Status");
-        stringBuilder.append(httpResponse.getStatusLine());
+        logInfo("");
+        logInfo("");
+        logInfo("");
+        logInfo("****************");
+        logInfo("****************");
+        logInfo("****************** Response  Status");
+        logInfo(httpResponse.getStatusLine().toString());
 
-        stringBuilder.append("");
-        stringBuilder.append("");
-        stringBuilder.append("");
+        logInfo("");
+        logInfo("");
+        logInfo("");
         BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader((httpResponse.getEntity().getContent())));
 
         String output;
-        stringBuilder.append("****************");
-        stringBuilder.append("****************");
-        stringBuilder.append("********** *******Response Body content");
+        logInfo("****************");
+        logInfo("****************");
+        logInfo("********** *******Response Body content");
         while ((output = bufferedReader.readLine()) != null) {
-            stringBuilder.append(output);
+            logInfo(output);
         }
 
-        stringBuilder.append("============================================ END  TEST " + testName + "==================================");
+        logInfo("============================================ END  TEST " + testName + "==================================");
 
-
-        LOGGER.info(stringBuilder.toString());
 
     }//logRequestHeaders()
 
@@ -220,7 +219,7 @@ public class RestRequest<T> {
         }
 
 
-        logRequestHeaders(postRequest, returnVal, " Authenticate with user " + userName);
+        // logRequestHeaders(postRequest, returnVal, " Authenticate with user " + userName);
 
         return (returnVal);
 

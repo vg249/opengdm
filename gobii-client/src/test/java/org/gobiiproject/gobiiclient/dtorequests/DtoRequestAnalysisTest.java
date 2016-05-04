@@ -53,10 +53,17 @@ public class DtoRequestAnalysisTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));
         Assert.assertTrue(analysisDTOResponse.getAnalysisId() > 1);
 
-        Assert.assertNotEquals(null, analysisDTOResponse.getParameters());
-        Assert.assertTrue(analysisDTOResponse.getParameters().size() > 0);
+        AnalysisDTO analysisDTORequestForParams = new AnalysisDTO();
+        analysisDTORequestForParams.setAnalysisId(analysisDTOResponse.getAnalysisId());
+        AnalysisDTO analysisDTOResponseForParams = dtoRequestAnalysis.process(analysisDTORequestForParams);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponseForParams));
+
+        Assert.assertNotEquals("Parameter collection is null",null, analysisDTOResponseForParams.getParameters());
+        Assert.assertTrue( "No parameters were returned",
+                analysisDTOResponseForParams.getParameters().size() > 0);
         Assert.assertTrue("Parameter values do not match",
-                entityParamValues.compare(analysisDTOResponse.getParameters()));
+                entityParamValues.compare(analysisDTOResponseForParams.getParameters()));
 
     } // testAnalysisCreate
 
