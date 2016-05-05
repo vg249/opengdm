@@ -7,6 +7,7 @@ import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapReference;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,4 +75,21 @@ public class DtoMapReferenceImpl implements DtoMapReference {
         return returnVal;
     }
 
+    @Override
+    public ReferenceDTO updateReference(ReferenceDTO referenceDTO) throws GobiiDtoMappingException {
+
+        ReferenceDTO returnVal = referenceDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            rsReferenceDao.updateReference(parameters);
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
 }

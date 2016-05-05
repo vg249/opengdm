@@ -37,6 +37,12 @@ public class ContactServiceImpl implements ContactService {
                     returnVal.setModifiedDate(new Date());
                     break;
 
+                case UPDATE:
+                    returnVal = dtoMapContact.updateContact(contactDTO);
+                    returnVal.setCreatedDate(new Date());
+                    returnVal.setModifiedDate(new Date());
+                    break;
+
                 default:
                     throw new GobiiDtoMappingException("Unsupported proces contact type " + contactDTO.getProcessType().toString());
 

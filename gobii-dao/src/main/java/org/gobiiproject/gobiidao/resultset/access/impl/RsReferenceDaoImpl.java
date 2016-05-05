@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsReferenceDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsReference;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdReference;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetReferenceDetailsByReferenceId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetReferenceNames;
@@ -99,5 +100,22 @@ public class RsReferenceDaoImpl implements RsReferenceDao {
         }
 
         return returnVal;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateReference(Map<String, Object> parameters) throws GobiiDaoException {
+
+        try {
+
+            if (!spRunnerCallable.run(new SpUpdReference(), parameters)) {
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating reference", e);
+            throw (new GobiiDaoException(e));
+        }
     }
 }

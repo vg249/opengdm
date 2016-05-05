@@ -39,6 +39,12 @@ public class MapsetServiceImpl implements MapsetService {
                     returnVal.setModifiedDate(new Date());
                     break;
 
+                case UPDATE:
+                    returnVal = dtoMapMapset.updateMapset(mapsetDTO);
+                    returnVal.setCreatedDate(new Date());
+                    returnVal.setModifiedDate(new Date());
+                    break;
+
                 default:
                     throw new GobiiDtoMappingException("Unsupported proces mapset type " + returnVal.getProcessType().toString());
 

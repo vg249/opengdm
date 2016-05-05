@@ -33,6 +33,10 @@ public class ReferenceServiceImpl implements ReferenceService {
                     returnVal = dtoMapReference.createReference(referenceDTO);
                     break;
 
+                case UPDATE:
+                    returnVal = dtoMapReference.updateReference(referenceDTO);
+                    break;
+
                 default:
                     throw new GobiiDtoMappingException("Unsupported proces Reference type " + referenceDTO.getProcessType().toString());
 

@@ -7,16 +7,21 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestDataSet;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.awt.event.ContainerAdapter;
 import java.util.Date;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DtoRequestContactTest {
 
@@ -60,6 +65,42 @@ public class DtoRequestContactTest {
         Assert.assertTrue(contactDTOResponse.getContactId() > 0);
 
     }
+    
+    @Test
+    public void testUpdateContact() throws Exception {
 
+        DtoRequestContact dtoRequestContact = new DtoRequestContact();
+
+        // create a new contact for our test
+        EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
+        ContactDTO newContactDto = TestDtoFactory
+                .makePopulatedContactDTO(DtoMetaData.ProcessType.CREATE, 1);
+        ContactDTO newContactDTOResponse = dtoRequestContact.processContact(newContactDto);
+
+
+        // re-retrieve the contact we just created so we start with a fresh READ mode dto
+        ContactDTO ContactDTORequest = new ContactDTO();
+        ContactDTORequest.setContactId(newContactDTOResponse.getContactId());
+        ContactDTO contactDTOReceived = dtoRequestContact.processContact(ContactDTORequest);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOReceived));
+
+
+        // so this would be the typical workflow for the client app
+        contactDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
+        String newName = UUID.randomUUID().toString();
+        contactDTOReceived.setLastName(newName);
+
+        ContactDTO ContactDTOResponse = dtoRequestContact.processContact(contactDTOReceived);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(ContactDTOResponse));
+
+
+        ContactDTO dtoRequestContactReRetrieved =
+                dtoRequestContact.processContact(ContactDTORequest);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestContactReRetrieved));
+
+        Assert.assertTrue(dtoRequestContactReRetrieved.getLastName().equals(newName));
+
+    }
 
 }

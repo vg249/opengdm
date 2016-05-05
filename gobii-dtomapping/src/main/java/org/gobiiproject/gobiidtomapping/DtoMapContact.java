@@ -11,5 +11,6 @@ public interface DtoMapContact {
 
     ContactDTO getContactDetails(ContactDTO contactDTO) throws GobiiDtoMappingException;
     ContactDTO  createContact(ContactDTO contactDTO) throws GobiiDtoMappingException;
+    ContactDTO  updateContact(ContactDTO contactDTO) throws GobiiDtoMappingException;
 
 }
