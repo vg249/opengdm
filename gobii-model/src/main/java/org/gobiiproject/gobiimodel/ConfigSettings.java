@@ -48,6 +48,7 @@ public class ConfigSettings {
     private Map<CropType, CropConfig> cropConfigs = new HashMap<>();
 
     private CropType currentCropType = CropType.RICE; // default crop
+
     private String emailSvrType;
     private String emailSvrDomain;
     private String emailSvrUser;
@@ -109,6 +110,10 @@ public class ConfigSettings {
         return getCropConfig(getCurrentCropType());
     }
 
+
+    public void setCurrentCropType(CropType currentCropType) {
+        this.currentCropType = currentCropType;
+    }
 
     public CropType getCurrentCropType() {
         return currentCropType;
