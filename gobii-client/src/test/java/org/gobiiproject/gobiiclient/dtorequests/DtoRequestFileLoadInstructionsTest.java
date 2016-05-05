@@ -31,7 +31,7 @@ public class DtoRequestFileLoadInstructionsTest {
 
     } // testGetMarkers()
 
-    @Ignore
+    @Test
     public void testSendInstructionFile() throws Exception {
 
 

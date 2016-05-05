@@ -3,7 +3,8 @@ package org.gobiiproject.gobiidao.filesystem.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.LoaderFileDAO;
-import org.gobiiproject.gobiimodel.ConfigurationSettings;
+import org.gobiiproject.gobiimodel.ConfigFileReader;
+import org.gobiiproject.gobiimodel.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.Column;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.File;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstruction;
@@ -11,6 +12,9 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstruction;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,45 +32,56 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
 
         String returnVal = null;
 
+        String fileFQPN = null;
+        String loaderFilePath = null;
         try {
 
 
-            ConfigurationSettings configurationSettings = new ConfigurationSettings();
+            ConfigSettings configSettings = new ConfigSettings();
 
-            String laoderFilePath = configurationSettings.getPropValue("loaderfilepath");
-//            if (! laoderFilePath.substring(laoderFilePath.length() - 1).equals("\\")) {
-//                laoderFilePath += "\\";
-//            }
+            loaderFilePath = configSettings.getCurrentCropConfig().getLoaderFilesLocation();
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            String dateTimeForFileName =
-                    String.format("%02d", calendar.get(Calendar.YEAR)) +
-                            "-" +
-                            String.format("%02d", calendar.get(Calendar.MONTH) + 1) +
-                            "-" +
-                            String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH)) +
-                            "_" +
-                            String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY)) +
-                            "-" +
-                            String.format("%02d", calendar.get(Calendar.MINUTE)) +
-                            "-" +
-                            String.format("%02d", calendar.get(Calendar.SECOND));
+            if( null != loaderFilePath ) {
 
-            String fileFQPN = laoderFilePath + fileUniqueId + "_" + dateTimeForFileName + LOADER_FILE_EXT;
+                Path path = Paths.get(loaderFilePath);
+                if (Files.exists(path)) {
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            String instructionsAsJson = objectMapper.writeValueAsString(instructions);
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileFQPN));
-            bufferedWriter.write(instructionsAsJson);
-            bufferedWriter.flush();
-            bufferedWriter.close();
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date());
+                    String dateTimeForFileName =
+                            String.format("%02d", calendar.get(Calendar.YEAR)) +
+                                    "-" +
+                                    String.format("%02d", calendar.get(Calendar.MONTH) + 1) +
+                                    "-" +
+                                    String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH)) +
+                                    "_" +
+                                    String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY)) +
+                                    "-" +
+                                    String.format("%02d", calendar.get(Calendar.MINUTE)) +
+                                    "-" +
+                                    String.format("%02d", calendar.get(Calendar.SECOND));
 
-            returnVal = fileFQPN; // set this last in case we got an exception
+                    fileFQPN = loaderFilePath + fileUniqueId + "_" + dateTimeForFileName + LOADER_FILE_EXT;
+
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    String instructionsAsJson = objectMapper.writeValueAsString(instructions);
+                    BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileFQPN));
+                    bufferedWriter.write(instructionsAsJson);
+                    bufferedWriter.flush();
+                    bufferedWriter.close();
+
+                    returnVal = fileFQPN; // set this last in case we got an exception
+                } else {
+                    throw new GobiiDaoException("Instruction file path does not exist: " + loaderFilePath);
+                } // if-else the path was found
+            } else {
+                throw new GobiiDaoException("The configuration does not specify a loader file destination" );
+            } // if-else there is path in the configuration
 
 
-        } catch (IOException e) {
-            throw new GobiiDaoException(e);
+        } catch (Exception e) {
+            String message = e.getMessage() + "; fqpn: " + fileFQPN + "; configured path: " + loaderFilePath;
+            throw new GobiiDaoException(message);
         }
 
         return returnVal;

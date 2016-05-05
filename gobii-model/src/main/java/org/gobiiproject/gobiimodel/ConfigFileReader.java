@@ -7,7 +7,7 @@ import java.util.Properties;
 /**
  * Created by Phil on 4/12/2016.
  */
-public class ConfigurationSettings {
+public class ConfigFileReader {
 
 
     private final String PROP_FILE_NAME = "/gobii.properties";
@@ -33,4 +33,4 @@ public class ConfigurationSettings {
 
     } // getPropValue()
 
-} // ConfigurationSettings
+} // ConfigFileReader

@@ -17,7 +17,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import org.gobiiproject.gobiimodel.ConfigurationSettings;
+import org.gobiiproject.gobiimodel.ConfigFileReader;
+import org.gobiiproject.gobiimodel.ConfigSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +26,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class RestRequest<T> {
@@ -43,9 +42,9 @@ public class RestRequest<T> {
         this.paramType = paramType;
 
         try {
-            ConfigurationSettings configurationSettings = new ConfigurationSettings();
+            ConfigSettings configSettings = new ConfigSettings();
 
-            String host = configurationSettings.getPropValue("servicedomain");
+            String host = configSettings.getCurrentCropConfig().getServiceDomain();
             if( null != host ) {
                 this.host = host;
             } else {
@@ -53,16 +52,16 @@ public class RestRequest<T> {
                 LOGGER.info("servicedomain property is not specified in configuration; setting domain to localhost");
             }
 
-            String port = configurationSettings.getPropValue("serviceport");
+            Integer port = configSettings.getCurrentCropConfig().getServicePort();
             if( null != port ) {
-                this.port = Integer.parseInt(port);
+                this.port = port;
             } else {
                 this.port = 8080;
                 LOGGER.info("serviceport property is not specified in configuration; setting port to 8080");
             }
 
 
-        } catch( IOException e) {
+        } catch( Exception e) {
             LOGGER.error(e.getMessage());
         }
     } // ctor
