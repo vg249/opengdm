@@ -28,7 +28,7 @@ public class SpGetAnalysisNames implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select analysis_id, name from analysis";
+        String sql = "select analysis_id, name from analysis order by lower(name)";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
 
