@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
+
 /**
  * Created by Phil on 4/28/2016.
  */
@@ -33,6 +35,8 @@ public class MapsetServiceImpl implements MapsetService {
 
                 case CREATE:
                     returnVal = dtoMapMapset.createMapset(mapsetDTO);
+                    returnVal.setCreatedDate(new Date());
+                    returnVal.setModifiedDate(new Date());
                     break;
 
                 default:

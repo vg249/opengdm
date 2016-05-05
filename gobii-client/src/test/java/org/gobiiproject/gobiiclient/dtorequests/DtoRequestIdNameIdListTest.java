@@ -24,6 +24,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getContactsById("Curator");
 
 
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDTO));
         Assert.assertNotEquals(null, nameIdListDTO);
         Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
