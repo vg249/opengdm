@@ -17,7 +17,9 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DtoRequestAnalysisTest {
 
@@ -67,31 +69,54 @@ public class DtoRequestAnalysisTest {
 
     } // testAnalysisCreate
 
-    @Ignore
+    @Test
     public void testUpdateAnalysis() throws Exception {
 
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
+
+        // create a new analysis for our test
+        EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
+        AnalysisDTO newAnalysisDto = TestDtoFactory
+                .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
+        AnalysisDTO newAnalysisDTOResponse = dtoRequestAnalysis.process(newAnalysisDto);
+
+
+        // re-retrieve the analysis we just created so we start with a fresh READ mode dto
         AnalysisDTO AnalysisDTORequest = new AnalysisDTO();
-        AnalysisDTORequest.setAnalysisId(2);
-        AnalysisDTO AnalysisDTOReceived = dtoRequestAnalysis.process(AnalysisDTORequest);
+        AnalysisDTORequest.setAnalysisId(newAnalysisDTOResponse.getAnalysisId());
+        AnalysisDTO analysisDTOReceived = dtoRequestAnalysis.process(AnalysisDTORequest);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOReceived));
 
 
-        AnalysisDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
-
+        // so this would be the typical workflow for the client app
+        analysisDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
         String newDataFile = UUID.randomUUID().toString();
+        analysisDTOReceived.setSourceName(newDataFile);
 
-        AnalysisDTOReceived.setSourceName(newDataFile);
+        EntityPropertyDTO propertyToUpdate = analysisDTOReceived.getParameters().get(0);
+        String updatedPropertyName = propertyToUpdate.getPropertyName();
+        String updatedPropertyValue = UUID.randomUUID().toString();
+        propertyToUpdate.setPropertyValue(updatedPropertyValue);
 
-        AnalysisDTO AnalysisDTOResponse = dtoRequestAnalysis.process(AnalysisDTOReceived);
+        AnalysisDTO AnalysisDTOResponse = dtoRequestAnalysis.process(analysisDTOReceived);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(AnalysisDTOResponse));
 
 
-        AnalysisDTO dtoRequestAnalysisAnalysisReRetrieved =
+        AnalysisDTO dtoRequestAnalysisReRetrieved =
                 dtoRequestAnalysis.process(AnalysisDTORequest);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestAnalysisAnalysisReRetrieved));
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestAnalysisReRetrieved));
 
-        Assert.assertTrue(dtoRequestAnalysisAnalysisReRetrieved.getSourceName().equals(newDataFile));
+        Assert.assertTrue(dtoRequestAnalysisReRetrieved.getSourceName().equals(newDataFile));
+
+        EntityPropertyDTO matchedProperty = dtoRequestAnalysisReRetrieved
+                .getParameters()
+                .stream()
+                .filter(m -> m.getPropertyName().equals(updatedPropertyName) )
+                .collect(Collectors.toList())
+                .get(0);
+
+        Assert.assertTrue(matchedProperty.getPropertyValue().equals(updatedPropertyValue));
 
     }
 

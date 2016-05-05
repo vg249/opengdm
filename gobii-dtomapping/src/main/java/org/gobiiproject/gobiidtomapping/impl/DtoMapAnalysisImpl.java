@@ -110,6 +110,11 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             rsAnalysisDao.updateAnalysis(parameters);
 
+            if( null != analysisDTO.getParameters() ) {
+                upsertAnalysisProperties(analysisDTO.getAnalysisId(),
+                        analysisDTO.getParameters());
+            }
+
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());

@@ -37,10 +37,12 @@ public class AnalysisServiceImpl implements AnalysisService {
                     break;
 
                 case CREATE:
-                    //analysisDTO.setModifiedDate(Date.valueOf(LocalDate.now()));
                     returnVal = dtoMapAnalysis.createAnalysis(analysisDTO);
                     break;
-                    
+
+                case UPDATE:
+                    returnVal = dtoMapAnalysis.updateAnalysis(analysisDTO);
+                    break;
             }
 
         } catch (GobiiDtoMappingException e) {
