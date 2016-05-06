@@ -43,8 +43,6 @@ public class DtoRequestAnalysisTest {
     public void testAnalysisCreate() throws Exception {
 
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
-
-
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         AnalysisDTO analysisDTORequest = TestDtoFactory
                 .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);

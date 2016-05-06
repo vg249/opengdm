@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Phil on 4/27/2016.
@@ -17,9 +18,9 @@ public class TestDtoFactory {
         EntityParamValues returnVal = new EntityParamValues();
 
 
-        returnVal.add("fooparam","fooval");
-        returnVal.add("barparam","barval");
-        returnVal.add("foobarparam","foobarval");
+        returnVal.add("fooparam", "fooval");
+        returnVal.add("barparam", "barval");
+        returnVal.add("foobarparam", "foobarval");
 
         return returnVal;
     }
@@ -30,7 +31,6 @@ public class TestDtoFactory {
 
         AnalysisDTO returnVal = new AnalysisDTO(processType);
 
-        String uniqueStemString = uniqueStem.toString();
         returnVal.setAnalysisName(uniqueStem + ": analysis");
         returnVal.setTimeExecuted(new Date());
         returnVal.setSourceUri(uniqueStem + ":  foo URL");
@@ -49,31 +49,14 @@ public class TestDtoFactory {
     }
 
     public static DataSetDTO makePopulatedDataSetDTO(DtoMetaData.ProcessType processType,
-                                                       Integer uniqueStem,
-                                                       EntityParamValues entityParamValues) {
+                                                     Integer uniqueStem,
+                                                     Integer callingAnalysisId,
+                                                     List<Integer> analysisIds) {
 
         DataSetDTO returnVal = new DataSetDTO(processType);
 
 
         // set the big-ticket items
-        Integer analysisUniqueStem = 0;
-        returnVal.setCallingAnalysis(TestDtoFactory.makePopulatedAnalysisDTO(
-                processType,
-                ++analysisUniqueStem,
-                entityParamValues));
-
-        returnVal.getAnalyses().add(TestDtoFactory.makePopulatedAnalysisDTO(
-                processType,
-                ++analysisUniqueStem,
-                entityParamValues));
-        returnVal.getAnalyses().add(TestDtoFactory.makePopulatedAnalysisDTO(
-                processType,
-                ++analysisUniqueStem,
-                entityParamValues));
-        returnVal.getAnalyses().add(TestDtoFactory.makePopulatedAnalysisDTO(
-                processType,
-                ++analysisUniqueStem,
-                entityParamValues));
 
         returnVal.getScores().add(1);
         returnVal.getScores().add(2);
@@ -89,6 +72,8 @@ public class TestDtoFactory {
         returnVal.setDataTable(uniqueStem + ": foo table");
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
+        returnVal.setCallingAnalysisId(callingAnalysisId);
+        returnVal.setAnalysesIds(analysisIds);
 
         return returnVal;
 

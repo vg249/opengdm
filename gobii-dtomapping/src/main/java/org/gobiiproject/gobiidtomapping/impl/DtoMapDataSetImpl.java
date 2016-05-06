@@ -53,28 +53,28 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
 
 
-                // create calling analysis from annotations
-                if (null != returnVal.getCallingAnalysisId()) {
+//                // create calling analysis from annotations
+//                if (null != returnVal.getCallingAnalysisId()) {
+//
+//                    ResultSet callingAnalysisResultSet =
+//                            rsAnalysisDao.getAnalysisDetailsByAnalysisId(returnVal.getCallingAnalysisId());
+//                    if (callingAnalysisResultSet.next()) {
+//                        AnalysisDTO callingAnalysisDTO = new AnalysisDTO();
+//                        ResultColumnApplicator.applyColumnValues(callingAnalysisResultSet, callingAnalysisDTO);
+//                    }
+//                }
+//
+//                // create analyses
+//                for (Integer currentAnalysisId : returnVal.getAnalysesIds()) {
+//                    ResultSet currentAnalysisResultSet = rsAnalysisDao.getAnalysisDetailsByAnalysisId(currentAnalysisId);
+//                    if (currentAnalysisResultSet.next()) {
+//                        AnalysisDTO currentAnalysisDTO = new AnalysisDTO();
+//                        ResultColumnApplicator.applyColumnValues(currentAnalysisResultSet, currentAnalysisDTO);
+//                        returnVal.getAnalyses().add(currentAnalysisDTO);
+//                    }
+//                }
 
-                    ResultSet callingAnalysisResultSet =
-                            rsAnalysisDao.getAnalysisDetailsByAnalysisId(returnVal.getCallingAnalysisId());
-                    if (callingAnalysisResultSet.next()) {
-                        AnalysisDTO callingAnalysisDTO = new AnalysisDTO();
-                        ResultColumnApplicator.applyColumnValues(callingAnalysisResultSet, callingAnalysisDTO);
-                    }
-                }
-
-                // create analyses
-                for (Integer currentAnalysisId : returnVal.getAnalysesIds()) {
-                    ResultSet currentAnalysisResultSet = rsAnalysisDao.getAnalysisDetailsByAnalysisId(currentAnalysisId);
-                    if (currentAnalysisResultSet.next()) {
-                        AnalysisDTO currentAnalysisDTO = new AnalysisDTO();
-                        ResultColumnApplicator.applyColumnValues(currentAnalysisResultSet, currentAnalysisDTO);
-                        returnVal.getAnalyses().add(currentAnalysisDTO);
-                    }
-                }
-
-            } // iterate resultSet
+            }
 
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -94,18 +94,6 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
         try {
 
-            AnalysisDTO analysisDTOCalling = returnVal.getCallingAnalysis();
-            if (DtoMetaData.ProcessType.CREATE == analysisDTOCalling.getProcessType()) {
-                dtoMapAnalysis.createAnalysis(analysisDTOCalling);
-            }
-
-            returnVal.setCallingAnalysisId(analysisDTOCalling.getAnalysisId());
-
-            for (AnalysisDTO currentAnalysisDTO : returnVal.getAnalyses()) {
-                dtoMapAnalysis.createAnalysis(currentAnalysisDTO);
-                returnVal.getAnalysesIds().add(currentAnalysisDTO.getAnalysisId());
-            }
-
             Map<String, Object> parameters = ParamExtractor.makeParamVals(dataSetDTO);
             Integer datasetId = rsDataSetDao.createDataset(parameters);
             returnVal.setDataSetId(datasetId);
@@ -124,6 +112,17 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
         DataSetDTO returnVal = dataSetDTO;
 
         try {
+
+
+//            for (AnalysisDTO currentAnalysisDTO : returnVal.getAnalyses()) {
+//
+//                if(DtoMetaData.ProcessType.CREATE == currentAnalysisDTO.getProcessType() ) {
+//                    dtoMapAnalysis.createAnalysis(currentAnalysisDTO);
+//                    returnVal.getAnalysesIds().add(currentAnalysisDTO.getAnalysisId());
+//
+//                }
+//            }
+
 
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             rsDataSetDao.updateDataSet(parameters);

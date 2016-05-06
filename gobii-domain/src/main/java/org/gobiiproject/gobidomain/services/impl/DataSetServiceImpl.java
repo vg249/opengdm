@@ -39,6 +39,11 @@ public class DataSetServiceImpl implements DataSetService {
                     returnVal = dtoMapDataSet.createDataset(datasetDTO);
                     break;
 
+                case UPDATE:
+                    returnVal.setModifiedDate(new Date());
+                    returnVal = dtoMapDataSet.updateDataset(datasetDTO);
+                    break;
+
                 default:
                     throw new GobiiDtoMappingException("Unsupported procesCv type " + datasetDTO.getProcessType().toString());
 

@@ -23,7 +23,7 @@ public class DataSetDTO extends DtoMetaData {
     private Integer dataSetId;
     private Integer experimentId;
     private Integer callingAnalysisId;
-    private AnalysisDTO callingAnalysis;
+//    private AnalysisDTO callingAnalysis;
     private String dataTable;
     private String dataFile;
     private String qualityTable;
@@ -34,7 +34,7 @@ public class DataSetDTO extends DtoMetaData {
     private Date modifiedDate;
     private Integer status;
     private List<Integer> analysesIds = new ArrayList<>();
-    private List<AnalysisDTO> analyses = new ArrayList<>();
+  //  private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
 
     @GobiiEntityParam(paramName = "dataSetId")
@@ -57,15 +57,14 @@ public class DataSetDTO extends DtoMetaData {
         this.experimentId = experimentId;
     }
 
-    public AnalysisDTO getCallingAnalysis() {
-        return callingAnalysis;
-    }
+//    public AnalysisDTO getCallingAnalysis() {
+//        return callingAnalysis;
+//    }
+//    public void setCallingAnalysis(AnalysisDTO callingAnalysis) {
+//        this.callingAnalysis = callingAnalysis;
+//    }
 
-    public void setCallingAnalysis(AnalysisDTO callingAnalysis) {
-        this.callingAnalysis = callingAnalysis;
-    }
-
-    @GobiiEntityParam(paramName = "callinganalysisId")
+    @GobiiEntityParam(paramName = "callingAnalysisId")
     public Integer getCallingAnalysisId() {
         return callingAnalysisId;
     }
@@ -178,13 +177,12 @@ public class DataSetDTO extends DtoMetaData {
     }
 
 
-    public List<AnalysisDTO> getAnalyses() {
-        return analyses;
-    }
-
-    public void setAnalyses(List<AnalysisDTO> analyses) {
-        this.analyses = analyses;
-    }
+//    public List<AnalysisDTO> getAnalyses() {
+//        return analyses;
+//    }
+//    public void setAnalyses(List<AnalysisDTO> analyses) {
+//        this.analyses = analyses;
+//    }
 
     public List<Integer> getScores() {
         return scores;

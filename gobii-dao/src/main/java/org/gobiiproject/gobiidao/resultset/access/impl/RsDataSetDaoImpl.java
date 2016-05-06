@@ -114,6 +114,7 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
         return returnVal;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void updateDataSet(Map<String, Object> parameters) throws GobiiDaoException {
         try {
