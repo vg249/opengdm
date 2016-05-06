@@ -11,4 +11,5 @@ public interface DtoMapMapset {
 
     MapsetDTO getMapsetDetails(MapsetDTO mapsetDTO) throws GobiiDtoMappingException;
     MapsetDTO createMapset(MapsetDTO mapsetDTO) throws GobiiDtoMappingException;
+    MapsetDTO updateMapset(MapsetDTO mapsetDTO) throws GobiiDtoMappingException;
 }

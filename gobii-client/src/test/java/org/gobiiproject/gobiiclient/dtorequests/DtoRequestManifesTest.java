@@ -26,11 +26,6 @@ public class DtoRequestManifesTest {
          Assert.assertNotEquals(null, nameIdListDtoResponse);
          Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
          Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-         
-         for (Entry entry : nameIdListDtoResponse.getNamesById().entrySet()){ //add project on list
-        	 System.out.println("Value:"+(String) entry.getValue());//project name
- 			System.out.println("Key:"+(String) entry.getKey());//project name
- 		}
     } // testGetMarkers()
 
 

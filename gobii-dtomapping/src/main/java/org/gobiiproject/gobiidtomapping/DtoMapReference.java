@@ -2,6 +2,7 @@
 package org.gobiiproject.gobiidtomapping;
 
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 
@@ -12,5 +13,6 @@ public interface DtoMapReference {
 
     ReferenceDTO getReferenceDetails(ReferenceDTO referenceDTO) throws GobiiDtoMappingException;
     ReferenceDTO  createReference(ReferenceDTO referenceDTO) throws GobiiDtoMappingException;
+    ReferenceDTO updateReference(ReferenceDTO  referenceDTO) throws GobiiDtoMappingException;
 
 }

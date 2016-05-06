@@ -19,4 +19,10 @@ public interface RsMapSetDao {
     ResultSet getMapsetDetailsByMapsetId(int mapSetId) throws GobiiDaoException;
 
     Integer createMapset(Map<String,Object> parameters) throws GobiiDaoException;
+
+    void createUpdateParameter(Map<String, Object> parameters) throws GobiiDaoException;
+
+    void updateMapset(Map<String, Object> parameters) throws GobiiDaoException;
+
+    ResultSet getParameters(Integer mapsetId ) throws GobiiDaoException;
 }

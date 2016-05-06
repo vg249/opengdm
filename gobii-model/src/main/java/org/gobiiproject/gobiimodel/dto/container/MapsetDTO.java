@@ -5,7 +5,9 @@ import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Angel on 4/13/2016.
@@ -29,6 +31,7 @@ public class MapsetDTO extends DtoMetaData {
 	private Integer modifiedBy;
 	private Date modifiedDate;
 	private Integer status;
+	private List<EntityPropertyDTO> parameters = new ArrayList<>();
 
 	public Integer getMapsetId() {
 		return mapsetId;
@@ -138,5 +141,14 @@ public class MapsetDTO extends DtoMetaData {
 	@GobiiEntityColumn(columnName ="status")
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+
+	public List<EntityPropertyDTO> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(List<EntityPropertyDTO> parameters) {
+		this.parameters = parameters;
 	}
 }

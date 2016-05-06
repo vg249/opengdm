@@ -5,6 +5,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsContact;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdContact;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactNamesByRoleName;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactsByRoleName;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactDetailsByContactId;
@@ -111,4 +112,20 @@ public class RsContactDaoImpl implements RsContactDao {
         return returnVal;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateContact(Map<String, Object> parameters) throws GobiiDaoException {
+
+        try {
+
+            if (!spRunnerCallable.run(new SpUpdContact(), parameters)) {
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating contact", e);
+            throw (new GobiiDaoException(e));
+        }
+    }
 }

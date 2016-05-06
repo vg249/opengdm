@@ -15,4 +15,5 @@ public interface RsReferenceDao {
     ResultSet getReferenceNames() throws GobiiDaoException;
     ResultSet getReferenceDetailsByReferenceId(Integer referenceId) throws GobiiDaoException;
     Integer createReference( Map<String, Object> parameters) throws GobiiDaoException;
+    void updateReference(Map<String, Object> parameters) throws GobiiDaoException;
 }

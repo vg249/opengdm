@@ -2,8 +2,11 @@ package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
 
 import java.util.Date;
 import java.util.List;
@@ -74,6 +77,71 @@ public class TestDtoFactory {
         returnVal.setModifiedDate(new Date());
         returnVal.setCallingAnalysisId(callingAnalysisId);
         returnVal.setAnalysesIds(analysisIds);
+
+        return returnVal;
+
+    }
+
+
+    public static MapsetDTO makePopulatedMapsetDTO(DtoMetaData.ProcessType processType,
+                                                   Integer uniqueStem,
+                                                   EntityParamValues entityParamValues) {
+
+        MapsetDTO returnVal = new MapsetDTO(processType);
+
+        String uniqueStemString = uniqueStem.toString();
+        // set the plain properties
+        returnVal.setName(uniqueStem + "dummy name");
+        returnVal.setCode(uniqueStem + "add dummy code");
+        returnVal.setCreatedBy(1);
+        returnVal.setCreatedDate(new Date());
+        returnVal.setDescription(uniqueStem + "dummy description");
+        returnVal.setMapType(1);
+        returnVal.setModifiedBy(1);
+        returnVal.setModifiedDate(new Date());
+        returnVal.setReferenceId(1);
+        returnVal.setStatus(1);
+
+        returnVal.setParameters(entityParamValues.getProperties());
+
+        return returnVal;
+
+    }
+
+    public static ReferenceDTO makePopulatedReferenceDTO(DtoMetaData.ProcessType processType,
+                                                         Integer uniqueStem) {
+
+        ReferenceDTO returnVal = new ReferenceDTO(processType);
+
+        String uniqueStemString = uniqueStem.toString();
+        returnVal.setName(uniqueStem + ": reference");
+        returnVal.setVersion("version:"+uniqueStem);
+        returnVal.setLink(uniqueStem+" link");
+        returnVal.setFilePath(uniqueStem +" file path");
+
+        return returnVal;
+
+    }
+
+
+    public static ContactDTO makePopulatedContactDTO(DtoMetaData.ProcessType processType,
+                                                     Integer uniqueStem) {
+
+        String uniqueStemString = uniqueStem.toString();
+        ContactDTO returnVal = new ContactDTO(processType);
+        // set the plain properties
+
+        returnVal.setFirstName(uniqueStem +" new contact");
+        returnVal.setLastName(uniqueStem +"new lastname");
+        returnVal.setEmail(uniqueStem +"mail@email.com");
+        returnVal.setCode(uniqueStem +"added New Code");
+        returnVal.setCreatedBy(1);
+        returnVal.setCreatedDate(new Date());
+        returnVal.setModifiedBy(1);
+        returnVal.setModifiedDate(new Date());
+
+        returnVal.getRoles().add(1);
+        returnVal.getRoles().add(2);
 
         return returnVal;
 

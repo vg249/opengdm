@@ -3,17 +3,17 @@ package org.gobiiproject.gobiidao.resultset.sqlworkers.modify;
 import org.gobiiproject.gobiidao.resultset.core.SpDef;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
- * Created by Angel on 5/4/2016.
+ * Created by Angel on 5/5/2016.
  */
-public class SpInsContact extends SpDef {
+public class SpUpdContact extends SpDef {
 
-    public SpInsContact() {
+    public SpUpdContact() {
 
-        super("{call createcontact(?,?,?,?,?,?,?,?,?)}");
+        super("{call updatecontact(?,?,?,?,?,?,?,?,?,?)}",false);
 
+        this.addParamDef("contactId", Integer.class).setNullable(false);
         this.addParamDef("lastName", String.class).setNullable(false);
         this.addParamDef("firstName", String.class).setNullable(false);
         this.addParamDef("code", String.class).setNullable(false);
@@ -24,7 +24,5 @@ public class SpInsContact extends SpDef {
         this.addParamDef("modifiedBy", Integer.class).setNullable(true);
         this.addParamDef("modifiedDate", java.util.Date.class).setNullable(true);
 
-
     } // ctor
-
 }
