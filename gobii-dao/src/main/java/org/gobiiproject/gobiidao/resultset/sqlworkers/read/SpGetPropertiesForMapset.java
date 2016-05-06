@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidao.resultset.sqlworkers.read;
 
+import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
 import org.hibernate.jdbc.Work;
 
 import java.sql.Connection;
@@ -29,7 +30,7 @@ public class SpGetPropertiesForMapset implements Work {
     public void execute(Connection dbConnection) throws SQLException {
         String sql = "select * from getallpropertiesofmapset(?)";
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-        preparedStatement.setInt(1, (Integer) parameters.get("mapsetId"));
+        preparedStatement.setInt(1, (Integer) parameters.get(EntityPropertyParamNames.PROPPCOLARAMNAME_ENTITY_ID));
         resultSet = preparedStatement.executeQuery();
     } // execute()
 }

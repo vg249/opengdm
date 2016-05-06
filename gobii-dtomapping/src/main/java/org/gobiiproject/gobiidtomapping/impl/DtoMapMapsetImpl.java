@@ -43,11 +43,11 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
                 // apply dataset values
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
 
-                ResultSet propertyResultSet = rsMapsetDao.getParameters(mapsetDTO.getMapsetId());
+                ResultSet propertyResultSet = rsMapsetDao.getProperties(mapsetDTO.getMapsetId());
                 List<EntityPropertyDTO> entityPropertyDTOs =
-                        EntityProperties.resultSetToProperties(mapsetDTO.getMapsetId(),propertyResultSet);
+                        EntityProperties.resultSetToProperties(mapsetDTO.getMapsetId(), propertyResultSet);
 
-                mapsetDTO.setParameters(entityPropertyDTOs);
+                mapsetDTO.setProperties(entityPropertyDTOs);
 
             } // if result set has a row
 
@@ -73,7 +73,7 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
             Integer mapsetId = rsMapsetDao.createMapset(parameters);
             returnVal.setMapsetId(mapsetId);
 
-            List<EntityPropertyDTO> mapsetParameters = mapsetDTO.getParameters();
+            List<EntityPropertyDTO> mapsetParameters = mapsetDTO.getProperties();
             upsertMapsetProperties(mapsetDTO.getMapsetId(), mapsetParameters);
 
         } catch (GobiiDaoException e) {
@@ -91,13 +91,20 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
             Map<String, Object> spParamsParameters =
                     EntityProperties.propertiesToParams(mapsetId, currentProperty);
 
-            rsMapsetDao.createUpdateParameter(spParamsParameters);
+            Integer propertyId = rsMapsetDao.createUpdateMapSetProperty(spParamsParameters);
+
+            if (null == propertyId || propertyId <= 0) {
+                throw (new GobiiDaoException("Unable to update mapset property with name: "
+                        + currentProperty.getPropertyName()
+                        + "; the property name must be a cv term"));
+            }
 
             currentProperty.setEntityIdId(mapsetId);
+            currentProperty.setPropertyId(propertyId);
         }
 
     }
-    
+
     @Override
     public MapsetDTO updateMapset(MapsetDTO mapsetDTO) throws GobiiDtoMappingException {
 
@@ -108,9 +115,9 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             rsMapsetDao.updateMapset(parameters);
 
-            if( null != mapsetDTO.getParameters() ) {
+            if (null != mapsetDTO.getProperties()) {
                 upsertMapsetProperties(mapsetDTO.getMapsetId(),
-                        mapsetDTO.getParameters());
+                        mapsetDTO.getProperties());
             }
 
         } catch (GobiiDaoException e) {

@@ -5,7 +5,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsMapSetDao;
 import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMapsetParameters;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMapsetProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMapset;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdMapset;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
@@ -54,10 +54,10 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
 
     }
 
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public ResultSet getMapNamesByTypeId(int typeId) throws GobiiDaoException {
-		// TODO Auto-generated method stub
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ResultSet getMapNamesByTypeId(int typeId) throws GobiiDaoException {
+        // TODO Auto-generated method stub
 
         ResultSet returnVal = null;
 
@@ -78,7 +78,7 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
         }
 
         return returnVal;
-	}
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
@@ -89,7 +89,7 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("mapSetId", mapSetId);
-            SpGetMapsetDetailsByMapsetId spGetMapsetDetailsByMapsetId= new SpGetMapsetDetailsByMapsetId(parameters);
+            SpGetMapsetDetailsByMapsetId spGetMapsetDetailsByMapsetId = new SpGetMapsetDetailsByMapsetId(parameters);
 
             storedProcExec.doWithConnection(spGetMapsetDetailsByMapsetId);
 
@@ -153,10 +153,14 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public void createUpdateParameter(Map<String, Object> parameters) throws GobiiDaoException {
+    public Integer createUpdateMapSetProperty(Map<String, Object> parameters) throws GobiiDaoException {
+
+        Integer returnVal = null;
 
         try {
-            spRunnerCallable.run(new SpInsMapsetParameters(), parameters);
+
+            spRunnerCallable.run(new SpInsMapsetProperties(), parameters);
+            returnVal = spRunnerCallable.getResult();
 
         } catch (Exception e) {
 
@@ -164,17 +168,19 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
             throw (new GobiiDaoException(e));
 
         }
-    } // createUpdateProperty
+
+        return returnVal;
+    } // createUpdateMapSetProperty
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public ResultSet getParameters(Integer mapsetId) throws GobiiDaoException {
+    public ResultSet getProperties(Integer mapSetId) throws GobiiDaoException {
         ResultSet returnVal = null;
 
         try {
 
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put(EntityPropertyParamNames.PROPPCOLARAMNAME_ENTITY_ID, mapsetId);
+            parameters.put(EntityPropertyParamNames.PROPPCOLARAMNAME_ENTITY_ID, mapSetId);
             SpGetPropertiesForMapset spGetPropertiesForMapset = new SpGetPropertiesForMapset(parameters);
             storedProcExec.doWithConnection(spGetPropertiesForMapset);
             returnVal = spGetPropertiesForMapset.getResultSet();
@@ -185,7 +191,6 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
             throw (new GobiiDaoException(e));
 
         }
-
 
         return returnVal;
     }

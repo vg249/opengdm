@@ -6,11 +6,11 @@ import org.gobiiproject.gobiidao.resultset.core.SpDef;
 /**
  * Created by Phil on 4/7/2016.
  */
-public class SpInsMapsetParameters extends SpDef {
+public class SpInsMapsetProperties extends SpDef {
 
-    public SpInsMapsetParameters() {
+    public SpInsMapsetProperties() {
 
-        super("{call upsertanalysisparameter(?,?,?)}",false);
+        super("{call upsertmapsetpropertybyname(?,?,?)}");
 
         this.addParamDef(EntityPropertyParamNames.PROPPCOLARAMNAME_ENTITY_ID, Integer.class)
                 .setNullable(false);

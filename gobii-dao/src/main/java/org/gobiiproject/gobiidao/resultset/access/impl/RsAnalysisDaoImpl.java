@@ -142,7 +142,7 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
             throw (new GobiiDaoException(e));
 
         }
-    } // createUpdateProperty
+    } // createUpdateMapSetProperty
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override

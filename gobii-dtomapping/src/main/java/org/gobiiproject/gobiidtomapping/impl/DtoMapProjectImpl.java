@@ -1,11 +1,8 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectDetailsByProjectId;
-import org.gobiiproject.gobiidtomapping.DtoMapCv;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
@@ -19,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -170,7 +166,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
             Map<String, Object> spParamsParameters =
                     EntityProperties.propertiesToParams(projectId,currentProperty);
 
-            Integer propertyId = rsProjectDao.createUpdateProperty(spParamsParameters);
+            Integer propertyId = rsProjectDao.createUpdateProjectProperty(spParamsParameters);
             currentProperty.setEntityIdId(projectId);
             currentProperty.setPropertyId(propertyId);
         }

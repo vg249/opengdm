@@ -187,7 +187,7 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Integer createUpdateProperty(Map<String, Object> parameters) throws GobiiDaoException {
+    public Integer createUpdateProjectProperty(Map<String, Object> parameters) throws GobiiDaoException {
 
         Integer returnVal = 0;
 
@@ -204,7 +204,7 @@ public class RsProjectDaoImpl implements RsProjectDao {
 
         return returnVal;
 
-    } // createUpdateProperty
+    } // createUpdateMapSetProperty
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override

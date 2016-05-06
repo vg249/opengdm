@@ -4,7 +4,6 @@ import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
-import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
 
@@ -24,6 +23,19 @@ public class TestDtoFactory {
         returnVal.add("fooparam", "fooval");
         returnVal.add("barparam", "barval");
         returnVal.add("foobarparam", "foobarval");
+
+        return returnVal;
+    }
+
+    public static EntityParamValues makeConstrainedEntityParams(List<String> propNames,
+                                                                Integer nameStem) {
+
+        EntityParamValues returnVal = new EntityParamValues();
+
+        for(String currentPropName : propNames) {
+
+            returnVal.add(currentPropName, "fooval " + (nameStem++));
+        }
 
         return returnVal;
     }
@@ -102,7 +114,7 @@ public class TestDtoFactory {
         returnVal.setReferenceId(1);
         returnVal.setStatus(1);
 
-        returnVal.setParameters(entityParamValues.getProperties());
+        returnVal.setProperties(entityParamValues.getProperties());
 
         return returnVal;
 

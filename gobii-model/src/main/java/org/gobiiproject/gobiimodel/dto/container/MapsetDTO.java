@@ -31,7 +31,7 @@ public class MapsetDTO extends DtoMetaData {
 	private Integer modifiedBy;
 	private Date modifiedDate;
 	private Integer status;
-	private List<EntityPropertyDTO> parameters = new ArrayList<>();
+	private List<EntityPropertyDTO> properties = new ArrayList<>();
 
 	public Integer getMapsetId() {
 		return mapsetId;
@@ -144,11 +144,11 @@ public class MapsetDTO extends DtoMetaData {
 	}
 
 
-	public List<EntityPropertyDTO> getParameters() {
-		return parameters;
+	public List<EntityPropertyDTO> getProperties() {
+		return properties;
 	}
 
-	public void setParameters(List<EntityPropertyDTO> parameters) {
-		this.parameters = parameters;
+	public void setProperties(List<EntityPropertyDTO> properties) {
+		this.properties = properties;
 	}
 }

@@ -17,6 +17,6 @@ public interface RsProjectDao {
     ResultSet getProjectsByNameAndPiContact(String projectName, Integer piContactId ) throws GobiiDaoException;
     Integer createProject(Map<String,Object> parameters) throws GobiiDaoException;
     void updateProject(Map<String,Object> parameters) throws GobiiDaoException;
-    Integer createUpdateProperty(Map<String, Object> parameters) throws GobiiDaoException;
+    Integer createUpdateProjectProperty(Map<String, Object> parameters) throws GobiiDaoException;
 	ResultSet getProjectNames()throws GobiiDaoException;
 }

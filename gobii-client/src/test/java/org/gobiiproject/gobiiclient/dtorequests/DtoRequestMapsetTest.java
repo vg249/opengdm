@@ -6,13 +6,14 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public class DtoRequestMapsetTest {
 
-    @Ignore
+    @Test
     public void testGetMapsetDetails() throws Exception {
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
         MapsetDTO mapsetDTORequest = new MapsetDTO();
@@ -32,14 +33,27 @@ public class DtoRequestMapsetTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponse));
         Assert.assertFalse(mapsetDTOResponse.getName().isEmpty());
         Assert.assertTrue(mapsetDTOResponse.getMapsetId().equals(2));
-        
+
     }
 
+    //waiting for properties stored procedure change to test this
     @Ignore
     public void testCreateMapset() throws Exception {
 
+        //get terms for mapset properties:
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("cvgroupterms");
+        nameIdListDTORequest.setFilter("map_type");
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        List<String> mapsetProperTerms = new ArrayList<> ( nameIdListDTO
+                .getNamesById()
+                .values());
+
+
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
-        EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
+        EntityParamValues entityParamValues = TestDtoFactory
+                .makeConstrainedEntityParams(mapsetProperTerms,1);
 
         MapsetDTO mapsetDTORequest = TestDtoFactory
                 .makePopulatedMapsetDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
@@ -56,15 +70,16 @@ public class DtoRequestMapsetTest {
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponseForParams));
 
-        Assert.assertNotEquals("Parameter collection is null",null, mapsetDTOResponseForParams.getParameters());
-        Assert.assertTrue( "No parameters were returned",
-                mapsetDTOResponseForParams.getParameters().size() > 0);
+        Assert.assertNotEquals("Parameter collection is null", null, mapsetDTOResponseForParams.getProperties());
+        Assert.assertTrue("No properties were returned",
+                mapsetDTOResponseForParams.getProperties().size() > 0);
         Assert.assertTrue("Parameter values do not match",
-                entityParamValues.compare(mapsetDTOResponseForParams.getParameters()));
+                entityParamValues.compare(mapsetDTOResponseForParams.getProperties()));
 
     }
 
 
+    //waiting for properties stored procedure change to test this
     @Ignore
     public void testUpdateMapset() throws Exception {
 
@@ -89,7 +104,7 @@ public class DtoRequestMapsetTest {
         String newName = UUID.randomUUID().toString();
         mapsetDTOReceived.setName(newName);
 
-        EntityPropertyDTO propertyToUpdate = mapsetDTOReceived.getParameters().get(0);
+        EntityPropertyDTO propertyToUpdate = mapsetDTOReceived.getProperties().get(0);
         String updatedPropertyName = propertyToUpdate.getPropertyName();
         String updatedPropertyValue = UUID.randomUUID().toString();
         propertyToUpdate.setPropertyValue(updatedPropertyValue);
@@ -106,9 +121,9 @@ public class DtoRequestMapsetTest {
         Assert.assertTrue(dtoRequestMapsetReRetrieved.getName().equals(newName));
 
         EntityPropertyDTO matchedProperty = dtoRequestMapsetReRetrieved
-                .getParameters()
+                .getProperties()
                 .stream()
-                .filter(m -> m.getPropertyName().equals(updatedPropertyName) )
+                .filter(m -> m.getPropertyName().equals(updatedPropertyName))
                 .collect(Collectors.toList())
                 .get(0);
 
