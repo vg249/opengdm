@@ -7,6 +7,7 @@ import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Date;
@@ -31,7 +32,7 @@ public class DtoRequestPlatformTest {
     }
 
 
-    @Test
+    @Ignore
     public void testCreatePlatform() throws Exception {
 
         DtoRequestPlatform dtoRequestPlatform = new DtoRequestPlatform();
