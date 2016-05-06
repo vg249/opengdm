@@ -29,6 +29,7 @@ public class ReferenceDTO extends DtoMetaData {
     private String link;
     private String filePath;
 
+    @GobiiEntityParam(paramName = "referenceId")
     public Integer getReferenceId() {return referenceId;}
     @GobiiEntityColumn(columnName = "reference_id")
     public void setReferenceId(Integer referenceId) {

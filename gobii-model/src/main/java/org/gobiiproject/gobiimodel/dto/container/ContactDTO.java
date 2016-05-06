@@ -35,6 +35,7 @@ public class ContactDTO extends DtoMetaData {
     private Integer modifiedBy;
     private Date modifiedDate;
 
+    @GobiiEntityParam(paramName = "contactId")
     public Integer getContactId() {return contactId;}
     @GobiiEntityColumn(columnName = "contact_id")
     public void setContactId(Integer contactId) {
