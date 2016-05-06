@@ -27,7 +27,7 @@ public class DtoRequestPlatformTest {
         Assert.assertNotEquals(null, PlatformDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(PlatformDTOResponse));
         Assert.assertFalse(PlatformDTOResponse.getPlatformName().isEmpty());
-        Assert.assertTrue(PlatformDTOResponse.getPlatformId() == 1);
+        Assert.assertTrue(PlatformDTOResponse.getPlatformId().equals(1));
         
     }
 

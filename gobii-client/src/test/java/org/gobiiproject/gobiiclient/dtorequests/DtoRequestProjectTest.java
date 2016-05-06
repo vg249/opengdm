@@ -70,7 +70,7 @@ public class DtoRequestProjectTest {
                 .collect(Collectors.toList())
                 .get(0);
 
-        Assert.assertTrue(divisionProperty.getEntityIdId() == projectDTOResponse.getProjectId());
+        Assert.assertTrue(divisionProperty.getEntityIdId().equals(projectDTOResponse.getProjectId()));
         Assert.assertTrue(divisionProperty.getPropertyId() > 0);
 
     } // testGetMarkers()
@@ -93,7 +93,7 @@ public class DtoRequestProjectTest {
                 .getDtoHeaderResponse()
                 .getStatusMessages()
                 .stream()
-                .filter(m -> m.getValidationStatusType() == DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE)
+                .filter(m -> m.getValidationStatusType().equals(DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE))
                 .collect(Collectors.toList());
 
 

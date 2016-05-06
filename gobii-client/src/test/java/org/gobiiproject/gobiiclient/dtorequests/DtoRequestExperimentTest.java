@@ -86,7 +86,7 @@ public class DtoRequestExperimentTest {
                 .getDtoHeaderResponse()
                 .getStatusMessages()
                 .stream()
-                .filter(m -> m.getValidationStatusType() == DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE)
+                .filter(m -> m.getValidationStatusType().equals(DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE))
                 .collect(Collectors.toList());
 
 

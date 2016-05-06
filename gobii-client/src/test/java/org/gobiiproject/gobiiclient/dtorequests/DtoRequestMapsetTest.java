@@ -23,7 +23,7 @@ public class DtoRequestMapsetTest {
         Assert.assertNotEquals(null, mapsetDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponse));
         Assert.assertFalse(mapsetDTOResponse.getName().isEmpty());
-        Assert.assertTrue(mapsetDTOResponse.getMapsetId() == 2);
+        Assert.assertTrue(mapsetDTOResponse.getMapsetId().equals(2));
         
     }
 
