@@ -33,6 +33,7 @@ public class MapsetDTO extends DtoMetaData {
 	private Integer status;
 	private List<EntityPropertyDTO> properties = new ArrayList<>();
 
+	@GobiiEntityParam(paramName = "mapsetId")
 	public Integer getMapsetId() {
 		return mapsetId;
 	}

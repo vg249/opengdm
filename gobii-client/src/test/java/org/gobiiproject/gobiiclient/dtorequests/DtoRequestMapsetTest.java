@@ -37,7 +37,7 @@ public class DtoRequestMapsetTest {
     }
 
     //waiting for properties stored procedure change to test this
-    @Ignore
+    @Test
     public void testCreateMapset() throws Exception {
 
         //get terms for mapset properties:
@@ -49,8 +49,6 @@ public class DtoRequestMapsetTest {
         List<String> mapsetProperTerms = new ArrayList<> ( nameIdListDTO
                 .getNamesById()
                 .values());
-
-
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
         EntityParamValues entityParamValues = TestDtoFactory
                 .makeConstrainedEntityParams(mapsetProperTerms,1);
@@ -80,13 +78,26 @@ public class DtoRequestMapsetTest {
 
 
     //waiting for properties stored procedure change to test this
-    @Ignore
+    @Test
     public void testUpdateMapset() throws Exception {
 
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
 
+        //get terms for mapset properties:
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("cvgroupterms");
+        nameIdListDTORequest.setFilter("map_type");
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        List<String> mapsetProperTerms = new ArrayList<> ( nameIdListDTO
+                .getNamesById()
+                .values());
+        EntityParamValues entityParamValues = TestDtoFactory
+                .makeConstrainedEntityParams(mapsetProperTerms,1);
+
+
+
         // create a new mapset for our test
-        EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         MapsetDTO newMapsetDto = TestDtoFactory
                 .makePopulatedMapsetDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
         MapsetDTO newMapsetDTOResponse = dtoRequestMapset.processMapset(newMapsetDto);

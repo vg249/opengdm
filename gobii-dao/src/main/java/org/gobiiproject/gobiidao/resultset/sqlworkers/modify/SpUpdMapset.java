@@ -12,7 +12,7 @@ public class SpUpdMapset extends SpDef {
     public SpUpdMapset() {
 
 
-        super("{call createmapset(?,?,?,?,?,?,?,?,?,?,?)}",false);
+        super("{call updatemapset(?,?,?,?,?,?,?,?,?,?,?)}",false);
 
         this.addParamDef("mapsetId", Integer.class).setNullable(false);
         this.addParamDef("name", String.class).setNullable(false);
