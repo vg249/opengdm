@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 
 import java.util.Date;
@@ -42,6 +43,52 @@ public class TestDtoFactory {
         returnVal.setStatus(1);
 
         returnVal.setParameters(entityParamValues.getProperties());
+
+        return returnVal;
+
+    }
+
+    public static DataSetDTO makePopulatedDataSetDTO(DtoMetaData.ProcessType processType,
+                                                       Integer uniqueStem,
+                                                       EntityParamValues entityParamValues) {
+
+        DataSetDTO returnVal = new DataSetDTO(processType);
+
+
+        // set the big-ticket items
+        Integer analysisUniqueStem = 0;
+        returnVal.setCallingAnalysis(TestDtoFactory.makePopulatedAnalysisDTO(
+                processType,
+                ++analysisUniqueStem,
+                entityParamValues));
+
+        returnVal.getAnalyses().add(TestDtoFactory.makePopulatedAnalysisDTO(
+                processType,
+                ++analysisUniqueStem,
+                entityParamValues));
+        returnVal.getAnalyses().add(TestDtoFactory.makePopulatedAnalysisDTO(
+                processType,
+                ++analysisUniqueStem,
+                entityParamValues));
+        returnVal.getAnalyses().add(TestDtoFactory.makePopulatedAnalysisDTO(
+                processType,
+                ++analysisUniqueStem,
+                entityParamValues));
+
+        returnVal.getScores().add(1);
+        returnVal.getScores().add(2);
+        returnVal.getScores().add(3);
+
+        // set the plain properties
+        returnVal.setStatus(1);
+        returnVal.setCreatedBy(1);
+        returnVal.setCreatedDate(new Date());
+        returnVal.setDataFile(uniqueStem + ": foo file");
+        returnVal.setQualityFile(uniqueStem + ": foo quality file");
+        returnVal.setExperimentId(2);
+        returnVal.setDataTable(uniqueStem + ": foo table");
+        returnVal.setModifiedBy(1);
+        returnVal.setModifiedDate(new Date());
 
         return returnVal;
 

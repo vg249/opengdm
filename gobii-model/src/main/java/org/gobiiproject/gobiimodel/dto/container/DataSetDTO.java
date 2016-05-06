@@ -20,7 +20,7 @@ public class DataSetDTO extends DtoMetaData {
         super(processType);
     }
 
-    private Integer datasetId;
+    private Integer dataSetId;
     private Integer experimentId;
     private Integer callingAnalysisId;
     private AnalysisDTO callingAnalysis;
@@ -37,13 +37,14 @@ public class DataSetDTO extends DtoMetaData {
     private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
 
-    public Integer getDatasetId() {
-        return datasetId;
+    @GobiiEntityParam(paramName = "dataSetId")
+    public Integer getDataSetId() {
+        return dataSetId;
     }
 
     @GobiiEntityColumn(columnName = "dataset_id")
-    public void setDatasetId(Integer datasetId) {
-        this.datasetId = datasetId;
+    public void setDataSetId(Integer dataSetId) {
+        this.dataSetId = dataSetId;
     }
 
     @GobiiEntityParam(paramName = "experimentId")

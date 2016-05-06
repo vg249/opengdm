@@ -45,7 +45,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
         try {
 
-            ResultSet resultSet = rsDataSetDao.getDataSetDetailsByDataSetId(dataSetDTO.getDatasetId());
+            ResultSet resultSet = rsDataSetDao.getDataSetDetailsByDataSetId(dataSetDTO.getDataSetId());
 
             if (resultSet.next()) {
 
@@ -95,20 +95,20 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
         try {
 
             AnalysisDTO analysisDTOCalling = returnVal.getCallingAnalysis();
-            if(DtoMetaData.ProcessType.CREATE == analysisDTOCalling.getProcessType()) {
+            if (DtoMetaData.ProcessType.CREATE == analysisDTOCalling.getProcessType()) {
                 dtoMapAnalysis.createAnalysis(analysisDTOCalling);
             }
 
             returnVal.setCallingAnalysisId(analysisDTOCalling.getAnalysisId());
 
-            for(AnalysisDTO currentAnalysisDTO : returnVal.getAnalyses() ) {
+            for (AnalysisDTO currentAnalysisDTO : returnVal.getAnalyses()) {
                 dtoMapAnalysis.createAnalysis(currentAnalysisDTO);
                 returnVal.getAnalysesIds().add(currentAnalysisDTO.getAnalysisId());
             }
 
             Map<String, Object> parameters = ParamExtractor.makeParamVals(dataSetDTO);
             Integer datasetId = rsDataSetDao.createDataset(parameters);
-            returnVal.setDatasetId(datasetId);
+            returnVal.setDataSetId(datasetId);
 
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -117,5 +117,25 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
         return returnVal;
     }
+
+    @Override
+    public DataSetDTO updateDataset(DataSetDTO dataSetDTO) throws GobiiDtoMappingException {
+
+        DataSetDTO returnVal = dataSetDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            rsDataSetDao.updateDataSet(parameters);
+
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
+
 
 }

@@ -10,5 +10,6 @@ public interface DtoMapDataSet {
 
     DataSetDTO getDataSetDetails(DataSetDTO dataSetDTO) throws GobiiDtoMappingException;
     DataSetDTO  createDataset(DataSetDTO dataSetDTO) throws GobiiDtoMappingException;
+    DataSetDTO  updateDataset(DataSetDTO dataSetDTO) throws GobiiDtoMappingException;
 
 }
