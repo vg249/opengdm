@@ -42,6 +42,7 @@ public class PlatformDTO extends DtoMetaData {
         this.platformId = platformId;
     }
 
+    @GobiiEntityParam(paramName = "platformName")
     public String getPlatformName() {
         return platformName;
     }
@@ -51,6 +52,7 @@ public class PlatformDTO extends DtoMetaData {
         this.platformName = platformName;
     }
 
+    @GobiiEntityParam(paramName = "platformCode")
     public String getPlatformCode() {
         return platformCode;
     }
@@ -60,6 +62,7 @@ public class PlatformDTO extends DtoMetaData {
         this.platformCode = platformCode;
     }
 
+    @GobiiEntityParam(paramName = "platformVendor")
     public Integer getPlatformVendor() {
         return platformVendor;
     }
@@ -69,6 +72,7 @@ public class PlatformDTO extends DtoMetaData {
         this.platformVendor = platformVendor;
     }
 
+    @GobiiEntityParam(paramName = "platformDescription")
     public String getPlatformDescription() {
         return platformDescription;
     }
@@ -78,6 +82,7 @@ public class PlatformDTO extends DtoMetaData {
         this.platformDescription = platformDescription;
     }
 
+    @GobiiEntityParam(paramName = "createdBy")
     public Integer getCreatedBy() {
         return createdBy;
     }
@@ -87,6 +92,7 @@ public class PlatformDTO extends DtoMetaData {
         this.createdBy = createdBy;
     }
 
+    @GobiiEntityParam(paramName = "createdDate")
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -96,6 +102,7 @@ public class PlatformDTO extends DtoMetaData {
         this.createdDate = createdDate;
     }
 
+    @GobiiEntityParam(paramName = "modifiedBy")
     public Integer getModifiedBy() {
         return modifiedBy;
     }
@@ -105,6 +112,7 @@ public class PlatformDTO extends DtoMetaData {
         this.modifiedBy = modifiedBy;
     }
 
+    @GobiiEntityParam(paramName = "modifiedDate")
     public Date getModifiedDate() {
         return modifiedDate;
     }
@@ -114,6 +122,7 @@ public class PlatformDTO extends DtoMetaData {
         this.modifiedDate = modifiedDate;
     }
 
+    @GobiiEntityParam(paramName = "status")
     public Integer getStatus() {
         return status;
     }
@@ -122,6 +131,8 @@ public class PlatformDTO extends DtoMetaData {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+    @GobiiEntityParam(paramName = "typeId")
     public Integer getTypeId() {
         return typeId;
     }
