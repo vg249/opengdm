@@ -14,5 +14,6 @@ public interface RsPlatformDao {
     ResultSet getPlatformNames() throws GobiiDaoException;
     ResultSet getPlatformDetailsByPlatformId(Integer platformId) throws GobiiDaoException;
     Integer createPlatform(Map<String,Object> parameters) throws GobiiDaoException;
+    void updatePlatform(Map<String, Object> parameters) throws GobiiDaoException;
 
 }

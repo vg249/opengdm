@@ -33,6 +33,7 @@ public class PlatformDTO extends DtoMetaData {
     private Integer typeId;
 
 
+    @GobiiEntityParam(paramName = "platformId")
     public Integer getPlatformId() {
         return platformId;
     }

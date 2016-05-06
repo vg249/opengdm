@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
-import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 
 import java.util.Date;
 
@@ -43,6 +43,28 @@ public class TestDtoFactory {
         returnVal.setStatus(1);
 
         returnVal.setParameters(entityParamValues.getProperties());
+
+        return returnVal;
+
+    }
+
+    public static PlatformDTO makePopulatedPlatformDTO(DtoMetaData.ProcessType processType,
+                                                       Integer uniqueStem) {
+
+        PlatformDTO returnVal = new PlatformDTO(processType);
+
+        String uniqueStemString = uniqueStem.toString();
+        // set the plain properties
+        returnVal.setStatus(1);
+        returnVal.setModifiedBy(1);
+        returnVal.setModifiedDate(new Date());
+        returnVal.setCreatedBy(1);
+        returnVal.setCreatedDate(new Date());
+        returnVal.setPlatformCode(uniqueStem +"dummy code");
+        returnVal.setPlatformDescription(uniqueStem +"dummy description");
+        returnVal.setPlatformName(uniqueStem +"New Platform");
+        returnVal.setPlatformVendor(1);
+        returnVal.setTypeId(1);
 
         return returnVal;
 

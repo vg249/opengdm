@@ -1,17 +1,17 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
+import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
-import org.gobiiproject.gobiidtomapping.DtoMapAnalysis;
+import org.gobiiproject.gobiidtomapping.DtoMapPlatform;
 import org.gobiiproject.gobiidtomapping.DtoMapPlatform;
 import org.gobiiproject.gobiidtomapping.DtoMapPlatform;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 import org.slf4j.Logger;
@@ -76,6 +76,25 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
         } catch (GobiiDaoException e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error("Error mapping result set to DTO", e);
+        }
+
+        return returnVal;
+    }
+
+
+    @Override
+    public PlatformDTO updatePlatform(PlatformDTO platformDTO) throws GobiiDtoMappingException {
+
+        PlatformDTO returnVal = platformDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            rsPlatformDao.updatePlatform(parameters);
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
         }
 
         return returnVal;

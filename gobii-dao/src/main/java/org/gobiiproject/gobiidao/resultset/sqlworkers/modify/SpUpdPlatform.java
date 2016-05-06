@@ -2,18 +2,18 @@ package org.gobiiproject.gobiidao.resultset.sqlworkers.modify;
 
 import org.gobiiproject.gobiidao.resultset.core.SpDef;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
  * Created by Phil on 4/7/2016.
  */
-public class SpInsPlatform extends SpDef {
+public class SpUpdPlatform extends SpDef {
 
-    public SpInsPlatform() {
+    public SpUpdPlatform() {
 
-        super("{call createplatform(?,?,?,?,?,?,?,?,?,?)}");
+        super("{call updateplatform(?,?,?,?,?,?,?,?,?,?,?)}",false);
 
+        this.addParamDef("platformId",Integer.class).setNullable(false);
         this.addParamDef("platformName", String.class).setNullable(false);
         this.addParamDef("platformCode", String.class).setNullable(false);
         this.addParamDef("platformVendor", Integer.class).setNullable(false);

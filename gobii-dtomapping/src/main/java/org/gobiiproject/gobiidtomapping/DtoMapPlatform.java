@@ -10,5 +10,6 @@ public interface DtoMapPlatform {
 
     PlatformDTO getPlatformDetails(PlatformDTO platformDTO) throws GobiiDtoMappingException;
     PlatformDTO createPlatform(PlatformDTO platformDTO) throws GobiiDtoMappingException;
+    PlatformDTO updatePlatform(PlatformDTO platformDTO) throws GobiiDtoMappingException;
 
 }
