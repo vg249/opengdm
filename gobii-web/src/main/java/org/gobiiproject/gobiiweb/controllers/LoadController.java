@@ -45,7 +45,10 @@ public class LoadController {
 
     @Autowired
     private AnalysisService analysisService = null;
-    
+
+    @Autowired
+    private MarkerGroupService markerGroupService = null;
+
     @Autowired
     private ExperimentService experimentService = null;
 
@@ -274,6 +277,24 @@ public class LoadController {
 
         try {
             returnVal = analysisService.getAnalysisDetails(analysisDTO);
+        } catch (AccessDeniedException e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/markergroup", method = RequestMethod.POST)
+    @ResponseBody
+    public MarkerGroupDTO process(@RequestBody MarkerGroupDTO markerGroupDTO) {
+
+        MarkerGroupDTO returnVal = new MarkerGroupDTO();
+
+        try {
+            returnVal = markerGroupService.process(markerGroupDTO);
         } catch (AccessDeniedException e) {
 
             returnVal.getDtoHeaderResponse().addException(e);

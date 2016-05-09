@@ -155,6 +155,8 @@
 	<!-- **** MarkerGroup Beans *************************************** -->
 	<bean id="rsMarkerGroupDao"
 		class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerGroupDaoImpl" />
+	<bean id="dtoMapMarkerGroup" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerGroupImpl" />
+	<bean id="MarkerGroupService" class="org.gobiiproject.gobidomain.services.impl.MarkerGroupServiceImpl" />
 
 	<!-- **** Role Beans *************************************** -->
 	<bean id="rsRoleDao"

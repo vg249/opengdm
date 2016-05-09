@@ -4,6 +4,8 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsMarkerGroupDao;
 import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisDetailsByAnalysisId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkerGroupDetailsByMarkerGroupId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkerGroupNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
 import org.slf4j.Logger;
@@ -13,6 +15,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Angel on 4/27/2016.
@@ -46,5 +50,30 @@ public class RsMarkerGroupDaoImpl implements RsMarkerGroupDao {
 
         return returnVal;
 
+    }
+
+    @Override
+    public ResultSet getMarkerGroupDetailByMarkerGroupId(Integer markerGroupId) throws GobiiDaoException {
+        ResultSet returnVal = null;
+
+        try {
+
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("markerGroupid", markerGroupId);
+            SpGetMarkerGroupDetailsByMarkerGroupId spGetMarkerGroupDetailsByMarkerGroupId = new SpGetMarkerGroupDetailsByMarkerGroupId(parameters);
+
+            storedProcExec.doWithConnection(spGetMarkerGroupDetailsByMarkerGroupId);
+
+            returnVal = spGetMarkerGroupDetailsByMarkerGroupId.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving analysis details", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
     }
 }

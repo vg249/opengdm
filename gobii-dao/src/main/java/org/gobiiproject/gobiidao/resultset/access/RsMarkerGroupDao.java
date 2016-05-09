@@ -11,5 +11,6 @@ public interface RsMarkerGroupDao {
 
 
     ResultSet getMarkerGroupNames() throws GobiiDaoException;
+    ResultSet getMarkerGroupDetailByMarkerGroupId(Integer markerGroupId) throws GobiiDaoException;
 //    ResultSet getContactsForRoleName(String roleName) throws GobiiDaoException;
 }
