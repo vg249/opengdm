@@ -20,11 +20,15 @@ public class MarkerGroupDTO extends DtoMetaData {
     public MarkerGroupDTO() {
     }
 
+    public MarkerGroupDTO(ProcessType processType) {
+        super(processType);
+    }
+
 
     private Integer markerGroupId;
     private String name;
     private String code;
-    private Serializable markers;
+    private List<MarkerGroupMarkerDTO> markers = new ArrayList<>();
     private String germplasmGroup;
     private String createdBy;
     private Date createDate;
@@ -104,11 +108,11 @@ public class MarkerGroupDTO extends DtoMetaData {
         this.germplasmGroup = germplasmGroup;
     }
 
-    public Serializable getMarkers() {
+    public List<MarkerGroupMarkerDTO> getMarkers() {
         return markers;
     }
 
-    public void setMarkers(Serializable markers) {
+    public void setMarkers(List<MarkerGroupMarkerDTO> markers) {
         this.markers = markers;
     }
 

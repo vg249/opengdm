@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
+
 /**
  * Created by Phil on 4/21/2016.
  */
@@ -30,9 +32,11 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
                     returnVal = dtoMapMarkerGroup.getMarkerGroupDetails(markerGroupDTO);
                     break;
 
-//                case CREATE:
-//                    returnVal = dtoMapMarkerGroup.createMarkerGroup(MarkerGroupDTO);
-//                    break;
+                case CREATE:
+                    returnVal.setCreateDate(new Date());
+                    returnVal.setModifiedDate(new Date());
+                    returnVal = dtoMapMarkerGroup.createMarkerGroup(markerGroupDTO);
+                    break;
 //
 //                case UPDATE:
 //                    returnVal = dtoMapMarkerGroup.updateMarkerGroup(MarkerGroupDTO);

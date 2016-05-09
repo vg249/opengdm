@@ -5,8 +5,11 @@ import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +35,7 @@ public class TestDtoFactory {
 
         EntityParamValues returnVal = new EntityParamValues();
 
-        for(String currentPropName : propNames) {
+        for (String currentPropName : propNames) {
 
             returnVal.add(currentPropName, "fooval " + (nameStem++));
         }
@@ -127,9 +130,9 @@ public class TestDtoFactory {
 
         String uniqueStemString = uniqueStem.toString();
         returnVal.setName(uniqueStem + ": reference");
-        returnVal.setVersion("version:"+uniqueStem);
-        returnVal.setLink(uniqueStem+" link");
-        returnVal.setFilePath(uniqueStem +" file path");
+        returnVal.setVersion("version:" + uniqueStem);
+        returnVal.setLink(uniqueStem + " link");
+        returnVal.setFilePath(uniqueStem + " file path");
 
         return returnVal;
 
@@ -143,10 +146,10 @@ public class TestDtoFactory {
         ContactDTO returnVal = new ContactDTO(processType);
         // set the plain properties
 
-        returnVal.setFirstName(uniqueStem +" new contact");
-        returnVal.setLastName(uniqueStem +"new lastname");
-        returnVal.setEmail(uniqueStem +"mail@email.com");
-        returnVal.setCode(uniqueStem +"added New Code");
+        returnVal.setFirstName(uniqueStem + " new contact");
+        returnVal.setLastName(uniqueStem + "new lastname");
+        returnVal.setEmail(uniqueStem + "mail@email.com");
+        returnVal.setCode(uniqueStem + "added New Code");
         returnVal.setCreatedBy(1);
         returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
@@ -156,6 +159,40 @@ public class TestDtoFactory {
         returnVal.getRoles().add(2);
 
         return returnVal;
+
+    }
+
+    public static List<MarkerGroupMarkerDTO> makeMarkerGroupMarkers(List<String> markerNames,
+                                                                    DtoMetaData.ProcessType processType) {
+
+        List<MarkerGroupMarkerDTO> returnVal = new ArrayList<>();
+
+        for(String currentMarkerName : markerNames ) {
+
+            MarkerGroupMarkerDTO currentMarkerGroupMarker = new MarkerGroupMarkerDTO();
+            currentMarkerGroupMarker.setProcessType(processType);
+            currentMarkerGroupMarker.setMarkerName(currentMarkerName);
+            returnVal.add(currentMarkerGroupMarker);
+
+        }
+
+        return  returnVal;
+
+    }
+
+    public static MarkerGroupDTO makePopulatedMarkerGroupDTO(DtoMetaData.ProcessType processType,
+                                                             Integer uniqueStem,
+                                                             List<MarkerGroupMarkerDTO> markerGroupMarkers) {
+
+        MarkerGroupDTO returnVal = new MarkerGroupDTO(processType);
+
+        returnVal.setMarkers(markerGroupMarkers);
+        returnVal.setStatus(1);
+        returnVal.setCode( uniqueStem + "_code");
+        returnVal.setGermplasmGroup(uniqueStem + "_germplasmGroup");
+        returnVal.setName(uniqueStem + "_name");
+
+        return  returnVal;
 
     }
 }

@@ -16,7 +16,8 @@ public class DtoHeaderResponse implements Serializable {
     public enum ValidationStatusType {
         UNKNOWN,
         VALIDATION_COMPOUND_UNIQUE,
-        VALIDATION_NOT_UNIQUE
+        VALIDATION_NOT_UNIQUE,
+        NONEXISTENT_FK_ENTITY
     }
 
     private boolean succeeded = true;
