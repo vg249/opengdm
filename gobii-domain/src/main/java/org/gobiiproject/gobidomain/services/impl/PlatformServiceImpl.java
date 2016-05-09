@@ -40,6 +40,8 @@ public class PlatformServiceImpl implements PlatformService {
 
                 case UPDATE:
                     returnVal = dtoMapPlatform.updatePlatform(returnVal);
+                    returnVal.setCreatedDate(new Date());
+                    returnVal.setModifiedDate(new Date());
                     break;
 
                 default:

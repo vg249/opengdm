@@ -49,7 +49,8 @@ public class TestDtoFactory {
     }
 
     public static PlatformDTO makePopulatedPlatformDTO(DtoMetaData.ProcessType processType,
-                                                       Integer uniqueStem) {
+                                                       Integer uniqueStem,
+                                                       EntityParamValues entityParamValues) {
 
         PlatformDTO returnVal = new PlatformDTO(processType);
 
@@ -66,6 +67,7 @@ public class TestDtoFactory {
         returnVal.setPlatformVendor(1);
         returnVal.setTypeId(1);
 
+        returnVal.setProperties(entityParamValues.getProperties());
         return returnVal;
 
     }
