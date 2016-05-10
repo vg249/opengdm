@@ -14,11 +14,16 @@ import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 4/22/2016.
@@ -31,6 +36,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
     @Autowired
     private RsMarkerGroupDao rsMarkerGroupDao;
+
 
     public MarkerGroupDTO getMarkerGroupDetails(MarkerGroupDTO markerGroupDTO) throws GobiiDtoMappingException {
 
@@ -78,6 +84,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 //    }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED) // if we throw a runtime exception, we'll rollback
     public MarkerGroupDTO createMarkerGroup(MarkerGroupDTO markerGroupDTO) throws GobiiDtoMappingException {
 
         MarkerGroupDTO returnVal = markerGroupDTO;
@@ -89,46 +96,65 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
             returnVal.setMarkerGroupId(markerGroupId);
 
 
-            boolean allMarkerNamesExist = true;
-            for (MarkerGroupMarkerDTO currentMarkerGroupMarkerDto : returnVal.getMarkers()) {
-                String currentMarkerName = currentMarkerGroupMarkerDto.getMarkerName();
-                ResultSet markersResultSet = rsMarkerGroupDao.getMarkersByMarkerName(currentMarkerName);
-                boolean currentMarkerNameExists = false;
-                while(markersResultSet.next()) {
-                    currentMarkerNameExists = true;
-                    ResultColumnApplicator.applyColumnValues(markersResultSet, currentMarkerGroupMarkerDto);
+            if ((null != returnVal.getMarkers()) && (returnVal.getMarkers().size() > 0)) {
+
+                for (MarkerGroupMarkerDTO currentMarkerGroupMarkerDto : returnVal.getMarkers()) {
+                    String currentMarkerName = currentMarkerGroupMarkerDto.getMarkerName();
+                    ResultSet markersResultSet = rsMarkerGroupDao.getMarkersByMarkerName(currentMarkerName);
+                    boolean currentMarkerNameExists = false;
+                    while (markersResultSet.next()) {
+                        currentMarkerNameExists = true;
+                        ResultColumnApplicator.applyColumnValues(markersResultSet, currentMarkerGroupMarkerDto);
+                    }
+
+                    if (!currentMarkerNameExists) {
+                        currentMarkerGroupMarkerDto.setMarkerExists(false);
+
+                    }
                 }
 
-                if(!currentMarkerNameExists) {
-                    currentMarkerGroupMarkerDto.setMarkerExists(false);
-                    allMarkerNamesExist = false;
-                }
-            }
+                List<MarkerGroupMarkerDTO> existingMarkers = returnVal.getMarkers()
+                        .stream()
+                        .filter(m -> m.isMarkerExists())
+                        .collect(Collectors.toList());
 
-            if( allMarkerNamesExist ) {
 
-                for(MarkerGroupMarkerDTO currentMarkerGroupMarkerDTO : returnVal.getMarkers()) {
+                if (existingMarkers.size() > 1) {
 
-                    Map<String, Object> markerGroupMarkerParameters = new HashMap<>();
+                    for (MarkerGroupMarkerDTO currentMarkerGroupMarkerDTO : existingMarkers) {
 
-                    markerGroupMarkerParameters.put(EntityPropertyParamNames.PROPPCOLARAMNAME_ENTITY_ID, returnVal.getMarkerGroupId());
-                    markerGroupMarkerParameters.put(EntityPropertyParamNames.PROPPCOLARAMNAME_PROP_ID, currentMarkerGroupMarkerDTO.getMarkerId());
-                    markerGroupMarkerParameters.put(EntityPropertyParamNames.PROPPCOLARAMNAME_VALUE, currentMarkerGroupMarkerDTO.getFavorableAllele());
+                        Map<String, Object> markerGroupMarkerParameters = new HashMap<>();
 
-                    rsMarkerGroupDao.createUpdateMarkerGroupMarker(markerGroupMarkerParameters);
+                        markerGroupMarkerParameters.put(EntityPropertyParamNames.PROPPCOLARAMNAME_ENTITY_ID, returnVal.getMarkerGroupId());
+                        markerGroupMarkerParameters.put(EntityPropertyParamNames.PROPPCOLARAMNAME_PROP_ID, currentMarkerGroupMarkerDTO.getMarkerId());
+                        markerGroupMarkerParameters.put(EntityPropertyParamNames.PROPPCOLARAMNAME_VALUE, currentMarkerGroupMarkerDTO.getFavorableAllele());
 
-                }
+                        rsMarkerGroupDao.createUpdateMarkerGroupMarker(markerGroupMarkerParameters);
 
-            } else {
-                returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                        DtoHeaderResponse.ValidationStatusType.NONEXISTENT_FK_ENTITY,
-                        "At least one marker name does not exist");
-            }
+                    }
+                } else {
 
-        } catch (SQLException e) {
+                    throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+                            DtoHeaderResponse.ValidationStatusType.NONEXISTENT_FK_ENTITY,
+                            "None of the specified markers exists");
+
+                } // if else at least one marker is valid
+
+            } // if any markers were specified
+
+
+        } catch (
+                SQLException e
+                )
+
+        {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error("Error mapping result set to DTO", e);
-        } catch (GobiiDaoException e) {
+        } catch (
+                GobiiDaoException e
+                )
+
+        {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error("Error mapping result set to DTO", e);
         }

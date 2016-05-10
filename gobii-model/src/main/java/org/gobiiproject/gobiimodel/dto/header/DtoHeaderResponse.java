@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.dto.header;
 
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.gobiiproject.gobiimodel.GobiiException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,7 +18,8 @@ public class DtoHeaderResponse implements Serializable {
         UNKNOWN,
         VALIDATION_COMPOUND_UNIQUE,
         VALIDATION_NOT_UNIQUE,
-        NONEXISTENT_FK_ENTITY
+        NONEXISTENT_FK_ENTITY,
+        BAD_REQUEST
     }
 
     private boolean succeeded = true;
@@ -28,6 +30,15 @@ public class DtoHeaderResponse implements Serializable {
         succeeded = false;
         addStatusMessage(StatusLevel.ERROR,
                 exception.getMessage() + ": " + exception.getStackTrace());
+    }
+
+
+    @JsonIgnore
+    public void addException(GobiiException gobiiException) {
+        succeeded = false;
+        addStatusMessage(gobiiException.getStatusLevel(),
+                gobiiException.getValidationStatusType(),
+                gobiiException.getMessage() + ": " + gobiiException.getStackTrace());
     }
 
 

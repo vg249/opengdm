@@ -7,6 +7,7 @@ import org.gobiiproject.gobiidtomapping.*;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,9 @@ public class CvServiceImpl implements CvService {
 					break;
 
 				default:
-					throw new GobiiDtoMappingException("Unsupported proces Cv type " + cvDTO.getProcessType().toString());
+					throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+							DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
+							"Unsupported proces Cv type " + cvDTO.getProcessType().toString());
 
 			}
 

@@ -4,6 +4,7 @@ import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,9 @@ public class ExperimentServiceImpl implements ExperimentService {
                     break;
 
                 default:
-                    throw new GobiiDtoMappingException("Unsupported process type " + experimentDTO.getProcessType().toString());
+                    throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+                            DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
+                            "Unsupported process type " + experimentDTO.getProcessType().toString());
 
             } // switch()
 

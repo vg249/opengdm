@@ -42,7 +42,9 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             while (resultSet.next()) {
 
                 if (true == retrievedOneRecord) {
-                    throw (new GobiiDtoMappingException("There are more than one project records for project id: " + experimentDTO.getExperimentId()));
+                    throw (new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+                            DtoHeaderResponse.ValidationStatusType.VALIDATION_NOT_UNIQUE,
+                            "There are more than one project records for project id: " + experimentDTO.getExperimentId()));
                 }
 
                 retrievedOneRecord = true;

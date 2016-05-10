@@ -1,15 +1,17 @@
 package org.gobiiproject.gobiidtomapping;
 
+import org.gobiiproject.gobiimodel.GobiiException;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+
 /**
  * Created by Phil on 4/7/2016.
  */
-public class GobiiDtoMappingException extends Exception {
+public class GobiiDtoMappingException extends GobiiException {
 
-    public GobiiDtoMappingException(Exception e) {
-        super(e);
-    }
 
-    public GobiiDtoMappingException(String message) {
-        super(message);
+    public GobiiDtoMappingException(DtoHeaderResponse.StatusLevel statusLevel,
+                                    DtoHeaderResponse.ValidationStatusType validationStatusType,
+                                    String message) {
+        super(statusLevel,validationStatusType,message);
     }
 }

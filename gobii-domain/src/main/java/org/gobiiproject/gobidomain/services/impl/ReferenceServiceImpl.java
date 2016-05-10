@@ -4,6 +4,7 @@ import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiidtomapping.DtoMapReference;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,9 @@ public class ReferenceServiceImpl implements ReferenceService {
                     break;
 
                 default:
-                    throw new GobiiDtoMappingException("Unsupported proces Reference type " + referenceDTO.getProcessType().toString());
+                    throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+                            DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
+                            "Unsupported proces Reference type " + referenceDTO.getProcessType().toString());
 
             }
 

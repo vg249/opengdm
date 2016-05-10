@@ -13,6 +13,8 @@ import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -25,41 +27,27 @@ import java.util.stream.Collectors;
 
 public class DtoRequestMarkerGroupTest {
 
-    @Ignore
-    public void testMarkerGroupGet() throws Exception {
+    private List<String> validMarkerNames = Arrays.asList("4806",
+            "4824",
+            "4831",
+            "7925",
+            "8144",
+            "9614",
+            "9673",
+            "10710",
+            "14005",
+            "16297",
+            "19846",
+            "20215");
 
-
-        DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
-        MarkerGroupDTO markerGroupDTORequest = new MarkerGroupDTO();
-        markerGroupDTORequest.setMarkerGroupId(1);
-        MarkerGroupDTO markerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTORequest);
-
-        Assert.assertNotEquals(null, markerGroupDTOResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOResponse));
-        Assert.assertNotEquals(null, markerGroupDTOResponse.getName());
-
-
-    }
 
     @Test
     public void testMarkerGroupCreate() throws Exception {
 
         DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
 
-        List<String> validMarkerName = Arrays.asList("4806",
-                "4824",
-                "4831",
-                "7925",
-                "8144",
-                "9614",
-                "9673",
-                "10710",
-                "14005",
-                "16297",
-                "19846",
-                "20215");
 
-        List<MarkerGroupMarkerDTO> markerGroupMarkers = TestDtoFactory.makeMarkerGroupMarkers(validMarkerName,
+        List<MarkerGroupMarkerDTO> markerGroupMarkers = TestDtoFactory.makeMarkerGroupMarkers(validMarkerNames,
                 DtoMetaData.ProcessType.CREATE);
 
         MarkerGroupDTO markerGroupDTORequest = TestDtoFactory
@@ -83,7 +71,102 @@ public class DtoRequestMarkerGroupTest {
         Assert.assertTrue(totalMarkersWithMarkerAndPlatformIds == markerGroupDTORequest.getMarkers().size());
 
 
-    } // testMarkerGroupCreate
+    }
+
+    @Test
+    public void testMarkerGroupCreateFailSomeMarkers() throws Exception {
+
+        DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
+
+        List<String> someInvalidNames = new ArrayList<>(validMarkerNames);
+        someInvalidNames.add("i-do-not-exist!");
+
+
+        List<MarkerGroupMarkerDTO> markerGroupMarkers = TestDtoFactory.makeMarkerGroupMarkers(someInvalidNames,
+                DtoMetaData.ProcessType.CREATE);
+
+        MarkerGroupDTO markerGroupDTORequest = TestDtoFactory
+                .makePopulatedMarkerGroupDTO(DtoMetaData.ProcessType.CREATE, 1, markerGroupMarkers);
+
+        MarkerGroupDTO markerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTORequest);
+
+        Assert.assertNotEquals(null, markerGroupDTOResponse);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOResponse));
+
+        Assert.assertTrue(markerGroupDTOResponse.getMarkerGroupId() > 0);
+
+        Assert.assertNotNull(markerGroupDTOResponse.getMarkers());
+
+        Integer totalInvalidMarkers = markerGroupDTOResponse
+                .getMarkers()
+                .stream()
+                .filter(m -> !m.isMarkerExists()
+                        && (m.getMarkerId() == null)
+                        && (m.getPlatformName() == null)
+                        && (m.getPlatformId() == null))
+
+                .collect(Collectors.toList())
+                .size();
+
+        Assert.assertTrue(totalInvalidMarkers == 1);
+
+
+    }
+
+    @Test
+    public void testMarkerGroupCreateFailAllMarkers() throws Exception {
+
+        DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
+
+        List<String> allInvalidNames = new ArrayList<>();
+        allInvalidNames.add("i-do-not-exist 1");
+        allInvalidNames.add("i-do-not-exist 2");
+        allInvalidNames.add("i-do-not-exist 3");
+        allInvalidNames.add("i-do-not-exist 4");
+        allInvalidNames.add("i-do-not-exist 5");
+
+
+        List<MarkerGroupMarkerDTO> markerGroupMarkers = TestDtoFactory.makeMarkerGroupMarkers(allInvalidNames,
+                DtoMetaData.ProcessType.CREATE);
+
+        MarkerGroupDTO markerGroupDTORequest = TestDtoFactory
+                .makePopulatedMarkerGroupDTO(DtoMetaData.ProcessType.CREATE, 1, markerGroupMarkers);
+
+        MarkerGroupDTO markerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTORequest);
+
+        Assert.assertNotEquals(null, markerGroupDTOResponse);
+        Assert.assertFalse(markerGroupDTOResponse.getDtoHeaderResponse().isSucceeded());
+
+        Assert.assertTrue(null == markerGroupDTOResponse.getMarkerGroupId() || markerGroupDTOResponse.getMarkerGroupId() > 0);
+
+        List<HeaderStatusMessage> invalidResponses = markerGroupDTOResponse
+                .getDtoHeaderResponse()
+                .getStatusMessages()
+                .stream()
+                .filter(m -> m.getValidationStatusType() == DtoHeaderResponse.ValidationStatusType.NONEXISTENT_FK_ENTITY )
+                .collect(Collectors.toList());
+
+        Assert.assertTrue(invalidResponses.size() == 1);
+
+    }
+
+
+    @Ignore
+    public void testMarkerGroupGet() throws Exception {
+
+
+        DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
+        MarkerGroupDTO markerGroupDTORequest = new MarkerGroupDTO();
+        markerGroupDTORequest.setMarkerGroupId(1);
+        MarkerGroupDTO markerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTORequest);
+
+        Assert.assertNotEquals(null, markerGroupDTOResponse);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOResponse));
+        Assert.assertNotEquals(null, markerGroupDTOResponse.getName());
+
+
+    }
+
 
     @Ignore
     public void testUpdateMarkerGroup() throws Exception {

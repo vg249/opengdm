@@ -4,6 +4,8 @@ import org.gobiiproject.gobidomain.services.MapsetService;
 import org.gobiiproject.gobiidtomapping.DtoMapMapset;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,9 @@ public class MapsetServiceImpl implements MapsetService {
                     break;
 
                 default:
-                    throw new GobiiDtoMappingException("Unsupported proces mapset type " + returnVal.getProcessType().toString());
+                    throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+                            DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
+                            "Unsupported proces mapset type " + returnVal.getProcessType().toString());
 
             } // switch()
 

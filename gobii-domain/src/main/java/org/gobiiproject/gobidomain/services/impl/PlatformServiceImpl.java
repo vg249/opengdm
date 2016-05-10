@@ -4,6 +4,7 @@ import org.gobiiproject.gobidomain.services.PlatformService;
 import org.gobiiproject.gobiidtomapping.DtoMapPlatform;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,9 @@ public class PlatformServiceImpl implements PlatformService {
                     break;
 
                 default:
-                    throw new GobiiDtoMappingException("Unsupported procesCv type " + platformDTO.getProcessType().toString());
+                    throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+                            DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
+                            "Unsupported procesCv type " + platformDTO.getProcessType().toString());
 
             } // switch()
 
