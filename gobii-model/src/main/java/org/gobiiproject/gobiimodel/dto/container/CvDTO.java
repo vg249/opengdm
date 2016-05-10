@@ -15,6 +15,12 @@ import java.util.Map;
  */
 public class CvDTO extends DtoMetaData {
 
+	public CvDTO() {}
+
+	public CvDTO(ProcessType processType) {
+		super(processType);
+	}
+
 	private Integer cv_id;
 	private String group;
 	private String term;
@@ -27,7 +33,7 @@ public class CvDTO extends DtoMetaData {
 	}
 
 	@GobiiEntityColumn(columnName = "cv_id")
-	public void setcvId(Integer cv_id) {
+	public void setCvId(Integer cv_id) {
 		this.cv_id = cv_id;
 	}
 

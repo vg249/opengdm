@@ -32,6 +32,14 @@ public class CvServiceImpl implements CvService {
 					returnVal = dtoMapCv.getCvDetails(cvDTO);
 					break;
 
+				case CREATE:
+					returnVal = dtoMapCv.createCv(cvDTO);
+					break;
+
+				case UPDATE:
+					returnVal = dtoMapCv.updateCv(cvDTO);
+					break;
+
 				default:
 					throw new GobiiDtoMappingException("Unsupported proces Cv type " + cvDTO.getProcessType().toString());
 

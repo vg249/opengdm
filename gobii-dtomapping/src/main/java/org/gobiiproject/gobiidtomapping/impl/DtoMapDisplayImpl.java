@@ -2,7 +2,10 @@ package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsDisplayDao;
+import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidtomapping.DtoMapDisplay;
+import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.entity.TableColDisplay;
 import org.slf4j.Logger;
@@ -13,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Phil on 4/6/2016.
@@ -20,8 +24,6 @@ import java.util.List;
 public class DtoMapDisplayImpl implements DtoMapDisplay {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapDisplayImpl.class);
-
-
     @Autowired
     private RsDisplayDao rsDisplayDao = null;
 
@@ -68,41 +70,40 @@ public class DtoMapDisplayImpl implements DtoMapDisplay {
     }
 
 
-    //
-    //    private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
-    //
-    //        NameIdListDTO returnVal = new NameIdListDTO();
-    //
-    //        try {
-    //
-    //            ResultSet contactList = rsContact.getContactNamesForRoleName(nameIdListDTO.getFilter());
-    //
-    //            Map<String, String> contactNamesById = new HashMap<>();
-    //            while (contactList.next()) {
-    //
-    //                Integer contactId = contactList.getInt("contact_id");
-    //                String lastName = contactList.getString("lastname");
-    //                String firstName = contactList.getString("firstname");
-    //                String name = lastName + ", " + firstName;
-    //                contactNamesById.put(contactId.toString(), name);
-    //
-    //            }
-    //
-    //            returnVal.setNamesById(contactNamesById);
-    //
-    //        } catch (SQLException e) {
-    //            returnVal.getDtoHeaderResponse().addException(e);
-    //            LOGGER.error(e.getMessage());
-    //        } catch (GobiiDaoException e) {
-    //            returnVal.getDtoHeaderResponse().addException(e);
-    //            LOGGER.error(e.getMessage());
-    //        }
-    //
-    //
-    //        return (returnVal);
-    //
-    //    } // getNameIdListForContacts()
-    //
-    //
+    @Override
+    public DisplayDTO createDisplay(DisplayDTO contactDTO) throws GobiiDtoMappingException {
+        DisplayDTO returnVal = contactDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(contactDTO);
+            Integer contactId = rsDisplayDao.createDisplay(parameters);
+            returnVal.setDisplayId(contactId);
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error("Error mapping result set to DTO", e);
+        }
+
+        return returnVal;
+    }
+
+    @Override
+    public DisplayDTO updateDisplay(DisplayDTO contactDTO) throws GobiiDtoMappingException {
+
+        DisplayDTO returnVal = contactDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            rsDisplayDao.updateDisplay(parameters);
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
 
 } // DtoMapNameIdListImpl

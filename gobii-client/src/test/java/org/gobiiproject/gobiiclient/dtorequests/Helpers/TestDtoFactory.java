@@ -1,13 +1,7 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
-import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
-import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.container.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,6 +60,36 @@ public class TestDtoFactory {
 
     }
 
+    public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
+                                           Integer uniqueStem) {
+
+        CvDTO returnVal = new CvDTO(processType);
+        returnVal.setGroup(uniqueStem+"dummy cv name");
+        returnVal.setTerm(uniqueStem+"dummy cv term");
+        returnVal.setDefinition(uniqueStem+"dummy definition");
+        returnVal.setRank(1);
+
+        return returnVal;
+
+    }
+
+    public static DisplayDTO makePopulatedDisplayDTO(DtoMetaData.ProcessType processType,
+                                            Integer uniqueStem) {
+
+        DisplayDTO returnVal = new DisplayDTO(processType);
+        returnVal.setColumnName(uniqueStem+"dummy column");
+        returnVal.setCreatedBy(1);
+        returnVal.setDisplayName(uniqueStem+"dummyDisplay");
+        returnVal.setCreatedDate(new Date());
+        returnVal.setDisplayId(1);
+        returnVal.setModifiedBy(1);
+        returnVal.setModifiedDate(new Date());
+        returnVal.setTableName(uniqueStem+"dummy table");
+
+
+        return returnVal;
+
+    }
     public static DataSetDTO makePopulatedDataSetDTO(DtoMetaData.ProcessType processType,
                                                      Integer uniqueStem,
                                                      Integer callingAnalysisId,

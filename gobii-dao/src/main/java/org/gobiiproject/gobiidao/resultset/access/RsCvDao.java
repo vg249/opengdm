@@ -19,4 +19,8 @@ public interface RsCvDao {
 
 	ResultSet getDetailsForCvId(Integer cvId) throws GobiiDaoException;
 
+	Integer createCv( Map<String, Object> parameters) throws GobiiDaoException;
+
+	void updateCv(Map<String, Object> parameters) throws GobiiDaoException;
+
 }

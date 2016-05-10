@@ -16,7 +16,7 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
 public class DtoRequestDisplay {
 
 
-    public DisplayDTO getDisplayNames(DisplayDTO displayDTO) throws Exception {
+    public DisplayDTO process(DisplayDTO displayDTO) throws Exception {
 
 
         DisplayDTO returnVal = null;
