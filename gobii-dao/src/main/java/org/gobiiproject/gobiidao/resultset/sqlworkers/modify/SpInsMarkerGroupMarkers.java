@@ -15,7 +15,7 @@ public class SpInsMarkerGroupMarkers extends SpDef {
         this.addParamDef(EntityPropertyParamNames.PROPPCOLARAMNAME_ENTITY_ID, Integer.class)
                 .setNullable(false);
 
-        this.addParamDef(EntityPropertyParamNames.PROPPCOLARAMNAME_PROP_ID, String.class)
+        this.addParamDef(EntityPropertyParamNames.PROPPCOLARAMNAME_PROP_ID, Integer.class)
                 .setNullable(false);
 
         this.addParamDef(EntityPropertyParamNames.PROPPCOLARAMNAME_VALUE, String.class)

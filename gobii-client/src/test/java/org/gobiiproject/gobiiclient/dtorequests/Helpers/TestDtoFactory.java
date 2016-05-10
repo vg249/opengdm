@@ -172,6 +172,7 @@ public class TestDtoFactory {
             MarkerGroupMarkerDTO currentMarkerGroupMarker = new MarkerGroupMarkerDTO();
             currentMarkerGroupMarker.setProcessType(processType);
             currentMarkerGroupMarker.setMarkerName(currentMarkerName);
+            currentMarkerGroupMarker.setFavorableAllele("G");
             returnVal.add(currentMarkerGroupMarker);
 
         }

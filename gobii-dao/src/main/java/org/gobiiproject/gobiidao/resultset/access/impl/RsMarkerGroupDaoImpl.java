@@ -62,6 +62,7 @@ public class RsMarkerGroupDaoImpl implements RsMarkerGroupDao {
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ResultSet getMarkerGroupDetailByMarkerGroupId(Integer markerGroupId) throws GobiiDaoException {
 
@@ -88,7 +89,7 @@ public class RsMarkerGroupDaoImpl implements RsMarkerGroupDao {
         return returnVal;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Integer createMarkerGroup(Map<String, Object> parameters) throws GobiiDaoException {
 
@@ -116,6 +117,7 @@ public class RsMarkerGroupDaoImpl implements RsMarkerGroupDao {
         return returnVal;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ResultSet getMarkersByMarkerName(String markerName) throws GobiiDaoException {
 
@@ -147,7 +149,10 @@ public class RsMarkerGroupDaoImpl implements RsMarkerGroupDao {
 
         try {
 
-            spRunnerCallable.run(new SpInsMarkerGroupMarkers(), parameters);
+            if( ! spRunnerCallable.run(new SpInsMarkerGroupMarkers(), parameters) ) {
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+
+            }
 
         } catch (Exception e) {
 

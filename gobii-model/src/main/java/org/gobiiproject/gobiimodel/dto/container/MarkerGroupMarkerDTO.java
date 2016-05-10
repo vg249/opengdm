@@ -6,17 +6,8 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
-import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class MarkerGroupMarkerDTO extends DtoMetaData {
 

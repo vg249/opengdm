@@ -71,6 +71,18 @@ public class DtoRequestMarkerGroupTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOResponse));
         Assert.assertTrue(markerGroupDTOResponse.getMarkerGroupId() > 1);
 
+        Assert.assertNotNull(markerGroupDTOResponse.getMarkers());
+
+        Integer totalMarkersWithMarkerAndPlatformIds = markerGroupDTOResponse
+                .getMarkers()
+                .stream()
+                .filter(m -> (m.getMarkerId() > 0) && (m.getPlatformId() > 0))
+                .collect(Collectors.toList())
+                .size();
+
+        Assert.assertTrue(totalMarkersWithMarkerAndPlatformIds == markerGroupDTORequest.getMarkers().size());
+
+
     } // testMarkerGroupCreate
 
     @Ignore
