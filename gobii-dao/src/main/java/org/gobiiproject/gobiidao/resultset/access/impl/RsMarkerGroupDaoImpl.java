@@ -3,6 +3,7 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsMarkerGroupDao;
 import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
+import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysis;
@@ -12,8 +13,11 @@ import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMarkerGroupMar
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisDetailsByAnalysisId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkerGroupDetailsByMarkerGroupId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkerGroupNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkersByMarkerId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkersByMarkerName;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkersForMarkerGroup;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPropertiesForAnalysis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +76,7 @@ public class RsMarkerGroupDaoImpl implements RsMarkerGroupDao {
 
 
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("markerGroupid", markerGroupId);
+            parameters.put("markerGroupId", markerGroupId);
             SpGetMarkerGroupDetailsByMarkerGroupId spGetMarkerGroupDetailsByMarkerGroupId = new SpGetMarkerGroupDetailsByMarkerGroupId(parameters);
 
             storedProcExec.doWithConnection(spGetMarkerGroupDetailsByMarkerGroupId);
@@ -81,7 +85,7 @@ public class RsMarkerGroupDaoImpl implements RsMarkerGroupDao {
 
         } catch (Exception e) {
 
-            LOGGER.error("Error retrieving analysis details", e);
+            LOGGER.error("Error retrieving marker group details", e);
             throw (new GobiiDaoException(e));
 
         }
@@ -145,6 +149,31 @@ public class RsMarkerGroupDaoImpl implements RsMarkerGroupDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
+    public ResultSet getMarkerByMarkerId(Integer markerId) throws GobiiDaoException {
+        ResultSet returnVal = null;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("markerId", markerId);
+            SpGetMarkersByMarkerId spGetMarkersByMarkerId = new SpGetMarkersByMarkerId(parameters);
+
+            storedProcExec.doWithConnection(spGetMarkersByMarkerId);
+
+            returnVal = spGetMarkersByMarkerId.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving markers", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
     public void createUpdateMarkerGroupMarker(Map<String, Object> parameters) throws GobiiDaoException {
 
         try {
@@ -161,6 +190,29 @@ public class RsMarkerGroupDaoImpl implements RsMarkerGroupDao {
         }
 
     } // createUpdateMapSetProperty
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getMarkersForMarkerGroup(Integer markerGroupId) throws GobiiDaoException {
+        ResultSet returnVal = null;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("markerGroupId", markerGroupId);
+            SpGetMarkersForMarkerGroup spGetMarkersForMarkerGroup = new SpGetMarkersForMarkerGroup(parameters);
+            storedProcExec.doWithConnection(spGetMarkersForMarkerGroup);
+            returnVal = spGetMarkersForMarkerGroup.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving marker group markers", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+
+        return returnVal;    }
 
 
 }

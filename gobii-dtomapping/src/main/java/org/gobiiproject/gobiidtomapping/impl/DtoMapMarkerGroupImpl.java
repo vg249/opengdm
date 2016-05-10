@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import ch.qos.logback.core.status.Status;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsMarkerGroupDao;
 import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
@@ -14,7 +13,6 @@ import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,12 +48,22 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
             }
 
-//            ResultSet propertyResultSet = rsMarkerGroupDao.getParameters(MarkerGroupDTO.getMarkerGroupId());
-//            List<EntityPropertyDTO> entityPropertyDTOs =
-//                    EntityProperties.resultSetToProperties(MarkerGroupDTO.getMarkerGroupId(),propertyResultSet);
-//
-//            MarkerGroupDTO.setParameters(entityPropertyDTOs);
+            ResultSet markersForMarkerGroupResultSet = rsMarkerGroupDao.getMarkersForMarkerGroup(returnVal.getMarkerGroupId());
+            while(markersForMarkerGroupResultSet.next()) {
 
+                Integer currentMarkerId = markersForMarkerGroupResultSet.getInt("marker_id");
+                ResultSet markerDetailsResultSet = rsMarkerGroupDao.getMarkerByMarkerId(currentMarkerId);
+                MarkerGroupMarkerDTO currentMarkerGroupMarkerDTO = new MarkerGroupMarkerDTO();
+                if( markerDetailsResultSet.next()) {
+                    ResultColumnApplicator.applyColumnValues(markerDetailsResultSet, currentMarkerGroupMarkerDTO);
+                    currentMarkerGroupMarkerDTO.setMarkerExists(true);
+                } else {
+                    currentMarkerGroupMarkerDTO.setMarkerId(currentMarkerId);
+                    currentMarkerGroupMarkerDTO.setMarkerExists(false);
+                }
+
+                returnVal.getMarkers().add(currentMarkerGroupMarkerDTO);
+            }
 
         } catch (SQLException e) {
             returnVal.getDtoHeaderResponse().addException(e);

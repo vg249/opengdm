@@ -151,18 +151,40 @@ public class DtoRequestMarkerGroupTest {
     }
 
 
-    @Ignore
+    @Test
     public void testMarkerGroupGet() throws Exception {
 
-
+        // CREATE A MARKER GROUP
         DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
-        MarkerGroupDTO markerGroupDTORequest = new MarkerGroupDTO();
-        markerGroupDTORequest.setMarkerGroupId(1);
+        List<MarkerGroupMarkerDTO> markerGroupMarkers = TestDtoFactory.makeMarkerGroupMarkers(validMarkerNames,
+                DtoMetaData.ProcessType.CREATE);
+        MarkerGroupDTO markerGroupDTORequest = TestDtoFactory
+                .makePopulatedMarkerGroupDTO(DtoMetaData.ProcessType.CREATE, 1, markerGroupMarkers);
         MarkerGroupDTO markerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTORequest);
+        Integer newMarkerGroupId = markerGroupDTOResponse.getMarkerGroupId();
 
-        Assert.assertNotEquals(null, markerGroupDTOResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOResponse));
-        Assert.assertNotEquals(null, markerGroupDTOResponse.getName());
+
+
+
+        MarkerGroupDTO markerGroupDTORequestRefresh = new MarkerGroupDTO();
+        markerGroupDTORequestRefresh.setMarkerGroupId(newMarkerGroupId);
+        MarkerGroupDTO markerGroupDTOResponseRefresh = dtoRequestMarkerGroup.process(markerGroupDTORequestRefresh);
+
+        Assert.assertNotNull(markerGroupDTOResponseRefresh);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOResponseRefresh));
+        Assert.assertNotNull(markerGroupDTOResponseRefresh.getName());
+
+        List<String> succededMarkerNames = markerGroupDTOResponseRefresh
+                .getMarkers()
+                .stream()
+                .filter(m-> m.isMarkerExists()
+                        && (null != m.getMarkerId())
+                        && (m.getMarkerId() > 0 )
+                )
+                .map(m -> m.getMarkerName())
+                .collect(Collectors.toList());
+
+        Assert.assertTrue(validMarkerNames.equals(succededMarkerNames));
 
 
     }

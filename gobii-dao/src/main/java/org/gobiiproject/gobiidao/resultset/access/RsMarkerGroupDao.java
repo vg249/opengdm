@@ -12,10 +12,19 @@ public interface RsMarkerGroupDao {
 
 
     ResultSet getMarkerGroupNames() throws GobiiDaoException;
+
     ResultSet getMarkerGroupDetailByMarkerGroupId(Integer markerGroupId) throws GobiiDaoException;
+
     Integer createMarkerGroup(Map<String, Object> parameters) throws GobiiDaoException;
-    ResultSet getMarkersByMarkerName(String markerName ) throws  GobiiDaoException;
+
+    ResultSet getMarkersByMarkerName(String markerName) throws GobiiDaoException;
+
+    ResultSet getMarkerByMarkerId(Integer markerId) throws GobiiDaoException;
+
     void createUpdateMarkerGroupMarker(Map<String, Object> parameters) throws GobiiDaoException;
+
+    ResultSet getMarkersForMarkerGroup(Integer markerGroupId) throws GobiiDaoException;
+
 
 //    ResultSet getContactsForRoleName(String roleName) throws GobiiDaoException;
 }

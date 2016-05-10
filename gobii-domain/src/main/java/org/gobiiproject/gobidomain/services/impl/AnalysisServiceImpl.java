@@ -7,6 +7,7 @@ import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,12 @@ public class AnalysisServiceImpl implements AnalysisService {
                 case UPDATE:
                     returnVal = dtoMapAnalysis.updateAnalysis(analysisDTO);
                     break;
+
+                default:
+                    throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+                            DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
+                            "Unsupported proces type " + analysisDTO.getProcessType().toString());
+
             }
 
         } catch (GobiiDtoMappingException e) {

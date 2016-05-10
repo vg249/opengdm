@@ -4,6 +4,7 @@ import org.gobiiproject.gobidomain.services.MarkerGroupService;
 import org.gobiiproject.gobiidtomapping.DtoMapMarkerGroup;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,12 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 //                case UPDATE:
 //                    returnVal = dtoMapMarkerGroup.updateMarkerGroup(MarkerGroupDTO);
 //                    break;
+
+                default:
+                    throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+                            DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
+                            "Unsupported proces type " + markerGroupDTO.getProcessType().toString());
+
             }
 
         } catch (GobiiDtoMappingException e) {
