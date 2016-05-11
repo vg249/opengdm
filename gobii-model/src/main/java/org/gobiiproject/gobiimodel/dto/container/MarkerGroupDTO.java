@@ -30,14 +30,14 @@ public class MarkerGroupDTO extends DtoMetaData {
     private String code;
     private List<MarkerGroupMarkerDTO> markers = new ArrayList<>();
     private String germplasmGroup;
-    private String createdBy;
+    private Integer createdBy;
     private Date createDate;
-    private String modifiedBy;
+    private Integer modifiedBy;
     private Date modifiedDate;
     private Integer status;
 
 
-    @GobiiEntityParam(paramName="markerGroupId")
+    @GobiiEntityParam(paramName = "markerGroupId")
     public Integer getMarkerGroupId() {
         return markerGroupId;
     }
@@ -48,7 +48,7 @@ public class MarkerGroupDTO extends DtoMetaData {
     }
 
 
-    @GobiiEntityParam(paramName="status")
+    @GobiiEntityParam(paramName = "status")
     public Integer getStatus() {
         return status;
     }
@@ -58,7 +58,7 @@ public class MarkerGroupDTO extends DtoMetaData {
         this.status = status;
     }
 
-    @GobiiEntityParam(paramName="modifiedDate")
+    @GobiiEntityParam(paramName = "modifiedDate")
     public Date getModifiedDate() {
         return modifiedDate;
     }
@@ -68,17 +68,17 @@ public class MarkerGroupDTO extends DtoMetaData {
         this.modifiedDate = modifiedDate;
     }
 
-    @GobiiEntityParam(paramName="modifiedBy")
-    public String getModifiedBy() {
+    @GobiiEntityParam(paramName = "modifiedBy")
+    public Integer getModifiedBy() {
         return modifiedBy;
     }
 
     @GobiiEntityColumn(columnName = "modified_by")
-    public void setModifiedBy(String modifiedBy) {
+    public void setModifiedBy(Integer modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
 
-    @GobiiEntityParam(paramName="createDate")
+    @GobiiEntityParam(paramName = "createDate")
     public Date getCreateDate() {
         return createDate;
     }
@@ -88,17 +88,17 @@ public class MarkerGroupDTO extends DtoMetaData {
         this.createDate = createDate;
     }
 
-    @GobiiEntityParam(paramName="createdBy")
-    public String getCreatedBy() {
+    @GobiiEntityParam(paramName = "createdBy")
+    public Integer getCreatedBy() {
         return createdBy;
     }
 
     @GobiiEntityColumn(columnName = "created_by")
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(Integer createdBy) {
         this.createdBy = createdBy;
     }
 
-    @GobiiEntityParam(paramName="germplasmGroup")
+    @GobiiEntityParam(paramName = "germplasmGroup")
     public String getGermplasmGroup() {
         return germplasmGroup;
     }
@@ -116,7 +116,7 @@ public class MarkerGroupDTO extends DtoMetaData {
         this.markers = markers;
     }
 
-    @GobiiEntityParam(paramName="code")
+    @GobiiEntityParam(paramName = "code")
     public String getCode() {
         return code;
     }
@@ -126,7 +126,7 @@ public class MarkerGroupDTO extends DtoMetaData {
         this.code = code;
     }
 
-    @GobiiEntityParam(paramName="name")
+    @GobiiEntityParam(paramName = "name")
     public String getName() {
         return name;
     }
@@ -135,7 +135,6 @@ public class MarkerGroupDTO extends DtoMetaData {
     public void setName(String name) {
         this.name = name;
     }
-
 
 
     // ******************** below this line is garbage and can probably be removed

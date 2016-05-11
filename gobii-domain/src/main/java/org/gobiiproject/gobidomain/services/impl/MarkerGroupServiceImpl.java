@@ -36,12 +36,18 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
                 case CREATE:
                     returnVal.setCreateDate(new Date());
                     returnVal.setModifiedDate(new Date());
+                    returnVal.setCreatedBy(1);
+                    returnVal.setModifiedBy(1);
                     returnVal = dtoMapMarkerGroup.createMarkerGroup(markerGroupDTO);
                     break;
-//
-//                case UPDATE:
-//                    returnVal = dtoMapMarkerGroup.updateMarkerGroup(MarkerGroupDTO);
-//                    break;
+
+                case UPDATE:
+                    returnVal.setCreateDate(new Date());
+                    returnVal.setModifiedDate(new Date());
+                    returnVal.setCreatedBy(1);
+                    returnVal.setModifiedBy(1);
+                    returnVal = dtoMapMarkerGroup.updateMarkerGroup(markerGroupDTO);
+                    break;
 
                 default:
                     throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,

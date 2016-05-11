@@ -70,6 +70,13 @@ public class DtoRequestMarkerGroupTest {
 
         Assert.assertTrue(totalMarkersWithMarkerAndPlatformIds == markerGroupDTORequest.getMarkers().size());
 
+        Assert.assertTrue(markerGroupDTOResponse
+                .getMarkers()
+                .stream()
+                .filter(m -> null == m.getFavorableAllele() || m.getFavorableAllele().isEmpty())
+                .collect(Collectors.toList())
+                .size() == 0);
+
 
     }
 
@@ -185,11 +192,18 @@ public class DtoRequestMarkerGroupTest {
 
         Assert.assertTrue(validMarkerNames.equals(succededMarkerNames));
 
+        Assert.assertTrue(markerGroupDTOResponseRefresh
+                .getMarkers()
+                .stream()
+                .filter(m -> null == m.getFavorableAllele() || m.getFavorableAllele().isEmpty())
+                .collect(Collectors.toList())
+                .size() == 0);
+
 
     }
 
 
-    @Ignore
+    @Test
     public void testUpdateMarkerGroup() throws Exception {
 
         // CREATE A MARKER GROUP
@@ -206,6 +220,7 @@ public class DtoRequestMarkerGroupTest {
         MarkerGroupDTO markerGroupDTORequestRefreshRequest = new MarkerGroupDTO();
         markerGroupDTORequestRefreshRequest.setMarkerGroupId(newMarkerGroupId);
         MarkerGroupDTO markerGroupDTOResponseToUpdate = dtoRequestMarkerGroup.process(markerGroupDTORequestRefreshRequest);
+        markerGroupDTOResponseToUpdate.setProcessType(DtoMetaData.ProcessType.UPDATE);
 
         String previousName = markerGroupDTOResponseToUpdate.getName();
         String newName = UUID.randomUUID().toString();
@@ -213,6 +228,7 @@ public class DtoRequestMarkerGroupTest {
 
         MarkerGroupMarkerDTO markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(DtoMetaData.ProcessType.CREATE);
         markerGroupMarkerDTOToAdd.setMarkerName("40539");
+        markerGroupMarkerDTOToAdd.setFavorableAllele("N");
         String newMarkerName = markerGroupMarkerDTOToAdd.getMarkerName();
         markerGroupDTOResponseToUpdate.getMarkers().add(markerGroupMarkerDTOToAdd);
 
@@ -260,6 +276,8 @@ public class DtoRequestMarkerGroupTest {
                         .size() == 0
         );
 
+
+        Assert.assertFalse(modifiedAlleleNewValue.equals(modifiedAlelleOldValue));
         Assert.assertTrue(
                 markerGroupDTOResponseRefreshFinal
                         .getMarkers()
