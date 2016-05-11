@@ -15,6 +15,10 @@ public class MarkerGroupMarkerDTO extends DtoMetaData {
     public MarkerGroupMarkerDTO() {
     }
 
+    public MarkerGroupMarkerDTO(ProcessType processType) {
+        super(processType);
+    }
+
     boolean markerExists = true;
     Integer markerId;
     String markerName;

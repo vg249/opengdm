@@ -7,6 +7,7 @@ import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapMarkerGroup;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
@@ -18,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,17 +52,20 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
             }
 
             ResultSet markersForMarkerGroupResultSet = rsMarkerGroupDao.getMarkersForMarkerGroup(returnVal.getMarkerGroupId());
-            while(markersForMarkerGroupResultSet.next()) {
+            while (markersForMarkerGroupResultSet.next()) {
 
                 Integer currentMarkerId = markersForMarkerGroupResultSet.getInt("marker_id");
                 ResultSet markerDetailsResultSet = rsMarkerGroupDao.getMarkerByMarkerId(currentMarkerId);
                 MarkerGroupMarkerDTO currentMarkerGroupMarkerDTO = new MarkerGroupMarkerDTO();
-                if( markerDetailsResultSet.next()) {
+                if (markerDetailsResultSet.next()) {
                     ResultColumnApplicator.applyColumnValues(markerDetailsResultSet, currentMarkerGroupMarkerDTO);
                     currentMarkerGroupMarkerDTO.setMarkerExists(true);
                 } else {
                     currentMarkerGroupMarkerDTO.setMarkerId(currentMarkerId);
                     currentMarkerGroupMarkerDTO.setMarkerExists(false);
+                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.OK,
+                            DtoHeaderResponse.ValidationStatusType.NONEXISTENT_FK_ENTITY,
+                            "A marker id in the marker_group table does not exist " + currentMarkerId);
                 }
 
                 returnVal.getMarkers().add(currentMarkerGroupMarkerDTO);
@@ -77,19 +83,20 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
     }
 
-//    private void upsertMarkerGroupProperties(Integer markerGroupId, List<EntityPropertyDTO> markerGroupProperties) throws GobiiDaoException {
-//
-//        for (EntityPropertyDTO currentProperty : markerGroupProperties) {
-//
-//            Map<String, Object> spParamsParameters =
-//                    EntityProperties.propertiesToParams(markerGroupId, currentProperty);
-//
-//            rsMarkerGroupDao.createUpdateMarkerGroupMarker(spParamsParameters);
-//
-//            currentProperty.setEntityIdId(markerGroupId);
-//        }
-//
-//    }
+
+    private List<MarkerGroupMarkerDTO> getMarkerGroupMarkersByMarkerName(String markerName) throws SQLException, GobiiDaoException {
+
+        List<MarkerGroupMarkerDTO> returnVal = new ArrayList<>();
+
+        ResultSet markersResultSet = rsMarkerGroupDao.getMarkersByMarkerName(markerName);
+        while (markersResultSet.next()) {
+            MarkerGroupMarkerDTO currentMarkerGroupMarkerDto = new MarkerGroupMarkerDTO();
+            ResultColumnApplicator.applyColumnValues(markersResultSet, currentMarkerGroupMarkerDto);
+            returnVal.add(currentMarkerGroupMarkerDto);
+        }
+
+        return returnVal;
+    }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED) // if we throw a runtime exception, we'll rollback
@@ -104,22 +111,45 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
             returnVal.setMarkerGroupId(markerGroupId);
 
 
+            // populate marker DTO's in a way that deals with case of
+            // multiple markers with that name
+            List<MarkerGroupMarkerDTO> newMarkerDTOsForMarker = new ArrayList<>();
             if ((null != returnVal.getMarkers()) && (returnVal.getMarkers().size() > 0)) {
 
-                for (MarkerGroupMarkerDTO currentMarkerGroupMarkerDto : returnVal.getMarkers()) {
-                    String currentMarkerName = currentMarkerGroupMarkerDto.getMarkerName();
-                    ResultSet markersResultSet = rsMarkerGroupDao.getMarkersByMarkerName(currentMarkerName);
-                    boolean currentMarkerNameExists = false;
-                    while (markersResultSet.next()) {
-                        currentMarkerNameExists = true;
-                        ResultColumnApplicator.applyColumnValues(markersResultSet, currentMarkerGroupMarkerDto);
-                    }
+                for (Iterator<MarkerGroupMarkerDTO> iterator =
+                     returnVal.getMarkers().iterator();
+                     iterator.hasNext(); ) {
 
-                    if (!currentMarkerNameExists) {
+                    MarkerGroupMarkerDTO currentMarkerGroupMarkerDto = iterator.next();
+
+                    List<MarkerGroupMarkerDTO> markerDTOsForMarkerName =
+                            getMarkerGroupMarkersByMarkerName(currentMarkerGroupMarkerDto.getMarkerName());
+
+                    if (markerDTOsForMarkerName.size() > 0) {
+
+                        markerDTOsForMarkerName
+                                .stream()
+                                .forEach(m -> {
+                                            m.setFavorableAllele(currentMarkerGroupMarkerDto
+                                                    .getFavorableAllele());
+                                            m.setMarkerExists(true);
+                                        }
+                                );
+
+                        // the one from our list has not been populated with values from the query
+                        // only the ones in the list we got back have been populated
+                        // we'll add the new, populated one to the marker group DTO's list below
+                        iterator.remove();
+
+                        newMarkerDTOsForMarker.addAll(markerDTOsForMarkerName);
+
+                    } else if (0 == markerDTOsForMarkerName.size()) {
                         currentMarkerGroupMarkerDto.setMarkerExists(false);
-
                     }
                 }
+
+
+                returnVal.getMarkers().addAll(newMarkerDTOsForMarker); // if new markers is empty, we don't care
 
                 List<MarkerGroupMarkerDTO> existingMarkers = returnVal.getMarkers()
                         .stream()
@@ -169,27 +199,34 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
         return returnVal;
     }
-//
-//    @Override
-//    public MarkerGroupDTO updateMarkerGroup(MarkerGroupDTO markerGroupDTO) throws GobiiDtoMappingException {
-//
-//        MarkerGroupDTO returnVal = markerGroupDTO;
-//
-//        try {
-//
-//            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
-//            rsMarkerGroupDao.updateMarkerGroup(parameters);
-//
-//            if( null != markerGroupDTO.getParameters() ) {
-//                upsertMarkerGroupProperties(markerGroupDTO.getMarkerGroupId(),
-//                        markerGroupDTO.getParameters());
-//            }
-//
-//        } catch (GobiiDaoException e) {
-//            returnVal.getDtoHeaderResponse().addException(e);
-//            LOGGER.error(e.getMessage());
-//        }
-//
-//        return returnVal;
-//    }
+
+    @Override
+    public MarkerGroupDTO updateMarkerGroup(MarkerGroupDTO markerGroupDTO) throws GobiiDtoMappingException {
+
+        MarkerGroupDTO returnVal = markerGroupDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            rsMarkerGroupDao.updateMarkerGroup(parameters);
+
+            List<MarkerGroupMarkerDTO> markerGroupMarkerDTOs = returnVal.getMarkers();
+            for (MarkerGroupMarkerDTO currentMarkerGroupMarkerDTO : markerGroupMarkerDTOs) {
+
+                if (DtoMetaData.ProcessType.CREATE == currentMarkerGroupMarkerDTO.getProcessType()) {
+
+                } else if (DtoMetaData.ProcessType.UPDATE == currentMarkerGroupMarkerDTO.getProcessType()) {
+
+                } else if (DtoMetaData.ProcessType.DELETE == currentMarkerGroupMarkerDTO.getProcessType()) {
+
+                }
+            }
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
 }

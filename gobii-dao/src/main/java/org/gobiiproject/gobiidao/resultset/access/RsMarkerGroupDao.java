@@ -23,8 +23,13 @@ public interface RsMarkerGroupDao {
 
     void createUpdateMarkerGroupMarker(Map<String, Object> parameters) throws GobiiDaoException;
 
+    void deleteMarkerGroupMarker(Map<String, Object> parameters) throws GobiiDaoException;
+
+    void updateMarkerGroup(Map<String, Object> parameters) throws GobiiDaoException;
+
+
     ResultSet getMarkersForMarkerGroup(Integer markerGroupId) throws GobiiDaoException;
 
 
-//    ResultSet getContactsForRoleName(String roleName) throws GobiiDaoException;
+
 }

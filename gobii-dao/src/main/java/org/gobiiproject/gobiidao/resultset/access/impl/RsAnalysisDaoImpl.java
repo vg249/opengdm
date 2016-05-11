@@ -124,7 +124,7 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
 
         } catch (Exception e) {
 
-            LOGGER.error("Error creating analysis", e);
+            LOGGER.error("Error updating analysis", e);
             throw (new GobiiDaoException(e));
         }
     }

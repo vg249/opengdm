@@ -143,7 +143,7 @@ public class DtoRequestMarkerGroupTest {
                 .getDtoHeaderResponse()
                 .getStatusMessages()
                 .stream()
-                .filter(m -> m.getValidationStatusType() == DtoHeaderResponse.ValidationStatusType.NONEXISTENT_FK_ENTITY )
+                .filter(m -> m.getValidationStatusType() == DtoHeaderResponse.ValidationStatusType.NONEXISTENT_FK_ENTITY)
                 .collect(Collectors.toList());
 
         Assert.assertTrue(invalidResponses.size() == 1);
@@ -164,8 +164,7 @@ public class DtoRequestMarkerGroupTest {
         Integer newMarkerGroupId = markerGroupDTOResponse.getMarkerGroupId();
 
 
-
-
+        // RE-RETREIVE
         MarkerGroupDTO markerGroupDTORequestRefresh = new MarkerGroupDTO();
         markerGroupDTORequestRefresh.setMarkerGroupId(newMarkerGroupId);
         MarkerGroupDTO markerGroupDTOResponseRefresh = dtoRequestMarkerGroup.process(markerGroupDTORequestRefresh);
@@ -177,9 +176,9 @@ public class DtoRequestMarkerGroupTest {
         List<String> succededMarkerNames = markerGroupDTOResponseRefresh
                 .getMarkers()
                 .stream()
-                .filter(m-> m.isMarkerExists()
+                .filter(m -> m.isMarkerExists()
                         && (null != m.getMarkerId())
-                        && (m.getMarkerId() > 0 )
+                        && (m.getMarkerId() > 0)
                 )
                 .map(m -> m.getMarkerName())
                 .collect(Collectors.toList());
@@ -193,52 +192,85 @@ public class DtoRequestMarkerGroupTest {
     @Ignore
     public void testUpdateMarkerGroup() throws Exception {
 
-//        DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
-//
-//        // create a new markerGroup for our test
-//        EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
-//        MarkerGroupDTO newMarkerGroupDto = TestDtoFactory
-//                .makePopulatedMarkerGroupDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
-//        MarkerGroupDTO newMarkerGroupDTOResponse = dtoRequestMarkerGroup.process(newMarkerGroupDto);
-//
-//
-//        // re-retrieve the markerGroup we just created so we start with a fresh READ mode dto
-//        MarkerGroupDTO MarkerGroupDTORequest = new MarkerGroupDTO();
-//        MarkerGroupDTORequest.setMarkerGroupId(newMarkerGroupDTOResponse.getMarkerGroupId());
-//        MarkerGroupDTO markerGroupDTOReceived = dtoRequestMarkerGroup.process(MarkerGroupDTORequest);
-//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOReceived));
-//
-//
-//        // so this would be the typical workflow for the client app
-//        markerGroupDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
-//        String newDataFile = UUID.randomUUID().toString();
-//        markerGroupDTOReceived.setSourceName(newDataFile);
-//
-//        EntityPropertyDTO propertyToUpdate = markerGroupDTOReceived.getParameters().get(0);
-//        String updatedPropertyName = propertyToUpdate.getPropertyName();
-//        String updatedPropertyValue = UUID.randomUUID().toString();
-//        propertyToUpdate.setPropertyValue(updatedPropertyValue);
-//
-//        MarkerGroupDTO MarkerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTOReceived);
-//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(MarkerGroupDTOResponse));
-//
-//
-//        MarkerGroupDTO dtoRequestMarkerGroupReRetrieved =
-//                dtoRequestMarkerGroup.process(MarkerGroupDTORequest);
-//
-//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestMarkerGroupReRetrieved));
-//
-//        Assert.assertTrue(dtoRequestMarkerGroupReRetrieved.getSourceName().equals(newDataFile));
-//
-//        EntityPropertyDTO matchedProperty = dtoRequestMarkerGroupReRetrieved
-//                .getParameters()
-//                .stream()
-//                .filter(m -> m.getPropertyName().equals(updatedPropertyName) )
-//                .collect(Collectors.toList())
-//                .get(0);
-//
-//        Assert.assertTrue(matchedProperty.getPropertyValue().equals(updatedPropertyValue));
-//
+        // CREATE A MARKER GROUP
+        DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
+        List<MarkerGroupMarkerDTO> markerGroupMarkers = TestDtoFactory.makeMarkerGroupMarkers(validMarkerNames,
+                DtoMetaData.ProcessType.CREATE);
+        MarkerGroupDTO markerGroupDTORequest = TestDtoFactory
+                .makePopulatedMarkerGroupDTO(DtoMetaData.ProcessType.CREATE, 1, markerGroupMarkers);
+        MarkerGroupDTO markerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTORequest);
+        Integer newMarkerGroupId = markerGroupDTOResponse.getMarkerGroupId();
+
+
+        // RE-RETREIVE
+        MarkerGroupDTO markerGroupDTORequestRefreshRequest = new MarkerGroupDTO();
+        markerGroupDTORequestRefreshRequest.setMarkerGroupId(newMarkerGroupId);
+        MarkerGroupDTO markerGroupDTOResponseToUpdate = dtoRequestMarkerGroup.process(markerGroupDTORequestRefreshRequest);
+
+        String previousName = markerGroupDTOResponseToUpdate.getName();
+        String newName = UUID.randomUUID().toString();
+        markerGroupDTOResponseToUpdate.setName(newName);
+
+        MarkerGroupMarkerDTO markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(DtoMetaData.ProcessType.CREATE);
+        markerGroupMarkerDTOToAdd.setMarkerName("40539");
+        String newMarkerName = markerGroupMarkerDTOToAdd.getMarkerName();
+        markerGroupDTOResponseToUpdate.getMarkers().add(markerGroupMarkerDTOToAdd);
+
+        MarkerGroupMarkerDTO markerGroupMarkerDTOToRemove = markerGroupDTOResponseToUpdate
+                .getMarkers()
+                .get(0);
+        String removedMarkerName = markerGroupMarkerDTOToRemove.getMarkerName();
+        markerGroupMarkerDTOToRemove.setProcessType(DtoMetaData.ProcessType.DELETE);
+
+        MarkerGroupMarkerDTO markerGroupMarkerDTOToModify = markerGroupDTOResponseToUpdate
+                .getMarkers()
+                .get(1);
+        Integer modifiedAlleleMarkerId = markerGroupMarkerDTOToModify.getMarkerId();
+        String modifiedAlelleOldValue = markerGroupMarkerDTOToModify.getFavorableAllele();
+        String modifiedAlleleNewValue = "X"; // not a legit value, but will work for our test
+        markerGroupMarkerDTOToModify.setFavorableAllele(modifiedAlleleNewValue);
+        markerGroupMarkerDTOToModify.setProcessType(DtoMetaData.ProcessType.UPDATE);
+
+        MarkerGroupDTO markerGroupDTOUpdated = dtoRequestMarkerGroup.process(markerGroupDTOResponseToUpdate);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOUpdated));
+
+
+        // RE-RETREIVE again
+        MarkerGroupDTO markerGroupDTOResponseRefreshFinal = dtoRequestMarkerGroup.process(markerGroupDTORequestRefreshRequest);
+        Assert.assertNotNull(markerGroupDTOResponseRefreshFinal);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOResponseRefreshFinal));
+        Assert.assertTrue(markerGroupDTOResponseRefreshFinal.getName().equals(newName));
+        Assert.assertTrue(!markerGroupDTOResponseRefreshFinal.getName().equals(previousName));
+
+        Assert.assertTrue(
+                markerGroupDTOResponseRefreshFinal
+                        .getMarkers()
+                        .stream()
+                        .filter(m -> m.getMarkerName().equals(newMarkerName))
+                        .collect(Collectors.toList())
+                        .size() == 1
+        );
+
+        Assert.assertTrue(
+                markerGroupDTOResponseRefreshFinal
+                        .getMarkers()
+                        .stream()
+                        .filter(m -> m.getMarkerName().equals(removedMarkerName))
+                        .collect(Collectors.toList())
+                        .size() == 0
+        );
+
+        Assert.assertTrue(
+                markerGroupDTOResponseRefreshFinal
+                        .getMarkers()
+                        .stream()
+                        .filter(m ->
+                                m.getMarkerId().equals(modifiedAlleleMarkerId)
+                                        && m.getFavorableAllele().equals(modifiedAlleleNewValue))
+                        .collect(Collectors.toList())
+                        .size() == 1
+        );
+
     }
 
 }
