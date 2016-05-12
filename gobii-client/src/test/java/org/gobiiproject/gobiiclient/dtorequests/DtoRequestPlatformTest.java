@@ -106,13 +106,13 @@ public class DtoRequestPlatformTest {
         String newName = UUID.randomUUID().toString();
         platformDTOReceived.setPlatformName(newName);
 
-        PlatformDTO PlatformDTOResponse = dtoRequestPlatform.process(platformDTOReceived);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(PlatformDTOResponse));
-
         EntityPropertyDTO propertyToUpdate = platformDTOReceived.getProperties().get(0);
         String updatedPropertyName = propertyToUpdate.getPropertyName();
         String updatedPropertyValue = UUID.randomUUID().toString();
         propertyToUpdate.setPropertyValue(updatedPropertyValue);
+
+        PlatformDTO PlatformDTOResponse = dtoRequestPlatform.process(platformDTOReceived);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(PlatformDTOResponse));
 
         PlatformDTO dtoRequestPlatformReRetrieved =
                 dtoRequestPlatform.process(PlatformDTORequest);
