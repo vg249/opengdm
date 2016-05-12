@@ -35,7 +35,7 @@ public class DtoRequestDisplayTest {
 
         Assert.assertNotEquals(displayDTOResponse, null);
         Assert.assertTrue(displayDTOResponse.getTableNamesWithColDisplay().size() > 0);
-        Assert.assertNotNull(displayDTOResponse.getDisplayRank());
+//        Assert.assertNotNull(displayDTOResponse.getDisplayRank());
         Assert.assertNotNull(displayDTOResponse.getColumnName());
 
 
