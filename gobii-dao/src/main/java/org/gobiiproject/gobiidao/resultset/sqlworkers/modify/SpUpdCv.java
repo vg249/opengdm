@@ -11,10 +11,10 @@ public class SpUpdCv extends SpDef {
 
         super("{call updatecv(?,?,?,?,?)}",false);
 
-        this.addParamDef("referenceId",Integer.class).setNullable(false);
-        this.addParamDef("name", String.class).setNullable(false);
-        this.addParamDef("version", String.class).setNullable(false);
-        this.addParamDef("link", String.class).setNullable(false);
-        this.addParamDef("filePath", Integer.class).setNullable(false);
+        this.addParamDef("cvId",Integer.class).setNullable(false);
+        this.addParamDef("group", String.class).setNullable(false);
+        this.addParamDef("term", String.class).setNullable(false);
+        this.addParamDef("definition", String.class).setNullable(false);
+        this.addParamDef("rank", Integer.class).setNullable(false);
     } // ctor
 }

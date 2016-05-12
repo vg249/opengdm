@@ -59,7 +59,7 @@ public class DtoRequestDisplayTest {
         DtoRequestDisplay dtoRequestDisplay = new DtoRequestDisplay();
 
         // create a new reference for our test
-        EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
+
         DisplayDTO newDisplayDto = TestDtoFactory
                 .makePopulatedDisplayDTO(DtoMetaData.ProcessType.CREATE, 1);
         DisplayDTO newDisplayDTOResponse = dtoRequestDisplay.process(newDisplayDto);

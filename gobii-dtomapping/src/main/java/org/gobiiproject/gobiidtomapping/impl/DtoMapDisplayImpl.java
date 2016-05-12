@@ -40,6 +40,7 @@ public class DtoMapDisplayImpl implements DtoMapDisplay {
 
             while (resultSet.next()) {
 
+                returnVal.setDisplayId(resultSet.getInt("display_id"));
                 String newTableName = resultSet.getString("table_name");
 
                 if (tableName.equals("")) { //if first table name from query

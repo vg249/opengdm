@@ -23,7 +23,8 @@ public class SpGetTableDisplayNames implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select table_name,\n" +
+        String sql = "select display_id," +
+                "table_name,\n" +
                 "column_name,\n" +
                 "display_name\n" +
                 "from display\n" +
