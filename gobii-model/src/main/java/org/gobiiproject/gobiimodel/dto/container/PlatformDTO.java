@@ -31,8 +31,10 @@ public class PlatformDTO extends DtoMetaData {
     private Date modifiedDate;
     private Integer status;
     private Integer typeId;
+    private List<EntityPropertyDTO> properties = new ArrayList<>();
 
 
+    @GobiiEntityParam(paramName = "platformId")
     public Integer getPlatformId() {
         return platformId;
     }
@@ -140,6 +142,15 @@ public class PlatformDTO extends DtoMetaData {
     @GobiiEntityColumn(columnName ="type_id")
     public void setTypeId(Integer typeId) {
         this.typeId = typeId;
+    }
+
+
+    public List<EntityPropertyDTO> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<EntityPropertyDTO> properties) {
+        this.properties = properties;
     }
 }
 

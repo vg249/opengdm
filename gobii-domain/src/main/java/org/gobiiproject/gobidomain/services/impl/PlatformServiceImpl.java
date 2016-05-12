@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
+
 /**
  * Created by Phil on 4/27/2016.
  */
@@ -32,7 +34,15 @@ public class PlatformServiceImpl implements PlatformService {
                     break;
 
                 case CREATE:
-                    returnVal = dtoMapPlatform.createPlatform(platformDTO);
+                    returnVal = dtoMapPlatform.createPlatform(returnVal);
+                    returnVal.setCreatedDate(new Date());
+                    returnVal.setModifiedDate(new Date());
+                    break;
+
+                case UPDATE:
+                    returnVal = dtoMapPlatform.updatePlatform(returnVal);
+                    returnVal.setCreatedDate(new Date());
+                    returnVal.setModifiedDate(new Date());
                     break;
 
                 default:

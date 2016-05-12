@@ -7,6 +7,7 @@ import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
+import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
 
 import java.util.ArrayList;
@@ -62,6 +63,30 @@ public class TestDtoFactory {
 
         returnVal.setParameters(entityParamValues.getProperties());
 
+        return returnVal;
+
+    }
+
+    public static PlatformDTO makePopulatedPlatformDTO(DtoMetaData.ProcessType processType,
+                                                       Integer uniqueStem,
+                                                       EntityParamValues entityParamValues) {
+
+        PlatformDTO returnVal = new PlatformDTO(processType);
+
+        String uniqueStemString = uniqueStem.toString();
+        // set the plain properties
+        returnVal.setStatus(1);
+        returnVal.setModifiedBy(1);
+        returnVal.setModifiedDate(new Date());
+        returnVal.setCreatedBy(1);
+        returnVal.setCreatedDate(new Date());
+        returnVal.setPlatformCode(uniqueStem +"dummy code");
+        returnVal.setPlatformDescription(uniqueStem +"dummy description");
+        returnVal.setPlatformName(uniqueStem +"New Platform");
+        returnVal.setPlatformVendor(1);
+        returnVal.setTypeId(1);
+
+        returnVal.setProperties(entityParamValues.getProperties());
         return returnVal;
 
     }
