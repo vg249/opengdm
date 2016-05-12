@@ -33,6 +33,14 @@ public class CvServiceImpl implements CvService {
 					returnVal = dtoMapCv.getCvDetails(cvDTO);
 					break;
 
+				case CREATE:
+					returnVal = dtoMapCv.createCv(cvDTO);
+					break;
+
+				case UPDATE:
+					returnVal = dtoMapCv.updateCv(cvDTO);
+					break;
+
 				default:
 					throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
 							DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,

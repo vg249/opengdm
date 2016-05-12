@@ -3,7 +3,10 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
+import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsCv;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdCv;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvDetailsByCvId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvGroups;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvTerms;
@@ -31,6 +34,9 @@ public class RsCvDaoImpl implements RsCvDao {
 
     @Autowired
     private StoredProcExec storedProcExec = null;
+
+    @Autowired
+    private SpRunnerCallable spRunnerCallable;
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
@@ -130,4 +136,48 @@ public class RsCvDaoImpl implements RsCvDao {
 	}
 
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Integer createCv(Map<String, Object> parameters) throws GobiiDaoException {
+
+        Integer returnVal = null;
+
+        try {
+
+            if (spRunnerCallable.run(new SpInsCv(), parameters)) {
+
+                returnVal = spRunnerCallable.getResult();
+
+            } else {
+
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating cv", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateCv(Map<String, Object> parameters) throws GobiiDaoException {
+
+        try {
+
+            if (!spRunnerCallable.run(new SpUpdCv(), parameters)) {
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating cv", e);
+            throw (new GobiiDaoException(e));
+        }
+    }
 } // RsProjectDaoImpl

@@ -2,7 +2,10 @@ package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsDisplayDao;
+import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
+import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapDisplay;
+import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.entity.TableColDisplay;
 import org.slf4j.Logger;
@@ -13,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Phil on 4/6/2016.
@@ -20,89 +24,91 @@ import java.util.List;
 public class DtoMapDisplayImpl implements DtoMapDisplay {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapDisplayImpl.class);
-
-
     @Autowired
     private RsDisplayDao rsDisplayDao = null;
 
     @Override
-    public DisplayDTO getDisplayNames(DisplayDTO displayDTO) {
+    public DisplayDTO getDisplayDetails(DisplayDTO displayDTO) throws GobiiDtoMappingException {
 
-        DisplayDTO returnVal = new DisplayDTO();
+        DisplayDTO returnVal = displayDTO;
 
         try {
 
-            String tableName = "";
-            List<TableColDisplay> colDisplay = new ArrayList<TableColDisplay>();
-            ResultSet resultSet = rsDisplayDao.getTableDisplayNames();
+            ResultSet resultSet = rsDisplayDao.getTableDisplayDetailByDisplayId(returnVal.getDisplayId());
 
-            while (resultSet.next()) {
-
-                String newTableName = resultSet.getString("table_name");
-
-                if (tableName.equals("")) { //if first table name from query
-                    tableName = newTableName; //set table name if first table name frm query
-                } else if (!tableName.equals(newTableName)) { //if new name
-                    returnVal.getTableNamesWithColDisplay().put(tableName, colDisplay);
-                    colDisplay = new ArrayList<TableColDisplay>();
-                    tableName = newTableName;
-                }
-
-                TableColDisplay tableColDisplay = new TableColDisplay();
-                tableColDisplay.setColumnName(resultSet.getString("column_name"));
-                tableColDisplay.setDisplayName(resultSet.getString("display_name"));
-                colDisplay.add(tableColDisplay);
+            if (resultSet.next()) {
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
             }
 
-            //            returnVal.setTableName(displayDTO.);
+            if (displayDTO.isIncludeDetailsList()) {
 
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+                ResultSet tableColResultSet = rsDisplayDao.getTableDisplayNames();
+                String currentTableName = "";
+                while (tableColResultSet.next()) {
+
+                    String newTableName = tableColResultSet.getString("table_name");
+
+                    if (!currentTableName.equals(newTableName)) {
+                        currentTableName = newTableName; //set table name if first table name frm query
+                        returnVal.getTableNamesWithColDisplay().put(currentTableName, new ArrayList<>());
+                    }
+
+                    TableColDisplay  currentTableColDisplay = new TableColDisplay();
+                    currentTableColDisplay.setDisplayId(tableColResultSet.getInt("display_id"));
+                    currentTableColDisplay.setColumnName(tableColResultSet.getString("column_name"));
+                    currentTableColDisplay.setDisplayName(tableColResultSet.getString("display_name"));
+                    returnVal.getTableNamesWithColDisplay().get(currentTableName).add(currentTableColDisplay);
+
+                }
+            }
+
+
         } catch (SQLException e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Error mapping result set to DTO", e);
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error("Error mapping result set to DTO", e);
         }
 
         return returnVal;
     }
 
 
-    //
-    //    private NameIdListDTO getNameIdListForContacts(NameIdListDTO nameIdListDTO) {
-    //
-    //        NameIdListDTO returnVal = new NameIdListDTO();
-    //
-    //        try {
-    //
-    //            ResultSet contactList = rsContact.getContactNamesForRoleName(nameIdListDTO.getFilter());
-    //
-    //            Map<String, String> contactNamesById = new HashMap<>();
-    //            while (contactList.next()) {
-    //
-    //                Integer contactId = contactList.getInt("contact_id");
-    //                String lastName = contactList.getString("lastname");
-    //                String firstName = contactList.getString("firstname");
-    //                String name = lastName + ", " + firstName;
-    //                contactNamesById.put(contactId.toString(), name);
-    //
-    //            }
-    //
-    //            returnVal.setNamesById(contactNamesById);
-    //
-    //        } catch (SQLException e) {
-    //            returnVal.getDtoHeaderResponse().addException(e);
-    //            LOGGER.error(e.getMessage());
-    //        } catch (GobiiDaoException e) {
-    //            returnVal.getDtoHeaderResponse().addException(e);
-    //            LOGGER.error(e.getMessage());
-    //        }
-    //
-    //
-    //        return (returnVal);
-    //
-    //    } // getNameIdListForContacts()
-    //
-    //
+    @Override
+    public DisplayDTO createDisplay(DisplayDTO displayDTO) throws GobiiDtoMappingException {
+        DisplayDTO returnVal = displayDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(displayDTO);
+            Integer contactId = rsDisplayDao.createDisplay(parameters);
+            returnVal.setDisplayId(contactId);
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error("Error mapping result set to DTO", e);
+        }
+
+        return returnVal;
+    }
+
+    @Override
+    public DisplayDTO updateDisplay(DisplayDTO displayDTO) throws GobiiDtoMappingException {
+
+        DisplayDTO returnVal = displayDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            rsDisplayDao.updateDisplay(parameters);
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
 
 } // DtoMapNameIdListImpl

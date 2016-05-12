@@ -240,7 +240,7 @@ public class LoadController {
         DisplayDTO returnVal = new DisplayDTO();
 
         try {
-            returnVal = displayService.getDisplayNames(displayDTO);
+            returnVal = displayService.process(displayDTO);
         } catch (AccessDeniedException e) {
 
             returnVal.getDtoHeaderResponse().addException(e);

@@ -13,5 +13,5 @@ import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
  */
 public interface DisplayService {
 
-    DisplayDTO getDisplayNames(DisplayDTO displayDTO);
+    DisplayDTO process(DisplayDTO displayDTO);
 }

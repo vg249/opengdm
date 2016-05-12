@@ -26,10 +26,12 @@ public class SpGetDisplayNamesForTable implements Work {
     public void execute(Connection dbConnection) throws SQLException {
 
         String sql = "select table_name,\n" +
+                "display_id,\n" +
                 "column_name,\n" +
                 "display_name\n" +
+                "rank\n" +
                 "from display\n" +
-                "where lower(table_name) = ?";
+                "where LOWER(table_name) = ?";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
         String tableName = parameters.get("tableName").toString().toLowerCase();
