@@ -6,8 +6,8 @@ package org.gobiiproject.gobiimodel.dto.types;
 public enum ServiceRequestId {
     URL_AUTH,
     URL_PING_EXTRACT,
-    URL_PING_LOAD,
-    URL_PING_PROJECT,
+    URL_PING,
+    URL_PROJECT,
     URL_NAME_ID_LIST,
     URL_FILE_LOAD_INSTRUCTIONS,
     URL_DISPLAY,

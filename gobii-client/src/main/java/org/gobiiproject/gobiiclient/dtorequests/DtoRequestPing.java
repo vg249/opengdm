@@ -6,23 +6,18 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
-import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
 public class DtoRequestPing {
 
     public PingDTO process(PingDTO pingDTO) throws Exception {
 
-
         return new DtoRequestProcessor<PingDTO>().process(pingDTO,
                 PingDTO.class,
                 pingDTO.getControllerType(),
-                ServiceRequestId.URL_PING_LOAD);
+                ServiceRequestId.URL_PING);
 
     } // getPingFromExtractController()
-
-
 
 }
