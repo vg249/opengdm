@@ -26,6 +26,12 @@ public class HttpCore {
     private String host = null;
     private Integer port = null;
 
+    public HttpCore(String host, Integer port) {
+
+        this.host = host;
+        this.port = port;
+    }
+
     public HttpCore() {
 
 
@@ -33,7 +39,7 @@ public class HttpCore {
             ConfigSettings configSettings = new ConfigSettings();
 
             String host = configSettings.getCurrentCropConfig().getServiceDomain();
-            if( null != host ) {
+            if (null != host) {
                 this.host = host;
             } else {
                 this.host = "localhost";
@@ -41,7 +47,7 @@ public class HttpCore {
             }
 
             Integer port = configSettings.getCurrentCropConfig().getServicePort();
-            if( null != port ) {
+            if (null != port) {
                 this.port = port;
             } else {
                 this.port = 8080;
@@ -49,7 +55,7 @@ public class HttpCore {
             }
 
 
-        } catch( Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
     } // ctor
@@ -139,7 +145,6 @@ public class HttpCore {
     private void logRequestHeaders(HttpUriRequest httpUriRequest, HttpResponse httpResponse, String testName) throws Exception {
 
 
-
         logInfo("============================================ BEGIN TEST " + testName + "==================================");
         logInfo("");
         logInfo("");
@@ -201,8 +206,8 @@ public class HttpCore {
         HttpPost postRequest = new HttpPost(uri);
         returnVal = submitUriRequest(postRequest, userName, password, null);
 
-        if( HTTP_STATUS_CODE_OK !=  returnVal.getStatusLine().getStatusCode()) {
-            throw new Exception( "Request did not succeed: " + returnVal.getStatusLine().getStatusCode()  );
+        if (HTTP_STATUS_CODE_OK != returnVal.getStatusLine().getStatusCode()) {
+            throw new Exception("Request did not succeed: " + returnVal.getStatusLine().getStatusCode());
         }
 
 
@@ -216,7 +221,7 @@ public class HttpCore {
 
         String returnVal = null;
 
-        HttpResponse response = authenticateWithUser(url,userName, password);
+        HttpResponse response = authenticateWithUser(url, userName, password);
         Header tokenHeader = getHeader(response.getAllHeaders(), HEADER_TOKEN);
         returnVal = tokenHeader.getValue();
 
@@ -246,8 +251,8 @@ public class HttpCore {
 
         httpResponse = submitUriRequest(postRequest, "", "", token);
 
-        if( HTTP_STATUS_CODE_OK !=  httpResponse.getStatusLine().getStatusCode()) {
-            throw new Exception( "Request did not succeed: " + httpResponse.getStatusLine().getStatusCode()  );
+        if (HTTP_STATUS_CODE_OK != httpResponse.getStatusLine().getStatusCode()) {
+            throw new Exception("Request did not succeed: " + httpResponse.getStatusLine().getStatusCode());
         }
 
 

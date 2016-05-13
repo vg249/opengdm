@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
@@ -7,7 +8,9 @@ import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -21,6 +24,18 @@ import java.util.stream.Collectors;
  * Created by Phil on 4/27/2016.
  */
 public class DtoRequestMapsetTest {
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.authenticate());
+    }
+
+    @AfterClass
+    public static void tearDownUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.deAuthenticate());
+    }
+
+
 
     @Test
     public void testGetMapsetDetails() throws Exception {

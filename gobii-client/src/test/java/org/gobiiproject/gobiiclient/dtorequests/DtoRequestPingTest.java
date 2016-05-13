@@ -5,14 +5,27 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DtoRequestPingTest {
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.authenticate());
+    }
+
+    @AfterClass
+    public static void tearDownUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.deAuthenticate());
+    }
 
 
     @Test

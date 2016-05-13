@@ -5,8 +5,10 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
 import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
+import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
@@ -16,35 +18,10 @@ public class DtoRequestReference {
 
     public ReferenceDTO processReference(ReferenceDTO referenceDTO) throws Exception {
 
-        ReferenceDTO returnVal = null;
-
-        TypedRestRequest<ReferenceDTO> typedRestRequest = new TypedRestRequest<>(ReferenceDTO.class);
-
-        SystemUsers systemUsers = new SystemUsers();
-        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
-
-        returnVal = typedRestRequest.getTypedHtppResponseForDto(Urls.URL_REFERENCE, referenceDTO, token);
-
-        return returnVal;
+        return new DtoRequestProcessor<ReferenceDTO>().process(referenceDTO,
+                ReferenceDTO.class,
+                Urls.RequestId.URL_REFERENCE);
 
     } // getPing()
-
-//    public ProjectDTO updateProject(ProjectDTO projectDTO) throws Exception {
-//
-//        ProjectDTO returnVal = null;
-//
-//        TypedRestRequest<ProjectDTO> restRequest = new TypedRestRequest<>(ProjectDTO.class);
-//
-//        SystemUsers systemUsers = new SystemUsers();
-//        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-//        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
-//
-//        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_PING_PROJECT, projectDTO, token);
-//
-//        return returnVal;
-//
-//    }
-
 
 }

@@ -20,35 +20,40 @@ public final class ClientContext {
 
     // configure as a singleton
     // this may not be effective if more thn one classloader is used
-    public final static ClientContext INSTANCE = new ClientContext();
+    private static ClientContext clientContext = null;
+    public synchronized static ClientContext getInstance() throws Exception {
 
-    private void ClientContext() throws Exception {
+        if (null == clientContext) {
+            clientContext = new ClientContext();
+        }
+
+        return clientContext;
+    }
+
+
+    private ClientContext() throws Exception {
 
         configSettings = new ConfigSettings();
+        configSettings.setCurrentCropType(ConfigSettings.CropType.RICE); // default crop
 
-        for (ConfigSettings.CropType currentCropType : ConfigSettings.CropType.values()) {
-            configSettings.setCurrentCropType(currentCropType);
-            String currentCropDomain = configSettings.getCurrentCropConfig().getServiceDomain();
-            String currentCropPort = configSettings.getCurrentCropConfig().getServicePort().toString();
-            String currentBaseUrl = currentCropDomain + ":" + currentCropPort + "\\";
-            baseUrlsByCrop.put(currentCropType, currentBaseUrl);
-
-        }
     }
 
     public enum ProcessMode {Asynch, Block}
 
-    private Map<ConfigSettings.CropType, String> baseUrlsByCrop = new HashMap<>();
     private ProcessMode processMode = ProcessMode.Asynch;
     private String userToken = null;
+
     private ConfigSettings configSettings;
-    private ConfigSettings.CropType currentClientCrop = ConfigSettings.CropType.RICE;
     private HttpCore httpCore = new HttpCore();
 
-
-    public String getBaseUrl(ConfigSettings.CropType cropType) {
-        return baseUrlsByCrop.get(cropType);
+    public String getCurrentCropDomain() {
+        return configSettings.getCurrentCropConfig().getServiceDomain();
     }
+
+    public Integer getCurrentCropPort() {
+        return configSettings.getCurrentCropConfig().getServicePort();
+    }
+
 
     public List<ConfigSettings.CropType> getCropTypeTypes() {
         return new ArrayList<>(Arrays.asList(ConfigSettings.CropType.values()));
@@ -56,25 +61,29 @@ public final class ClientContext {
 
 
     public ConfigSettings.CropType getCurrentClientCrop() {
-        return currentClientCrop;
+        return configSettings.getCurrentCropType();
     }
 
     public void setCurrentClientCrop(ConfigSettings.CropType currentClientCrop) {
-        this.currentClientCrop = currentClientCrop;
+        configSettings.setCurrentCropType(currentClientCrop);
     }
 
     public boolean login(String userName, String password) {
         boolean returnVal = true;
 
         try {
-            String authUrl = getBaseUrl(getCurrentClientCrop());
-            authUrl += Urls.URL_AUTH;
-            userToken = httpCore.getTokenForUser(authUrl,userName, password);
+            String authUrl = Urls.getRequestUrl(Urls.RequestId.URL_AUTH);
+            userToken = httpCore.getTokenForUser(authUrl, userName, password);
         } catch (Exception e) {
             LOGGER.error("Authenticating", e);
         }
 
         return returnVal;
     }
+
+    public String getUserToken() {
+        return userToken;
+    }
+
 
 }

@@ -6,6 +6,8 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 import com.google.gson.JsonObject;
+import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
 import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
@@ -13,8 +15,8 @@ import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
 
-public class DtoRequestNameIdList {
 
+public class DtoRequestNameIdList {
 
     private final String JSON_PROP_NAMESBYID = "namesById";
     private final String JSON_PROP_ENTITYNAME = "entityName";
@@ -33,9 +35,12 @@ public class DtoRequestNameIdList {
 
         TypedRestRequest<NameIdListDTO> typedRestRequest = new TypedRestRequest<>(NameIdListDTO.class);
 
-        SystemUsers systemUsers = new SystemUsers();
-        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+//        SystemUsers systemUsers = new SystemUsers();
+//        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
+//        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+
+        String token = ClientContext.getInstance().getUserToken();
+
 
         returnVal = typedRestRequest.getTypedHtppResponse(Urls.URL_NAME_ID_LIST, ContactsByRoleJson, token);
 
@@ -56,9 +61,11 @@ public class DtoRequestNameIdList {
 
         TypedRestRequest<NameIdListDTO> typedRestRequest = new TypedRestRequest<>(NameIdListDTO.class);
 
-        SystemUsers systemUsers = new SystemUsers();
-        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+//        SystemUsers systemUsers = new SystemUsers();
+//        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
+//        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+
+        String token = ClientContext.getInstance().getUserToken();
 
         returnVal = typedRestRequest.getTypedHtppResponse(Urls.URL_NAME_ID_LIST, projectNamesByContactJson, token);
 
@@ -78,9 +85,11 @@ public class DtoRequestNameIdList {
 
         TypedRestRequest<NameIdListDTO> typedRestRequest = new TypedRestRequest<>(NameIdListDTO.class);
 
-        SystemUsers systemUsers = new SystemUsers();
-        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+//        SystemUsers systemUsers = new SystemUsers();
+//        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
+//        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+
+        String token = ClientContext.getInstance().getUserToken();
 
         returnVal = typedRestRequest.getTypedHtppResponse(Urls.URL_NAME_ID_LIST, experimentNamesByProjectJson, token);
 
@@ -92,17 +101,9 @@ public class DtoRequestNameIdList {
     
     public NameIdListDTO getNamesById(NameIdListDTO nameIdListDTORequest) throws Exception {
 
-        NameIdListDTO returnVal = null;
-
-        TypedRestRequest<NameIdListDTO> typedRestRequest = new TypedRestRequest<>(NameIdListDTO.class);
-
-        SystemUsers systemUsers = new SystemUsers();
-        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
-
-        returnVal = typedRestRequest.getTypedHtppResponseForDto(Urls.URL_NAME_ID_LIST, nameIdListDTORequest, token);
-
-        return returnVal;
+        return new DtoRequestProcessor<NameIdListDTO>().process(nameIdListDTORequest,
+                NameIdListDTO.class,
+                Urls.RequestId.URL_NAME_ID_LIST);
 
     } // getContactsById()
 

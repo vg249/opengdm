@@ -6,6 +6,7 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
@@ -13,7 +14,9 @@ import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Date;
@@ -21,6 +24,16 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class DtoRequestReferenceTest {
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.authenticate());
+    }
+
+    @AfterClass
+    public static void tearDownUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.deAuthenticate());
+    }
 
 
     @Test

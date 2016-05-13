@@ -7,6 +7,98 @@ package org.gobiiproject.gobiiclient.core;
 
 public class Urls {
 
+    public enum RequestId {
+        URL_AUTH,
+        URL_PING_EXTRACT,
+        URL_PING_LOAD,
+        URL_PING_PROJECT,
+        URL_NAME_ID_LIST,
+        URL_FILE_LOAD_INSTRUCTIONS,
+        URL_DISPLAY,
+        URL_CV,
+        URL_CONTACT,
+        URL_REFERENCE,
+        URL_EXPERIMENT,
+        URL_DATASET,
+        URL_ANALYSIS,
+        URL_MARKERGROUP,
+        URL_PLATFORM,
+        URL_MAPSET,
+    }
+
+    public static String getRequestUrl(RequestId requestId) throws  Exception {
+
+        String returnVal = APP_ROOT + CTRLR_LOAD ;
+
+        switch (requestId) {
+
+            case URL_AUTH:
+                returnVal += "auth";
+                break;
+
+            case URL_PING_LOAD:
+                returnVal += "ping";
+                break;
+
+            case URL_PING_PROJECT:
+                returnVal += "project";
+                break;
+
+            case URL_NAME_ID_LIST:
+                returnVal += "nameidlist";
+                break;
+
+            case URL_FILE_LOAD_INSTRUCTIONS:
+                returnVal += "instructions";
+                break;
+
+            case URL_DISPLAY:
+                returnVal += "display";
+                break;
+
+            case URL_CV:
+                returnVal += "cv";
+                break;
+
+            case URL_CONTACT:
+                returnVal += "contact";
+                break;
+
+            case URL_REFERENCE:
+                returnVal += "reference";
+                break;
+
+            case URL_EXPERIMENT:
+                returnVal += "experiment";
+                break;
+
+            case URL_DATASET:
+                returnVal += "dataset";
+                break;
+
+            case URL_ANALYSIS:
+                returnVal += "analysis";
+                break;
+
+            case URL_MARKERGROUP:
+                returnVal += "markergroup";
+                break;
+
+            case URL_PLATFORM:
+                returnVal += "platform";
+                break;
+
+            case URL_MAPSET:
+                returnVal += "mapset";
+                break;
+
+            default:
+                throw new Exception("Unknown request id : " + requestId.toString());
+        }
+
+        return returnVal;
+    }
+
 
     private final static String APP_ROOT = "/gobii-web/";
     private final static String CTRLR_EXTRACT = "extract/";

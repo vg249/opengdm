@@ -17,18 +17,28 @@ public class TypedRestRequest<T> {
 
 
     private final Class<T> paramType;
-    private HttpCore httpCore = new HttpCore();
+    private HttpCore httpCore = null;
     Logger LOGGER = LoggerFactory.getLogger(TypedRestRequest.class);
 
     @SuppressWarnings("unchecked")
     public TypedRestRequest(Class<T> paramType) {
 
         this.paramType = paramType;
+        httpCore = new HttpCore();
+
+    } // ctor
+
+    public TypedRestRequest(String baseUrl,
+                            Integer port,
+                            Class<T> paramType) {
+
+        this.paramType = paramType;
+        httpCore = new HttpCore(baseUrl, port);
 
     } // ctor
 
     public String getTokenForUser(String userName, String password) throws Exception {
-        return httpCore.getTokenForUser(Urls.URL_AUTH,userName, password);
+        return httpCore.getTokenForUser(Urls.URL_AUTH, userName, password);
     }
 
     public T getTypedHtppResponseForDto(String url,

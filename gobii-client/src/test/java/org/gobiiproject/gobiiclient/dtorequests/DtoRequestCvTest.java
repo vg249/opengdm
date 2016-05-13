@@ -5,17 +5,32 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.UUID;
 
 public class DtoRequestCvTest {
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.authenticate());
+    }
+
+    @AfterClass
+    public static void tearDownUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.deAuthenticate());
+    }
+
+
 
     @Test
     public void testGetCvDetailsByCvId() throws Exception {
