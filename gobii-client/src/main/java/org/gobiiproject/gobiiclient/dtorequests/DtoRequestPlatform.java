@@ -6,7 +6,7 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
@@ -20,13 +20,13 @@ public class DtoRequestPlatform {
 
         PlatformDTO returnVal = null;
 
-        RestRequest<PlatformDTO> restRequest = new RestRequest<>(PlatformDTO.class);
+        TypedRestRequest<PlatformDTO> typedRestRequest = new TypedRestRequest<>(PlatformDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_PLATFORM, platformDTO, token);
+        returnVal = typedRestRequest.getTypedHtppResponseForDto(Urls.URL_PLATFORM, platformDTO, token);
 
         return returnVal;
 

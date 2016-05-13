@@ -7,9 +7,8 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
-import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
@@ -37,13 +36,13 @@ public class DtoRequestPing {
         pingRequestJson.add(JSON_PROP_PINGREQUESTS, requestArray);
 
 
-        RestRequest<PingDTO> restRequest = new RestRequest<>(PingDTO.class);
+        TypedRestRequest<PingDTO> typedRestRequest = new TypedRestRequest<>(PingDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponse(uri, pingRequestJson, token);
+        returnVal = typedRestRequest.getTypedHtppResponse(uri, pingRequestJson, token);
 
         return returnVal;
 

@@ -5,8 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import com.google.gson.JsonObject;
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
@@ -21,13 +20,13 @@ public class DtoRequestDisplay {
 
         DisplayDTO returnVal = null;
 
-        RestRequest<DisplayDTO> restRequest = new RestRequest<>(DisplayDTO.class);
+        TypedRestRequest<DisplayDTO> typedRestRequest = new TypedRestRequest<>(DisplayDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_DISPLAY, displayDTO, token);
+        returnVal = typedRestRequest.getTypedHtppResponseForDto(Urls.URL_DISPLAY, displayDTO, token);
 
         return returnVal;
 

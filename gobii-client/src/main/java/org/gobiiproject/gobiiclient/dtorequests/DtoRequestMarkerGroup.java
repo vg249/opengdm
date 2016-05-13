@@ -6,11 +6,9 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
-import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
@@ -22,13 +20,13 @@ public class DtoRequestMarkerGroup {
 
         MarkerGroupDTO returnVal = null;
 
-        RestRequest<MarkerGroupDTO> restRequest = new RestRequest<>(MarkerGroupDTO.class);
+        TypedRestRequest<MarkerGroupDTO> typedRestRequest = new TypedRestRequest<>(MarkerGroupDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_MARKERGROUP, markerGroupDTO, token);
+        returnVal = typedRestRequest.getTypedHtppResponseForDto(Urls.URL_MARKERGROUP, markerGroupDTO, token);
 
         return returnVal;
 

@@ -59,7 +59,7 @@ public final class ClientContext {
     }
 
 //    login(String userName, String password ) {
-//        RestRequest
+//        TypedRestRequest
 //        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 //
 //    }

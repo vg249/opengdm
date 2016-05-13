@@ -6,7 +6,7 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 import com.google.gson.JsonObject;
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
@@ -36,13 +36,13 @@ public class DtoRequestFileLoadInstructions {
         contactsByRoleJson.addProperty(JSON_PROP_FILTER, "foo");
 
 
-        RestRequest<LoaderInstructionFilesDTO> restRequest = new RestRequest<>(LoaderInstructionFilesDTO.class);
+        TypedRestRequest<LoaderInstructionFilesDTO> typedRestRequest = new TypedRestRequest<>(LoaderInstructionFilesDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponse(Urls.URL_FILE_LOAD_INSTRUCTIONS, contactsByRoleJson, token);
+        returnVal = typedRestRequest.getTypedHtppResponse(Urls.URL_FILE_LOAD_INSTRUCTIONS, contactsByRoleJson, token);
 
         return returnVal;
 
@@ -62,13 +62,13 @@ public class DtoRequestFileLoadInstructions {
 //        JsonObject projectRequestJson = new JsonObject();
 //        projectRequestJson.add(LOADER_INSTRUCTIONS, new JsonObject());
 
-        RestRequest<LoaderInstructionFilesDTO> restRequest = new RestRequest<>(LoaderInstructionFilesDTO.class);
+        TypedRestRequest<LoaderInstructionFilesDTO> typedRestRequest = new TypedRestRequest<>(LoaderInstructionFilesDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_FILE_LOAD_INSTRUCTIONS, loaderInstructionFilesDTO, token);
+        returnVal = typedRestRequest.getTypedHtppResponseForDto(Urls.URL_FILE_LOAD_INSTRUCTIONS, loaderInstructionFilesDTO, token);
 
         return returnVal;
 

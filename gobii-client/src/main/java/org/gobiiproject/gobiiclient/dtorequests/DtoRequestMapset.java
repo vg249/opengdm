@@ -6,7 +6,7 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
@@ -20,13 +20,13 @@ public class DtoRequestMapset {
 
         MapsetDTO returnVal = null;
 
-        RestRequest<MapsetDTO> restRequest = new RestRequest<>(MapsetDTO.class);
+        TypedRestRequest<MapsetDTO> typedRestRequest = new TypedRestRequest<>(MapsetDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_MAPSET, MapsetDTO, token);
+        returnVal = typedRestRequest.getTypedHtppResponseForDto(Urls.URL_MAPSET, MapsetDTO, token);
 
         return returnVal;
 

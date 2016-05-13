@@ -5,11 +5,9 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import com.google.gson.JsonObject;
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
@@ -20,13 +18,13 @@ public class DtoRequestContact {
 
         ContactDTO returnVal = null;
 
-        RestRequest<ContactDTO> restRequest = new RestRequest<>(ContactDTO.class);
+        TypedRestRequest<ContactDTO> typedRestRequest = new TypedRestRequest<>(ContactDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_CONTACT, contactDTO, token);
+        returnVal = typedRestRequest.getTypedHtppResponseForDto(Urls.URL_CONTACT, contactDTO, token);
 
         return returnVal;
 
@@ -36,7 +34,7 @@ public class DtoRequestContact {
 //
 //        ProjectDTO returnVal = null;
 //
-//        RestRequest<ProjectDTO> restRequest = new RestRequest<>(ProjectDTO.class);
+//        TypedRestRequest<ProjectDTO> restRequest = new TypedRestRequest<>(ProjectDTO.class);
 //
 //        SystemUsers systemUsers = new SystemUsers();
 //        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());

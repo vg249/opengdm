@@ -5,10 +5,8 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import com.google.gson.JsonObject;
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
-import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
@@ -20,13 +18,13 @@ public class DtoRequestExperiment {
 
     	  ExperimentDTO returnVal = null;
 
-          RestRequest<ExperimentDTO> restRequest = new RestRequest<>(ExperimentDTO.class);
+          TypedRestRequest<ExperimentDTO> typedRestRequest = new TypedRestRequest<>(ExperimentDTO.class);
 
           SystemUsers systemUsers = new SystemUsers();
           SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-          String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+          String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-          returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_EXPERIMENT, experimentDTO, token);
+          returnVal = typedRestRequest.getTypedHtppResponseForDto(Urls.URL_EXPERIMENT, experimentDTO, token);
 
           return returnVal;
 

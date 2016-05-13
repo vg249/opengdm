@@ -6,7 +6,7 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 import com.google.gson.JsonObject;
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
@@ -31,13 +31,13 @@ public class DtoRequestNameIdList {
         ContactsByRoleJson.addProperty(JSON_PROP_ENTITYNAME, "contact");
         ContactsByRoleJson.addProperty(JSON_PROP_FILTER, Type);
 
-        RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class);
+        TypedRestRequest<NameIdListDTO> typedRestRequest = new TypedRestRequest<>(NameIdListDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponse(Urls.URL_NAME_ID_LIST, ContactsByRoleJson, token);
+        returnVal = typedRestRequest.getTypedHtppResponse(Urls.URL_NAME_ID_LIST, ContactsByRoleJson, token);
 
         return returnVal;
 
@@ -54,13 +54,13 @@ public class DtoRequestNameIdList {
         projectNamesByContactJson.addProperty(JSON_PROP_ENTITYNAME, "project");
         projectNamesByContactJson.addProperty(JSON_PROP_FILTER, contactId.toString());
 
-        RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class);
+        TypedRestRequest<NameIdListDTO> typedRestRequest = new TypedRestRequest<>(NameIdListDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponse(Urls.URL_NAME_ID_LIST, projectNamesByContactJson, token);
+        returnVal = typedRestRequest.getTypedHtppResponse(Urls.URL_NAME_ID_LIST, projectNamesByContactJson, token);
 
         return returnVal;
 
@@ -76,13 +76,13 @@ public class DtoRequestNameIdList {
         experimentNamesByProjectJson.addProperty(JSON_PROP_ENTITYNAME, "experiment");
         experimentNamesByProjectJson.addProperty(JSON_PROP_FILTER, projectId.toString());
 
-        RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class);
+        TypedRestRequest<NameIdListDTO> typedRestRequest = new TypedRestRequest<>(NameIdListDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponse(Urls.URL_NAME_ID_LIST, experimentNamesByProjectJson, token);
+        returnVal = typedRestRequest.getTypedHtppResponse(Urls.URL_NAME_ID_LIST, experimentNamesByProjectJson, token);
 
         return returnVal;
 
@@ -94,13 +94,13 @@ public class DtoRequestNameIdList {
 
         NameIdListDTO returnVal = null;
 
-        RestRequest<NameIdListDTO> restRequest = new RestRequest<>(NameIdListDTO.class);
+        TypedRestRequest<NameIdListDTO> typedRestRequest = new TypedRestRequest<>(NameIdListDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_NAME_ID_LIST, nameIdListDTORequest, token);
+        returnVal = typedRestRequest.getTypedHtppResponseForDto(Urls.URL_NAME_ID_LIST, nameIdListDTORequest, token);
 
         return returnVal;
 

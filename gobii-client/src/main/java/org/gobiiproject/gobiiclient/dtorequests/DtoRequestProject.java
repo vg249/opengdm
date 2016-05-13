@@ -6,7 +6,7 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 import com.google.gson.JsonObject;
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
@@ -28,13 +28,13 @@ public class DtoRequestProject {
         projectRequestJson.add(JSON_PROP_INVESTIGATORS, new JsonObject());
         projectRequestJson.addProperty(JSON_PROP_PROJECTID,projectId);
 
-        RestRequest<ProjectDTO> restRequest = new RestRequest<>(ProjectDTO.class);
+        TypedRestRequest<ProjectDTO> typedRestRequest = new TypedRestRequest<>(ProjectDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponse(Urls.URL_PING_PROJECT, projectRequestJson, token);
+        returnVal = typedRestRequest.getTypedHtppResponse(Urls.URL_PING_PROJECT, projectRequestJson, token);
 
         return returnVal;
 
@@ -44,13 +44,13 @@ public class DtoRequestProject {
 
         ProjectDTO returnVal = null;
 
-        RestRequest<ProjectDTO> restRequest = new RestRequest<>(ProjectDTO.class);
+        TypedRestRequest<ProjectDTO> typedRestRequest = new TypedRestRequest<>(ProjectDTO.class);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
+        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
 
-        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_PING_PROJECT, projectDTO, token);
+        returnVal = typedRestRequest.getTypedHtppResponseForDto(Urls.URL_PING_PROJECT, projectDTO, token);
 
         return returnVal;
 

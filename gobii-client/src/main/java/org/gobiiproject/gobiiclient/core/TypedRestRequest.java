@@ -8,35 +8,20 @@ package org.gobiiproject.gobiiclient.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 
-import org.gobiiproject.gobiimodel.ConfigFileReader;
-import org.gobiiproject.gobiimodel.ConfigSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
 
-
-public class RestRequest<T> {
+public class TypedRestRequest<T> {
 
 
     private final Class<T> paramType;
     private HttpCore httpCore = new HttpCore();
-    Logger LOGGER = LoggerFactory.getLogger(RestRequest.class);
+    Logger LOGGER = LoggerFactory.getLogger(TypedRestRequest.class);
 
     @SuppressWarnings("unchecked")
-    public RestRequest(Class<T> paramType) {
+    public TypedRestRequest(Class<T> paramType) {
 
         this.paramType = paramType;
 
