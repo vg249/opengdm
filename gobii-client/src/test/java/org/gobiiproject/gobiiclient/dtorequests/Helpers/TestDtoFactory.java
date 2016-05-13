@@ -1,5 +1,8 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
@@ -9,8 +12,12 @@ import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
+import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
+import org.gobiiproject.gobiimodel.types.SystemUserDetail;
+import org.gobiiproject.gobiimodel.types.SystemUserNames;
+import org.gobiiproject.gobiimodel.types.SystemUsers;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -252,6 +259,17 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
         returnVal.setName(uniqueStem + "_name");
 
         return  returnVal;
+
+    }
+
+    public static PingDTO makePingDTO() throws Exception {
+
+        PingDTO returnVal = new PingDTO();
+
+        returnVal.getPingRequests().add("test string 1");
+        returnVal.getPingRequests().add("test string 2");
+
+        return returnVal;
 
     }
 }

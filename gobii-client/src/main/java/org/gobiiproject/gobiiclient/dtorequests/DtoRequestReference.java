@@ -10,6 +10,8 @@ import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
@@ -20,7 +22,8 @@ public class DtoRequestReference {
 
         return new DtoRequestProcessor<ReferenceDTO>().process(referenceDTO,
                 ReferenceDTO.class,
-                Urls.RequestId.URL_REFERENCE);
+                ControllerType.LOADER,
+                ServiceRequestId.URL_REFERENCE);
 
     } // getPing()
 

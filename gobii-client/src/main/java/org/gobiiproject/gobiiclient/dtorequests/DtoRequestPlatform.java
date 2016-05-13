@@ -11,6 +11,8 @@ import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
+import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
@@ -22,7 +24,8 @@ public class DtoRequestPlatform {
 
         return new DtoRequestProcessor<PlatformDTO>().process(platformDTO,
                 PlatformDTO.class,
-                Urls.RequestId.URL_PLATFORM);
+                ControllerType.LOADER,
+                ServiceRequestId.URL_PLATFORM);
 
     } // getPing()
 

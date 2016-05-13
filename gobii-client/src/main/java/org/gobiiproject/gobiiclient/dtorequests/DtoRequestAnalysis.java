@@ -7,12 +7,10 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 
 import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
-import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
-import org.gobiiproject.gobiimodel.types.SystemUserDetail;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
-import org.gobiiproject.gobiimodel.types.SystemUsers;
+import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
 public class DtoRequestAnalysis {
 
@@ -21,7 +19,8 @@ public class DtoRequestAnalysis {
 
         return new DtoRequestProcessor<AnalysisDTO>().process(analysisDTO,
                 AnalysisDTO.class,
-                Urls.RequestId.URL_ANALYSIS);
+                ControllerType.LOADER,
+                ServiceRequestId.URL_ANALYSIS);
 
-    } // getPing()
+    }
 }

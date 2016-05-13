@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiiclient.core;
 
 import org.gobiiproject.gobiimodel.ConfigSettings;
+import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +74,8 @@ public final class ClientContext {
         boolean returnVal = true;
 
         try {
-            String authUrl = Urls.getRequestUrl(Urls.RequestId.URL_AUTH);
+            String authUrl = Urls.getRequestUrl(ControllerType.EXTRACTOR,
+                    ServiceRequestId.URL_AUTH);
             userToken = httpCore.getTokenForUser(authUrl, userName, password);
         } catch (Exception e) {
             LOGGER.error("Authenticating", e);

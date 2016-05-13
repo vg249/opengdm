@@ -32,19 +32,6 @@ public class DtoRequestFileLoadInstructionsTest {
 
 
 
-    @Ignore
-    public void testGetSampleInstructionFile() throws Exception {
-
-
-        DtoRequestFileLoadInstructions dtoRequestFileLoadInstructions = new DtoRequestFileLoadInstructions();
-        LoaderInstructionFilesDTO loaderInstructionFilesDTO = dtoRequestFileLoadInstructions.getSampleInstructionFile();
-
-
-        Assert.assertNotEquals(null, dtoRequestFileLoadInstructions);
-//        Assert.assertNotEquals(null, projectDTO.getProjectName());
-
-    } // testGetMarkers()
-
     @Test
     public void testSendInstructionFile() throws Exception {
 

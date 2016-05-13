@@ -6,13 +6,9 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
-import org.gobiiproject.gobiiclient.core.TypedRestRequest;
-import org.gobiiproject.gobiiclient.core.Urls;
-import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.types.SystemUserDetail;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
-import org.gobiiproject.gobiimodel.types.SystemUsers;
+import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
 public class DtoRequestContact {
 
@@ -20,9 +16,7 @@ public class DtoRequestContact {
 
         return new DtoRequestProcessor<ContactDTO>().process(contactDTO,
                 ContactDTO.class,
-                Urls.RequestId.URL_CONTACT);
-
-    } // getPing()
-
-
+                ControllerType.LOADER,
+                ServiceRequestId.URL_CONTACT);
+    }
 }

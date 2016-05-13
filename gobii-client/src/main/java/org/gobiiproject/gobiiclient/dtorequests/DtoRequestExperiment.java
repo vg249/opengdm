@@ -6,13 +6,10 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
-import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiiclient.core.Urls;
-import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.types.SystemUserDetail;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
-import org.gobiiproject.gobiimodel.types.SystemUsers;
+import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
 public class DtoRequestExperiment {
 
@@ -20,7 +17,8 @@ public class DtoRequestExperiment {
 
         return new DtoRequestProcessor<ExperimentDTO>().process(experimentDTO,
                 ExperimentDTO.class,
-                Urls.RequestId.URL_EXPERIMENT);
+                ControllerType.LOADER,
+                ServiceRequestId.URL_EXPERIMENT);
 
     } // getPing()
 

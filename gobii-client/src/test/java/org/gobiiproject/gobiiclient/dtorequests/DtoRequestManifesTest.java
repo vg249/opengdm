@@ -5,10 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import java.util.Map.Entry;
-
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -40,7 +37,6 @@ public class DtoRequestManifesTest {
          Assert.assertNotEquals(null, nameIdListDtoResponse);
          Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
          Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-    } // testGetMarkers()
-
+    }
 
 }

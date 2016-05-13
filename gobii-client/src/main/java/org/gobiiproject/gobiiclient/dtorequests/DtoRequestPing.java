@@ -5,56 +5,22 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import org.gobiiproject.gobiiclient.core.TypedRestRequest;
+import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.types.SystemUserDetail;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
-import org.gobiiproject.gobiimodel.types.SystemUsers;
-
-import java.util.List;
+import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
 public class DtoRequestPing {
 
-
-    private final String JSON_PROP_PINGREQUESTS = "pingRequests";
-
-
-    private PingDTO getPing(List<String> requestStrings, String uri) throws Exception {
-
-        PingDTO returnVal = null;
-
-        JsonArray requestArray = new JsonArray();
-
-        for (String currentString : requestStrings) {
-            requestArray.add(currentString);
-        }
-
-        JsonObject pingRequestJson = new JsonObject();
-        pingRequestJson.add(JSON_PROP_PINGREQUESTS, requestArray);
+    public PingDTO process(PingDTO pingDTO) throws Exception {
 
 
-        TypedRestRequest<PingDTO> typedRestRequest = new TypedRestRequest<>(PingDTO.class);
+        return new DtoRequestProcessor<PingDTO>().process(pingDTO,
+                PingDTO.class,
+                pingDTO.getControllerType(),
+                ServiceRequestId.URL_PING_LOAD);
 
-        SystemUsers systemUsers = new SystemUsers();
-        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = typedRestRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
-
-        returnVal = typedRestRequest.getTypedHtppResponse(uri, pingRequestJson, token);
-
-        return returnVal;
-
-    } // getPing()
-
-
-    public PingDTO getPingFromExtractController(List<String> requestStrings) throws Exception {
-        return this.getPing(requestStrings,Urls.URL_PING_EXTRACT);
-    } // getPingFromExtractController()
-
-    public PingDTO getPingFromLoadController(List<String> requestStrings) throws Exception {
-        return this.getPing(requestStrings,Urls.URL_PING_LOAD);
     } // getPingFromExtractController()
 
 

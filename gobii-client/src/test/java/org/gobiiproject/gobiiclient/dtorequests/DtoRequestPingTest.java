@@ -6,10 +6,13 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -31,36 +34,35 @@ public class DtoRequestPingTest {
     @Test
     public void testGetPingFromExtractController() throws Exception {
 
-        List<String> requestStrings = new ArrayList<>();
-
-        requestStrings.add("Test String 1");
-        requestStrings.add("Test String 2");
+        PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
+        pingDTORequest.setControllerType(ControllerType.EXTRACTOR);
 
         DtoRequestPing dtoRequestPing = new DtoRequestPing();
-        PingDTO pingDTO = dtoRequestPing.getPingFromExtractController(requestStrings);
+        PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
 
-        Assert.assertNotEquals(null, pingDTO);
-        Assert.assertNotEquals(null, pingDTO.getPingRequests());
-        Assert.assertNotEquals(null, pingDTO.getPingResponses());
-        Assert.assertTrue(pingDTO.getPingResponses().size() >= requestStrings.size());
+        Assert.assertNotEquals(null, pingDTOResponse);
+        Assert.assertNotEquals(null, pingDTOResponse.getPingRequests());
+        Assert.assertNotEquals(null, pingDTOResponse.getPingResponses());
+        Assert.assertTrue(pingDTOResponse.getPingResponses().size()
+                >= pingDTORequest.getPingRequests().size());
 
     } // testGetMarkers()
+
 
     @Test
     public void testGetPingFromLoadController() throws Exception {
 
-        List<String> requestStrings = new ArrayList<>();
-
-        requestStrings.add("Test String 1");
-        requestStrings.add("Test String 2");
+        PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
+        pingDTORequest.setControllerType(ControllerType.LOADER);
 
         DtoRequestPing dtoRequestPing = new DtoRequestPing();
-        PingDTO pingDTO = dtoRequestPing.getPingFromLoadController(requestStrings);
+        PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
 
-        Assert.assertNotEquals(null, pingDTO);
-        Assert.assertNotEquals(null, pingDTO.getPingRequests());
-        Assert.assertNotEquals(null, pingDTO.getPingResponses());
-        Assert.assertTrue(pingDTO.getPingResponses().size() >= requestStrings.size());
+        Assert.assertNotEquals(null, pingDTOResponse);
+        Assert.assertNotEquals(null, pingDTOResponse.getPingRequests());
+        Assert.assertNotEquals(null, pingDTOResponse.getPingResponses());
+        Assert.assertTrue(pingDTOResponse.getPingResponses().size()
+                >= pingDTORequest.getPingRequests().size());
 
     } // testGetMarkers()
 

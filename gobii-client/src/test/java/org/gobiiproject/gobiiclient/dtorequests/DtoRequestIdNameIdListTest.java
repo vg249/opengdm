@@ -34,13 +34,17 @@ public class DtoRequestIdNameIdListTest {
 
         // Assumes rice data with seed script is loaded
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getContactsById("Curator");
+        NameIdListDTO nameIdListDTOReuest = new NameIdListDTO();
+        nameIdListDTOReuest.setFilter("Curator");
+        nameIdListDTOReuest.setEntityName("contact");
+
+        NameIdListDTO nameIdListDTOResponse = dtoRequestNameIdList.getNamesById(nameIdListDTOReuest);
 
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDTO));
-        Assert.assertNotEquals(null, nameIdListDTO);
-        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
-        Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDTOResponse));
+        Assert.assertNotEquals(null, nameIdListDTOResponse);
+        Assert.assertEquals(true, nameIdListDTOResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDTOResponse.getNamesById().size() >= 0);
 
     } // testGetMarkers()
 
@@ -50,11 +54,15 @@ public class DtoRequestIdNameIdListTest {
 
         // Assumes rice data with seed script is loaded
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getProjectNamesById(2);
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("project");
+        nameIdListDTORequest.setFilter("2");
+        NameIdListDTO nameIdListDTOResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
 
-        Assert.assertNotEquals(null, nameIdListDTO);
-        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
-        Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
+
+        Assert.assertNotEquals(null, nameIdListDTOResponse);
+        Assert.assertEquals(true, nameIdListDTOResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDTOResponse.getNamesById().size() >= 0);
 
     }
     
