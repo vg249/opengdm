@@ -28,7 +28,7 @@ public class SpGetReferenceNames implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select reference_id, name from reference";
+        String sql = "select reference_id, name from reference order by lower(name)";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
 

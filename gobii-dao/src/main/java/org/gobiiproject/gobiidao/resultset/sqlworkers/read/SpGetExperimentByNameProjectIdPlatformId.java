@@ -35,7 +35,7 @@ public class SpGetExperimentByNameProjectIdPlatformId implements Work {
                 "\tfrom experiment\n" +
                 "\twhere name= ?  \n" +
                 "\t\t\tAND project_id= ?\n" +
-                "\t\t\tand platform_id = ?\n";
+                "\t\t\tand platform_id = ?\n ";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
         String experimentName = (String) parameters.get("experimentName");

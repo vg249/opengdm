@@ -276,9 +276,6 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
         
-        for (Entry entry : nameIdListDtoResponse.getNamesById().entrySet()){ //add project on list
-			System.out.println((String) entry.getValue());//project name
-		}
     }
 
     @Test

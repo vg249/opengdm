@@ -27,7 +27,7 @@ public class SpGetCvTerms implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String Sql = "select cv_id, term from cv ";
+        String Sql = "select cv_id, term from cv order by lower(term)";
         
         PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
         

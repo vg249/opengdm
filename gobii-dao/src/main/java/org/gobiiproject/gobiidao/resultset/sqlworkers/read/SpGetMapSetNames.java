@@ -28,7 +28,7 @@ public class SpGetMapSetNames implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select mapset_id, name from mapset";
+        String sql = "select mapset_id, name from mapset order by lower(name)";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
 

@@ -27,7 +27,7 @@ public class SpGetAnalysisNamesByTypeId implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String Sql = "select analysis_id, name from analysis where analysis.type_id= ?";
+        String Sql = "select analysis_id, name from analysis where analysis.type_id= ?  order by lower(name) ";
         PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
         int typeId = (int) parameters.get("typeId");
         preparedStatement.setInt(1, typeId);

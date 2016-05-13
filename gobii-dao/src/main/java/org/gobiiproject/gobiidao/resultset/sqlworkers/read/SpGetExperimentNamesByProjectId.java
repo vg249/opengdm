@@ -28,7 +28,7 @@ public class SpGetExperimentNamesByProjectId implements Work {
         String sql = "select e.experiment_id, \n" +
                 "e.name\n" +
                 "from experiment e\n" +
-                "where e.project_id= ? ";
+                "where e.project_id= ? order by lower(name)";
         PreparedStatement preparedStatement = dbConnection.prepareCall(sql);
         preparedStatement.setInt(1, (Integer) parameters.get("projectId"));
         resultSet = preparedStatement.executeQuery();

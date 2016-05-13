@@ -27,7 +27,7 @@ public class SpGetCvTermsByGroup implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String Sql = "select cv_id, term from cv where cv.group= ?";
+        String Sql = "select cv_id, term from cv where cv.group= ? order by lower(term)";
         PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
         String groupName = (String) parameters.get("groupName");
         preparedStatement.setString(1, groupName);

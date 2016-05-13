@@ -28,7 +28,7 @@ public class SpGetManifestNames implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select manifest_id, name from manifest";
+        String sql = "select manifest_id, name from manifest order by lower(name)";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
 
