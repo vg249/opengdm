@@ -57,6 +57,7 @@ public class DtoMapDisplayImpl implements DtoMapDisplay {
                     currentTableColDisplay.setDisplayId(tableColResultSet.getInt("display_id"));
                     currentTableColDisplay.setColumnName(tableColResultSet.getString("column_name"));
                     currentTableColDisplay.setDisplayName(tableColResultSet.getString("display_name"));
+                    currentTableColDisplay.setRank(tableColResultSet.getInt("rank"));
                     returnVal.getTableNamesWithColDisplay().get(currentTableName).add(currentTableColDisplay);
 
                 }

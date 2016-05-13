@@ -16,6 +16,10 @@ public class TableColDisplay {
 	private String displayName; // display name
 
 
+	private Integer rank;
+
+
+
 	public Integer getDisplayId() {
 		return displayId;
 	}
@@ -42,5 +46,15 @@ public class TableColDisplay {
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
+
+	public Integer getRank() {
+		return rank;
+	}
+
+	@GobiiEntityParam(paramName = "rank")
+	public void setRank(Integer rank) {
+		this.rank = rank;
+	}
+
 	
 }

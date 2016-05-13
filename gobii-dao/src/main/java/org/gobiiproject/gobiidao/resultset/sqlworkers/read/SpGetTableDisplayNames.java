@@ -26,9 +26,10 @@ public class SpGetTableDisplayNames implements Work {
         String sql = "select display_id, " +
                 "table_name,\n" +
                 "display_name,\n" +
+                "rank,\n" +
                 "column_name \n" +
                 "from display \n" +
-                " order by lower(table_name), lower(column_name)";
+                " order by lower(table_name), lower(column_name), rank";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
 //        String tableName = parameters.get("tableName").toString().toLowerCase();
