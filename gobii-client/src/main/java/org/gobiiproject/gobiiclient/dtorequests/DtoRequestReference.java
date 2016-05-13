@@ -18,7 +18,7 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
 
 public class DtoRequestReference {
 
-    public ReferenceDTO processReference(ReferenceDTO referenceDTO) throws Exception {
+    public ReferenceDTO process(ReferenceDTO referenceDTO) throws Exception {
 
         return new DtoRequestProcessor<ReferenceDTO>().process(referenceDTO,
                 ReferenceDTO.class,

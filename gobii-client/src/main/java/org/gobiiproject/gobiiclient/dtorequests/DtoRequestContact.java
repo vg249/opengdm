@@ -12,7 +12,7 @@ import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
 public class DtoRequestContact {
 
-    public ContactDTO processContact(ContactDTO contactDTO) throws Exception {
+    public ContactDTO process(ContactDTO contactDTO) throws Exception {
 
         return new DtoRequestProcessor<ContactDTO>().process(contactDTO,
                 ContactDTO.class,

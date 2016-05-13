@@ -32,7 +32,7 @@ public class DtoRequestManifesTest {
     	 NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
          nameIdListDTORequest.setEntityName("manifest");
          DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
          Assert.assertNotEquals(null, nameIdListDtoResponse);
          Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());

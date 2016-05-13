@@ -10,11 +10,9 @@ import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -56,7 +54,7 @@ public class DtoRequestPlatformTest {
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("platform type");
 
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
         List<String> platformProperTerms = new ArrayList<> ( nameIdListDTO
                 .getNamesById()
                 .values());
@@ -96,7 +94,7 @@ public class DtoRequestPlatformTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("platform type");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
         List<String> platformProperTerms = new ArrayList<>( nameIdListDTO
                 .getNamesById()
                 .values());

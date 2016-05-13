@@ -40,7 +40,7 @@ public class DtoRequestMapsetTest {
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
         MapsetDTO mapsetDTORequest = new MapsetDTO();
         mapsetDTORequest.setMapsetId(2);
-        MapsetDTO mapsetDTOResponse = dtoRequestMapset.processMapset(mapsetDTORequest);
+        MapsetDTO mapsetDTOResponse = dtoRequestMapset.process(mapsetDTORequest);
 
         Assert.assertNotEquals(null, mapsetDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponse));
@@ -58,7 +58,7 @@ public class DtoRequestMapsetTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("map_type");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
         List<String> mapsetProperTerms = new ArrayList<> ( nameIdListDTO
                 .getNamesById()
                 .values());
@@ -69,7 +69,7 @@ public class DtoRequestMapsetTest {
         MapsetDTO mapsetDTORequest = TestDtoFactory
                 .makePopulatedMapsetDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
 
-        MapsetDTO mapsetDTOResponse = dtoRequestMapset.processMapset(mapsetDTORequest);
+        MapsetDTO mapsetDTOResponse = dtoRequestMapset.process(mapsetDTORequest);
 
         Assert.assertNotEquals(null, mapsetDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponse));
@@ -77,7 +77,7 @@ public class DtoRequestMapsetTest {
 
         MapsetDTO mapsetDTORequestForParams = new MapsetDTO();
         mapsetDTORequestForParams.setMapsetId(mapsetDTOResponse.getMapsetId());
-        MapsetDTO mapsetDTOResponseForParams = dtoRequestMapset.processMapset(mapsetDTORequestForParams);
+        MapsetDTO mapsetDTOResponseForParams = dtoRequestMapset.process(mapsetDTORequestForParams);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponseForParams));
 
@@ -101,7 +101,7 @@ public class DtoRequestMapsetTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("map_type");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
         List<String> mapsetProperTerms = new ArrayList<> ( nameIdListDTO
                 .getNamesById()
                 .values());
@@ -113,13 +113,13 @@ public class DtoRequestMapsetTest {
         // create a new mapset for our test
         MapsetDTO newMapsetDto = TestDtoFactory
                 .makePopulatedMapsetDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
-        MapsetDTO newMapsetDTOResponse = dtoRequestMapset.processMapset(newMapsetDto);
+        MapsetDTO newMapsetDTOResponse = dtoRequestMapset.process(newMapsetDto);
 
 
         // re-retrieve the mapset we just created so we start with a fresh READ mode dto
         MapsetDTO MapsetDTORequest = new MapsetDTO();
         MapsetDTORequest.setMapsetId(newMapsetDTOResponse.getMapsetId());
-        MapsetDTO mapsetDTOReceived = dtoRequestMapset.processMapset(MapsetDTORequest);
+        MapsetDTO mapsetDTOReceived = dtoRequestMapset.process(MapsetDTORequest);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOReceived));
 
 
@@ -133,12 +133,12 @@ public class DtoRequestMapsetTest {
         String updatedPropertyValue = UUID.randomUUID().toString();
         propertyToUpdate.setPropertyValue(updatedPropertyValue);
 
-        MapsetDTO MapsetDTOResponse = dtoRequestMapset.processMapset(mapsetDTOReceived);
+        MapsetDTO MapsetDTOResponse = dtoRequestMapset.process(mapsetDTOReceived);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(MapsetDTOResponse));
 
 
         MapsetDTO dtoRequestMapsetReRetrieved =
-                dtoRequestMapset.processMapset(MapsetDTORequest);
+                dtoRequestMapset.process(MapsetDTORequest);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestMapsetReRetrieved));
 

@@ -14,7 +14,7 @@ import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 public class DtoRequestNameIdList {
 
 
-    public NameIdListDTO getNamesById(NameIdListDTO nameIdListDTORequest) throws Exception {
+    public NameIdListDTO process(NameIdListDTO nameIdListDTORequest) throws Exception {
 
         return new DtoRequestProcessor<NameIdListDTO>().process(nameIdListDTORequest,
                 NameIdListDTO.class,

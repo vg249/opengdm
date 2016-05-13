@@ -13,7 +13,7 @@ import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 public class DtoRequestFileLoadInstructions {
 
 
-    public LoaderInstructionFilesDTO sendInstructionFile(LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws Exception {
+    public LoaderInstructionFilesDTO process(LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws Exception {
 
         return new DtoRequestProcessor<LoaderInstructionFilesDTO>().process(loaderInstructionFilesDTO,
                 LoaderInstructionFilesDTO.class,

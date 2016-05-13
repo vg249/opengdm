@@ -15,7 +15,7 @@ import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 public class DtoRequestMapset {
 
 
-    public MapsetDTO processMapset(MapsetDTO mapsetDTO) throws Exception {
+    public MapsetDTO process(MapsetDTO mapsetDTO) throws Exception {
 
         return new DtoRequestProcessor<MapsetDTO>().process(mapsetDTO,
                 MapsetDTO.class,
