@@ -193,11 +193,11 @@ public class HttpCore {
 
     }//logRequestHeaders()
 
-    private HttpResponse authenticateWithUser(String userName, String password) throws Exception {
+    private HttpResponse authenticateWithUser(String url, String userName, String password) throws Exception {
 
         HttpResponse returnVal = null;
 
-        URI uri = makeUri(Urls.URL_AUTH);
+        URI uri = makeUri(url);
         HttpPost postRequest = new HttpPost(uri);
         returnVal = submitUriRequest(postRequest, userName, password, null);
 
@@ -212,11 +212,11 @@ public class HttpCore {
 
     }//authenticateWithUser()
 
-    public String getTokenForUser(String userName, String password) throws Exception {
+    public String getTokenForUser(String url, String userName, String password) throws Exception {
 
         String returnVal = null;
 
-        HttpResponse response = authenticateWithUser(userName, password);
+        HttpResponse response = authenticateWithUser(url,userName, password);
         Header tokenHeader = getHeader(response.getAllHeaders(), HEADER_TOKEN);
         returnVal = tokenHeader.getValue();
 

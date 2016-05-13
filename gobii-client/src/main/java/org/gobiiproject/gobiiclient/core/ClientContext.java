@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiiclient.core;
 
 import org.gobiiproject.gobiimodel.ConfigSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +16,8 @@ import java.util.Map;
 public final class ClientContext {
 
 
+    Logger LOGGER = LoggerFactory.getLogger(TypedRestRequest.class);
+
     // configure as a singleton
     // this may not be effective if more thn one classloader is used
     public final static ClientContext INSTANCE = new ClientContext();
@@ -22,27 +26,28 @@ public final class ClientContext {
 
         configSettings = new ConfigSettings();
 
-        for(ConfigSettings.CropType currentCropType : ConfigSettings.CropType.values()) {
+        for (ConfigSettings.CropType currentCropType : ConfigSettings.CropType.values()) {
             configSettings.setCurrentCropType(currentCropType);
             String currentCropDomain = configSettings.getCurrentCropConfig().getServiceDomain();
             String currentCropPort = configSettings.getCurrentCropConfig().getServicePort().toString();
             String currentBaseUrl = currentCropDomain + ":" + currentCropPort + "\\";
-            baseUrlsByCrop.put(currentCropType,currentBaseUrl);
+            baseUrlsByCrop.put(currentCropType, currentBaseUrl);
 
         }
     }
 
     public enum ProcessMode {Asynch, Block}
 
-    private Map<ConfigSettings.CropType,String> baseUrlsByCrop = new HashMap<>();
+    private Map<ConfigSettings.CropType, String> baseUrlsByCrop = new HashMap<>();
     private ProcessMode processMode = ProcessMode.Asynch;
     private String userToken = null;
     private ConfigSettings configSettings;
     private ConfigSettings.CropType currentClientCrop = ConfigSettings.CropType.RICE;
+    private HttpCore httpCore = new HttpCore();
 
 
     public String getBaseUrl(ConfigSettings.CropType cropType) {
-        return  baseUrlsByCrop.get(cropType);
+        return baseUrlsByCrop.get(cropType);
     }
 
     public List<ConfigSettings.CropType> getCropTypeTypes() {
@@ -58,10 +63,18 @@ public final class ClientContext {
         this.currentClientCrop = currentClientCrop;
     }
 
-//    login(String userName, String password ) {
-//        TypedRestRequest
-//        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
-//
-//    }
+    public boolean login(String userName, String password) {
+        boolean returnVal = true;
+
+        try {
+            String authUrl = getBaseUrl(getCurrentClientCrop());
+            authUrl += Urls.URL_AUTH;
+            userToken = httpCore.getTokenForUser(authUrl,userName, password);
+        } catch (Exception e) {
+            LOGGER.error("Authenticating", e);
+        }
+
+        return returnVal;
+    }
 
 }

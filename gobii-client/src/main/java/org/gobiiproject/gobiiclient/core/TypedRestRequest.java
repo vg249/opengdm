@@ -28,7 +28,7 @@ public class TypedRestRequest<T> {
     } // ctor
 
     public String getTokenForUser(String userName, String password) throws Exception {
-        return httpCore.getTokenForUser(userName, password);
+        return httpCore.getTokenForUser(Urls.URL_AUTH,userName, password);
     }
 
     public T getTypedHtppResponseForDto(String url,
