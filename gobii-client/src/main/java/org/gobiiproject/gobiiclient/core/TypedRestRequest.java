@@ -20,14 +20,6 @@ public class TypedRestRequest<T> {
     private HttpCore httpCore = null;
     Logger LOGGER = LoggerFactory.getLogger(TypedRestRequest.class);
 
-    @SuppressWarnings("unchecked")
-    public TypedRestRequest(Class<T> paramType) {
-
-        this.paramType = paramType;
-        httpCore = new HttpCore();
-
-    } // ctor
-
     public TypedRestRequest(String baseUrl,
                             Integer port,
                             Class<T> paramType) {

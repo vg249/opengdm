@@ -96,7 +96,4 @@ public class Urls {
         return returnVal;
     }
 
-
-    public final static String URL_AUTH = APP_ROOT + CTRLR_EXTRACT + "auth";
-
 } // Urls

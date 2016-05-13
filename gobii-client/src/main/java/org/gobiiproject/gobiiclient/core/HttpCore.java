@@ -32,33 +32,6 @@ public class HttpCore {
         this.port = port;
     }
 
-    public HttpCore() {
-
-
-        try {
-            ConfigSettings configSettings = new ConfigSettings();
-
-            String host = configSettings.getCurrentCropConfig().getServiceDomain();
-            if (null != host) {
-                this.host = host;
-            } else {
-                this.host = "localhost";
-                LOGGER.info("servicedomain property is not specified in configuration; setting domain to localhost");
-            }
-
-            Integer port = configSettings.getCurrentCropConfig().getServicePort();
-            if (null != port) {
-                this.port = port;
-            } else {
-                this.port = 8080;
-                LOGGER.info("serviceport property is not specified in configuration; setting port to 8080");
-            }
-
-
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-        }
-    } // ctor
 
     Logger LOGGER = LoggerFactory.getLogger(HttpCore.class);
 

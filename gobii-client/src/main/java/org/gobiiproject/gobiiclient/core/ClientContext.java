@@ -46,7 +46,6 @@ public final class ClientContext {
     private String userToken = null;
 
     private ConfigSettings configSettings;
-    private HttpCore httpCore = new HttpCore();
 
     public String getCurrentCropDomain() {
         return configSettings.getCurrentCropConfig().getServiceDomain();
@@ -76,6 +75,10 @@ public final class ClientContext {
         try {
             String authUrl = Urls.getRequestUrl(ControllerType.EXTRACTOR,
                     ServiceRequestId.URL_AUTH);
+
+            HttpCore httpCore = new HttpCore(this.getCurrentCropDomain(),
+                    this.getCurrentCropPort());
+
             userToken = httpCore.getTokenForUser(authUrl, userName, password);
         } catch (Exception e) {
             LOGGER.error("Authenticating", e);
