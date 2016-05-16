@@ -5,13 +5,16 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -21,13 +24,25 @@ import java.util.stream.Collectors;
 
 public class DtoRequestProjectTest {
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.authenticate());
+    }
+
+    @AfterClass
+    public static void tearDownUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.deAuthenticate());
+    }
+
 
     @Test
     public void testGetProjectDetails() throws Exception {
 
 
         DtoRequestProject dtoRequestProject = new DtoRequestProject();
-        ProjectDTO projectDTO = dtoRequestProject.getProject(1);
+        ProjectDTO projectDTORequest = new ProjectDTO();
+        projectDTORequest.setProjectId(1);
+        ProjectDTO projectDTO = dtoRequestProject.process(projectDTORequest);
 
         Assert.assertNotEquals(null, projectDTO);
         Assert.assertNotEquals(null, projectDTO.getProjectName());
@@ -79,7 +94,9 @@ public class DtoRequestProjectTest {
     public void testCreateExistingProject() throws Exception {
 
         DtoRequestProject dtoRequestProject = new DtoRequestProject();
-        ProjectDTO projectDTOExisting = dtoRequestProject.getProject(1);
+        ProjectDTO projectDTORequest = new ProjectDTO();
+        projectDTORequest.setProjectId(1);
+        ProjectDTO projectDTOExisting = dtoRequestProject.process(projectDTORequest);
         projectDTOExisting.setProcessType(DtoMetaData.ProcessType.CREATE);
 
 
@@ -110,16 +127,18 @@ public class DtoRequestProjectTest {
     public void testUpdateProject() throws Exception {
 
         DtoRequestProject dtoRequestProject = new DtoRequestProject();
-        ProjectDTO projectDTORequest = dtoRequestProject.getProject(1);
+        ProjectDTO projectDTORequest = new ProjectDTO();
+        projectDTORequest.setProjectId(1);
+        ProjectDTO projectDTORequestReceived = dtoRequestProject.process(projectDTORequest);
 
-        projectDTORequest.setProcessType(DtoMetaData.ProcessType.UPDATE);
+        projectDTORequestReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
 
         String newDescription = UUID.randomUUID().toString();
 
-        projectDTORequest.setProjectDescription(newDescription);
+        projectDTORequestReceived.setProjectDescription(newDescription);
 
         String divisionPropertyNewValue = UUID.randomUUID().toString();
-        EntityPropertyDTO divisionProperty = projectDTORequest
+        EntityPropertyDTO divisionProperty = projectDTORequestReceived
                 .getProperties()
                 .stream()
                 .filter(p -> p.getPropertyName().equals("division"))
@@ -129,11 +148,13 @@ public class DtoRequestProjectTest {
         divisionProperty.setPropertyValue(divisionPropertyNewValue);
 
 
-        ProjectDTO projectDTOResponse = dtoRequestProject.process(projectDTORequest);
+        ProjectDTO projectDTOResponse = dtoRequestProject.process(projectDTORequestReceived);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(projectDTOResponse));
 
 
-        ProjectDTO dtoRequestProjectProjectReRetrieved = dtoRequestProject.getProject(1);
+        ProjectDTO projectDTOReRequest = new ProjectDTO();
+        projectDTOReRequest.setProjectId(1);
+        ProjectDTO dtoRequestProjectProjectReRetrieved = dtoRequestProject.process(projectDTOReRequest);
         Assert.assertTrue(dtoRequestProjectProjectReRetrieved.getProjectDescription().equals(newDescription));
 
         EntityPropertyDTO divisionPropertyReceived = dtoRequestProjectProjectReRetrieved

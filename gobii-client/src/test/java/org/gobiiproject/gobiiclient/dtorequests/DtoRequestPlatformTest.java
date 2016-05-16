@@ -1,17 +1,18 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -20,6 +21,17 @@ import java.util.stream.Collectors;
  * Created by Angel on 5/9/2016.
  */
 public class DtoRequestPlatformTest {
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.authenticate());
+    }
+
+    @AfterClass
+    public static void tearDownUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.deAuthenticate());
+    }
+
 
     @Test
     public void testGetPlatformDetails() throws Exception {
@@ -42,7 +54,7 @@ public class DtoRequestPlatformTest {
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("platform type");
 
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
         List<String> platformProperTerms = new ArrayList<> ( nameIdListDTO
                 .getNamesById()
                 .values());
@@ -82,7 +94,7 @@ public class DtoRequestPlatformTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("platform type");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
         List<String> platformProperTerms = new ArrayList<>( nameIdListDTO
                 .getNamesById()
                 .values());

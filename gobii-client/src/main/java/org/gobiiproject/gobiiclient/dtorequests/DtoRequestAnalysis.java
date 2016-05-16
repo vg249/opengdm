@@ -6,32 +6,21 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
-import org.gobiiproject.gobiimodel.types.SystemUserDetail;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
-import org.gobiiproject.gobiimodel.types.SystemUsers;
+import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
 public class DtoRequestAnalysis {
 
 
     public AnalysisDTO process(AnalysisDTO analysisDTO) throws Exception {
 
-        AnalysisDTO returnVal = null;
+        return new DtoRequestProcessor<AnalysisDTO>().process(analysisDTO,
+                AnalysisDTO.class,
+                ControllerType.LOADER,
+                ServiceRequestId.URL_ANALYSIS);
 
-        RestRequest<AnalysisDTO> restRequest = new RestRequest<>(AnalysisDTO.class);
-
-        SystemUsers systemUsers = new SystemUsers();
-        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
-
-        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_ANALYSIS, analysisDTO, token);
-
-        return returnVal;
-
-    } // getPing()
-
-
+    }
 }

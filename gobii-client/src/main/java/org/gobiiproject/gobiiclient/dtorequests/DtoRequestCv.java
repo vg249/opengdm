@@ -5,34 +5,20 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import com.google.gson.JsonObject;
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
-import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
-import org.gobiiproject.gobiimodel.types.SystemUserDetail;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
-import org.gobiiproject.gobiimodel.types.SystemUsers;
+import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
 public class DtoRequestCv {
 
 
     public CvDTO process(CvDTO cvDTO) throws Exception {
 
-
-    	CvDTO returnVal = null;
-
-        RestRequest<CvDTO> restRequest = new RestRequest<>(CvDTO.class);
-
-        SystemUsers systemUsers = new SystemUsers();
-        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
-
-        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_CV, cvDTO, token);
-
-        return returnVal;
-
-    } //
-
-
+        return new DtoRequestProcessor<CvDTO>().process(cvDTO,
+                CvDTO.class,
+                ControllerType.LOADER,
+                ServiceRequestId.URL_CV);
+    }
 }

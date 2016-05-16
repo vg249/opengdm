@@ -6,32 +6,21 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
-import org.gobiiproject.gobiimodel.types.SystemUserDetail;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
-import org.gobiiproject.gobiimodel.types.SystemUsers;
+import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
 public class DtoRequestMapset {
 
 
-    public MapsetDTO processMapset(MapsetDTO MapsetDTO) throws Exception {
+    public MapsetDTO process(MapsetDTO mapsetDTO) throws Exception {
 
-        MapsetDTO returnVal = null;
+        return new DtoRequestProcessor<MapsetDTO>().process(mapsetDTO,
+                MapsetDTO.class,
+                ControllerType.LOADER,
+                ServiceRequestId.URL_MAPSET);
 
-        RestRequest<MapsetDTO> restRequest = new RestRequest<>(MapsetDTO.class);
-
-        SystemUsers systemUsers = new SystemUsers();
-        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
-
-        returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_MAPSET, MapsetDTO, token);
-
-        return returnVal;
-
-    } // getPing()
-
-
-
+    }
 }

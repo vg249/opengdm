@@ -7,13 +7,7 @@ import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsCv;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdCv;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvDetailsByCvId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvGroups;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvTerms;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvTermsByGroup;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentDetailsByExperimentId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNamesByProjectId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectDetailsByProjectId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +104,31 @@ public class RsCvDaoImpl implements RsCvDao {
 
 	        return returnVal;
 	}
+
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ResultSet getAllCvItems() throws GobiiDaoException {
+        // TODO Auto-generated method stub
+        ResultSet returnVal = null;
+
+        try {
+            Map<String, Object> parameters = new HashMap<>();
+            SpGetCvItems spGetCvItems = new SpGetCvItems();
+
+            storedProcExec.doWithConnection(spGetCvItems);
+
+            returnVal = spGetCvItems.getResultSet();
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving CV groups", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+
+        return returnVal;
+    }
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)

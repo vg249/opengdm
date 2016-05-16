@@ -6,24 +6,31 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
-import org.gobiiproject.gobiiclient.dtorequests.DtoRequestDataSet;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
-import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.awt.event.ContainerAdapter;
 import java.util.Date;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class DtoRequestContactTest {
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.authenticate());
+    }
+
+    @AfterClass
+    public static void tearDownUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.deAuthenticate());
+    }
 
 
     @Test
@@ -32,7 +39,7 @@ public class DtoRequestContactTest {
         DtoRequestContact dtoRequestContact = new DtoRequestContact();
         ContactDTO contactDTORequest = new ContactDTO();
         contactDTORequest.setContactId(6);
-        ContactDTO contactDTOResponse = dtoRequestContact.processContact(contactDTORequest);
+        ContactDTO contactDTOResponse = dtoRequestContact.process(contactDTORequest);
 
         Assert.assertNotEquals(null, contactDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponse));
@@ -58,7 +65,7 @@ public class DtoRequestContactTest {
 
         contactDTORequest.getRoles().add(1);
         contactDTORequest.getRoles().add(2);
-        ContactDTO contactDTOResponse = dtoRequestContact.processContact(contactDTORequest);
+        ContactDTO contactDTOResponse = dtoRequestContact.process(contactDTORequest);
 
         Assert.assertNotEquals(null, contactDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponse));
@@ -75,13 +82,13 @@ public class DtoRequestContactTest {
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         ContactDTO newContactDto = TestDtoFactory
                 .makePopulatedContactDTO(DtoMetaData.ProcessType.CREATE, 1);
-        ContactDTO newContactDTOResponse = dtoRequestContact.processContact(newContactDto);
+        ContactDTO newContactDTOResponse = dtoRequestContact.process(newContactDto);
 
 
         // re-retrieve the contact we just created so we start with a fresh READ mode dto
         ContactDTO ContactDTORequest = new ContactDTO();
         ContactDTORequest.setContactId(newContactDTOResponse.getContactId());
-        ContactDTO contactDTOReceived = dtoRequestContact.processContact(ContactDTORequest);
+        ContactDTO contactDTOReceived = dtoRequestContact.process(ContactDTORequest);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOReceived));
 
 
@@ -90,12 +97,12 @@ public class DtoRequestContactTest {
         String newName = UUID.randomUUID().toString();
         contactDTOReceived.setLastName(newName);
 
-        ContactDTO ContactDTOResponse = dtoRequestContact.processContact(contactDTOReceived);
+        ContactDTO ContactDTOResponse = dtoRequestContact.process(contactDTOReceived);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(ContactDTOResponse));
 
 
         ContactDTO dtoRequestContactReRetrieved =
-                dtoRequestContact.processContact(ContactDTORequest);
+                dtoRequestContact.process(ContactDTORequest);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestContactReRetrieved));
 

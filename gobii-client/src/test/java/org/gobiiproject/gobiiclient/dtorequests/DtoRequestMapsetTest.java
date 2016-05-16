@@ -1,18 +1,19 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -22,12 +23,24 @@ import java.util.stream.Collectors;
  */
 public class DtoRequestMapsetTest {
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.authenticate());
+    }
+
+    @AfterClass
+    public static void tearDownUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.deAuthenticate());
+    }
+
+
+
     @Test
     public void testGetMapsetDetails() throws Exception {
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
         MapsetDTO mapsetDTORequest = new MapsetDTO();
         mapsetDTORequest.setMapsetId(2);
-        MapsetDTO mapsetDTOResponse = dtoRequestMapset.processMapset(mapsetDTORequest);
+        MapsetDTO mapsetDTOResponse = dtoRequestMapset.process(mapsetDTORequest);
 
         Assert.assertNotEquals(null, mapsetDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponse));
@@ -45,7 +58,7 @@ public class DtoRequestMapsetTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("map_type");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
         List<String> mapsetProperTerms = new ArrayList<> ( nameIdListDTO
                 .getNamesById()
                 .values());
@@ -56,7 +69,7 @@ public class DtoRequestMapsetTest {
         MapsetDTO mapsetDTORequest = TestDtoFactory
                 .makePopulatedMapsetDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
 
-        MapsetDTO mapsetDTOResponse = dtoRequestMapset.processMapset(mapsetDTORequest);
+        MapsetDTO mapsetDTOResponse = dtoRequestMapset.process(mapsetDTORequest);
 
         Assert.assertNotEquals(null, mapsetDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponse));
@@ -64,7 +77,7 @@ public class DtoRequestMapsetTest {
 
         MapsetDTO mapsetDTORequestForParams = new MapsetDTO();
         mapsetDTORequestForParams.setMapsetId(mapsetDTOResponse.getMapsetId());
-        MapsetDTO mapsetDTOResponseForParams = dtoRequestMapset.processMapset(mapsetDTORequestForParams);
+        MapsetDTO mapsetDTOResponseForParams = dtoRequestMapset.process(mapsetDTORequestForParams);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponseForParams));
 
@@ -88,7 +101,7 @@ public class DtoRequestMapsetTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("map_type");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
         List<String> mapsetProperTerms = new ArrayList<> ( nameIdListDTO
                 .getNamesById()
                 .values());
@@ -100,13 +113,13 @@ public class DtoRequestMapsetTest {
         // create a new mapset for our test
         MapsetDTO newMapsetDto = TestDtoFactory
                 .makePopulatedMapsetDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
-        MapsetDTO newMapsetDTOResponse = dtoRequestMapset.processMapset(newMapsetDto);
+        MapsetDTO newMapsetDTOResponse = dtoRequestMapset.process(newMapsetDto);
 
 
         // re-retrieve the mapset we just created so we start with a fresh READ mode dto
         MapsetDTO MapsetDTORequest = new MapsetDTO();
         MapsetDTORequest.setMapsetId(newMapsetDTOResponse.getMapsetId());
-        MapsetDTO mapsetDTOReceived = dtoRequestMapset.processMapset(MapsetDTORequest);
+        MapsetDTO mapsetDTOReceived = dtoRequestMapset.process(MapsetDTORequest);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOReceived));
 
 
@@ -120,12 +133,12 @@ public class DtoRequestMapsetTest {
         String updatedPropertyValue = UUID.randomUUID().toString();
         propertyToUpdate.setPropertyValue(updatedPropertyValue);
 
-        MapsetDTO MapsetDTOResponse = dtoRequestMapset.processMapset(mapsetDTOReceived);
+        MapsetDTO MapsetDTOResponse = dtoRequestMapset.process(mapsetDTOReceived);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(MapsetDTOResponse));
 
 
         MapsetDTO dtoRequestMapsetReRetrieved =
-                dtoRequestMapset.processMapset(MapsetDTORequest);
+                dtoRequestMapset.process(MapsetDTORequest);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestMapsetReRetrieved));
 

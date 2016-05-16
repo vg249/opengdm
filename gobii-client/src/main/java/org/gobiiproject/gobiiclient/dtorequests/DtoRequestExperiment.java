@@ -5,30 +5,20 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import com.google.gson.JsonObject;
-import org.gobiiproject.gobiiclient.core.RestRequest;
+import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
 import org.gobiiproject.gobiiclient.core.Urls;
-import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.types.SystemUserDetail;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
-import org.gobiiproject.gobiimodel.types.SystemUsers;
+import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
 public class DtoRequestExperiment {
 
     public ExperimentDTO process(ExperimentDTO experimentDTO) throws Exception {
 
-    	  ExperimentDTO returnVal = null;
-
-          RestRequest<ExperimentDTO> restRequest = new RestRequest<>(ExperimentDTO.class);
-
-          SystemUsers systemUsers = new SystemUsers();
-          SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-          String token = restRequest.getTokenForUser(userDetail.getUserName(), userDetail.getPassword());
-
-          returnVal = restRequest.getTypedHtppResponseForDto(Urls.URL_EXPERIMENT, experimentDTO, token);
-
-          return returnVal;
+        return new DtoRequestProcessor<ExperimentDTO>().process(experimentDTO,
+                ExperimentDTO.class,
+                ControllerType.LOADER,
+                ServiceRequestId.URL_EXPERIMENT);
 
     } // getPing()
 

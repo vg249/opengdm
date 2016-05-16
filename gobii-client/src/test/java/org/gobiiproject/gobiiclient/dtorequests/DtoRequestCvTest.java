@@ -5,17 +5,32 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
+import org.gobiiproject.gobiimodel.entity.CvItem;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.UUID;
 
 public class DtoRequestCvTest {
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.authenticate());
+    }
+
+    @AfterClass
+    public static void tearDownUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.deAuthenticate());
+    }
+
+
 
     @Test
     public void testGetCvDetailsByCvId() throws Exception {
@@ -23,6 +38,7 @@ public class DtoRequestCvTest {
 
         CvDTO cvDTORequest = new CvDTO();
         cvDTORequest.setCvId(2);
+        cvDTORequest.setIncludeDetailsList(true);
 
 
         CvDTO cvDTOResponse = dtoRequestCv.process(cvDTORequest);
@@ -32,6 +48,13 @@ public class DtoRequestCvTest {
 
         Assert.assertNotEquals(null, cvDTOResponse);
         Assert.assertTrue(cvDTOResponse.getCvId() >= 0);
+        Assert.assertTrue(cvDTOResponse.getGroupCvItems().size() > 0);
+        CvItem arbitraryItem = cvDTOResponse.getGroupCvItems().get("status").get(0);
+        Assert.assertNotNull(arbitraryItem.getCvId());
+        Assert.assertNotNull(arbitraryItem.getDefinition());
+        Assert.assertNotNull(arbitraryItem.getTerm());
+
+
 
     } // testGetMarkers()
 

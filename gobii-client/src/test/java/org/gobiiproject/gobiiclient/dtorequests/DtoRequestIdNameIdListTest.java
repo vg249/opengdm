@@ -7,13 +7,25 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 import java.util.Map.Entry;
 
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class DtoRequestIdNameIdListTest {
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.authenticate());
+    }
+
+    @AfterClass
+    public static void tearDownUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.deAuthenticate());
+    }
 
 
     @Test
@@ -21,13 +33,17 @@ public class DtoRequestIdNameIdListTest {
 
         // Assumes rice data with seed script is loaded
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getContactsById("Curator");
+        NameIdListDTO nameIdListDTOReuest = new NameIdListDTO();
+        nameIdListDTOReuest.setFilter("Curator");
+        nameIdListDTOReuest.setEntityName("contact");
+
+        NameIdListDTO nameIdListDTOResponse = dtoRequestNameIdList.process(nameIdListDTOReuest);
 
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDTO));
-        Assert.assertNotEquals(null, nameIdListDTO);
-        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
-        Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDTOResponse));
+        Assert.assertNotEquals(null, nameIdListDTOResponse);
+        Assert.assertEquals(true, nameIdListDTOResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDTOResponse.getNamesById().size() >= 0);
 
     } // testGetMarkers()
 
@@ -37,11 +53,15 @@ public class DtoRequestIdNameIdListTest {
 
         // Assumes rice data with seed script is loaded
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getProjectNamesById(2);
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("project");
+        nameIdListDTORequest.setFilter("2");
+        NameIdListDTO nameIdListDTOResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        Assert.assertNotEquals(null, nameIdListDTO);
-        Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
-        Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
+
+        Assert.assertNotEquals(null, nameIdListDTOResponse);
+        Assert.assertEquals(true, nameIdListDTOResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDTOResponse.getNamesById().size() >= 0);
 
     }
     
@@ -54,7 +74,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("experiment");
         nameIdListDTORequest.setFilter("1");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         Assert.assertNotEquals(null, nameIdListDTO);
         Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
@@ -68,7 +88,7 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("experimentnames");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         Assert.assertNotEquals(null, nameIdListDTO);
         Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
@@ -84,7 +104,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("map_type");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         Assert.assertNotEquals(null, nameIdListDTO);
         Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
@@ -99,7 +119,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("platform");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         
         Assert.assertNotEquals(null, nameIdListDtoResponse);
@@ -116,7 +136,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("projectnames");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         
         Assert.assertNotEquals(null, nameIdListDtoResponse);
@@ -132,7 +152,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("markergroup");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         
         Assert.assertNotEquals(null, nameIdListDtoResponse);
@@ -148,7 +168,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("reference");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         
         Assert.assertNotEquals(null, nameIdListDtoResponse);
@@ -164,7 +184,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("mapset");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         
         Assert.assertNotEquals(null, nameIdListDtoResponse);
@@ -179,7 +199,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvgroups");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         
         Assert.assertNotEquals(null, nameIdListDtoResponse);
@@ -194,7 +214,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvnames");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         
         Assert.assertNotEquals(null, nameIdListDtoResponse);
@@ -209,7 +229,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("role");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         
         Assert.assertNotEquals(null, nameIdListDtoResponse);
@@ -225,7 +245,7 @@ public class DtoRequestIdNameIdListTest {
         nameIdListDTORequest.setEntityName("mapNameByTypeId");
         nameIdListDTORequest.setFilter("19");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         
         Assert.assertNotEquals(null, nameIdListDtoResponse);
@@ -240,7 +260,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("analysis");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         
         Assert.assertNotEquals(null, nameIdListDtoResponse);
@@ -256,7 +276,7 @@ public class DtoRequestIdNameIdListTest {
         nameIdListDTORequest.setEntityName("analysisNameByTypeId");
         nameIdListDTORequest.setFilter("33");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         
         Assert.assertNotEquals(null, nameIdListDtoResponse);
@@ -270,7 +290,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("manifest");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
@@ -289,7 +309,7 @@ public class DtoRequestIdNameIdListTest {
         nameIdListDTORequest.setEntityName("dataset");
         nameIdListDTORequest.setFilter("2");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
@@ -304,7 +324,7 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("datasetnames");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.getNamesById(nameIdListDTORequest);
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());

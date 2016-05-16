@@ -1,10 +1,4 @@
-// ************************************************************************
-// (c) 2016 GOBii Project
-// Initial Version: Phil Glaser
-// Create Date:   2016-03-25
-// ************************************************************************
 package org.gobiiproject.gobiiclient.core;
-
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
@@ -16,57 +10,30 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-
-import org.gobiiproject.gobiimodel.ConfigFileReader;
 import org.gobiiproject.gobiimodel.ConfigSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 
+/**
+ * Created by Phil on 5/13/2016.
+ */
+public class HttpCore {
 
-public class RestRequest<T> {
-
-
-
-    private final Class<T> paramType;
     private String host = null;
     private Integer port = null;
 
-    @SuppressWarnings("unchecked")
-    public RestRequest(Class<T> paramType) {
+    public HttpCore(String host, Integer port) {
 
-        this.paramType = paramType;
-
-        try {
-            ConfigSettings configSettings = new ConfigSettings();
-
-            String host = configSettings.getCurrentCropConfig().getServiceDomain();
-            if( null != host ) {
-                this.host = host;
-            } else {
-                this.host = "localhost";
-                LOGGER.info("servicedomain property is not specified in configuration; setting domain to localhost");
-            }
-
-            Integer port = configSettings.getCurrentCropConfig().getServicePort();
-            if( null != port ) {
-                this.port = port;
-            } else {
-                this.port = 8080;
-                LOGGER.info("serviceport property is not specified in configuration; setting port to 8080");
-            }
+        this.host = host;
+        this.port = port;
+    }
 
 
-        } catch( Exception e) {
-            LOGGER.error(e.getMessage());
-        }
-    } // ctor
-
-    Logger LOGGER = LoggerFactory.getLogger(RestRequest.class);
+    Logger LOGGER = LoggerFactory.getLogger(HttpCore.class);
 
 
     private static final String HEADER_TOKEN = "X-Auth-Token";
@@ -121,7 +88,7 @@ public class RestRequest<T> {
 
     private void logInfo(String logMessage) {
         LOGGER.info(logMessage);
-    } // logInfo() 
+    } // logInfo()
 
     private void logHeaders(Header[] headers) {
 
@@ -150,7 +117,6 @@ public class RestRequest<T> {
 
     private void logRequestHeaders(HttpUriRequest httpUriRequest, HttpResponse httpResponse, String testName) throws Exception {
 
-        
 
         logInfo("============================================ BEGIN TEST " + testName + "==================================");
         logInfo("");
@@ -205,16 +171,16 @@ public class RestRequest<T> {
 
     }//logRequestHeaders()
 
-    private HttpResponse authenticateWithUser(String userName, String password) throws Exception {
+    private HttpResponse authenticateWithUser(String url, String userName, String password) throws Exception {
 
         HttpResponse returnVal = null;
 
-        URI uri = makeUri(Urls.URL_AUTH);
+        URI uri = makeUri(url);
         HttpPost postRequest = new HttpPost(uri);
         returnVal = submitUriRequest(postRequest, userName, password, null);
 
-        if( HTTP_STATUS_CODE_OK !=  returnVal.getStatusLine().getStatusCode()) {
-            throw new Exception( "Request did not succeed: " + returnVal.getStatusLine().getStatusCode()  );
+        if (HTTP_STATUS_CODE_OK != returnVal.getStatusLine().getStatusCode()) {
+            throw new Exception("Request did not succeed: " + returnVal.getStatusLine().getStatusCode());
         }
 
 
@@ -224,11 +190,11 @@ public class RestRequest<T> {
 
     }//authenticateWithUser()
 
-    public String getTokenForUser(String userName, String password) throws Exception {
+    public String getTokenForUser(String url, String userName, String password) throws Exception {
 
         String returnVal = null;
 
-        HttpResponse response = authenticateWithUser(userName, password);
+        HttpResponse response = authenticateWithUser(url, userName, password);
         Header tokenHeader = getHeader(response.getAllHeaders(), HEADER_TOKEN);
         returnVal = tokenHeader.getValue();
 
@@ -239,43 +205,6 @@ public class RestRequest<T> {
         return returnVal;
 
     } // getTokenForUser()
-
-
-
-    public T getTypedHtppResponseForDto(String url,
-                                        T dtoInstance,
-                                        String token) throws Exception {
-
-        T returnVal = null;
-
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String dtoRequestJson = objectMapper.writeValueAsString(dtoInstance);
-        JsonObject responseJson = getResponseBody(url, dtoRequestJson, token);
-
-        returnVal = objectMapper.readValue(responseJson.toString(), paramType);
-
-        return returnVal;
-
-
-    } // getTypedHtppResponseForDto()
-
-
-
-    public T getTypedHtppResponse(String url,
-                                  JsonObject requestJson,
-                                  String token) throws Exception {
-
-        T returnVal = null;
-
-        JsonObject responseJson = getResponseBody(url, requestJson.toString(), token);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        returnVal = objectMapper.readValue(responseJson.toString(), paramType);
-
-        return returnVal;
-
-    } // getTypedHtppResponse()
 
 
     public JsonObject getResponseBody(String url,
@@ -295,8 +224,8 @@ public class RestRequest<T> {
 
         httpResponse = submitUriRequest(postRequest, "", "", token);
 
-        if( HTTP_STATUS_CODE_OK !=  httpResponse.getStatusLine().getStatusCode()) {
-            throw new Exception( "Request did not succeed: " + httpResponse.getStatusLine().getStatusCode()  );
+        if (HTTP_STATUS_CODE_OK != httpResponse.getStatusLine().getStatusCode()) {
+            throw new Exception("Request did not succeed: " + httpResponse.getStatusLine().getStatusCode());
         }
 
 
@@ -318,5 +247,4 @@ public class RestRequest<T> {
 
     }//accessResource_test
 
-
-}// ArgumentDAOTest
+}
