@@ -48,6 +48,7 @@ public class DtoRequestCvTest {
 
         Assert.assertNotEquals(null, cvDTOResponse);
         Assert.assertTrue(cvDTOResponse.getCvId() >= 0);
+        Assert.assertTrue(cvDTOResponse.getGroupCvItems().size() > 0);
 
     } // testGetMarkers()
 
