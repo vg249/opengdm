@@ -6,10 +6,10 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
+import org.gobiiproject.gobiimodel.entity.CvItem;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
@@ -49,6 +49,12 @@ public class DtoRequestCvTest {
         Assert.assertNotEquals(null, cvDTOResponse);
         Assert.assertTrue(cvDTOResponse.getCvId() >= 0);
         Assert.assertTrue(cvDTOResponse.getGroupCvItems().size() > 0);
+        CvItem arbitraryItem = cvDTOResponse.getGroupCvItems().get("status").get(0);
+        Assert.assertNotNull(arbitraryItem.getCvId());
+        Assert.assertNotNull(arbitraryItem.getDefinition());
+        Assert.assertNotNull(arbitraryItem.getTerm());
+
+
 
     } // testGetMarkers()
 

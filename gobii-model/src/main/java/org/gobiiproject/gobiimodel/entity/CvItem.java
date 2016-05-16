@@ -5,18 +5,18 @@ package org.gobiiproject.gobiimodel.entity;
  */
 public class CvItem {
 
-    private Integer cv_id;
+    private Integer cvId;
     private String term;
     private String definition;
     private Integer rank;
 
 
-    public Integer getCv_id() {
-        return cv_id;
+    public Integer getCvId() {
+        return cvId;
     }
 
-    public void setCv_id(Integer cv_id) {
-        this.cv_id = cv_id;
+    public void setCvId(Integer cvId) {
+        this.cvId = cvId;
     }
 
     public String getTerm() {
