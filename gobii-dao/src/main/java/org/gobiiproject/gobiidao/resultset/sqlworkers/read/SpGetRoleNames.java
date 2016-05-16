@@ -28,7 +28,7 @@ public class SpGetRoleNames implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select role_id, role_name from role";
+        String sql = "select role_id, role_name from role order by lower(role_name)";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
 
