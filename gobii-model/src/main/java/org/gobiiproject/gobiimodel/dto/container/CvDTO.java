@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.dto.container;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.entity.CvItem;
 import org.gobiiproject.gobiimodel.entity.TableColDisplay;
 import org.gobiiproject.gobiimodel.entity.TableCv;
 
@@ -21,11 +22,21 @@ public class CvDTO extends DtoMetaData {
 		super(processType);
 	}
 
+	boolean includeDetailsList = false;
+
 	private Integer cv_id;
 	private String group;
 	private String term;
 	private String definition;
 	private Integer rank;
+
+	public boolean isIncludeDetailsList() {
+		return includeDetailsList;
+	}
+
+	public void setIncludeDetailsList(boolean includeDetailsList) {
+		this.includeDetailsList = includeDetailsList;
+	}
 
 	@GobiiEntityParam(paramName = "cvId")
 	public Integer getCvId() {
@@ -77,4 +88,13 @@ public class CvDTO extends DtoMetaData {
 		this.rank = rank;
 	}
 
+	Map<String,List<CvItem>> groupCvItems = new HashMap<>();
+
+	public Map<String, List<CvItem>> getGroupCvItems() {
+		return groupCvItems;
+	}
+
+	public void setGroupCvItems(Map<String, List<CvItem>> groupCvItems) {
+		this.groupCvItems = groupCvItems;
+	}
 }

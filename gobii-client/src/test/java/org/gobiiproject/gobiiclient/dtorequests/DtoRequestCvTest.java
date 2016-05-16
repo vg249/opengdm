@@ -38,6 +38,7 @@ public class DtoRequestCvTest {
 
         CvDTO cvDTORequest = new CvDTO();
         cvDTORequest.setCvId(2);
+        cvDTORequest.setIncludeDetailsList(true);
 
 
         CvDTO cvDTOResponse = dtoRequestCv.process(cvDTORequest);
