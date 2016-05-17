@@ -1,0 +1,52 @@
+<html>
+<head>
+    <!--<base href="/">-->
+    <title>GOBii Extractor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="js/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/extractor-ui.css">
+
+
+    <!-- 1. Load libraries -->
+    <script src="js/node_modules/angular2/bundles/angular2-polyfills.js"></script>
+    <script src="js/node_modules/es6-shim/es6-shim.min.js"></script>
+    <script src="js/node_modules/systemjs/dist/system-polyfills.js"></script>
+    <script src="js/node_modules/angular2/es6/dev/src/testing/shims_for_IE.js"></script>
+    <script src="js/node_modules/systemjs/dist/system.src.js"></script>
+    <script src="js/node_modules/rxjs/bundles/Rx.js"></script>
+    <script src="js/node_modules/angular2/bundles/angular2.dev.js"></script>
+    <script src="js/node_modules/angular2/bundles/router.dev.js"></script>
+    <script src="js/node_modules/angular2/bundles/http.dev.js"></script>
+
+    <!-- 2. Load Modules -->
+    <script>
+        System.config({
+            packages: {
+                'js/gobii_modules/root': {
+                    format: 'register',
+                    defaultExtension: 'js'
+                },
+                'js/gobii_modules/views': {
+                    format: 'register',
+                    defaultExtension: 'js'
+                },
+                'js/gobii_modules/services/app': {
+                    format: 'register',
+                    defaultExtension: 'js'
+                },
+                'js/gobii_modules/model': {
+                    format: 'register',
+                    defaultExtension: 'js'
+                },
+            }
+        });
+        System.import('js/gobii_modules/root/main').then(null, console.error.bind(console));
+    </script>
+
+
+</head>
+<!-- 3. Display the application -->
+<body>
+<extractor-root>Loading...</extractor-root>
+</body>
+</html>

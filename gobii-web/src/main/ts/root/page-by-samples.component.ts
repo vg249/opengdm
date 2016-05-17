@@ -6,7 +6,7 @@ import { Component, OnInit } from 'angular2/core';
 
 @Component({
   selector: 'search-criteria-samples',
-  templateUrl: '/root/page-by-samples.component.html',
+  templateUrl: 'js/gobii_modules/root/page-by-samples.component.html',
   //directives: [FileSelect]
 //  directives: [FILE_UPLOAD_DIRECTIVES,FileUploader]
 })

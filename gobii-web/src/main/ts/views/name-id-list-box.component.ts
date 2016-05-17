@@ -7,7 +7,7 @@ import {PrincipleInvestigatorService} from '../services/app/principle-investigat
 
 @Component({
   selector: 'name-id-list-box',
-  templateUrl: '/views/name-id-list-box.component.html',
+  templateUrl: 'js/gobii_modules/views/name-id-list-box.component.html',
   //directives: [RADIO_GROUP_DIRECTIVES]
 })
 

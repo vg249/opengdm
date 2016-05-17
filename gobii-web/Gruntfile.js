@@ -21,7 +21,9 @@ module.exports = function (grunt) {
             "target": "target",
 
             // location to place (compiled) javascript files
-            "target_js": "target/js",
+//            "target_js": "src/main/webapp/js",
+//            "target_js": "target//js",
+            "target_js": "target/generated-sources/js/gobii_modules",
             // location to place (compiles) javascript test files
             "target_test_js": "target/js-test",
             // location to place documentation, etc.

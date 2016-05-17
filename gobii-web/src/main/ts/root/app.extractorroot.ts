@@ -17,7 +17,7 @@ import {NameIdListService} from '../services/app/name-id-list.service';
 @Component({
 	selector: 'extractor-root',
 	styleUrls: ['/extractor-ui.css'],
-	templateUrl: 'root/app.extractorroot.html',
+	templateUrl: 'js/gobii_modules/root/app.extractorroot.html',
 	directives: [ExportFormatComponent, 
 	SearchCriteriaBySamplesComponent,
 	PageByProjectComponent],

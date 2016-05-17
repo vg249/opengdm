@@ -33,7 +33,6 @@
         <servlet.version>2.5</servlet.version>
 
 
-
         <!-- Test -->
 
         <httpclient.version>4.4</httpclient.version>
@@ -97,7 +96,7 @@
             <version>${spring-framework.version}</version>
         </dependency>
 
-           <!--Spring ORM support-->
+        <!--Spring ORM support-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
@@ -163,21 +162,21 @@
 
         <!-- Other Web dependencies -->
         <!--<dependency>-->
-            <!--<groupId>javax.servlet</groupId>-->
-            <!--<artifactId>jstl</artifactId>-->
-            <!--<version>${jstl.version}</version>-->
+        <!--<groupId>javax.servlet</groupId>-->
+        <!--<artifactId>jstl</artifactId>-->
+        <!--<version>${jstl.version}</version>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>javax.servlet</groupId>-->
-            <!--<artifactId>servlet-api</artifactId>-->
-            <!--<version>${servlet.version}</version>-->
-            <!--<scope>provided</scope>-->
+        <!--<groupId>javax.servlet</groupId>-->
+        <!--<artifactId>servlet-api</artifactId>-->
+        <!--<version>${servlet.version}</version>-->
+        <!--<scope>provided</scope>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>javax.servlet.jsp</groupId>-->
-            <!--<artifactId>jsp-api</artifactId>-->
-            <!--<version>${jsp.version}</version>-->
-            <!--<scope>provided</scope>-->
+        <!--<groupId>javax.servlet.jsp</groupId>-->
+        <!--<artifactId>jsp-api</artifactId>-->
+        <!--<version>${jsp.version}</version>-->
+        <!--<scope>provided</scope>-->
         <!--</dependency>-->
 
         <!-- Spring and Transactions -->
@@ -200,7 +199,7 @@
             <version>${logback.version}</version>
         </dependency>
 
-         <dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
@@ -219,7 +218,7 @@
             <version>${logback.version}</version>
         </dependency>
 
-         <!--Hibernate-->
+        <!--Hibernate-->
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.1-api</artifactId>
@@ -243,19 +242,19 @@
 
 
         <!--<dependency>-->
-            <!--<groupId>org.hibernate</groupId>-->
-            <!--<artifactId>hibernate-core</artifactId>-->
-            <!--<version>${hibernate.version}</version>-->
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.jboss.logging</groupId>-->
-                    <!--<artifactId>jboss-logging</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.jboss.logging</groupId>-->
-                    <!--<artifactId>jboss-logging-annotations</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
+        <!--<groupId>org.hibernate</groupId>-->
+        <!--<artifactId>hibernate-core</artifactId>-->
+        <!--<version>${hibernate.version}</version>-->
+        <!--<exclusions>-->
+        <!--<exclusion>-->
+        <!--<groupId>org.jboss.logging</groupId>-->
+        <!--<artifactId>jboss-logging</artifactId>-->
+        <!--</exclusion>-->
+        <!--<exclusion>-->
+        <!--<groupId>org.jboss.logging</groupId>-->
+        <!--<artifactId>jboss-logging-annotations</artifactId>-->
+        <!--</exclusion>-->
+        <!--</exclusions>-->
         <!--</dependency>-->
 
         <!-- Test Artifacts -->
@@ -357,10 +356,10 @@
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.jszip.redist</groupId>-->
-            <!--<artifactId>require</artifactId>-->
-            <!--<version>2.1.6</version>-->
-            <!--<type>jszip</type>-->
+        <!--<groupId>org.jszip.redist</groupId>-->
+        <!--<artifactId>require</artifactId>-->
+        <!--<version>2.1.6</version>-->
+        <!--<type>jszip</type>-->
         <!--</dependency>-->
 
 
@@ -393,40 +392,40 @@
 
             <!-- Type Script Library -->
             <!--<plugin>-->
-                <!--<groupId>org.jszip.maven</groupId>-->
-                <!--<artifactId>jszip-maven-plugin</artifactId>-->
-                <!--<extensions>true</extensions>-->
-                <!--<configuration>-->
-                    <!--<mappings>-->
-                        <!--&lt;!&ndash; copy all JSZIP dependencies to directory "modules" &ndash;&gt;-->
-                        <!--<mapping>-->
-                            <!--<select>*:*</select>-->
-                            <!--<path>/modules</path>-->
-                        <!--</mapping>-->
-                    <!--</mappings>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                    <!--
-                       Make all web resources (packaged as a JSZIP archive) available to the webapp
-                    -->
-                    <!--
-                        Make all web resources (packaged as a JSZIP archive) available to the webapp
-                     -->
-                    <!-- 	THIS GOAL CAUSES AN ERROR IN ECLIPSE
-                    <execution>
-                        <id>resolve-dependencies</id>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <unpackExcludes>
-                                <unpackExclude>META-INF/**</unpackExclude>
-                                <unpackExclude>package.json</unpackExclude>
-                            </unpackExcludes>
-                        </configuration>
-                    </execution>
-                     -->
-                <!--</executions>-->
+            <!--<groupId>org.jszip.maven</groupId>-->
+            <!--<artifactId>jszip-maven-plugin</artifactId>-->
+            <!--<extensions>true</extensions>-->
+            <!--<configuration>-->
+            <!--<mappings>-->
+            <!--&lt;!&ndash; copy all JSZIP dependencies to directory "modules" &ndash;&gt;-->
+            <!--<mapping>-->
+            <!--<select>*:*</select>-->
+            <!--<path>/modules</path>-->
+            <!--</mapping>-->
+            <!--</mappings>-->
+            <!--</configuration>-->
+            <!--<executions>-->
+            <!--
+               Make all web resources (packaged as a JSZIP archive) available to the webapp
+            -->
+            <!--
+                Make all web resources (packaged as a JSZIP archive) available to the webapp
+             -->
+            <!-- 	THIS GOAL CAUSES AN ERROR IN ECLIPSE
+            <execution>
+                <id>resolve-dependencies</id>
+                <goals>
+                    <goal>unpack</goal>
+                </goals>
+                <configuration>
+                    <unpackExcludes>
+                        <unpackExclude>META-INF/**</unpackExclude>
+                        <unpackExclude>package.json</unpackExclude>
+                    </unpackExcludes>
+                </configuration>
+            </execution>
+             -->
+            <!--</executions>-->
             <!--</plugin>-->
 
             <!--
@@ -435,73 +434,73 @@
                 it doesn't support compressing into a single file
             -->
             <!--<plugin>-->
-                <!--<groupId>com.github.mcheely</groupId>-->
-                <!--<artifactId>requirejs-maven-plugin</artifactId>-->
-                <!--<version>1.0.4</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>optimize</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-                <!--<configuration>-->
-                    <!--<skip>true</skip>&lt;!&ndash; NOT ENABLED AS A DEFAULT &ndash;&gt;-->
-                    <!--<configFile>${basedir}/src/build/js/optimize.js</configFile>-->
-                    <!--<filterConfig>true</filterConfig>-->
-                <!--</configuration>-->
+            <!--<groupId>com.github.mcheely</groupId>-->
+            <!--<artifactId>requirejs-maven-plugin</artifactId>-->
+            <!--<version>1.0.4</version>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<phase>package</phase>-->
+            <!--<goals>-->
+            <!--<goal>optimize</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--<configuration>-->
+            <!--<skip>true</skip>&lt;!&ndash; NOT ENABLED AS A DEFAULT &ndash;&gt;-->
+            <!--<configFile>${basedir}/src/build/js/optimize.js</configFile>-->
+            <!--<filterConfig>true</filterConfig>-->
+            <!--</configuration>-->
             <!--</plugin>-->
 
 
             <!-- run the module in Jetty servlet container -->
             <!--<plugin>-->
-                <!--<groupId>org.mortbay.jetty</groupId>-->
-                <!--<artifactId>jetty-maven-plugin</artifactId>-->
-                <!--<version>8.1.12.v20130726</version>-->
-                <!--<configuration>-->
-                    <!--<webAppSourceDirectory>${project.build.directory}/${project.build.finalName}</webAppSourceDirectory>-->
-                <!--</configuration>-->
+            <!--<groupId>org.mortbay.jetty</groupId>-->
+            <!--<artifactId>jetty-maven-plugin</artifactId>-->
+            <!--<version>8.1.12.v20130726</version>-->
+            <!--<configuration>-->
+            <!--<webAppSourceDirectory>${project.build.directory}/${project.build.finalName}</webAppSourceDirectory>-->
+            <!--</configuration>-->
             <!--</plugin>-->
 
 
             <!--<plugin>-->
-                <!--<groupId>com.google.code.maven-replacer-plugin</groupId>-->
-                <!--<artifactId>replacer</artifactId>-->
-                <!--<version>${replacer-plugin-version}</version>-->
-                <!--<executions>-->
-                    <!--&lt;!&ndash;-->
-                       <!--Synchronizes "package.json"  with POM's name, version and description.-->
-                       <!--NOTE: This will potentially modify the source file on every build!-->
-                    <!--&ndash;&gt;-->
-                    <!--<execution>-->
-                        <!--<phase>post-clean</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>replace</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<file>${project.basedir}/package.json</file>-->
-                            <!--<replacements>-->
-                                <!--<replacement>-->
-                                    <!--<token>"name"(\s*):(\s*)"(.*)"</token>-->
-                                    <!--<value>"name": "${project.name}"</value>-->
-                                <!--</replacement>-->
-                                <!--<replacement>-->
-                                    <!--<token>"version": "(.*)"</token>-->
-                                    <!--<value>"version": "${project.version}"</value>-->
-                                <!--</replacement>-->
-                                <!--<replacement>-->
-                                    <!--<token>"description": "(.*)"</token>-->
-                                    <!--<value>"description": "${project.description}"</value>-->
-                                <!--</replacement>-->
-                                <!--<replacement>-->
-                                    <!--<token>"homepage": "(.*)"</token>-->
-                                    <!--<value>"homepage": "${project.url}"</value>-->
-                                <!--</replacement>-->
-                            <!--</replacements>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
+            <!--<groupId>com.google.code.maven-replacer-plugin</groupId>-->
+            <!--<artifactId>replacer</artifactId>-->
+            <!--<version>${replacer-plugin-version}</version>-->
+            <!--<executions>-->
+            <!--&lt;!&ndash;-->
+            <!--Synchronizes "package.json"  with POM's name, version and description.-->
+            <!--NOTE: This will potentially modify the source file on every build!-->
+            <!--&ndash;&gt;-->
+            <!--<execution>-->
+            <!--<phase>post-clean</phase>-->
+            <!--<goals>-->
+            <!--<goal>replace</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+            <!--<file>${project.basedir}/package.json</file>-->
+            <!--<replacements>-->
+            <!--<replacement>-->
+            <!--<token>"name"(\s*):(\s*)"(.*)"</token>-->
+            <!--<value>"name": "${project.name}"</value>-->
+            <!--</replacement>-->
+            <!--<replacement>-->
+            <!--<token>"version": "(.*)"</token>-->
+            <!--<value>"version": "${project.version}"</value>-->
+            <!--</replacement>-->
+            <!--<replacement>-->
+            <!--<token>"description": "(.*)"</token>-->
+            <!--<value>"description": "${project.description}"</value>-->
+            <!--</replacement>-->
+            <!--<replacement>-->
+            <!--<token>"homepage": "(.*)"</token>-->
+            <!--<value>"homepage": "${project.url}"</value>-->
+            <!--</replacement>-->
+            <!--</replacements>-->
+            <!--</configuration>-->
+            <!--</execution>-->
+            <!--</executions>-->
             <!--</plugin>-->
 
 
@@ -574,6 +573,120 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+
+                    <execution>
+                        <id>prepare-package-modules-html</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-sources/js/gobii_modules/
+                            </outputDirectory>
+                            <resources>
+                                <resource>
+                                    <!-- the grunt  -->
+                                    <directory>${project.basedir}/src/main/ts/</directory>
+                                    <includes>
+                                        <include>**/*.html</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>prepare-package-javascript</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/js/gobii_modules
+                            </outputDirectory>
+                            <resources>
+                                <resource>
+                                    <!-- the directory that is populated by Grunt -->
+                                    <directory>${project.build.directory}/generated-sources/js/gobii_modules/
+                                    </directory>
+                                    <includes>
+                                        <include>**/*.js</include>
+                                        <include>**/*.map</include>
+                                        <include>**/*.ts</include>
+                                        <include>**/*.html</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+
+                    <!--<execution>-->
+                    <!--<id>prepare-package-typescript</id>-->
+                    <!--<phase>prepare-package</phase>-->
+                    <!--<goals>-->
+                    <!--<goal>copy-resources</goal>-->
+                    <!--</goals>-->
+                    <!--<configuration>-->
+                    <!--&lt;!&ndash; Optional: Put all generated typescript definition files (*.d.ts) into the JAR as well &ndash;&gt;-->
+                    <!--<outputDirectory>-->
+                    <!--${project.build.outputDirectory}/META-INF/typescript/${project.artifactId}-->
+                    <!--</outputDirectory>-->
+                    <!--<resources>-->
+                    <!--<resource>-->
+                    <!--<directory>${project.build.directory}/js</directory>-->
+                    <!--<includes>-->
+                    <!--<include>**/*.d.ts</include>-->
+                    <!--</includes>-->
+                    <!--<filtering>false</filtering>-->
+                    <!--</resource>-->
+                    <!--</resources>-->
+                    <!--</configuration>-->
+                    <!--</execution>-->
+
+                    <execution>
+                        <id>prepare-package-nodemodules</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Copy all generated javascript files into the final directory structure -->
+                            <!--<outputDirectory>${project.build.outputDirectory}/${project.artifactId}</outputDirectory>-->
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/js/node_modules
+                            </outputDirectory>
+                            <resources>
+                                <resource>
+                                    <!-- Take the node-module code from where npm puts it -->
+                                    <directory>${project.basedir}/node_modules</directory>
+                                    <includes>
+                                        <include>es6-shim/es6-shim.min.js</include>
+                                        <include>systemjs/dist/system-polyfills.js</include>
+                                        <include>angular2/es6/dev/src/testing/shims_for_IE.js</include>
+                                        <include>angular2/bundles/angular2-polyfills.js</include>
+                                        <include>systemjs/dist/system.src.js</include>
+                                        <include>rxjs/bundles/Rx.js</include>
+                                        <include>angular2/bundles/angular2.dev.js</include>
+                                        <include>angular2/bundles/router.dev.js</include>
+                                        <include>angular2/bundles/http.dev.js</include>
+                                        <include>bootstrap/dist/css/bootstrap.min.css</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
         </plugins>
     </build>
 </project>

@@ -5,7 +5,7 @@ import {NameIdListBoxComponent} from '../views/name-id-list-box.component';
 
 @Component({
   selector: 'page-by-project',
-  templateUrl: '../root/page-by-project.component.html',
+  templateUrl: 'js/gobii_modules/root/page-by-project.component.html',
   directives: [NameIdListBoxComponent]
 
 })

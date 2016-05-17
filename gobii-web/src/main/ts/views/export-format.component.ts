@@ -5,7 +5,7 @@ import { Component, OnInit } from 'angular2/core';
 @Component({
   selector: 'export-format',
 //  inputs: ['hero'],
-  templateUrl: '/views/export-format.component.html',
+  templateUrl: 'js/gobii_modules/views/export-format.component.html',
   //directives: [RADIO_GROUP_DIRECTIVES]
 //  directives: [Alert]
 })
