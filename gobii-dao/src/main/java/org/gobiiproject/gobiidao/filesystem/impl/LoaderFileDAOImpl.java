@@ -5,7 +5,6 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.LoaderFileDAO;
 import org.gobiiproject.gobiimodel.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.Column;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.File;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 
@@ -120,11 +119,11 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         gobiiLoaderInstructionOne.getColumns().add(columnOne);
         gobiiLoaderInstructionOne.getColumns().add(columnTwo);
 
-        // File Config
-        gobiiLoaderInstructionOne.getFile().setDelimiter(",");
-        gobiiLoaderInstructionOne.getFile().setSource("c:\\your-dir");
-        gobiiLoaderInstructionOne.getFile().setDestination("c:\\mydir");
-        gobiiLoaderInstructionOne.getFile().setGobiiFileType(GobiiFileType.VCF);
+        // GobiiFile Config
+        gobiiLoaderInstructionOne.getGobiiFile().setDelimiter(",");
+        gobiiLoaderInstructionOne.getGobiiFile().setSource("c:\\your-dir");
+        gobiiLoaderInstructionOne.getGobiiFile().setDestination("c:\\mydir");
+        gobiiLoaderInstructionOne.getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
 
         // VCF Parameters
         gobiiLoaderInstructionOne.getVcfParameters().setMaf(1.1f);
@@ -165,11 +164,11 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         gobiiLoaderInstructionTwo.getColumns().add(columnTwo);
         gobiiLoaderInstructionTwo.getColumns().add(columnTwo);
 
-        // File Config
-        gobiiLoaderInstructionTwo.getFile().setDelimiter(",");
-        gobiiLoaderInstructionTwo.getFile().setSource("c:\\your-bar-dir");
-        gobiiLoaderInstructionTwo.getFile().setDestination("c:\\mybardir");
-        gobiiLoaderInstructionTwo.getFile().setGobiiFileType(GobiiFileType.VCF);
+        // GobiiFile Config
+        gobiiLoaderInstructionTwo.getGobiiFile().setDelimiter(",");
+        gobiiLoaderInstructionTwo.getGobiiFile().setSource("c:\\your-bar-dir");
+        gobiiLoaderInstructionTwo.getGobiiFile().setDestination("c:\\mybardir");
+        gobiiLoaderInstructionTwo.getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
 
         // VCF Parameters
         gobiiLoaderInstructionTwo.getVcfParameters().setMaf(1.1f);

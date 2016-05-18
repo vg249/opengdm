@@ -8,19 +8,19 @@ import java.util.List;
  */
 public class GobiiLoaderInstruction {
 
-    private File file = new File();
+    private GobiiFile gobiiFile = new GobiiFile();
     private String table = null;
     private List<Column> columns = new ArrayList<>();
     private VcfParameters vcfParameters = new VcfParameters();
     ;
 
-    public File getFile() {
-        return file;
+    public GobiiFile getGobiiFile() {
+        return gobiiFile;
     }
 
-    public GobiiLoaderInstruction setFile(File file) {
+    public GobiiLoaderInstruction setGobiiFile(GobiiFile gobiiFile) {
 
-        this.file = file;
+        this.gobiiFile = gobiiFile;
         return this;
     }
 

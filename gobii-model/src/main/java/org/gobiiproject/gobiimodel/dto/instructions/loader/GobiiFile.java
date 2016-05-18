@@ -5,7 +5,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFileType;
 /**
  * Created by Phil on 4/12/2016.
  */
-public class File {
+public class GobiiFile {
 
 
 
@@ -18,7 +18,7 @@ public class File {
         return source;
     }
 
-    public File setSource(String source) {
+    public GobiiFile setSource(String source) {
         this.source = source;
         return this;
     }
@@ -27,7 +27,7 @@ public class File {
         return destination;
     }
 
-    public File setDestination(String destination) {
+    public GobiiFile setDestination(String destination) {
         this.destination = destination;
         return this;
     }
@@ -36,7 +36,7 @@ public class File {
         return delimiter;
     }
 
-    public File setDelimiter(String delimiter) {
+    public GobiiFile setDelimiter(String delimiter) {
         this.delimiter = delimiter;
         return this;
     }
@@ -45,7 +45,7 @@ public class File {
         return gobiiFileType;
     }
 
-    public File setGobiiFileType(GobiiFileType gobiiFileType) {
+    public GobiiFile setGobiiFileType(GobiiFileType gobiiFileType) {
         this.gobiiFileType = gobiiFileType;
         return this;
     }
