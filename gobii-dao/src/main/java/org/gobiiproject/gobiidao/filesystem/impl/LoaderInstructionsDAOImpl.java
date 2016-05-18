@@ -2,7 +2,7 @@ package org.gobiiproject.gobiidao.filesystem.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.filesystem.LoaderFileDAO;
+import org.gobiiproject.gobiidao.filesystem.LoaderInstructionsDAO;
 import org.gobiiproject.gobiimodel.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/12/2016.
  */
-public class LoaderFileDAOImpl implements LoaderFileDAO {
+public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
 
     private final String LOADER_FILE_EXT = ".json";
 
@@ -186,4 +186,4 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
 
     } // getSampleInstructions()
 
-} // LoaderFileDAOImpl
+} // LoaderInstructionsDAOImpl

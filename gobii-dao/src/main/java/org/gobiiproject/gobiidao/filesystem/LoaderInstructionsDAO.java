@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/12/2016.
  */
-public interface LoaderFileDAO {
+public interface LoaderInstructionsDAO {
 
     List<GobiiLoaderInstruction> getSampleInstructions();
     String writeInstructions(String fileUniqueId, List<GobiiLoaderInstruction> instructions)  throws GobiiDaoException;

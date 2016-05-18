@@ -72,7 +72,7 @@
 
 	<!-- **** Loader File Beans *************************************** -->
 	<bean id="loaderFileDAO"
-		class="org.gobiiproject.gobiidao.filesystem.impl.LoaderFileDAOImpl" />
+		class="org.gobiiproject.gobiidao.filesystem.impl.LoaderInstructionsDAOImpl" />
 	<bean id="dtoMapLoaderInstructions"
 		class="org.gobiiproject.gobiidtomapping.impl.DtoMapLoaderInstructionsImpl" />
 	<bean id="loaderInstructionFilesService"

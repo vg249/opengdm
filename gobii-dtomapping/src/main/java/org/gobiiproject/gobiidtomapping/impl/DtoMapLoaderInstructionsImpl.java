@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.filesystem.LoaderFileDAO;
+import org.gobiiproject.gobiidao.filesystem.LoaderInstructionsDAO;
 import org.gobiiproject.gobiidtomapping.DtoMapLoaderInstructions;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
@@ -20,7 +20,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
 
     @Autowired
-    private LoaderFileDAO loaderFileDAO;
+    private LoaderInstructionsDAO loaderInstructionsDAO;
 
     @Override
     public LoaderInstructionFilesDTO writeInstructions(LoaderInstructionFilesDTO loaderInstructionFilesDTO) {
@@ -29,7 +29,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
         try {
 
-            String outputFileName = loaderFileDAO.writeInstructions(loaderInstructionFilesDTO.getUserName(),
+            String outputFileName = loaderInstructionsDAO.writeInstructions(loaderInstructionFilesDTO.getUserName(),
                     loaderInstructionFilesDTO.getGobiiLoaderInstructions());
 
             returnVal = loaderInstructionFilesDTO;
@@ -50,7 +50,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
         LoaderInstructionFilesDTO returnVal = new LoaderInstructionFilesDTO();
 
-        List<GobiiLoaderInstruction> instructions = loaderFileDAO.getSampleInstructions();
+        List<GobiiLoaderInstruction> instructions = loaderInstructionsDAO.getSampleInstructions();
 
         returnVal.setGobiiLoaderInstructions(instructions);
 
