@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
+import org.gobiiproject.gobiimodel.types.BaseEncodingType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 
 /**
@@ -14,10 +15,15 @@ public class GobiiFileColumn {
     private String name = null;
     private String filterFrom = null;
     private String filterTo = null;
+    private String findText = null;
+    private String replaceText = null;
     private String constantValue = null;
     private String index = null;
     private boolean subcolumn = false;
     private String subcolumnDelimiter = null;
+
+    private BaseEncodingType baseEncodingType = BaseEncodingType.UNKNOWN;
+
 
     private String metaDataId = null;
 
@@ -118,6 +124,33 @@ public class GobiiFileColumn {
 
     public GobiiFileColumn setSubcolumnDelimiter(String subcolumnDelimiter) {
         this.subcolumnDelimiter = subcolumnDelimiter;
+        return this;
+    }
+
+    public String getFindText() {
+        return findText;
+    }
+
+    public GobiiFileColumn setFindText(String findText) {
+        this.findText = findText;
+        return this;
+    }
+
+    public String getReplaceText() {
+        return replaceText;
+    }
+
+    public GobiiFileColumn setReplaceText(String replaceText) {
+        this.replaceText = replaceText;
+        return this;
+    }
+
+    public BaseEncodingType getBaseEncodingType() {
+        return baseEncodingType;
+    }
+
+    public GobiiFileColumn setBaseEncodingType(BaseEncodingType baseEncodingType) {
+        this.baseEncodingType = baseEncodingType;
         return this;
     }
 

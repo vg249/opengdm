@@ -12,6 +12,7 @@ import org.gobiiproject.gobiimodel.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.types.BaseEncodingType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
@@ -27,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DtoRequestGobiiFileLoadInstructionsTest {
 
@@ -39,7 +41,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
     public static void tearDownUpClass() throws Exception {
         Assert.assertTrue(Authenticator.deAuthenticate());
     }
-
 
 
     @Test
@@ -55,13 +56,19 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // column one
         String instructionOneColumnOneName = "my_foo_column";
+        BaseEncodingType baseEncodingTypeTableOneColumnOne = BaseEncodingType.IUPAC;
+        String findTextTableOneColumnOne = "foo-replace-me";
+        String replaceTextTextTableOneColumnOne = "bar-replace-me";
         GobiiFileColumn gobiiFileColumnOne = new GobiiFileColumn()
                 .setCCoord(1)
                 .setRCoord((1))
                 .setGobiiColumnType(GobiiColumnType.VCF_MARKER)
                 .setFilterFrom(".*")
                 .setFilterTo(".*")
-                .setName(instructionOneColumnOneName);
+                .setName(instructionOneColumnOneName)
+                .setFindText(findTextTableOneColumnOne)
+                .setReplaceText(replaceTextTextTableOneColumnOne)
+                .setBaseEncodingType(baseEncodingTypeTableOneColumnOne);
 
         // column two
         GobiiFileColumn gobiiFileColumnTwo = new GobiiFileColumn()
@@ -184,17 +191,45 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         Assert.assertTrue("0 instructions were deserialized", instructionsList.size() > 0);
 
-        Assert.assertTrue(instructionsList.get(0)
+        List<GobiiLoaderInstruction> gobiiLoaderInstructionOneList =
+                instructionsList
+                        .stream()
+                        .filter(i -> i.getTable().equals(instructionOneTableName))
+                        .collect(Collectors.toList());
+
+
+        Assert.assertTrue(1 == gobiiLoaderInstructionOneList.size());
+
+        GobiiLoaderInstruction gobiiLoaderInstructionOneFromFileSystem = gobiiLoaderInstructionOneList.get(0);
+
+        Assert.assertTrue(gobiiLoaderInstructionOneFromFileSystem
                 .getTable()
                 .equals(instructionOneTableName));
 
-        Assert.assertTrue(instructionsList
-                .get(0)
+        List<GobiiFileColumn> gobiiFileColumnOneList = gobiiLoaderInstructionOneFromFileSystem
                 .getGobiiFileColumns()
-                .get(0)
+                .stream()
+                .filter(c -> c.getName().equals(instructionOneColumnOneName))
+                .collect(Collectors.toList());
+
+        Assert.assertTrue(1 == gobiiFileColumnOneList.size());
+
+        GobiiFileColumn gobiiFileColumnTableOneColumnOne = gobiiFileColumnOneList.get(0);
+
+
+        Assert.assertTrue(gobiiFileColumnTableOneColumnOne
                 .getName()
                 .equals(instructionOneColumnOneName));
 
+
+        Assert.assertTrue(gobiiFileColumnTableOneColumnOne
+                .getFindText().equals(findTextTableOneColumnOne));
+
+        Assert.assertTrue(gobiiFileColumnTableOneColumnOne
+                .getReplaceText().equals(replaceTextTextTableOneColumnOne));
+
+        Assert.assertTrue(gobiiFileColumnTableOneColumnOne
+                .getBaseEncodingType().equals(baseEncodingTypeTableOneColumnOne));
 
     } // testGetMarkers()
 }
