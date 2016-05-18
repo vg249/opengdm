@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidao.filesystem.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.LoaderInstructionsDAO;
 import org.gobiiproject.gobiimodel.ConfigSettings;
@@ -63,6 +64,7 @@ public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
                     fileFQPN = loaderFilePath + fileUniqueId + "_" + dateTimeForFileName + LOADER_FILE_EXT;
 
                     ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
                     String instructionsAsJson = objectMapper.writeValueAsString(instructions);
                     BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileFQPN));
                     bufferedWriter.write(instructionsAsJson);
