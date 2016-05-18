@@ -3,15 +3,14 @@ package org.gobiiproject.gobiidao.filesystem.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.LoaderFileDAO;
-import org.gobiiproject.gobiimodel.ConfigFileReader;
 import org.gobiiproject.gobiimodel.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.Column;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.File;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiFileType;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,7 +27,7 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
     private final String LOADER_FILE_EXT = ".json";
 
     @Override
-    public String writeInstructions(String fileUniqueId, List<LoaderInstruction> instructions) throws GobiiDaoException {
+    public String writeInstructions(String fileUniqueId, List<GobiiLoaderInstruction> instructions) throws GobiiDaoException {
 
         String returnVal = null;
 
@@ -90,15 +89,15 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
 
 
     @Override
-    public List<LoaderInstruction> getSampleInstructions() {
+    public List<GobiiLoaderInstruction> getSampleInstructions() {
 
-        List<LoaderInstruction> returnVal = new ArrayList<>();
+        List<GobiiLoaderInstruction> returnVal = new ArrayList<>();
 
         // **********************************************************************
         // INSTRUCTION ONE BEGIN
-        LoaderInstruction loaderInstructionOne = new LoaderInstruction();
+        GobiiLoaderInstruction gobiiLoaderInstructionOne = new GobiiLoaderInstruction();
 
-        loaderInstructionOne.setTable("foo_table");
+        gobiiLoaderInstructionOne.setTable("foo_table");
 
         // column one
         Column columnOne = new Column();
@@ -118,32 +117,32 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         columnTwo.setFilterTo(".*");
         columnTwo.setName("my_bar");
 
-        loaderInstructionOne.getColumns().add(columnOne);
-        loaderInstructionOne.getColumns().add(columnTwo);
+        gobiiLoaderInstructionOne.getColumns().add(columnOne);
+        gobiiLoaderInstructionOne.getColumns().add(columnTwo);
 
         // File Config
-        loaderInstructionOne.getFile().setDelimiter(",");
-        loaderInstructionOne.getFile().setSource("c:\\your-dir");
-        loaderInstructionOne.getFile().setDestination("c:\\mydir");
-        loaderInstructionOne.getFile().setFileType(File.FileType.VCF);
+        gobiiLoaderInstructionOne.getFile().setDelimiter(",");
+        gobiiLoaderInstructionOne.getFile().setSource("c:\\your-dir");
+        gobiiLoaderInstructionOne.getFile().setDestination("c:\\mydir");
+        gobiiLoaderInstructionOne.getFile().setGobiiFileType(GobiiFileType.VCF);
 
         // VCF Parameters
-        loaderInstructionOne.getVcfParameters().setMaf(1.1f);
-        loaderInstructionOne.getVcfParameters().setMinDp(1.1f);
-        loaderInstructionOne.getVcfParameters().setMinQ(1.1f);
-        loaderInstructionOne.getVcfParameters().setRemoveIndels(true);
-        loaderInstructionOne.getVcfParameters().setToIupac(true);
+        gobiiLoaderInstructionOne.getVcfParameters().setMaf(1.1f);
+        gobiiLoaderInstructionOne.getVcfParameters().setMinDp(1.1f);
+        gobiiLoaderInstructionOne.getVcfParameters().setMinQ(1.1f);
+        gobiiLoaderInstructionOne.getVcfParameters().setRemoveIndels(true);
+        gobiiLoaderInstructionOne.getVcfParameters().setToIupac(true);
 
-        returnVal.add(loaderInstructionOne);
+        returnVal.add(gobiiLoaderInstructionOne);
         // INSTRUCTION ONE END
         // **********************************************************************
 
 
         // **********************************************************************
         // INSTRUCTION TWO BEGIN
-        LoaderInstruction loaderInstructionTwo = new LoaderInstruction();
+        GobiiLoaderInstruction gobiiLoaderInstructionTwo = new GobiiLoaderInstruction();
 
-        loaderInstructionTwo.setTable("bar_table");
+        gobiiLoaderInstructionTwo.setTable("bar_table");
 
         // column one
         columnOne = new Column();
@@ -163,23 +162,23 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         columnTwo.setFilterTo(".*");
         columnTwo.setName("my_barfoo");
 
-        loaderInstructionTwo.getColumns().add(columnTwo);
-        loaderInstructionTwo.getColumns().add(columnTwo);
+        gobiiLoaderInstructionTwo.getColumns().add(columnTwo);
+        gobiiLoaderInstructionTwo.getColumns().add(columnTwo);
 
         // File Config
-        loaderInstructionTwo.getFile().setDelimiter(",");
-        loaderInstructionTwo.getFile().setSource("c:\\your-bar-dir");
-        loaderInstructionTwo.getFile().setDestination("c:\\mybardir");
-        loaderInstructionTwo.getFile().setFileType(File.FileType.VCF);
+        gobiiLoaderInstructionTwo.getFile().setDelimiter(",");
+        gobiiLoaderInstructionTwo.getFile().setSource("c:\\your-bar-dir");
+        gobiiLoaderInstructionTwo.getFile().setDestination("c:\\mybardir");
+        gobiiLoaderInstructionTwo.getFile().setGobiiFileType(GobiiFileType.VCF);
 
         // VCF Parameters
-        loaderInstructionTwo.getVcfParameters().setMaf(1.1f);
-        loaderInstructionTwo.getVcfParameters().setMinDp(1.1f);
-        loaderInstructionTwo.getVcfParameters().setMinQ(1.1f);
-        loaderInstructionTwo.getVcfParameters().setRemoveIndels(true);
-        loaderInstructionTwo.getVcfParameters().setToIupac(true);
+        gobiiLoaderInstructionTwo.getVcfParameters().setMaf(1.1f);
+        gobiiLoaderInstructionTwo.getVcfParameters().setMinDp(1.1f);
+        gobiiLoaderInstructionTwo.getVcfParameters().setMinQ(1.1f);
+        gobiiLoaderInstructionTwo.getVcfParameters().setRemoveIndels(true);
+        gobiiLoaderInstructionTwo.getVcfParameters().setToIupac(true);
 
-        returnVal.add(loaderInstructionTwo);
+        returnVal.add(gobiiLoaderInstructionTwo);
         // INSTRUCTION TWO END
         // **********************************************************************        
 

@@ -1,16 +1,18 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
+import org.gobiiproject.gobiimodel.types.GobiiFileType;
+
 /**
  * Created by Phil on 4/12/2016.
  */
 public class File {
 
-    public enum FileType {HAPMAP, GENERIC, VCF}
+
 
     String source = null;
     String destination = null;
     String delimiter = null;
-    FileType fileType = null;
+    GobiiFileType gobiiFileType = null;
 
     public String getSource() {
         return source;
@@ -39,12 +41,12 @@ public class File {
         return this;
     }
 
-    public FileType getFileType() {
-        return fileType;
+    public GobiiFileType getGobiiFileType() {
+        return gobiiFileType;
     }
 
-    public File setFileType(FileType fileType) {
-        this.fileType = fileType;
+    public File setGobiiFileType(GobiiFileType gobiiFileType) {
+        this.gobiiFileType = gobiiFileType;
         return this;
     }
 }

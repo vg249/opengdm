@@ -1,9 +1,8 @@
 package org.gobiiproject.gobiimodel;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -43,11 +42,9 @@ public class ConfigSettings {
 
     private ConfigFileReader configReader = new ConfigFileReader();
 
-    public enum CropType {RICE, WHEAT, MAIZE, SORGUM, CHICKPEA}
+    private Map<GobiiCropType, CropConfig> cropConfigs = new HashMap<>();
 
-    private Map<CropType, CropConfig> cropConfigs = new HashMap<>();
-
-    private CropType currentCropType = CropType.RICE; // default crop
+    private GobiiCropType currentGobiiCropType = GobiiCropType.RICE; // default crop
 
     private String emailSvrType;
     private String emailSvrDomain;
@@ -60,7 +57,7 @@ public class ConfigSettings {
 
         String currentPrefix = null;
 
-        currentCropType = CropType.valueOf(configReader.getPropValue(PROP_NAME_WEB_SVR_INSTANCECROP).toUpperCase());
+        currentGobiiCropType = GobiiCropType.valueOf(configReader.getPropValue(PROP_NAME_WEB_SVR_INSTANCECROP).toUpperCase());
         emailSvrType = configReader.getPropValue(PROP_NAME_MAIL_SVR_TYPE);
         emailSvrDomain = configReader.getPropValue(PROP_NAME_MAIL_SVR_DOMAIN);
         emailSvrUser = configReader.getPropValue(PROP_NAME_MAIL_SVR_USER);
@@ -88,9 +85,9 @@ public class ConfigSettings {
                     .replace(CROP_PREFIX, "")
                     .replace(".","")
                     .toUpperCase();
-            CropType currentCropType = CropType.valueOf(cropTypeFromProp);
+            GobiiCropType currentGobiiCropType = GobiiCropType.valueOf(cropTypeFromProp);
 
-            cropConfigs.put(currentCropType, currentCropConfig);
+            cropConfigs.put(currentGobiiCropType, currentCropConfig);
 
         }
 
@@ -98,25 +95,25 @@ public class ConfigSettings {
     } // ctor
 
 
-    public CropConfig getCropConfig(CropType cropType) {
+    public CropConfig getCropConfig(GobiiCropType gobiiCropType) {
 
         CropConfig returnVal = null;
-        returnVal = cropConfigs.get(cropType);
+        returnVal = cropConfigs.get(gobiiCropType);
 
         return returnVal;
     }
 
     public CropConfig getCurrentCropConfig() {
-        return getCropConfig(getCurrentCropType());
+        return getCropConfig(getCurrentGobiiCropType());
     }
 
 
-    public void setCurrentCropType(CropType currentCropType) {
-        this.currentCropType = currentCropType;
+    public void setCurrentGobiiCropType(GobiiCropType currentGobiiCropType) {
+        this.currentGobiiCropType = currentGobiiCropType;
     }
 
-    public CropType getCurrentCropType() {
-        return currentCropType;
+    public GobiiCropType getCurrentGobiiCropType() {
+        return currentGobiiCropType;
     }
 
     public String getEmailSvrPassword() {

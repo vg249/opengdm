@@ -10,7 +10,8 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.Column;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.File;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -36,8 +37,8 @@ public class DtoRequestFileLoadInstructionsTest {
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
 
-        LoaderInstruction loaderInstructionOne = new LoaderInstruction();
-        loaderInstructionOne.setTable("foo_table");
+        GobiiLoaderInstruction gobiiLoaderInstructionOne = new GobiiLoaderInstruction();
+        gobiiLoaderInstructionOne.setTable("foo_table");
 
         // column one
         Column columnOne = new Column()
@@ -57,17 +58,17 @@ public class DtoRequestFileLoadInstructionsTest {
                 .setFilterTo(".*")
                 .setName("my_bar");
 
-        loaderInstructionOne.getColumns().add(columnOne);
-        loaderInstructionOne.getColumns().add(columnTwo);
+        gobiiLoaderInstructionOne.getColumns().add(columnOne);
+        gobiiLoaderInstructionOne.getColumns().add(columnTwo);
 
         // File Config
-        loaderInstructionOne.getFile().setDelimiter(",")
+        gobiiLoaderInstructionOne.getFile().setDelimiter(",")
                 .setSource("c:\\your-dir")
                 .setDestination("c:\\mydir")
-                .setFileType(File.FileType.VCF);
+                .setGobiiFileType(GobiiFileType.VCF);
 
         // VCF Parameters
-        loaderInstructionOne.getVcfParameters()
+        gobiiLoaderInstructionOne.getVcfParameters()
                 .setMaf(1.1f)
                 .setMinDp(1.1f)
                 .setMinQ(1.1f)
@@ -75,8 +76,8 @@ public class DtoRequestFileLoadInstructionsTest {
                 .setToIupac(true);
 
         loaderInstructionFilesDTOToSend
-                .getLoaderInstructions()
-                .add(loaderInstructionOne);
+                .getGobiiLoaderInstructions()
+                .add(gobiiLoaderInstructionOne);
 
 
         // INSTRUCTION ONE END
@@ -85,9 +86,9 @@ public class DtoRequestFileLoadInstructionsTest {
 
         // **********************************************************************
         // INSTRUCTION TWO BEGIN
-        LoaderInstruction loaderInstructionTwo = new LoaderInstruction();
+        GobiiLoaderInstruction gobiiLoaderInstructionTwo = new GobiiLoaderInstruction();
 
-        loaderInstructionTwo.setTable("bar_table");
+        gobiiLoaderInstructionTwo.setTable("bar_table");
 
         // column one
         columnOne = new Column();
@@ -107,23 +108,23 @@ public class DtoRequestFileLoadInstructionsTest {
         columnTwo.setFilterTo(".*");
         columnTwo.setName("my_barfoo");
 
-        loaderInstructionTwo.getColumns().add(columnTwo);
-        loaderInstructionTwo.getColumns().add(columnTwo);
+        gobiiLoaderInstructionTwo.getColumns().add(columnTwo);
+        gobiiLoaderInstructionTwo.getColumns().add(columnTwo);
 
         // File Config
-        loaderInstructionTwo.getFile().setDelimiter(",");
-        loaderInstructionTwo.getFile().setSource("c:\\your-bar-dir");
-        loaderInstructionTwo.getFile().setDestination("c:\\mybardir");
-        loaderInstructionTwo.getFile().setFileType(File.FileType.VCF);
+        gobiiLoaderInstructionTwo.getFile().setDelimiter(",");
+        gobiiLoaderInstructionTwo.getFile().setSource("c:\\your-bar-dir");
+        gobiiLoaderInstructionTwo.getFile().setDestination("c:\\mybardir");
+        gobiiLoaderInstructionTwo.getFile().setGobiiFileType(GobiiFileType.VCF);
 
         // VCF Parameters
-        loaderInstructionTwo.getVcfParameters().setMaf(1.1f);
-        loaderInstructionTwo.getVcfParameters().setMinDp(1.1f);
-        loaderInstructionTwo.getVcfParameters().setMinQ(1.1f);
-        loaderInstructionTwo.getVcfParameters().setRemoveIndels(true);
-        loaderInstructionTwo.getVcfParameters().setToIupac(true);
+        gobiiLoaderInstructionTwo.getVcfParameters().setMaf(1.1f);
+        gobiiLoaderInstructionTwo.getVcfParameters().setMinDp(1.1f);
+        gobiiLoaderInstructionTwo.getVcfParameters().setMinQ(1.1f);
+        gobiiLoaderInstructionTwo.getVcfParameters().setRemoveIndels(true);
+        gobiiLoaderInstructionTwo.getVcfParameters().setToIupac(true);
 
-        loaderInstructionFilesDTOToSend.getLoaderInstructions().add(loaderInstructionTwo);
+        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().add(gobiiLoaderInstructionTwo);
         loaderInstructionFilesDTOToSend.setUserName("foo_user");
 
 

@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidao.filesystem;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 
 import java.util.List;
 
@@ -10,6 +10,6 @@ import java.util.List;
  */
 public interface LoaderFileDAO {
 
-    List<LoaderInstruction> getSampleInstructions();
-    String writeInstructions(String fileUniqueId, List<LoaderInstruction> instructions)  throws GobiiDaoException;
+    List<GobiiLoaderInstruction> getSampleInstructions();
+    String writeInstructions(String fileUniqueId, List<GobiiLoaderInstruction> instructions)  throws GobiiDaoException;
 }

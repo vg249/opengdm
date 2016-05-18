@@ -4,7 +4,7 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.LoaderFileDAO;
 import org.gobiiproject.gobiidtomapping.DtoMapLoaderInstructions;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.LoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
         try {
 
             String outputFileName = loaderFileDAO.writeInstructions(loaderInstructionFilesDTO.getUserName(),
-                    loaderInstructionFilesDTO.getLoaderInstructions());
+                    loaderInstructionFilesDTO.getGobiiLoaderInstructions());
 
             returnVal = loaderInstructionFilesDTO;
             returnVal.setOutputFileId(outputFileName);
@@ -50,9 +50,9 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
         LoaderInstructionFilesDTO returnVal = new LoaderInstructionFilesDTO();
 
-        List<LoaderInstruction> instructions = loaderFileDAO.getSampleInstructions();
+        List<GobiiLoaderInstruction> instructions = loaderFileDAO.getSampleInstructions();
 
-        returnVal.setLoaderInstructions(instructions);
+        returnVal.setGobiiLoaderInstructions(instructions);
 
         return returnVal;
     }

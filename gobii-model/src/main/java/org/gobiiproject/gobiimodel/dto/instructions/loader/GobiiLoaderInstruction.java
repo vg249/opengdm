@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/12/2016.
  */
-public class LoaderInstruction {
+public class GobiiLoaderInstruction {
 
     private File file = new File();
     private String table = null;
@@ -18,7 +18,7 @@ public class LoaderInstruction {
         return file;
     }
 
-    public LoaderInstruction setFile(File file) {
+    public GobiiLoaderInstruction setFile(File file) {
 
         this.file = file;
         return this;
@@ -28,7 +28,7 @@ public class LoaderInstruction {
         return table;
     }
 
-    public LoaderInstruction setTable(String table) {
+    public GobiiLoaderInstruction setTable(String table) {
         this.table = table;
         return this;
     }
@@ -37,7 +37,7 @@ public class LoaderInstruction {
         return columns;
     }
 
-    public LoaderInstruction  setColumns(List<Column> columns) {
+    public GobiiLoaderInstruction setColumns(List<Column> columns) {
         this.columns = columns;
         return this;
     }
@@ -46,7 +46,7 @@ public class LoaderInstruction {
         return vcfParameters;
     }
 
-    public LoaderInstruction  setVcfParameters(VcfParameters vcfParameters) {
+    public GobiiLoaderInstruction setVcfParameters(VcfParameters vcfParameters) {
         this.vcfParameters = vcfParameters;
         return this;
     }

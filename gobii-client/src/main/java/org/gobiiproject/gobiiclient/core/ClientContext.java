@@ -3,14 +3,13 @@ package org.gobiiproject.gobiiclient.core;
 import org.gobiiproject.gobiimodel.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Phil on 5/13/2016.
@@ -36,7 +35,7 @@ public final class ClientContext {
     private ClientContext() throws Exception {
 
         configSettings = new ConfigSettings();
-        configSettings.setCurrentCropType(ConfigSettings.CropType.RICE); // default crop
+        configSettings.setCurrentGobiiCropType(GobiiCropType.RICE); // default crop
 
     }
 
@@ -56,17 +55,17 @@ public final class ClientContext {
     }
 
 
-    public List<ConfigSettings.CropType> getCropTypeTypes() {
-        return new ArrayList<>(Arrays.asList(ConfigSettings.CropType.values()));
+    public List<GobiiCropType> getCropTypeTypes() {
+        return new ArrayList<>(Arrays.asList(GobiiCropType.values()));
     }
 
 
-    public ConfigSettings.CropType getCurrentClientCrop() {
-        return configSettings.getCurrentCropType();
+    public GobiiCropType getCurrentClientCrop() {
+        return configSettings.getCurrentGobiiCropType();
     }
 
-    public void setCurrentClientCrop(ConfigSettings.CropType currentClientCrop) {
-        configSettings.setCurrentCropType(currentClientCrop);
+    public void setCurrentClientCrop(GobiiCropType currentClientCrop) {
+        configSettings.setCurrentGobiiCropType(currentClientCrop);
     }
 
     public boolean login(String userName, String password) {
