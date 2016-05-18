@@ -5,17 +5,28 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 public class DtoRequestGobiiFileLoadInstructionsTest {
 
@@ -37,17 +48,20 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
 
+        String instructionOneTableName = "foo_table";
+
         GobiiLoaderInstruction gobiiLoaderInstructionOne = new GobiiLoaderInstruction();
-        gobiiLoaderInstructionOne.setTable("foo_table");
+        gobiiLoaderInstructionOne.setTable(instructionOneTableName);
 
         // column one
+        String instructionOneColumnOneName = "my_foo_column";
         GobiiFileColumn gobiiFileColumnOne = new GobiiFileColumn()
                 .setCCoord(1)
                 .setRCoord((1))
                 .setGobiiColumnType(GobiiColumnType.VCF_MARKER)
                 .setFilterFrom(".*")
                 .setFilterTo(".*")
-                .setName("my_foo");
+                .setName(instructionOneColumnOneName);
 
         // column two
         GobiiFileColumn gobiiFileColumnTwo = new GobiiFileColumn()
@@ -139,7 +153,48 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertTrue(loaderInstructionFilesDTOResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertNotEquals(null, loaderInstructionFilesDTOResponse.getOutputFileId());
 
+
+        String instructionFileFqpn = loaderInstructionFilesDTOResponse.getOutputFileId();
+        ConfigSettings configSettings = new ConfigSettings();
+        String loaderFilePath = configSettings
+                .getCropConfig(GobiiCropType.RICE)
+                .getLoaderFilesLocation();
+
+        Assert.assertNotNull("loader file path not specified", loaderFilePath);
+
+        Path path = Paths.get(loaderFilePath);
+        Assert.assertTrue("loader file path does not exist: " + path.getFileName(), Files.exists(path));
+
+
+        File file = new File(instructionFileFqpn);
+        Assert.assertTrue("Instruction file does not exist: " + instructionFileFqpn, file.exists());
+
+        FileInputStream fileInputStream = new FileInputStream(file);
+        Assert.assertNotNull("Unable to create file input stream for file " + instructionFileFqpn, fileInputStream);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        GobiiLoaderInstruction[] instructions = null;
+
+        instructions = objectMapper.readValue(fileInputStream, GobiiLoaderInstruction[].class);
+
+        Assert.assertNotNull("Insructions were de-serialzied to null", instructions);
+
+        List<GobiiLoaderInstruction> instructionsList = Arrays.asList(instructions);
+
+        Assert.assertTrue("0 instructions were deserialized", instructionsList.size() > 0);
+
+        Assert.assertTrue(instructionsList.get(0)
+                .getTable()
+                .equals(instructionOneTableName));
+
+        Assert.assertTrue(instructionsList
+                .get(0)
+                .getGobiiFileColumns()
+                .get(0)
+                .getName()
+                .equals(instructionOneColumnOneName));
+
+
     } // testGetMarkers()
-
-
 }
