@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -43,7 +44,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         GobiiFileColumn gobiiFileColumnOne = new GobiiFileColumn()
                 .setCCoord(1)
                 .setRCoord((1))
-                .setColumnType(GobiiFileColumn.ColumnType.VCF_MARKER)
+                .setGobiiColumnType(GobiiColumnType.VCF_MARKER)
                 .setFilterFrom(".*")
                 .setFilterTo(".*")
                 .setName("my_foo");
@@ -52,7 +53,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         GobiiFileColumn gobiiFileColumnTwo = new GobiiFileColumn()
                 .setCCoord(1)
                 .setRCoord(1)
-                .setColumnType(GobiiFileColumn.ColumnType.CSV_COLUMN)
+                .setGobiiColumnType(GobiiColumnType.CSV_COLUMN)
                 .setFilterFrom(".*")
                 .setFilterTo(".*")
                 .setName("my_bar");
@@ -93,7 +94,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         gobiiFileColumnOne = new GobiiFileColumn();
         gobiiFileColumnOne.setCCoord(1);
         gobiiFileColumnOne.setRCoord(1);
-        gobiiFileColumnOne.setColumnType(GobiiFileColumn.ColumnType.VCF_MARKER);
+        gobiiFileColumnOne.setGobiiColumnType(GobiiColumnType.VCF_MARKER);
         gobiiFileColumnOne.setFilterFrom(".*");
         gobiiFileColumnOne.setFilterTo(".*");
         gobiiFileColumnOne.setName("my_foobar");
@@ -102,7 +103,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         gobiiFileColumnTwo = new GobiiFileColumn();
         gobiiFileColumnTwo.setCCoord(1);
         gobiiFileColumnTwo.setRCoord((1));
-        gobiiFileColumnTwo.setColumnType(GobiiFileColumn.ColumnType.CSV_COLUMN);
+        gobiiFileColumnTwo.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
         gobiiFileColumnTwo.setFilterFrom(".*");
         gobiiFileColumnTwo.setFilterTo(".*");
         gobiiFileColumnTwo.setName("my_barfoo");

@@ -1,24 +1,14 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
+import org.gobiiproject.gobiimodel.types.GobiiColumnType;
+
 /**
  * Created by Phil on 4/12/2016.
  */
 public class GobiiFileColumn {
 
-    public enum ColumnType {
-        CSV_COLUMN,
-        CSV_ROW,
-        CSV_BOTH,
-        VCF_SAMPLE,
-        VCF_MARKER,
-        VCF_VARIANT,
-        VCF_METADATA,
-        VCF_INFO,
-        CONSTANT
-    }
 
-
-    private ColumnType columnType = null;
+    private GobiiColumnType gobiiColumnType = null;
     private Integer rCoord = null;
     private Integer cCoord = null;
     private String name = null;
@@ -31,12 +21,12 @@ public class GobiiFileColumn {
 
     private String metaDataId = null;
 
-    public ColumnType getColumnType() {
-        return columnType;
+    public GobiiColumnType getGobiiColumnType() {
+        return gobiiColumnType;
     }
 
-    public GobiiFileColumn setColumnType(ColumnType columnType) {
-        this.columnType = columnType;
+    public GobiiFileColumn setGobiiColumnType(GobiiColumnType gobiiColumnType) {
+        this.gobiiColumnType = gobiiColumnType;
         return this;
     }
 

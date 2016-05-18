@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.filesystem.LoaderFileDAO;
 import org.gobiiproject.gobiimodel.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 
 import java.io.BufferedWriter;
@@ -102,7 +103,7 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         GobiiFileColumn gobiiFileColumnOne = new GobiiFileColumn();
         gobiiFileColumnOne.setCCoord(1);
         gobiiFileColumnOne.setRCoord((1));
-        gobiiFileColumnOne.setColumnType(GobiiFileColumn.ColumnType.VCF_MARKER);
+        gobiiFileColumnOne.setGobiiColumnType(GobiiColumnType.VCF_MARKER);
         gobiiFileColumnOne.setFilterFrom(".*");
         gobiiFileColumnOne.setFilterTo(".*");
         gobiiFileColumnOne.setName("my_foo");
@@ -111,7 +112,7 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         GobiiFileColumn gobiiFileColumnTwo = new GobiiFileColumn();
         gobiiFileColumnTwo.setCCoord(1);
         gobiiFileColumnTwo.setRCoord(1);
-        gobiiFileColumnTwo.setColumnType(GobiiFileColumn.ColumnType.CSV_COLUMN);
+        gobiiFileColumnTwo.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
         gobiiFileColumnTwo.setFilterFrom(".*");
         gobiiFileColumnTwo.setFilterTo(".*");
         gobiiFileColumnTwo.setName("my_bar");
@@ -147,7 +148,7 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         gobiiFileColumnOne = new GobiiFileColumn();
         gobiiFileColumnOne.setCCoord(1);
         gobiiFileColumnOne.setRCoord(1);
-        gobiiFileColumnOne.setColumnType(GobiiFileColumn.ColumnType.VCF_MARKER);
+        gobiiFileColumnOne.setGobiiColumnType(GobiiColumnType.VCF_MARKER);
         gobiiFileColumnOne.setFilterFrom(".*");
         gobiiFileColumnOne.setFilterTo(".*");
         gobiiFileColumnOne.setName("my_foobar");
@@ -156,7 +157,7 @@ public class LoaderFileDAOImpl implements LoaderFileDAO {
         gobiiFileColumnTwo = new GobiiFileColumn();
         gobiiFileColumnTwo.setCCoord(1);
         gobiiFileColumnTwo.setRCoord((1));
-        gobiiFileColumnTwo.setColumnType(GobiiFileColumn.ColumnType.CSV_COLUMN);
+        gobiiFileColumnTwo.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
         gobiiFileColumnTwo.setFilterFrom(".*");
         gobiiFileColumnTwo.setFilterTo(".*");
         gobiiFileColumnTwo.setName("my_barfoo");
