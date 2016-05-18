@@ -8,7 +8,7 @@ package org.gobiiproject.gobiiclient.dtorequests;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.Column;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.junit.AfterClass;
@@ -40,25 +40,25 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         gobiiLoaderInstructionOne.setTable("foo_table");
 
         // column one
-        Column columnOne = new Column()
+        GobiiFileColumn gobiiFileColumnOne = new GobiiFileColumn()
                 .setCCoord(1)
                 .setRCoord((1))
-                .setColumnType(Column.ColumnType.VCF_MARKER)
+                .setColumnType(GobiiFileColumn.ColumnType.VCF_MARKER)
                 .setFilterFrom(".*")
                 .setFilterTo(".*")
                 .setName("my_foo");
 
         // column two
-        Column columnTwo = new Column()
+        GobiiFileColumn gobiiFileColumnTwo = new GobiiFileColumn()
                 .setCCoord(1)
                 .setRCoord(1)
-                .setColumnType(Column.ColumnType.CSV_COLUMN)
+                .setColumnType(GobiiFileColumn.ColumnType.CSV_COLUMN)
                 .setFilterFrom(".*")
                 .setFilterTo(".*")
                 .setName("my_bar");
 
-        gobiiLoaderInstructionOne.getColumns().add(columnOne);
-        gobiiLoaderInstructionOne.getColumns().add(columnTwo);
+        gobiiLoaderInstructionOne.getGobiiFileColumns().add(gobiiFileColumnOne);
+        gobiiLoaderInstructionOne.getGobiiFileColumns().add(gobiiFileColumnTwo);
 
         // GobiiFile Config
         gobiiLoaderInstructionOne.getGobiiFile().setDelimiter(",")
@@ -90,25 +90,25 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         gobiiLoaderInstructionTwo.setTable("bar_table");
 
         // column one
-        columnOne = new Column();
-        columnOne.setCCoord(1);
-        columnOne.setRCoord(1);
-        columnOne.setColumnType(Column.ColumnType.VCF_MARKER);
-        columnOne.setFilterFrom(".*");
-        columnOne.setFilterTo(".*");
-        columnOne.setName("my_foobar");
+        gobiiFileColumnOne = new GobiiFileColumn();
+        gobiiFileColumnOne.setCCoord(1);
+        gobiiFileColumnOne.setRCoord(1);
+        gobiiFileColumnOne.setColumnType(GobiiFileColumn.ColumnType.VCF_MARKER);
+        gobiiFileColumnOne.setFilterFrom(".*");
+        gobiiFileColumnOne.setFilterTo(".*");
+        gobiiFileColumnOne.setName("my_foobar");
 
         // column two
-        columnTwo = new Column();
-        columnTwo.setCCoord(1);
-        columnTwo.setRCoord((1));
-        columnTwo.setColumnType(Column.ColumnType.CSV_COLUMN);
-        columnTwo.setFilterFrom(".*");
-        columnTwo.setFilterTo(".*");
-        columnTwo.setName("my_barfoo");
+        gobiiFileColumnTwo = new GobiiFileColumn();
+        gobiiFileColumnTwo.setCCoord(1);
+        gobiiFileColumnTwo.setRCoord((1));
+        gobiiFileColumnTwo.setColumnType(GobiiFileColumn.ColumnType.CSV_COLUMN);
+        gobiiFileColumnTwo.setFilterFrom(".*");
+        gobiiFileColumnTwo.setFilterTo(".*");
+        gobiiFileColumnTwo.setName("my_barfoo");
 
-        gobiiLoaderInstructionTwo.getColumns().add(columnTwo);
-        gobiiLoaderInstructionTwo.getColumns().add(columnTwo);
+        gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileColumnTwo);
+        gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileColumnTwo);
 
         // GobiiFile Config
         gobiiLoaderInstructionTwo.getGobiiFile().setDelimiter(",");

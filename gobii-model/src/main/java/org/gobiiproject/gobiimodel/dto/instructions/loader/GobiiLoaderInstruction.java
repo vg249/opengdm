@@ -10,7 +10,7 @@ public class GobiiLoaderInstruction {
 
     private GobiiFile gobiiFile = new GobiiFile();
     private String table = null;
-    private List<Column> columns = new ArrayList<>();
+    private List<GobiiFileColumn> gobiiFileColumns = new ArrayList<>();
     private VcfParameters vcfParameters = new VcfParameters();
     ;
 
@@ -33,12 +33,12 @@ public class GobiiLoaderInstruction {
         return this;
     }
 
-    public List<Column> getColumns() {
-        return columns;
+    public List<GobiiFileColumn> getGobiiFileColumns() {
+        return gobiiFileColumns;
     }
 
-    public GobiiLoaderInstruction setColumns(List<Column> columns) {
-        this.columns = columns;
+    public GobiiLoaderInstruction setGobiiFileColumns(List<GobiiFileColumn> gobiiFileColumns) {
+        this.gobiiFileColumns = gobiiFileColumns;
         return this;
     }
 
