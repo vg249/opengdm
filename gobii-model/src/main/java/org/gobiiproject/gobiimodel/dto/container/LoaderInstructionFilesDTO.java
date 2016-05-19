@@ -11,10 +11,16 @@ import java.util.List;
  */
 public class LoaderInstructionFilesDTO extends DtoMetaData {
 
+    public LoaderInstructionFilesDTO() {
+        super(ProcessType.CREATE);
+    }
+
     private List<GobiiLoaderInstruction> gobiiLoaderInstructions = new ArrayList<>();
-    String userName = null;
-    String outputFileId = null;
-    String loaderDestinationPath = null;
+    private String instructionFileName = null;
+    private String rawUserFilesDirectory = null;
+    private String intermediateFilesDirectory = null;
+    private boolean createInstructionFile = true;
+    boolean requireDirectoriesToExist = false;
 
     public List<GobiiLoaderInstruction> getGobiiLoaderInstructions() {
         return gobiiLoaderInstructions;
@@ -24,27 +30,43 @@ public class LoaderInstructionFilesDTO extends DtoMetaData {
         this.gobiiLoaderInstructions = gobiiLoaderInstructions;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getInstructionFileName() {
+        return instructionFileName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setInstructionFileName(String instructionFileName) {
+        this.instructionFileName = instructionFileName;
     }
 
-    public String getOutputFileId() {
-        return outputFileId;
+    public String getRawUserFilesDirectory() {
+        return rawUserFilesDirectory;
     }
 
-    public void setOutputFileId(String outputFileId) {
-        this.outputFileId = outputFileId;
+    public void setRawUserFilesDirectory(String rawUserFilesDirectory) {
+        this.rawUserFilesDirectory = rawUserFilesDirectory;
     }
 
-    public String getLoaderDestinationPath() {
-        return loaderDestinationPath;
+    public String getIntermediateFilesDirectory() {
+        return intermediateFilesDirectory;
     }
 
-    public void setLoaderDestinationPath(String loaderDestinationPath) {
-        this.loaderDestinationPath = loaderDestinationPath;
+    public void setIntermediateFilesDirectory(String intermediateFilesDirectory) {
+        this.intermediateFilesDirectory = intermediateFilesDirectory;
+    }
+
+    public boolean isCreateInstructionFile() {
+        return createInstructionFile;
+    }
+
+    public void setCreateInstructionFile(boolean createInstructionFile) {
+        this.createInstructionFile = createInstructionFile;
+    }
+
+    public boolean isRequireDirectoriesToExist() {
+        return requireDirectoriesToExist;
+    }
+
+    public void setRequireDirectoriesToExist(boolean requireDirectoriesToExist) {
+        this.requireDirectoriesToExist = requireDirectoriesToExist;
     }
 }

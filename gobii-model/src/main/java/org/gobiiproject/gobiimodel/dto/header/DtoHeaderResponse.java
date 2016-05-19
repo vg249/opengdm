@@ -20,7 +20,8 @@ public class DtoHeaderResponse implements Serializable {
         VALIDATION_NOT_UNIQUE,
         NONEXISTENT_FK_ENTITY,
         BAD_REQUEST,
-        MISSING_REQUIRED_VALUE
+        MISSING_REQUIRED_VALUE,
+        ENTITY_DOES_NOT_EXIST
     }
 
     private boolean succeeded = true;

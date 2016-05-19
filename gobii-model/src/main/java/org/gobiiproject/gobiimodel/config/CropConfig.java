@@ -13,38 +13,38 @@ public class CropConfig {
 
     private String serviceDomain;
     private Integer servicePort;
-    private String userFilesLocation;
-    private String loaderFilesLocation;
-    private String intermediateFilesLocation;
+    private String rawUserFilesDirectory;
+    private String instructionFilesDirectory;
+    private String intermediateFilesDirectory;
     private Map<GobiiDbType,CropDbConfig> dbConfigByDbType = new HashMap<>();
 
     public CropConfig(String serviceDomain,
                       Integer servicePort,
-                      String userFilesLocation,
-                      String loaderFilesLocation,
-                      String intermediateFilesLocation) {
+                      String instructionFilesDirectory,
+                      String rawUserFilesDirectory,
+                      String intermediateFilesDirectory) {
 
         this.serviceDomain = serviceDomain;
         this.servicePort = servicePort;
-        this.userFilesLocation = userFilesLocation;
-        this.loaderFilesLocation = loaderFilesLocation;
-        this.intermediateFilesLocation = intermediateFilesLocation;
+        this.rawUserFilesDirectory = rawUserFilesDirectory;
+        this.instructionFilesDirectory = instructionFilesDirectory;
+        this.intermediateFilesDirectory = intermediateFilesDirectory;
     }
 
     public Integer getServicePort() {
         return servicePort;
     }
 
-    public String getUserFilesLocation() {
-        return userFilesLocation;
+    public String getRawUserFilesDirectory() {
+        return rawUserFilesDirectory;
     }
 
-    public String getLoaderFilesLocation() {
-        return loaderFilesLocation;
+    public String getInstructionFilesDirectory() {
+        return instructionFilesDirectory;
     }
 
-    public String getIntermediateFilesLocation() {
-        return intermediateFilesLocation;
+    public String getIntermediateFilesDirectory() {
+        return intermediateFilesDirectory;
     }
 
     public String getServiceDomain() {

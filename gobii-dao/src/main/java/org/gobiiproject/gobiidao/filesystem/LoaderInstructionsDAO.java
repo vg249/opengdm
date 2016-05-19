@@ -10,6 +10,13 @@ import java.util.List;
  */
 public interface LoaderInstructionsDAO {
 
-    List<GobiiLoaderInstruction> getSampleInstructions();
-    String writeInstructions(String loaderDestinationPath, List<GobiiLoaderInstruction> instructions)  throws GobiiDaoException;
+    String writeInstructions(String instructionFileFqpn,
+                             List<GobiiLoaderInstruction> instructions) throws GobiiDaoException;
+
+    List<GobiiLoaderInstruction> getInstructions(String instructionFileFqpn) throws GobiiDaoException;
+
+    boolean doesPathExist(String pathName) throws GobiiDaoException;
+
+    void makeDirectory(String pathName) throws GobiiDaoException;
+
 }

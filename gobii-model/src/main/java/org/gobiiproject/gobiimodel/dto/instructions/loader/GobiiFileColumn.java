@@ -22,7 +22,7 @@ public class GobiiFileColumn {
     private boolean subcolumn = false;
     private String subcolumnDelimiter = null;
 
-    private DataSetType dataSetType = DataSetType.UNKNOWN;
+    private DataSetType dataSetType = DataSetType.IUPAC;
 
 
     private String metaDataId = null;

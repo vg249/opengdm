@@ -5,10 +5,10 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
@@ -16,17 +16,12 @@ import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
+import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +43,26 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
+
+
+        ClientContext.getInstance().setCurrentClientCrop(GobiiCropType.RICE);
+
+        String instructionFileName = "testapp_" + DateUtils.makeDateIdString();
+
+        String intermediateFilesDirectory = ClientContext
+                .getInstance()
+                .getCurrentClientCropConfig()
+                .getIntermediateFilesDirectory();
+
+
+        String rawUserFilesDirectory = ClientContext
+                .getInstance()
+                .getCurrentClientCropConfig()
+                .getRawUserFilesDirectory();
+
+        loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
+        loaderInstructionFilesDTOToSend.setRawUserFilesDirectory(rawUserFilesDirectory);
+        loaderInstructionFilesDTOToSend.setIntermediateFilesDirectory(intermediateFilesDirectory);
 
         String instructionOneTableName = "foo_table";
 
@@ -84,8 +99,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // GobiiFile Config
         gobiiLoaderInstructionOne.getGobiiFile().setDelimiter(",")
-                .setSource("c:\\your-dir")
-                .setDestination("c:\\mydir")
+                .setSource("c://your-dir")
+                .setDestination("c://mydir")
                 .setGobiiFileType(GobiiFileType.VCF);
 
         // VCF Parameters
@@ -134,8 +149,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // GobiiFile Config
         gobiiLoaderInstructionTwo.getGobiiFile().setDelimiter(",");
-        gobiiLoaderInstructionTwo.getGobiiFile().setSource("c:\\your-bar-dir");
-        gobiiLoaderInstructionTwo.getGobiiFile().setDestination("c:\\mybardir");
+        gobiiLoaderInstructionTwo.getGobiiFile().setSource("c://your-bar-dir");
+        gobiiLoaderInstructionTwo.getGobiiFile().setDestination("c://mybardir");
         gobiiLoaderInstructionTwo.getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
 
         // VCF Parameters
@@ -146,7 +161,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         gobiiLoaderInstructionTwo.getVcfParameters().setToIupac(true);
 
         loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().add(gobiiLoaderInstructionTwo);
-        loaderInstructionFilesDTOToSend.setUserName("foo_user");
 
 
         DtoRequestFileLoadInstructions dtoRequestFileLoadInstructions = new DtoRequestFileLoadInstructions();
@@ -157,79 +171,30 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         TestUtils.checkAndPrintHeaderMessages(loaderInstructionFilesDTOResponse);
 
-        Assert.assertTrue(loaderInstructionFilesDTOResponse.getDtoHeaderResponse().isSucceeded());
-        Assert.assertNotEquals(null, loaderInstructionFilesDTOResponse.getOutputFileId());
+        LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieve = new LoaderInstructionFilesDTO();
+        loaderInstructionFilesDTOretrieve.setProcessType(DtoMetaData.ProcessType.READ);
+        loaderInstructionFilesDTOretrieve
+                .setInstructionFileName(loaderInstructionFilesDTOResponse.getInstructionFileName());
+        LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieveResponse
+                = dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOretrieve);
 
+        TestUtils.checkAndPrintHeaderMessages(loaderInstructionFilesDTOretrieveResponse);
 
-        String instructionFileFqpn = loaderInstructionFilesDTOResponse.getOutputFileId();
-        ConfigSettings configSettings = new ConfigSettings();
-        String loaderFilePath = configSettings
-                .getCropConfig(GobiiCropType.RICE)
-                .getLoaderFilesLocation();
+        Assert.assertTrue(
+                2 == loaderInstructionFilesDTOretrieveResponse
+                        .getGobiiLoaderInstructions()
+                        .size()
+        );
 
-        Assert.assertNotNull("loader file path not specified", loaderFilePath);
+        Assert.assertTrue(
+                loaderInstructionFilesDTOretrieveResponse
+                        .getGobiiLoaderInstructions()
+                        .get(0)
+                        .getGobiiFileColumns()
+                        .get(0)
+                        .getName().equals(instructionOneColumnOneName)
+        );
 
-        Path path = Paths.get(loaderFilePath);
-        Assert.assertTrue("loader file path does not exist: " + path.getFileName(), Files.exists(path));
-
-
-        File file = new File(instructionFileFqpn);
-        Assert.assertTrue("Instruction file does not exist: " + instructionFileFqpn, file.exists());
-
-        FileInputStream fileInputStream = new FileInputStream(file);
-        Assert.assertNotNull("Unable to create file input stream for file " + instructionFileFqpn, fileInputStream);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        GobiiLoaderInstruction[] instructions = null;
-
-        instructions = objectMapper.readValue(fileInputStream, GobiiLoaderInstruction[].class);
-
-        Assert.assertNotNull("Insructions were de-serialzied to null", instructions);
-
-        List<GobiiLoaderInstruction> instructionsList = Arrays.asList(instructions);
-
-        Assert.assertTrue("0 instructions were deserialized", instructionsList.size() > 0);
-
-        List<GobiiLoaderInstruction> gobiiLoaderInstructionOneList =
-                instructionsList
-                        .stream()
-                        .filter(i -> i.getTable().equals(instructionOneTableName))
-                        .collect(Collectors.toList());
-
-
-        Assert.assertTrue(1 == gobiiLoaderInstructionOneList.size());
-
-        GobiiLoaderInstruction gobiiLoaderInstructionOneFromFileSystem = gobiiLoaderInstructionOneList.get(0);
-
-        Assert.assertTrue(gobiiLoaderInstructionOneFromFileSystem
-                .getTable()
-                .equals(instructionOneTableName));
-
-        List<GobiiFileColumn> gobiiFileColumnOneList = gobiiLoaderInstructionOneFromFileSystem
-                .getGobiiFileColumns()
-                .stream()
-                .filter(c -> c.getName().equals(instructionOneColumnOneName))
-                .collect(Collectors.toList());
-
-        Assert.assertTrue(1 == gobiiFileColumnOneList.size());
-
-        GobiiFileColumn gobiiFileColumnTableOneColumnOne = gobiiFileColumnOneList.get(0);
-
-
-        Assert.assertTrue(gobiiFileColumnTableOneColumnOne
-                .getName()
-                .equals(instructionOneColumnOneName));
-
-
-        Assert.assertTrue(gobiiFileColumnTableOneColumnOne
-                .getFindText().equals(findTextTableOneColumnOne));
-
-        Assert.assertTrue(gobiiFileColumnTableOneColumnOne
-                .getReplaceText().equals(replaceTextTextTableOneColumnOne));
-
-        Assert.assertTrue(gobiiFileColumnTableOneColumnOne
-                .getDataSetType().equals(dataSetTypeTableOneColumnOne));
 
     } // testGetMarkers()
 }

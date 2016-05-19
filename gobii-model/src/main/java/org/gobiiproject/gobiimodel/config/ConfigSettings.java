@@ -76,8 +76,8 @@ public class ConfigSettings {
 
             CropConfig currentCropConfig = new CropConfig(serviceDomain,
                     servicePort,
-                    userFilesLocation,
                     loaderFilesLocation,
+                    userFilesLocation,
                     intermediateFilesLocation);
 
 
