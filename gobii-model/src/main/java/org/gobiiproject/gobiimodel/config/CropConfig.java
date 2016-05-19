@@ -1,4 +1,9 @@
-package org.gobiiproject.gobiimodel;
+package org.gobiiproject.gobiimodel.config;
+
+import org.gobiiproject.gobiimodel.types.GobiiDbType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Phil on 5/5/2016.
@@ -11,6 +16,7 @@ public class CropConfig {
     private String userFilesLocation;
     private String loaderFilesLocation;
     private String intermediateFilesLocation;
+    private Map<GobiiDbType,CropDbConfig> dbConfigByDbType = new HashMap<>();
 
     public CropConfig(String serviceDomain,
                       Integer servicePort,

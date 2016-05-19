@@ -2,7 +2,7 @@ package org.gobiiproject.gobiimodel.dto.header;
 
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.gobiiproject.gobiimodel.GobiiException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiidtomapping;
 
-import org.gobiiproject.gobiimodel.GobiiException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 
 /**

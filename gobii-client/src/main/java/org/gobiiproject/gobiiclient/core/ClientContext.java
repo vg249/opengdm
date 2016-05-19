@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiclient.core;
 
-import org.gobiiproject.gobiimodel.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
@@ -60,8 +61,12 @@ public final class ClientContext {
     }
 
 
-    public GobiiCropType getCurrentClientCrop() {
+    public GobiiCropType getCurrentClientCropType() {
         return configSettings.getCurrentGobiiCropType();
+    }
+
+    public CropConfig getCurrentClientCropConfig() {
+        return configSettings.getCropConfig(this.getCurrentClientCropType());
     }
 
     public void setCurrentClientCrop(GobiiCropType currentClientCrop) {

@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiclient.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.http.Header;
@@ -10,7 +9,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.gobiiproject.gobiimodel.ConfigSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
