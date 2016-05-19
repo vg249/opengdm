@@ -22,9 +22,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class DtoRequestGobiiFileLoadInstructionsTest {
 
     @BeforeClass
@@ -61,7 +58,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .getRawUserFilesDirectory();
 
         loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
-        loaderInstructionFilesDTOToSend.setRawUserFilesDirectory(rawUserFilesDirectory);
+        loaderInstructionFilesDTOToSend.setRawUserFilePath(rawUserFilesDirectory);
         loaderInstructionFilesDTOToSend.setIntermediateFilesDirectory(intermediateFilesDirectory);
 
         String instructionOneTableName = "foo_table";
@@ -171,6 +168,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         TestUtils.checkAndPrintHeaderMessages(loaderInstructionFilesDTOResponse);
 
+
+        // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE
         LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieve = new LoaderInstructionFilesDTO();
         loaderInstructionFilesDTOretrieve.setProcessType(DtoMetaData.ProcessType.READ);
         loaderInstructionFilesDTOretrieve
@@ -194,6 +193,9 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                         .get(0)
                         .getName().equals(instructionOneColumnOneName)
         );
+
+        // ************** NOW VERIFY THAT WE CAN REPORT CORRECTLY THAT AN INSTRUCTION FILE DOESN'T EXIST
+
 
 
     } // testGetMarkers()

@@ -36,8 +36,8 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             }
         }
 
-        if (!loaderInstructionsDAO.doesPathExist(loaderInstructionFilesDTO.getRawUserFilesDirectory())) {
-            loaderInstructionsDAO.makeDirectory(loaderInstructionFilesDTO.getRawUserFilesDirectory());
+        if (!loaderInstructionsDAO.doesPathExist(loaderInstructionFilesDTO.getRawUserFilePath())) {
+            loaderInstructionsDAO.makeDirectory(loaderInstructionFilesDTO.getRawUserFilePath());
         }
 
         if (!loaderInstructionsDAO.doesPathExist(loaderInstructionFilesDTO.getIntermediateFilesDirectory())) {
@@ -63,7 +63,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                         "instruction file name is missing");
             }
 
-            if (LineUtils.isNullOrEmpty(returnVal.getRawUserFilesDirectory())) {
+            if (LineUtils.isNullOrEmpty(returnVal.getRawUserFilePath())) {
                 allValuesSpecified = false;
                 returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
                         DtoHeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
@@ -80,12 +80,12 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                                     + returnVal.getIntermediateFilesDirectory());
                 }
 
-                if (!loaderInstructionsDAO.doesPathExist(returnVal.getRawUserFilesDirectory())) {
+                if (!loaderInstructionsDAO.doesPathExist(returnVal.getRawUserFilePath())) {
                     allValuesSpecified = false;
                     returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
                             DtoHeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
                             "require-to-exist was set to true, but the digest destination file path does not exist: "
-                                    + returnVal.getRawUserFilesDirectory());
+                                    + returnVal.getRawUserFilePath());
                 }
 
             }
@@ -104,7 +104,8 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                         + loaderInstructionFilesDTO.getInstructionFileName()
                         + INSTRUCTION_FILE_EXT;
 
-                if (loaderInstructionFilesDTO.isCreateInstructionFile()) {
+                // "source file" is the data file the user may have already uploaded
+                if (loaderInstructionFilesDTO.isCreateSourceFile()) {
 
                     createDirectories(instructionFileDirectory,
                             returnVal);
@@ -113,9 +114,14 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                 } else {
 
-                    if (loaderInstructionsDAO.doesPathExist(instructionFileFqpn)) {
+                    // it's supposed to exist, so we check
+                    if (loaderInstructionsDAO.doesPathExist(loaderInstructionFilesDTO.getRawUserFilePath())) {
 
-                        createDirectories(null, returnVal);
+                        createDirectories(instructionFileDirectory,
+                                returnVal);
+
+                        loaderInstructionsDAO.writeInstructions(instructionFileFqpn,
+                                returnVal.getGobiiLoaderInstructions());
 
                     } else {
 
