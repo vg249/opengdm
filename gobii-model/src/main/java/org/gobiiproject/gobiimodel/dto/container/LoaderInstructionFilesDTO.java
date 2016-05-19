@@ -14,6 +14,7 @@ public class LoaderInstructionFilesDTO extends DtoMetaData {
     private List<GobiiLoaderInstruction> gobiiLoaderInstructions = new ArrayList<>();
     String userName = null;
     String outputFileId = null;
+    String loaderDestinationPath = null;
 
     public List<GobiiLoaderInstruction> getGobiiLoaderInstructions() {
         return gobiiLoaderInstructions;
@@ -37,5 +38,13 @@ public class LoaderInstructionFilesDTO extends DtoMetaData {
 
     public void setOutputFileId(String outputFileId) {
         this.outputFileId = outputFileId;
+    }
+
+    public String getLoaderDestinationPath() {
+        return loaderDestinationPath;
+    }
+
+    public void setLoaderDestinationPath(String loaderDestinationPath) {
+        this.loaderDestinationPath = loaderDestinationPath;
     }
 }

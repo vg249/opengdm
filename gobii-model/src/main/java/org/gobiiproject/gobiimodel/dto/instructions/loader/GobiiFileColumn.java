@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
-import org.gobiiproject.gobiimodel.types.BaseEncodingType;
+import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 
 /**
@@ -22,7 +22,7 @@ public class GobiiFileColumn {
     private boolean subcolumn = false;
     private String subcolumnDelimiter = null;
 
-    private BaseEncodingType baseEncodingType = BaseEncodingType.UNKNOWN;
+    private DataSetType dataSetType = DataSetType.UNKNOWN;
 
 
     private String metaDataId = null;
@@ -145,12 +145,12 @@ public class GobiiFileColumn {
         return this;
     }
 
-    public BaseEncodingType getBaseEncodingType() {
-        return baseEncodingType;
+    public DataSetType getDataSetType() {
+        return dataSetType;
     }
 
-    public GobiiFileColumn setBaseEncodingType(BaseEncodingType baseEncodingType) {
-        this.baseEncodingType = baseEncodingType;
+    public GobiiFileColumn setDataSetType(DataSetType dataSetType) {
+        this.dataSetType = dataSetType;
         return this;
     }
 

@@ -12,7 +12,7 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
-import org.gobiiproject.gobiimodel.types.BaseEncodingType;
+import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
@@ -56,7 +56,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // column one
         String instructionOneColumnOneName = "my_foo_column";
-        BaseEncodingType baseEncodingTypeTableOneColumnOne = BaseEncodingType.IUPAC;
+        DataSetType dataSetTypeTableOneColumnOne = DataSetType.IUPAC;
         String findTextTableOneColumnOne = "foo-replace-me";
         String replaceTextTextTableOneColumnOne = "bar-replace-me";
         GobiiFileColumn gobiiFileColumnOne = new GobiiFileColumn()
@@ -68,7 +68,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setName(instructionOneColumnOneName)
                 .setFindText(findTextTableOneColumnOne)
                 .setReplaceText(replaceTextTextTableOneColumnOne)
-                .setBaseEncodingType(baseEncodingTypeTableOneColumnOne);
+                .setDataSetType(dataSetTypeTableOneColumnOne);
 
         // column two
         GobiiFileColumn gobiiFileColumnTwo = new GobiiFileColumn()
@@ -229,7 +229,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .getReplaceText().equals(replaceTextTextTableOneColumnOne));
 
         Assert.assertTrue(gobiiFileColumnTableOneColumnOne
-                .getBaseEncodingType().equals(baseEncodingTypeTableOneColumnOne));
+                .getDataSetType().equals(dataSetTypeTableOneColumnOne));
 
     } // testGetMarkers()
 }

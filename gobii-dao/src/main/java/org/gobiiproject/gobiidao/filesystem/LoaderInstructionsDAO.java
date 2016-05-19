@@ -11,5 +11,5 @@ import java.util.List;
 public interface LoaderInstructionsDAO {
 
     List<GobiiLoaderInstruction> getSampleInstructions();
-    String writeInstructions(String fileUniqueId, List<GobiiLoaderInstruction> instructions)  throws GobiiDaoException;
+    String writeInstructions(String loaderDestinationPath, List<GobiiLoaderInstruction> instructions)  throws GobiiDaoException;
 }

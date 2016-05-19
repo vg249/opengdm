@@ -32,11 +32,16 @@ public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
 
         String returnVal = null;
 
-        String fileFQPN = null;
+        String instructionFileFqpn = null;
         String loaderFilePath = null;
+        
+        
+        
+        
         try {
 
 
+            /*
             ConfigSettings configSettings = new ConfigSettings();
 
             loaderFilePath = configSettings.getCurrentCropConfig().getLoaderFilesLocation();
@@ -61,17 +66,17 @@ public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
                                     "-" +
                                     String.format("%02d", calendar.get(Calendar.SECOND));
 
-                    fileFQPN = loaderFilePath + fileUniqueId + "_" + dateTimeForFileName + LOADER_FILE_EXT;
+                    instructionFileFqpn = loaderFilePath + fileUniqueId + "_" + dateTimeForFileName + LOADER_FILE_EXT;
 
                     ObjectMapper objectMapper = new ObjectMapper();
                     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
                     String instructionsAsJson = objectMapper.writeValueAsString(instructions);
-                    BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileFQPN));
+                    BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(instructionFileFqpn));
                     bufferedWriter.write(instructionsAsJson);
                     bufferedWriter.flush();
                     bufferedWriter.close();
 
-                    returnVal = fileFQPN; // set this last in case we got an exception
+                    returnVal = instructionFileFqpn; // set this last in case we got an exception
                 } else {
                     throw new GobiiDaoException("Instruction file path does not exist: " + loaderFilePath);
                 } // if-else the path was found
@@ -79,9 +84,10 @@ public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
                 throw new GobiiDaoException("The configuration does not specify a loader file destination" );
             } // if-else there is path in the configuration
 
+        */
 
         } catch (Exception e) {
-            String message = e.getMessage() + "; fqpn: " + fileFQPN + "; configured path: " + loaderFilePath;
+            String message = e.getMessage() + "; fqpn: " + instructionFileFqpn + "; configured path: " + loaderFilePath;
             throw new GobiiDaoException(message);
         }
 

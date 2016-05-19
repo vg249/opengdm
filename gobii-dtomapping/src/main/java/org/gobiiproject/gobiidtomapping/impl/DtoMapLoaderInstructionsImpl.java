@@ -29,7 +29,8 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
         try {
 
-            String outputFileName = loaderInstructionsDAO.writeInstructions(loaderInstructionFilesDTO.getUserName(),
+
+            String outputFileName = loaderInstructionsDAO.writeInstructions(loaderInstructionFilesDTO.getLoaderDestinationPath(),
                     loaderInstructionFilesDTO.getGobiiLoaderInstructions());
 
             returnVal = loaderInstructionFilesDTO;
