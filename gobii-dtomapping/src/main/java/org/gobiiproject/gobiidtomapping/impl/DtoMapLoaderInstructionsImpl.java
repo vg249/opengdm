@@ -36,8 +36,10 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             }
         }
 
-        if (!loaderInstructionsDAO.doesPathExist(loaderInstructionFilesDTO.getRawUserFilePath())) {
-            loaderInstructionsDAO.makeDirectory(loaderInstructionFilesDTO.getRawUserFilePath());
+        if (loaderInstructionFilesDTO.isCreateSourceFile()) {
+            if (!loaderInstructionsDAO.doesPathExist(loaderInstructionFilesDTO.getRawUserFilePath())) {
+                loaderInstructionsDAO.makeDirectory(loaderInstructionFilesDTO.getRawUserFilePath());
+            }
         }
 
         if (!loaderInstructionsDAO.doesPathExist(loaderInstructionFilesDTO.getIntermediateFilesDirectory())) {
@@ -75,7 +77,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                 if (!loaderInstructionsDAO.doesPathExist(returnVal.getIntermediateFilesDirectory())) {
                     allValuesSpecified = false;
                     returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                            DtoHeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
+                            DtoHeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST,
                             "require-to-exist was set to true, but the source file path does not exist: "
                                     + returnVal.getIntermediateFilesDirectory());
                 }
@@ -83,7 +85,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                 if (!loaderInstructionsDAO.doesPathExist(returnVal.getRawUserFilePath())) {
                     allValuesSpecified = false;
                     returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                            DtoHeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
+                            DtoHeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST,
                             "require-to-exist was set to true, but the digest destination file path does not exist: "
                                     + returnVal.getRawUserFilePath());
                 }

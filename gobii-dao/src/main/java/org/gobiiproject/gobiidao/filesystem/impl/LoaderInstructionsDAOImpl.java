@@ -65,6 +65,7 @@ public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
                 } // if-else destination directory exists
 
             } else {
+
                 throw new GobiiDaoException("The specified instruction file already exists: "
                         + instructionFileFqpn);
             } // if-else file does not arleady exist
@@ -87,7 +88,9 @@ public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
     public void makeDirectory(String pathName) throws GobiiDaoException {
 
         if (!doesPathExist(pathName)) {
-            new File(pathName).mkdir();
+            if( ! ( new File(pathName).mkdirs() ) ) {
+                throw new GobiiDaoException("Unable to create directory " + pathName);
+            }
         } else {
             throw new GobiiDaoException("The specified path already exists: " + pathName);
         }

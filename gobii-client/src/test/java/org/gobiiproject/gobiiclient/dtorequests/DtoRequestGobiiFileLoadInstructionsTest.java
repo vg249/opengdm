@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.DataSetType;
@@ -21,6 +22,8 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.stream.Collectors;
 
 public class DtoRequestGobiiFileLoadInstructionsTest {
 
@@ -166,7 +169,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         Assert.assertNotEquals(null, loaderInstructionFilesDTOResponse);
 
-        TestUtils.checkAndPrintHeaderMessages(loaderInstructionFilesDTOResponse);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFilesDTOResponse));
 
 
         // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE
@@ -177,7 +180,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieveResponse
                 = dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOretrieve);
 
-        TestUtils.checkAndPrintHeaderMessages(loaderInstructionFilesDTOretrieveResponse);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFilesDTOretrieveResponse));
 
         Assert.assertTrue(
                 2 == loaderInstructionFilesDTOretrieveResponse
@@ -194,9 +197,97 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                         .getName().equals(instructionOneColumnOneName)
         );
 
-        // ************** NOW VERIFY THAT WE CAN REPORT CORRECTLY THAT AN INSTRUCTION FILE DOESN'T EXIST
+        // ************** VERIFY THAT WE CAN MEANINGFULLY TEST FOR NON EXISTENT DIRECTORIES
+        String newInstructionFileName = "testapp_" + DateUtils.makeDateIdString();
+        loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileName);
+        loaderInstructionFilesDTOToSend.setIntermediateFilesDirectory("foodir");
+        loaderInstructionFilesDTOToSend.setRawUserFilePath("bardir");
+        loaderInstructionFilesDTOToSend.setRequireDirectoriesToExist(true);
+
+        LoaderInstructionFilesDTO requiredDirectoriesResponse =
+                dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOToSend);
+
+        Assert.assertTrue(
+                2 ==
+                        requiredDirectoriesResponse
+                                .getDtoHeaderResponse()
+                                .getStatusMessages()
+                                .stream()
+                                .filter(r ->
+                                        r.getValidationStatusType()
+                                                .equals(DtoHeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST))
+                                .collect(Collectors.toList())
+                                .size()
+        );
 
 
+        // ************** VERIFY THAT THE DIRECTORIES WE SHOULD HAVE CREATED DO EXIST
+        String newInstructionFileNameNoError = "testapp_" + DateUtils.makeDateIdString();
+        loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileNameNoError);
+        loaderInstructionFilesDTOToSend.setRawUserFilePath(rawUserFilesDirectory);
+        loaderInstructionFilesDTOToSend.setIntermediateFilesDirectory(intermediateFilesDirectory);
+        loaderInstructionFilesDTOToSend.setRequireDirectoriesToExist(true);
+        LoaderInstructionFilesDTO requiredDirectoriesResponseNoError =
+                dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOToSend);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(requiredDirectoriesResponseNoError));
+
+
+        // ************** VERIFY THAT WE GET AN ERROR WHEN A FILE ALREADY EXISTS
+        loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileNameNoError);
+        loaderInstructionFilesDTOToSend.setRequireDirectoriesToExist(true);
+        LoaderInstructionFilesDTO requiredDirectoriesResponseDuplicateNameError =
+                dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOToSend);
+        Assert.assertTrue(1 == requiredDirectoriesResponseDuplicateNameError
+                .getDtoHeaderResponse()
+                .getStatusMessages().size());
+
+        Assert.assertTrue(requiredDirectoriesResponseDuplicateNameError
+                .getDtoHeaderResponse()
+                .getStatusMessages()
+                .get(0)
+                .getMessage().toLowerCase().contains("already exists"));
+
+
+        // ************** VERIFY THAT WE ERROR ON USER INPUT FILE THAT SHOULD EXISTS BUT DOESN'T EXIST
+
+        loaderInstructionFilesDTOToSend.setInstructionFileName("testapp_" + DateUtils.makeDateIdString());
+        loaderInstructionFilesDTOToSend.setRequireDirectoriesToExist(false); // actually we don't care, but it's the base case
+        loaderInstructionFilesDTOToSend.setRawUserFilePath("foo");
+        loaderInstructionFilesDTOToSend.setCreateSourceFile(false); // in other words, we expect raw file path to exist
+        LoaderInstructionFilesDTO testForuserInputFileExistsCausesError =
+                dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOToSend);
+
+        Assert.assertTrue(
+                1 ==
+                        testForuserInputFileExistsCausesError
+                                .getDtoHeaderResponse()
+                                .getStatusMessages()
+                                .stream()
+                                .filter(r ->
+                                        r.getValidationStatusType()
+                                                .equals(DtoHeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST))
+                                .collect(Collectors.toList())
+                                .size()
+        );
+
+        // ************** VERIFY THAT WE HANDLE USER INPUT FILE ALREADY EXISTS
+        // we're going to test for the existence of the previous instruction file we created;
+        // that would not be the real use case; however, it is a file we created on the server
+        // so it's handy way to test this functionality
+        String instructionFileDirectory = ClientContext
+                .getInstance()
+                .getCurrentClientCropConfig()
+                .getInstructionFilesDirectory();
+        String bogusUserInputFile = instructionFileDirectory + newInstructionFileNameNoError + ".json";
+
+        loaderInstructionFilesDTOToSend.setInstructionFileName("testapp_" + DateUtils.makeDateIdString());
+        loaderInstructionFilesDTOToSend.setRequireDirectoriesToExist(false); // actually we don't care, but it's the base case
+        loaderInstructionFilesDTOToSend.setRawUserFilePath(bogusUserInputFile);
+        loaderInstructionFilesDTOToSend.setCreateSourceFile(false);
+        LoaderInstructionFilesDTO testForuserInputFileExistsNoError =
+                dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOToSend);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(testForuserInputFileExistsNoError));
 
     } // testGetMarkers()
 }

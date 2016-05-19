@@ -23,7 +23,9 @@ public class DateUtils {
                         "-" +
                         String.format("%02d", calendar.get(Calendar.MINUTE)) +
                         "-" +
-                        String.format("%02d", calendar.get(Calendar.SECOND));
+                        String.format("%02d", calendar.get(Calendar.SECOND)) +
+                        "-" +
+                        String.format("%02d", calendar.get(Calendar.MILLISECOND));
 
         return returnVal;
     }
