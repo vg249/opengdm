@@ -14,11 +14,14 @@ public class ConfigSettings {
 
 
     private final String PROP_NAME_WEB_SVR_INSTANCECROP = "websvr.instancecrop";
+
     private final String PROP_NAME_MAIL_SVR_TYPE = "mailsvr.type";
     private final String PROP_NAME_MAIL_SVR_DOMAIN = "mailsvr.domain";
     private final String PROP_NAME_MAIL_SVR_USER = "mailsvr.user";
     private final String PROP_NAME_MAIL_SVR_HASHTYPE = "mailsvr.hashtype";
     private final String PROP_NAME_MAIL_SVR_PWD = "mailsvr.pwd";
+
+    private final String PROP_NAME_IFL_INTEGRITY_CHECK = "ifl.integritycheck";
 
     private final String DB_PREFX = "db.";
     private final String DB_SUFFIX_HOST = "host";
@@ -61,6 +64,7 @@ public class ConfigSettings {
     private String emailSvrUser;
     private String emailSvrHashType;
     private String emailSvrPassword;
+    private boolean iflIntegrityCheck = false;
 
 
     public ConfigSettings() throws Exception {
@@ -73,6 +77,7 @@ public class ConfigSettings {
         emailSvrUser = configReader.getPropValue(PROP_NAME_MAIL_SVR_USER);
         emailSvrHashType = configReader.getPropValue(PROP_NAME_MAIL_SVR_HASHTYPE);
         emailSvrPassword = configReader.getPropValue(PROP_NAME_MAIL_SVR_PWD);
+        iflIntegrityCheck = configReader.getPropValue(PROP_NAME_IFL_INTEGRITY_CHECK).equals("true") ? true : false;
 
 
         for (int idx = 0; idx < cropPrefixes.length; idx++) {
@@ -169,4 +174,11 @@ public class ConfigSettings {
         return emailSvrType;
     }
 
+    public boolean isIflIntegrityCheck() {
+        return iflIntegrityCheck;
+    }
+
+    public void setIflIntegrityCheck(boolean iflIntegrityCheck) {
+        this.iflIntegrityCheck = iflIntegrityCheck;
+    }
 }
