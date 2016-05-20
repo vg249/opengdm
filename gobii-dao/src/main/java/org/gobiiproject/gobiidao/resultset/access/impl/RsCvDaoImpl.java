@@ -5,6 +5,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpDelCv;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsCv;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdCv;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
@@ -190,6 +191,24 @@ public class RsCvDaoImpl implements RsCvDao {
         try {
 
             if (!spRunnerCallable.run(new SpUpdCv(), parameters)) {
+                throw new GobiiDaoException(spRunnerCallable.getErrorString());
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error creating cv", e);
+            throw (new GobiiDaoException(e));
+        }
+    }
+
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void deleteCv(Map<String, Object> parameters) throws GobiiDaoException {
+
+        try {
+
+            if (!spRunnerCallable.run(new SpDelCv(), parameters)) {
                 throw new GobiiDaoException(spRunnerCallable.getErrorString());
             }
 

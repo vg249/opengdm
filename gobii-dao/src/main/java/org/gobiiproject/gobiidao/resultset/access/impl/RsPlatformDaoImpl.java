@@ -8,10 +8,8 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.SpInsPlatformProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsPlatform;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdPlatform;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformDetailsByPlatformId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformDetailsByPlatformId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatformNames;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPropertiesForPlatform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +56,33 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
         return returnVal;
 
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getPlatformNamesByTypeId(Integer typeId) throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("typeId", typeId);
+            SpGetPlatformNamesByTypeId spGetPlatformNamesByTypeId = new SpGetPlatformNamesByTypeId(parameters);
+
+            storedProcExec.doWithConnection(spGetPlatformNamesByTypeId);
+
+            returnVal = spGetPlatformNamesByTypeId.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving platform details", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+
+    } // getPlatformDetailsByPlatformId()
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override

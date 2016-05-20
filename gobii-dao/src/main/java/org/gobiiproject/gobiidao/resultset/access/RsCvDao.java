@@ -25,4 +25,7 @@ public interface RsCvDao {
 
 	void updateCv(Map<String, Object> parameters) throws GobiiDaoException;
 
+	void deleteCv(Map<String, Object> parameters) throws GobiiDaoException;
+
+
 }

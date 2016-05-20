@@ -98,7 +98,6 @@ public class DtoRequestIdNameIdListTest {
     @Test
     public void testGetCvTermsByGroup() throws Exception {
 
-
         // Assumes rice data with seed script is loaded
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
@@ -111,9 +110,9 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
 
     }
+
     @Test
     public void testGetPlatformNames() throws Exception {
-
 
         // Assumes rice data with seed script is loaded
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
@@ -122,6 +121,22 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+
+    } // testGetMarkers()
+
+    @Test
+    public void testGetPlatformNamesByTypeId() throws Exception {
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("platformByTypeId");
+        nameIdListDTORequest.setFilter("1");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);

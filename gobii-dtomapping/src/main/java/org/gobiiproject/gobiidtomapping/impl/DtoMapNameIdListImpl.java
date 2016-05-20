@@ -268,7 +268,36 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         return returnVal;
     }
-    
+
+    private NameIdListDTO getNameIdListForPlatformsByTypeId(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsPlatformDao.getPlatformNamesByTypeId(Integer.parseInt(nameIdListDTO.getFilter()));
+            Map<String, String> platformNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer platformId = resultSet.getInt("platform_id");
+                String platformName = resultSet.getString("name");
+                platformNamesById.put(platformId.toString(), platformName);
+            }
+
+
+            returnVal.setNamesById(platformNamesById);
+
+
+        } catch (SQLException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
     private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -658,6 +687,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     
                 case "platform":
                     returnVal = getNameIdListForPlatforms(nameIdListDTO);
+                    break;
+
+                case "platformByTypeId":
+                    returnVal = getNameIdListForPlatformsByTypeId(nameIdListDTO);
                     break;
 
                 case "manifest":
