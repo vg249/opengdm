@@ -110,4 +110,22 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         return returnVal;
     }
+
+    @Override
+    public CvDTO deleteCv(CvDTO cvDTO) throws GobiiDtoMappingException {
+
+        CvDTO returnVal = cvDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            rsCvDao.deleteCv(parameters);
+
+        } catch (GobiiDaoException e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return returnVal;
+    }
 } // DtoMapNameIdListImpl

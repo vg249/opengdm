@@ -58,7 +58,6 @@ public class DtoRequestCvTest {
 
     } // testGetMarkers()
 
-
     @Test
     public void testCreateCv() throws Exception {
 
@@ -72,9 +71,7 @@ public class DtoRequestCvTest {
         Assert.assertNotEquals(null, cvDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResponse));
         Assert.assertTrue(cvDTOResponse.getCvId() > 0);
-
     }
-
 
     @Test
     public void testUpdateCv() throws Exception {
@@ -84,7 +81,6 @@ public class DtoRequestCvTest {
         CvDTO newCvDto = TestDtoFactory
                 .makePopulatedCvDTO(DtoMetaData.ProcessType.CREATE, 1);
         CvDTO newCvDTOResponse = dtoRequestCv.process(newCvDto);
-
 
         // re-retrieve the cv we just created so we start with a fresh READ mode dto
         CvDTO CvDTORequest = new CvDTO();
@@ -107,6 +103,46 @@ public class DtoRequestCvTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestCvReRetrieved));
 
         Assert.assertTrue(dtoRequestCvReRetrieved.getGroup().equals(newName));
+
+    }
+
+    @Test
+    public void testDeleteCv() throws Exception {
+        DtoRequestCv dtoRequestCv = new DtoRequestCv();
+
+        // create a new cv for our test
+        CvDTO newCvDto = TestDtoFactory
+                .makePopulatedCvDTO(DtoMetaData.ProcessType.CREATE, 1);
+        CvDTO newCvDTOResponse = dtoRequestCv.process(newCvDto);
+
+        // re-retrieve the cv we just created so we start with a fresh READ mode dto
+        CvDTO CvDTORequest = new CvDTO();
+        CvDTORequest.setCvId(newCvDTOResponse.getCvId());
+        CvDTO cvDTOReceived = dtoRequestCv.process(CvDTORequest);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOReceived));
+
+
+        // so this would be the typical workflow for the client app
+        cvDTOReceived.setProcessType(DtoMetaData.ProcessType.DELETE);
+
+
+        CvDTO CvDTOResponse = dtoRequestCv.process(cvDTOReceived);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(CvDTOResponse));
+
+        CvDTO dtoRequestCvReRetrieved =
+                dtoRequestCv.process(CvDTORequest);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestCvReRetrieved));
+
+        //try to retrieve deleted cv
+
+        CvDTO cvDTORequest = new CvDTO();
+        cvDTORequest.setCvId(dtoRequestCvReRetrieved.getCvId());
+        cvDTORequest.setIncludeDetailsList(true);
+
+
+        CvDTO cvDTOResponse = dtoRequestCv.process(dtoRequestCvReRetrieved);
+        Assert.assertEquals(null, cvDTOResponse.getTerm());
 
     }
 }

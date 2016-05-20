@@ -11,4 +11,5 @@ public interface DtoMapCv {
     CvDTO getCvDetails(CvDTO cvDTO) throws GobiiDtoMappingException;
     CvDTO createCv(CvDTO cvDTO) throws GobiiDtoMappingException;
     CvDTO updateCv(CvDTO cvDTO) throws GobiiDtoMappingException;
+    CvDTO deleteCv(CvDTO cvDTO) throws GobiiDtoMappingException;
 }

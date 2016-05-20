@@ -41,6 +41,10 @@ public class CvServiceImpl implements CvService {
 					returnVal = dtoMapCv.updateCv(cvDTO);
 					break;
 
+				case DELETE:
+					returnVal = dtoMapCv.deleteCv(cvDTO);
+					break;
+
 				default:
 					throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
 							DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
