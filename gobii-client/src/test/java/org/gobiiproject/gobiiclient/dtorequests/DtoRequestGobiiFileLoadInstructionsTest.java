@@ -49,20 +49,17 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         String instructionFileName = "testapp_" + DateUtils.makeDateIdString();
 
-        String intermediateFilesDirectory = ClientContext
-                .getInstance()
-                .getCurrentClientCropConfig()
-                .getIntermediateFilesDirectory();
-
-
-        String rawUserFilesDirectory = ClientContext
+        String digesterInputDirectory = ClientContext
                 .getInstance()
                 .getCurrentClientCropConfig()
                 .getRawUserFilesDirectory();
 
+        String digesterOutputDirectory = ClientContext
+                .getInstance()
+                .getCurrentClientCropConfig()
+                .getIntermediateFilesDirectory();
+
         loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
-        loaderInstructionFilesDTOToSend.setRawUserFilePath(rawUserFilesDirectory);
-        loaderInstructionFilesDTOToSend.setIntermediateFilesDirectory(intermediateFilesDirectory);
 
         String instructionOneTableName = "foo_table";
 
@@ -98,10 +95,14 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         gobiiLoaderInstructionOne.getGobiiFileColumns().add(gobiiFileColumnTwo);
 
         // GobiiFile Config
+        String testSourceDirName = digesterInputDirectory + "file_one_dir";
+        String testDestinationDirName = digesterOutputDirectory + "file_one_dir";
         gobiiLoaderInstructionOne.getGobiiFile().setDelimiter(",")
                 .setSource("c://your-dir")
                 .setDestination("c://mydir")
-                .setGobiiFileType(GobiiFileType.VCF);
+                .setGobiiFileType(GobiiFileType.VCF)
+                .setSource(testSourceDirName)
+                .setDestination(testDestinationDirName);
 
         // VCF Parameters
         gobiiLoaderInstructionOne.getVcfParameters()
@@ -152,6 +153,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         gobiiLoaderInstructionTwo.getGobiiFile().setSource("c://your-bar-dir");
         gobiiLoaderInstructionTwo.getGobiiFile().setDestination("c://mybardir");
         gobiiLoaderInstructionTwo.getGobiiFile().setGobiiFileType(GobiiFileType.VCF);
+        gobiiLoaderInstructionTwo.getGobiiFile().setSource(digesterInputDirectory + "file_two_dir");
+        gobiiLoaderInstructionTwo.getGobiiFile().setDestination(digesterOutputDirectory + "file_two_dir");
 
         // VCF Parameters
         gobiiLoaderInstructionTwo.getVcfParameters().setMaf(1.1f);
@@ -200,9 +203,14 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         // ************** VERIFY THAT WE CAN MEANINGFULLY TEST FOR NON EXISTENT DIRECTORIES
         String newInstructionFileName = "testapp_" + DateUtils.makeDateIdString();
         loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileName);
-        loaderInstructionFilesDTOToSend.setIntermediateFilesDirectory("foodir");
-        loaderInstructionFilesDTOToSend.setRawUserFilePath("bardir");
-        loaderInstructionFilesDTOToSend.setRequireDirectoriesToExist(true);
+
+        loaderInstructionFilesDTOToSend
+                .getGobiiLoaderInstructions()
+                .get(0)
+                .getGobiiFile()
+                .setSource("foo")
+                .setDestination("bar")
+                .setRequireDirectoriesToExist(true); // <== should result in validation error
 
         LoaderInstructionFilesDTO requiredDirectoriesResponse =
                 dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOToSend);
@@ -224,9 +232,14 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         // ************** VERIFY THAT THE DIRECTORIES WE SHOULD HAVE CREATED DO EXIST
         String newInstructionFileNameNoError = "testapp_" + DateUtils.makeDateIdString();
         loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileNameNoError);
-        loaderInstructionFilesDTOToSend.setRawUserFilePath(rawUserFilesDirectory);
-        loaderInstructionFilesDTOToSend.setIntermediateFilesDirectory(intermediateFilesDirectory);
-        loaderInstructionFilesDTOToSend.setRequireDirectoriesToExist(true);
+        loaderInstructionFilesDTOToSend
+                .getGobiiLoaderInstructions()
+                .get(0)
+                .getGobiiFile()
+                .setSource(testSourceDirName)
+                .setDestination(testDestinationDirName)
+                .setRequireDirectoriesToExist(true); // <== should result in validation error
+
         LoaderInstructionFilesDTO requiredDirectoriesResponseNoError =
                 dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOToSend);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(requiredDirectoriesResponseNoError));
@@ -234,7 +247,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // ************** VERIFY THAT WE GET AN ERROR WHEN A FILE ALREADY EXISTS
         loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileNameNoError);
-        loaderInstructionFilesDTOToSend.setRequireDirectoriesToExist(true);
         LoaderInstructionFilesDTO requiredDirectoriesResponseDuplicateNameError =
                 dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOToSend);
         Assert.assertTrue(1 == requiredDirectoriesResponseDuplicateNameError
@@ -251,14 +263,21 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         // ************** VERIFY THAT WE ERROR ON USER INPUT FILE THAT SHOULD EXISTS BUT DOESN'T EXIST
 
         loaderInstructionFilesDTOToSend.setInstructionFileName("testapp_" + DateUtils.makeDateIdString());
-        loaderInstructionFilesDTOToSend.setRequireDirectoriesToExist(false); // actually we don't care, but it's the base case
-        loaderInstructionFilesDTOToSend.setRawUserFilePath("foo");
-        loaderInstructionFilesDTOToSend.setCreateSourceFile(false); // in other words, we expect raw file path to exist
+
+        loaderInstructionFilesDTOToSend
+                .getGobiiLoaderInstructions()
+                .get(0)
+                .getGobiiFile()
+                .setSource("foo")
+                .setDestination("bar")
+                .setCreateSource(false); // <== should result in validation error
+
+
         LoaderInstructionFilesDTO testForuserInputFileExistsCausesError =
                 dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOToSend);
 
         Assert.assertTrue(
-                1 ==
+                2 ==
                         testForuserInputFileExistsCausesError
                                 .getDtoHeaderResponse()
                                 .getStatusMessages()
@@ -281,9 +300,14 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String bogusUserInputFile = instructionFileDirectory + newInstructionFileNameNoError + ".json";
 
         loaderInstructionFilesDTOToSend.setInstructionFileName("testapp_" + DateUtils.makeDateIdString());
-        loaderInstructionFilesDTOToSend.setRequireDirectoriesToExist(false); // actually we don't care, but it's the base case
-        loaderInstructionFilesDTOToSend.setRawUserFilePath(bogusUserInputFile);
-        loaderInstructionFilesDTOToSend.setCreateSourceFile(false);
+        loaderInstructionFilesDTOToSend
+                .getGobiiLoaderInstructions()
+                .get(0)
+                .getGobiiFile()
+                .setSource(bogusUserInputFile)
+                .setDestination(testDestinationDirName)
+                .setCreateSource(false); // <== should result in validation error
+
         LoaderInstructionFilesDTO testForuserInputFileExistsNoError =
                 dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOToSend);
 

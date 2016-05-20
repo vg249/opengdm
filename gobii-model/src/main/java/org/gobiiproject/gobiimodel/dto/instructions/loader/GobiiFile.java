@@ -13,6 +13,9 @@ public class GobiiFile {
     String destination = null;
     String delimiter = null;
     GobiiFileType gobiiFileType = null;
+    private boolean isCreateSource = true;
+    boolean requireDirectoriesToExist = false;
+
 
     public String getSource() {
         return source;
@@ -47,6 +50,24 @@ public class GobiiFile {
 
     public GobiiFile setGobiiFileType(GobiiFileType gobiiFileType) {
         this.gobiiFileType = gobiiFileType;
+        return this;
+    }
+
+    public boolean isCreateSource() {
+        return isCreateSource;
+    }
+
+    public GobiiFile setCreateSource(boolean createSource) {
+        isCreateSource = createSource;
+        return this;
+    }
+
+    public boolean isRequireDirectoriesToExist() {
+        return requireDirectoriesToExist;
+    }
+
+    public GobiiFile setRequireDirectoriesToExist(boolean requireDirectoriesToExist) {
+        this.requireDirectoriesToExist = requireDirectoriesToExist;
         return this;
     }
 }

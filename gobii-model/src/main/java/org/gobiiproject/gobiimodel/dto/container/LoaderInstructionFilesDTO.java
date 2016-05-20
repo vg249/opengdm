@@ -17,10 +17,6 @@ public class LoaderInstructionFilesDTO extends DtoMetaData {
 
     private List<GobiiLoaderInstruction> gobiiLoaderInstructions = new ArrayList<>();
     private String instructionFileName = null;
-    private String rawUserFilePath = null;
-    private String intermediateFilesDirectory = null;
-    private boolean isCreateSourceFile = true;
-    boolean requireDirectoriesToExist = false;
 
     public List<GobiiLoaderInstruction> getGobiiLoaderInstructions() {
         return gobiiLoaderInstructions;
@@ -38,35 +34,4 @@ public class LoaderInstructionFilesDTO extends DtoMetaData {
         this.instructionFileName = instructionFileName;
     }
 
-    public String getRawUserFilePath() {
-        return rawUserFilePath;
-    }
-
-    public void setRawUserFilePath(String rawUserFilePath) {
-        this.rawUserFilePath = rawUserFilePath;
-    }
-
-    public String getIntermediateFilesDirectory() {
-        return intermediateFilesDirectory;
-    }
-
-    public void setIntermediateFilesDirectory(String intermediateFilesDirectory) {
-        this.intermediateFilesDirectory = intermediateFilesDirectory;
-    }
-
-    public boolean isCreateSourceFile() {
-        return isCreateSourceFile;
-    }
-
-    public void setCreateSourceFile(boolean createSourceFile) {
-        this.isCreateSourceFile = createSourceFile;
-    }
-
-    public boolean isRequireDirectoriesToExist() {
-        return requireDirectoriesToExist;
-    }
-
-    public void setRequireDirectoriesToExist(boolean requireDirectoriesToExist) {
-        this.requireDirectoriesToExist = requireDirectoriesToExist;
-    }
 }
