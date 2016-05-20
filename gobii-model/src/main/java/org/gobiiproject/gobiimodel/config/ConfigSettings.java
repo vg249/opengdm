@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.config;
 
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
+import org.gobiiproject.gobiimodel.types.GobiiDbType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,14 @@ public class ConfigSettings {
     private final String PROP_NAME_MAIL_SVR_HASHTYPE = "mailsvr.hashtype";
     private final String PROP_NAME_MAIL_SVR_PWD = "mailsvr.pwd";
 
+    private final String DB_PREFX = "db.";
+    private final String DB_SUFFIX_HOST = "host";
+    private final String DB_SUFFIX_PORT = "port";
+    private final String DB_SUFFIX_DBNAME = "dbname";
+    private final String DB_SUFFIX_USER = "username";
+    private final String DB_SUFFIX_PASSWORD = "password";
+
+
     private final String CROP_SUFFIX_SERVICE_DOMAIN = "servicedomain";
     private final String CROP_SUFFIX_SERVICE_PORT = "serviceport";
     private final String CROP_SUFFIX_USER_FILE_LOCLOCATION = "usrfloc";
@@ -31,6 +40,7 @@ public class ConfigSettings {
     private final String CROP_PEFIX_MAIZE = CROP_PREFIX + "maize.";
     private final String CROP_PEFIX_SORGUM = CROP_PREFIX + "sorgum.";
     private final String CROP_PEFIX_CHICKPEA = CROP_PREFIX + "chickpea.";
+
 
     private String[] cropPrefixes = {
             CROP_PEFIX_RICE,
@@ -80,10 +90,33 @@ public class ConfigSettings {
                     userFilesLocation,
                     intermediateFilesLocation);
 
+            //crops.rice.db.monetdb.password=appuser
+            for (GobiiDbType currentDbType : GobiiDbType.values()) {
+
+                String currentDbTypeSegment = currentDbType.toString().toLowerCase() + ".";
+                String currentDbPrefix = currentPrefix + DB_PREFX + currentDbTypeSegment;
+                String currentHost = configReader.getPropValue(currentDbPrefix + DB_SUFFIX_HOST);
+                String currentDbName = configReader.getPropValue(currentDbPrefix + DB_SUFFIX_DBNAME);
+                Integer currentPort = Integer.parseInt(configReader.getPropValue(currentDbPrefix + DB_SUFFIX_PORT));
+                String currentUserName = configReader.getPropValue(currentDbPrefix + DB_SUFFIX_USER);
+                String currentPassword = configReader.getPropValue(currentDbPrefix + DB_SUFFIX_PASSWORD);
+
+                CropDbConfig currentCropDbConfig = new CropDbConfig(
+                        currentDbType,
+                        currentHost,
+                        currentDbName,
+                        currentPort,
+                        currentUserName,
+                        currentPassword
+                );
+
+                currentCropConfig.addCropDbConfig(currentDbType, currentCropDbConfig);
+            }
+
 
             String cropTypeFromProp = currentPrefix
                     .replace(CROP_PREFIX, "")
-                    .replace(".","")
+                    .replace(".", "")
                     .toUpperCase();
             GobiiCropType currentGobiiCropType = GobiiCropType.valueOf(cropTypeFromProp);
 

@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 
 import java.util.HashMap;
@@ -50,6 +51,14 @@ public class CropConfig {
     public String getServiceDomain() {
         return serviceDomain;
     }
+
+    public void addCropDbConfig(GobiiDbType gobiiDbTypee, CropDbConfig cropDbConfig) {
+        dbConfigByDbType.put(gobiiDbTypee,cropDbConfig);
+    } // addCropDbConfig()
+
+    public CropDbConfig getCropDbConfig(GobiiDbType gobiiDbType) {
+        return dbConfigByDbType.get(gobiiDbType);
+    } // getCropDbConfig()
 
 
 }

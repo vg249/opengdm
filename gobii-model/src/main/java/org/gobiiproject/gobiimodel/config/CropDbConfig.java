@@ -1,15 +1,33 @@
 package org.gobiiproject.gobiimodel.config;
 
+import org.gobiiproject.gobiimodel.types.GobiiDbType;
+
 /**
  * Created by Phil on 5/18/2016.
  */
 public class CropDbConfig {
-    
-    String host= null; 
-    String dbName= null; 
-    Integer port= null; 
-    String userName= null; 
-    String password= null;
+
+    CropDbConfig(GobiiDbType gobiiDbType,
+                 String host,
+                 String dbName,
+                 Integer port,
+                 String userName,
+                 String password) {
+
+        this.gobiiDbType = gobiiDbType;
+        this.host = host;
+        this.dbName = dbName;
+        this.port = port;
+        this.userName = userName;
+        this.password = password;
+    }
+
+    private GobiiDbType gobiiDbType = null;
+    private String host = null;
+    private String dbName = null;
+    private Integer port = null;
+    private String userName = null;
+    private String password = null;
 
     public String getHost() {
         return host;
@@ -49,5 +67,17 @@ public class CropDbConfig {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getConnectionString() {
+
+        return ("jdbc:"
+                + this.gobiiDbType.toString().toLowerCase()
+                + "://"
+                + this.host
+                + ":"
+                + this.port.toString()
+                + "/"
+                + this.dbName);
     }
 }
