@@ -52,7 +52,7 @@ public class DtoRequestPlatformTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvgroupterms");
-        nameIdListDTORequest.setFilter("platform type");
+        nameIdListDTORequest.setFilter("platform_type");
 
         NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
         List<String> platformProperTerms = new ArrayList<> ( nameIdListDTO
@@ -93,7 +93,7 @@ public class DtoRequestPlatformTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvgroupterms");
-        nameIdListDTORequest.setFilter("platform type");
+        nameIdListDTORequest.setFilter("platform_type");
         NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
         List<String> platformProperTerms = new ArrayList<>( nameIdListDTO
                 .getNamesById()

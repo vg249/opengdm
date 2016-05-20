@@ -123,6 +123,7 @@ public class DtoRequestDataSetTest {
         Assert.assertTrue(dataSetDTOResponse.getCallingAnalysisId() > 0);
         Assert.assertNotNull(dataSetDTOResponse.getAnalysesIds());
         Assert.assertTrue(dataSetDTOResponse.getAnalysesIds().size() > 0);
+        Assert.assertTrue(dataSetDTOResponse.getTypeId() > 0);
 
 
         DataSetDTO dataSetDTOReRequest = new DataSetDTO();

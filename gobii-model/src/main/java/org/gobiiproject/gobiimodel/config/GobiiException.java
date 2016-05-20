@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel;
+package org.gobiiproject.gobiimodel.config;
 
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 

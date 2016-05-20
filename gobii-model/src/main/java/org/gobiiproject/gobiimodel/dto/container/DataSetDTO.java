@@ -33,6 +33,7 @@ public class DataSetDTO extends DtoMetaData {
     private Integer modifiedBy;
     private Date modifiedDate;
     private Integer status;
+    private Integer typeId;
     private List<Integer> analysesIds = new ArrayList<>();
   //  private List<AnalysisDTO> analyses = new ArrayList<>();
     private List<Integer> scores = new ArrayList<>();
@@ -190,5 +191,15 @@ public class DataSetDTO extends DtoMetaData {
 
     public void setScores(List<Integer> scores) {
         this.scores = scores;
+    }
+
+    @GobiiEntityParam(paramName = "typeId")
+    public Integer getTypeId() {
+        return typeId;
+    }
+
+    @GobiiEntityColumn(columnName = "type_id")
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
     }
 }

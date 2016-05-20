@@ -1,42 +1,38 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
+import org.gobiiproject.gobiimodel.types.DataSetType;
+import org.gobiiproject.gobiimodel.types.GobiiColumnType;
+
 /**
  * Created by Phil on 4/12/2016.
  */
-public class Column {
-
-    public enum ColumnType {
-        CSV_COLUMN,
-        CSV_ROW,
-        CSV_BOTH,
-        VCF_SAMPLE,
-        VCF_MARKER,
-        VCF_VARIANT,
-        VCF_METADATA,
-        VCF_INFO,
-        CONSTANT
-    }
+public class GobiiFileColumn {
 
 
-    private ColumnType columnType = null;
+    private GobiiColumnType gobiiColumnType = null;
     private Integer rCoord = null;
     private Integer cCoord = null;
     private String name = null;
     private String filterFrom = null;
     private String filterTo = null;
+    private String findText = null;
+    private String replaceText = null;
     private String constantValue = null;
     private String index = null;
     private boolean subcolumn = false;
     private String subcolumnDelimiter = null;
 
+    private DataSetType dataSetType = DataSetType.IUPAC;
+
+
     private String metaDataId = null;
 
-    public ColumnType getColumnType() {
-        return columnType;
+    public GobiiColumnType getGobiiColumnType() {
+        return gobiiColumnType;
     }
 
-    public Column setColumnType(ColumnType columnType) {
-        this.columnType = columnType;
+    public GobiiFileColumn setGobiiColumnType(GobiiColumnType gobiiColumnType) {
+        this.gobiiColumnType = gobiiColumnType;
         return this;
     }
 
@@ -44,7 +40,7 @@ public class Column {
         return rCoord;
     }
 
-    public Column setRCoord(Integer rCoord) {
+    public GobiiFileColumn setRCoord(Integer rCoord) {
         this.rCoord = rCoord;
         return this;
     }
@@ -53,7 +49,7 @@ public class Column {
         return cCoord;
     }
 
-    public Column setCCoord(Integer cCoord) {
+    public GobiiFileColumn setCCoord(Integer cCoord) {
         this.cCoord = cCoord;
         return this;
     }
@@ -62,7 +58,7 @@ public class Column {
         return name;
     }
 
-    public Column setName(String name) {
+    public GobiiFileColumn setName(String name) {
         this.name = name;
         return this;
     }
@@ -71,7 +67,7 @@ public class Column {
         return filterFrom;
     }
 
-    public Column setFilterFrom(String filterFrom) {
+    public GobiiFileColumn setFilterFrom(String filterFrom) {
         this.filterFrom = filterFrom;
         return this;
     }
@@ -80,7 +76,7 @@ public class Column {
         return filterTo;
     }
 
-    public Column setFilterTo(String filterTo) {
+    public GobiiFileColumn setFilterTo(String filterTo) {
         this.filterTo = filterTo;
         return this;
     }
@@ -89,7 +85,7 @@ public class Column {
         return constantValue;
     }
 
-    public Column setConstantValue(String constantValue) {
+    public GobiiFileColumn setConstantValue(String constantValue) {
         this.constantValue = constantValue;
         return this;
     }
@@ -98,7 +94,7 @@ public class Column {
         return metaDataId;
     }
 
-    public Column setMetaDataId(String metaDataId) {
+    public GobiiFileColumn setMetaDataId(String metaDataId) {
         this.metaDataId = metaDataId;
         return this;
     }
@@ -108,7 +104,7 @@ public class Column {
         return index;
     }
 
-    public Column setIndex(String index) {
+    public GobiiFileColumn setIndex(String index) {
         this.index = index;
         return this;
     }
@@ -117,7 +113,7 @@ public class Column {
         return subcolumn;
     }
 
-    public Column setSubcolumn(boolean subcolumn) {
+    public GobiiFileColumn setSubcolumn(boolean subcolumn) {
         this.subcolumn = subcolumn;
         return this;
     }
@@ -126,8 +122,35 @@ public class Column {
         return subcolumnDelimiter;
     }
 
-    public Column setSubcolumnDelimiter(String subcolumnDelimiter) {
+    public GobiiFileColumn setSubcolumnDelimiter(String subcolumnDelimiter) {
         this.subcolumnDelimiter = subcolumnDelimiter;
+        return this;
+    }
+
+    public String getFindText() {
+        return findText;
+    }
+
+    public GobiiFileColumn setFindText(String findText) {
+        this.findText = findText;
+        return this;
+    }
+
+    public String getReplaceText() {
+        return replaceText;
+    }
+
+    public GobiiFileColumn setReplaceText(String replaceText) {
+        this.replaceText = replaceText;
+        return this;
+    }
+
+    public DataSetType getDataSetType() {
+        return dataSetType;
+    }
+
+    public GobiiFileColumn setDataSetType(DataSetType dataSetType) {
+        this.dataSetType = dataSetType;
         return this;
     }
 

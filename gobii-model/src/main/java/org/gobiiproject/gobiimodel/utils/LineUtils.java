@@ -14,4 +14,9 @@ public class LineUtils {
 
         return "[" + now + "] " + message;
     }
+
+    public static boolean isNullOrEmpty(String value) {
+
+        return (null == value || value.isEmpty());
+    }
 }

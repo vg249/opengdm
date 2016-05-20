@@ -11,7 +11,7 @@ public class SpUpdDataSet extends SpDef {
 
     public SpUpdDataSet() {
 
-        super("{call updatedataset(?,?,?,?,?,?,?,?,?,?,?,?,?)}",false);
+        super("{call updatedataset(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}",false);
 
         this.addParamDef("dataSetId", Integer.class).setNullable(false);
         this.addParamDef("experimentId", Integer.class).setNullable(false);
@@ -26,6 +26,7 @@ public class SpUpdDataSet extends SpDef {
         this.addParamDef("modifiedBy", Integer.class).setNullable(true);
         this.addParamDef("modifiedDate", java.util.Date.class).setNullable(true);
         this.addParamDef("status", Integer.class).setNullable(false);
+        this.addParamDef("typeId", Integer.class).setNullable(true);
 
 
     } // ctor
