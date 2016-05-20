@@ -34,7 +34,6 @@ public class DtoRequestMapsetTest {
     }
 
 
-
     @Test
     public void testGetMapsetDetails() throws Exception {
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
@@ -57,14 +56,14 @@ public class DtoRequestMapsetTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvgroupterms");
-        nameIdListDTORequest.setFilter("map_type");
+        nameIdListDTORequest.setFilter("mapset_type");
         NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<String> mapsetProperTerms = new ArrayList<> ( nameIdListDTO
+        List<String> mapsetProperTerms = new ArrayList<>(nameIdListDTO
                 .getNamesById()
                 .values());
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
         EntityParamValues entityParamValues = TestDtoFactory
-                .makeConstrainedEntityParams(mapsetProperTerms,1);
+                .makeConstrainedEntityParams(mapsetProperTerms, 1);
 
         MapsetDTO mapsetDTORequest = TestDtoFactory
                 .makePopulatedMapsetDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
@@ -78,7 +77,6 @@ public class DtoRequestMapsetTest {
         MapsetDTO mapsetDTORequestForParams = new MapsetDTO();
         mapsetDTORequestForParams.setMapsetId(mapsetDTOResponse.getMapsetId());
         MapsetDTO mapsetDTOResponseForParams = dtoRequestMapset.process(mapsetDTORequestForParams);
-
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponseForParams));
 
         Assert.assertNotEquals("Parameter collection is null", null, mapsetDTOResponseForParams.getProperties());
@@ -100,14 +98,13 @@ public class DtoRequestMapsetTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
         nameIdListDTORequest.setEntityName("cvgroupterms");
-        nameIdListDTORequest.setFilter("map_type");
+        nameIdListDTORequest.setFilter("mapset_type");
         NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<String> mapsetProperTerms = new ArrayList<> ( nameIdListDTO
+        List<String> mapsetProperTerms = new ArrayList<>(nameIdListDTO
                 .getNamesById()
                 .values());
         EntityParamValues entityParamValues = TestDtoFactory
-                .makeConstrainedEntityParams(mapsetProperTerms,1);
-
+                .makeConstrainedEntityParams(mapsetProperTerms, 1);
 
 
         // create a new mapset for our test

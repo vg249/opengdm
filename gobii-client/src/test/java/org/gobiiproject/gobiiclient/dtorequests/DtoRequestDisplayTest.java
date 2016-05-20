@@ -114,7 +114,6 @@ public class DtoRequestDisplayTest {
 
         DisplayDTO dtoRequestDisplayReRetrieved =
                 dtoRequestDisplay.process(DisplayDTORequest);
-
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestDisplayReRetrieved));
 
         Assert.assertTrue(dtoRequestDisplayReRetrieved.getDisplayName().equals(newDisplayName));
