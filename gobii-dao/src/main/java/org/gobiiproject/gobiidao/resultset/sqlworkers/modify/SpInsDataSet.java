@@ -13,7 +13,7 @@ public class SpInsDataSet extends SpDef {
 
     public SpInsDataSet() {
 
-        super("{call createdataset(?,?,?,?,?,?,?,?,?,?,?,?)}");
+        super("{call createdataset(?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 
         this.addParamDef("experimentId", Integer.class).setNullable(false);
         this.addParamDef("callingAnalysisId", Integer.class).setNullable(false);
@@ -27,7 +27,7 @@ public class SpInsDataSet extends SpDef {
         this.addParamDef("modifiedBy", Integer.class).setNullable(true);
         this.addParamDef("modifiedDate", java.util.Date.class).setNullable(true);
         this.addParamDef("status", Integer.class).setNullable(false);
-
+        this.addParamDef("typeId", Integer.class).setNullable(true);
 
     } // ctor
 

@@ -157,6 +157,7 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
         returnVal.setModifiedDate(new Date());
         returnVal.setCallingAnalysisId(callingAnalysisId);
         returnVal.setAnalysesIds(analysisIds);
+        returnVal.setTypeId(93);
 
         return returnVal;
 
