@@ -39,7 +39,7 @@ public class TokenManagerSingle implements TokenManager {
         } while (validUsers.containsKey(token));
 
         TokenInfo tokenInfo = new TokenInfo(token, userDetails);
-        removeUserDetails(userDetails);
+        // removeUserDetails(userDetails);
         UserDetails previous = validUsers.put(token, userDetails);
         if (previous != null) {
             System.out.println(" *** SERIOUS PROBLEM HERE - we generated the same token (randomly?)!");
