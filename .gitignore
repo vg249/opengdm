@@ -16,7 +16,6 @@ gobii-web/target
 gobii-web/src/main/ts/*.js
 gobii-web/src/main/ts/*.map
 gobii-web/src/main/ts/.baseDir.ts
-gobii-web/src/main/webapp/js
 gobii-web/node_modules
 gobii-web/.tscache
 
