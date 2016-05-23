@@ -11,7 +11,6 @@ import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
-import java.io.Serializable;
 import java.util.*;
 
 public class MarkerGroupDTO extends DtoMetaData {
@@ -31,7 +30,7 @@ public class MarkerGroupDTO extends DtoMetaData {
     private List<MarkerGroupMarkerDTO> markers = new ArrayList<>();
     private String germplasmGroup;
     private Integer createdBy;
-    private Date createDate;
+    private Date createdDate;
     private Integer modifiedBy;
     private Date modifiedDate;
     private Integer status;
@@ -78,14 +77,14 @@ public class MarkerGroupDTO extends DtoMetaData {
         this.modifiedBy = modifiedBy;
     }
 
-    @GobiiEntityParam(paramName = "createDate")
-    public Date getCreateDate() {
-        return createDate;
+    @GobiiEntityParam(paramName = "createdDate")
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    @GobiiEntityColumn(columnName = "create_date")
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    @GobiiEntityColumn(columnName = "created_date")
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
     @GobiiEntityParam(paramName = "createdBy")

@@ -28,15 +28,7 @@ public class SpGetMarkerGroupDetailsByMarkerGroupId implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select marker_group_id,\n" +
-                "\tname,\n" +
-                "\tcode,\n" +
-                "\tgermplasm_group,\n" +
-                "\tcreated_by,\n" +
-                "\tcreate_date,\n" +
-                "\tmodified_by,\n" +
-                "\tmodified_date,\n" +
-                "\tstatus \n" +
+        String sql = "select * " +
                 "from marker_group\n" +
                 "where marker_group_id=?";
 

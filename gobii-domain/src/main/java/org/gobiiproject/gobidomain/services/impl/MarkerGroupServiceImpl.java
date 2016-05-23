@@ -34,7 +34,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
                     break;
 
                 case CREATE:
-                    returnVal.setCreateDate(new Date());
+                    returnVal.setCreatedDate(new Date());
                     returnVal.setModifiedDate(new Date());
                     returnVal.setCreatedBy(1);
                     returnVal.setModifiedBy(1);
@@ -42,7 +42,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
                     break;
 
                 case UPDATE:
-                    returnVal.setCreateDate(new Date());
+                    returnVal.setCreatedDate(new Date());
                     returnVal.setModifiedDate(new Date());
                     returnVal.setCreatedBy(1);
                     returnVal.setModifiedBy(1);

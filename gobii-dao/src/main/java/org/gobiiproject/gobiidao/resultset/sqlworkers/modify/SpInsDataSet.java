@@ -13,13 +13,14 @@ public class SpInsDataSet extends SpDef {
 
     public SpInsDataSet() {
 
-        super("{call createdataset(?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+        super("{call createdataset(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 
+        this.addParamDef("name", String.class).setNullable(true);
         this.addParamDef("experimentId", Integer.class).setNullable(false);
         this.addParamDef("callingAnalysisId", Integer.class).setNullable(false);
         this.addParamDef("datasetAnalysIds", ArrayList.class).setNullable(true);
-        this.addParamDef("dataTable", String.class).setNullable(false);
-        this.addParamDef("dataFile", String.class).setNullable(false);
+        this.addParamDef("dataTable", String.class).setNullable(true);
+        this.addParamDef("dataFile", String.class).setNullable(true);
         this.addParamDef("qualityTable", String.class).setNullable(true);
         this.addParamDef("qualityFile", String.class).setNullable(true);
         this.addParamDef("createdBy", Integer.class).setNullable(true);
