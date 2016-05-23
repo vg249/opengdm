@@ -8,7 +8,7 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": false,
-    "outDir": "C:\\phil-source\\IntelliJ\\gobiiproject\\gobii-web\\src\\main\\webapp\\js\\gobii_modules"
+    "sourceRoot" : "C:/phil-source/IntelliJ/gobiiproject/gobii-web/src/main/webapp/js/gobii_modules"
   },
   "exclude": [
     "node_modules",
