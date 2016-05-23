@@ -6,9 +6,20 @@ import { Component, OnInit } from 'angular2/core';
 
 @Component({
   selector: 'search-criteria-samples',
-  templateUrl: 'js/gobii_modules/root/page-by-samples.component.html',
-  //directives: [FileSelect]
-//  directives: [FILE_UPLOAD_DIRECTIVES,FileUploader]
+  template: `
+			<form>
+				<fieldset class="well the-fieldset">
+				<legend class="the-legend">Search Criteria</legend>
+				
+				Samples:
+				<input type="file"/>
+				<BR>
+				Markers:
+				<input type="file/>
+				
+				</fieldset>
+			</form>
+  ` // end template
 })
 
 export class SearchCriteriaBySamplesComponent implements OnInit {

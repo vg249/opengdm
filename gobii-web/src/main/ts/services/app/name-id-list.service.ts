@@ -35,7 +35,7 @@ export class NameIdListService {
 
         let payload = response.json;
         console.log(payload);
-        return [];
+    return [];
     }
 
     private handleError(error:any) {

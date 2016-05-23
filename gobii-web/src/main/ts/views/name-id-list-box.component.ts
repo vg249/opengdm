@@ -7,8 +7,14 @@ import {PrincipleInvestigatorService} from '../services/app/principle-investigat
 
 @Component({
   selector: 'name-id-list-box',
-  templateUrl: 'js/gobii_modules/views/name-id-list-box.component.html',
   //directives: [RADIO_GROUP_DIRECTIVES]
+templateUrl: `
+		<select name="principleInvestigators">
+			<option *ngFor="#nameId of nameIds" 
+				value={{nameId.id}}>{{nameId.name}}</option>
+		</select>
+` // end template
+
 })
 
 export class NameIdListBoxComponent implements OnInit {
