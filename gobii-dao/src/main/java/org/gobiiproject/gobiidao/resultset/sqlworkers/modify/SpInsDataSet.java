@@ -15,7 +15,7 @@ public class SpInsDataSet extends SpDef {
 
         super("{call createdataset(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 
-        this.addParamDef("name", String.class).setNullable(true);
+        this.addParamDef("name", String.class).setNullable(false);
         this.addParamDef("experimentId", Integer.class).setNullable(false);
         this.addParamDef("callingAnalysisId", Integer.class).setNullable(false);
         this.addParamDef("datasetAnalysIds", ArrayList.class).setNullable(true);

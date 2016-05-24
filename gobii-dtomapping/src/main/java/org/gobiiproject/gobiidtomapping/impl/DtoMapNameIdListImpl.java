@@ -216,13 +216,16 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         try {
 
-            ResultSet resultSet = rsDataSetDao.getDatasetFileNames();
+            ResultSet resultSet = rsDataSetDao.getDatasetNames();
             Map<String, String> datasetNamesById = new HashMap<>();
             while (resultSet.next()) {
 
                 Integer datasetId = resultSet.getInt("dataset_id");
-                String dataFileName = resultSet.getString("data_file").toString();
-                datasetNamesById.put(datasetId.toString(), dataFileName);
+                String name = resultSet.getString("name");
+                if( resultSet.wasNull() ) {
+                    name = "<no name>";
+                }
+                datasetNamesById.put(datasetId.toString(), name);
             }
 
 
@@ -627,8 +630,12 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             while (resultSet.next()) {
                 Integer dataSetId = resultSet.getInt("dataset_id");
-                String dataFileName = resultSet.getString("data_file").toString();
-                experimentNameIdList.put(dataSetId.toString(), dataFileName);
+                String dataSetName = resultSet.getString("data_file");
+                if( resultSet.wasNull()) {
+                    dataSetName = "<no name>";
+                }
+
+                experimentNameIdList.put(dataSetId.toString(), dataSetName);
             }
 
             returnVal.setNamesById(experimentNameIdList);

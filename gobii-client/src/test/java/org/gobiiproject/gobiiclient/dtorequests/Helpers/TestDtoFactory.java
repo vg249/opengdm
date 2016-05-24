@@ -146,6 +146,7 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
         returnVal.getScores().add(3);
 
         // set the plain properties
+        returnVal.setName(uniqueStem + ": foo name");
         returnVal.setStatus(1);
         returnVal.setCreatedBy(1);
         returnVal.setCreatedDate(new Date());
