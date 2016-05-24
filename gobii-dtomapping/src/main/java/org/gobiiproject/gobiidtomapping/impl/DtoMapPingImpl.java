@@ -31,7 +31,7 @@ public class DtoMapPingImpl implements DtoMapPing {
             List<String> pingResponses = pingEntityDao.getPingResponses(pingDTO.getPingRequests());
             String newPingMessage = LineUtils.wrapLine("Mapping layer responded");
             pingResponses.add(newPingMessage);
-            pingDTO.setPingResponses(pingResponses);
+            returnVal.setPingResponses(pingResponses);
 
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
