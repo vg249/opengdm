@@ -76,12 +76,9 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
             addPropertiesToProject(returnVal);
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
 
@@ -92,44 +89,30 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         ResultSet propertyResultSet = rsProjectDao.getPropertiesForProject(projectDTO.getProjectId());
         List<EntityPropertyDTO> projectProperties =
-                EntityProperties.resultSetToProperties(projectDTO.getProjectId(),propertyResultSet);
+                EntityProperties.resultSetToProperties(projectDTO.getProjectId(), propertyResultSet);
 
         projectDTO.setProperties(projectProperties);
 
     }
 
-    private boolean validateProjectRequest(ProjectDTO projectDTO) {
+    private boolean validateProjectRequest(ProjectDTO projectDTO) throws Exception {
 
         boolean returnVal = true;
 
-        try {
+        String projectName = projectDTO.getProjectName();
+        Integer piContactId = projectDTO.getPiContact();
+        ResultSet resultSetExistingProject =
+                rsProjectDao.getProjectsByNameAndPiContact(projectName, piContactId);
 
-            String projectName = projectDTO.getProjectName();
-            Integer piContactId = projectDTO.getPiContact();
-            ResultSet resultSetExistingProject =
-                    rsProjectDao.getProjectsByNameAndPiContact(projectName, piContactId);
-
-            if (resultSetExistingProject.next()) {
-                returnVal = false;
-                projectDTO.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.OK,
-                        DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
-                        "A project with name " + projectName + " and contact id " + piContactId + "already exists");
-            }
-
-        } catch (SQLException e) {
-            projectDTO.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+        if (resultSetExistingProject.next()) {
             returnVal = false;
-
-        } catch (GobiiDaoException e) {
-            projectDTO.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-            returnVal = false;
+            projectDTO.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.OK,
+                    DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
+                    "A project with name " + projectName + " and contact id " + piContactId + "already exists");
         }
 
 
         return returnVal;
-
     }
 
     @Override
@@ -153,9 +136,9 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
             }
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -166,7 +149,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
         for (EntityPropertyDTO currentProperty : projectProperties) {
 
             Map<String, Object> spParamsParameters =
-                    EntityProperties.propertiesToParams(projectId,currentProperty);
+                    EntityProperties.propertiesToParams(projectId, currentProperty);
 
             Integer propertyId = rsProjectDao.createUpdateProjectProperty(spParamsParameters);
             currentProperty.setEntityIdId(projectId);
@@ -190,9 +173,9 @@ public class DtoMapProjectImpl implements DtoMapProject {
             upsertProjectProperties(returnVal.getProjectId(), projectProperties);
 
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;

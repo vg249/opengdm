@@ -64,14 +64,10 @@ public class DtoMapDisplayImpl implements DtoMapDisplay {
             }
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
+            LOGGER.error("Gobii Maping Error", e);
         }
-
         return returnVal;
     }
 
@@ -86,10 +82,11 @@ public class DtoMapDisplayImpl implements DtoMapDisplay {
             Integer contactId = rsDisplayDao.createDisplay(parameters);
             returnVal.setDisplayId(contactId);
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
+            LOGGER.error("Gobii Maping Error", e);
         }
+
 
         return returnVal;
     }
@@ -104,9 +101,9 @@ public class DtoMapDisplayImpl implements DtoMapDisplay {
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             rsDisplayDao.updateDisplay(parameters);
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;

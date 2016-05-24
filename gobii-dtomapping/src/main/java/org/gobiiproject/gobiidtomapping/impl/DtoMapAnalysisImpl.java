@@ -47,17 +47,14 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
 
             ResultSet propertyResultSet = rsAnalysisDao.getParameters(analysisDTO.getAnalysisId());
             List<EntityPropertyDTO> entityPropertyDTOs =
-                    EntityProperties.resultSetToProperties(analysisDTO.getAnalysisId(),propertyResultSet);
+                    EntityProperties.resultSetToProperties(analysisDTO.getAnalysisId(), propertyResultSet);
 
             analysisDTO.setParameters(entityPropertyDTOs);
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -92,9 +89,9 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
             List<EntityPropertyDTO> analysisParameters = analysisDTO.getParameters();
             upsertAnalysisProperties(analysisDTO.getAnalysisId(), analysisParameters);
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -110,14 +107,14 @@ public class DtoMapAnalysisImpl implements DtoMapAnalysis {
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             rsAnalysisDao.updateAnalysis(parameters);
 
-            if( null != analysisDTO.getParameters() ) {
+            if (null != analysisDTO.getParameters()) {
                 upsertAnalysisProperties(analysisDTO.getAnalysisId(),
                         analysisDTO.getParameters());
             }
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;

@@ -45,12 +45,9 @@ public class DtoMapReferenceImpl implements DtoMapReference {
 
             } // iterate resultSet
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -67,9 +64,9 @@ public class DtoMapReferenceImpl implements DtoMapReference {
             Integer referenceId = rsReferenceDao.createReference(parameters);
             returnVal.setReferenceId(referenceId);
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -85,9 +82,9 @@ public class DtoMapReferenceImpl implements DtoMapReference {
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             rsReferenceDao.updateReference(parameters);
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;

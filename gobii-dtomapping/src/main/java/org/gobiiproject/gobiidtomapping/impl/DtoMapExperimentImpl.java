@@ -52,23 +52,17 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
             }
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
-
 
         return returnVal;
     }
 
-    private boolean validateExperimentRequest(ExperimentDTO experimentDTO) {
+    private boolean validateExperimentRequest(ExperimentDTO experimentDTO) throws Exception {
 
         boolean returnVal = true;
-
-        try {
 
             String experimentName = experimentDTO.getExperimentName();
             Integer projectId = experimentDTO.getProjectId();
@@ -91,18 +85,6 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
                                 + "already exists");
             }
 
-        } catch (SQLException e) {
-            experimentDTO.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-            returnVal = false;
-
-        } catch (GobiiDaoException e) {
-            experimentDTO.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-            returnVal = false;
-        }
-
-
         return returnVal;
 
     }
@@ -120,9 +102,9 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
                 returnVal.setExperimentId(experimentId);
             }
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -138,9 +120,9 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             rsExperimentDao.updateExperiment(parameters);
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;

@@ -74,12 +74,9 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
                 returnVal.getMarkers().add(currentMarkerGroupMarkerDTO);
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -197,7 +194,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
                 } else {
 
-                    throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
                             DtoHeaderResponse.ValidationStatusType.NONEXISTENT_FK_ENTITY,
                             "None of the specified markers exists");
 
@@ -206,12 +203,9 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
             } // if any markers were specified
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -298,12 +292,9 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
             }
 
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
