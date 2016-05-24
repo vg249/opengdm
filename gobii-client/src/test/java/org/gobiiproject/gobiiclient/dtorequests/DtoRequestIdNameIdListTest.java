@@ -321,7 +321,7 @@ public class DtoRequestIdNameIdListTest {
 
         // Assumes rice data with seed script is loaded
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("dataset");
+        nameIdListDTORequest.setEntityName("datasetnamesbyexperimentid");
         nameIdListDTORequest.setFilter("2");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);

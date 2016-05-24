@@ -11,10 +11,10 @@ import java.util.Map;
 /**
  * Created by Angel on 4/19/2016.
  */
-public class SpGetDatasetFileNamesByExperimentId implements Work {
+public class SpGetDatasetNamesByExperimentId implements Work {
 
     private Map<String,Object> parameters = null;
-    public SpGetDatasetFileNamesByExperimentId(Map<String,Object> parameters ) {
+    public SpGetDatasetNamesByExperimentId(Map<String,Object> parameters ) {
         this.parameters = parameters;
     }
 
@@ -28,7 +28,7 @@ public class SpGetDatasetFileNamesByExperimentId implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select dataset_id, data_file\n" +
+        String sql = "select dataset_id, name\n" +
                 "from dataset\n" +
                 "where experiment_id=? ";
 

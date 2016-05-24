@@ -34,18 +34,18 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public ResultSet getDatasetFileNamesByExperimentId(Integer experimentId) throws GobiiDaoException {
+    public ResultSet getDatasetNamesByExperimentId(Integer experimentId) throws GobiiDaoException {
 
         ResultSet returnVal = null;
 
         try {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("experimentId", experimentId);
-            SpGetDatasetFileNamesByExperimentId spGetDatasetFileNamesByExperimentId = new SpGetDatasetFileNamesByExperimentId(parameters);
+            SpGetDatasetNamesByExperimentId spGetDatasetNamesByExperimentId = new SpGetDatasetNamesByExperimentId(parameters);
 
-            storedProcExec.doWithConnection(spGetDatasetFileNamesByExperimentId);
+            storedProcExec.doWithConnection(spGetDatasetNamesByExperimentId);
 
-            returnVal = spGetDatasetFileNamesByExperimentId.getResultSet();
+            returnVal = spGetDatasetNamesByExperimentId.getResultSet();
 
         } catch (Exception e) {
 
