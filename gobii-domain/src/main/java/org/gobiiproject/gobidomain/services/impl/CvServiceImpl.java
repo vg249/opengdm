@@ -41,17 +41,21 @@ public class CvServiceImpl implements CvService {
 					returnVal = dtoMapCv.updateCv(cvDTO);
 					break;
 
+				case DELETE:
+					returnVal = dtoMapCv.deleteCv(cvDTO);
+					break;
+
 				default:
-					throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+					returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
 							DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
 							"Unsupported proces Cv type " + cvDTO.getProcessType().toString());
 
 			}
 
-		} catch (GobiiDtoMappingException e) {
+		} catch (Exception e) {
 
 			returnVal.getDtoHeaderResponse().addException(e);
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Gobii service error", e);
 		}
 
 		return returnVal;

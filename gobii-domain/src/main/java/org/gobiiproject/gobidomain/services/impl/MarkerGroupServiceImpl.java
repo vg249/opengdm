@@ -34,7 +34,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
                     break;
 
                 case CREATE:
-                    returnVal.setCreateDate(new Date());
+                    returnVal.setCreatedDate(new Date());
                     returnVal.setModifiedDate(new Date());
                     returnVal.setCreatedBy(1);
                     returnVal.setModifiedBy(1);
@@ -42,7 +42,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
                     break;
 
                 case UPDATE:
-                    returnVal.setCreateDate(new Date());
+                    returnVal.setCreatedDate(new Date());
                     returnVal.setModifiedDate(new Date());
                     returnVal.setCreatedBy(1);
                     returnVal.setModifiedBy(1);
@@ -50,16 +50,16 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
                     break;
 
                 default:
-                    throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
                             DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
                             "Unsupported proces type " + markerGroupDTO.getProcessType().toString());
 
             }
 
-        } catch (GobiiDtoMappingException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii service error", e);
         }
 
         return returnVal;

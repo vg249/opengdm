@@ -55,11 +55,11 @@ public class DtoRequestPlatformTest {
         nameIdListDTORequest.setFilter("platform_type");
 
         NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<String> platformProperTerms = new ArrayList<> ( nameIdListDTO
+        List<String> platformProperTerms = new ArrayList<>(nameIdListDTO
                 .getNamesById()
                 .values());
         EntityParamValues entityParamValues = TestDtoFactory
-                .makeConstrainedEntityParams(platformProperTerms,1);
+                .makeConstrainedEntityParams(platformProperTerms, 1);
 
         DtoRequestPlatform dtoRequestPlatform = new DtoRequestPlatform();
 
@@ -81,8 +81,27 @@ public class DtoRequestPlatformTest {
         Assert.assertNotEquals("Parameter collection is null", null, platformDTOResponseForParams.getProperties());
         Assert.assertTrue("No properties were returned",
                 platformDTOResponseForParams.getProperties().size() > 0);
+
+        List<EntityPropertyDTO> missing = entityParamValues
+                .getMissingEntityProperties(platformDTOResponseForParams.getProperties());
+
+        String missingItems = null;
+
+        if (missing.size() > 0) {
+
+            for (EntityPropertyDTO currentEntityPropDTO : missing) {
+                missingItems += "Name: " + currentEntityPropDTO.getPropertyName()
+                        + "Value: " + currentEntityPropDTO.getPropertyValue()
+                        + "\n";
+            }
+        }
+
+        Assert.assertNull("There are missing entity property items",missingItems);
+
         Assert.assertTrue("Parameter values do not match",
                 entityParamValues.compare(platformDTOResponseForParams.getProperties()));
+
+
     }
 
     @Test
@@ -95,11 +114,11 @@ public class DtoRequestPlatformTest {
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("platform_type");
         NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<String> platformProperTerms = new ArrayList<>( nameIdListDTO
+        List<String> platformProperTerms = new ArrayList<>(nameIdListDTO
                 .getNamesById()
                 .values());
         EntityParamValues entityParamValues = TestDtoFactory
-                .makeConstrainedEntityParams(platformProperTerms,1);
+                .makeConstrainedEntityParams(platformProperTerms, 1);
 
         // create a new platform for our test
         PlatformDTO newPlatformDto = TestDtoFactory

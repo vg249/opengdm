@@ -45,16 +45,16 @@ public class ContactServiceImpl implements ContactService {
                     break;
 
                 default:
-                    throw new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
+                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
                             DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
                             "Unsupported proces contact type " + contactDTO.getProcessType().toString());
 
             }
 
-        } catch (GobiiDtoMappingException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii service error", e);
         }
 
         return returnVal;

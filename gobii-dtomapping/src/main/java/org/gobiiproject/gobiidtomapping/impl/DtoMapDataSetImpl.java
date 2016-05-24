@@ -76,12 +76,9 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
             }
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -98,9 +95,9 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
             Integer datasetId = rsDataSetDao.createDataset(parameters);
             returnVal.setDataSetId(datasetId);
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -128,9 +125,9 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
             rsDataSetDao.updateDataSet(parameters);
 
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;

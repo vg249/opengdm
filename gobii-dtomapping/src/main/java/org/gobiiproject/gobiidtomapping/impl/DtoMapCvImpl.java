@@ -63,13 +63,11 @@ public class DtoMapCvImpl implements DtoMapCv {
 
                 }
             }
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
+            LOGGER.error("Gobii Maping Error", e);
         }
+
 
         return returnVal;
     }
@@ -85,9 +83,9 @@ public class DtoMapCvImpl implements DtoMapCv {
             Integer cvId = rsCvDao.createCv(parameters);
             returnVal.setCvId(cvId);
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Error mapping result set to DTO", e);
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -103,9 +101,27 @@ public class DtoMapCvImpl implements DtoMapCv {
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             rsCvDao.updateCv(parameters);
 
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
+        }
+
+        return returnVal;
+    }
+
+    @Override
+    public CvDTO deleteCv(CvDTO cvDTO) throws GobiiDtoMappingException {
+
+        CvDTO returnVal = cvDTO;
+
+        try {
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            rsCvDao.deleteCv(parameters);
+
+        } catch (Exception e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;

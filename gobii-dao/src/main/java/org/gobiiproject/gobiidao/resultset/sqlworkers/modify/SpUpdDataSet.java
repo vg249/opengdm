@@ -11,14 +11,15 @@ public class SpUpdDataSet extends SpDef {
 
     public SpUpdDataSet() {
 
-        super("{call updatedataset(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}",false);
+        super("{call updatedataset(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}",false);
 
         this.addParamDef("dataSetId", Integer.class).setNullable(false);
+        this.addParamDef("name", String.class).setNullable(false);
         this.addParamDef("experimentId", Integer.class).setNullable(false);
         this.addParamDef("callingAnalysisId", Integer.class).setNullable(false);
         this.addParamDef("datasetAnalysIds", ArrayList.class).setNullable(true);
-        this.addParamDef("dataTable", String.class).setNullable(false);
-        this.addParamDef("dataFile", String.class).setNullable(false);
+        this.addParamDef("dataTable", String.class).setNullable(true);
+        this.addParamDef("dataFile", String.class).setNullable(true);
         this.addParamDef("qualityTable", String.class).setNullable(true);
         this.addParamDef("qualityFile", String.class).setNullable(true);
         this.addParamDef("createdBy", Integer.class).setNullable(true);

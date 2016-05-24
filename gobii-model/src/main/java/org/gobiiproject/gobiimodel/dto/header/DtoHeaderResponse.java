@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.dto.header;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.utils.ExceptionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,19 +29,22 @@ public class DtoHeaderResponse implements Serializable {
     private ArrayList<HeaderStatusMessage> statusMessages = new ArrayList<>();
 
     @JsonIgnore
-    public void addException(Exception exception) {
+    public void addException(Exception e) {
         succeeded = false;
+        String message = ExceptionUtils.makeMessageFromException(e);
         addStatusMessage(StatusLevel.ERROR,
-                exception.getMessage() + ": " + exception.getStackTrace());
+                message);
     }
 
 
     @JsonIgnore
     public void addException(GobiiException gobiiException) {
         succeeded = false;
+
+        String message = ExceptionUtils.makeMessageFromException(gobiiException);
         addStatusMessage(gobiiException.getStatusLevel(),
                 gobiiException.getValidationStatusType(),
-                gobiiException.getMessage() + ": " + gobiiException.getStackTrace());
+                message);
     }
 
 

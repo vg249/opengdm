@@ -21,6 +21,7 @@ public class DataSetDTO extends DtoMetaData {
     }
 
     private Integer dataSetId;
+    private String name;
     private Integer experimentId;
     private Integer callingAnalysisId;
 //    private AnalysisDTO callingAnalysis;
@@ -46,6 +47,16 @@ public class DataSetDTO extends DtoMetaData {
     @GobiiEntityColumn(columnName = "dataset_id")
     public void setDataSetId(Integer dataSetId) {
         this.dataSetId = dataSetId;
+    }
+
+    @GobiiEntityParam(paramName = "name")
+    public String getName() {
+        return name;
+    }
+
+    @GobiiEntityColumn(columnName = "name")
+    public void setName(String name) {
+        this.name = name;
     }
 
     @GobiiEntityParam(paramName = "experimentId")

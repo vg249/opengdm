@@ -64,7 +64,7 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertTrue(nameIdListDTOResponse.getNamesById().size() >= 0);
 
     }
-    
+
     @Test
     public void testGetExperimentNamesByProjectId() throws Exception {
 
@@ -80,7 +80,7 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
     }
-    
+
     @Test
     public void testGetExperimentNames() throws Exception {
 
@@ -94,10 +94,9 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertEquals(true, nameIdListDTO.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
     }
-    
+
     @Test
     public void testGetCvTermsByGroup() throws Exception {
-
 
         // Assumes rice data with seed script is loaded
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
@@ -111,9 +110,9 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertTrue(nameIdListDTO.getNamesById().size() >= 0);
 
     }
+
     @Test
     public void testGetPlatformNames() throws Exception {
-
 
         // Assumes rice data with seed script is loaded
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
@@ -121,7 +120,23 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        
+
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+
+    } // testGetMarkers()
+
+    @Test
+    public void testGetPlatformNamesByTypeId() throws Exception {
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("platformByTypeId");
+        nameIdListDTORequest.setFilter("1");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
@@ -138,12 +153,13 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
 
     } // testGetMarkers()
+
     @Test
     public void testGetMarkerGroupNames() throws Exception {
 
@@ -154,12 +170,13 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
 
     } // testGetMarkerGroupNames()
+
     @Test
     public void testGetReferenceNames() throws Exception {
 
@@ -170,13 +187,13 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
 
     } // testGetMarkers()
-    
+
     @Test
     public void testGetMapNames() throws Exception {
 
@@ -186,12 +203,12 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
     } // testGetMarkers()
-    
+
     @Test
     public void testGetCvTypes() throws Exception {
 
@@ -201,12 +218,12 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
     } // testGetMarkers()
-    
+
     @Test
     public void testGetCvNames() throws Exception {
 
@@ -216,12 +233,12 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
     } // testGetMarkers()
-    
+
     @Test
     public void testGetRoles() throws Exception {
 
@@ -231,12 +248,12 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
     } // testGetMarkers()
-    
+
     @Test
     public void testGetMapNamesByType() throws Exception {
 
@@ -247,12 +264,12 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
     } // testGetMarkers()
-    
+
     @Test
     public void testGetAnalysisNames() throws Exception {
 
@@ -262,12 +279,12 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
     } // testGetAnalysisNames()
-    
+
     @Test
     public void testGetAnalysisNamesByTypeId() throws Exception {
 
@@ -278,11 +295,12 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-    } 
+    }
+
     @Test
     public void testGetManifestNames() throws Exception {
 
@@ -295,7 +313,7 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-        
+
     }
 
     @Test
@@ -303,13 +321,13 @@ public class DtoRequestIdNameIdListTest {
 
         // Assumes rice data with seed script is loaded
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("dataset");
+        nameIdListDTORequest.setEntityName("datasetnamesbyexperimentid");
         nameIdListDTORequest.setFilter("2");
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         Assert.assertNotEquals(null, nameIdListDtoResponse);
-        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
 
     }
@@ -323,7 +341,9 @@ public class DtoRequestIdNameIdListTest {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
+
         Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
     }

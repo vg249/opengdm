@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.*;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,13 +37,13 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     @Autowired
     private RsMapSetDao rsMapSetDao = null;
-    
+
     @Autowired
     private RsMarkerGroupDao rsMarkerGroupDao = null;
-    
+
     @Autowired
     private RsCvDao rsCvDao = null;
-    
+
     @Autowired
     private RsExperimentDao rsExperimentDao = null;
 
@@ -54,10 +52,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     @Autowired
     private RsDataSetDao rsDataSetDao = null;
-    
+
     @Autowired
     private RsRoleDao rsRoleDao = null;
-    
+
     private NameIdListDTO getNameIdListForAnalysis(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -77,12 +75,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             returnVal.setNamesById(analysisNamesById);
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -107,12 +102,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             returnVal.setNamesById(analysisNamesById);
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -138,19 +130,16 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             returnVal.setNamesById(contactNamesById);
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
 
         return (returnVal);
 
     } // getNameIdListForContacts()
-    
+
     private NameIdListDTO getNameIdListForMarkerGroups(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -170,17 +159,15 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             returnVal.setNamesById(markerGroupNamesById);
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
+
     }//getNameIdListForMarkerGroups
-    
+
     private NameIdListDTO getNameIdListForExperiment(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -200,45 +187,35 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             returnVal.setNamesById(experimentNamesById);
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
     }
+
     private NameIdListDTO getNameIdListForDataSet(NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+        NameIdListDTO returnVal = nameIdListDTO;
 
         try {
 
-            ResultSet resultSet = rsDataSetDao.getDatasetFileNames();
-            Map<String, String> datasetNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            ResultSet resultSet = rsDataSetDao.getDatasetNames();
 
-                Integer datasetId = resultSet.getInt("dataset_id");
-                String dataFileName = resultSet.getString("data_file").toString();
-                datasetNamesById.put(datasetId.toString(), dataFileName);
-            }
-
+            Map<String, String> datasetNamesById = makeMapOfDataSetNames(resultSet);
 
             returnVal.setNamesById(datasetNamesById);
 
 
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
         }
 
         return returnVal;
     }
+
     private NameIdListDTO getNameIdListForPlatforms(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -258,17 +235,41 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             returnVal.setNamesById(platformNamesById);
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
     }
-    
+
+    private NameIdListDTO getNameIdListForPlatformsByTypeId(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsPlatformDao.getPlatformNamesByTypeId(Integer.parseInt(nameIdListDTO.getFilter()));
+            Map<String, String> platformNamesById = new HashMap<>();
+            while (resultSet.next()) {
+
+                Integer platformId = resultSet.getInt("platform_id");
+                String platformName = resultSet.getString("name");
+                platformNamesById.put(platformId.toString(), platformName);
+            }
+
+
+            returnVal.setNamesById(platformNamesById);
+
+
+        } catch (Exception e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error("Gobii Maping Error", e);
+        }
+
+        return returnVal;
+    }
+
     private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -288,17 +289,14 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             returnVal.setNamesById(projectNamesById);
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
     }
-    
+
     private NameIdListDTO getNameIdListForReference(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -318,16 +316,14 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             returnVal.setNamesById(referenceNamesById);
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
     }
+
     private NameIdListDTO getNameIdListForRole(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -347,12 +343,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             returnVal.setNamesById(roleNamesById);
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -376,16 +369,14 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             returnVal.setNamesById(mapNamesById);
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
     }
+
     private NameIdListDTO getNameIdListForMap(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -404,12 +395,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             returnVal.setNamesById(mapNamesById);
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -434,12 +422,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             returnVal.setNamesById(manifestNamesById);
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -462,12 +447,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             }
 
             returnVal.setNamesById(projectNameIdList);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -491,18 +473,15 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             }
 
             returnVal.setNamesById(experimentNameIdList);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
 
     } // getNameIdListForContacts()
-    
+
     private NameIdListDTO getNameIdListForCvGroups(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -520,18 +499,16 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             }
 
             returnVal.setNamesById(cvGroupTermList);
-        } catch (SQLException e) {
+
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
 
     } // getNameIdListForCvTypes
-    
+
 
     private NameIdListDTO getNameIdListForCv(NameIdListDTO nameIdListDTO) {
 
@@ -550,17 +527,15 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             }
 
             returnVal.setNamesById(cvGroupTermList);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
 
     }
+
     private NameIdListDTO getNameIdListForCvGroupTerms(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -578,41 +553,46 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             }
 
             returnVal.setNamesById(cvGroupTermList);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
 
     } // getNameIdListForCvGroupTerms()
+
+    private Map<String, String> makeMapOfDataSetNames(ResultSet resultSet) throws Exception {
+
+        Map<String, String> returnVal = new HashMap<>();
+
+        while (resultSet.next()) {
+            Integer dataSetId = resultSet.getInt("dataset_id");
+            String dataSetName = resultSet.getString("name");
+            if (resultSet.wasNull()) {
+                dataSetName = "<no name>";
+            }
+
+            returnVal.put(dataSetId.toString(), dataSetName);
+        }
+
+        return returnVal;
+    }
+
     private NameIdListDTO getNameIdListForDataSetByExperimentId(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
 
         try {
 
-            ResultSet resultSet = rsDataSetDao.getDatasetFileNamesByExperimentId(Integer.parseInt(nameIdListDTO.getFilter()));
+            ResultSet resultSet = rsDataSetDao.getDatasetNamesByExperimentId(Integer.parseInt(nameIdListDTO.getFilter()));
+            Map<String, String> datasetNameIdList = makeMapOfDataSetNames(resultSet);
 
-            Map<String, String> experimentNameIdList = new HashMap<>();
+            returnVal.setNamesById(datasetNameIdList);
 
-            while (resultSet.next()) {
-                Integer dataSetId = resultSet.getInt("dataset_id");
-                String dataFileName = resultSet.getString("data_file").toString();
-                experimentNameIdList.put(dataSetId.toString(), dataFileName);
-            }
-
-            returnVal.setNamesById(experimentNameIdList);
-
-        } catch (SQLException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii Maping Error", e);
         }
 
         return returnVal;
@@ -622,12 +602,12 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     @Override
     public NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+        NameIdListDTO returnVal = nameIdListDTO;
 
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
 
             switch (nameIdListDTO.getEntityName()) {
-            
+
                 case "analysis":
                     returnVal = getNameIdListForAnalysis(nameIdListDTO);
                     break;
@@ -635,7 +615,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                 case "analysisNameByTypeId":
                     returnVal = getNameIdListForAnalysisNameByTypeId(nameIdListDTO);
                     break;
-                    
+
                 case "contact":
                     returnVal = getNameIdListForContacts(nameIdListDTO);
                     break;
@@ -644,20 +624,28 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     returnVal = getNameIdListForDataSet(nameIdListDTO);
                     break;
 
+                case "datasetnamesbyexperimentid":
+                    returnVal = getNameIdListForDataSetByExperimentId(nameIdListDTO);
+                    break;
+
                 case "cvnames":
                     returnVal = getNameIdListForCv(nameIdListDTO);
                     break;
-                    
+
                 case "project":
                     returnVal = getNameIdListForProjectNameByContact(nameIdListDTO);
                     break;
-                    
+
                 case "projectnames":
                     returnVal = getNameIdListForProjects(nameIdListDTO);
                     break;
-                    
+
                 case "platform":
                     returnVal = getNameIdListForPlatforms(nameIdListDTO);
+                    break;
+
+                case "platformByTypeId":
+                    returnVal = getNameIdListForPlatformsByTypeId(nameIdListDTO);
                     break;
 
                 case "manifest":
@@ -671,31 +659,27 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                 case "mapNameByTypeId":
                     returnVal = getNameIdListForMapByTypeId(nameIdListDTO);
                     break;
-                    
+
                 case "markergroup":
                     returnVal = getNameIdListForMarkerGroups(nameIdListDTO);
                     break;
-                    
+
                 case "experiment":
                     returnVal = getNameIdListForExperimentByProjectId(nameIdListDTO);
                     break;
-                    
+
                 case "experimentnames":
                     returnVal = getNameIdListForExperiment(nameIdListDTO);
                     break;
-                    
+
                 case "cvgroupterms":
                     returnVal = getNameIdListForCvGroupTerms(nameIdListDTO);
                     break;
-                    
+
                 case "cvgroups":
                     returnVal = getNameIdListForCvGroups(nameIdListDTO);
                     break;
-                    
-                case "dataset":
-                    returnVal = getNameIdListForDataSetByExperimentId(nameIdListDTO);
-                    break;
-                    
+
                 case "reference":
                     returnVal = getNameIdListForReference(nameIdListDTO);
                     break;

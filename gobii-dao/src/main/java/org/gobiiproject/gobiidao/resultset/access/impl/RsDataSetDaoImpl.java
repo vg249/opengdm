@@ -4,9 +4,7 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsDataSetDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysis;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsDataSet;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdAnalysis;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdDataSet;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
 import org.slf4j.Logger;
@@ -36,18 +34,18 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public ResultSet getDatasetFileNamesByExperimentId(Integer experimentId) throws GobiiDaoException {
+    public ResultSet getDatasetNamesByExperimentId(Integer experimentId) throws GobiiDaoException {
 
         ResultSet returnVal = null;
 
         try {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("experimentId", experimentId);
-            SpGetDatasetFileNamesByExperimentId spGetDatasetFileNamesByExperimentId = new SpGetDatasetFileNamesByExperimentId(parameters);
+            SpGetDatasetNamesByExperimentId spGetDatasetNamesByExperimentId = new SpGetDatasetNamesByExperimentId(parameters);
 
-            storedProcExec.doWithConnection(spGetDatasetFileNamesByExperimentId);
+            storedProcExec.doWithConnection(spGetDatasetNamesByExperimentId);
 
-            returnVal = spGetDatasetFileNamesByExperimentId.getResultSet();
+            returnVal = spGetDatasetNamesByExperimentId.getResultSet();
 
         } catch (Exception e) {
 
@@ -139,17 +137,17 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
 	@Override
-	public ResultSet getDatasetFileNames() throws GobiiDaoException {
+	public ResultSet getDatasetNames() throws GobiiDaoException {
 		// TODO Auto-generated method stub
 
         ResultSet returnVal = null;
 
         try {
-            SpGetDatasetFileNames spGetDatasetFileNames = new SpGetDatasetFileNames();
+            SpGetDatasetNames spGetDatasetNames = new SpGetDatasetNames();
 
-            storedProcExec.doWithConnection(spGetDatasetFileNames);
+            storedProcExec.doWithConnection(spGetDatasetNames);
 
-            returnVal = spGetDatasetFileNames.getResultSet();
+            returnVal = spGetDatasetNames.getResultSet();
 
         } catch (Exception e) {
 

@@ -56,10 +56,10 @@ public class ProjectServiceImpl implements ProjectService {
             } // switch
 
 
-        } catch (GobiiDtoMappingException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii service error", e);
         }
 
         return returnVal;

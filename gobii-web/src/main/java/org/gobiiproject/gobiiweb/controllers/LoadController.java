@@ -201,7 +201,7 @@ public class LoadController {
     @ResponseBody
     public NameIdListDTO getNameIdList(@RequestBody NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+        NameIdListDTO returnVal = nameIdListDTO;
 
         try {
             returnVal = nameIdListService.getNameIdList(nameIdListDTO);

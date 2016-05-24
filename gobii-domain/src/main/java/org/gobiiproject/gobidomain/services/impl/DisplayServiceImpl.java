@@ -10,6 +10,7 @@ import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,17 +51,17 @@ public class DisplayServiceImpl implements DisplayService {
                     break;
 
                 default:
-                    GobiiDomainException gobiiDomainException = new GobiiDomainException("Unsupported process type: " + returnVal.getProcessType().toString());
-                    returnVal.getDtoHeaderResponse().addException(gobiiDomainException);
-                    LOGGER.error(gobiiDomainException.getMessage());
+                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
+                            DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
+                            "Unsupported proces type " + returnVal.getProcessType().toString());
                     break;
 
             }
 
-        } catch (GobiiDtoMappingException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Gobii service error", e);
         }
 
         return returnVal;

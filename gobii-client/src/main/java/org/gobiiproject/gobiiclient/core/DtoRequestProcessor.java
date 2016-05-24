@@ -36,11 +36,24 @@ public class DtoRequestProcessor<T> {
                      ControllerType controllerType,
                      ServiceRequestId requestId) throws Exception {
 
+        String token = ClientContext.getInstance().getUserToken();
+
+        return this.process(dtoToProcess,
+                DtoType,
+                controllerType,
+                requestId,
+                token);
+
+    }
+
+    public T process(T dtoToProcess, Class<T> DtoType,
+                     ControllerType controllerType,
+                     ServiceRequestId requestId,
+                     String token) throws Exception {
+
         T returnVal = null;
 
         TypedRestRequest<T> typedRestRequest = makeTypedRequest(DtoType);
-
-        String token = ClientContext.getInstance().getUserToken();
 
         if (null == token || token.isEmpty()) {
             throw (new Exception("there is no user token; user must log in"));
@@ -56,5 +69,6 @@ public class DtoRequestProcessor<T> {
         return returnVal;
 
     }
+
 
 }

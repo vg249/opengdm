@@ -223,7 +223,7 @@ public class HttpCore {
         httpResponse = submitUriRequest(postRequest, "", "", token);
 
         if (HTTP_STATUS_CODE_OK != httpResponse.getStatusLine().getStatusCode()) {
-            throw new Exception("Request did not succeed: " + httpResponse.getStatusLine().getStatusCode());
+            throw new Exception("Request did not succeed: " + httpResponse.getStatusLine());
         }
 
 

@@ -34,7 +34,7 @@ public class EntityParamValues {
 
             List<EntityPropertyDTO> matchedProperties = propertiesToCompare
                     .stream()
-                    .filter(m -> m.getPropertyName().equals(currentProperty.getPropertyName()) )
+                    .filter(m -> m.getPropertyName().equals(currentProperty.getPropertyName()))
                     .collect(Collectors.toList());
 
             if (matchedProperties.size() == 1) {
@@ -43,6 +43,28 @@ public class EntityParamValues {
 
             } else {
                 returnVal = false;
+            }
+
+        }
+
+        return returnVal;
+    }
+
+    public List<EntityPropertyDTO> getMissingEntityProperties(List<EntityPropertyDTO> propertiesToCompare) {
+
+        List<EntityPropertyDTO> returnVal = new ArrayList<>();
+
+        for (EntityPropertyDTO currentPropDto : this.properties) {
+
+            List<EntityPropertyDTO> foundInDestination = propertiesToCompare
+                    .stream()
+                    .filter(d -> d.getPropertyName().equals(currentPropDto.getPropertyName())
+                            && d.getPropertyValue().equals(currentPropDto.getPropertyValue()))
+                    .collect(Collectors.toList());
+
+            if (foundInDestination.size() != 1) {
+                returnVal.add(currentPropDto);
+
             }
 
         }

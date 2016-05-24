@@ -118,6 +118,7 @@ public class DtoRequestDataSetTest {
         DataSetDTO dataSetDTOResponse = dtoRequestDataSet.process(dataSetDTORequest);
 
         Assert.assertNotEquals(null, dataSetDTOResponse);
+
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dataSetDTOResponse));
         Assert.assertTrue(dataSetDTOResponse.getDataSetId() > 0);
         Assert.assertTrue(dataSetDTOResponse.getCallingAnalysisId() > 0);
@@ -224,5 +225,75 @@ public class DtoRequestDataSetTest {
                 .filter(a -> a.equals(anlysisIdRemovedFromList))
                 .toArray().length == 0);
     }
+
+    public void testNewColumnValues() throws Exception {
+
+
+        EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
+
+        // ******** make analyses we'll need for the new data set
+        DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
+        AnalysisDTO analysisDTORequest = TestDtoFactory
+                .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
+
+        AnalysisDTO callingAnalysisDTO = dtoRequestAnalysis.process(analysisDTORequest);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(callingAnalysisDTO));
+
+        List<AnalysisDTO> analyses = new ArrayList<>();
+        analyses.add(TestDtoFactory
+                .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE,
+                        2,
+                        entityParamValues));
+        analyses.add(TestDtoFactory
+                .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE,
+                        3,
+                        entityParamValues));
+        analyses.add(TestDtoFactory
+                .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE,
+                        4,
+                        entityParamValues));
+
+        for (AnalysisDTO currentAnalysis : analyses) {
+            dtoRequestAnalysis.process(currentAnalysis);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(currentAnalysis));
+        }
+
+        List<Integer> analysisIds = analyses
+                .stream()
+                .map(a -> a.getAnalysisId())
+                .collect(Collectors.toList());
+
+
+        // ********** make raw data set dto and add anlyses
+        DtoRequestDataSet dtoRequestDataSet = new DtoRequestDataSet();
+        DataSetDTO dataSetDTORequest = TestDtoFactory
+                .makePopulatedDataSetDTO(DtoMetaData.ProcessType.CREATE,
+                        1,
+                        callingAnalysisDTO.getAnalysisId(),
+                        analysisIds);
+
+
+        //These are nullable now:
+        dataSetDTORequest.setDataTable(null);
+        dataSetDTORequest.setDataFile(null);
+
+        //And we added a name
+        String name = UUID.randomUUID().toString();
+        dataSetDTORequest.setName(name);
+
+        DataSetDTO dataSetDTOResponse = dtoRequestDataSet.process(dataSetDTORequest);
+
+        Assert.assertNotEquals(null, dataSetDTOResponse);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dataSetDTOResponse));
+
+        DataSetDTO dataSetDTOReRequest = new DataSetDTO();
+        dataSetDTOReRequest.setDataSetId(dataSetDTOResponse.getDataSetId());
+        DataSetDTO dataSetDTOReReuestResponse = dtoRequestDataSet.process(dataSetDTOReRequest);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dataSetDTOReReuestResponse));
+        dataSetDTOReReuestResponse.getName().equals(name);
+
+    }
+
 
 }
