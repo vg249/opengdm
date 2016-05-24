@@ -212,7 +212,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     }
     private NameIdListDTO getNameIdListForDataSet(NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+        NameIdListDTO returnVal = nameIdListDTO;
 
         try {
 
@@ -229,10 +229,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             returnVal.setNamesById(datasetNamesById);
 
 
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
         }
@@ -636,10 +633,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             returnVal.setNamesById(experimentNameIdList);
 
-        } catch (SQLException e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error(e.getMessage());
-        } catch (GobiiDaoException e) {
+        } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
         }
@@ -651,7 +645,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     @Override
     public NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+        NameIdListDTO returnVal = nameIdListDTO;
 
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
 
