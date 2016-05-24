@@ -1,7 +1,9 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.codehaus.jackson.map.deser.std.FromStringDeserializer;
 import org.gobiiproject.gobiiclient.core.TypedRestRequest;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
@@ -22,6 +24,7 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Phil on 4/27/2016.
@@ -106,7 +109,7 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
 
         CvDTO returnVal = new CvDTO(processType);
         returnVal.setGroup(uniqueStem+"dummy cv name");
-        returnVal.setTerm(uniqueStem+"dummy cv term");
+        returnVal.setTerm(UUID.randomUUID().toString());
         returnVal.setDefinition(uniqueStem+"dummy definition");
         returnVal.setRank(1);
 
