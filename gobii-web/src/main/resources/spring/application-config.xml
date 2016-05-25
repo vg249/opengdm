@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:security="http://www.springframework.org/schema/security"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context-3.0.xsd 
@@ -14,200 +15,230 @@
 	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
 
-	<tx:annotation-driven transaction-manager="transactionManager" />
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
 
-	<!-- ******************** beans instanced with @component annotation **************** -->
-	<!-- Anthing in these namespaces annotated with @Component will be isntanced 
-		into the injection container. But this is not usually what you want. You 
-		want to use the bean defintiions below so that you can swap in arbitrary 
-		implementions of interfaces as system needs evolve -->
-	<context:annotation-config />
-	<context:component-scan base-package="org.gobiiproject.gobiidao.core" />
-	<context:component-scan base-package="org.gobiiproject.gobidomain.security" />
-	<context:component-scan base-package="org.gobiiproject.gobiiweb.controllers" />
+    <!-- ******************** beans instanced with @component annotation **************** -->
+    <!-- Anthing in these namespaces annotated with @Component will be isntanced
+        into the injection container. But this is not usually what you want. You
+        want to use the bean defintiions below so that you can swap in arbitrary
+        implementions of interfaces as system needs evolve -->
+    <context:annotation-config/>
+    <context:component-scan base-package="org.gobiiproject.gobiidao.core"/>
+    <context:component-scan base-package="org.gobiiproject.gobidomain.security"/>
+    <context:component-scan base-package="org.gobiiproject.gobiiweb.controllers"/>
 
 
-	<!-- ******************** ****************************************** -->
-	<!-- ******************** explicitly defined beans **************** -->
+    <!-- ******************** ****************************************** -->
+    <!-- ******************** explicitly defined beans **************** -->
 
-	<!-- **** Security Beans *************************************** -->
-	<bean id="UserDao"
-		class="org.gobiiproject.gobiidao.entity.access.impl.UserDaoImpl" />
-	<bean id="dtoMapProject" class="org.gobiiproject.gobiidtomapping.impl.DtoMapProjectImpl" />
-	<bean id="projectService"
-		class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl" />
+    <!-- **** Security Beans *************************************** -->
+    <bean id="UserDao"
+          class="org.gobiiproject.gobiidao.entity.access.impl.UserDaoImpl"/>
+    <bean id="dtoMapProject" class="org.gobiiproject.gobiidtomapping.impl.DtoMapProjectImpl"/>
+    <bean id="projectService"
+          class="org.gobiiproject.gobidomain.services.impl.ProjectServiceImpl"/>
 
-	<!-- **** Helper Beans *************************************** -->
-	<bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec" />
-	<bean id="spRunnerCallable"
-		class="org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable" />
-
-
-	<!-- **** Ping Beans *************************************** -->
-	<bean id="pingDao"
-		class="org.gobiiproject.gobiidao.entity.access.impl.mock.PingEntityDaoImplMock" />
-	<bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.impl.DtoMapPingImpl" />
-	<bean id="pingService"
-		class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl" />
+    <!-- **** Helper Beans *************************************** -->
+    <bean id="storedProcExec" class="org.gobiiproject.gobiidao.resultset.core.StoredProcExec"/>
+    <bean id="spRunnerCallable"
+          class="org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable"/>
 
 
-	<!-- **** Marker Beans *************************************** -->
-	<bean id="markerDao"
-		class="org.gobiiproject.gobiidao.entity.access.impl.mock.MarkerEntityDaoImplMock" />
-	<bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl" />
-
-	<!-- **** NameIdList Beans *************************************** -->
-	<bean id="rsContact"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoImpl" />
-	<bean id="rsProject"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl" />
-	<!--<bean id="rsCvTerm" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvTermDaoImpl"/> -->
-	<bean id="rsPlatform"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsPlatformDaoImpl" />
-	<bean id="dtoMapNameIdList"
-		class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl" />
-	<bean id="nameIdListService"
-		class="org.gobiiproject.gobidomain.services.impl.NameIdListServiceImpl" />
-
-	<!-- **** Loader File Beans *************************************** -->
-	<bean id="loaderFileDAO"
-		class="org.gobiiproject.gobiidao.filesystem.impl.LoaderInstructionsDAOImpl" />
-	<bean id="dtoMapLoaderInstructions"
-		class="org.gobiiproject.gobiidtomapping.impl.DtoMapLoaderInstructionsImpl" />
-	<bean id="loaderInstructionFilesService"
-		class="org.gobiiproject.gobidomain.services.impl.LoaderInstructionFileServiceImpl" />
-
-	<!-- **** Contact Beans *************************************** -->
-	<bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.impl.DtoMapContactImpl" />
-	<bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl" />
-
-	<!-- **** Display Beans *************************************** -->
-	<bean id="rsDisplayDao"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsDisplayDaoImpl" />
-	<bean id="dtoMapDisplay" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDisplayImpl" />
-	<bean id="displayService"
-		class="org.gobiiproject.gobidomain.services.impl.DisplayServiceImpl" />
+    <!-- **** Ping Beans *************************************** -->
+    <bean id="pingDao"
+          class="org.gobiiproject.gobiidao.entity.access.impl.mock.PingEntityDaoImplMock"/>
+    <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.impl.DtoMapPingImpl"/>
+    <bean id="pingService"
+          class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl"/>
 
 
-	<!-- **** DataSet Beans *************************************** -->
-	<bean id="rsDataSetDao"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsDataSetDaoImpl" />
-	<bean id="dtoMapDataSet" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDataSetImpl" />
-	<bean id="DataSetService"
-		class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl" />
+    <!-- **** Marker Beans *************************************** -->
+    <bean id="markerDao"
+          class="org.gobiiproject.gobiidao.entity.access.impl.mock.MarkerEntityDaoImplMock"/>
+    <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>
 
-	<!-- **** Experiment Beans *************************************** -->
-	<bean id="rsExperimentDao"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsExperimentDaoImpl" />
-	<bean id="dtoMapExperiment"
-		class="org.gobiiproject.gobiidtomapping.impl.DtoMapExperimentImpl" />
-	<bean id="ExperimentService"
-		class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl" />
+    <!-- **** NameIdList Beans *************************************** -->
+    <bean id="rsContact"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoImpl"/>
+    <bean id="rsProject"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>
+    <!--<bean id="rsCvTerm" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvTermDaoImpl"/> -->
+    <bean id="rsPlatform"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsPlatformDaoImpl"/>
+    <bean id="dtoMapNameIdList"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl"/>
+    <bean id="nameIdListService"
+          class="org.gobiiproject.gobidomain.services.impl.NameIdListServiceImpl"/>
 
+    <!-- **** Loader File Beans *************************************** -->
+    <bean id="loaderFileDAO"
+          class="org.gobiiproject.gobiidao.filesystem.impl.LoaderInstructionsDAOImpl"/>
+    <bean id="dtoMapLoaderInstructions"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapLoaderInstructionsImpl"/>
+    <bean id="loaderInstructionFilesService"
+          class="org.gobiiproject.gobidomain.services.impl.LoaderInstructionFileServiceImpl"/>
 
-	<!-- **** Analysis Beans *************************************** -->
-	<bean id="rsAnalysisDao"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsAnalysisDaoImpl" />
-	<bean id="dtoMapAnalysis"
-		class="org.gobiiproject.gobiidtomapping.impl.DtoMapAnalysisImpl" />
-	<bean id="AnalysisService"
-		class="org.gobiiproject.gobidomain.services.impl.AnalysisServiceImpl" />
+    <!-- **** Contact Beans *************************************** -->
+    <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.impl.DtoMapContactImpl"/>
+    <bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl"/>
 
-
-	<!-- **** Platform Beans *************************************** -->
-	<bean id="rsPlatformDao"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsPlatformDaoImpl" />
-	<bean id="dtoMapPlatform"
-		class="org.gobiiproject.gobiidtomapping.impl.DtoMapPlatformImpl" />
-	<bean id="platformService"
-		class="org.gobiiproject.gobidomain.services.impl.PlatformServiceImpl" />
-
-
-	<!-- **** Manifest Beans *************************************** -->
-	<bean id="rsManifestDao"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl" />
-
-	<!-- <bean id="dtoMapManifest" class="org.gobiiproject.gobiidtomapping.impl.DtoMapManifestImpl"/> 
-		<bean id="ManifestService" class="org.gobiiproject.gobidomain.services.impl.ManifestServiceImpl"/> -->
-
-	<!-- **** Map Beans *************************************** -->
-	<bean id="rsMapDao"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapSetDaoImpl" />
-	<bean id="dtoMapMapset" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapsetImpl" />
-	<bean id="MapsetService"
-		class="org.gobiiproject.gobidomain.services.impl.MapsetServiceImpl" />
-
-	<!-- <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/> 
-		<bean id="MapService" class="org.gobiiproject.gobidomain.services.impl.MapServiceImpl"/> -->
-
-	<!-- **** Reference Beans *************************************** -->
-	<bean id="rsReferenceDao"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsReferenceDaoImpl" />
-	<bean id="dtoMapReference" class="org.gobiiproject.gobiidtomapping.impl.DtoMapReferenceImpl"/>
-	<bean id="ReferenceService" class="org.gobiiproject.gobidomain.services.impl.ReferenceServiceImpl"/>
-
-	<!-- **** CvTerms Beans *************************************** -->
-	<bean id="rsCvDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvDaoImpl" />
-	<bean id="dtoMapCv" class="org.gobiiproject.gobiidtomapping.impl.DtoMapCvImpl" />
-	<bean id="CvService" class="org.gobiiproject.gobidomain.services.impl.CvServiceImpl" />
-	
-	<!-- **** MarkerGroup Beans *************************************** -->
-	<bean id="rsMarkerGroupDao"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerGroupDaoImpl" />
-	<bean id="dtoMapMarkerGroup" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerGroupImpl" />
-	<bean id="MarkerGroupService" class="org.gobiiproject.gobidomain.services.impl.MarkerGroupServiceImpl" />
-
-	<!-- **** Role Beans *************************************** -->
-	<bean id="rsRoleDao"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsRoleDaoImpl" />
-
-	<!-- **** Project Beans *************************************** -->
-	<bean id="rsProjectDao"
-		class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl" />
-
-	<!-- ************************ DATA ACCESS BEANS ************************* -->
-
-	<!-- Hibernate/JDBC connection properties -->
-	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://localhost:5432/gobii_rice" />
-		<property name="username" value="appuser" />
-		<property name="password" value="appuser" />
-	</bean>
+    <!-- **** Display Beans *************************************** -->
+    <bean id="rsDisplayDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsDisplayDaoImpl"/>
+    <bean id="dtoMapDisplay" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDisplayImpl"/>
+    <bean id="displayService"
+          class="org.gobiiproject.gobidomain.services.impl.DisplayServiceImpl"/>
 
 
-	<bean id="entityManagerFactory"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="org.gobiiproject.gobiidao.entity" />
-		<property name="mappingResources" value="META_INF/mapping.xml" />
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-		</property>
-		<property name="jpaProperties">
-			<props>
-				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop>
-			</props>
-		</property>
-	</bean>
+    <!-- **** DataSet Beans *************************************** -->
+    <bean id="rsDataSetDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsDataSetDaoImpl"/>
+    <bean id="dtoMapDataSet" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDataSetImpl"/>
+    <bean id="DataSetService"
+          class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl"/>
 
-	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean>
-	<tx:annotation-driven />
-
-	<bean id="persistenceExceptionTranslationPostProcessor"
-		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
-
-	<!-- *********************************************** SECURITY CONFIGURATION 
-		*********************************************** -->
-	<security:global-method-security
-		secured-annotations="enabled" pre-post-annotations="enabled" />
+    <!-- **** Experiment Beans *************************************** -->
+    <bean id="rsExperimentDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsExperimentDaoImpl"/>
+    <bean id="dtoMapExperiment"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapExperimentImpl"/>
+    <bean id="ExperimentService"
+          class="org.gobiiproject.gobidomain.services.impl.ExperimentServiceImpl"/>
 
 
-	<!--<bean id="userContextLoader" class="org.advocacydb.web.sec.UserContextLoader"> -->
-	<!--</bean> -->
+    <!-- **** Analysis Beans *************************************** -->
+    <bean id="rsAnalysisDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsAnalysisDaoImpl"/>
+    <bean id="dtoMapAnalysis"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapAnalysisImpl"/>
+    <bean id="AnalysisService"
+          class="org.gobiiproject.gobidomain.services.impl.AnalysisServiceImpl"/>
+
+
+    <!-- **** Platform Beans *************************************** -->
+    <bean id="rsPlatformDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsPlatformDaoImpl"/>
+    <bean id="dtoMapPlatform"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapPlatformImpl"/>
+    <bean id="platformService"
+          class="org.gobiiproject.gobidomain.services.impl.PlatformServiceImpl"/>
+
+
+    <!-- **** Manifest Beans *************************************** -->
+    <bean id="rsManifestDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsManifestDaoImpl"/>
+
+    <!-- <bean id="dtoMapManifest" class="org.gobiiproject.gobiidtomapping.impl.DtoMapManifestImpl"/>
+        <bean id="ManifestService" class="org.gobiiproject.gobidomain.services.impl.ManifestServiceImpl"/> -->
+
+    <!-- **** Map Beans *************************************** -->
+    <bean id="rsMapDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapSetDaoImpl"/>
+    <bean id="dtoMapMapset" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapsetImpl"/>
+    <bean id="MapsetService"
+          class="org.gobiiproject.gobidomain.services.impl.MapsetServiceImpl"/>
+
+    <!-- <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/>
+        <bean id="MapService" class="org.gobiiproject.gobidomain.services.impl.MapServiceImpl"/> -->
+
+    <!-- **** Reference Beans *************************************** -->
+    <bean id="rsReferenceDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsReferenceDaoImpl"/>
+    <bean id="dtoMapReference" class="org.gobiiproject.gobiidtomapping.impl.DtoMapReferenceImpl"/>
+    <bean id="ReferenceService" class="org.gobiiproject.gobidomain.services.impl.ReferenceServiceImpl"/>
+
+    <!-- **** CvTerms Beans *************************************** -->
+    <bean id="rsCvDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvDaoImpl"/>
+    <bean id="dtoMapCv" class="org.gobiiproject.gobiidtomapping.impl.DtoMapCvImpl"/>
+    <bean id="CvService" class="org.gobiiproject.gobidomain.services.impl.CvServiceImpl"/>
+
+    <!-- **** MarkerGroup Beans *************************************** -->
+    <bean id="rsMarkerGroupDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerGroupDaoImpl"/>
+    <bean id="dtoMapMarkerGroup" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerGroupImpl"/>
+    <bean id="MarkerGroupService" class="org.gobiiproject.gobidomain.services.impl.MarkerGroupServiceImpl"/>
+
+    <!-- **** Role Beans *************************************** -->
+    <bean id="rsRoleDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsRoleDaoImpl"/>
+
+    <!-- **** Project Beans *************************************** -->
+    <bean id="rsProjectDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>
+
+    <!-- ************************ DATA ACCESS BEANS ************************* -->
+
+    <bean id="gobiiProperties"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:gobii.properties"/>
+    </bean>
+
+    <bean id="configSettings" class="org.gobiiproject.gobiimodel.config.ConfigSettings"/>
+    <!--<bean id="gobiiCropType" class="org.gobiiproject.gobiimodel.types.GobiiCropType"/>-->
+    <!--<bean id="gobiiDbType" class="org.gobiiproject.gobiimodel.types.GobiiDbType"/>-->
+    <!-- Hibernate/JDBC connection properties -->
+
+    <bean id="dataSourceRice"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver"/>
+        <!--<property name="url" value="jdbc:postgresql://localhost:5432/gobii_rice"/>-->
+        <property name="url" value="#{configSettings
+        .getCropConfig(T(org.gobiiproject.gobiimodel.types.GobiiCropType).RICE)
+        .getCropDbConfig(T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL)
+         .getConnectionString()}"/>
+        <property name="username" value="${crops.rice.db.postgresql.username}"/>
+        <property name="password" value="${crops.rice.db.postgresql.password}"/>
+    </bean>
+
+    <!--<bean id="dataSourceMaize"-->
+    <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+    <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
+    <!--<property name="url" value="jdbc:postgresql://localhost:5432/gobii_maize"/>-->
+    <!--<property name="username" value="appuser"/>-->
+    <!--<property name="password" value="appuser"/>-->
+    <!--</bean>-->
+
+    <bean id="dataSourceMulti" class="org.gobiiproject.gobiiweb.DataSourceSelector">
+        <property name="targetDataSources">
+            <map key-type="java.lang.String">
+                <entry key="RICE" value-ref="dataSourceRice"/>
+                <!--<entry key="MAIZE" value-ref="dataSourceMaize"/>-->
+            </map>
+        </property>
+        <!-- <property name="defaultTargetDataSource" ref="concreteDataSourceOne"/> -->
+    </bean>
+
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSourceMulti"/>
+        <property name="packagesToScan" value="org.gobiiproject.gobiidao.entity"/>
+        <property name="mappingResources" value="META_INF/mapping.xml"/>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+    <tx:annotation-driven/>
+
+    <bean id="persistenceExceptionTranslationPostProcessor"
+          class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+    <!-- *********************************************** SECURITY CONFIGURATION
+        *********************************************** -->
+    <security:global-method-security
+            secured-annotations="enabled" pre-post-annotations="enabled"/>
+
+
+    <!--<bean id="userContextLoader" class="org.advocacydb.web.sec.UserContextLoader"> -->
+    <!--</bean> -->
 
 </beans>
