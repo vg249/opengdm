@@ -7,6 +7,9 @@ System.register(['angular2/core'], function(exports_1, context_1) {
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
     var core_1;
     var SearchCriteriaBySamplesComponent;
     return {
@@ -30,7 +33,8 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                     core_1.Component({
                         selector: 'search-criteria-samples',
                         template: "\n\t\t\t<form>\n\t\t\t\t<fieldset class=\"well the-fieldset\">\n\t\t\t\t<legend class=\"the-legend\">Search Criteria</legend>\n\t\t\t\t\n\t\t\t\tSamples:\n\t\t\t\t<input type=\"file\"/>\n\t\t\t\t<BR>\n\t\t\t\tMarkers:\n\t\t\t\t<input type=\"file/>\n\t\t\t\t\n\t\t\t\t</fieldset>\n\t\t\t</form>\n  " // end template
-                    })
+                    }), 
+                    __metadata('design:paramtypes', [])
                 ], SearchCriteriaBySamplesComponent);
                 return SearchCriteriaBySamplesComponent;
             }());

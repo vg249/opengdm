@@ -7,6 +7,9 @@ System.register(['angular2/core', '../views/name-id-list-box.component'], functi
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
     var core_1, name_id_list_box_component_1;
     var PageByProjectComponent;
     return {
@@ -33,7 +36,8 @@ System.register(['angular2/core', '../views/name-id-list-box.component'], functi
                         selector: 'page-by-project',
                         directives: [name_id_list_box_component_1.NameIdListBoxComponent],
                         template: "\n            <form>\n                <fieldset class=\"well the-fieldset\">\n                <legend class=\"the-legend\">Search Criteria</legend>\n                \n                <name-id-list-box></name-id-list-box>\n                \n                </fieldset>\n            </form>\n    " // end template
-                    })
+                    }), 
+                    __metadata('design:paramtypes', [])
                 ], PageByProjectComponent);
                 return PageByProjectComponent;
             }());

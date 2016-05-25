@@ -2,7 +2,7 @@ import {RouteParams} from 'angular2/router';
 import { Component, OnInit } from 'angular2/core';
 
 import {NameId} from '../model/name-id';
-import {PrincipleInvestigatorService} from '../services/app/principle-investigator.service.ts';
+import {PrincipleInvestigatorService} from '../services/app/principle-investigator.service';
 
 
 @Component({
