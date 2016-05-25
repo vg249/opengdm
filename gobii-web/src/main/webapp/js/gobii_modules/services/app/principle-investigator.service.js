@@ -26,19 +26,22 @@ System.register(['angular2/core', './name-id-list.service'], function(exports_1,
                     this._nameIdListService = _nameIdListService;
                 } // ctor
                 PrincipleInvestigatorService.prototype.getNameIds = function () {
-                    var nameIds = [
-                        { "id": 11, "name": "Mr. Nice" },
-                        { "id": 12, "name": "Narco" },
-                        { "id": 13, "name": "Bombasto" },
-                        { "id": 14, "name": "Celeritas" },
-                        { "id": 15, "name": "Magneta" },
-                        { "id": 16, "name": "RubberMan" },
-                        { "id": 17, "name": "Dynama" },
-                        { "id": 18, "name": "Dr IQ" },
-                        { "id": 19, "name": "Magma" },
-                        { "id": 20, "name": "Tornado" }
-                    ];
-                    return nameIds;
+                    var _this = this;
+                    this._nameIdListService.getNameIds()
+                        .subscribe(function (nameIds) { return _this.nameIds = nameIds; }, function (error) { return _this.error = error.message; });
+                    // let nameIds: NameId[] = [
+                    // 	{"id": 11, "name": "Mr. Nice"},
+                    // 	{"id": 12, "name": "Narco"},
+                    // 	{"id": 13, "name": "Bombasto"},
+                    // 	{"id": 14, "name": "Celeritas"},
+                    // 	{"id": 15, "name": "Magneta"},
+                    // 	{"id": 16, "name": "RubberMan"},
+                    // 	{"id": 17, "name": "Dynama"},
+                    // 	{"id": 18, "name": "Dr IQ"},
+                    // 	{"id": 19, "name": "Magma"},
+                    // 	{"id": 20, "name": "Tornado"}
+                    // ];		
+                    return this.nameIds;
                 };
                 PrincipleInvestigatorService = __decorate([
                     core_1.Injectable(), 

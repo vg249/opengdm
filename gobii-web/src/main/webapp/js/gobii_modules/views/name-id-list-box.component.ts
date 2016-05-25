@@ -31,8 +31,8 @@ export class NameIdListBoxComponent implements OnInit {
 	
 	ngOnInit() {
 		
-		//this.nameIds = this._principleInvestigatorService.getNameIds();
-		this.nameIds = [new NameId(1,"foo"), new NameId(2,"bar")];
+		this.nameIds = this._principleInvestigatorService.getNameIds();
+		//this.nameIds = [new NameId(1,"foo"), new NameId(2,"bar")];
 /*
 		let id = +this._routeParams.get('id');
 		this._heroService.getHero(id)

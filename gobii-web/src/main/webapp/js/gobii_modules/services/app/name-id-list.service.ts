@@ -1,8 +1,10 @@
 import {Injectable} from 'angular2/core';
 
 import {NameId} from '../../model/name-id';
-import {Http, Response} from 'angular2/http';
+import {Http, Response, Headers} from 'angular2/http';
 import {Observable}     from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
 
 @Injectable()
 export class NameIdListService {
@@ -13,16 +15,25 @@ export class NameIdListService {
 
     public getNameIds():Observable<NameId[]> {
 
-        let requestBody = `
+        let requestBody = JSON.stringify({
             "processType": "READ",
+            "dtoHeaderAuth": {"userName": null, "password": null, "token": null},
+            "dtoHeaderResponse": {"succeeded": true, "statusMessages": []},
             "entityType": "DBTABLE",
-            "entityName": "project",
-            "filter": "2"        
-            `;
+            "entityName": "datasetnames",
+            "namesById": {},
+            "filter": null
+        });
+
+
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
+
 
         return this
             ._http
-            .post("extract/nameidlist", requestBody)
+            .post("load/nameidlist", requestBody, {headers: headers})
             .map(this.handleResponse)
             .catch(this.handleError);
     }
@@ -35,7 +46,7 @@ export class NameIdListService {
 
         let payload = response.json;
         console.log(payload);
-    return [];
+        return [];
     }
 
     private handleError(error:any) {

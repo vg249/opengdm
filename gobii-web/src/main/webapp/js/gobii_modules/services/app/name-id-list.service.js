@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/http', 'rxjs/Observable'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/operator/map', 'rxjs/add/operator/catch'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -22,17 +22,30 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable'], function(
             },
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
-            }],
+            },
+            function (_1) {},
+            function (_2) {}],
         execute: function() {
             NameIdListService = (function () {
                 function NameIdListService(_http) {
                     this._http = _http;
                 }
                 NameIdListService.prototype.getNameIds = function () {
-                    var requestBody = "\n            \"processType\": \"READ\",\n            \"entityType\": \"DBTABLE\",\n            \"entityName\": \"project\",\n            \"filter\": \"2\"        \n            ";
+                    var requestBody = JSON.stringify({
+                        "processType": "READ",
+                        "dtoHeaderAuth": { "userName": null, "password": null, "token": null },
+                        "dtoHeaderResponse": { "succeeded": true, "statusMessages": [] },
+                        "entityType": "DBTABLE",
+                        "entityName": "datasetnames",
+                        "namesById": {},
+                        "filter": null
+                    });
+                    var headers = new http_1.Headers();
+                    headers.append('Content-Type', 'application/json');
+                    headers.append('Accept', 'application/json');
                     return this
                         ._http
-                        .post("extract/nameidlist", requestBody)
+                        .post("load/nameidlist", requestBody, { headers: headers })
                         .map(this.handleResponse)
                         .catch(this.handleError);
                 };
