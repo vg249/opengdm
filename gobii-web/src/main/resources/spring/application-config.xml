@@ -174,7 +174,22 @@
         <property name="location" value="classpath:gobii.properties"/>
     </bean>
 
+    <!--SET UP CONFIGURAITON FOR JDBC settings-->
     <bean id="configSettings" class="org.gobiiproject.gobiimodel.config.ConfigSettings"/>
+    <bean id="cropConfigRice"
+          class="org.gobiiproject.gobiimodel.config.CropConfig"
+          factory-bean="configSettings"
+          factory-method="getCropConfig">
+        <constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).RICE}"/>
+    </bean>
+
+    <bean id="cropDbConfigRice"
+          class="org.gobiiproject.gobiimodel.config.CropDbConfig"
+          factory-bean="cropConfigRice"
+          factory-method="getCropDbConfig">
+        <constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>
+    </bean>
+
     <!--<bean id="gobiiCropType" class="org.gobiiproject.gobiimodel.types.GobiiCropType"/>-->
     <!--<bean id="gobiiDbType" class="org.gobiiproject.gobiimodel.types.GobiiDbType"/>-->
     <!-- Hibernate/JDBC connection properties -->
@@ -182,14 +197,21 @@
     <bean id="dataSourceRice"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
-        <!--<property name="url" value="jdbc:postgresql://localhost:5432/gobii_rice"/>-->
-        <property name="url" value="#{configSettings
-        .getCropConfig(T(org.gobiiproject.gobiimodel.types.GobiiCropType).RICE)
-        .getCropDbConfig(T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL)
-         .getConnectionString()}"/>
-        <property name="username" value="${crops.rice.db.postgresql.username}"/>
-        <property name="password" value="${crops.rice.db.postgresql.password}"/>
+        <property name="url" value="#{cropDbConfigRice.getConnectionString()}"/>
+        <property name="username" value="#{cropDbConfigRice.getUserName()}"/>
+        <property name="password" value="#{cropDbConfigRice.getPassword()}"/>
     </bean>
+    <!--<bean id="dataSourceRice"-->
+          <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+        <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
+        <!--&lt;!&ndash;<property name="url" value="jdbc:postgresql://localhost:5432/gobii_rice"/>&ndash;&gt;-->
+        <!--<property name="url" value="#{configSettings-->
+        <!--.getCropConfig(T(org.gobiiproject.gobiimodel.types.GobiiCropType).RICE)-->
+        <!--.getCropDbConfig(T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL)-->
+         <!--.getConnectionString()}"/>-->
+        <!--<property name="username" value="${crops.rice.db.postgresql.username}"/>-->
+        <!--<property name="password" value="${crops.rice.db.postgresql.password}"/>-->
+    <!--</bean>-->
 
     <!--<bean id="dataSourceMaize"-->
     <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
