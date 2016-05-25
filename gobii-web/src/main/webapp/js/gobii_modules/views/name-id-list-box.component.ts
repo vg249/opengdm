@@ -8,8 +8,7 @@ import {PrincipleInvestigatorService} from '../services/app/principle-investigat
 @Component({
   selector: 'name-id-list-box',
   //directives: [RADIO_GROUP_DIRECTIVES]
-templateUrl: `
-		<select name="principleInvestigators">
+template: `<select name="principleInvestigators">
 			<option *ngFor="#nameId of nameIds" 
 				value={{nameId.id}}>{{nameId.name}}</option>
 		</select>
@@ -32,7 +31,8 @@ export class NameIdListBoxComponent implements OnInit {
 	
 	ngOnInit() {
 		
-		this.nameIds = this._principleInvestigatorService.getNameIds();
+		//this.nameIds = this._principleInvestigatorService.getNameIds();
+		this.nameIds = [new NameId(1,"foo"), new NameId(2,"bar")];
 /*
 		let id = +this._routeParams.get('id');
 		this._heroService.getHero(id)

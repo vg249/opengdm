@@ -1,4 +1,4 @@
-System.register(['angular2/core', '../services/app/principle-investigator.service'], function(exports_1, context_1) {
+System.register(['angular2/core', '../model/name-id', '../services/app/principle-investigator.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,12 +10,15 @@ System.register(['angular2/core', '../services/app/principle-investigator.servic
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, principle_investigator_service_1;
+    var core_1, name_id_1, principle_investigator_service_1;
     var NameIdListBoxComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (name_id_1_1) {
+                name_id_1 = name_id_1_1;
             },
             function (principle_investigator_service_1_1) {
                 principle_investigator_service_1 = principle_investigator_service_1_1;
@@ -27,7 +30,8 @@ System.register(['angular2/core', '../services/app/principle-investigator.servic
                     this._principleInvestigatorService = _principleInvestigatorService;
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
-                    this.nameIds = this._principleInvestigatorService.getNameIds();
+                    //this.nameIds = this._principleInvestigatorService.getNameIds();
+                    this.nameIds = [new name_id_1.NameId(1, "foo"), new name_id_1.NameId(2, "bar")];
                     /*
                             let id = +this._routeParams.get('id');
                             this._heroService.getHero(id)
@@ -38,7 +42,7 @@ System.register(['angular2/core', '../services/app/principle-investigator.servic
                     core_1.Component({
                         selector: 'name-id-list-box',
                         //directives: [RADIO_GROUP_DIRECTIVES]
-                        templateUrl: "\n\t\t<select name=\"principleInvestigators\">\n\t\t\t<option *ngFor=\"#nameId of nameIds\" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
+                        template: "<select name=\"principleInvestigators\">\n\t\t\t<option *ngFor=\"#nameId of nameIds\" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [principle_investigator_service_1.PrincipleInvestigatorService])
                 ], NameIdListBoxComponent);
