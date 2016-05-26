@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.CropDbConfig;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
@@ -76,9 +77,12 @@ public class DtoRequestPingTest {
     public void testGetPingDatabaseConfig() throws Exception {
 
         ConfigSettings configSettings = new ConfigSettings(); // we're deliberately going to the source instead of using ClientContext
-        List<GobiiCropType> activeCropTypes = Arrays.asList(GobiiCropType.values())
+
+
+        List<GobiiCropType> activeCropTypes = configSettings
+                .getActiveCropConfigs()
                 .stream()
-                .filter(c -> configSettings.getCropConfig(c).isActive())
+                .map(CropConfig::getGobiiCropType)
                 .collect(Collectors.toList());
 
         PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
@@ -104,7 +108,7 @@ public class DtoRequestPingTest {
                             + currentCropType.toString()
                             + ": "
                             + currentCropDbUrl,
-                    0 == currentPingDTOResponse
+                    1 == currentPingDTOResponse
                             .getPingResponses()
                             .stream()
                             .filter(r -> r.contains(currentCropDbUrl))

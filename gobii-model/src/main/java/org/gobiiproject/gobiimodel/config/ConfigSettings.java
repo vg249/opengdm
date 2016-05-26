@@ -7,7 +7,9 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -122,7 +124,8 @@ public class ConfigSettings {
             String isActiveString = configReader.getPropValue(currentPrefix + CROP_SUFFIX_INTERMEDIATE_FILE_ACTIVE);
             boolean isActive = isActiveString.toLowerCase().equals("true");
 
-            CropConfig currentCropConfig = new CropConfig(serviceDomain,
+            CropConfig currentCropConfig = new CropConfig(currentGobiiCropType,
+                    serviceDomain,
                     servicePort,
                     loaderFilesLocation,
                     userFilesLocation,
@@ -169,6 +172,14 @@ public class ConfigSettings {
         return returnVal;
     }
 
+    public List<CropConfig> getActiveCropConfigs() {
+        return cropConfigs
+                .values()
+                .stream()
+                .filter(c -> c.isActive())
+                .collect(Collectors.toList());
+    }
+
     public CropConfig getCurrentCropConfig() {
         return getCropConfig(getCurrentGobiiCropType());
     }
@@ -176,6 +187,7 @@ public class ConfigSettings {
 
     public void setCurrentGobiiCropType(GobiiCropType currentGobiiCropType) {
         this.currentGobiiCropType = currentGobiiCropType;
+
     }
 
     public GobiiCropType getCurrentGobiiCropType() {

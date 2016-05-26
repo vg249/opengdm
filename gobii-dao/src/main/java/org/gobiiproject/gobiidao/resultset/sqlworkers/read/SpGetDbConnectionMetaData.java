@@ -42,17 +42,8 @@ public class SpGetDbConnectionMetaData implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        try {
+        parameters.put("url", getDbUrl(dbConnection));
 
-            parameters.put("url", getDbUrl(dbConnection));
-
-        } catch (SQLException e) {
-
-            if (null != dbConnection) {
-                String url = getDbUrl(dbConnection);
-                throw new SQLException("Error using connection " + url, e);
-            }
-        }
 
     } // execute()
 }

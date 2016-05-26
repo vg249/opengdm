@@ -24,7 +24,6 @@ public class DbMetaData {
     @PersistenceContext
     protected EntityManager em;
 
-
     public String getCurrentDbUrl() throws SQLException {
 
         String returnVal = "";
@@ -35,6 +34,9 @@ public class DbMetaData {
         SessionFactoryImpl sessionFactory = (SessionFactoryImpl) entityManagerFactory.getSessionFactory();
         DatasourceConnectionProviderImpl datasourceConnectionProviderImplj = (DatasourceConnectionProviderImpl) sessionFactory.getConnectionProvider();
         DataSource dataSource = datasourceConnectionProviderImplj.getDataSource();
+
+
+
         returnVal = dataSource.getConnection().getMetaData().getURL();
 
         return returnVal;

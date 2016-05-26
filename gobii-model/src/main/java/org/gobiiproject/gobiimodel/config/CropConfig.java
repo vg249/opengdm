@@ -12,6 +12,7 @@ import java.util.Map;
 public class CropConfig {
 
 
+    private GobiiCropType gobiiCropType;
     private String serviceDomain;
     private Integer servicePort;
     private String rawUserFilesDirectory;
@@ -20,13 +21,15 @@ public class CropConfig {
     private boolean isActive = false;
     private Map<GobiiDbType,CropDbConfig> dbConfigByDbType = new HashMap<>();
 
-    public CropConfig(String serviceDomain,
+    public CropConfig(GobiiCropType gobiiCropType,
+                      String serviceDomain,
                       Integer servicePort,
                       String instructionFilesDirectory,
                       String rawUserFilesDirectory,
                       String intermediateFilesDirectory,
                       boolean isActive) {
 
+        this.gobiiCropType = gobiiCropType;
         this.serviceDomain = serviceDomain;
         this.servicePort = servicePort;
         this.rawUserFilesDirectory = rawUserFilesDirectory;
@@ -61,6 +64,14 @@ public class CropConfig {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public GobiiCropType getGobiiCropType() {
+        return gobiiCropType;
+    }
+
+    public void setGobiiCropType(GobiiCropType gobiiCropType) {
+        this.gobiiCropType = gobiiCropType;
     }
 
     public void addCropDbConfig(GobiiDbType gobiiDbTypee, CropDbConfig cropDbConfig) {
