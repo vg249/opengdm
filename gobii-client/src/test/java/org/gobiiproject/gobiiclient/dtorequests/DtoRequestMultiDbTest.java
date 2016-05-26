@@ -62,7 +62,7 @@ public class DtoRequestMultiDbTest {
             pingDTORequest.setControllerType(ControllerType.LOADER);
             DtoRequestPing currentDtoRequestPing = new DtoRequestPing();
             PingDTO currentPingDTOResponse = currentDtoRequestPing.process(pingDTORequest);
-            Assert.assertFalse(
+            Assert.assertFalse("Ping failed for crop " + currentCropType.toString(),
                     TestUtils.checkAndPrintHeaderMessages(currentPingDTOResponse)
             );
 
@@ -83,7 +83,6 @@ public class DtoRequestMultiDbTest {
         }
 
     }
-
 
 
     @Test
@@ -116,12 +115,12 @@ public class DtoRequestMultiDbTest {
             CvDTO cvDTOResponse = dtoRequestCv.process(currentCvDtoRequest);
 
             Assert.assertNotEquals(null, cvDTOResponse);
-            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResponse));
+            Assert.assertFalse("CV Create failed for crop " + currentCropType.toString(),
+                    TestUtils.checkAndPrintHeaderMessages(cvDTOResponse));
             Assert.assertTrue(cvDTOResponse.getCvId() > 0);
 
         }
     }
-
 
 
 }

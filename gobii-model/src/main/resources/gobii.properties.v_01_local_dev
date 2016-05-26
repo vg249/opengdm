@@ -21,8 +21,8 @@ ifl.integritycheck=false
 
 ################### BEGIN NEW CROP-SPECIFIC CONFIGURATION
 ## RICE -------------------------------------------------
-crops.rice.servicedomain=cbsugobii06.tc.cornell.edu
-#crops.rice.servicedomain=localhost
+#crops.rice.servicedomain=cbsugobii06.tc.cornell.edu
+crops.rice.servicedomain=localhost
 crops.rice.serviceapproot=/gobii-web/
 crops.rice.serviceport=8080
 crops.rice.active=true
@@ -37,7 +37,7 @@ crops.rice.db.monetdb.port=5000
 crops.rice.db.monetdb.username=appuser
 crops.rice.db.monetdb.password=appuser
 # ---------- POSTGRES
-crops.rice.db.postgresql.host=cbsugobii08.tc.cornell.edu
+crops.rice.db.postgresql.host=localhost
 crops.rice.db.postgresql.dbname=gobii_rice
 crops.rice.db.postgresql.port=5432
 crops.rice.db.postgresql.username=appuser
@@ -52,23 +52,23 @@ crops.wheat.serviceport=8080
 crops.wheat.usrfloc=/shared_data/gobii/crops/wheat/files/
 crops.wheat.ldrfloc=/shared_data/gobii/crops/wheat/loader/instructions/
 crops.wheat.intfloc=/shared_data/gobii/crops/wheat/loader/digest/
-crops.wheat.active=true
+crops.wheat.active=false
 # ---------- MONET
 crops.wheat.db.monetdb.host=cbsugobii06.tc.cornell.edu
-crops.wheat.db.monetdb.dbname=gobii_wheat
+crops.wheat.db.monetdb.dbname=gobiiwheat
 crops.wheat.db.monetdb.port=5000
 crops.wheat.db.monetdb.username=appuser
 crops.wheat.db.monetdb.password=appuser
 # ---------- POSTGRES
-crops.wheat.db.postgresql.host=cbsugobii07.tc.cornell.edu
-crops.wheat.db.postgresql.dbname=gobii_wheat
+crops.wheat.db.postgresql.host=cbsugobii06.tc.cornell.edu
+crops.wheat.db.postgresql.dbname=gobiiwheat
 crops.wheat.db.postgresql.port=5432
 crops.wheat.db.postgresql.username=appuser
 crops.wheat.db.postgresql.password=appuser
 
 
 ## MAIZE  -------------------------------------------------
-crops.maize.servicedomain=cbsugobii06.tc.cornell.edu
+crops.maize.servicedomain=localhost
 crops.maize.serviceapproot=/gobii-web/
 crops.maize.serviceport=8080
 crops.maize.active=true
@@ -83,7 +83,7 @@ crops.maize.db.monetdb.port=5000
 crops.maize.db.monetdb.username=appuser
 crops.maize.db.monetdb.password=appuser
 # ---------- POSTGRES
-crops.maize.db.postgresql.host=cbsugobii07.tc.cornell.edu
+crops.maize.db.postgresql.host=localhost
 crops.maize.db.postgresql.dbname=gobii_maize
 crops.maize.db.postgresql.port=5432
 crops.maize.db.postgresql.username=appuser
@@ -101,13 +101,13 @@ crops.sorgum.ldrfloc=/shared_data/gobii/crops/sorgum/loader/instructions/
 crops.sorgum.intfloc=/shared_data/gobii/crops/sorgum/loader/digest/
 # ---------- MONET
 crops.sorgum.db.monetdb.host=cbsugobii06.tc.cornell.edu
-crops.sorgum.db.monetdb.dbname=gobii_sorgum
+crops.sorgum.db.monetdb.dbname=gobiisorgum
 crops.sorgum.db.monetdb.port=5000
 crops.sorgum.db.monetdb.username=appuser
 crops.sorgum.db.monetdb.password=appuser
 # ---------- POSTGRES
-crops.sorgum.db.postgresql.host=cbsugobii08.tc.cornell.edu
-crops.sorgum.db.postgresql.dbname=gobii_sorgum
+crops.sorgum.db.postgresql.host=cbsugobii06.tc.cornell.edu
+crops.sorgum.db.postgresql.dbname=gobiisorgum
 crops.sorgum.db.postgresql.port=5432
 crops.sorgum.db.postgresql.username=appuser
 crops.sorgum.db.postgresql.password=appuser
@@ -117,20 +117,20 @@ crops.sorgum.db.postgresql.password=appuser
 crops.chickpea.servicedomain=cbsugobii06.tc.cornell.edu
 crops.chickpea.serviceapproot=/gobii-web/
 crops.chickpea.serviceport=8080
-crops.chickpea.active=true
+crops.chickpea.active=false
 # ---------- FILE MANAGEMENT
 crops.chickpea.usrfloc=/shared_data/gobii/crops/chickpea/files/
 crops.chickpea.ldrfloc=/shared_data/gobii/crops/chickpea/loader/instructions/
 crops.chickpea.intfloc=/shared_data/gobii/crops/chickpea/loader/digest/
 # ---------- MONET
 crops.chickpea.db.monetdb.host=cbsugobii06.tc.cornell.edu
-crops.chickpea.db.monetdb.dbname=gobii_chickpea
+crops.chickpea.db.monetdb.dbname=gobiichickpea
 crops.chickpea.db.monetdb.port=5000
 crops.chickpea.db.monetdb.username=appuser
 crops.chickpea.db.monetdb.password=appuser
 # ---------- POSTGRES
-crops.chickpea.db.postgresql.host=cbsugobii08.tc.cornell.edu
-crops.chickpea.db.postgresql.dbname=gobii_chickpea
+crops.chickpea.db.postgresql.host=cbsugobii06.tc.cornell.edu
+crops.chickpea.db.postgresql.dbname=gobiichickpea
 crops.chickpea.db.postgresql.port=5432
 crops.chickpea.db.postgresql.username=appuser
 crops.chickpea.db.postgresql.password=appuser
