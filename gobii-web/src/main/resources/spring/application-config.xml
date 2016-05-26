@@ -46,7 +46,9 @@
 
 
     <!-- **** Ping Beans *************************************** -->
-    <bean id="pingDao"
+    <bean id="pingDaoRs"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsPingDaoImpl"/>
+    <bean id="pingDaoEntity"
           class="org.gobiiproject.gobiidao.entity.access.impl.mock.PingEntityDaoImplMock"/>
     <bean id="dtoPing" class="org.gobiiproject.gobiidtomapping.impl.DtoMapPingImpl"/>
     <bean id="pingService"

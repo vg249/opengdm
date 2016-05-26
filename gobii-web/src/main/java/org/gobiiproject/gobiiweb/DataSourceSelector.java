@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiweb;
 
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
@@ -14,7 +15,24 @@ public class DataSourceSelector extends AbstractRoutingDataSource {
     @Override
     protected Object determineCurrentLookupKey() {
 
-        return cropRequestAnalyzer.findCurrentCropType().toString();
+        String returnVal = GobiiCropType.RICE.toString(); // always give a reasonable value
 
+
+        GobiiCropType gobiiCropType = cropRequestAnalyzer.getCropTypeFromHeaders();
+        if (null != gobiiCropType) {
+            returnVal = gobiiCropType.toString();
+
+        } else {
+
+            gobiiCropType = cropRequestAnalyzer.getCropTypeFromUri();
+
+            if (null == gobiiCropType) {
+                LOGGER.error("Unable to determine crop type from header or uri; setting crop type to "
+                        + returnVal
+                        + " database connectioins will be made accordingly");
+            }
+        }
+
+        return returnVal;
     }
 }

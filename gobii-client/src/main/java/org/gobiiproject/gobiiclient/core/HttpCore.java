@@ -76,6 +76,10 @@ public class HttpCore {
             httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_PASSWORD, password);
         }
 
+
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP,
+                ClientContext.getInstance().getCurrentClientCropType().toString());
+
         return (HttpClientBuilder.create().build().execute(httpUriRequest));
 
     }// submitUriRequest()

@@ -29,7 +29,7 @@ public class PingDTO extends DtoMetaData {
     }
 
 
-    public List<String> getPingRequests() {
+    public List<String> getDbMetaData() {
         return pingRequests;
     }
 

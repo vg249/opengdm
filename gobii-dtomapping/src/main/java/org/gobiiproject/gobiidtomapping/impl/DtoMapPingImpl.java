@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import org.gobiiproject.gobiidao.entity.access.PingEntityDao;
+import org.gobiiproject.gobiidao.resultset.access.RsPingDao;
 import org.gobiiproject.gobiidtomapping.DtoMapPing;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Phil on 3/29/2016.
@@ -19,7 +21,7 @@ public class DtoMapPingImpl implements DtoMapPing {
 
 
     @Autowired
-    PingEntityDao pingEntityDao = null;
+    RsPingDao rsPingDao;
 
     @Override
     public PingDTO getPings(PingDTO pingDTO) {
@@ -28,9 +30,22 @@ public class DtoMapPingImpl implements DtoMapPing {
 
         try {
 
-            List<String> pingResponses = pingEntityDao.getPingResponses(pingDTO.getPingRequests());
+            List<String> pingResponses = new ArrayList<>();
+
             String newPingMessage = LineUtils.wrapLine("Mapping layer responded");
             pingResponses.add(newPingMessage);
+
+
+            Map<String,String> dbInfo = rsPingDao.getPingResponses(pingDTO.getDbMetaData());
+            for( Map.Entry<String,String> entry : dbInfo.entrySet() ) {
+
+                String currentPingMessage = LineUtils.wrapLine(entry.getKey()
+                        + ": "
+                        + entry.getValue());
+
+                pingResponses.add(currentPingMessage);
+            }
+
             returnVal.setPingResponses(pingResponses);
 
         } catch (Exception e) {

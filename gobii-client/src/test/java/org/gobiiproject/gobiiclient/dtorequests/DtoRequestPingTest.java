@@ -12,11 +12,7 @@ import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DtoRequestPingTest {
 
@@ -41,10 +37,10 @@ public class DtoRequestPingTest {
         PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
 
         Assert.assertNotEquals(null, pingDTOResponse);
-        Assert.assertNotEquals(null, pingDTOResponse.getPingRequests());
+        Assert.assertNotEquals(null, pingDTOResponse.getDbMetaData());
         Assert.assertNotEquals(null, pingDTOResponse.getPingResponses());
         Assert.assertTrue(pingDTOResponse.getPingResponses().size()
-                >= pingDTORequest.getPingRequests().size());
+                >= pingDTORequest.getDbMetaData().size());
 
     } // testGetMarkers()
 
@@ -59,10 +55,10 @@ public class DtoRequestPingTest {
         PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
 
         Assert.assertNotEquals(null, pingDTOResponse);
-        Assert.assertNotEquals(null, pingDTOResponse.getPingRequests());
+        Assert.assertNotEquals(null, pingDTOResponse.getDbMetaData());
         Assert.assertNotEquals(null, pingDTOResponse.getPingResponses());
         Assert.assertTrue(pingDTOResponse.getPingResponses().size()
-                >= pingDTORequest.getPingRequests().size());
+                >= pingDTORequest.getDbMetaData().size());
 
     } // testGetMarkers()
 
