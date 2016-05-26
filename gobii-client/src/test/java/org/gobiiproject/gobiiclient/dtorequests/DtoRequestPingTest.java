@@ -5,14 +5,24 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.CropDbConfig;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
+import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DtoRequestPingTest {
 
@@ -61,5 +71,46 @@ public class DtoRequestPingTest {
                 >= pingDTORequest.getDbMetaData().size());
 
     } // testGetMarkers()
+
+    @Test
+    public void testGetPingDatabaseConfig() throws Exception {
+
+        ConfigSettings configSettings = new ConfigSettings(); // we're deliberately going to the source instead of using ClientContext
+        List<GobiiCropType> activeCropTypes = Arrays.asList(GobiiCropType.values())
+                .stream()
+                .filter(c -> configSettings.getCropConfig(c).isActive())
+                .collect(Collectors.toList());
+
+        PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
+        for (GobiiCropType currentCropType : activeCropTypes) {
+
+            // should cause server to assign the correct datasource
+            ClientContext.getInstance().setCurrentClientCrop(currentCropType);
+            Assert.assertTrue(Authenticator.authenticate());
+
+            pingDTORequest.setControllerType(ControllerType.LOADER);
+            DtoRequestPing currentDtoRequestPing = new DtoRequestPing();
+            PingDTO currentPingDTOResponse = currentDtoRequestPing.process(pingDTORequest);
+            Assert.assertFalse(
+                    TestUtils.checkAndPrintHeaderMessages(currentPingDTOResponse)
+            );
+
+            String currentCropDbUrl = configSettings
+                    .getCropConfig(currentCropType)
+                    .getCropDbConfig(GobiiDbType.POSTGRESQL)
+                    .getConnectionString();
+
+            Assert.assertTrue("The ping response does not contain the db url for crop "
+                            + currentCropType.toString()
+                            + ": "
+                            + currentCropDbUrl,
+                    0 == currentPingDTOResponse
+                            .getPingResponses()
+                            .stream()
+                            .filter(r -> r.contains(currentCropDbUrl))
+                            .count());
+        }
+
+    }
 
 }

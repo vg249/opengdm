@@ -48,12 +48,6 @@ public class RsPingDaoImpl implements RsPingDao {
 
         try {
 
-//            EntityManagerImpl entityManager = (EntityManagerImpl) em;
-//            HibernateEntityManagerFactory entityManagerFactory = entityManager.getFactory();
-//            SessionFactoryImpl sessionFactory = (SessionFactoryImpl) entityManagerFactory.getSessionFactory();
-//            DatasourceConnectionProviderImpl datasourceConnectionProviderImplj =  (DatasourceConnectionProviderImpl) sessionFactory.getConnectionProvider();
-//            DataSource dataSource = datasourceConnectionProviderImplj.getDataSource();
-//            returnVal.put("",dataSource.getConnection().getMetaData().getURL())
 
             Map<String, Object> parameters = new HashMap<>();
             SpGetDbConnectionMetaData spGetDbConnectionMetaData = new SpGetDbConnectionMetaData(parameters);

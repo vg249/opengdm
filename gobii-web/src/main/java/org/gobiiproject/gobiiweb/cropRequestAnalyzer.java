@@ -48,7 +48,7 @@ public class cropRequestAnalyzer {
                 final String gobiiCropProper = gobiiCrop.toUpperCase();
                 if (1 == Arrays.asList(GobiiCropType.values())
                         .stream()
-                        .filter(c -> c.equals(gobiiCropProper))
+                        .filter(c -> c.toString().toUpperCase().equals(gobiiCropProper))
                         .count()) {
 
                     returnVal = GobiiCropType.valueOf(gobiiCropProper);

@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiidao.resultset.sqlworkers.read;
 
+import org.gobiiproject.gobiidao.resultset.core.DbMetaData;
 import org.hibernate.jdbc.Work;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +14,10 @@ import java.util.Map;
  * Created by Phil on 4/7/2016.
  */
 public class SpGetDbConnectionMetaData implements Work {
+
+    @Autowired
+    DbMetaData dbMetaData;
+
 
     private Map<String, Object> parameters = null;
 
@@ -26,12 +32,27 @@ public class SpGetDbConnectionMetaData implements Work {
         return resultSet;
     }
 
+    private String getDbUrl(Connection connection) throws SQLException {
+
+        return connection
+                .getMetaData()
+                .getURL();
+    }
+
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        parameters.put("url", dbConnection
-                .getMetaData()
-                .getURL());
+        try {
+
+            parameters.put("url", getDbUrl(dbConnection));
+
+        } catch (SQLException e) {
+
+            if (null != dbConnection) {
+                String url = getDbUrl(dbConnection);
+                throw new SQLException("Error using connection " + url, e);
+            }
+        }
 
     } // execute()
 }

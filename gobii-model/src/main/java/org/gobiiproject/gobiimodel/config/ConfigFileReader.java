@@ -29,7 +29,12 @@ public class ConfigFileReader {
 
     public String getPropValue(String propName) throws IOException {
 
-        return getProperties().getProperty(propName);
+        String returnVal =  getProperties().getProperty(propName);
+        if( null == returnVal) {
+            returnVal = ""; //prevent NPEs
+        }
+
+        return  returnVal;
 
     } // getPropValue()
 

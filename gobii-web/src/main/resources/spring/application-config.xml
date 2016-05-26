@@ -46,6 +46,9 @@
 
 
     <!-- **** Ping Beans *************************************** -->
+    <bean id="dbMetaData"
+          class="org.gobiiproject.gobiidao.resultset.core.DbMetaData"/>
+
     <bean id="pingDaoRs"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsPingDaoImpl"/>
     <bean id="pingDaoEntity"
