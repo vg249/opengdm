@@ -140,6 +140,35 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     } // getNameIdListForContacts()
 
+    private NameIdListDTO getNameIdListForAllContacts(NameIdListDTO nameIdListDTO) {
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet contactList = rsContactDao.getAllContactNames();
+
+            Map<String, String> contactNamesById = new HashMap<>();
+            while (contactList.next()) {
+
+                Integer contactId = contactList.getInt("contact_id");
+                String lastName = contactList.getString("lastname");
+                String firstName = contactList.getString("firstname");
+                String name = lastName + ", " + firstName;
+                contactNamesById.put(contactId.toString(), name);
+            }
+
+            returnVal.setNamesById(contactNamesById);
+
+        } catch (Exception e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error("Gobii Maping Error", e);
+        }
+
+
+        return (returnVal);
+
+    } // getNameIdListForContacts()
+
     private NameIdListDTO getNameIdListForMarkerGroups(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -618,6 +647,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
                 case "contact":
                     returnVal = getNameIdListForContacts(nameIdListDTO);
+                    break;
+                case "allContacts":
+                    returnVal = getNameIdListForAllContacts(nameIdListDTO);
                     break;
 
                 case "datasetnames":

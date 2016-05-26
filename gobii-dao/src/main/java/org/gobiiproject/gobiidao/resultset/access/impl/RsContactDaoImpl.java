@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsContact;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdContact;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactNamesByRoleName;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactsByRoleName;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactDetailsByContactId;
@@ -31,6 +32,30 @@ public class RsContactDaoImpl implements RsContactDao {
 
     @Autowired
     private SpRunnerCallable spRunnerCallable;
+
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getAllContactNames() throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        try {
+            SpGetContactNames spGetContactNames = new SpGetContactNames();
+
+            storedProcExec.doWithConnection(spGetContactNames);
+
+            returnVal = spGetContactNames.getResultSet();
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving contact names", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+
+    } // getAllContactNames
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
