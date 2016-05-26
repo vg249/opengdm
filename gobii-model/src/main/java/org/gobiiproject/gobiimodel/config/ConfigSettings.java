@@ -37,6 +37,7 @@ public class ConfigSettings {
 
 
     private final String CROP_SUFFIX_SERVICE_DOMAIN = "servicedomain";
+    private final String CROP_SUFFIX_SERVICE_APPROOT = "serviceapproot";
     private final String CROP_SUFFIX_SERVICE_PORT = "serviceport";
     private final String CROP_SUFFIX_USER_FILE_LOCLOCATION = "usrfloc";
     private final String CROP_SUFFIX_LOADR_FILE_LOCATION = "ldrfloc";
@@ -117,6 +118,7 @@ public class ConfigSettings {
 
 
             String serviceDomain = configReader.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_DOMAIN);
+            String serviceAppRoot = configReader.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_APPROOT);
             Integer servicePort = Integer.parseInt(configReader.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_PORT));
             String userFilesLocation = configReader.getPropValue(currentPrefix + CROP_SUFFIX_USER_FILE_LOCLOCATION);
             String loaderFilesLocation = configReader.getPropValue(currentPrefix + CROP_SUFFIX_LOADR_FILE_LOCATION);
@@ -126,6 +128,7 @@ public class ConfigSettings {
 
             CropConfig currentCropConfig = new CropConfig(currentGobiiCropType,
                     serviceDomain,
+                    serviceAppRoot,
                     servicePort,
                     loaderFilesLocation,
                     userFilesLocation,

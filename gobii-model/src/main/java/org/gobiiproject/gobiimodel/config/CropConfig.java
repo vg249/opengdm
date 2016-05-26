@@ -14,6 +14,7 @@ public class CropConfig {
 
     private GobiiCropType gobiiCropType;
     private String serviceDomain;
+    private String serviceAppRoot;
     private Integer servicePort;
     private String rawUserFilesDirectory;
     private String instructionFilesDirectory;
@@ -23,6 +24,7 @@ public class CropConfig {
 
     public CropConfig(GobiiCropType gobiiCropType,
                       String serviceDomain,
+                      String serviceAppRoot,
                       Integer servicePort,
                       String instructionFilesDirectory,
                       String rawUserFilesDirectory,
@@ -31,6 +33,7 @@ public class CropConfig {
 
         this.gobiiCropType = gobiiCropType;
         this.serviceDomain = serviceDomain;
+        this.serviceAppRoot = serviceAppRoot;
         this.servicePort = servicePort;
         this.rawUserFilesDirectory = rawUserFilesDirectory;
         this.instructionFilesDirectory = instructionFilesDirectory;
@@ -64,6 +67,14 @@ public class CropConfig {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public String getServiceAppRoot() {
+        return serviceAppRoot;
+    }
+
+    public void setServiceAppRoot(String serviceAppRoot) {
+        this.serviceAppRoot = serviceAppRoot;
     }
 
     public GobiiCropType getGobiiCropType() {

@@ -51,6 +51,11 @@ public final class ClientContext {
         return configSettings.getCurrentCropConfig().getServiceDomain();
     }
 
+    public String getCurrentCropAppRoot() {
+        return configSettings.getCurrentCropConfig().getServiceAppRoot();
+    }
+
+
     public Integer getCurrentCropPort() {
         return configSettings.getCurrentCropConfig().getServicePort();
     }

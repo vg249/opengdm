@@ -73,48 +73,5 @@ public class DtoRequestPingTest {
 
     } // testGetMarkers()
 
-    @Test
-    public void testGetPingDatabaseConfig() throws Exception {
-
-        ConfigSettings configSettings = new ConfigSettings(); // we're deliberately going to the source instead of using ClientContext
-
-
-        List<GobiiCropType> activeCropTypes = configSettings
-                .getActiveCropConfigs()
-                .stream()
-                .map(CropConfig::getGobiiCropType)
-                .collect(Collectors.toList());
-
-        PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
-        for (GobiiCropType currentCropType : activeCropTypes) {
-
-            // should cause server to assign the correct datasource
-            ClientContext.getInstance().setCurrentClientCrop(currentCropType);
-            Assert.assertTrue(Authenticator.authenticate());
-
-            pingDTORequest.setControllerType(ControllerType.LOADER);
-            DtoRequestPing currentDtoRequestPing = new DtoRequestPing();
-            PingDTO currentPingDTOResponse = currentDtoRequestPing.process(pingDTORequest);
-            Assert.assertFalse(
-                    TestUtils.checkAndPrintHeaderMessages(currentPingDTOResponse)
-            );
-
-            String currentCropDbUrl = configSettings
-                    .getCropConfig(currentCropType)
-                    .getCropDbConfig(GobiiDbType.POSTGRESQL)
-                    .getConnectionString();
-
-            Assert.assertTrue("The ping response does not contain the db url for crop "
-                            + currentCropType.toString()
-                            + ": "
-                            + currentCropDbUrl,
-                    1 == currentPingDTOResponse
-                            .getPingResponses()
-                            .stream()
-                            .filter(r -> r.contains(currentCropDbUrl))
-                            .count());
-        }
-
-    }
 
 }
