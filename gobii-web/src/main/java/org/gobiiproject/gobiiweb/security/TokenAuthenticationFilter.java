@@ -7,6 +7,7 @@ package org.gobiiproject.gobiiweb.security;
 
 import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
+import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.filter.GenericFilterBean;
@@ -31,10 +32,6 @@ import java.util.StringTokenizer;
  * but it doesn't really depend on it at all.
  */
 public final class TokenAuthenticationFilter extends GenericFilterBean {
-
-    private static final String HEADER_TOKEN = "X-Auth-Token";
-    private static final String HEADER_USERNAME = "X-Username";
-    private static final String HEADER_PASSWORD = "X-Password";
 
     /** Request attribute that indicates that this filter will not continue with the chain. Handy after login/logout, etc. */
     private static final String REQUEST_ATTR_DO_NOT_CONTINUE = "MyAuthenticationFilter-doNotContinue";
@@ -74,8 +71,8 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
     private void checkLogin(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
         String authorization = httpRequest.getHeader("Authorization");
-        String username = httpRequest.getHeader(HEADER_USERNAME);
-        String password = httpRequest.getHeader(HEADER_PASSWORD);
+        String username = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_USERNAME);
+        String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_PASSWORD);
 
         if (authorization != null) {
             checkBasicAuthorization(authorization, httpResponse);
@@ -107,7 +104,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
     private void checkUsernameAndPassword(String username, String password, HttpServletResponse httpResponse) throws IOException {
         TokenInfo tokenInfo = authenticationService.authenticate(username, password);
         if (tokenInfo != null) {
-            httpResponse.setHeader(HEADER_TOKEN, tokenInfo.getToken());
+            httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, tokenInfo.getToken());
             // TODO set other token information possible: IP, ...
         } else {
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -116,16 +113,16 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
     /** Returns true, if request contains valid authentication token. */
     private boolean checkToken(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-        String token = httpRequest.getHeader(HEADER_TOKEN);
+        String token = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_TOKEN);
         if (token == null) {
             return false;
         }
 
         if (authenticationService.checkToken(token)) {
-            System.out.println(" *** " + HEADER_TOKEN + " valid for: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            System.out.println(" *** " + GobiiHttpHeaderNames.HEADER_TOKEN + " valid for: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
             return true;
         } else {
-            System.out.println(" *** Invalid " + HEADER_TOKEN + ' ' + token);
+            System.out.println(" *** Invalid " + GobiiHttpHeaderNames.HEADER_TOKEN + ' ' + token);
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             doNotContinueWithRequestProcessing(httpRequest);
         }
@@ -134,7 +131,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
     private void checkLogout(HttpServletRequest httpRequest) {
         if (currentLink(httpRequest).equals(logoutLink)) {
-            String token = httpRequest.getHeader(HEADER_TOKEN);
+            String token = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_TOKEN);
             // we go here only authenticated, token must not be null
             authenticationService.logout(token);
             doNotContinueWithRequestProcessing(httpRequest);

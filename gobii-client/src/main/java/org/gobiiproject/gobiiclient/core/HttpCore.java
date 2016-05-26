@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,10 +34,6 @@ public class HttpCore {
 
     Logger LOGGER = LoggerFactory.getLogger(HttpCore.class);
 
-
-    private static final String HEADER_TOKEN = "X-Auth-Token";
-    private static final String HEADER_USERNAME = "X-Username";
-    private static final String HEADER_PASSWORD = "X-Password";
 
 
     final private static int HTTP_STATUS_CODE_OK = 200;
@@ -73,10 +70,10 @@ public class HttpCore {
         httpUriRequest.addHeader("Accept", "application/json");
 
         if ((null != token) && (false == token.isEmpty())) {
-            httpUriRequest.addHeader(HEADER_TOKEN, token);
+            httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN, token);
         } else {
-            httpUriRequest.addHeader(HEADER_USERNAME, userName);
-            httpUriRequest.addHeader(HEADER_PASSWORD, password);
+            httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_USERNAME, userName);
+            httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_PASSWORD, password);
         }
 
         return (HttpClientBuilder.create().build().execute(httpUriRequest));
@@ -193,7 +190,7 @@ public class HttpCore {
         String returnVal = null;
 
         HttpResponse response = authenticateWithUser(url, userName, password);
-        Header tokenHeader = getHeader(response.getAllHeaders(), HEADER_TOKEN);
+        Header tokenHeader = getHeader(response.getAllHeaders(), GobiiHttpHeaderNames.HEADER_TOKEN);
         returnVal = tokenHeader.getValue();
 
         if (null == returnVal) {

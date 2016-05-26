@@ -14,7 +14,7 @@ public class DataSourceSelector extends AbstractRoutingDataSource {
     @Override
     protected Object determineCurrentLookupKey() {
 
-        return UrlAnalyzier.findCurrentCropType().toString();
+        return cropRequestAnalyzer.findCurrentCropType().toString();
 
     }
 }

@@ -15,18 +15,40 @@ import java.util.stream.Collectors;
 /**
  * Created by Phil on 5/25/2016.
  */
-public class UrlAnalyzier {
+public class cropRequestAnalyzer {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(UrlAnalyzier.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(cropRequestAnalyzer.class);
+
+    private static HttpServletRequest getRequest() {
+
+        HttpServletRequest returnVal = null;
+
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+
+        if (null != requestAttributes && requestAttributes instanceof ServletRequestAttributes) {
+            returnVal = ((ServletRequestAttributes) requestAttributes).getRequest();
+        }
+
+        return returnVal;
+    }
+
+
+    public static GobiiCropType getCropTypeFromHeaders() {
+
+        GobiiCropType returnVal = null;
+
+
+        return returnVal;
+
+    }
 
 
     public static GobiiCropType findCurrentCropType() {
 
         GobiiCropType returnVal = null;
 
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        if (null != requestAttributes && requestAttributes instanceof ServletRequestAttributes) {
-            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+        HttpServletRequest request = getRequest();
+        if (null != request) {
             String requestUrl = request.getRequestURI();
 
             List<GobiiCropType> matchedCrops =
