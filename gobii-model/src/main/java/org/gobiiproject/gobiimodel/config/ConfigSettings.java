@@ -4,7 +4,6 @@ import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 public class ConfigSettings {
 
 
-    private final String PROP_NAME_WEB_SVR_INSTANCECROP = "websvr.instancecrop";
+    private final String PROP_NAME_WEB_SVR_DEFAULT_CROP = "websvr.defaultcrop";
 
     private final String PROP_NAME_MAIL_SVR_TYPE = "mailsvr.type";
     private final String PROP_NAME_MAIL_SVR_DOMAIN = "mailsvr.domain";
@@ -45,26 +44,31 @@ public class ConfigSettings {
     private final String CROP_SUFFIX_INTERMEDIATE_FILE_ACTIVE = "active";
 
     private final String CROP_PREFIX = "crops.";
-    private final String CROP_PREFIX_RICE = CROP_PREFIX + "rice.";
-    private final String CROP_PREFIX_WHEAT = CROP_PREFIX + "wheat.";
-    private final String CROP_PREFIX_MAIZE = CROP_PREFIX + "maize.";
-    private final String CROP_PREFIX_SORGHUM = CROP_PREFIX + "sorghum.";
+    private final String CROP_PREFIX_DEV = CROP_PREFIX + "dev.";
+    private final String CROP_PREFIX_TEST = CROP_PREFIX + "test.";
     private final String CROP_PREFIX_CHICKPEA = CROP_PREFIX + "chickpea.";
+    private final String CROP_PREFIX_MAIZE = CROP_PREFIX + "maize.";
+    private final String CROP_PREFIX_RICE = CROP_PREFIX + "rice.";
+    private final String CROP_PREFIX_SORGHUM = CROP_PREFIX + "sorghum.";
+    private final String CROP_PREFIX_WHEAT = CROP_PREFIX + "wheat.";
 
 
     private String[] cropPrefixes = {
-            CROP_PREFIX_RICE,
-            CROP_PREFIX_WHEAT,
+            CROP_PREFIX_DEV,
+            CROP_PREFIX_TEST,
+            CROP_PREFIX_CHICKPEA,
             CROP_PREFIX_MAIZE,
+            CROP_PREFIX_RICE,
             CROP_PREFIX_SORGHUM,
-            CROP_PREFIX_CHICKPEA
+            CROP_PREFIX_WHEAT
     };
 
     private ConfigFileReader configReader = new ConfigFileReader();
 
     private Map<GobiiCropType, CropConfig> cropConfigs = new HashMap<>();
 
-    private GobiiCropType currentGobiiCropType = GobiiCropType.RICE; // default crop
+    private GobiiCropType currentGobiiCropType = GobiiCropType.TEST;
+    private GobiiCropType defaultGobiiCropType = GobiiCropType.TEST; // default crop
 
     private String emailSvrType;
     private String emailSvrDomain;
@@ -78,16 +82,19 @@ public class ConfigSettings {
 
         String currentPrefix = null;
 
-        String candidateCropName = configReader.getPropValue(PROP_NAME_WEB_SVR_INSTANCECROP).toUpperCase();
+        String candidateCropName = configReader.getPropValue(PROP_NAME_WEB_SVR_DEFAULT_CROP).toUpperCase();
         if (!LineUtils.isNullOrEmpty(candidateCropName)) {
             if (0 == Arrays.asList(GobiiCropType.values())
                     .stream()
                     .filter(c -> c.toString().toUpperCase().equals(candidateCropName))
                     .count()) {
-                throw new Exception("The configuration file specifies an instance type that does not correspond to a cropy type: " + candidateCropName);
+                throw new Exception("The configuration file specifies an instance type that does not correspond to a crop type: " + candidateCropName);
             }
 
-            currentGobiiCropType = GobiiCropType.valueOf(candidateCropName);
+            defaultGobiiCropType = GobiiCropType.valueOf(candidateCropName);
+            currentGobiiCropType = defaultGobiiCropType;
+        } else {
+            throw new Exception("The configuration does not specify a default crop");
         }
 
         emailSvrType = configReader.getPropValue(PROP_NAME_MAIL_SVR_TYPE);
@@ -195,6 +202,14 @@ public class ConfigSettings {
 
     public GobiiCropType getCurrentGobiiCropType() {
         return currentGobiiCropType;
+    }
+
+    public GobiiCropType getDefaultGobiiCropType() {
+        return defaultGobiiCropType;
+    }
+
+    public void setDefaultGobiiCropType(GobiiCropType defaultGobiiCropType) {
+        this.defaultGobiiCropType = defaultGobiiCropType;
     }
 
     public String getEmailSvrPassword() {

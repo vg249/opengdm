@@ -23,6 +23,7 @@ public final class ClientContext {
     // configure as a singleton
     // this may not be effective if more thn one classloader is used
     private static ClientContext clientContext = null;
+
     public synchronized static ClientContext getInstance() throws Exception {
 
         if (null == clientContext) {
@@ -36,7 +37,6 @@ public final class ClientContext {
     private ClientContext() throws Exception {
 
         configSettings = new ConfigSettings();
-        configSettings.setCurrentGobiiCropType(GobiiCropType.RICE); // default crop
 
     }
 
@@ -76,6 +76,10 @@ public final class ClientContext {
 
     public void setCurrentClientCrop(GobiiCropType currentClientCrop) {
         configSettings.setCurrentGobiiCropType(currentClientCrop);
+    }
+
+    public GobiiCropType getDefaultCropType() {
+        return configSettings.getCurrentGobiiCropType();
     }
 
     public boolean login(String userName, String password) {

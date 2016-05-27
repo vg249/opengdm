@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiweb;
 
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,17 @@ public class DataSourceSelector extends AbstractRoutingDataSource {
     @Override
     protected Object determineCurrentLookupKey() {
 
-        String returnVal = GobiiCropType.RICE.toString(); // always give a reasonable value
+        String returnVal = GobiiCropType.TEST.toString(); // always give a reasonable value
+
+        try {
+
+            ConfigSettings configSettings = new ConfigSettings();
+            returnVal = configSettings.getDefaultGobiiCropType().toString();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Exception setting default crop type", e);
+        }
 
 
         GobiiCropType gobiiCropType = cropRequestAnalyzer.getCropTypeFromHeaders();

@@ -57,8 +57,7 @@ public class DtoRequestMultiDbTest {
         for (GobiiCropType currentCropType : activeCropTypes) {
 
             // should cause server to assign the correct datasource
-            ClientContext.getInstance().setCurrentClientCrop(currentCropType);
-            Assert.assertTrue(Authenticator.authenticate());
+            Assert.assertTrue(Authenticator.authenticate(currentCropType));
 
             pingDTORequest.setControllerType(ControllerType.LOADER);
             DtoRequestPing currentDtoRequestPing = new DtoRequestPing();
@@ -102,8 +101,7 @@ public class DtoRequestMultiDbTest {
         for (GobiiCropType currentCropType : activeCropTypes) {
 
             // should cause server to assign the correct datasource
-            ClientContext.getInstance().setCurrentClientCrop(currentCropType);
-            Assert.assertTrue(Authenticator.authenticate());
+            Assert.assertTrue(Authenticator.authenticate(currentCropType));
 
             CvDTO currentCvDtoRequest = TestDtoFactory
                     .makePopulatedCvDTO(DtoMetaData.ProcessType.CREATE, 1);
