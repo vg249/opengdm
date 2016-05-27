@@ -90,27 +90,27 @@ crops.maize.db.postgresql.username=appuser
 crops.maize.db.postgresql.password=appuser
 
 
-## SORGUM  -------------------------------------------------
-crops.sorgum.servicedomain=cbsugobii06.tc.cornell.edu
-crops.sorgum.serviceapproot=/gobii-web/
-crops.sorgum.serviceport=8080
-crops.sorgum.active=false
+## SORGHUM  -------------------------------------------------
+crops.sorghum.servicedomain=cbsugobii06.tc.cornell.edu
+crops.sorghum.serviceapproot=/gobii-web/
+crops.sorghum.serviceport=8080
+crops.sorghum.active=false
 # ---------- FILE MANAGEMENT
-crops.sorgum.usrfloc=/shared_data/gobii/crops/sorgum/files/
-crops.sorgum.ldrfloc=/shared_data/gobii/crops/sorgum/loader/instructions/
-crops.sorgum.intfloc=/shared_data/gobii/crops/sorgum/loader/digest/
+crops.sorghum.usrfloc=/shared_data/gobii/crops/sorghum/files/
+crops.sorghum.ldrfloc=/shared_data/gobii/crops/sorghum/loader/instructions/
+crops.sorghum.intfloc=/shared_data/gobii/crops/sorghum/loader/digest/
 # ---------- MONET
-crops.sorgum.db.monetdb.host=cbsugobii06.tc.cornell.edu
-crops.sorgum.db.monetdb.dbname=gobii_sorgum
-crops.sorgum.db.monetdb.port=5000
-crops.sorgum.db.monetdb.username=appuser
-crops.sorgum.db.monetdb.password=appuser
+crops.sorghum.db.monetdb.host=cbsugobii06.tc.cornell.edu
+crops.sorghum.db.monetdb.dbname=gobii_sorghum
+crops.sorghum.db.monetdb.port=5000
+crops.sorghum.db.monetdb.username=appuser
+crops.sorghum.db.monetdb.password=appuser
 # ---------- POSTGRES
-crops.sorgum.db.postgresql.host=cbsugobii08.tc.cornell.edu
-crops.sorgum.db.postgresql.dbname=gobii_sorgum
-crops.sorgum.db.postgresql.port=5432
-crops.sorgum.db.postgresql.username=appuser
-crops.sorgum.db.postgresql.password=appuser
+crops.sorghum.db.postgresql.host=cbsugobii08.tc.cornell.edu
+crops.sorghum.db.postgresql.dbname=gobii_sorghum
+crops.sorghum.db.postgresql.port=5432
+crops.sorghum.db.postgresql.username=appuser
+crops.sorghum.db.postgresql.password=appuser
 
 
 ## CHICKPEA  -------------------------------------------------

@@ -252,27 +252,27 @@
         <property name="password" value="#{cropDbConfigMaize.getPassword()}"/>
     </bean>
 
-    <!--**************** JDBC Configuraiton: SORGUM *********************************-->
-    <bean id="cropConfigSorgum"
+    <!--**************** JDBC Configuraiton: SORGHUM *********************************-->
+    <bean id="cropConfigSorghum"
           class="org.gobiiproject.gobiimodel.config.CropConfig"
           factory-bean="configSettings"
           factory-method="getCropConfig">
-        <constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).SORGUM}"/>
+        <constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).SORGHUM}"/>
     </bean>
 
-    <bean id="cropDbConfigSorgum"
+    <bean id="cropDbConfigSorghum"
           class="org.gobiiproject.gobiimodel.config.CropDbConfig"
-          factory-bean="cropConfigSorgum"
+          factory-bean="cropConfigSorghum"
           factory-method="getCropDbConfig">
         <constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>
     </bean>
 
-    <bean id="dataSourceSorgum"
+    <bean id="dataSourceSorghum"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="url" value="#{cropDbConfigSorgum.getConnectionString()}"/>
-        <property name="username" value="#{cropDbConfigSorgum.getUserName()}"/>
-        <property name="password" value="#{cropDbConfigSorgum.getPassword()}"/>
+        <property name="url" value="#{cropDbConfigSorghum.getConnectionString()}"/>
+        <property name="username" value="#{cropDbConfigSorghum.getUserName()}"/>
+        <property name="password" value="#{cropDbConfigSorghum.getPassword()}"/>
     </bean>
 
     <!--**************** JDBC Configuraiton: CHICKPEA *********************************-->
@@ -308,7 +308,7 @@
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).RICE.toString()}" value-ref="dataSourceRice"/>
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).WHEAT.toString()}" value-ref="dataSourceWheat"/>
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).MAIZE.toString()}" value-ref="dataSourceMaize"/>
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).SORGUM.toString()}" value-ref="dataSourceSorgum"/>
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).SORGHUM.toString()}" value-ref="dataSourceSorghum"/>
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).CHICKPEA.toString()}" value-ref="dataSourceChickpea"/>
             </map>
         </property>

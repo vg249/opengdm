@@ -45,19 +45,19 @@ public class ConfigSettings {
     private final String CROP_SUFFIX_INTERMEDIATE_FILE_ACTIVE = "active";
 
     private final String CROP_PREFIX = "crops.";
-    private final String CROP_PEFIX_RICE = CROP_PREFIX + "rice.";
-    private final String CROP_PEFIX_WHEAT = CROP_PREFIX + "wheat.";
-    private final String CROP_PEFIX_MAIZE = CROP_PREFIX + "maize.";
-    private final String CROP_PEFIX_SORGUM = CROP_PREFIX + "sorgum.";
-    private final String CROP_PEFIX_CHICKPEA = CROP_PREFIX + "chickpea.";
+    private final String CROP_PREFIX_RICE = CROP_PREFIX + "rice.";
+    private final String CROP_PREFIX_WHEAT = CROP_PREFIX + "wheat.";
+    private final String CROP_PREFIX_MAIZE = CROP_PREFIX + "maize.";
+    private final String CROP_PREFIX_SORGHUM = CROP_PREFIX + "sorghum.";
+    private final String CROP_PREFIX_CHICKPEA = CROP_PREFIX + "chickpea.";
 
 
     private String[] cropPrefixes = {
-            CROP_PEFIX_RICE,
-            CROP_PEFIX_WHEAT,
-            CROP_PEFIX_MAIZE,
-            CROP_PEFIX_SORGUM,
-            CROP_PEFIX_CHICKPEA
+            CROP_PREFIX_RICE,
+            CROP_PREFIX_WHEAT,
+            CROP_PREFIX_MAIZE,
+            CROP_PREFIX_SORGHUM,
+            CROP_PREFIX_CHICKPEA
     };
 
     private ConfigFileReader configReader = new ConfigFileReader();

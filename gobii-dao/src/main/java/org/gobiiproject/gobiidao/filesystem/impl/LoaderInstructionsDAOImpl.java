@@ -88,9 +88,17 @@ public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
     public void makeDirectory(String pathName) throws GobiiDaoException {
 
         if (!doesPathExist(pathName)) {
-            if( ! ( new File(pathName).mkdirs() ) ) {
+
+            File pathToCreate = new File(pathName);
+
+            if (!pathToCreate.mkdirs()) {
                 throw new GobiiDaoException("Unable to create directory " + pathName);
             }
+
+            if (!(pathToCreate.setReadable(true, false) && pathToCreate.setWritable(true, false))) {
+                throw new GobiiDaoException("Unable to set permissions on directory " + pathName);
+            }
+
         } else {
             throw new GobiiDaoException("The specified path already exists: " + pathName);
         }

@@ -7,6 +7,6 @@ public enum GobiiCropType {
     RICE,
     WHEAT,
     MAIZE,
-    SORGUM,
+    SORGHUM,
     CHICKPEA
 }
