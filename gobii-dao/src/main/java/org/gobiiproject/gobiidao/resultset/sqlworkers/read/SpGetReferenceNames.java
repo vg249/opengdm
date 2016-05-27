@@ -18,7 +18,6 @@ public class SpGetReferenceNames implements Work {
     public SpGetReferenceNames() {
     }
 
-
     private ResultSet resultSet = null;
 
     public ResultSet getResultSet() {

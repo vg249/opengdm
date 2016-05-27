@@ -18,6 +18,7 @@ public enum ServiceRequestId {
     URL_DATASET,
     URL_ANALYSIS,
     URL_MARKERGROUP,
+    URL_MANIFEST,
     URL_PLATFORM,
     URL_MAPSET,
 }
