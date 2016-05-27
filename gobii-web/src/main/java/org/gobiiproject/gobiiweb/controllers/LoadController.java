@@ -47,6 +47,9 @@ public class LoadController {
     private AnalysisService analysisService = null;
 
     @Autowired
+    private ManifestService manifestService = null;
+
+    @Autowired
     private MarkerGroupService markerGroupService = null;
 
     @Autowired
@@ -196,6 +199,23 @@ public class LoadController {
         return (returnVal);
 
     }//processReference
+
+
+    @RequestMapping(value = "/manifest", method = RequestMethod.POST)
+    @ResponseBody
+    public ManifestDTO process(@RequestBody ManifestDTO manifestDTO) {
+
+        ManifestDTO returnVal = new ManifestDTO();
+        try {
+            returnVal = manifestService.process(manifestDTO);
+        } catch (AccessDeniedException e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+        return (returnVal);
+
+    }//processManifest
 
     @RequestMapping(value = "/nameidlist", method = RequestMethod.POST)
     @ResponseBody

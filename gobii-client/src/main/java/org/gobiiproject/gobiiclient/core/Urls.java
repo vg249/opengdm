@@ -82,6 +82,10 @@ public class Urls {
                 returnVal += "markergroup";
                 break;
 
+            case URL_MANIFEST:
+                returnVal += "manifest";
+                break;
+
             case URL_PLATFORM:
                 returnVal += "platform";
                 break;

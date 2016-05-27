@@ -1,17 +1,7 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.container.CvDTO;
-import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
-import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
-import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
-import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
-import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
+import org.gobiiproject.gobiimodel.dto.container.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -200,6 +190,24 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
 
     }
 
+
+    public static ManifestDTO makePopulatedManifestDTO(DtoMetaData.ProcessType processType,
+                                                       Integer uniqueStem) {
+
+        ManifestDTO returnVal = new ManifestDTO(processType);
+
+        String uniqueStemString = uniqueStem.toString();
+        returnVal.setName(uniqueStem + ": reference");
+        returnVal.setCode("version:" + uniqueStem);
+        returnVal.setFilePath(uniqueStem + " file path");
+        returnVal.setCreatedBy(1);
+        returnVal.setCreatedDate(new Date());
+        returnVal.setModifiedBy(1);
+        returnVal.setModifiedDate(new Date());
+
+        return returnVal;
+
+    }
 
     public static ContactDTO makePopulatedContactDTO(DtoMetaData.ProcessType processType,
                                                      Integer uniqueStem) {

@@ -21,7 +21,6 @@ ifl.integritycheck=false
 
 ################### BEGIN NEW CROP-SPECIFIC CONFIGURATION
 ## RICE -------------------------------------------------
-#crops.rice.servicedomain=cbsugobii06.tc.cornell.edu
 crops.rice.servicedomain=localhost
 crops.rice.serviceapproot=/gobii-web/
 crops.rice.serviceport=8080
