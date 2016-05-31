@@ -134,7 +134,7 @@ public class DtoRequestAuthorizationTest {
         postRequestForPing.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN,tokenValue);
 
         HttpResponse httpResponseForToken = HttpClientBuilder.create().build().execute(postRequestForToken);
-        Integer httpStatusCodeForToken = httpResponse.getStatusLine().getStatusCode();
+        Integer httpStatusCodeForToken = httpResponseForToken.getStatusLine().getStatusCode();
         Assert.assertTrue("Request with good user credentials should have succeded; "
                         + "status code received was "
                         + httpStatusCodeForToken
