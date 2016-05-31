@@ -5,18 +5,25 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.CropConfig;
+import org.gobiiproject.gobiimodel.config.CropDbConfig;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
+import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DtoRequestPingTest {
 
@@ -41,10 +48,10 @@ public class DtoRequestPingTest {
         PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
 
         Assert.assertNotEquals(null, pingDTOResponse);
-        Assert.assertNotEquals(null, pingDTOResponse.getPingRequests());
+        Assert.assertNotEquals(null, pingDTOResponse.getDbMetaData());
         Assert.assertNotEquals(null, pingDTOResponse.getPingResponses());
         Assert.assertTrue(pingDTOResponse.getPingResponses().size()
-                >= pingDTORequest.getPingRequests().size());
+                >= pingDTORequest.getDbMetaData().size());
 
     } // testGetMarkers()
 
@@ -59,11 +66,12 @@ public class DtoRequestPingTest {
         PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
 
         Assert.assertNotEquals(null, pingDTOResponse);
-        Assert.assertNotEquals(null, pingDTOResponse.getPingRequests());
+        Assert.assertNotEquals(null, pingDTOResponse.getDbMetaData());
         Assert.assertNotEquals(null, pingDTOResponse.getPingResponses());
         Assert.assertTrue(pingDTOResponse.getPingResponses().size()
-                >= pingDTORequest.getPingRequests().size());
+                >= pingDTORequest.getDbMetaData().size());
 
     } // testGetMarkers()
+
 
 }

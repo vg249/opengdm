@@ -2,9 +2,13 @@ package org.gobiiproject.gobiimodel.config;
 
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -13,7 +17,7 @@ import java.util.Map;
 public class ConfigSettings {
 
 
-    private final String PROP_NAME_WEB_SVR_INSTANCECROP = "websvr.instancecrop";
+    private final String PROP_NAME_WEB_SVR_DEFAULT_CROP = "websvr.defaultcrop";
 
     private final String PROP_NAME_MAIL_SVR_TYPE = "mailsvr.type";
     private final String PROP_NAME_MAIL_SVR_DOMAIN = "mailsvr.domain";
@@ -32,32 +36,39 @@ public class ConfigSettings {
 
 
     private final String CROP_SUFFIX_SERVICE_DOMAIN = "servicedomain";
+    private final String CROP_SUFFIX_SERVICE_APPROOT = "serviceapproot";
     private final String CROP_SUFFIX_SERVICE_PORT = "serviceport";
     private final String CROP_SUFFIX_USER_FILE_LOCLOCATION = "usrfloc";
     private final String CROP_SUFFIX_LOADR_FILE_LOCATION = "ldrfloc";
     private final String CROP_SUFFIX_INTERMEDIATE_FILE_LOCATION = "intfloc";
+    private final String CROP_SUFFIX_INTERMEDIATE_FILE_ACTIVE = "active";
 
     private final String CROP_PREFIX = "crops.";
-    private final String CROP_PEFIX_RICE = CROP_PREFIX + "rice.";
-    private final String CROP_PEFIX_WHEAT = CROP_PREFIX + "wheat.";
-    private final String CROP_PEFIX_MAIZE = CROP_PREFIX + "maize.";
-    private final String CROP_PEFIX_SORGUM = CROP_PREFIX + "sorgum.";
-    private final String CROP_PEFIX_CHICKPEA = CROP_PREFIX + "chickpea.";
+    private final String CROP_PREFIX_DEV = CROP_PREFIX + "dev.";
+    private final String CROP_PREFIX_TEST = CROP_PREFIX + "test.";
+    private final String CROP_PREFIX_CHICKPEA = CROP_PREFIX + "chickpea.";
+    private final String CROP_PREFIX_MAIZE = CROP_PREFIX + "maize.";
+    private final String CROP_PREFIX_RICE = CROP_PREFIX + "rice.";
+    private final String CROP_PREFIX_SORGHUM = CROP_PREFIX + "sorghum.";
+    private final String CROP_PREFIX_WHEAT = CROP_PREFIX + "wheat.";
 
 
     private String[] cropPrefixes = {
-            CROP_PEFIX_RICE,
-            CROP_PEFIX_WHEAT,
-            CROP_PEFIX_MAIZE,
-            CROP_PEFIX_SORGUM,
-            CROP_PEFIX_CHICKPEA
+            CROP_PREFIX_DEV,
+            CROP_PREFIX_TEST,
+            CROP_PREFIX_CHICKPEA,
+            CROP_PREFIX_MAIZE,
+            CROP_PREFIX_RICE,
+            CROP_PREFIX_SORGHUM,
+            CROP_PREFIX_WHEAT
     };
 
     private ConfigFileReader configReader = new ConfigFileReader();
 
     private Map<GobiiCropType, CropConfig> cropConfigs = new HashMap<>();
 
-    private GobiiCropType currentGobiiCropType = GobiiCropType.RICE; // default crop
+    private GobiiCropType currentGobiiCropType = GobiiCropType.TEST;
+    private GobiiCropType defaultGobiiCropType = GobiiCropType.TEST; // default crop
 
     private String emailSvrType;
     private String emailSvrDomain;
@@ -71,29 +82,65 @@ public class ConfigSettings {
 
         String currentPrefix = null;
 
-        currentGobiiCropType = GobiiCropType.valueOf(configReader.getPropValue(PROP_NAME_WEB_SVR_INSTANCECROP).toUpperCase());
+        String candidateCropName = configReader.getPropValue(PROP_NAME_WEB_SVR_DEFAULT_CROP).toUpperCase();
+        if (!LineUtils.isNullOrEmpty(candidateCropName)) {
+            if (0 == Arrays.asList(GobiiCropType.values())
+                    .stream()
+                    .filter(c -> c.toString().toUpperCase().equals(candidateCropName))
+                    .count()) {
+                throw new Exception("The configuration file specifies an instance type that does not correspond to a crop type: " + candidateCropName);
+            }
+
+            defaultGobiiCropType = GobiiCropType.valueOf(candidateCropName);
+            currentGobiiCropType = defaultGobiiCropType;
+        } else {
+            throw new Exception("The configuration does not specify a default crop");
+        }
+
         emailSvrType = configReader.getPropValue(PROP_NAME_MAIL_SVR_TYPE);
         emailSvrDomain = configReader.getPropValue(PROP_NAME_MAIL_SVR_DOMAIN);
         emailSvrUser = configReader.getPropValue(PROP_NAME_MAIL_SVR_USER);
         emailSvrHashType = configReader.getPropValue(PROP_NAME_MAIL_SVR_HASHTYPE);
         emailSvrPassword = configReader.getPropValue(PROP_NAME_MAIL_SVR_PWD);
-        iflIntegrityCheck = configReader.getPropValue(PROP_NAME_IFL_INTEGRITY_CHECK).equals("true") ? true : false;
+        iflIntegrityCheck = configReader.getPropValue(PROP_NAME_IFL_INTEGRITY_CHECK).equals("true");
 
 
         for (int idx = 0; idx < cropPrefixes.length; idx++) {
             currentPrefix = cropPrefixes[idx];
 
+            final String cropTypeFromProp = currentPrefix
+                    .replace(CROP_PREFIX, "")
+                    .replace(".", "")
+                    .toUpperCase();
+
+
+            if (0 == Arrays.asList(GobiiCropType.values())
+                    .stream()
+                    .filter(c -> c.toString().toUpperCase().equals(cropTypeFromProp.toUpperCase()))
+                    .count()) {
+                throw new Exception("The configuration file specifies a non-existent crop type: " + cropTypeFromProp);
+            }
+
+            GobiiCropType currentGobiiCropType = GobiiCropType.valueOf(cropTypeFromProp.toUpperCase());
+
+
             String serviceDomain = configReader.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_DOMAIN);
+            String serviceAppRoot = configReader.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_APPROOT);
             Integer servicePort = Integer.parseInt(configReader.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_PORT));
             String userFilesLocation = configReader.getPropValue(currentPrefix + CROP_SUFFIX_USER_FILE_LOCLOCATION);
             String loaderFilesLocation = configReader.getPropValue(currentPrefix + CROP_SUFFIX_LOADR_FILE_LOCATION);
             String intermediateFilesLocation = configReader.getPropValue(currentPrefix + CROP_SUFFIX_INTERMEDIATE_FILE_LOCATION);
+            String isActiveString = configReader.getPropValue(currentPrefix + CROP_SUFFIX_INTERMEDIATE_FILE_ACTIVE);
+            boolean isActive = isActiveString.toLowerCase().equals("true");
 
-            CropConfig currentCropConfig = new CropConfig(serviceDomain,
+            CropConfig currentCropConfig = new CropConfig(currentGobiiCropType,
+                    serviceDomain,
+                    serviceAppRoot,
                     servicePort,
                     loaderFilesLocation,
                     userFilesLocation,
-                    intermediateFilesLocation);
+                    intermediateFilesLocation,
+                    isActive);
 
             //crops.rice.db.monetdb.password=appuser
             for (GobiiDbType currentDbType : GobiiDbType.values()) {
@@ -119,12 +166,6 @@ public class ConfigSettings {
             }
 
 
-            String cropTypeFromProp = currentPrefix
-                    .replace(CROP_PREFIX, "")
-                    .replace(".", "")
-                    .toUpperCase();
-            GobiiCropType currentGobiiCropType = GobiiCropType.valueOf(cropTypeFromProp);
-
             cropConfigs.put(currentGobiiCropType, currentCropConfig);
 
         }
@@ -141,6 +182,14 @@ public class ConfigSettings {
         return returnVal;
     }
 
+    public List<CropConfig> getActiveCropConfigs() {
+        return cropConfigs
+                .values()
+                .stream()
+                .filter(c -> c.isActive())
+                .collect(Collectors.toList());
+    }
+
     public CropConfig getCurrentCropConfig() {
         return getCropConfig(getCurrentGobiiCropType());
     }
@@ -148,10 +197,19 @@ public class ConfigSettings {
 
     public void setCurrentGobiiCropType(GobiiCropType currentGobiiCropType) {
         this.currentGobiiCropType = currentGobiiCropType;
+
     }
 
     public GobiiCropType getCurrentGobiiCropType() {
         return currentGobiiCropType;
+    }
+
+    public GobiiCropType getDefaultGobiiCropType() {
+        return defaultGobiiCropType;
+    }
+
+    public void setDefaultGobiiCropType(GobiiCropType defaultGobiiCropType) {
+        this.defaultGobiiCropType = defaultGobiiCropType;
     }
 
     public String getEmailSvrPassword() {

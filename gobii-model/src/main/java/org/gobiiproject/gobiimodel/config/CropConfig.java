@@ -12,24 +12,33 @@ import java.util.Map;
 public class CropConfig {
 
 
+    private GobiiCropType gobiiCropType;
     private String serviceDomain;
+    private String serviceAppRoot;
     private Integer servicePort;
     private String rawUserFilesDirectory;
     private String instructionFilesDirectory;
     private String intermediateFilesDirectory;
+    private boolean isActive = false;
     private Map<GobiiDbType,CropDbConfig> dbConfigByDbType = new HashMap<>();
 
-    public CropConfig(String serviceDomain,
+    public CropConfig(GobiiCropType gobiiCropType,
+                      String serviceDomain,
+                      String serviceAppRoot,
                       Integer servicePort,
                       String instructionFilesDirectory,
                       String rawUserFilesDirectory,
-                      String intermediateFilesDirectory) {
+                      String intermediateFilesDirectory,
+                      boolean isActive) {
 
+        this.gobiiCropType = gobiiCropType;
         this.serviceDomain = serviceDomain;
+        this.serviceAppRoot = serviceAppRoot;
         this.servicePort = servicePort;
         this.rawUserFilesDirectory = rawUserFilesDirectory;
         this.instructionFilesDirectory = instructionFilesDirectory;
         this.intermediateFilesDirectory = intermediateFilesDirectory;
+        this.isActive = isActive;
     }
 
     public Integer getServicePort() {
@@ -50,6 +59,30 @@ public class CropConfig {
 
     public String getServiceDomain() {
         return serviceDomain;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public String getServiceAppRoot() {
+        return serviceAppRoot;
+    }
+
+    public void setServiceAppRoot(String serviceAppRoot) {
+        this.serviceAppRoot = serviceAppRoot;
+    }
+
+    public GobiiCropType getGobiiCropType() {
+        return gobiiCropType;
+    }
+
+    public void setGobiiCropType(GobiiCropType gobiiCropType) {
+        this.gobiiCropType = gobiiCropType;
     }
 
     public void addCropDbConfig(GobiiDbType gobiiDbTypee, CropDbConfig cropDbConfig) {

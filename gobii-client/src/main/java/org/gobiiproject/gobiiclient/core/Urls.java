@@ -11,7 +11,7 @@ import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 public class Urls {
 
 
-    private final static String APP_ROOT = "/gobii-web/";
+    //private final static String APP_ROOT = "/gobii-web/";
     private final static String CTRLR_EXTRACT = "extract/";
     private final static String CTRLR_LOAD = "load/";
 
@@ -25,7 +25,8 @@ public class Urls {
             controller = CTRLR_EXTRACT;
         }
 
-        String returnVal = APP_ROOT + controller;
+        String appRoot = ClientContext.getInstance().getCurrentCropAppRoot();
+        String returnVal = appRoot + controller;
 
         switch (requestId) {
 
@@ -79,6 +80,10 @@ public class Urls {
 
             case URL_MARKERGROUP:
                 returnVal += "markergroup";
+                break;
+
+            case URL_MANIFEST:
+                returnVal += "manifest";
                 break;
 
             case URL_PLATFORM:

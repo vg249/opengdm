@@ -11,12 +11,12 @@ import java.util.Map;
 /**
  * Created by Phil on 4/7/2016.
  */
-public class SpGetReferenceNames implements Work {
+public class SpGetContactNames implements Work {
 
-    private Map<String, Object> parameters = null;
+    public SpGetContactNames() {
 
-    public SpGetReferenceNames() {
     }
+
 
     private ResultSet resultSet = null;
 
@@ -26,12 +26,12 @@ public class SpGetReferenceNames implements Work {
 
     @Override
     public void execute(Connection dbConnection) throws SQLException {
-
-        String sql = "select reference_id, name from reference order by lower(name)";
-
+        String sql = "SELECT c.contact_id,\n" +
+                "\t\t\t\tc.lastname,\n" +
+                "\t\t\t\tc.firstname\n" +
+                "\t\tfrom contact c\n" +
+                "\t\torder by lastname";
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-
         resultSet = preparedStatement.executeQuery();
-
     } // execute()
 }

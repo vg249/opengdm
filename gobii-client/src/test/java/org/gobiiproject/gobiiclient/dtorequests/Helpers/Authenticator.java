@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
@@ -11,10 +12,19 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
  */
 public class Authenticator {
 
-    public static boolean authenticate() throws Exception {
+    public static boolean authenticate(GobiiCropType gobiiCropType) throws Exception {
+
+        ClientContext.getInstance().setCurrentClientCrop(gobiiCropType);
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
+
+
         return ClientContext.getInstance().login(userDetail.getUserName(), userDetail.getPassword());
+    }
+
+    public static boolean authenticate() throws Exception {
+        GobiiCropType gobiiCropTypeDefault = ClientContext.getInstance().getDefaultCropType();
+        return Authenticator.authenticate(gobiiCropTypeDefault);
     }
 
     // not implemented yet

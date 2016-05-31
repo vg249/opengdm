@@ -12,5 +12,6 @@ public enum GobiiColumnType {
     VCF_VARIANT,
     VCF_METADATA,
     VCF_INFO,
-    CONSTANT
+    CONSTANT,
+    AUTOINCREMENT
 }

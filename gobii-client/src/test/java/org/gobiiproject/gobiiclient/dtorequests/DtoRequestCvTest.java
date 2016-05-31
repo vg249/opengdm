@@ -73,6 +73,7 @@ public class DtoRequestCvTest {
         Assert.assertTrue(cvDTOResponse.getCvId() > 0);
     }
 
+
     @Test
     public void testUpdateCv() throws Exception {
         DtoRequestCv dtoRequestCv = new DtoRequestCv();

@@ -48,6 +48,23 @@ public class DtoRequestIdNameIdListTest {
     } // testGetMarkers()
 
     @Test
+    public void testGetContactNames() throws Exception {
+
+        // Assumes rice data with seed script is loaded
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("allContacts");
+
+        NameIdListDTO nameIdListDTOResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDTOResponse));
+        Assert.assertNotEquals(null, nameIdListDTOResponse);
+        Assert.assertEquals(true, nameIdListDTOResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDTOResponse.getNamesById().size() >= 0);
+
+    } // testGetMarkers()
+    @Test
     public void testGetProjectNamesByContactId() throws Exception {
 
 
