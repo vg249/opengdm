@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -38,7 +39,7 @@ public class DtoRequestPingTest {
     }
 
 
-    @Test
+    @Ignore
     public void testGetPingFromExtractController() throws Exception {
 
         PingDTO pingDTORequest = TestDtoFactory.makePingDTO();

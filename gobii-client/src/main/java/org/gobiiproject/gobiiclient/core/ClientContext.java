@@ -82,7 +82,7 @@ public final class ClientContext {
         return configSettings.getCurrentGobiiCropType();
     }
 
-    public boolean login(String userName, String password) {
+    public boolean login(String userName, String password) throws Exception {
         boolean returnVal = true;
 
         try {
@@ -95,6 +95,7 @@ public final class ClientContext {
             userToken = httpCore.getTokenForUser(authUrl, userName, password);
         } catch (Exception e) {
             LOGGER.error("Authenticating", e);
+            throw new Exception(e);
         }
 
         return returnVal;
