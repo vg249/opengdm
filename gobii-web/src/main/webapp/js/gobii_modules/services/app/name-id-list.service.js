@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/operator/map', 'rxjs/add/operator/catch'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxjs/add/operator/catch'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,8 +10,8 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1, Observable_1;
-    var NameIdListService;
+    var core_1, http_1;
+    var NameIdListService, requestBody, headers;
     return {
         setters:[
             function (core_1_1) {
@@ -20,9 +20,6 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
             function (http_1_1) {
                 http_1 = http_1_1;
             },
-            function (Observable_1_1) {
-                Observable_1 = Observable_1_1;
-            },
             function (_1) {},
             function (_2) {}],
         execute: function() {
@@ -30,38 +27,6 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                 function NameIdListService(_http) {
                     this._http = _http;
                 }
-                NameIdListService.prototype.getNameIds = function () {
-                    var requestBody = JSON.stringify({
-                        "processType": "READ",
-                        "dtoHeaderAuth": { "userName": null, "password": null, "token": null },
-                        "dtoHeaderResponse": { "succeeded": true, "statusMessages": [] },
-                        "entityType": "DBTABLE",
-                        "entityName": "datasetnames",
-                        "namesById": {},
-                        "filter": null
-                    });
-                    var headers = new http_1.Headers();
-                    headers.append('Content-Type', 'application/json');
-                    headers.append('Accept', 'application/json');
-                    return this
-                        ._http
-                        .post("load/nameidlist", requestBody, { headers: headers })
-                        .map(this.handleResponse)
-                        .catch(this.handleError);
-                };
-                NameIdListService.prototype.handleResponse = function (response) {
-                    if (response.status < 200 || response.status > 300) {
-                        throw new Error('Bad response status: ' + response.status);
-                    }
-                    var payload = response.json;
-                    console.log(payload);
-                    return [];
-                };
-                NameIdListService.prototype.handleError = function (error) {
-                    var errorMessage = error.message;
-                    console.error(errorMessage);
-                    return Observable_1.Observable.throw(errorMessage);
-                };
                 NameIdListService = __decorate([
                     core_1.Injectable(), 
                     __metadata('design:paramtypes', [http_1.Http])
@@ -69,6 +34,40 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                 return NameIdListService;
             }());
             exports_1("NameIdListService", NameIdListService);
+            requestBody = JSON.stringify({
+                "processType": "READ",
+                "dtoHeaderAuth": { "userName": null, "password": null, "token": null },
+                "dtoHeaderResponse": { "succeeded": true, "statusMessages": [] },
+                "entityType": "DBTABLE",
+                "entityName": "datasetnames",
+                "namesById": {},
+                "filter": null
+            });
+            headers = new http_1.Headers();
+            headers.append('Content-Type', 'application/json');
+            headers.append('Accept', 'application/json');
+            return this
+                ._http
+                .post("load/nameidlist", requestBody, { headers: headers })
+                .map(this.handleResponse)
+                .catch(this.handleError);
+            handleResponse(response, http_1.Response);
+            {
+                if (response.status < 200 || response.status > 300) {
+                    throw new Error('Bad response status: ' + response.status);
+                }
+                var payload = response.json();
+                console.log(payload);
+                console.log(response.headers);
+                console.log(response.status + ': ' + response.status);
+                return [];
+            }
+            handleError(error, any);
+            {
+                var errorMessage = error.message;
+                console.error(errorMessage);
+                return Observable_1.Observable.throw(errorMessage);
+            }
         }
     }
 });

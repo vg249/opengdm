@@ -7,6 +7,8 @@ package org.gobiiproject.gobiiweb.security;
 
 import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.filter.GenericFilterBean;
@@ -31,6 +33,9 @@ import java.util.StringTokenizer;
  * but it doesn't really depend on it at all.
  */
 public final class TokenAuthenticationFilter extends GenericFilterBean {
+
+    Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
+
 
     private static final String HEADER_TOKEN = "X-Auth-Token";
     private static final String HEADER_USERNAME = "X-Username";
@@ -116,20 +121,33 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
     /** Returns true, if request contains valid authentication token. */
     private boolean checkToken(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-        String token = httpRequest.getHeader(HEADER_TOKEN);
-        if (token == null) {
-            return false;
-        }
 
-        if (authenticationService.checkToken(token)) {
-            System.out.println(" *** " + HEADER_TOKEN + " valid for: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-            return true;
+        boolean returnVal = false;
+
+        String tokenHeaderVal = httpRequest.getHeader(HEADER_TOKEN);
+
+        if (null != tokenHeaderVal ) {
+
+            if (authenticationService.checkToken(tokenHeaderVal)) {
+
+                returnVal = true;
+                LOGGER.error(" *** " + HEADER_TOKEN + " valid for: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+
+            } else {
+
+                LOGGER.error(" *** Invalid " + HEADER_TOKEN + ' ' + tokenHeaderVal);
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                doNotContinueWithRequestProcessing(httpRequest);
+
+            } // if-else  the token is registered
+
         } else {
-            System.out.println(" *** Invalid " + HEADER_TOKEN + ' ' + token);
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            doNotContinueWithRequestProcessing(httpRequest);
-        }
-        return false;
+
+            returnVal = false;
+
+        } // if-else there is any token value
+
+        return returnVal;
     }
 
     private void checkLogout(HttpServletRequest httpRequest) {

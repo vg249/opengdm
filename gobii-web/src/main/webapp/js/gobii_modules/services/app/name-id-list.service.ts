@@ -13,7 +13,7 @@ export class NameIdListService {
     constructor(private _http:Http) {
     }
 
-    public getNameIds():Observable<NameId[]> {
+    
 
         let requestBody = JSON.stringify({
             "processType": "READ",
@@ -44,8 +44,11 @@ export class NameIdListService {
             throw new Error('Bad response status: ' + response.status);
         }
 
-        let payload = response.json;
+        let payload = response.json();
         console.log(payload);
+        console.log(response.headers);
+        console.log(response.status + ': ' + response.status)
+        
         return [];
     }
 
