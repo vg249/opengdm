@@ -75,17 +75,20 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
     }
 
     private void checkLogin(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+
         String authorization = httpRequest.getHeader("Authorization");
         String username = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_USERNAME);
         String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_PASSWORD);
 
         if (authorization != null) {
             checkBasicAuthorization(authorization, httpResponse);
-            doNotContinueWithRequestProcessing(httpRequest);
         } else if (username != null && password != null) {
             checkUsernameAndPassword(username, password, httpResponse);
-            doNotContinueWithRequestProcessing(httpRequest);
+        } else {
+            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
+
+        doNotContinueWithRequestProcessing(httpRequest);
     }
 
     private void checkBasicAuthorization(String authorization, HttpServletResponse httpResponse) throws IOException {
@@ -107,7 +110,9 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
     }
 
     private void checkUsernameAndPassword(String username, String password, HttpServletResponse httpResponse) throws IOException {
+
         TokenInfo tokenInfo = authenticationService.authenticate(username, password);
+
         if (tokenInfo != null) {
             httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, tokenInfo.getToken());
             // TODO set other token information possible: IP, ...
