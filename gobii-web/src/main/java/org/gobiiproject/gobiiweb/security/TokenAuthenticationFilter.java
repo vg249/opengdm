@@ -37,12 +37,6 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
     Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
 
-
-    /**
-     * Request attribute that indicates that this filter will not continue with the chain. Handy after login/logout, etc.
-     */
-    private static final String REQUEST_ATTR_DO_NOT_CONTINUE = "MyAuthenticationFilter-doNotContinue";
-
     private final String logoutLink;
     private final AuthenticationService authenticationService;
 
@@ -53,17 +47,47 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-//        System.out.println(" *** MyAuthenticationFilter.doFilter");
+
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        boolean hasValidToken = checkToken(httpRequest, httpResponse);
+        // ordinary page GETs pass right through
+        if (!httpRequest.getMethod().equals("GET")) {
 
-        if (hasValidToken) {
-            chain.doFilter(request, response);
+            String tokenHeaderVal = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_TOKEN);
+            boolean hasValidToken = authenticationService.checkToken(tokenHeaderVal);
+            //boolean hasValidToken = checkToken(httpRequest, httpResponse);
+
+            if (hasValidToken) {
+                chain.doFilter(request, response);
+            } else {
+
+                TokenInfo tokenInfo = null;
+                String authorization = httpRequest.getHeader("Authorization");
+                if (null == authorization) {
+
+                    // we're doing HTTP post authentication
+                    String username = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_USERNAME);
+                    String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_PASSWORD);
+                    tokenInfo = authenticationService.authenticate(username, password);
+
+                } else {
+                    tokenInfo = checkBasicAuthorization(authorization, httpResponse);
+
+                } // if else we're going basic authentication
+
+                if (null != tokenInfo) {
+                    httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, tokenInfo.getToken());
+                } else {
+                    httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+
+                }
+
+            }
+
         } else {
-            checkLogin(httpRequest, httpResponse);
-        }
+            chain.doFilter(request, response);
+        } // if-else we're not doing a plain page get
 
 //        if (canRequestProcessingContinue(httpRequest) && httpRequest.getMethod().equals("POST")) {
 //            // If we're not authenticated, we don't bother with logout at all.
@@ -80,93 +104,97 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 //            chain.doFilter(request, response);
 //        }
 //        System.out.println(" === AUTHENTICATION: " + SecurityContextHolder.getContext().getAuthentication());
-    }
+    } // doFilter()
 
-    private void checkLogin(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-        String authorization = httpRequest.getHeader("Authorization");
-        String username = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_USERNAME);
-        String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_PASSWORD);
+//    private boolean checkLogin(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+//
+//        boolean returnVal = false;
+//        String authorization = httpRequest.getHeader("Authorization");
+//        String username = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_USERNAME);
+//        String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_PASSWORD);
+//
+//        if (authorization != null) {
+//            returnVal = checkBasicAuthorization(authorization, httpResponse);
+//        } else if (username != null && password != null) {
+//            returnVal = checkUsernameAndPassword(username, password, httpResponse);
+//        }
+////        else {
+////            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+////        }
+//
+//        return returnVal;
+//    }
 
-        if (authorization != null) {
-            checkBasicAuthorization(authorization, httpResponse);
-            doNotContinueWithRequestProcessing(httpRequest);
-        } else if (username != null && password != null) {
-            checkUsernameAndPassword(username, password, httpResponse);
-            doNotContinueWithRequestProcessing(httpRequest);
-        } else {
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            doNotContinueWithRequestProcessing(httpRequest);
-        }
-    }
+    private TokenInfo checkBasicAuthorization(String authorization, HttpServletResponse httpResponse) throws IOException {
 
-    private void checkBasicAuthorization(String authorization, HttpServletResponse httpResponse) throws IOException {
+        TokenInfo returnVal = null;
+
         StringTokenizer tokenizer = new StringTokenizer(authorization);
-        if (tokenizer.countTokens() < 2) {
-            return;
+        if ((tokenizer.countTokens() >= 2)
+                && tokenizer.nextToken().equalsIgnoreCase("Basic")) {
+
+            String base64 = tokenizer.nextToken();
+            String loginPassword = new String(Base64.decode(base64.getBytes(StandardCharsets.UTF_8)));
+
+            System.out.println("loginPassword = " + loginPassword);
+            tokenizer = new StringTokenizer(loginPassword, ":");
+            System.out.println("tokenizer = " + tokenizer);
+            String userName = tokenizer.nextToken();
+            String password = tokenizer.nextToken();
+            returnVal = authenticationService.authenticate(userName, password);
         }
-        if (!tokenizer.nextToken().equalsIgnoreCase("Basic")) {
-            return;
-        }
-
-        String base64 = tokenizer.nextToken();
-        String loginPassword = new String(Base64.decode(base64.getBytes(StandardCharsets.UTF_8)));
-
-        System.out.println("loginPassword = " + loginPassword);
-        tokenizer = new StringTokenizer(loginPassword, ":");
-        System.out.println("tokenizer = " + tokenizer);
-        checkUsernameAndPassword(tokenizer.nextToken(), tokenizer.nextToken(), httpResponse);
-    }
-
-    private void checkUsernameAndPassword(String username, String password, HttpServletResponse httpResponse) throws IOException {
-        TokenInfo tokenInfo = authenticationService.authenticate(username, password);
-        if (tokenInfo != null) {
-            httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, tokenInfo.getToken());
-            // TODO set other token information possible: IP, ...
-        } else {
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        }
-    }
-
-    /**
-     * Returns true, if request contains valid authentication token.
-     */
-    private boolean checkToken(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-
-        boolean returnVal = false;
-
-
-        String tokenHeaderVal = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_TOKEN);
-
-        if (null != tokenHeaderVal) {
-
-            if (authenticationService.checkToken(tokenHeaderVal)) {
-
-                returnVal = true;
-                LOGGER.error(" *** " + GobiiHttpHeaderNames.HEADER_TOKEN + " valid for: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-
-            } else {
-
-                LOGGER.error(" *** Invalid " + GobiiHttpHeaderNames.HEADER_TOKEN + ' ' + tokenHeaderVal);
-                //httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                doNotContinueWithRequestProcessing(httpRequest);
-
-            } // if-else  the token is registered
-
-        } else {
-
-            returnVal = false;
-
-        } // if-else there is any token value
 
         return returnVal;
     }
 
+//    private boolean checkUsernameAndPassword(String username, String password, HttpServletResponse httpResponse) throws IOException {
+//
+//        boolean returnVal = false;
+//
+//        TokenInfo tokenInfo = authenticationService.authenticate(username, password);
+//        if (tokenInfo != null) {
+//            returnVal = true;
+//            httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, tokenInfo.getToken());
+//        }
+//
+//        return returnVal;
+//    }
+
+    /**
+     * Returns true, if request contains valid authentication token.
+     */
+//    private boolean checkToken(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+//
+//        boolean returnVal = false;
+//
+//        String tokenHeaderVal = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_TOKEN);
+//
+//        if (null != tokenHeaderVal) {
+//
+//            if (authenticationService.checkToken(tokenHeaderVal)) {
+//
+//                returnVal = true;
+//                LOGGER.error(" *** " + GobiiHttpHeaderNames.HEADER_TOKEN + " valid for: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+//
+//            } else {
+//
+//                LOGGER.error(" *** Invalid " + GobiiHttpHeaderNames.HEADER_TOKEN + ' ' + tokenHeaderVal);
+//
+//            } // if-else  the token is registered
+//
+//        } else {
+//
+//            returnVal = false;
+//
+//        } // if-else there is any token value
+//
+//        return returnVal;
+//    }
     private void checkLogout(HttpServletRequest httpRequest) {
         if (currentLink(httpRequest).equals(logoutLink)) {
             String token = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_TOKEN);
             // we go here only authenticated, token must not be null
             authenticationService.logout(token);
-            doNotContinueWithRequestProcessing(httpRequest);
         }
     }
 
@@ -183,11 +211,4 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
      * This is set in cases when we don't want to continue down the filter chain. This occurs
      * for any {@link HttpServletResponse#SC_UNAUTHORIZED} and also for login or logout.
      */
-    private void doNotContinueWithRequestProcessing(HttpServletRequest httpRequest) {
-        httpRequest.setAttribute(REQUEST_ATTR_DO_NOT_CONTINUE, "");
-    }
-
-    private boolean canRequestProcessingContinue(HttpServletRequest httpRequest) {
-        return httpRequest.getAttribute(REQUEST_ATTR_DO_NOT_CONTINUE) == null;
-    }
 }
