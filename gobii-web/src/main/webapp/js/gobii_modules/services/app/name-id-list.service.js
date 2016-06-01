@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/operator/map', 'rxjs/add/operator/catch'], function(exports_1, context_1) {
+System.register(["angular2/core", "angular2/http", "rxjs/Observable", '../core/authentication.service', "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw', "../../model/header-names"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1, Observable_1;
+    var core_1, http_1, Observable_1, authentication_service_1, header_names_1;
     var NameIdListService;
     return {
         setters:[
@@ -23,12 +23,20 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
             },
+            function (authentication_service_1_1) {
+                authentication_service_1 = authentication_service_1_1;
+            },
             function (_1) {},
-            function (_2) {}],
+            function (_2) {},
+            function (_3) {},
+            function (header_names_1_1) {
+                header_names_1 = header_names_1_1;
+            }],
         execute: function() {
             NameIdListService = (function () {
-                function NameIdListService(_http) {
+                function NameIdListService(_http, _authenticationService) {
                     this._http = _http;
+                    this._authenticationService = _authenticationService;
                 }
                 NameIdListService.prototype.getNameIds = function () {
                     var requestBody = JSON.stringify({
@@ -40,32 +48,34 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                         "namesById": {},
                         "filter": null
                     });
+                    var token = this._authenticationService.getToken();
+                    if (!token) {
+                        this._authenticationService
+                            .authenticate(null, null)
+                            .subscribe(function (h) {
+                            token = h.getToken();
+                        }, function (error) { return console.log(error.message); });
+                    }
+                    if (!token) {
+                        Observable_1.Observable.throw(Error("no authentication token"));
+                    }
                     var headers = new http_1.Headers();
                     headers.append('Content-Type', 'application/json');
                     headers.append('Accept', 'application/json');
+                    headers.append(header_names_1.HeaderNames.headerToken, token);
                     return this
                         ._http
                         .post("load/nameidlist", requestBody, { headers: headers })
-                        .map(this.handleResponse)
-                        .catch(this.handleError);
-                };
-                NameIdListService.prototype.handleResponse = function (response) {
-                    if (response.status < 200 || response.status > 300) {
-                        throw new Error('Bad response status: ' + response.status);
-                    }
-                    var payload = response.json();
-                    console.log(payload);
-                    console.log(response.headers);
-                    return [];
-                };
-                NameIdListService.prototype.handleError = function (error) {
-                    var errorMessage = error.message;
-                    console.error(errorMessage);
-                    return Observable_1.Observable.throw(errorMessage);
+                        .map(function (response) {
+                        var payload = response.json();
+                        console.log(payload);
+                        console.log(response.headers);
+                        return [];
+                    });
                 };
                 NameIdListService = __decorate([
                     core_1.Injectable(), 
-                    __metadata('design:paramtypes', [http_1.Http])
+                    __metadata('design:paramtypes', [http_1.Http, authentication_service_1.AuthenticationService])
                 ], NameIdListService);
                 return NameIdListService;
             }());

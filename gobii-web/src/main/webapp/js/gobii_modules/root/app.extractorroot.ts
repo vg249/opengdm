@@ -1,17 +1,17 @@
 ///<reference path="../../../../../../node_modules/angular2/typings/browser.d.ts"/>
 
 // Angular Imports
-import {Component}       from 'angular2/core';
-import {HTTP_PROVIDERS}    from 'angular2/http';
+import {Component} from "angular2/core";
+import {HTTP_PROVIDERS} from "angular2/http";
+import {ExportFormatComponent} from "../views/export-format.component";
+import {SearchCriteriaBySamplesComponent} from "./page-by-samples.component";
+import {PageByProjectComponent} from "./page-by-project.component";
+import {PrincipleInvestigatorService} from "../services/app/principle-investigator.service";
+import {NameIdListService} from "../services/app/name-id-list.service";
+import {AuthenticationService} from "../services/core/authentication.service";
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
-import {ExportFormatComponent} from '../views/export-format.component';
-import {SearchCriteriaBySamplesComponent} from './page-by-samples.component';
-import {PageByProjectComponent} from './page-by-project.component';
-
-import {PrincipleInvestigatorService} from '../services/app/principle-investigator.service';
-import {NameIdListService} from '../services/app/name-id-list.service';
 
 
 @Component({
@@ -22,8 +22,9 @@ import {NameIdListService} from '../services/app/name-id-list.service';
         PageByProjectComponent],
     providers: [
         HTTP_PROVIDERS,
-        PrincipleInvestigatorService,
+        AuthenticationService,
         NameIdListService,
+        PrincipleInvestigatorService
     ],
     template: `
         <div class = "panel panel-default">

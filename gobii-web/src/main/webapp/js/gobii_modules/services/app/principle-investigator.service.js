@@ -1,4 +1,4 @@
-System.register(['angular2/core', './name-id-list.service'], function(exports_1, context_1) {
+System.register(["angular2/core", "./name-id-list.service"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -28,7 +28,7 @@ System.register(['angular2/core', './name-id-list.service'], function(exports_1,
                 PrincipleInvestigatorService.prototype.getNameIds = function () {
                     var _this = this;
                     this._nameIdListService.getNameIds()
-                        .subscribe(function (nameIds) { return _this.nameIds = nameIds; }, function (error) { return _this.error = error.message; });
+                        .subscribe(function (nameIds) { return _this.nameIds = nameIds; }, function (error) { return console.log(error.message); });
                     // let nameIds: NameId[] = [
                     // 	{"id": 11, "name": "Mr. Nice"},
                     // 	{"id": 12, "name": "Narco"},
