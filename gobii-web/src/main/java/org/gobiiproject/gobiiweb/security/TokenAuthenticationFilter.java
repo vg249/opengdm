@@ -56,7 +56,6 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
             String tokenHeaderVal = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_TOKEN);
             boolean hasValidToken = authenticationService.checkToken(tokenHeaderVal);
-            //boolean hasValidToken = checkToken(httpRequest, httpResponse);
 
             if (hasValidToken) {
                 chain.doFilter(request, response);
@@ -80,50 +79,14 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                     httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, tokenInfo.getToken());
                 } else {
                     httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-
-                }
-
+                } // if-else the user authenticated
             }
 
         } else {
             chain.doFilter(request, response);
         } // if-else we're not doing a plain page get
 
-//        if (canRequestProcessingContinue(httpRequest) && httpRequest.getMethod().equals("POST")) {
-//            // If we're not authenticated, we don't bother with logout at all.
-//            // Logout does not work in the same request with login - this does not make sense, because logout works with token and login returns it.
-//            if (hasValidToken) {
-//                checkLogout(httpRequest);
-//            }
-//
-//            // Login works just fine even when we provide token that is valid up to this request, because then we get a new one.
-//            checkLogin(httpRequest, httpResponse);
-//        }
-//
-//        if (canRequestProcessingContinue(httpRequest)) {
-//            chain.doFilter(request, response);
-//        }
-//        System.out.println(" === AUTHENTICATION: " + SecurityContextHolder.getContext().getAuthentication());
     } // doFilter()
-
-//    private boolean checkLogin(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-//
-//        boolean returnVal = false;
-//        String authorization = httpRequest.getHeader("Authorization");
-//        String username = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_USERNAME);
-//        String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_PASSWORD);
-//
-//        if (authorization != null) {
-//            returnVal = checkBasicAuthorization(authorization, httpResponse);
-//        } else if (username != null && password != null) {
-//            returnVal = checkUsernameAndPassword(username, password, httpResponse);
-//        }
-////        else {
-////            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-////        }
-//
-//        return returnVal;
-//    }
 
     private TokenInfo checkBasicAuthorization(String authorization, HttpServletResponse httpResponse) throws IOException {
 
@@ -147,49 +110,6 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
         return returnVal;
     }
 
-//    private boolean checkUsernameAndPassword(String username, String password, HttpServletResponse httpResponse) throws IOException {
-//
-//        boolean returnVal = false;
-//
-//        TokenInfo tokenInfo = authenticationService.authenticate(username, password);
-//        if (tokenInfo != null) {
-//            returnVal = true;
-//            httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, tokenInfo.getToken());
-//        }
-//
-//        return returnVal;
-//    }
-
-    /**
-     * Returns true, if request contains valid authentication token.
-     */
-//    private boolean checkToken(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-//
-//        boolean returnVal = false;
-//
-//        String tokenHeaderVal = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_TOKEN);
-//
-//        if (null != tokenHeaderVal) {
-//
-//            if (authenticationService.checkToken(tokenHeaderVal)) {
-//
-//                returnVal = true;
-//                LOGGER.error(" *** " + GobiiHttpHeaderNames.HEADER_TOKEN + " valid for: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-//
-//            } else {
-//
-//                LOGGER.error(" *** Invalid " + GobiiHttpHeaderNames.HEADER_TOKEN + ' ' + tokenHeaderVal);
-//
-//            } // if-else  the token is registered
-//
-//        } else {
-//
-//            returnVal = false;
-//
-//        } // if-else there is any token value
-//
-//        return returnVal;
-//    }
     private void checkLogout(HttpServletRequest httpRequest) {
         if (currentLink(httpRequest).equals(logoutLink)) {
             String token = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_TOKEN);
@@ -207,8 +127,4 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
         return httpRequest.getServletPath() + httpRequest.getPathInfo();
     }
 
-    /**
-     * This is set in cases when we don't want to continue down the filter chain. This occurs
-     * for any {@link HttpServletResponse#SC_UNAUTHORIZED} and also for login or logout.
-     */
 }
