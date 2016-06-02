@@ -1,5 +1,6 @@
 import {Injectable} from "angular2/core";
 import {NameId} from "../../model/name-id";
+import {HttpValues} from "../../model/http-values";
 import {Http, Response, Headers} from "angular2/http";
 import {Observable} from "rxjs/Observable";
 import {AuthenticationService} from '../core/authentication.service';
@@ -8,7 +9,7 @@ import {AuthenticationService} from '../core/authentication.service';
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import 'rxjs/add/observable/throw';
-import {HeaderNames} from "../../model/header-names";
+
 
 @Injectable()
 export class NameIdListService {
@@ -18,7 +19,12 @@ export class NameIdListService {
                 private _authenticationService:AuthenticationService) {
     }
 
-    public getNameIds():Observable<NameId[]> {
+
+    public getAString():string {
+        return 'a string';
+    }
+
+    public getNameIds():Observable < NameId[] > {
 
         let requestBody = JSON.stringify({
             "processType": "READ",
@@ -30,36 +36,58 @@ export class NameIdListService {
             "filter": null
         });
 
+        // **************************
+        // this works:
+        // return Observable.create(observer => {
+        //     observer.next(this.mapToNameIds(JSON.parse('{"foo":"bar"}')));
+        //     observer.complete();
+        // })
+        // ***************************
 
-        let token:string = this._authenticationService.getToken();
-        if (!token) {
-            this._authenticationService
-                .authenticate(null, null)
-                .subscribe(h => {
-                        token = h.getToken();
-                    },
-                    error => console.log(error.message))
+        let scope$ = this;
+        let existingToken:string = this._authenticationService.getToken();
+        if (existingToken) {
+            let headers = HttpValues.makeTokenHeaders(existingToken);
+            return Observable.create(observer => {
+                    this._http
+                        .post("load/nameidlist", requestBody, {headers: headers})
+                        .map(response => response.json())
+                        .subscribe(json => {
+                            let nameIds:NameId[] = scope$.mapToNameIds(json);
+                            observer.next(nameIds);
+                            observer.complete();
+                        })
+                }
+            ); // observer.create
+
+        } else {
+            return Observable.create(observer => {
+                this._authenticationService
+                    .authenticate(null, null)
+                    .map(h => h.getToken())
+                    .subscribe(token => {
+                            let newTokenHeaders:Headers =
+                                HttpValues.makeTokenHeaders(token);
+                            scope$._http
+                                .post("load/nameidlist", requestBody, {headers: newTokenHeaders})
+                                .map(response => response.json())
+                                .subscribe(json => {
+                                    let nameIds:NameId[] = scope$.mapToNameIds(json);
+                                    observer.next(nameIds);
+                                    observer.complete();
+                                })
+
+                        },
+                        error => console.log(error.message));
+
+            }); // observer
+
         }
 
-        if (!token) {
-            Observable.throw(Error("no authentication token"));
-        }
+    } // getNameIds()
 
-        let headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-        headers.append('Accept', 'application/json');
-        headers.append(HeaderNames.headerToken, token);
-
-        return this
-            ._http
-            .post("load/nameidlist", requestBody, {headers: headers})
-            .map(response => {
-                let payload = response.json();
-                console.log(payload);
-                console.log(response.headers);
-                return [];
-            });
-
+    private mapToNameIds(json:JSON):NameId[] {
+        console.log(json);
+        return [new NameId(1, 'foo'), new NameId(2, 'bar')];
     }
-
 }

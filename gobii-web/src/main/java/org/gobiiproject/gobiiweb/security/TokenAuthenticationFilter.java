@@ -5,8 +5,10 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
+import org.gobiiproject.gobiimodel.dto.header.DtoHeaderAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
@@ -62,13 +64,13 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
             } else {
 
                 TokenInfo tokenInfo = null;
+                String userName = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_USERNAME);
+                String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_PASSWORD);
                 String authorization = httpRequest.getHeader("Authorization");
                 if (null == authorization) {
 
                     // we're doing HTTP post authentication
-                    String username = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_USERNAME);
-                    String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_PASSWORD);
-                    tokenInfo = authenticationService.authenticate(username, password);
+                    tokenInfo = authenticationService.authenticate(userName, password);
 
                 } else {
                     tokenInfo = checkBasicAuthorization(authorization, httpResponse);
@@ -76,12 +78,23 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                 } // if else we're going basic authentication
 
                 if (null != tokenInfo) {
-                    httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_ALLOW_HEADER,GobiiHttpHeaderNames.HEADER_TOKEN);
-                    httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_EXPOSE_HEADER,GobiiHttpHeaderNames.HEADER_TOKEN);
-                    httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_ALLOW_ORIGIN,"*");
-                    httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_ALLOW_METHODS, "GET, PUT, POST");
+
+                    // Chrome won't give us access to the response headers, even if we set all the allow header
+                    // headers here. So, instead, and in addition to putting the token in the header, we need to put
+                    // it into the body of the response
+//                    httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_ALLOW_HEADER, GobiiHttpHeaderNames.HEADER_TOKEN);
+//                    httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_EXPOSE_HEADER, GobiiHttpHeaderNames.HEADER_TOKEN);
+//                    httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_ALLOW_ORIGIN, "*");
+//                    httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_ALLOW_METHODS, "GET, PUT, POST");
+
+                    DtoHeaderAuth dtoHeaderAuth = new DtoHeaderAuth();
+                    dtoHeaderAuth.setToken(tokenInfo.getToken());
+                    dtoHeaderAuth.setUserName(userName);
+
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    String dtoHeaderAuthString = objectMapper.writeValueAsString(dtoHeaderAuth);
                     httpResponse.getWriter()
-                            .write(GobiiHttpHeaderNames.HEADER_TOKEN + ":" + tokenInfo.getToken());                    ;
+                            .write(dtoHeaderAuthString);
                     httpResponse.getWriter().flush();
                     httpResponse.getWriter().close();
 //                    res.header("Access-Control-Allow-Origin", "*");

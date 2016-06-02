@@ -3,18 +3,28 @@ export class DtoHeaderAuth {
     public constructor(public userName:string,
                        public password:string,
                        public token:string) {
+
+        this.userName = userName;
+        this.password = password;
+        this.token = token;
     }
+
 
     public getToken():string {
         return this.token;
     }
 
 
-    // public fromJSON(json:JSON) {
-    //     this.userName = json['userName'];
-    //     this.password = json['password'];
-    //     this.token = json['token'];
-    // }
+    public static fromJSON(json:JSON):DtoHeaderAuth {
+
+        return new DtoHeaderAuth(
+            json['userName'],
+            json['password'],
+            json['token']
+        );
+
+    }
+
     //
     // public toJSON(): JSON {
     //     return {

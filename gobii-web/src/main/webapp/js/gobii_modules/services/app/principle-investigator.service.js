@@ -24,11 +24,21 @@ System.register(["angular2/core", "./name-id-list.service"], function(exports_1,
             PrincipleInvestigatorService = (function () {
                 function PrincipleInvestigatorService(_nameIdListService) {
                     this._nameIdListService = _nameIdListService;
+                    this._nameIdListService = _nameIdListService;
                 } // ctor
                 PrincipleInvestigatorService.prototype.getNameIds = function () {
                     var _this = this;
+                    var astring = this._nameIdListService.getAString();
                     this._nameIdListService.getNameIds()
-                        .subscribe(function (nameIds) { return _this.nameIds = nameIds; }, function (error) { return console.log(error.message); });
+                        .subscribe(function (nameIds) { return _this.nameIds = nameIds; });
+                    //let astring:string =  _nameIdListService.get
+                    // let observable:Observable<NameId[]> = this._nameIdListService.getNameIds();
+                    // //observable.subscribe()
+                    //
+                    // let nameIdsReceived: NameId[] = [];
+                    // this._nameIdListService.getNameIds()
+                    //     .map(nameIds => nameIds)
+                    //     .subscribe(nameIds => nameIdsReceived = nameIds);
                     // let nameIds: NameId[] = [
                     // 	{"id": 11, "name": "Mr. Nice"},
                     // 	{"id": 12, "name": "Narco"},

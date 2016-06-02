@@ -1,12 +1,14 @@
 import {Injectable} from "angular2/core";
 import {NameId} from "../../model/name-id";
 import {NameIdListService} from "./name-id-list.service";
+import {Observable} from "rxjs/Observable";
 
 @Injectable()
 export class PrincipleInvestigatorService {
 
 
     constructor(private _nameIdListService:NameIdListService) {
+        this._nameIdListService = _nameIdListService;
     } // ctor
 
     private nameIds:NameId[];
@@ -14,9 +16,22 @@ export class PrincipleInvestigatorService {
 
     getNameIds():NameId[] {
 
+        let astring:string = this._nameIdListService.getAString();
+
+
         this._nameIdListService.getNameIds()
-            .subscribe(nameIds => this.nameIds = nameIds,
-                error => console.log(error.message));
+            .subscribe(nameIds => this.nameIds = nameIds);
+        
+
+        //let astring:string =  _nameIdListService.get
+
+        // let observable:Observable<NameId[]> = this._nameIdListService.getNameIds();
+        // //observable.subscribe()
+        //
+        // let nameIdsReceived: NameId[] = [];
+        // this._nameIdListService.getNameIds()
+        //     .map(nameIds => nameIds)
+        //     .subscribe(nameIds => nameIdsReceived = nameIds);
 
         // let nameIds: NameId[] = [
         // 	{"id": 11, "name": "Mr. Nice"},

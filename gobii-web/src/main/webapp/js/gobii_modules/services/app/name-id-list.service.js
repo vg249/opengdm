@@ -1,4 +1,4 @@
-System.register(["angular2/core", "angular2/http", "rxjs/Observable", '../core/authentication.service', "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw', "../../model/header-names"], function(exports_1, context_1) {
+System.register(["angular2/core", "../../model/name-id", "../../model/http-values", "angular2/http", "rxjs/Observable", '../core/authentication.service', "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,12 +10,18 @@ System.register(["angular2/core", "angular2/http", "rxjs/Observable", '../core/a
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1, Observable_1, authentication_service_1, header_names_1;
+    var core_1, name_id_1, http_values_1, http_1, Observable_1, authentication_service_1;
     var NameIdListService;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (name_id_1_1) {
+                name_id_1 = name_id_1_1;
+            },
+            function (http_values_1_1) {
+                http_values_1 = http_values_1_1;
             },
             function (http_1_1) {
                 http_1 = http_1_1;
@@ -28,17 +34,18 @@ System.register(["angular2/core", "angular2/http", "rxjs/Observable", '../core/a
             },
             function (_1) {},
             function (_2) {},
-            function (_3) {},
-            function (header_names_1_1) {
-                header_names_1 = header_names_1_1;
-            }],
+            function (_3) {}],
         execute: function() {
             NameIdListService = (function () {
                 function NameIdListService(_http, _authenticationService) {
                     this._http = _http;
                     this._authenticationService = _authenticationService;
                 }
+                NameIdListService.prototype.getAString = function () {
+                    return 'a string';
+                };
                 NameIdListService.prototype.getNameIds = function () {
+                    var _this = this;
                     var requestBody = JSON.stringify({
                         "processType": "READ",
                         "dtoHeaderAuth": { "userName": null, "password": null, "token": null },
@@ -48,30 +55,50 @@ System.register(["angular2/core", "angular2/http", "rxjs/Observable", '../core/a
                         "namesById": {},
                         "filter": null
                     });
-                    var token = this._authenticationService.getToken();
-                    if (!token) {
-                        this._authenticationService
-                            .authenticate(null, null)
-                            .subscribe(function (h) {
-                            token = h.getToken();
-                        }, function (error) { return console.log(error.message); });
+                    // **************************
+                    // this works:
+                    // return Observable.create(observer => {
+                    //     observer.next(this.mapToNameIds(JSON.parse('{"foo":"bar"}')));
+                    //     observer.complete();
+                    // })
+                    // ***************************
+                    var scope$ = this;
+                    var existingToken = this._authenticationService.getToken();
+                    if (existingToken) {
+                        var headers_1 = http_values_1.HttpValues.makeTokenHeaders(existingToken);
+                        return Observable_1.Observable.create(function (observer) {
+                            _this._http
+                                .post("load/nameidlist", requestBody, { headers: headers_1 })
+                                .map(function (response) { return response.json(); })
+                                .subscribe(function (json) {
+                                var nameIds = scope$.mapToNameIds(json);
+                                observer.next(nameIds);
+                                observer.complete();
+                            });
+                        }); // observer.create
                     }
-                    if (!token) {
-                        Observable_1.Observable.throw(Error("no authentication token"));
+                    else {
+                        return Observable_1.Observable.create(function (observer) {
+                            _this._authenticationService
+                                .authenticate(null, null)
+                                .map(function (h) { return h.getToken(); })
+                                .subscribe(function (token) {
+                                var newTokenHeaders = http_values_1.HttpValues.makeTokenHeaders(token);
+                                scope$._http
+                                    .post("load/nameidlist", requestBody, { headers: newTokenHeaders })
+                                    .map(function (response) { return response.json(); })
+                                    .subscribe(function (json) {
+                                    var nameIds = scope$.mapToNameIds(json);
+                                    observer.next(nameIds);
+                                    observer.complete();
+                                });
+                            }, function (error) { return console.log(error.message); });
+                        }); // observer
                     }
-                    var headers = new http_1.Headers();
-                    headers.append('Content-Type', 'application/json');
-                    headers.append('Accept', 'application/json');
-                    headers.append(header_names_1.HeaderNames.headerToken, token);
-                    return this
-                        ._http
-                        .post("load/nameidlist", requestBody, { headers: headers })
-                        .map(function (response) {
-                        var payload = response.json();
-                        console.log(payload);
-                        console.log(response.headers);
-                        return [];
-                    });
+                }; // getNameIds()
+                NameIdListService.prototype.mapToNameIds = function (json) {
+                    console.log(json);
+                    return [new name_id_1.NameId(1, 'foo'), new name_id_1.NameId(2, 'bar')];
                 };
                 NameIdListService = __decorate([
                     core_1.Injectable(), 
