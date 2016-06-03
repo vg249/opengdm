@@ -1,4 +1,4 @@
-System.register(['angular2/core', '../services/app/principle-investigator.service', 'rxjs/add/operator/toPromise', 'rxjs/add/operator/inspectTime', 'rxjs/add/operator/startWith', "../services/app/name-id-list.service"], function(exports_1, context_1) {
+System.register(['@angular/core', '../services/app/principle-investigator.service', "../services/app/name-id-list.service"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -20,9 +20,6 @@ System.register(['angular2/core', '../services/app/principle-investigator.servic
             function (principle_investigator_service_1_1) {
                 principle_investigator_service_1 = principle_investigator_service_1_1;
             },
-            function (_1) {},
-            function (_2) {},
-            function (_3) {},
             function (name_id_list_service_1_1) {
                 name_id_list_service_1 = name_id_list_service_1_1;
             }],
@@ -46,7 +43,7 @@ System.register(['angular2/core', '../services/app/principle-investigator.servic
                     core_1.Component({
                         selector: 'name-id-list-box',
                         //directives: [RADIO_GROUP_DIRECTIVES]
-                        template: "<select name=\"principleInvestigators\">\n\t\t\t<option *ngFor=\"#nameId of nameIdList | async\" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
+                        template: "<select name=\"principleInvestigators\">\n\t\t\t<option *ngFor=\"let nameId of nameIdList | async\" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [principle_investigator_service_1.PrincipleInvestigatorService, name_id_list_service_1.NameIdListService])
                 ], NameIdListBoxComponent);

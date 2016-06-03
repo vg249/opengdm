@@ -1,5 +1,5 @@
-import {RouteParams} from 'angular2/router';
-import { Component, OnInit } from 'angular2/core';
+import {RouteParams} from '@angular/router-deprecated';
+import { Component, OnInit } from '@angular/core';
 
 
 @Component({

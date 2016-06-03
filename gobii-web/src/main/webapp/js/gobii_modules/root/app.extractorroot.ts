@@ -1,8 +1,10 @@
-///<reference path="../../../../../../node_modules/angular2/typings/browser.d.ts"/>
+///<reference path="../../../../../../typings/index.d.ts"/>
 
 // Angular Imports
-import {Component} from "angular2/core";
-import {HTTP_PROVIDERS} from "angular2/http";
+//import 'zone.js';
+//import 'reflect-metadata';
+import {Component} from "@angular/core";
+import {HTTP_PROVIDERS} from "@angular/http";
 import {ExportFormatComponent} from "../views/export-format.component";
 import {SearchCriteriaBySamplesComponent} from "./page-by-samples.component";
 import {PageByProjectComponent} from "./page-by-project.component";
@@ -115,5 +117,10 @@ import {AuthenticationService} from "../services/core/authentication.service";
 
 export class ExtractorRoot {
     title = 'Tour of Heroes';
+
+    constructor() {
+        let foo = "foo";
+    }
+
 }
 

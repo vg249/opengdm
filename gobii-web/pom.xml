@@ -390,6 +390,78 @@
             </plugin>
 
 
+            <!--
+               Delegates build to "grunt" for several phases
+            -->
+            <plugin>
+                <groupId>pl.allegro</groupId>
+                <artifactId>grunt-maven-plugin</artifactId>
+                <version>${grunt-plugin-version}</version>
+                <configuration>
+                    <gruntBuildDirectory>${project.build.directory}/grunt</gruntBuildDirectory>
+                </configuration>
+                <executions>
+
+                    <!--
+                    Maven "validate" phase:
+                    This execution will result in running npm install
+                    -->
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <!--<goal>create-resources</goal>-->
+                            <goal>npm</goal><!-- setup grunt and plugin -->
+                        </goals>
+                    </execution>
+
+                    <!--
+                    Maven "compile" phase: Do the real stuff by running grunt with target "compile"
+                    Creates target/js
+                    -->
+                    <!--<execution>-->
+                        <!--<id>compile</id>-->
+                        <!--<phase>compile</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>grunt</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<target>compile</target>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+
+                    <!--&lt;!&ndash;-->
+                    <!--Maven "test" phase: Run grunt with target "test"-->
+                    <!--Creates target/js-test-->
+                    <!--&ndash;&gt;-->
+                    <!--<execution>-->
+                        <!--<id>test</id>-->
+                        <!--<phase>test</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>grunt</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<target>test</target>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+
+                    <!--&lt;!&ndash;-->
+                    <!--Maven "(prepare-)package" phase: Run grunt with target "package"-->
+                    <!--&ndash;&gt;-->
+                    <!--<execution>-->
+                        <!--<id>prepare-package</id>-->
+                        <!--<phase>prepare-package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>grunt</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<target>package</target>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                </executions>
+            </plugin>
+
+
             <!-- Type Script Library -->
             <!--<plugin>-->
             <!--<groupId>org.jszip.maven</groupId>-->
@@ -508,70 +580,70 @@
                Delegates build to "grunt" for several phases
             -->
             <!--<plugin>-->
-                <!--<groupId>pl.allegro</groupId>-->
-                <!--<artifactId>grunt-maven-plugin</artifactId>-->
-                <!--<version>${grunt-plugin-version}</version>-->
-                <!--<configuration>-->
-                    <!--<gruntBuildDirectory>${project.build.directory}/grunt</gruntBuildDirectory>-->
-                <!--</configuration>-->
-                <!--<executions>-->
+            <!--<groupId>pl.allegro</groupId>-->
+            <!--<artifactId>grunt-maven-plugin</artifactId>-->
+            <!--<version>${grunt-plugin-version}</version>-->
+            <!--<configuration>-->
+            <!--<gruntBuildDirectory>${project.build.directory}/grunt</gruntBuildDirectory>-->
+            <!--</configuration>-->
+            <!--<executions>-->
 
-                    <!--&lt;!&ndash;-->
-                       <!--Maven "validate" phase: Prepare everything that is required to run grunt-->
-                    <!--&ndash;&gt;-->
-                    <!--<execution>-->
-                        <!--<id>validate</id>-->
-                        <!--<phase>validate</phase>-->
-                        <!--<goals>-->
-                            <!--&lt;!&ndash;<goal>create-resources</goal>&ndash;&gt;-->
-                            <!--<goal>npm</goal>&lt;!&ndash; setup grunt and plugin &ndash;&gt;-->
-                        <!--</goals>-->
-                    <!--</execution>-->
+            <!--&lt;!&ndash;-->
+            <!--Maven "validate" phase: Prepare everything that is required to run grunt-->
+            <!--&ndash;&gt;-->
+            <!--<execution>-->
+            <!--<id>validate</id>-->
+            <!--<phase>validate</phase>-->
+            <!--<goals>-->
+            <!--&lt;!&ndash;<goal>create-resources</goal>&ndash;&gt;-->
+            <!--<goal>npm</goal>&lt;!&ndash; setup grunt and plugin &ndash;&gt;-->
+            <!--</goals>-->
+            <!--</execution>-->
 
-                    <!--&lt;!&ndash;-->
-                       <!--Maven "compile" phase: Do the real stuff by running grunt with target "compile"-->
-                       <!--Creates target/js-->
-                    <!--&ndash;&gt;-->
-                    <!--<execution>-->
-                        <!--<id>compile</id>-->
-                        <!--<phase>compile</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>grunt</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<target>compile</target>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
+            <!--&lt;!&ndash;-->
+            <!--Maven "compile" phase: Do the real stuff by running grunt with target "compile"-->
+            <!--Creates target/js-->
+            <!--&ndash;&gt;-->
+            <!--<execution>-->
+            <!--<id>compile</id>-->
+            <!--<phase>compile</phase>-->
+            <!--<goals>-->
+            <!--<goal>grunt</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+            <!--<target>compile</target>-->
+            <!--</configuration>-->
+            <!--</execution>-->
 
-                    <!--&lt;!&ndash;-->
-                        <!--Maven "test" phase: Run grunt with target "test"-->
-                        <!--Creates target/js-test-->
-                    <!--&ndash;&gt;-->
-                    <!--<execution>-->
-                        <!--<id>test</id>-->
-                        <!--<phase>test</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>grunt</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<target>test</target>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
+            <!--&lt;!&ndash;-->
+            <!--Maven "test" phase: Run grunt with target "test"-->
+            <!--Creates target/js-test-->
+            <!--&ndash;&gt;-->
+            <!--<execution>-->
+            <!--<id>test</id>-->
+            <!--<phase>test</phase>-->
+            <!--<goals>-->
+            <!--<goal>grunt</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+            <!--<target>test</target>-->
+            <!--</configuration>-->
+            <!--</execution>-->
 
-                    <!--&lt;!&ndash;-->
-                        <!--Maven "(prepare-)package" phase: Run grunt with target "package"-->
-                    <!--&ndash;&gt;-->
-                    <!--<execution>-->
-                        <!--<id>prepare-package</id>-->
-                        <!--<phase>prepare-package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>grunt</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<target>package</target>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
+            <!--&lt;!&ndash;-->
+            <!--Maven "(prepare-)package" phase: Run grunt with target "package"-->
+            <!--&ndash;&gt;-->
+            <!--<execution>-->
+            <!--<id>prepare-package</id>-->
+            <!--<phase>prepare-package</phase>-->
+            <!--<goals>-->
+            <!--<goal>grunt</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+            <!--<target>package</target>-->
+            <!--</configuration>-->
+            <!--</execution>-->
+            <!--</executions>-->
             <!--</plugin>-->
 
             <plugin>
@@ -579,52 +651,51 @@
                 <version>2.6</version>
                 <executions>
                     <!--<execution>-->
-                        <!--<id>prepare-package-modules-html</id>-->
-                        <!--<phase>prepare-package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy-resources</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<outputDirectory>${project.build.directory}/generated-sources/js/gobii_modules/-->
-                            <!--</outputDirectory>-->
-                            <!--<resources>-->
-                                <!--<resource>-->
-                                    <!--<directory>${project.basedir}/src/main/ts/</directory>-->
-                                    <!--<includes>-->
-                                        <!--<include>**/*.html</include>-->
-                                    <!--</includes>-->
-                                    <!--<filtering>false</filtering>-->
-                                <!--</resource>-->
-                            <!--</resources>-->
-                        <!--</configuration>-->
+                    <!--<id>prepare-package-modules-html</id>-->
+                    <!--<phase>prepare-package</phase>-->
+                    <!--<goals>-->
+                    <!--<goal>copy-resources</goal>-->
+                    <!--</goals>-->
+                    <!--<configuration>-->
+                    <!--<outputDirectory>${project.build.directory}/generated-sources/js/gobii_modules/-->
+                    <!--</outputDirectory>-->
+                    <!--<resources>-->
+                    <!--<resource>-->
+                    <!--<directory>${project.basedir}/src/main/ts/</directory>-->
+                    <!--<includes>-->
+                    <!--<include>**/*.html</include>-->
+                    <!--</includes>-->
+                    <!--<filtering>false</filtering>-->
+                    <!--</resource>-->
+                    <!--</resources>-->
+                    <!--</configuration>-->
                     <!--</execution>-->
 
                     <!--<execution>-->
-                        <!--<id>prepare-package-javascript</id>-->
-                        <!--<phase>prepare-package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy-resources</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<outputDirectory>${project.build.directory}/${project.build.finalName}/js/gobii_modules-->
-                            <!--</outputDirectory>-->
-                            <!--<resources>-->
-                                <!--<resource>-->
-                                    <!--&lt;!&ndash; the directory that is populated by Grunt &ndash;&gt;-->
-                                    <!--<directory>${project.build.directory}/generated-sources/js/gobii_modules/-->
-                                    <!--</directory>-->
-                                    <!--<includes>-->
-                                        <!--<include>**/*.js</include>-->
-                                        <!--<include>**/*.map</include>-->
-                                        <!--<include>**/*.ts</include>-->
-                                        <!--&lt;!&ndash;<include>**/*.html</include>&ndash;&gt;-->
-                                    <!--</includes>-->
-                                    <!--<filtering>false</filtering>-->
-                                <!--</resource>-->
-                            <!--</resources>-->
-                        <!--</configuration>-->
+                    <!--<id>prepare-package-javascript</id>-->
+                    <!--<phase>prepare-package</phase>-->
+                    <!--<goals>-->
+                    <!--<goal>copy-resources</goal>-->
+                    <!--</goals>-->
+                    <!--<configuration>-->
+                    <!--<outputDirectory>${project.build.directory}/${project.build.finalName}/js/gobii_modules-->
+                    <!--</outputDirectory>-->
+                    <!--<resources>-->
+                    <!--<resource>-->
+                    <!--&lt;!&ndash; the directory that is populated by Grunt &ndash;&gt;-->
+                    <!--<directory>${project.build.directory}/generated-sources/js/gobii_modules/-->
+                    <!--</directory>-->
+                    <!--<includes>-->
+                    <!--<include>**/*.js</include>-->
+                    <!--<include>**/*.map</include>-->
+                    <!--<include>**/*.ts</include>-->
+                    <!--&lt;!&ndash;<include>**/*.html</include>&ndash;&gt;-->
+                    <!--</includes>-->
+                    <!--<filtering>false</filtering>-->
+                    <!--</resource>-->
+                    <!--</resources>-->
+                    <!--</configuration>-->
                     <!--</execution>-->
-
 
 
                     <execution>
@@ -643,16 +714,53 @@
                                     <!-- Take the node-module code from where npm puts it -->
                                     <directory>${project.basedir}/node_modules</directory>
                                     <includes>
+                                        <!-- *************************************************-->
+                                        <!-- deployed javascript libraries to support angular2-->
+                                        <!-- ***** GROUP 1: supporting libraries -->
                                         <include>es6-shim/es6-shim.min.js</include>
                                         <include>systemjs/dist/system-polyfills.js</include>
-                                        <include>angular2/es6/dev/src/testing/shims_for_IE.js</include>
-                                        <include>angular2/bundles/angular2-polyfills.js</include>
                                         <include>systemjs/dist/system.src.js</include>
                                         <include>rxjs/bundles/Rx.js</include>
-                                        <include>angular2/bundles/angular2.dev.js</include>
-                                        <include>angular2/bundles/router.dev.js</include>
-                                        <include>angular2/bundles/http.dev.js</include>
                                         <include>bootstrap/dist/css/bootstrap.min.css</include>
+                                        <include>zone.js/dist/zone.js</include>
+                                        <include>core-js/client/shim.min.js</include>
+                                        <include>reflect-metadata/Reflect.js</include>
+
+                                        <!-- ***** GROUP 2: angular files from beta 2 that we probably don't want-->
+                                        <!--<include>angular2/bundles/angular2.dev.js</include>-->
+                                        <!--<include>angular2/bundles/router.dev.js</include>-->
+                                        <!--<include>angular2/es6/dev/src/testing/shims_for_IE.js</include>-->
+                                        <!--<include>angular2/bundles/angular2-polyfills.js</include>-->
+                                        <!--<include>angular2/bundles/http.dev.js</include>-->
+
+
+                                        <!-- ***** GROUP 3: angular index.js files-->
+                                        <include>@angular/core/index.js</include>
+                                        <include>@angular/common/index.js</include>
+                                        <include>@angular/compiler/index.js</include>
+                                        <include>@angular/router/index.js</include>
+                                        <include>@angular/router-deprecated/index.js</include>
+                                        <include>@angular/http/index.js</include>
+                                        <include>@angular/platform-browser/index.js</include>
+                                        <include>@angular/platform-browser-dynamic/index.js</include>
+
+                                        <!-- ***** GROUP 4: angular source files -->
+                                        <include>@angular/core/private_export.js</include>
+                                        <include>@angular/core/src/**</include>
+                                        <include>@angular/platform-browser-dynamic/platform_browser_dynamic.js</include>
+                                        <include>@angular/platform-browser-dynamic/core_private.js</include>
+                                        <include>@angular/platform-browser-dynamic/src/**</include>
+                                        <include>@angular/http/http.js</include>
+                                        <include>@angular/http/src/**</include>
+                                        <include>@angular/platform-browser/src/**</include>
+                                        <include>@angular/platform-browser/private_export.js</include>
+                                        <include>@angular/platform-browser/core_private.js</include>
+                                        <include>@angular/compiler/compiler.js</include>
+                                        <include>@angular/compiler/private_export.js</include>
+                                        <include>@angular/compiler/core_private.js</include>
+                                        <include>@angular/compiler/src/**</include>
+                                        <include>@angular/common/src/**</include>
+
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>

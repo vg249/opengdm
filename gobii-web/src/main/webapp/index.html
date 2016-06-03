@@ -8,20 +8,39 @@
 
 
     <!-- 1. Load libraries -->
-    <script src="js/node_modules/angular2/bundles/angular2-polyfills.js"></script>
-    <script src="js/node_modules/es6-shim/es6-shim.min.js"></script>
-    <script src="js/node_modules/systemjs/dist/system-polyfills.js"></script>
-    <script src="js/node_modules/angular2/es6/dev/src/testing/shims_for_IE.js"></script>
+    <!-- Polyfill(s) for older browsers -->
+    <script src="js/node_modules/core-js/client/shim.min.js"></script>
+    <script src="js/node_modules/zone.js/dist/zone.js"></script>
+    <script src="js/node_modules/reflect-metadata/Reflect.js"></script>
     <script src="js/node_modules/systemjs/dist/system.src.js"></script>
     <script src="js/node_modules/rxjs/bundles/Rx.js"></script>
-    <script src="js/node_modules/angular2/bundles/angular2.dev.js"></script>
-    <script src="js/node_modules/angular2/bundles/router.dev.js"></script>
-    <script src="js/node_modules/angular2/bundles/http.dev.js"></script>
+
+    <!--<script src="js/node_modules/es6-shim/es6-shim.min.js"></script>-->
+    <!--<script src="js/node_modules/systemjs/dist/system-polyfills.js"></script>-->
+    <!--<script src="js/node_modules/systemjs/dist/system.src.js"></script>-->
+    <!--<script src="js/node_modules/rxjs/bundles/Rx.js"></script>-->
+    <!--<script src="node_modules/zone.js/dist/zone.js"></script>-->
+    <!--<script src="node_modules/reflect-metadata/Reflect.js"></script>-->
+
+    <!--<script src="js/node_modules/angular2/bundles/angular2-polyfills.js"></script>-->
+    <!--<script src="js/node_modules/angular2/es6/dev/src/testing/shims_for_IE.js"></script>-->
+    <!--<script src="js/node_modules/angular2/bundles/angular2.dev.js"></script>-->
+    <!--<script src="js/node_modules/angular2/bundles/router.dev.js"></script>-->
+    <!--<script src="js/node_modules/angular2/bundles/http.dev.js"></script>-->
 
     <!-- 2. Load Modules -->
+
     <script>
         System.config({
             packages: {
+                '@angular/core': {defaultExtension: 'js', main: 'index.js'},
+                '@angular/common': {defaultExtension: 'js', main: 'index.js'},
+                '@angular/compiler': {defaultExtension: 'js', main: 'index.js'},
+                '@angular/router': {defaultExtension: 'js', main: 'index.js'},
+                '@angular/router-deprecated': {defaultExtension: 'js', main: 'index.js'},
+                '@angular/http': {defaultExtension: 'js', main: 'index.js'},
+                '@angular/platform-browser': {defaultExtension: 'js', main: 'index.js'},
+                '@angular/platform-browser-dynamic': {defaultExtension: 'js', main: 'index.js'},
                 'js/gobii_modules/root': {
                     format: 'register',
                     defaultExtension: 'js'
@@ -42,6 +61,16 @@
                     format: 'register',
                     defaultExtension: 'js'
                 },
+            },
+            map: {
+                '@angular/core': 'js/node_modules/@angular/core',
+                '@angular/common': 'js/node_modules/@angular/common',
+                '@angular/compiler': 'js/node_modules/@angular/compiler',
+                '@angular/router': 'js/node_modules/@angular/router',
+                '@angular/router-deprecated': 'js/node_modules/@angular/router-deprecated',
+                '@angular/http': 'js/node_modules/@angular/http',
+                '@angular/platform-browser': 'js/node_modules/@angular/platform-browser',
+                '@angular/platform-browser-dynamic': 'js/node_modules/@angular/platform-browser-dynamic'
             }
         });
         System.import('js/gobii_modules/root/main').then(null, console.error.bind(console));
@@ -51,6 +80,6 @@
 </head>
 <!-- 3. Display the application -->
 <body>
-<extractor-root>Loading...</extractor-root>
+<extractor-root>Plain page is loaded; waiting for Angular to load</extractor-root>
 </body>
 </html>

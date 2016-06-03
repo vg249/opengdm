@@ -1,4 +1,4 @@
-import {Component, OnInit} from 'angular2/core';
+import {Component, OnInit} from '@angular/core';
 
 import {NameIdListBoxComponent} from '../views/name-id-list-box.component';
 

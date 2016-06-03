@@ -1,7 +1,10 @@
-import {Injectable} from "angular2/core";
+import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
 import {NameIdListService} from "./name-id-list.service";
 import {Observable} from "rxjs/Observable";
+import "rxjs/add/operator/map";
+import "rxjs/add/operator/catch";
+import 'rxjs/add/observable/throw';
 
 @Injectable()
 export class PrincipleInvestigatorService {

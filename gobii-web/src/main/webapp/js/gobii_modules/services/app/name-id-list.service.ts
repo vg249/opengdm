@@ -1,11 +1,11 @@
-import {Injectable} from "angular2/core";
+import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
 import {HttpValues} from "../../model/http-values";
-import {Http, Response, Headers} from "angular2/http";
-import {Observable} from "rxjs/Observable";
+import {Http, Response, Headers} from "@angular/http";
 import {AuthenticationService} from '../core/authentication.service';
 //import {DtoHeaderAuth} from "../../model/dto-header-auth";
 
+import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import 'rxjs/add/observable/throw';

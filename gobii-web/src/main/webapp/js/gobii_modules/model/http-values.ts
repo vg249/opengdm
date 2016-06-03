@@ -1,4 +1,4 @@
-import {Http, Response, Headers} from "angular2/http";
+import {Http, Response, Headers} from "@angular/http";
 import {HeaderNames} from "./header-names";
 
 export class HttpValues {

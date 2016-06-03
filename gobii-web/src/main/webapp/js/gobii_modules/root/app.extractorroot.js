@@ -1,5 +1,5 @@
-///<reference path="../../../../../../node_modules/angular2/typings/browser.d.ts"/>
-System.register(["angular2/core", "angular2/http", "../views/export-format.component", "./page-by-samples.component", "./page-by-project.component", "../services/app/principle-investigator.service", "../services/app/name-id-list.service", "../services/core/authentication.service"], function(exports_1, context_1) {
+///<reference path="../../../../../../typings/index.d.ts"/>
+System.register(["@angular/core", "@angular/http", "../views/export-format.component", "./page-by-samples.component", "./page-by-project.component", "../services/app/principle-investigator.service", "../services/app/name-id-list.service", "../services/core/authentication.service"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -45,6 +45,7 @@ System.register(["angular2/core", "angular2/http", "../views/export-format.compo
             ExtractorRoot = (function () {
                 function ExtractorRoot() {
                     this.title = 'Tour of Heroes';
+                    var foo = "foo";
                 }
                 ExtractorRoot = __decorate([
                     core_1.Component({

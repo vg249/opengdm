@@ -1,4 +1,4 @@
-System.register(["angular2/core", "../../model/name-id", "../../model/http-values", "angular2/http", "rxjs/Observable", '../core/authentication.service', "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw'], function(exports_1, context_1) {
+System.register(["@angular/core", "../../model/name-id", "../../model/http-values", "@angular/http", '../core/authentication.service', "rxjs/Observable", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["angular2/core", "../../model/name-id", "../../model/http-value
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, name_id_1, http_values_1, http_1, Observable_1, authentication_service_1;
+    var core_1, name_id_1, http_values_1, http_1, authentication_service_1, Observable_1;
     var NameIdListService;
     return {
         setters:[
@@ -26,11 +26,11 @@ System.register(["angular2/core", "../../model/name-id", "../../model/http-value
             function (http_1_1) {
                 http_1 = http_1_1;
             },
-            function (Observable_1_1) {
-                Observable_1 = Observable_1_1;
-            },
             function (authentication_service_1_1) {
                 authentication_service_1 = authentication_service_1_1;
+            },
+            function (Observable_1_1) {
+                Observable_1 = Observable_1_1;
             },
             function (_1) {},
             function (_2) {},
