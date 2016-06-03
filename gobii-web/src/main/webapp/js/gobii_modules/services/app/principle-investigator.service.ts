@@ -11,42 +11,23 @@ export class PrincipleInvestigatorService {
         this._nameIdListService = _nameIdListService;
     } // ctor
 
-    private nameIds:NameId[];
-    private error:string;
+    getPiNameIds():Observable<NameId[]> {
 
-    getNameIds():NameId[] {
-
-        let astring:string = this._nameIdListService.getAString();
-
-
-        this._nameIdListService.getNameIds()
-            .subscribe(nameIds => this.nameIds = nameIds);
-        
-
-        //let astring:string =  _nameIdListService.get
-
-        // let observable:Observable<NameId[]> = this._nameIdListService.getNameIds();
-        // //observable.subscribe()
-        //
-        // let nameIdsReceived: NameId[] = [];
-        // this._nameIdListService.getNameIds()
-        //     .map(nameIds => nameIds)
-        //     .subscribe(nameIds => nameIdsReceived = nameIds);
-
-        // let nameIds: NameId[] = [
-        // 	{"id": 11, "name": "Mr. Nice"},
-        // 	{"id": 12, "name": "Narco"},
-        // 	{"id": 13, "name": "Bombasto"},
-        // 	{"id": 14, "name": "Celeritas"},
-        // 	{"id": 15, "name": "Magneta"},
-        // 	{"id": 16, "name": "RubberMan"},
-        // 	{"id": 17, "name": "Dynama"},
-        // 	{"id": 18, "name": "Dr IQ"},
-        // 	{"id": 19, "name": "Magma"},
-        // 	{"id": 20, "name": "Tornado"}
-        // ];		
-
-        return this.nameIds;
-    }
+        // return Observable.create(observer => {
+        //         observer.next([new NameId(1, 'from pisvc 1'),
+        //             new NameId(2, 'from pisvc 2')]);
+        //         observer.complete();
+        //     }
+        // );
+        return Observable.create(observer => {
+                this._nameIdListService.getNameIds()
+                    .subscribe(nameIds => {
+                            observer.next(nameIds);
+                            observer.complete();
+                        }
+                    );
+            }
+        );
+    } // getPiNameIds()
 
 } 

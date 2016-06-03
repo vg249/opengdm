@@ -1,4 +1,4 @@
-System.register(["angular2/core", "./name-id-list.service"], function(exports_1, context_1) {
+System.register(["angular2/core", "./name-id-list.service", "rxjs/Observable"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["angular2/core", "./name-id-list.service"], function(exports_1,
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, name_id_list_service_1;
+    var core_1, name_id_list_service_1, Observable_1;
     var PrincipleInvestigatorService;
     return {
         setters:[
@@ -19,6 +19,9 @@ System.register(["angular2/core", "./name-id-list.service"], function(exports_1,
             },
             function (name_id_list_service_1_1) {
                 name_id_list_service_1 = name_id_list_service_1_1;
+            },
+            function (Observable_1_1) {
+                Observable_1 = Observable_1_1;
             }],
         execute: function() {
             PrincipleInvestigatorService = (function () {
@@ -26,33 +29,22 @@ System.register(["angular2/core", "./name-id-list.service"], function(exports_1,
                     this._nameIdListService = _nameIdListService;
                     this._nameIdListService = _nameIdListService;
                 } // ctor
-                PrincipleInvestigatorService.prototype.getNameIds = function () {
+                PrincipleInvestigatorService.prototype.getPiNameIds = function () {
                     var _this = this;
-                    var astring = this._nameIdListService.getAString();
-                    this._nameIdListService.getNameIds()
-                        .subscribe(function (nameIds) { return _this.nameIds = nameIds; });
-                    //let astring:string =  _nameIdListService.get
-                    // let observable:Observable<NameId[]> = this._nameIdListService.getNameIds();
-                    // //observable.subscribe()
-                    //
-                    // let nameIdsReceived: NameId[] = [];
-                    // this._nameIdListService.getNameIds()
-                    //     .map(nameIds => nameIds)
-                    //     .subscribe(nameIds => nameIdsReceived = nameIds);
-                    // let nameIds: NameId[] = [
-                    // 	{"id": 11, "name": "Mr. Nice"},
-                    // 	{"id": 12, "name": "Narco"},
-                    // 	{"id": 13, "name": "Bombasto"},
-                    // 	{"id": 14, "name": "Celeritas"},
-                    // 	{"id": 15, "name": "Magneta"},
-                    // 	{"id": 16, "name": "RubberMan"},
-                    // 	{"id": 17, "name": "Dynama"},
-                    // 	{"id": 18, "name": "Dr IQ"},
-                    // 	{"id": 19, "name": "Magma"},
-                    // 	{"id": 20, "name": "Tornado"}
-                    // ];		
-                    return this.nameIds;
-                };
+                    // return Observable.create(observer => {
+                    //         observer.next([new NameId(1, 'from pisvc 1'),
+                    //             new NameId(2, 'from pisvc 2')]);
+                    //         observer.complete();
+                    //     }
+                    // );
+                    return Observable_1.Observable.create(function (observer) {
+                        _this._nameIdListService.getNameIds()
+                            .subscribe(function (nameIds) {
+                            observer.next(nameIds);
+                            observer.complete();
+                        });
+                    });
+                }; // getPiNameIds()
                 PrincipleInvestigatorService = __decorate([
                     core_1.Injectable(), 
                     __metadata('design:paramtypes', [name_id_list_service_1.NameIdListService])

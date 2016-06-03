@@ -24,6 +24,8 @@ export class NameIdListService {
         return 'a string';
     }
 
+    nameIds:NameId[];
+
     public getNameIds():Observable < NameId[] > {
 
         let requestBody = JSON.stringify({
@@ -49,12 +51,16 @@ export class NameIdListService {
         if (existingToken) {
             let headers = HttpValues.makeTokenHeaders(existingToken);
             return Observable.create(observer => {
+                    // observer.next(scope$.mapToNameIds(JSON.parse('{"foo" : "bar"}')));
+                    // observer.complete();
+
                     this._http
                         .post("load/nameidlist", requestBody, {headers: headers})
                         .map(response => response.json())
                         .subscribe(json => {
-                            let nameIds:NameId[] = scope$.mapToNameIds(json);
-                            observer.next(nameIds);
+
+                            scope$.nameIds = scope$.mapToNameIds(json);
+                            observer.next(scope$.nameIds);
                             observer.complete();
                         })
                 }
@@ -72,22 +78,37 @@ export class NameIdListService {
                                 .post("load/nameidlist", requestBody, {headers: newTokenHeaders})
                                 .map(response => response.json())
                                 .subscribe(json => {
-                                    let nameIds:NameId[] = scope$.mapToNameIds(json);
-                                    observer.next(nameIds);
+
+                                    scope$.nameIds = scope$.mapToNameIds(json);
+                                    observer.next(scope$.nameIds);
                                     observer.complete();
+
                                 })
 
                         },
                         error => console.log(error.message));
 
-            }); // observer
+            }); // observer create
 
-        }
+        } // if-else we have a token
 
-    } // getNameIds()
+    } // getPiNameIds()
+
 
     private mapToNameIds(json:JSON):NameId[] {
+        // for now, log the json and create a fake list
         console.log(json);
         return [new NameId(1, 'foo'), new NameId(2, 'bar')];
     }
+
+    public getFake():Observable<NameId[]> {
+        let scope$ = this;
+        return Observable.create(observer => {
+            console.log("got fake");
+            observer.next(scope$.mapToNameIds(JSON.parse('{"foo" : "bar"}')));
+            observer.complete();
+        });
+    }
+
+
 }

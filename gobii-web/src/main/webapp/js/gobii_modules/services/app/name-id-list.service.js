@@ -67,12 +67,14 @@ System.register(["angular2/core", "../../model/name-id", "../../model/http-value
                     if (existingToken) {
                         var headers_1 = http_values_1.HttpValues.makeTokenHeaders(existingToken);
                         return Observable_1.Observable.create(function (observer) {
+                            // observer.next(scope$.mapToNameIds(JSON.parse('{"foo" : "bar"}')));
+                            // observer.complete();
                             _this._http
                                 .post("load/nameidlist", requestBody, { headers: headers_1 })
                                 .map(function (response) { return response.json(); })
                                 .subscribe(function (json) {
-                                var nameIds = scope$.mapToNameIds(json);
-                                observer.next(nameIds);
+                                scope$.nameIds = scope$.mapToNameIds(json);
+                                observer.next(scope$.nameIds);
                                 observer.complete();
                             });
                         }); // observer.create
@@ -88,17 +90,26 @@ System.register(["angular2/core", "../../model/name-id", "../../model/http-value
                                     .post("load/nameidlist", requestBody, { headers: newTokenHeaders })
                                     .map(function (response) { return response.json(); })
                                     .subscribe(function (json) {
-                                    var nameIds = scope$.mapToNameIds(json);
-                                    observer.next(nameIds);
+                                    scope$.nameIds = scope$.mapToNameIds(json);
+                                    observer.next(scope$.nameIds);
                                     observer.complete();
                                 });
                             }, function (error) { return console.log(error.message); });
-                        }); // observer
-                    }
-                }; // getNameIds()
+                        }); // observer create
+                    } // if-else we have a token
+                }; // getPiNameIds()
                 NameIdListService.prototype.mapToNameIds = function (json) {
+                    // for now, log the json and create a fake list
                     console.log(json);
                     return [new name_id_1.NameId(1, 'foo'), new name_id_1.NameId(2, 'bar')];
+                };
+                NameIdListService.prototype.getFake = function () {
+                    var scope$ = this;
+                    return Observable_1.Observable.create(function (observer) {
+                        console.log("got fake");
+                        observer.next(scope$.mapToNameIds(JSON.parse('{"foo" : "bar"}')));
+                        observer.complete();
+                    });
                 };
                 NameIdListService = __decorate([
                     core_1.Injectable(), 
