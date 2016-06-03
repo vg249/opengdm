@@ -99,9 +99,15 @@ System.register(["@angular/core", "../../model/name-id", "../../model/http-value
                     } // if-else we have a token
                 }; // getPiNameIds()
                 NameIdListService.prototype.mapToNameIds = function (json) {
-                    // for now, log the json and create a fake list
+                    var returnVal = [];
                     console.log(json);
-                    return [new name_id_1.NameId(1, 'foo'), new name_id_1.NameId(2, 'bar')];
+                    var arrayOfIds = Object.keys(json.namesById);
+                    arrayOfIds.forEach(function (id) {
+                        var currentVal = json.namesById[id];
+                        returnVal.push(new name_id_1.NameId(id, currentVal));
+                    });
+                    return returnVal;
+                    //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
                 };
                 NameIdListService.prototype.getFake = function () {
                     var scope$ = this;

@@ -1,5 +1,6 @@
 //import {RouteParams} from '@angular/router-deprecated';
 import {Component, OnInit} from '@angular/core';
+import {Observable} from "rxjs/Observable";
 
 import {NameId} from '../model/name-id';
 import {PrincipleInvestigatorService} from '../services/app/principle-investigator.service';
@@ -9,7 +10,7 @@ import {NameIdListService} from "../services/app/name-id-list.service";
     selector: 'name-id-list-box',
     //directives: [RADIO_GROUP_DIRECTIVES]
     template: `<select name="principleInvestigators">
-			<option *ngFor="let nameId of nameIdList | async" 
+			<option *ngFor="let nameId of nameIdList " 
 				value={{nameId.id}}>{{nameId.name}}</option>
 		</select>
 ` // end template
@@ -19,10 +20,8 @@ import {NameIdListService} from "../services/app/name-id-list.service";
 export class NameIdListBoxComponent implements OnInit {
 
 
+    // use
     private nameIdList:NameId[];
-
-
-    // TODO: Use interface so this component can be reused?
     constructor(private _principleInvestigatorService:PrincipleInvestigatorService,
                 private _nameIdListService:NameIdListService) {
 
@@ -34,13 +33,12 @@ export class NameIdListBoxComponent implements OnInit {
 
     } // ctor
 
-    // get nameIds():Observable<NameId[]> {
-    //     return this._nameIdListService.getFake().inspectTime(1000);
-    // }
-    
+    get nameIds():Observable<NameId[]> {
+        return this._nameIdListService.getNameIds();
+    }
 
-    ngOnInit() {
 
-    } // ngOnInit
-
+    ngOnInit():any {
+        return null;
+    }
 }

@@ -25,7 +25,6 @@ System.register(['@angular/core', '../services/app/principle-investigator.servic
             }],
         execute: function() {
             NameIdListBoxComponent = (function () {
-                // TODO: Use interface so this component can be reused?
                 function NameIdListBoxComponent(_principleInvestigatorService, _nameIdListService) {
                     this._principleInvestigatorService = _principleInvestigatorService;
                     this._nameIdListService = _nameIdListService;
@@ -34,16 +33,21 @@ System.register(['@angular/core', '../services/app/principle-investigator.servic
                         scope$.nameIdList = nameIds;
                     });
                 } // ctor
-                // get nameIds():Observable<NameId[]> {
-                //     return this._nameIdListService.getFake().inspectTime(1000);
-                // }
+                Object.defineProperty(NameIdListBoxComponent.prototype, "nameIds", {
+                    get: function () {
+                        return this._nameIdListService.getNameIds();
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
-                }; // ngOnInit
+                    return null;
+                };
                 NameIdListBoxComponent = __decorate([
                     core_1.Component({
                         selector: 'name-id-list-box',
                         //directives: [RADIO_GROUP_DIRECTIVES]
-                        template: "<select name=\"principleInvestigators\">\n\t\t\t<option *ngFor=\"let nameId of nameIdList | async\" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
+                        template: "<select name=\"principleInvestigators\">\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [principle_investigator_service_1.PrincipleInvestigatorService, name_id_list_service_1.NameIdListService])
                 ], NameIdListBoxComponent);

@@ -95,10 +95,19 @@ export class NameIdListService {
     } // getPiNameIds()
 
 
-    private mapToNameIds(json:JSON):NameId[] {
-        // for now, log the json and create a fake list
+    private mapToNameIds(json):NameId[] {
+
+        let returnVal:NameId[] = [];
         console.log(json);
-        return [new NameId(1, 'foo'), new NameId(2, 'bar')];
+
+        let arrayOfIds = Object.keys(json.namesById);
+        arrayOfIds.forEach( id => {
+           let currentVal: string = json.namesById[id];
+            returnVal.push(new NameId(id,currentVal));
+        });
+
+        return returnVal;
+        //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
     }
 
     public getFake():Observable<NameId[]> {
