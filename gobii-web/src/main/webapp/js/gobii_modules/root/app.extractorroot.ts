@@ -18,10 +18,10 @@ import {AuthenticationService} from "../services/core/authentication.service";
 
 @Component({
     selector: 'extractor-root',
-    styleUrls: ['/extractor-ui.css'],
     directives: [ExportFormatComponent,
         SearchCriteriaBySamplesComponent,
         PageByProjectComponent],
+    styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
         AuthenticationService,

@@ -50,10 +50,10 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 ExtractorRoot = __decorate([
                     core_1.Component({
                         selector: 'extractor-root',
-                        styleUrls: ['/extractor-ui.css'],
                         directives: [export_format_component_1.ExportFormatComponent,
                             page_by_samples_component_1.SearchCriteriaBySamplesComponent,
                             page_by_project_component_1.PageByProjectComponent],
+                        styleUrls: ['/extractor-ui.css'],
                         providers: [
                             http_1.HTTP_PROVIDERS,
                             authentication_service_1.AuthenticationService,

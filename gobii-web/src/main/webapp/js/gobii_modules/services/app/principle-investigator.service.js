@@ -1,4 +1,4 @@
-System.register(["@angular/core", "./name-id-list.service", "rxjs/Observable", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw'], function(exports_1, context_1) {
+System.register(["@angular/core", "./name-id-list.service", "rxjs/Observable", "./dto-request-item-nameids", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["@angular/core", "./name-id-list.service", "rxjs/Observable", "
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, name_id_list_service_1, Observable_1;
+    var core_1, name_id_list_service_1, Observable_1, dto_request_item_nameids_1;
     var PrincipleInvestigatorService;
     return {
         setters:[
@@ -22,6 +22,9 @@ System.register(["@angular/core", "./name-id-list.service", "rxjs/Observable", "
             },
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
+            },
+            function (dto_request_item_nameids_1_1) {
+                dto_request_item_nameids_1 = dto_request_item_nameids_1_1;
             },
             function (_1) {},
             function (_2) {},
@@ -41,7 +44,7 @@ System.register(["@angular/core", "./name-id-list.service", "rxjs/Observable", "
                     //     }
                     // );
                     return Observable_1.Observable.create(function (observer) {
-                        _this._nameIdListService.getNameIds()
+                        _this._nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds())
                             .subscribe(function (nameIds) {
                             observer.next(nameIds);
                             observer.complete();

@@ -2,6 +2,8 @@ import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
 import {NameIdListService} from "./name-id-list.service";
 import {Observable} from "rxjs/Observable";
+import {DtoRequestItemNameIds} from "./dto-request-item-nameids";
+
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import 'rxjs/add/observable/throw';
@@ -23,7 +25,7 @@ export class PrincipleInvestigatorService {
         //     }
         // );
         return Observable.create(observer => {
-                this._nameIdListService.getNameIds()
+                this._nameIdListService.getNameIds(new DtoRequestItemNameIds())
                     .subscribe(nameIds => {
                             observer.next(nameIds);
                             observer.complete();

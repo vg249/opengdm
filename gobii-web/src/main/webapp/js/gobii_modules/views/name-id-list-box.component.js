@@ -1,4 +1,4 @@
-System.register(['@angular/core', '../services/app/principle-investigator.service', "../services/app/name-id-list.service"], function(exports_1, context_1) {
+System.register(['@angular/core', '../services/app/principle-investigator.service', "../services/app/name-id-list.service", "../services/app/dto-request-item-nameids"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['@angular/core', '../services/app/principle-investigator.servic
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, principle_investigator_service_1, name_id_list_service_1;
+    var core_1, principle_investigator_service_1, name_id_list_service_1, dto_request_item_nameids_1;
     var NameIdListBoxComponent;
     return {
         setters:[
@@ -22,6 +22,9 @@ System.register(['@angular/core', '../services/app/principle-investigator.servic
             },
             function (name_id_list_service_1_1) {
                 name_id_list_service_1 = name_id_list_service_1_1;
+            },
+            function (dto_request_item_nameids_1_1) {
+                dto_request_item_nameids_1 = dto_request_item_nameids_1_1;
             }],
         execute: function() {
             NameIdListBoxComponent = (function () {
@@ -29,17 +32,10 @@ System.register(['@angular/core', '../services/app/principle-investigator.servic
                     this._principleInvestigatorService = _principleInvestigatorService;
                     this._nameIdListService = _nameIdListService;
                     var scope$ = this;
-                    _nameIdListService.getNameIds().subscribe(function (nameIds) {
+                    _nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds()).subscribe(function (nameIds) {
                         scope$.nameIdList = nameIds;
                     });
                 } // ctor
-                Object.defineProperty(NameIdListBoxComponent.prototype, "nameIds", {
-                    get: function () {
-                        return this._nameIdListService.getNameIds();
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     return null;
                 };

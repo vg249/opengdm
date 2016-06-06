@@ -5,6 +5,7 @@ import {Observable} from "rxjs/Observable";
 import {NameId} from '../model/name-id';
 import {PrincipleInvestigatorService} from '../services/app/principle-investigator.service';
 import {NameIdListService} from "../services/app/name-id-list.service";
+import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 
 @Component({
     selector: 'name-id-list-box',
@@ -27,15 +28,11 @@ export class NameIdListBoxComponent implements OnInit {
 
 
         let scope$ = this;
-        _nameIdListService.getNameIds().subscribe(nameIds => {
+        _nameIdListService.getNameIds(new DtoRequestItemNameIds()).subscribe(nameIds => {
             scope$.nameIdList = nameIds
         } );
 
     } // ctor
-
-    get nameIds():Observable<NameId[]> {
-        return this._nameIdListService.getNameIds();
-    }
 
 
     ngOnInit():any {

@@ -1,3 +1,5 @@
+
+
 export class DtoHeaderAuth {
 
     public constructor(public userName:string,
