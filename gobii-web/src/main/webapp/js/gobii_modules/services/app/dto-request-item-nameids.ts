@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
-import {DtoRequestItem} from "./dto-request-item";
+import {DtoRequestItem} from "./../core/dto-request-item";
 
 
 @Injectable()

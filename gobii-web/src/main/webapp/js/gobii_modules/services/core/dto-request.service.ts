@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
 import {HttpValues} from "../../model/http-values";
 import {Http, Response, Headers} from "@angular/http";
-import {AuthenticationService} from '../core/authentication.service';
+import {AuthenticationService} from './authentication.service.ts';
 import {DtoRequestItem} from "./dto-request-item";
 
 import {Observable} from "rxjs/Observable";

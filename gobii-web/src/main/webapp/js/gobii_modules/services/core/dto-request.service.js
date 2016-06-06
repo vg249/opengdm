@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/http-values", "@angular/http", '../core/authentication.service', "rxjs/Observable", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw', 'rxjs/add/observable/complete', 'rxjs/add/observable/next'], function(exports_1, context_1) {
+System.register(["@angular/core", "../../model/http-values", "@angular/http", './authentication.service.ts', "rxjs/Observable", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw', 'rxjs/add/observable/complete', 'rxjs/add/observable/next'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", '.
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_values_1, http_1, authentication_service_1, Observable_1;
+    var core_1, http_values_1, http_1, authentication_service_ts_1, Observable_1;
     var DtoRequestService;
     return {
         setters:[
@@ -23,8 +23,8 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", '.
             function (http_1_1) {
                 http_1 = http_1_1;
             },
-            function (authentication_service_1_1) {
-                authentication_service_1 = authentication_service_1_1;
+            function (authentication_service_ts_1_1) {
+                authentication_service_ts_1 = authentication_service_ts_1_1;
             },
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
@@ -63,7 +63,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", '.
                 }; // getPiNameIds()
                 DtoRequestService = __decorate([
                     core_1.Injectable(), 
-                    __metadata('design:paramtypes', [http_1.Http, authentication_service_1.AuthenticationService])
+                    __metadata('design:paramtypes', [http_1.Http, authentication_service_ts_1.AuthenticationService])
                 ], DtoRequestService);
                 return DtoRequestService;
             }());

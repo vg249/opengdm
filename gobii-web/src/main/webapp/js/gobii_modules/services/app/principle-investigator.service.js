@@ -1,4 +1,4 @@
-System.register(["@angular/core", "./dto-request.service.ts", "rxjs/Observable", "./dto-request-item-nameids", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw'], function(exports_1, context_1) {
+System.register(["@angular/core", "./../core/dto-request.service.ts", "rxjs/Observable", "./dto-request-item-nameids", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {

@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
-import {DtoRequestService} from "./dto-request.service.ts";
+import {DtoRequestService} from "./../core/dto-request.service.ts";
 import {Observable} from "rxjs/Observable";
 import {DtoRequestItemNameIds} from "./dto-request-item-nameids";
 

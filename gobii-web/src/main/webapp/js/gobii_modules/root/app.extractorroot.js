@@ -1,5 +1,5 @@
 ///<reference path="../../../../../../typings/index.d.ts"/>
-System.register(["@angular/core", "@angular/http", "../views/export-format.component", "./page-by-samples.component", "./page-by-project.component", "../services/app/principle-investigator.service", "../services/app/dto-request.service.ts", "../services/core/authentication.service"], function(exports_1, context_1) {
+System.register(["@angular/core", "@angular/http", "../views/export-format.component", "./page-by-samples.component", "./page-by-project.component", "../services/app/principle-investigator.service", "../services/core/dto-request.service.ts", "../services/core/authentication.service"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
