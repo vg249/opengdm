@@ -38,6 +38,15 @@ System.register(["@angular/core", "../../model/name-id"], function(exports_1, co
                         "filter": null
                     });
                 };
+                // public getRequestBody(): string {
+                //     return JSON.stringify({
+                //         "processType": "READ",
+                //         "dtoHeaderAuth": {"userName": null, "password": null, "token": null},
+                //         "entityType": "DBTABLE",
+                //         "entityName": "datasetnames",
+                //         "filter": null
+                //     })
+                // }
                 DtoRequestItemNameIds.prototype.resultFromJson = function (json) {
                     var returnVal = [];
                     console.log(json);

@@ -2,9 +2,7 @@ import {Injectable} from "@angular/core";
 import {Http, Response, Headers} from "@angular/http";
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map";
-import "rxjs/add/operator/catch";
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/observable/complete';
+
 import {DtoHeaderAuth} from "../../model/dto-header-auth";
 import {HttpValues} from "../../model/http-values";
 
@@ -29,6 +27,7 @@ export class AuthenticationService {
             if (!scope$.token) {
 
                 scope$.authenticateDefault()
+                    .map(dtoHeaderAuth => dtoHeaderAuth.getToken())
                     .subscribe(token => {
                             observer.next(token);
                             observer.complete();

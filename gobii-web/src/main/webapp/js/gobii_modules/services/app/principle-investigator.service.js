@@ -1,4 +1,4 @@
-System.register(["@angular/core", "./../core/dto-request.service.ts", "rxjs/Observable", "./dto-request-item-nameids", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw'], function(exports_1, context_1) {
+System.register(["@angular/core", "./../core/dto-request.service", "rxjs/Observable", "./dto-request-item-nameids"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,25 +10,22 @@ System.register(["@angular/core", "./../core/dto-request.service.ts", "rxjs/Obse
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, dto_request_service_ts_1, Observable_1, dto_request_item_nameids_1;
+    var core_1, dto_request_service_1, Observable_1, dto_request_item_nameids_1;
     var PrincipleInvestigatorService;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (dto_request_service_ts_1_1) {
-                dto_request_service_ts_1 = dto_request_service_ts_1_1;
+            function (dto_request_service_1_1) {
+                dto_request_service_1 = dto_request_service_1_1;
             },
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
             },
             function (dto_request_item_nameids_1_1) {
                 dto_request_item_nameids_1 = dto_request_item_nameids_1_1;
-            },
-            function (_1) {},
-            function (_2) {},
-            function (_3) {}],
+            }],
         execute: function() {
             PrincipleInvestigatorService = (function () {
                 function PrincipleInvestigatorService(_nameIdListService) {
@@ -53,7 +50,7 @@ System.register(["@angular/core", "./../core/dto-request.service.ts", "rxjs/Obse
                 }; // getPiNameIds()
                 PrincipleInvestigatorService = __decorate([
                     core_1.Injectable(), 
-                    __metadata('design:paramtypes', [dto_request_service_ts_1.DtoRequestService])
+                    __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
                 ], PrincipleInvestigatorService);
                 return PrincipleInvestigatorService;
             }());

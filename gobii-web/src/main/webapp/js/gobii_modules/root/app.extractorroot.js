@@ -1,5 +1,5 @@
 ///<reference path="../../../../../../typings/index.d.ts"/>
-System.register(["@angular/core", "@angular/http", "../views/export-format.component", "./page-by-samples.component", "./page-by-project.component", "../services/app/principle-investigator.service", "../services/core/dto-request.service.ts", "../services/core/authentication.service"], function(exports_1, context_1) {
+System.register(["@angular/core", "@angular/http", "../views/export-format.component", "./page-by-samples.component", "./page-by-project.component", "../services/app/principle-investigator.service", "../services/core/dto-request.service", "../services/core/authentication.service"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -11,7 +11,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1, export_format_component_1, page_by_samples_component_1, page_by_project_component_1, principle_investigator_service_1, dto_request_service_ts_1, authentication_service_1;
+    var core_1, http_1, export_format_component_1, page_by_samples_component_1, page_by_project_component_1, principle_investigator_service_1, dto_request_service_1, authentication_service_1;
     var ExtractorRoot;
     return {
         setters:[
@@ -33,8 +33,8 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
             function (principle_investigator_service_1_1) {
                 principle_investigator_service_1 = principle_investigator_service_1_1;
             },
-            function (dto_request_service_ts_1_1) {
-                dto_request_service_ts_1 = dto_request_service_ts_1_1;
+            function (dto_request_service_1_1) {
+                dto_request_service_1 = dto_request_service_1_1;
             },
             function (authentication_service_1_1) {
                 authentication_service_1 = authentication_service_1_1;
@@ -57,7 +57,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                         providers: [
                             http_1.HTTP_PROVIDERS,
                             authentication_service_1.AuthenticationService,
-                            dto_request_service_ts_1.DtoRequestService,
+                            dto_request_service_1.DtoRequestService,
                             principle_investigator_service_1.PrincipleInvestigatorService
                         ],
                         template: "\n        <div class = \"panel panel-default\">\n        \n           <div class = \"panel-heading\">\n              <h1 class = \"panel-title\">GOBii Extractor</h1>\n           </div>\n           \n            <div class=\"container-fluid\">\n            \n                <div class=\"row\">\n        \n                    <div class=\"col-md-3\"> \n        \n                        <div class=\"sidebar-nav\">\n                          <div class=\"navbar navbar-default\" role=\"navigation\">\n                            <div class=\"navbar-header\">Search Options</div>\n                            <div class=\"navbar-collapse collapse sidebar-navbar-collapse\">\n                              <ul class=\"nav navbar-nav\">\n                                <li><a href=\"#\" class=\"active\">By Project</a></li>\n                                <li><a href=\"#\">By Sample</a></li>\n                                <li><a href=\"#\">By Marker/Haplotype</a></li>\n                                <li><a href=\"#\">By Platform</a></li>\n                                <li><a href=\"#\">By Map Location</a></li>\n                              </ul>\n                            </div><!--/.nav-collapse -->\n                          </div>\n                        </div>\t\t\t\n                    \n                    </div>  <!-- outer grid column 1-->\n                    \n                    <div class=\"col-md-5\"> \n                          \n                            <div class=\"row\">\n                                <div class=\"col-md-12\">\t\t\t\t\t\t\t\n                                    <page-by-project></page-by-project>\n                                </div>\n                            </div> <!-- inner grid row 1 -->\n                            \n                            <div class=\"row\">\n                                <div class=\"col-md-12\">\n                                    <export-format></export-format>\n                                </div>\n                            </div> <!-- inner grid row 2 -->\n        \n                            <div class=\"row\">\n                                <div class=\"col-md-12\">\n                                    SEARCH BUTTON GOES HERE\n                                </div>\n                            </div> <!-- inner grid row 3 -->\n        \n        \n                         \n                    </div>  <!-- outer grid column 2 (inner grid)-->\n                    \n                    <div class=\"col-md-4\">\n                        FILTERS GO HERE\n                    </div>  <!-- outer grid column 3-->\n                    \n                </div> <!-- .row of outer grid -->\n                \n            </div> \n\t" // end template

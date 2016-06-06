@@ -4,7 +4,7 @@ import {Observable} from "rxjs/Observable";
 
 import {NameId} from '../model/name-id';
 import {PrincipleInvestigatorService} from '../services/app/principle-investigator.service';
-import {DtoRequestService} from "../services/core/dto-request.service.ts";
+import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 
 @Component({

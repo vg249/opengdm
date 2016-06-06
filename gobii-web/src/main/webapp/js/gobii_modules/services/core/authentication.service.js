@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw', 'rxjs/add/observable/complete', "../../model/dto-header-auth", "../../model/http-values"], function(exports_1, context_1) {
+System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/operator/map", "../../model/dto-header-auth", "../../model/http-values"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -24,9 +24,6 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                 Observable_1 = Observable_1_1;
             },
             function (_1) {},
-            function (_2) {},
-            function (_3) {},
-            function (_4) {},
             function (dto_header_auth_1_1) {
                 dto_header_auth_1 = dto_header_auth_1_1;
             },
@@ -46,6 +43,7 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                     return Observable_1.Observable.create(function (observer) {
                         if (!scope$.token) {
                             scope$.authenticateDefault()
+                                .map(function (dtoHeaderAuth) { return dtoHeaderAuth.getToken(); })
                                 .subscribe(function (token) {
                                 observer.next(token);
                                 observer.complete();

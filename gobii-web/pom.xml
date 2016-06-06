@@ -725,6 +725,9 @@
                                         <include>zone.js/dist/zone.js</include>
                                         <include>core-js/client/shim.min.js</include>
                                         <include>reflect-metadata/Reflect.js</include>
+                                        <include>rxjs/bundles/Rx.js</include>
+                                        <include>rxjs/add/**</include>
+
 
                                         <!-- ***** GROUP 2: angular files from beta 2 that we probably don't want-->
                                         <!--<include>angular2/bundles/angular2.dev.js</include>-->
@@ -760,6 +763,7 @@
                                         <include>@angular/compiler/core_private.js</include>
                                         <include>@angular/compiler/src/**</include>
                                         <include>@angular/common/src/**</include>
+
 
                                     </includes>
                                     <filtering>false</filtering>

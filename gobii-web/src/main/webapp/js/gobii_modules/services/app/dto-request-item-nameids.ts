@@ -20,8 +20,18 @@ export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]>{
             "entityName": "datasetnames",
             "namesById": {},
             "filter": null
-        })        
+        })
     }
+
+    // public getRequestBody(): string {
+    //     return JSON.stringify({
+    //         "processType": "READ",
+    //         "dtoHeaderAuth": {"userName": null, "password": null, "token": null},
+    //         "entityType": "DBTABLE",
+    //         "entityName": "datasetnames",
+    //         "filter": null
+    //     })
+    // }
 
     public resultFromJson(json):NameId[] {
 

@@ -2,16 +2,11 @@ import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
 import {HttpValues} from "../../model/http-values";
 import {Http, Response, Headers} from "@angular/http";
-import {AuthenticationService} from './authentication.service.ts';
+import {AuthenticationService} from './authentication.service';
 import {DtoRequestItem} from "./dto-request-item";
 
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map";
-import "rxjs/add/operator/catch";
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/observable/complete';
-import 'rxjs/add/observable/next';
-
 
 @Injectable()
 export class DtoRequestService<T> {
