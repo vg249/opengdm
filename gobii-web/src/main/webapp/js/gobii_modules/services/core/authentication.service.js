@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw', "../../model/dto-header-auth", "../../model/http-values"], function(exports_1, context_1) {
+System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw', 'rxjs/add/observable/complete', "../../model/dto-header-auth", "../../model/http-values"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -26,6 +26,7 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
             function (_1) {},
             function (_2) {},
             function (_3) {},
+            function (_4) {},
             function (dto_header_auth_1_1) {
                 dto_header_auth_1 = dto_header_auth_1_1;
             },
@@ -41,8 +42,21 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                     this.token = '';
                 }
                 AuthenticationService.prototype.getToken = function () {
-                    return this.token;
-                };
+                    var scope$ = this;
+                    return Observable_1.Observable.create(function (observer) {
+                        if (!scope$.token) {
+                            scope$.authenticateDefault()
+                                .subscribe(function (token) {
+                                observer.next(token);
+                                observer.complete();
+                            }, function (error) { return observer.error(error); });
+                        }
+                        else {
+                            observer.next(scope$.token);
+                            observer.complete();
+                        } // if we don't already have a token
+                    }); // Observable
+                }; // getToken()
                 AuthenticationService.prototype.setToken = function (token) {
                     this.token = token;
                 };
@@ -64,9 +78,14 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                             .subscribe(function (json) {
                             var dtoHeaderAuth = dto_header_auth_1.DtoHeaderAuth
                                 .fromJSON(json);
-                            scope$.setToken(dtoHeaderAuth.getToken());
-                            observer.next(dtoHeaderAuth);
-                            observer.complete();
+                            if (dtoHeaderAuth.getToken()) {
+                                scope$.setToken(dtoHeaderAuth.getToken());
+                                observer.next(dtoHeaderAuth);
+                                observer.complete();
+                            }
+                            else {
+                                observer.error("No token was provided by server");
+                            }
                         }); // subscribe
                     } // observer callback
                      // observer callback

@@ -4,6 +4,7 @@ import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import 'rxjs/add/observable/throw';
+import 'rxjs/add/observable/complete';
 import {DtoHeaderAuth} from "../../model/dto-header-auth";
 import {HttpValues} from "../../model/http-values";
 
@@ -19,9 +20,31 @@ export class AuthenticationService {
     private defaultPassword:string = 'reader';
     private token:string = '';
 
-    public getToken():string {
-        return this.token;
-    }
+    public getToken():Observable<string> {
+
+        let scope$ = this;
+
+        return Observable.create(observer => {
+
+            if (!scope$.token) {
+
+                scope$.authenticateDefault()
+                    .subscribe(token => {
+                            observer.next(token);
+                            observer.complete();
+                        },
+                        error => observer.error(error));
+            } else {
+                observer.next(scope$.token);
+                observer.complete();
+
+            }// if we don't already have a token
+
+
+
+        }); // Observable
+
+    } // getToken()
 
     private setToken(token:string) {
         this.token = token;
@@ -48,9 +71,13 @@ export class AuthenticationService {
                     .subscribe(json => {
                         let dtoHeaderAuth:DtoHeaderAuth = DtoHeaderAuth
                             .fromJSON(json);
-                        scope$.setToken(dtoHeaderAuth.getToken())
-                        observer.next(dtoHeaderAuth);
-                        observer.complete();
+                        if (dtoHeaderAuth.getToken()) {
+                            scope$.setToken(dtoHeaderAuth.getToken())
+                            observer.next(dtoHeaderAuth);
+                            observer.complete();
+                        } else {
+                            observer.error("No token was provided by server");
+                        }
 
                     }) // subscribe
             } // observer callback

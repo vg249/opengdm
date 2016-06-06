@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/name-id", "../../model/http-values", "@angular/http", '../core/authentication.service', "rxjs/Observable", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw'], function(exports_1, context_1) {
+System.register(["@angular/core", "../../model/name-id", "../../model/http-values", "@angular/http", '../core/authentication.service', "rxjs/Observable", "rxjs/add/operator/map", "rxjs/add/operator/catch", 'rxjs/add/observable/throw', 'rxjs/add/observable/complete', 'rxjs/add/observable/next'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -34,7 +34,9 @@ System.register(["@angular/core", "../../model/name-id", "../../model/http-value
             },
             function (_1) {},
             function (_2) {},
-            function (_3) {}],
+            function (_3) {},
+            function (_4) {},
+            function (_5) {}],
         execute: function() {
             NameIdListService = (function () {
                 function NameIdListService(_http, _authenticationService) {
@@ -46,57 +48,31 @@ System.register(["@angular/core", "../../model/name-id", "../../model/http-value
                 };
                 NameIdListService.prototype.getNameIds = function () {
                     var _this = this;
-                    var requestBody = JSON.stringify({
-                        "processType": "READ",
-                        "dtoHeaderAuth": { "userName": null, "password": null, "token": null },
-                        "dtoHeaderResponse": { "succeeded": true, "statusMessages": [] },
-                        "entityType": "DBTABLE",
-                        "entityName": "datasetnames",
-                        "namesById": {},
-                        "filter": null
-                    });
-                    // **************************
-                    // this works:
-                    // return Observable.create(observer => {
-                    //     observer.next(this.mapToNameIds(JSON.parse('{"foo":"bar"}')));
-                    //     observer.complete();
-                    // })
-                    // ***************************
-                    var scope$ = this;
-                    var existingToken = this._authenticationService.getToken();
-                    if (existingToken) {
-                        var headers_1 = http_values_1.HttpValues.makeTokenHeaders(existingToken);
-                        return Observable_1.Observable.create(function (observer) {
-                            // observer.next(scope$.mapToNameIds(JSON.parse('{"foo" : "bar"}')));
-                            // observer.complete();
+                    return Observable_1.Observable.create(function (observer) {
+                        var requestBody = JSON.stringify({
+                            "processType": "READ",
+                            "dtoHeaderAuth": { "userName": null, "password": null, "token": null },
+                            "dtoHeaderResponse": { "succeeded": true, "statusMessages": [] },
+                            "entityType": "DBTABLE",
+                            "entityName": "datasetnames",
+                            "namesById": {},
+                            "filter": null
+                        });
+                        var scope$ = _this;
+                        _this._authenticationService
+                            .getToken()
+                            .subscribe(function (token) {
+                            var headers = http_values_1.HttpValues.makeTokenHeaders(token);
                             _this._http
-                                .post("load/nameidlist", requestBody, { headers: headers_1 })
+                                .post("load/nameidlist", requestBody, { headers: headers })
                                 .map(function (response) { return response.json(); })
                                 .subscribe(function (json) {
                                 scope$.nameIds = scope$.mapToNameIds(json);
                                 observer.next(scope$.nameIds);
                                 observer.complete();
-                            });
-                        }); // observer.create
-                    }
-                    else {
-                        return Observable_1.Observable.create(function (observer) {
-                            _this._authenticationService
-                                .authenticate(null, null)
-                                .map(function (h) { return h.getToken(); })
-                                .subscribe(function (token) {
-                                var newTokenHeaders = http_values_1.HttpValues.makeTokenHeaders(token);
-                                scope$._http
-                                    .post("load/nameidlist", requestBody, { headers: newTokenHeaders })
-                                    .map(function (response) { return response.json(); })
-                                    .subscribe(function (json) {
-                                    scope$.nameIds = scope$.mapToNameIds(json);
-                                    observer.next(scope$.nameIds);
-                                    observer.complete();
-                                });
-                            }, function (error) { return console.log(error.message); });
-                        }); // observer create
-                    } // if-else we have a token
+                            }); // subscribe http
+                        }); // subscribe get authentication token
+                    }); // observable
                 }; // getPiNameIds()
                 NameIdListService.prototype.mapToNameIds = function (json) {
                     var returnVal = [];
