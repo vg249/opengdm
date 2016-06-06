@@ -9,7 +9,7 @@ import {ExportFormatComponent} from "../views/export-format.component";
 import {SearchCriteriaBySamplesComponent} from "./page-by-samples.component";
 import {PageByProjectComponent} from "./page-by-project.component";
 import {PrincipleInvestigatorService} from "../services/app/principle-investigator.service";
-import {NameIdListService} from "../services/app/name-id-list.service";
+import {DtoRequestService} from "../services/app/dto-request.service.ts";
 import {AuthenticationService} from "../services/core/authentication.service";
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -25,7 +25,7 @@ import {AuthenticationService} from "../services/core/authentication.service";
     providers: [
         HTTP_PROVIDERS,
         AuthenticationService,
-        NameIdListService,
+        DtoRequestService,
         PrincipleInvestigatorService
     ],
     template: `

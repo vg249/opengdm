@@ -1,9 +1,10 @@
 import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
+import {DtoRequestItem} from "./dto-request-item";
 
 
 @Injectable()
-export class DtoRequestItemNameIds {
+export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]>{
 
 
     public getUrl():string {

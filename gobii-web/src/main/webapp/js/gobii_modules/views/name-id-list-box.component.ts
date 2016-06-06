@@ -4,7 +4,7 @@ import {Observable} from "rxjs/Observable";
 
 import {NameId} from '../model/name-id';
 import {PrincipleInvestigatorService} from '../services/app/principle-investigator.service';
-import {NameIdListService} from "../services/app/name-id-list.service";
+import {DtoRequestService} from "../services/app/dto-request.service.ts";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 
 @Component({
@@ -21,10 +21,10 @@ import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 export class NameIdListBoxComponent implements OnInit {
 
 
-    // use
+    // useg
     private nameIdList:NameId[];
     constructor(private _principleInvestigatorService:PrincipleInvestigatorService,
-                private _nameIdListService:NameIdListService) {
+                private _nameIdListService:DtoRequestService<NameId[]>) {
 
 
         let scope$ = this;

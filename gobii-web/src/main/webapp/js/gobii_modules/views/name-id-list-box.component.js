@@ -1,4 +1,4 @@
-System.register(['@angular/core', '../services/app/principle-investigator.service', "../services/app/name-id-list.service", "../services/app/dto-request-item-nameids"], function(exports_1, context_1) {
+System.register(['@angular/core', '../services/app/principle-investigator.service', "../services/app/dto-request.service.ts", "../services/app/dto-request-item-nameids"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['@angular/core', '../services/app/principle-investigator.servic
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, principle_investigator_service_1, name_id_list_service_1, dto_request_item_nameids_1;
+    var core_1, principle_investigator_service_1, dto_request_service_ts_1, dto_request_item_nameids_1;
     var NameIdListBoxComponent;
     return {
         setters:[
@@ -20,8 +20,8 @@ System.register(['@angular/core', '../services/app/principle-investigator.servic
             function (principle_investigator_service_1_1) {
                 principle_investigator_service_1 = principle_investigator_service_1_1;
             },
-            function (name_id_list_service_1_1) {
-                name_id_list_service_1 = name_id_list_service_1_1;
+            function (dto_request_service_ts_1_1) {
+                dto_request_service_ts_1 = dto_request_service_ts_1_1;
             },
             function (dto_request_item_nameids_1_1) {
                 dto_request_item_nameids_1 = dto_request_item_nameids_1_1;
@@ -45,7 +45,7 @@ System.register(['@angular/core', '../services/app/principle-investigator.servic
                         //directives: [RADIO_GROUP_DIRECTIVES]
                         template: "<select name=\"principleInvestigators\">\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                     }), 
-                    __metadata('design:paramtypes', [principle_investigator_service_1.PrincipleInvestigatorService, name_id_list_service_1.NameIdListService])
+                    __metadata('design:paramtypes', [principle_investigator_service_1.PrincipleInvestigatorService, dto_request_service_ts_1.DtoRequestService])
                 ], NameIdListBoxComponent);
                 return NameIdListBoxComponent;
             }());

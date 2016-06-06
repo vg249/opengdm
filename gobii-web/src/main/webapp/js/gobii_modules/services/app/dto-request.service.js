@@ -11,7 +11,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", '.
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, http_values_1, http_1, authentication_service_1, Observable_1;
-    var NameIdListService;
+    var DtoRequestService;
     return {
         setters:[
             function (core_1_1) {
@@ -35,41 +35,40 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", '.
             function (_4) {},
             function (_5) {}],
         execute: function() {
-            NameIdListService = (function () {
-                function NameIdListService(_http, _authenticationService) {
+            DtoRequestService = (function () {
+                function DtoRequestService(_http, _authenticationService) {
                     this._http = _http;
                     this._authenticationService = _authenticationService;
                 }
-                NameIdListService.prototype.getAString = function () {
+                DtoRequestService.prototype.getAString = function () {
                     return 'a string';
                 };
-                NameIdListService.prototype.getNameIds = function (dtoRequestItemNameIds) {
+                DtoRequestService.prototype.getNameIds = function (dtoRequestItem) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
-                        var scope$ = _this;
                         _this._authenticationService
                             .getToken()
                             .subscribe(function (token) {
                             var headers = http_values_1.HttpValues.makeTokenHeaders(token);
                             _this._http
-                                .post(dtoRequestItemNameIds.getUrl(), dtoRequestItemNameIds.getRequestBody(), { headers: headers })
+                                .post(dtoRequestItem.getUrl(), dtoRequestItem.getRequestBody(), { headers: headers })
                                 .map(function (response) { return response.json(); })
                                 .subscribe(function (json) {
-                                scope$.nameIds = dtoRequestItemNameIds.resultFromJson(json);
-                                observer.next(scope$.nameIds);
+                                var result = dtoRequestItem.resultFromJson(json);
+                                observer.next(result);
                                 observer.complete();
                             }); // subscribe http
                         }); // subscribe get authentication token
                     }); // observable
                 }; // getPiNameIds()
-                NameIdListService = __decorate([
+                DtoRequestService = __decorate([
                     core_1.Injectable(), 
                     __metadata('design:paramtypes', [http_1.Http, authentication_service_1.AuthenticationService])
-                ], NameIdListService);
-                return NameIdListService;
+                ], DtoRequestService);
+                return DtoRequestService;
             }());
-            exports_1("NameIdListService", NameIdListService);
+            exports_1("DtoRequestService", DtoRequestService);
         }
     }
 });
-//# sourceMappingURL=name-id-list.service.js.map
+//# sourceMappingURL=dto-request.service.js.map

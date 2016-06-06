@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
-import {NameIdListService} from "./name-id-list.service";
+import {DtoRequestService} from "./dto-request.service.ts";
 import {Observable} from "rxjs/Observable";
 import {DtoRequestItemNameIds} from "./dto-request-item-nameids";
 
@@ -12,7 +12,7 @@ import 'rxjs/add/observable/throw';
 export class PrincipleInvestigatorService {
 
 
-    constructor(private _nameIdListService:NameIdListService) {
+    constructor(private _nameIdListService:DtoRequestService<NameId[]>) {
         this._nameIdListService = _nameIdListService;
     } // ctor
 
