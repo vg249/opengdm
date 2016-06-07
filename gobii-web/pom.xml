@@ -160,25 +160,6 @@
         </dependency>
 
 
-        <!-- Other Web dependencies -->
-        <!--<dependency>-->
-        <!--<groupId>javax.servlet</groupId>-->
-        <!--<artifactId>jstl</artifactId>-->
-        <!--<version>${jstl.version}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>javax.servlet</groupId>-->
-        <!--<artifactId>servlet-api</artifactId>-->
-        <!--<version>${servlet.version}</version>-->
-        <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>javax.servlet.jsp</groupId>-->
-        <!--<artifactId>jsp-api</artifactId>-->
-        <!--<version>${jsp.version}</version>-->
-        <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-
         <!-- Spring and Transactions -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -239,23 +220,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-
-        <!--<dependency>-->
-        <!--<groupId>org.hibernate</groupId>-->
-        <!--<artifactId>hibernate-core</artifactId>-->
-        <!--<version>${hibernate.version}</version>-->
-        <!--<exclusions>-->
-        <!--<exclusion>-->
-        <!--<groupId>org.jboss.logging</groupId>-->
-        <!--<artifactId>jboss-logging</artifactId>-->
-        <!--</exclusion>-->
-        <!--<exclusion>-->
-        <!--<groupId>org.jboss.logging</groupId>-->
-        <!--<artifactId>jboss-logging-annotations</artifactId>-->
-        <!--</exclusion>-->
-        <!--</exclusions>-->
-        <!--</dependency>-->
 
         <!-- Test Artifacts -->
         <dependency>
@@ -347,22 +311,6 @@
             <version>2.3</version>
         </dependency>
 
-        <!-- Type Script Library -->
-        <!--<dependency>-->
-        <!--<groupId>${project.groupId}</groupId>-->
-        <!--<artifactId>advocacy-db-js</artifactId>-->
-        <!--<version>${project.version}</version>-->
-        <!--<type>jszip</type>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-        <!--<groupId>org.jszip.redist</groupId>-->
-        <!--<artifactId>require</artifactId>-->
-        <!--<version>2.1.6</version>-->
-        <!--<type>jszip</type>-->
-        <!--</dependency>-->
-
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -414,290 +362,13 @@
                             <goal>npm</goal><!-- setup grunt and plugin -->
                         </goals>
                     </execution>
-
-                    <!--
-                    Maven "compile" phase: Do the real stuff by running grunt with target "compile"
-                    Creates target/js
-                    -->
-                    <!--<execution>-->
-                        <!--<id>compile</id>-->
-                        <!--<phase>compile</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>grunt</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<target>compile</target>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-
-                    <!--&lt;!&ndash;-->
-                    <!--Maven "test" phase: Run grunt with target "test"-->
-                    <!--Creates target/js-test-->
-                    <!--&ndash;&gt;-->
-                    <!--<execution>-->
-                        <!--<id>test</id>-->
-                        <!--<phase>test</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>grunt</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<target>test</target>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-
-                    <!--&lt;!&ndash;-->
-                    <!--Maven "(prepare-)package" phase: Run grunt with target "package"-->
-                    <!--&ndash;&gt;-->
-                    <!--<execution>-->
-                        <!--<id>prepare-package</id>-->
-                        <!--<phase>prepare-package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>grunt</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<target>package</target>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
                 </executions>
             </plugin>
-
-
-            <!-- Type Script Library -->
-            <!--<plugin>-->
-            <!--<groupId>org.jszip.maven</groupId>-->
-            <!--<artifactId>jszip-maven-plugin</artifactId>-->
-            <!--<extensions>true</extensions>-->
-            <!--<configuration>-->
-            <!--<mappings>-->
-            <!--&lt;!&ndash; copy all JSZIP dependencies to directory "modules" &ndash;&gt;-->
-            <!--<mapping>-->
-            <!--<select>*:*</select>-->
-            <!--<path>/modules</path>-->
-            <!--</mapping>-->
-            <!--</mappings>-->
-            <!--</configuration>-->
-            <!--<executions>-->
-            <!--
-               Make all web resources (packaged as a JSZIP archive) available to the webapp
-            -->
-            <!--
-                Make all web resources (packaged as a JSZIP archive) available to the webapp
-             -->
-            <!-- 	THIS GOAL CAUSES AN ERROR IN ECLIPSE
-            <execution>
-                <id>resolve-dependencies</id>
-                <goals>
-                    <goal>unpack</goal>
-                </goals>
-                <configuration>
-                    <unpackExcludes>
-                        <unpackExclude>META-INF/**</unpackExclude>
-                        <unpackExclude>package.json</unpackExclude>
-                    </unpackExcludes>
-                </configuration>
-            </execution>
-             -->
-            <!--</executions>-->
-            <!--</plugin>-->
-
-            <!--
-               Optional: Running optimizer and compressing all *.js into a single one (starting with root "application.js").
-               Note#1: jszip:optimize (http://jszip.org/jszip-maven-plugin/optimize-mojo.html) doesn't work here because
-                it doesn't support compressing into a single file
-            -->
-            <!--<plugin>-->
-            <!--<groupId>com.github.mcheely</groupId>-->
-            <!--<artifactId>requirejs-maven-plugin</artifactId>-->
-            <!--<version>1.0.4</version>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<phase>package</phase>-->
-            <!--<goals>-->
-            <!--<goal>optimize</goal>-->
-            <!--</goals>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--<configuration>-->
-            <!--<skip>true</skip>&lt;!&ndash; NOT ENABLED AS A DEFAULT &ndash;&gt;-->
-            <!--<configFile>${basedir}/src/build/js/optimize.js</configFile>-->
-            <!--<filterConfig>true</filterConfig>-->
-            <!--</configuration>-->
-            <!--</plugin>-->
-
-
-            <!-- run the module in Jetty servlet container -->
-            <!--<plugin>-->
-            <!--<groupId>org.mortbay.jetty</groupId>-->
-            <!--<artifactId>jetty-maven-plugin</artifactId>-->
-            <!--<version>8.1.12.v20130726</version>-->
-            <!--<configuration>-->
-            <!--<webAppSourceDirectory>${project.build.directory}/${project.build.finalName}</webAppSourceDirectory>-->
-            <!--</configuration>-->
-            <!--</plugin>-->
-
-
-            <!--<plugin>-->
-            <!--<groupId>com.google.code.maven-replacer-plugin</groupId>-->
-            <!--<artifactId>replacer</artifactId>-->
-            <!--<version>${replacer-plugin-version}</version>-->
-            <!--<executions>-->
-            <!--&lt;!&ndash;-->
-            <!--Synchronizes "package.json"  with POM's name, version and description.-->
-            <!--NOTE: This will potentially modify the source file on every build!-->
-            <!--&ndash;&gt;-->
-            <!--<execution>-->
-            <!--<phase>post-clean</phase>-->
-            <!--<goals>-->
-            <!--<goal>replace</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-            <!--<file>${project.basedir}/package.json</file>-->
-            <!--<replacements>-->
-            <!--<replacement>-->
-            <!--<token>"name"(\s*):(\s*)"(.*)"</token>-->
-            <!--<value>"name": "${project.name}"</value>-->
-            <!--</replacement>-->
-            <!--<replacement>-->
-            <!--<token>"version": "(.*)"</token>-->
-            <!--<value>"version": "${project.version}"</value>-->
-            <!--</replacement>-->
-            <!--<replacement>-->
-            <!--<token>"description": "(.*)"</token>-->
-            <!--<value>"description": "${project.description}"</value>-->
-            <!--</replacement>-->
-            <!--<replacement>-->
-            <!--<token>"homepage": "(.*)"</token>-->
-            <!--<value>"homepage": "${project.url}"</value>-->
-            <!--</replacement>-->
-            <!--</replacements>-->
-            <!--</configuration>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
-
-
-            <!--
-               Delegates build to "grunt" for several phases
-            -->
-            <!--<plugin>-->
-            <!--<groupId>pl.allegro</groupId>-->
-            <!--<artifactId>grunt-maven-plugin</artifactId>-->
-            <!--<version>${grunt-plugin-version}</version>-->
-            <!--<configuration>-->
-            <!--<gruntBuildDirectory>${project.build.directory}/grunt</gruntBuildDirectory>-->
-            <!--</configuration>-->
-            <!--<executions>-->
-
-            <!--&lt;!&ndash;-->
-            <!--Maven "validate" phase: Prepare everything that is required to run grunt-->
-            <!--&ndash;&gt;-->
-            <!--<execution>-->
-            <!--<id>validate</id>-->
-            <!--<phase>validate</phase>-->
-            <!--<goals>-->
-            <!--&lt;!&ndash;<goal>create-resources</goal>&ndash;&gt;-->
-            <!--<goal>npm</goal>&lt;!&ndash; setup grunt and plugin &ndash;&gt;-->
-            <!--</goals>-->
-            <!--</execution>-->
-
-            <!--&lt;!&ndash;-->
-            <!--Maven "compile" phase: Do the real stuff by running grunt with target "compile"-->
-            <!--Creates target/js-->
-            <!--&ndash;&gt;-->
-            <!--<execution>-->
-            <!--<id>compile</id>-->
-            <!--<phase>compile</phase>-->
-            <!--<goals>-->
-            <!--<goal>grunt</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-            <!--<target>compile</target>-->
-            <!--</configuration>-->
-            <!--</execution>-->
-
-            <!--&lt;!&ndash;-->
-            <!--Maven "test" phase: Run grunt with target "test"-->
-            <!--Creates target/js-test-->
-            <!--&ndash;&gt;-->
-            <!--<execution>-->
-            <!--<id>test</id>-->
-            <!--<phase>test</phase>-->
-            <!--<goals>-->
-            <!--<goal>grunt</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-            <!--<target>test</target>-->
-            <!--</configuration>-->
-            <!--</execution>-->
-
-            <!--&lt;!&ndash;-->
-            <!--Maven "(prepare-)package" phase: Run grunt with target "package"-->
-            <!--&ndash;&gt;-->
-            <!--<execution>-->
-            <!--<id>prepare-package</id>-->
-            <!--<phase>prepare-package</phase>-->
-            <!--<goals>-->
-            <!--<goal>grunt</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-            <!--<target>package</target>-->
-            <!--</configuration>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
 
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
                 <executions>
-                    <!--<execution>-->
-                    <!--<id>prepare-package-modules-html</id>-->
-                    <!--<phase>prepare-package</phase>-->
-                    <!--<goals>-->
-                    <!--<goal>copy-resources</goal>-->
-                    <!--</goals>-->
-                    <!--<configuration>-->
-                    <!--<outputDirectory>${project.build.directory}/generated-sources/js/gobii_modules/-->
-                    <!--</outputDirectory>-->
-                    <!--<resources>-->
-                    <!--<resource>-->
-                    <!--<directory>${project.basedir}/src/main/ts/</directory>-->
-                    <!--<includes>-->
-                    <!--<include>**/*.html</include>-->
-                    <!--</includes>-->
-                    <!--<filtering>false</filtering>-->
-                    <!--</resource>-->
-                    <!--</resources>-->
-                    <!--</configuration>-->
-                    <!--</execution>-->
-
-                    <!--<execution>-->
-                    <!--<id>prepare-package-javascript</id>-->
-                    <!--<phase>prepare-package</phase>-->
-                    <!--<goals>-->
-                    <!--<goal>copy-resources</goal>-->
-                    <!--</goals>-->
-                    <!--<configuration>-->
-                    <!--<outputDirectory>${project.build.directory}/${project.build.finalName}/js/gobii_modules-->
-                    <!--</outputDirectory>-->
-                    <!--<resources>-->
-                    <!--<resource>-->
-                    <!--&lt;!&ndash; the directory that is populated by Grunt &ndash;&gt;-->
-                    <!--<directory>${project.build.directory}/generated-sources/js/gobii_modules/-->
-                    <!--</directory>-->
-                    <!--<includes>-->
-                    <!--<include>**/*.js</include>-->
-                    <!--<include>**/*.map</include>-->
-                    <!--<include>**/*.ts</include>-->
-                    <!--&lt;!&ndash;<include>**/*.html</include>&ndash;&gt;-->
-                    <!--</includes>-->
-                    <!--<filtering>false</filtering>-->
-                    <!--</resource>-->
-                    <!--</resources>-->
-                    <!--</configuration>-->
-                    <!--</execution>-->
-
-
                     <execution>
                         <id>prepare-package-nodemodules</id>
                         <phase>prepare-package</phase>
@@ -763,8 +434,6 @@
                                         <include>@angular/compiler/core_private.js</include>
                                         <include>@angular/compiler/src/**</include>
                                         <include>@angular/common/src/**</include>
-
-
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>
