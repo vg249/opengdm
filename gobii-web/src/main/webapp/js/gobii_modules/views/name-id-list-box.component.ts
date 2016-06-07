@@ -34,7 +34,8 @@ export class NameIdListBoxComponent implements OnInit {
         _nameIdListService.getNameIds(new DtoRequestItemNameIds(ProcessType.READ,
         EntityType.DataSetNames)).subscribe(nameIds => {
             scope$.nameIdList = nameIds
-        } );
+        },
+        dtoHeaderResponse => { dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))});
 
     } // ctor
 

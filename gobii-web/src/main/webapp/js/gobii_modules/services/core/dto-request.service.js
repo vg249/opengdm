@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/http-values", "@angular/http", './authentication.service', "rxjs/Observable", "rxjs/add/operator/map"], function(exports_1, context_1) {
+System.register(["@angular/core", "../../model/http-values", "@angular/http", './authentication.service', "../../model/dto-header-response", "rxjs/Observable", "rxjs/add/operator/map"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", '.
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_values_1, http_1, authentication_service_1, Observable_1;
+    var core_1, http_values_1, http_1, authentication_service_1, dto_header_response_1, Observable_1;
     var DtoRequestService;
     return {
         setters:[
@@ -25,6 +25,9 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", '.
             },
             function (authentication_service_1_1) {
                 authentication_service_1 = authentication_service_1_1;
+            },
+            function (dto_header_response_1_1) {
+                dto_header_response_1 = dto_header_response_1_1;
             },
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
@@ -50,9 +53,15 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", '.
                                 .post(dtoRequestItem.getUrl(), dtoRequestItem.getRequestBody(), { headers: headers })
                                 .map(function (response) { return response.json(); })
                                 .subscribe(function (json) {
-                                var result = dtoRequestItem.resultFromJson(json);
-                                observer.next(result);
-                                observer.complete();
+                                var headerResponse = dto_header_response_1.DtoHeaderResponse.fromJSON(json);
+                                if (headerResponse.succeeded) {
+                                    var result = dtoRequestItem.resultFromJson(json);
+                                    observer.next(result);
+                                    observer.complete();
+                                }
+                                else {
+                                    observer.error(headerResponse);
+                                }
                             }); // subscribe http
                         }); // subscribe get authentication token
                     }); // observable

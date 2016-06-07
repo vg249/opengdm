@@ -39,10 +39,11 @@ export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]>{
 
 
     public getRequestBody(): string {
+
         return JSON.stringify({
-            "processType": JSON.stringify(this.processType),
+            "processType": ProcessType[this.processType],
             "entityType": "DBTABLE",
-            "entityName": JSON.stringify(this.entityType).toLowerCase(),
+            "entityName": EntityType[this.entityType].toLowerCase(),
             "filter": null
         })
     }

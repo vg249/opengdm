@@ -41,9 +41,9 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
                 };
                 DtoRequestItemNameIds.prototype.getRequestBody = function () {
                     return JSON.stringify({
-                        "processType": JSON.stringify(this.processType),
+                        "processType": type_process_1.ProcessType[this.processType],
                         "entityType": "DBTABLE",
-                        "entityName": JSON.stringify(this.entityType).toLowerCase(),
+                        "entityName": type_entity_1.EntityType[this.entityType].toLowerCase(),
                         "filter": null
                     });
                 };

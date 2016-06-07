@@ -4,6 +4,7 @@ import {HttpValues} from "../../model/http-values";
 import {Http, Response, Headers} from "@angular/http";
 import {AuthenticationService} from './authentication.service';
 import {DtoRequestItem} from "./dto-request-item";
+import {DtoHeaderResponse} from "../../model/dto-header-response"
 
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map";
@@ -20,7 +21,7 @@ export class DtoRequestService<T> {
     public getAString():string {
         return 'a string';
     }
-    
+
 
     public getNameIds(dtoRequestItem:DtoRequestItem<T>):Observable < T > {
 
@@ -39,9 +40,15 @@ export class DtoRequestService<T> {
                         .map(response => response.json())
                         .subscribe(json => {
 
-                            let result = dtoRequestItem.resultFromJson(json);
-                            observer.next(result);
-                            observer.complete();
+                            let headerResponse:DtoHeaderResponse = DtoHeaderResponse.fromJSON(json);
+
+                            if (headerResponse.succeeded) {
+                                let result = dtoRequestItem.resultFromJson(json);
+                                observer.next(result);
+                                observer.complete();
+                            } else {
+                                observer.error(headerResponse);
+                            }
 
                         }) // subscribe http
 

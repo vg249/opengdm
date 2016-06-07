@@ -40,7 +40,7 @@ System.register(['@angular/core', '../services/app/principle-investigator.servic
                     var scope$ = this;
                     _nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNames)).subscribe(function (nameIds) {
                         scope$.nameIdList = nameIds;
-                    });
+                    }, function (dtoHeaderResponse) { dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); }); });
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     return null;
