@@ -6,6 +6,9 @@ import {NameId} from '../model/name-id';
 import {PrincipleInvestigatorService} from '../services/app/principle-investigator.service';
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
+import {EntityType} from "../model/type-entity";
+import {ProcessType} from "../model/type-process";
+
 
 @Component({
     selector: 'name-id-list-box',
@@ -28,7 +31,8 @@ export class NameIdListBoxComponent implements OnInit {
 
 
         let scope$ = this;
-        _nameIdListService.getNameIds(new DtoRequestItemNameIds()).subscribe(nameIds => {
+        _nameIdListService.getNameIds(new DtoRequestItemNameIds(ProcessType.READ,
+        EntityType.DataSetNames)).subscribe(nameIds => {
             scope$.nameIdList = nameIds
         } );
 

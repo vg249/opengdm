@@ -1,4 +1,4 @@
-System.register(["@angular/core", "./../core/dto-request.service", "rxjs/Observable", "./dto-request-item-nameids"], function(exports_1, context_1) {
+System.register(["@angular/core", "./../core/dto-request.service", "rxjs/Observable", "./dto-request-item-nameids", "../../model/type-entity", "../../model/type-process"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["@angular/core", "./../core/dto-request.service", "rxjs/Observa
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, dto_request_service_1, Observable_1, dto_request_item_nameids_1;
+    var core_1, dto_request_service_1, Observable_1, dto_request_item_nameids_1, type_entity_1, type_process_1;
     var PrincipleInvestigatorService;
     return {
         setters:[
@@ -25,6 +25,12 @@ System.register(["@angular/core", "./../core/dto-request.service", "rxjs/Observa
             },
             function (dto_request_item_nameids_1_1) {
                 dto_request_item_nameids_1 = dto_request_item_nameids_1_1;
+            },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
+            },
+            function (type_process_1_1) {
+                type_process_1 = type_process_1_1;
             }],
         execute: function() {
             PrincipleInvestigatorService = (function () {
@@ -41,7 +47,7 @@ System.register(["@angular/core", "./../core/dto-request.service", "rxjs/Observa
                     //     }
                     // );
                     return Observable_1.Observable.create(function (observer) {
-                        _this._nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds())
+                        _this._nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNames))
                             .subscribe(function (nameIds) {
                             observer.next(nameIds);
                             observer.complete();

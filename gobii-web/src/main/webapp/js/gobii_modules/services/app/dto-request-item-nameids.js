@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/name-id"], function(exports_1, context_1) {
+System.register(["@angular/core", "../../model/name-id", "../../model/type-entity", "../../model/type-process"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/name-id"], function(exports_1, co
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, name_id_1;
+    var core_1, name_id_1, type_entity_1, type_process_1;
     var DtoRequestItemNameIds;
     return {
         setters:[
@@ -19,34 +19,34 @@ System.register(["@angular/core", "../../model/name-id"], function(exports_1, co
             },
             function (name_id_1_1) {
                 name_id_1 = name_id_1_1;
+            },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
+            },
+            function (type_process_1_1) {
+                type_process_1 = type_process_1_1;
             }],
         execute: function() {
             DtoRequestItemNameIds = (function () {
-                function DtoRequestItemNameIds() {
+                function DtoRequestItemNameIds(processType, entityType) {
+                    this.processType = type_process_1.ProcessType.READ;
+                    this.processType = processType;
+                    this.entityType = entityType;
                 }
                 DtoRequestItemNameIds.prototype.getUrl = function () {
                     return "load/nameidlist";
                 }; // getUrl()
+                DtoRequestItemNameIds.prototype.setEntity = function (entityType) {
+                    this.entityType = entityType;
+                };
                 DtoRequestItemNameIds.prototype.getRequestBody = function () {
                     return JSON.stringify({
-                        "processType": "READ",
-                        "dtoHeaderAuth": { "userName": null, "password": null, "token": null },
-                        "dtoHeaderResponse": { "succeeded": true, "statusMessages": [] },
+                        "processType": JSON.stringify(this.processType),
                         "entityType": "DBTABLE",
-                        "entityName": "datasetnames",
-                        "namesById": {},
+                        "entityName": JSON.stringify(this.entityType).toLowerCase(),
                         "filter": null
                     });
                 };
-                // public getRequestBody(): string {
-                //     return JSON.stringify({
-                //         "processType": "READ",
-                //         "dtoHeaderAuth": {"userName": null, "password": null, "token": null},
-                //         "entityType": "DBTABLE",
-                //         "entityName": "datasetnames",
-                //         "filter": null
-                //     })
-                // }
                 DtoRequestItemNameIds.prototype.resultFromJson = function (json) {
                     var returnVal = [];
                     console.log(json);
@@ -60,7 +60,7 @@ System.register(["@angular/core", "../../model/name-id"], function(exports_1, co
                 };
                 DtoRequestItemNameIds = __decorate([
                     core_1.Injectable(), 
-                    __metadata('design:paramtypes', [])
+                    __metadata('design:paramtypes', [Number, Number])
                 ], DtoRequestItemNameIds);
                 return DtoRequestItemNameIds;
             }());

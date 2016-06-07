@@ -1,4 +1,4 @@
-System.register(['@angular/core', '../services/app/principle-investigator.service', "../services/core/dto-request.service", "../services/app/dto-request-item-nameids"], function(exports_1, context_1) {
+System.register(['@angular/core', '../services/app/principle-investigator.service', "../services/core/dto-request.service", "../services/app/dto-request-item-nameids", "../model/type-entity", "../model/type-process"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['@angular/core', '../services/app/principle-investigator.servic
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, principle_investigator_service_1, dto_request_service_1, dto_request_item_nameids_1;
+    var core_1, principle_investigator_service_1, dto_request_service_1, dto_request_item_nameids_1, type_entity_1, type_process_1;
     var NameIdListBoxComponent;
     return {
         setters:[
@@ -25,6 +25,12 @@ System.register(['@angular/core', '../services/app/principle-investigator.servic
             },
             function (dto_request_item_nameids_1_1) {
                 dto_request_item_nameids_1 = dto_request_item_nameids_1_1;
+            },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
+            },
+            function (type_process_1_1) {
+                type_process_1 = type_process_1_1;
             }],
         execute: function() {
             NameIdListBoxComponent = (function () {
@@ -32,7 +38,7 @@ System.register(['@angular/core', '../services/app/principle-investigator.servic
                     this._principleInvestigatorService = _principleInvestigatorService;
                     this._nameIdListService = _nameIdListService;
                     var scope$ = this;
-                    _nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds()).subscribe(function (nameIds) {
+                    _nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNames)).subscribe(function (nameIds) {
                         scope$.nameIdList = nameIds;
                     });
                 } // ctor

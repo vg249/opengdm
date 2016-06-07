@@ -20,8 +20,7 @@ export class DtoRequestService<T> {
     public getAString():string {
         return 'a string';
     }
-
-    nameIds:NameId[];
+    
 
     public getNameIds(dtoRequestItem:DtoRequestItem<T>):Observable < T > {
 

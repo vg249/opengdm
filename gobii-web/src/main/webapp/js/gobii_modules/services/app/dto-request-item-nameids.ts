@@ -2,36 +2,50 @@ import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
 import {DtoRequestItem} from "./../core/dto-request-item";
 
+import {EntityType} from "../../model/type-entity";
+import {ProcessType} from "../../model/type-process";
 
 @Injectable()
 export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]>{
+
+    public constructor(processType:ProcessType,entityType:EntityType) {
+        this.processType = processType;
+        this.entityType = entityType;
+    }
 
 
     public getUrl():string {
         return "load/nameidlist";
     } // getUrl()
 
-    public getRequestBody(): string {
-        return JSON.stringify({
-            "processType": "READ",
-            "dtoHeaderAuth": {"userName": null, "password": null, "token": null},
-            "dtoHeaderResponse": {"succeeded": true, "statusMessages": []},
-            "entityType": "DBTABLE",
-            "entityName": "datasetnames",
-            "namesById": {},
-            "filter": null
-        })
-    }
-
     // public getRequestBody(): string {
     //     return JSON.stringify({
     //         "processType": "READ",
     //         "dtoHeaderAuth": {"userName": null, "password": null, "token": null},
+    //         "dtoHeaderResponse": {"succeeded": true, "statusMessages": []},
     //         "entityType": "DBTABLE",
     //         "entityName": "datasetnames",
+    //         "namesById": {},
     //         "filter": null
     //     })
     // }
+
+    private entityType:EntityType;
+    public setEntity(entityType:EntityType) {
+        this.entityType = entityType;
+    }
+
+    private processType:ProcessType = ProcessType.READ;
+
+
+    public getRequestBody(): string {
+        return JSON.stringify({
+            "processType": JSON.stringify(this.processType),
+            "entityType": "DBTABLE",
+            "entityName": JSON.stringify(this.entityType).toLowerCase(),
+            "filter": null
+        })
+    }
 
     public resultFromJson(json):NameId[] {
 
