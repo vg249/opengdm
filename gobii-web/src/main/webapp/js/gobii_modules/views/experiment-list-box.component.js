@@ -36,7 +36,11 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             ExperimentListBoxComponent = (function () {
                 function ExperimentListBoxComponent(_nameIdListService) {
                     this._nameIdListService = _nameIdListService;
+                    this.onExperimentSelected = new core_1.EventEmitter();
                 } // ctor
+                ExperimentListBoxComponent.prototype.handleExperimentSelected = function (arg) {
+                    this.onExperimentSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
+                };
                 ExperimentListBoxComponent.prototype.setList = function () {
                     var scope$ = this;
                     this._nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Experiment, this.projectId)).subscribe(function (nameIds) {
@@ -61,7 +65,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     core_1.Component({
                         selector: 'experiment-list-box',
                         inputs: ['projectId'],
-                        template: "<select name=\"experiment\" multiple=\"multiple\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
+                        template: "<select name=\"experiment\" \n                multiple=\"multiple\" \n                (change)=\"handleExperimentSelected($event)\">\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
                 ], ExperimentListBoxComponent);

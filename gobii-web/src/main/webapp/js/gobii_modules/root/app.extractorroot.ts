@@ -11,6 +11,7 @@ import {AuthenticationService} from "../services/core/authentication.service";
 import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
 import {ProjectListBoxComponent} from "../views/project-list-box.component";
 import {ExperimentListBoxComponent} from "../views/experiment-list-box.component";
+import {DataSetListBoxComponent}  from "../views/dataset-list-box.component";
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
@@ -21,7 +22,8 @@ import {ExperimentListBoxComponent} from "../views/experiment-list-box.component
     directives: [ExportFormatComponent,
         ContactsListBoxComponent,
         ProjectListBoxComponent,
-        ExperimentListBoxComponent],
+        ExperimentListBoxComponent,
+        DataSetListBoxComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -52,7 +54,12 @@ import {ExperimentListBoxComponent} from "../views/experiment-list-box.component
                         
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Experiments</legend>
-                        <experiment-list-box [projectId] = "selectedProjectId"></experiment-list-box>
+                        <experiment-list-box [projectId] = "selectedProjectId" (onExperimentSelected)="handleExperimentSelected($event)"></experiment-list-box>
+                        </fieldset>
+                        
+                        <fieldset class="well the-fieldset">
+                        <legend class="the-legend">Data Sets</legend>
+                        <dataset-list-box [experimentId] = "selectedExperimentId"></dataset-list-box>
                         </fieldset>
                         
                     </div>  <!-- outer grid column 1-->
@@ -103,15 +110,21 @@ export class ExtractorRoot {
         let foo = "foo";
     }
 
-    private selectedContactId:string = "5";
+    private selectedContactId:string = "1";
     private handleContactSelected(arg) {
         this.selectedContactId = arg;
         //console.log("selected contact id:" + arg);
     }
 
-    private selectedProjectId:string = "3";
+    private selectedProjectId:string = "0";
     private handleProjectSelected(arg) {
         this.selectedProjectId= arg;
+        //console.log("selected contact id:" + arg);
+    }
+
+    private selectedExperimentId:string = "0";
+    private handleExperimentSelected(arg) {
+        this.selectedExperimentId= arg;
         //console.log("selected contact id:" + arg);
     }
 

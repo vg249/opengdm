@@ -36,7 +36,11 @@ export class ContactsListBoxComponent implements OnInit {
         _nameIdListService.getNameIds(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.Contact,
             EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(nameIds => {
-                scope$.nameIdList = nameIds
+                if (nameIds && ( nameIds.length > 0 )) {
+                    scope$.nameIdList = nameIds
+                } else {
+                    scope$.nameIdList = [new NameId(0, "<none>")];
+                }
             },
             dtoHeaderResponse => {
                 dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))

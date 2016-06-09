@@ -17,7 +17,10 @@ import {EntityType} from "../model/type-entity";
     selector: 'project-list-box',
     inputs: ['primaryInvestigatorId'],
     outputs: ['onProjectSelected'],
-    template: `<select name="projects" multiple="multiple" (change)="handleProjectSelected($event)">
+    template: `<select name="projects" 
+                multiple="multiple"
+                 size="nameIdList.length"
+                (change)="handleProjectSelected($event)">
 			<option *ngFor="let nameId of nameIdList " 
 				value={{nameId.id}}>{{nameId.name}}</option>
 		</select>

@@ -67,7 +67,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         selector: 'project-list-box',
                         inputs: ['primaryInvestigatorId'],
                         outputs: ['onProjectSelected'],
-                        template: "<select name=\"projects\" multiple=\"multiple\" (change)=\"handleProjectSelected($event)\">\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
+                        template: "<select name=\"projects\" \n                multiple=\"multiple\"\n                 size=\"nameIdList.length\"\n                (change)=\"handleProjectSelected($event)\">\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
                 ], ProjectListBoxComponent);
