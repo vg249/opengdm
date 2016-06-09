@@ -65,6 +65,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     core_1.Component({
                         selector: 'experiment-list-box',
                         inputs: ['projectId'],
+                        outputs: ['onExperimentSelected'],
                         template: "<select name=\"experiment\" \n                multiple=\"multiple\" \n                (change)=\"handleExperimentSelected($event)\">\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])

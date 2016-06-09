@@ -14,6 +14,7 @@ import {EntityType} from "../model/type-entity";
 @Component({
     selector: 'experiment-list-box',
     inputs: ['projectId'],
+    outputs: ['onExperimentSelected'],
     template: `<select name="experiment" 
                 multiple="multiple" 
                 (change)="handleExperimentSelected($event)">
