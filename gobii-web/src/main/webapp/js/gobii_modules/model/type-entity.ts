@@ -1,5 +1,5 @@
 export enum EntityType {DataSetNames,
 Contact,
-Project}
-;
+Project,
+Experiment};
 

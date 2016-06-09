@@ -56,7 +56,9 @@ export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]> {
     public resultFromJson(json):NameId[] {
 
         let returnVal:NameId[] = [];
-        console.log(json);
+        console.log("*************ENTITY NAME: " + json.entityName);
+        console.log( json.dtoHeaderResponse.succeeded ? "succeeded" : "error: " + json.dtoHeaderResponse.statusMessages)
+        console.log(json.namesById);
 
         let arrayOfIds = Object.keys(json.namesById);
         arrayOfIds.forEach(id => {

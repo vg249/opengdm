@@ -3,8 +3,7 @@ import {
     Component,
     OnInit,
     OnChanges,
-    SimpleChange,
-    EventEmitter
+    SimpleChange
 } from "@angular/core";
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
@@ -14,10 +13,9 @@ import {EntityType} from "../model/type-entity";
 
 
 @Component({
-    selector: 'project-list-box',
-    inputs: ['primaryInvestigatorId'],
-    outputs: ['onProjectSelected'],
-    template: `<select name="projects" multiple="multiple" (change)="handleProjectSelected($event)">
+    selector: 'experiment-list-box',
+    inputs: ['projectId'],
+    template: `<select name="experiment" multiple="multiple" >
 			<option *ngFor="let nameId of nameIdList " 
 				value={{nameId.id}}>{{nameId.name}}</option>
 		</select>
@@ -25,16 +23,12 @@ import {EntityType} from "../model/type-entity";
 
 })
 
-export class ProjectListBoxComponent implements OnInit,OnChanges {
+export class ExperimentListBoxComponent implements OnInit,OnChanges {
 
 
     // useg
     private nameIdList:NameId[];
-    private primaryInvestigatorId:string;
-    private onProjectSelected:EventEmitter<string> = new EventEmitter();
-    private handleProjectSelected(arg) {
-        this.onProjectSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
-    }
+    private projectId:string;
 
     constructor(private _nameIdListService:DtoRequestService<NameId[]>) {
 
@@ -45,13 +39,13 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
 
         let scope$ = this;
         this._nameIdListService.getNameIds(new DtoRequestItemNameIds(ProcessType.READ,
-            EntityType.Project,
-            this.primaryInvestigatorId)).subscribe(nameIds => {
-                if (nameIds && ( nameIds.length > 0 )) {
+            EntityType.Experiment,
+            this.projectId)).subscribe(nameIds => {
+                if(nameIds && ( nameIds.length > 0 ) ) {
                     scope$.nameIdList = nameIds
-                } else {
-                    scope$.nameIdList = [new NameId(0, "<none>")];
-                }
+                } else  {
+                    scope$.nameIdList = [new NameId(0,"<none>")];
+                } 
             },
             dtoHeaderResponse => {
                 dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
@@ -64,8 +58,7 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
     }
 
     ngOnChanges(changes:{[propName:string]:SimpleChange}) {
-        this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
+        this.projectId = changes['projectId'].currentValue;
         this.setList();
-//        console.log('ngOnChanges - myProp = ' + changes['primaryInvestigatorId'].currentValue);
     }
 }

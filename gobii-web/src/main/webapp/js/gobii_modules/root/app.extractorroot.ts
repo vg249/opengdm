@@ -10,6 +10,7 @@ import {DtoRequestService} from "../services/core/dto-request.service";
 import {AuthenticationService} from "../services/core/authentication.service";
 import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
 import {ProjectListBoxComponent} from "../views/project-list-box.component";
+import {ExperimentListBoxComponent} from "../views/experiment-list-box.component";
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
@@ -19,7 +20,8 @@ import {ProjectListBoxComponent} from "../views/project-list-box.component";
     selector: 'extractor-root',
     directives: [ExportFormatComponent,
         ContactsListBoxComponent,
-        ProjectListBoxComponent],
+        ProjectListBoxComponent,
+        ExperimentListBoxComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -42,9 +44,15 @@ import {ProjectListBoxComponent} from "../views/project-list-box.component";
                         <legend class="the-legend">Principle Investigator</legend>
                         <contacts-list-box (onContactSelected)="handleContactSelected($event)"></contacts-list-box>
                         </fieldset>
+                        
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Projects</legend>
-                        <project-list-box [primaryInvestigatorId] = "selectedContactId"></project-list-box>
+                        <project-list-box [primaryInvestigatorId] = "selectedContactId" (onProjectSelected)="handleProjectSelected($event)" ></project-list-box>
+                        </fieldset>
+                        
+                        <fieldset class="well the-fieldset">
+                        <legend class="the-legend">Experiments</legend>
+                        <experiment-list-box [projectId] = "selectedProjectId"></experiment-list-box>
                         </fieldset>
                         
                     </div>  <!-- outer grid column 1-->
@@ -98,6 +106,12 @@ export class ExtractorRoot {
     private selectedContactId:string = "5";
     private handleContactSelected(arg) {
         this.selectedContactId = arg;
+        //console.log("selected contact id:" + arg);
+    }
+
+    private selectedProjectId:string = "3";
+    private handleProjectSelected(arg) {
+        this.selectedProjectId= arg;
         //console.log("selected contact id:" + arg);
     }
 

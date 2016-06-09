@@ -51,7 +51,9 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
                 };
                 DtoRequestItemNameIds.prototype.resultFromJson = function (json) {
                     var returnVal = [];
-                    console.log(json);
+                    console.log("*************ENTITY NAME: " + json.entityName);
+                    console.log(json.dtoHeaderResponse.succeeded ? "succeeded" : "error: " + json.dtoHeaderResponse.statusMessages);
+                    console.log(json.namesById);
                     var arrayOfIds = Object.keys(json.namesById);
                     arrayOfIds.forEach(function (id) {
                         var currentVal = json.namesById[id];
