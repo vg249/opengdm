@@ -1,2 +1,2 @@
-export enum EntityType {DataSetNames};
+export enum EntityType {DataSetNames, Contact};
 

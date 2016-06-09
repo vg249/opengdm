@@ -8,6 +8,7 @@ import {PageByProjectComponent} from "./page-by-project.component";
 import {PrincipleInvestigatorService} from "../services/app/principle-investigator.service";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {AuthenticationService} from "../services/core/authentication.service";
+import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
@@ -16,8 +17,7 @@ import {AuthenticationService} from "../services/core/authentication.service";
 @Component({
     selector: 'extractor-root',
     directives: [ExportFormatComponent,
-        SearchCriteriaBySamplesComponent,
-        PageByProjectComponent],
+        ContactsListBoxComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -35,24 +35,15 @@ import {AuthenticationService} from "../services/core/authentication.service";
             <div class="container-fluid">
             
                 <div class="row">
-        
                     <div class="col-md-3"> 
-        
-                        <div class="sidebar-nav">
-                          <div class="navbar navbar-default" role="navigation">
-                            <div class="navbar-header">Search Options</div>
-                            <div class="navbar-collapse collapse sidebar-navbar-collapse">
-                              <ul class="nav navbar-nav">
-                                <li><a href="#" class="active">By Project</a></li>
-                                <li><a href="#">By Sample</a></li>
-                                <li><a href="#">By Marker/Haplotype</a></li>
-                                <li><a href="#">By Platform</a></li>
-                                <li><a href="#">By Map Location</a></li>
-                              </ul>
-                            </div><!--/.nav-collapse -->
-                          </div>
-                        </div>			
-                    
+                <fieldset class="well the-fieldset">
+                <legend class="the-legend">Principle Investigator</legend>
+                
+                <contacts-list-box></contacts-list-box>
+                
+                </fieldset>
+
+
                     </div>  <!-- outer grid column 1-->
                     
                     <div class="col-md-5"> 

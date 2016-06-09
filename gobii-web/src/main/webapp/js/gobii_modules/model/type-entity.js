@@ -7,6 +7,7 @@ System.register([], function(exports_1, context_1) {
         execute: function() {
             (function (EntityType) {
                 EntityType[EntityType["DataSetNames"] = 0] = "DataSetNames";
+                EntityType[EntityType["Contact"] = 1] = "Contact";
             })(EntityType || (EntityType = {}));
             exports_1("EntityType", EntityType);
             ;

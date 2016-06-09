@@ -28,10 +28,12 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
             }],
         execute: function() {
             DtoRequestItemNameIds = (function () {
-                function DtoRequestItemNameIds(processType, entityType) {
+                function DtoRequestItemNameIds(processType, entityType, entityFilter) {
+                    if (entityFilter === void 0) { entityFilter = null; }
                     this.processType = type_process_1.ProcessType.READ;
                     this.processType = processType;
                     this.entityType = entityType;
+                    this.entityFilter = entityFilter;
                 }
                 DtoRequestItemNameIds.prototype.getUrl = function () {
                     return "load/nameidlist";
@@ -44,7 +46,7 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
                         "processType": type_process_1.ProcessType[this.processType],
                         "entityType": "DBTABLE",
                         "entityName": type_entity_1.EntityType[this.entityType].toLowerCase(),
-                        "filter": null
+                        "filter": this.entityFilter
                     });
                 };
                 DtoRequestItemNameIds.prototype.resultFromJson = function (json) {
@@ -60,7 +62,7 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
                 };
                 DtoRequestItemNameIds = __decorate([
                     core_1.Injectable(), 
-                    __metadata('design:paramtypes', [Number, Number])
+                    __metadata('design:paramtypes', [Number, Number, String])
                 ], DtoRequestItemNameIds);
                 return DtoRequestItemNameIds;
             }());

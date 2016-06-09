@@ -1,16 +1,18 @@
 import {Injectable} from "@angular/core";
 import {NameId} from "../../model/name-id";
 import {DtoRequestItem} from "./../core/dto-request-item";
-
 import {EntityType} from "../../model/type-entity";
 import {ProcessType} from "../../model/type-process";
 
 @Injectable()
-export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]>{
+export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]> {
 
-    public constructor(processType:ProcessType,entityType:EntityType) {
+    public constructor(processType:ProcessType,
+                       entityType:EntityType,
+                       entityFilter:string = null) {
         this.processType = processType;
         this.entityType = entityType;
+        this.entityFilter = entityFilter;
     }
 
 
@@ -31,6 +33,7 @@ export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]>{
     // }
 
     private entityType:EntityType;
+
     public setEntity(entityType:EntityType) {
         this.entityType = entityType;
     }
@@ -38,13 +41,15 @@ export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]>{
     private processType:ProcessType = ProcessType.READ;
 
 
-    public getRequestBody(): string {
+    private entityFilter:string;
+    
+    public getRequestBody():string {
 
         return JSON.stringify({
             "processType": ProcessType[this.processType],
             "entityType": "DBTABLE",
             "entityName": EntityType[this.entityType].toLowerCase(),
-            "filter": null
+            "filter": this.entityFilter
         })
     }
 
@@ -62,8 +67,8 @@ export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]>{
         return returnVal;
         //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
     }
-    
-    
+
+
 } // DtoRequestItemNameIds() 
 
 
