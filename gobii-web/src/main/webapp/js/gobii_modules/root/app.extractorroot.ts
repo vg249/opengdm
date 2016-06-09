@@ -40,11 +40,11 @@ import {ProjectListBoxComponent} from "../views/project-list-box.component";
                     <div class="col-md-3"> 
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Principle Investigator</legend>
-                        <contacts-list-box></contacts-list-box>
+                        <contacts-list-box (onContactSelected)="handleContactSelected($event)"></contacts-list-box>
                         </fieldset>
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Projects</legend>
-                        <project-list-box></project-list-box>
+                        <project-list-box [primaryInvestigatorId] = "selectedContactId"></project-list-box>
                         </fieldset>
                         
                     </div>  <!-- outer grid column 1-->
@@ -88,34 +88,17 @@ import {ProjectListBoxComponent} from "../views/project-list-box.component";
 	` // end template
 }) // @Component
 
-/*
- @RouteConfig([
-
- {
- path: '/dashboard',
- name: 'Dashboard',
- component: DashboardComponent,
- useAsDefault: true
- },
- {
- path: '/heroes',
- name: 'Heroes',
- component: HeroesComponent
- },
- {
- path: '/detail/:id',
- name: 'HeroDetail',
- component: HeroDetailComponent
- },
-
- ]) // @RouteConfig
- */
-
 export class ExtractorRoot {
     title = 'Gobii Web';
 
     constructor() {
         let foo = "foo";
+    }
+
+    private selectedContactId:string = "5";
+    private handleContactSelected(arg) {
+        this.selectedContactId = arg;
+        //console.log("selected contact id:" + arg);
     }
 
 }

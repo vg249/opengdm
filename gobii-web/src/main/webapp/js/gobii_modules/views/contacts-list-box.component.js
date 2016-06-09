@@ -36,6 +36,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
             ContactsListBoxComponent = (function () {
                 function ContactsListBoxComponent(_nameIdListService) {
                     this._nameIdListService = _nameIdListService;
+                    this.onContactSelected = new core_1.EventEmitter();
                     var scope$ = this;
                     _nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Contact, EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(function (nameIds) {
                         scope$.nameIdList = nameIds;
@@ -43,13 +44,17 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
                     });
                 } // ctor
+                ContactsListBoxComponent.prototype.handleContactSelected = function (arg) {
+                    this.onContactSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
+                };
                 ContactsListBoxComponent.prototype.ngOnInit = function () {
                     return null;
                 };
                 ContactsListBoxComponent = __decorate([
                     core_1.Component({
                         selector: 'contacts-list-box',
-                        template: "<select name=\"principleInvestigators\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
+                        outputs: ['onContactSelected'],
+                        template: "<select name=\"principleInvestigators\" (change)=\"handleContactSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
                 ], ContactsListBoxComponent);
