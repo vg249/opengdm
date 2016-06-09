@@ -9,8 +9,8 @@ import * as EntityFilters from "../model/type-entity-filter"
 
 
 @Component({
-    selector: 'contacts-list-box',
-    template: `<select name="principleInvestigators" >
+    selector: 'project-list-box',
+    template: `<select name="projects" multiple="multiple" >
 			<option *ngFor="let nameId of nameIdList " 
 				value={{nameId.id}}>{{nameId.name}}</option>
 		</select>
@@ -18,7 +18,7 @@ import * as EntityFilters from "../model/type-entity-filter"
 
 })
 
-export class ContactsListBoxComponent implements OnInit {
+export class ProjectListBoxComponent implements OnInit {
 
 
     // useg
@@ -28,8 +28,8 @@ export class ContactsListBoxComponent implements OnInit {
 
         let scope$ = this;
         _nameIdListService.getNameIds(new DtoRequestItemNameIds(ProcessType.READ,
-            EntityType.Contact,
-            EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(nameIds => {
+            EntityType.Project,
+            "5")).subscribe(nameIds => {
                 scope$.nameIdList = nameIds
             },
             dtoHeaderResponse => {

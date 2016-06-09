@@ -9,6 +9,7 @@ import {PrincipleInvestigatorService} from "../services/app/principle-investigat
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {AuthenticationService} from "../services/core/authentication.service";
 import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
+import {ProjectListBoxComponent} from "../views/project-list-box.component";
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
@@ -17,7 +18,8 @@ import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
 @Component({
     selector: 'extractor-root',
     directives: [ExportFormatComponent,
-        ContactsListBoxComponent],
+        ContactsListBoxComponent,
+        ProjectListBoxComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -36,18 +38,17 @@ import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
             
                 <div class="row">
                     <div class="col-md-3"> 
-                <fieldset class="well the-fieldset">
-                <legend class="the-legend">Principle Investigator</legend>
-                
-                <contacts-list-box></contacts-list-box>
-                
-                </fieldset>
-
-
+                        <fieldset class="well the-fieldset">
+                        <legend class="the-legend">Principle Investigator</legend>
+                        <contacts-list-box></contacts-list-box>
+                        </fieldset>
+                        <fieldset class="well the-fieldset">
+                        <legend class="the-legend">Projects</legend>
+                        <project-list-box></project-list-box>
+                        </fieldset>
+                        
                     </div>  <!-- outer grid column 1-->
-                    
                     <div class="col-md-5"> 
-                          
                             <div class="row">
                                 <div class="col-md-12">							
                                     <page-by-project></page-by-project>
@@ -75,6 +76,13 @@ import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
                     </div>  <!-- outer grid column 3-->
                     
                 </div> <!-- .row of outer grid -->
+                
+                    <div class="row"><!-- begin .row 2 of outer grid-->
+                        <div class="col-md-3"><!-- begin column 1 of outer grid -->
+                         
+                         </div><!-- end column 1 of outer grid -->
+                    
+                    </div><!-- end .row 2 of outer grid-->
                 
             </div> 
 	` // end template
@@ -104,7 +112,7 @@ import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
  */
 
 export class ExtractorRoot {
-    title = 'Tour of Heroes';
+    title = 'Gobii Web';
 
     constructor() {
         let foo = "foo";

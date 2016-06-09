@@ -55,6 +55,8 @@
         <grunt-plugin-version>1.5.1</grunt-plugin-version>
         <replacer-plugin-version>1.5.2</replacer-plugin-version>
 
+        <!-- Apachee commons -->
+        <commons-lang-version>2.6</commons-lang-version>
 
     </properties>
 
