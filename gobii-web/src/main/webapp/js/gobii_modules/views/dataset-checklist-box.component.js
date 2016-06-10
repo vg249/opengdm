@@ -11,7 +11,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, name_id_1, dto_request_service_1, dto_request_item_nameids_1, type_process_1, type_entity_1;
-    var DataSetListBoxComponent;
+    var DataSetCheckListBoxComponent;
     return {
         setters:[
             function (core_1_1) {
@@ -33,11 +33,18 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 type_entity_1 = type_entity_1_1;
             }],
         execute: function() {
-            DataSetListBoxComponent = (function () {
-                function DataSetListBoxComponent(_nameIdListService) {
+            DataSetCheckListBoxComponent = (function () {
+                function DataSetCheckListBoxComponent(_nameIdListService) {
                     this._nameIdListService = _nameIdListService;
+                    this.onItemSelected = new core_1.EventEmitter();
                 } // ctor
-                DataSetListBoxComponent.prototype.setList = function () {
+                DataSetCheckListBoxComponent.prototype.handleItemSelected = function (arg) {
+                    var checked = arg.currentTarget.children[0].checked;
+                    var dataSetId = arg.currentTarget.children[0].value;
+                    var dataSetName = arg.currentTarget.children[0].name;
+                    //this.onExperimentSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
+                };
+                DataSetCheckListBoxComponent.prototype.setList = function () {
                     var scope$ = this;
                     this._nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNamesByExperimentId, this.experimentId)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
@@ -50,25 +57,25 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
                     });
                 }; // setList()
-                DataSetListBoxComponent.prototype.ngOnInit = function () {
+                DataSetCheckListBoxComponent.prototype.ngOnInit = function () {
                     this.setList();
                 };
-                DataSetListBoxComponent.prototype.ngOnChanges = function (changes) {
+                DataSetCheckListBoxComponent.prototype.ngOnChanges = function (changes) {
                     this.experimentId = changes['experimentId'].currentValue;
                     this.setList();
                 };
-                DataSetListBoxComponent = __decorate([
+                DataSetCheckListBoxComponent = __decorate([
                     core_1.Component({
-                        selector: 'dataset-list-box',
+                        selector: 'dataset-checklist-box',
                         inputs: ['experimentId'],
-                        template: "<select name=\"dataset\" multiple=\"multiple\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
+                        template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n \n                        <div *ngFor=\"let nameId of nameIdList\" (click)=handleItemSelected($event)>\n                            <input  type=\"checkbox\" \n                                \n                                value={{nameId.id}} \n                                name=\"{{nameId.name}}\">&nbsp;{{nameId.name}}\n                        </div>            \n     \n                    </div>        \n                </form>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
-                ], DataSetListBoxComponent);
-                return DataSetListBoxComponent;
+                ], DataSetCheckListBoxComponent);
+                return DataSetCheckListBoxComponent;
             }());
-            exports_1("DataSetListBoxComponent", DataSetListBoxComponent);
+            exports_1("DataSetCheckListBoxComponent", DataSetCheckListBoxComponent);
         }
     }
 });
-//# sourceMappingURL=dataset-list-box.component.js.map
+//# sourceMappingURL=dataset-checklist-box.component.js.map

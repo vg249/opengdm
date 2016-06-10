@@ -11,7 +11,7 @@ import {AuthenticationService} from "../services/core/authentication.service";
 import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
 import {ProjectListBoxComponent} from "../views/project-list-box.component";
 import {ExperimentListBoxComponent} from "../views/experiment-list-box.component";
-import {DataSetListBoxComponent}  from "../views/dataset-list-box.component";
+import {DataSetCheckListBoxComponent}  from "../views/dataset-checklist-box.component";
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
@@ -23,7 +23,7 @@ import {DataSetListBoxComponent}  from "../views/dataset-list-box.component";
         ContactsListBoxComponent,
         ProjectListBoxComponent,
         ExperimentListBoxComponent,
-        DataSetListBoxComponent],
+        DataSetCheckListBoxComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -59,7 +59,7 @@ import {DataSetListBoxComponent}  from "../views/dataset-list-box.component";
                         
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Data Sets</legend>
-                        <dataset-list-box [experimentId] = "selectedExperimentId"></dataset-list-box>
+                        <dataset-checklist-box [experimentId] = "selectedExperimentId"></dataset-checklist-box>
                         </fieldset>
                         
                     </div>  <!-- outer grid column 1-->
