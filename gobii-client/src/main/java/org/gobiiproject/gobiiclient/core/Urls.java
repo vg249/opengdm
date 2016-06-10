@@ -94,6 +94,10 @@ public class Urls {
                 returnVal += "mapset";
                 break;
 
+            case URL_CONFIGSETTINGS:
+                returnVal += "configsettings";
+                break;
+
             default:
                 throw new Exception("Unknown request id : " + requestId.toString());
         }

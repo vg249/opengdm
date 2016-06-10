@@ -157,6 +157,10 @@
     <bean id="dtoMapMarkerGroup" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerGroupImpl"/>
     <bean id="MarkerGroupService" class="org.gobiiproject.gobidomain.services.impl.MarkerGroupServiceImpl"/>
 
+    <!-- **** ConfigSetrings Beans *************************************** -->
+    <bean id="dtoMapConfigSettings" class="org.gobiiproject.gobiidtomapping.impl.DtoMapConfigSettingsImpl"/>
+    <bean id="configSettingsService" class="org.gobiiproject.gobidomain.services.impl.ConfigSettingsServiceImpl"/>
+
     <!-- **** Role Beans *************************************** -->
     <bean id="rsRoleDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsRoleDaoImpl"/>

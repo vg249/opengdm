@@ -21,4 +21,5 @@ public enum ServiceRequestId {
     URL_MANIFEST,
     URL_PLATFORM,
     URL_MAPSET,
+    URL_CONFIGSETTINGS
 }

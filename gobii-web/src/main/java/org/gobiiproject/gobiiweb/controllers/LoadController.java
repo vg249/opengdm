@@ -72,9 +72,12 @@ public class LoadController {
 
     @Autowired
     private PlatformService platformService = null;
-    
-    @Autowired 
+
+    @Autowired
     private MapsetService mapsetService;
+
+    @Autowired
+    private ConfigSettingsService configSettingsService;
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
@@ -103,7 +106,7 @@ public class LoadController {
         String returnVal = null;
         try {
             returnVal = "Authenticated: " +  (new Date()).toString();
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
             String msg = e.getMessage();
             String tmp = msg;
             throw (e);
@@ -122,7 +125,7 @@ public class LoadController {
 
         try {
             returnVal = cvService.procesCv(CvDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -139,7 +142,7 @@ public class LoadController {
 
         try {
             returnVal = experimentService.processExperiment(experimentDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -156,7 +159,7 @@ public class LoadController {
 
         try {
             returnVal = projectService.processProject(projectDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -173,7 +176,7 @@ public class LoadController {
         //PingDTO pingDTORequest = new PingDTO();
         try {
             returnVal = contactService.processContact(contactDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -191,7 +194,7 @@ public class LoadController {
         //PingDTO pingDTORequest = new PingDTO();
         try {
             returnVal = referenceService.processReference(referenceDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -208,7 +211,7 @@ public class LoadController {
         ManifestDTO returnVal = new ManifestDTO();
         try {
             returnVal = manifestService.process(manifestDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -225,7 +228,7 @@ public class LoadController {
 
         try {
             returnVal = nameIdListService.getNameIdList(nameIdListDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -243,7 +246,7 @@ public class LoadController {
 
         try {
             returnVal = loaderInstructionFilesService.processLoaderFileInstructions(loaderInstructionFilesDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -261,7 +264,7 @@ public class LoadController {
 
         try {
             returnVal = displayService.process(displayDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -279,7 +282,7 @@ public class LoadController {
 
         try {
             returnVal = dataSetService.processDataSet(dataSetDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -297,7 +300,7 @@ public class LoadController {
 
         try {
             returnVal = analysisService.getAnalysisDetails(analysisDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -315,7 +318,7 @@ public class LoadController {
 
         try {
             returnVal = markerGroupService.process(markerGroupDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -333,7 +336,7 @@ public class LoadController {
 
         try {
             returnVal = platformService.processPlatform(platformDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -351,7 +354,7 @@ public class LoadController {
 
         try {
             returnVal = mapsetService.processMapset(MapsetDTO);
-        } catch (AccessDeniedException e) {
+        } catch (Exception e) {
 
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error(e.getMessage());
@@ -360,5 +363,23 @@ public class LoadController {
         return (returnVal);
 
     }
+    @RequestMapping(value = "/configsettings", method = RequestMethod.POST)
+    @ResponseBody
+    public ConfigSettingsDTO process(@RequestBody ConfigSettingsDTO configSettingsDTO) {
+
+        ConfigSettingsDTO returnVal = new ConfigSettingsDTO();
+
+        try {
+            returnVal = configSettingsService.process(configSettingsDTO);
+        } catch (Exception e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return (returnVal);
+
+    }
+
 
 }// LoadController
