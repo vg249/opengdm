@@ -59,7 +59,7 @@ import {DataSetCheckListBoxComponent}  from "../views/dataset-checklist-box.comp
                         
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Data Sets</legend>
-                        <dataset-checklist-box [experimentId] = "selectedExperimentId"></dataset-checklist-box>
+                        <dataset-checklist-box [experimentId] = "selectedExperimentId" (onItemChecked)="handleCheckedDataSetItem($event)"></dataset-checklist-box>
                         </fieldset>
                         
                     </div>  <!-- outer grid column 1-->
@@ -126,6 +126,10 @@ export class ExtractorRoot {
     private handleExperimentSelected(arg) {
         this.selectedExperimentId= arg;
         //console.log("selected contact id:" + arg);
+    }
+
+    private handleCheckedDataSetItem(arg) {
+        let foo = arg;
     }
 
 }
