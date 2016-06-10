@@ -3,15 +3,18 @@
 import {Component} from "@angular/core";
 import {HTTP_PROVIDERS} from "@angular/http";
 import {ExportFormatComponent} from "../views/export-format.component";
-import {SearchCriteriaBySamplesComponent} from "./page-by-samples.component";
-import {PageByProjectComponent} from "./page-by-project.component";
 import {PrincipleInvestigatorService} from "../services/app/principle-investigator.service";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {AuthenticationService} from "../services/core/authentication.service";
 import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
 import {ProjectListBoxComponent} from "../views/project-list-box.component";
 import {ExperimentListBoxComponent} from "../views/experiment-list-box.component";
-import {DataSetCheckListBoxComponent}  from "../views/dataset-checklist-box.component";
+import {DataSetCheckListBoxComponent} from "../views/dataset-checklist-box.component";
+import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract"
+import {CriteriaDisplayComponent} from "../views/criteria-display.component";
+import {ProcessType} from "../model/type-process";
+import {CheckBoxEvent} from "../model/event-checkbox";
+
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
@@ -23,7 +26,8 @@ import {DataSetCheckListBoxComponent}  from "../views/dataset-checklist-box.comp
         ContactsListBoxComponent,
         ProjectListBoxComponent,
         ExperimentListBoxComponent,
-        DataSetCheckListBoxComponent],
+        DataSetCheckListBoxComponent,
+        CriteriaDisplayComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -78,7 +82,10 @@ import {DataSetCheckListBoxComponent}  from "../views/dataset-checklist-box.comp
         
                             <div class="row">
                                 <div class="col-md-12">
-                                    SEARCH BUTTON GOES HERE
+                                    <fieldset class="well the-fieldset">
+                                    <legend class="the-legend">Extract Critiera</legend>
+                                    <criteria-display [gobiiDatasetExtracts] = "gobiiDatasetExtracts"></criteria-display>
+                                    </fieldset>
                                 </div>
                             </div> <!-- inner grid row 3 -->
         
@@ -106,31 +113,45 @@ import {DataSetCheckListBoxComponent}  from "../views/dataset-checklist-box.comp
 export class ExtractorRoot {
     title = 'Gobii Web';
 
+
+    private gobiiDatasetExtracts:GobiiDataSetExtract[] = [];
+
     constructor() {
         let foo = "foo";
     }
 
     private selectedContactId:string = "1";
+
     private handleContactSelected(arg) {
         this.selectedContactId = arg;
         //console.log("selected contact id:" + arg);
     }
 
     private selectedProjectId:string = "0";
+
     private handleProjectSelected(arg) {
-        this.selectedProjectId= arg;
+        this.selectedProjectId = arg;
         //console.log("selected contact id:" + arg);
     }
 
     private selectedExperimentId:string = "0";
+
     private handleExperimentSelected(arg) {
-        this.selectedExperimentId= arg;
+        this.selectedExperimentId = arg;
         //console.log("selected contact id:" + arg);
     }
 
-    private handleCheckedDataSetItem(arg) {
-        let foo = arg;
-    }
+    private handleCheckedDataSetItem(arg:CheckBoxEvent) {
+        if (ProcessType.CREATE == arg.processType) {
+            this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(Number(arg.id), arg.name));
+        } else {
 
+            this.gobiiDatasetExtracts =
+                this.gobiiDatasetExtracts
+                    .filter((item:GobiiDataSetExtract) => {
+                        return item.getDataSetId() != Number(arg.id)
+                    });
+        } // if-else we're adding
+    }
 }
 

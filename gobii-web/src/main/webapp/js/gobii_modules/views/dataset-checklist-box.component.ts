@@ -1,17 +1,11 @@
 //import {RouteParams} from '@angular/router-deprecated';
-import {
-    Component,
-    OnInit,
-    OnChanges,
-    SimpleChange,
-    EventEmitter
-} from "@angular/core";
+import {Component, OnInit, OnChanges, SimpleChange, EventEmitter} from "@angular/core";
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {ProcessType} from "../model/type-process";
 import {EntityType} from "../model/type-entity";
-import {CheckBoxEvent} from "../model/event-checkbox"
+import {CheckBoxEvent} from "../model/event-checkbox";
 
 @Component({
     selector: 'dataset-checklist-box',
