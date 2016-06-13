@@ -37,8 +37,8 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             }],
         execute: function() {
             DataSetCheckListBoxComponent = (function () {
-                function DataSetCheckListBoxComponent(_nameIdListService) {
-                    this._nameIdListService = _nameIdListService;
+                function DataSetCheckListBoxComponent(_dtoRequestService) {
+                    this._dtoRequestService = _dtoRequestService;
                     this.onItemChecked = new core_1.EventEmitter();
                 } // ctor
                 DataSetCheckListBoxComponent.prototype.handleItemSelected = function (arg) {
@@ -49,7 +49,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 DataSetCheckListBoxComponent.prototype.setList = function () {
                     // we can get this event whenver the item is clicked, not necessarily when the checkbox
                     var scope$ = this;
-                    this._nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNamesByExperimentId, this.experimentId)).subscribe(function (nameIds) {
+                    this._dtoRequestService.getItemList(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNamesByExperimentId, this.experimentId)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.nameIdList = nameIds;
                         }

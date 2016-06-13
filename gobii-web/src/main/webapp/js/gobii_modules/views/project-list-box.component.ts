@@ -39,7 +39,7 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
         this.onProjectSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
     }
 
-    constructor(private _nameIdListService:DtoRequestService<NameId[]>) {
+    constructor(private _dtoRequestService:DtoRequestService<NameId[]>) {
 
 
     } // ctor
@@ -47,7 +47,7 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
     private setList():void {
 
         let scope$ = this;
-        this._nameIdListService.getNameIds(new DtoRequestItemNameIds(ProcessType.READ,
+        this._dtoRequestService.getItemList(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.Project,
             this.primaryInvestigatorId)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {

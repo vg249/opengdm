@@ -36,13 +36,13 @@ export class ExperimentListBoxComponent implements OnInit,OnChanges {
         this.onExperimentSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
     }
 
-    constructor(private _nameIdListService:DtoRequestService<NameId[]>) {
+    constructor(private _dtoRequestService:DtoRequestService<NameId[]>) {
     } // ctor
 
     private setList():void {
 
         let scope$ = this;
-        this._nameIdListService.getNameIds(new DtoRequestItemNameIds(ProcessType.READ,
+        this._dtoRequestService.getItemList(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.Experiment,
             this.projectId)).subscribe(nameIds => {
                 if(nameIds && ( nameIds.length > 0 ) ) {

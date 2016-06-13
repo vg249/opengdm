@@ -44,8 +44,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
         this.onItemChecked.emit(checkEvent);
     }
 
-    constructor(private _nameIdListService:DtoRequestService<NameId[]>) {
-
+    constructor(private _dtoRequestService:DtoRequestService<NameId[]>) {
 
     } // ctor
 
@@ -54,7 +53,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
         // we can get this event whenver the item is clicked, not necessarily when the checkbox
         let scope$ = this;
-        this._nameIdListService.getNameIds(new DtoRequestItemNameIds(ProcessType.READ,
+        this._dtoRequestService.getItemList(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.DataSetNamesByExperimentId,
             this.experimentId)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {

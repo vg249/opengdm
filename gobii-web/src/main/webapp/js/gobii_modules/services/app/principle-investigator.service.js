@@ -47,7 +47,7 @@ System.register(["@angular/core", "./../core/dto-request.service", "rxjs/Observa
                     //     }
                     // );
                     return Observable_1.Observable.create(function (observer) {
-                        _this._nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNames))
+                        _this._nameIdListService.getItemList(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNames))
                             .subscribe(function (nameIds) {
                             observer.next(nameIds);
                             observer.complete();

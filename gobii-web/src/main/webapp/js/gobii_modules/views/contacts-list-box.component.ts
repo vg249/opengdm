@@ -30,10 +30,10 @@ export class ContactsListBoxComponent implements OnInit {
         this.onContactSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
     }
 
-    constructor(private _nameIdListService:DtoRequestService<NameId[]>) {
+    constructor(private _dtoRequestService:DtoRequestService<NameId[]>) {
 
         let scope$ = this;
-        _nameIdListService.getNameIds(new DtoRequestItemNameIds(ProcessType.READ,
+        _dtoRequestService.getItemList(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.Contact,
             EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {

@@ -23,7 +23,7 @@ export class PrincipleInvestigatorService {
         //     }
         // );
         return Observable.create(observer => {
-                this._nameIdListService.getNameIds(new DtoRequestItemNameIds(ProcessType.READ,
+                this._nameIdListService.getItemList(new DtoRequestItemNameIds(ProcessType.READ,
                     EntityType.DataSetNames))
                     .subscribe(nameIds => {
                             observer.next(nameIds);

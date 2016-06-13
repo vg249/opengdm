@@ -34,8 +34,8 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             }],
         execute: function() {
             ExperimentListBoxComponent = (function () {
-                function ExperimentListBoxComponent(_nameIdListService) {
-                    this._nameIdListService = _nameIdListService;
+                function ExperimentListBoxComponent(_dtoRequestService) {
+                    this._dtoRequestService = _dtoRequestService;
                     this.onExperimentSelected = new core_1.EventEmitter();
                 } // ctor
                 ExperimentListBoxComponent.prototype.handleExperimentSelected = function (arg) {
@@ -43,7 +43,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 };
                 ExperimentListBoxComponent.prototype.setList = function () {
                     var scope$ = this;
-                    this._nameIdListService.getNameIds(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Experiment, this.projectId)).subscribe(function (nameIds) {
+                    this._dtoRequestService.getItemList(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Experiment, this.projectId)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.nameIdList = nameIds;
                         }

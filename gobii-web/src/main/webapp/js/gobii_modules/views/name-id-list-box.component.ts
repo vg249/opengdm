@@ -26,16 +26,18 @@ export class NameIdListBoxComponent implements OnInit {
 
     // useg
     private nameIdList:NameId[];
-    constructor(private _principleInvestigatorService:PrincipleInvestigatorService,
-                private _nameIdListService:DtoRequestService<NameId[]>) {
+
+    constructor(private _dtoRequestService:DtoRequestService<NameId[]>) {
 
 
         let scope$ = this;
-        _nameIdListService.getNameIds(new DtoRequestItemNameIds(ProcessType.READ,
-        EntityType.DataSetNames)).subscribe(nameIds => {
-            scope$.nameIdList = nameIds
-        },
-        dtoHeaderResponse => { dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))});
+        _dtoRequestService.getItemList(new DtoRequestItemNameIds(ProcessType.READ,
+            EntityType.DataSetNames)).subscribe(nameIds => {
+                scope$.nameIdList = nameIds
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+            });
 
     } // ctor
 
