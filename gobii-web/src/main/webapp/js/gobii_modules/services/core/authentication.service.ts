@@ -6,7 +6,6 @@ import "rxjs/add/operator/map";
 import {DtoHeaderAuth} from "../../model/dto-header-auth";
 import {HttpValues} from "../../model/http-values";
 
-
 @Injectable()
 export class AuthenticationService {
 

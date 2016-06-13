@@ -25,7 +25,8 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
             for (CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
                 returnVal.getServerConfigs().put(currentCropConfig.getGobiiCropType(),
                         new ServerConfig(currentCropConfig.getServicePort(),
-                                currentCropConfig.getServiceDomain()));
+                                currentCropConfig.getServiceDomain(),
+                                currentCropConfig.getServiceAppRoot()));
             }
 
         } catch (Exception e) {

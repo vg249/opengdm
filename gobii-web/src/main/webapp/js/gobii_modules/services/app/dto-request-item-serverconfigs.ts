@@ -35,8 +35,12 @@ export class DtoRequestItemServerConfigs implements DtoRequestItem<ServerConfig[
         arrayOfIds.forEach(crop => {
             let currentCrop = crop;
             let currentDomain:string = json.serverConfigs[crop].domain;
+            let currentContextRoot:string = json.serverConfigs[crop].contextRoot;
             let currentPort:number = Number(json.serverConfigs[crop].port);
-            returnVal.push(new ServerConfig(currentCrop,currentDomain,currentPort));
+            returnVal.push(new ServerConfig(currentCrop,
+                currentDomain,
+                currentContextRoot,
+                currentPort));
         });
 
         return returnVal;

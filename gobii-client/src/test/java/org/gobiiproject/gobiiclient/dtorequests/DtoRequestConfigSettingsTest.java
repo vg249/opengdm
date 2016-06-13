@@ -60,6 +60,7 @@ public class DtoRequestConfigSettingsTest {
         CropConfig cropConfigArbitrary = configSettings.getActiveCropConfigs().get(0);
 
 
+
         List<ServerConfig> matches = configSettingsDTOResponse
                 .getServerConfigs()
                 .entrySet()
@@ -72,6 +73,7 @@ public class DtoRequestConfigSettingsTest {
                 .collect(Collectors.toList());
 
         Assert.assertTrue(1 == matches.size());
+        Assert.assertNotNull(matches.get(0).getContextRoot());
     }
 
 }

@@ -39,7 +39,7 @@ export class CropsListBoxComponent implements OnInit {
                 if (serverConfigs && ( serverConfigs.length > 0 )) {
                     scope$.serverConfigList = serverConfigs;
                 } else {
-                    scope$.serverConfigList = [new ServerConfig("<undefined>","<undefined>",0)];
+                    scope$.serverConfigList = [new ServerConfig("<undefined>","<undefined>","<undefined>",0)];
                 }
             },
             dtoHeaderResponse => {

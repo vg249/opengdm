@@ -7,13 +7,17 @@ public class ServerConfig {
 
     public ServerConfig() {}
 
-    public ServerConfig(Integer port, String domain) {
+    public ServerConfig(Integer port,
+                        String domain,
+                        String contextRoot) {
         this.port = port;
         this.domain = domain;
+        this.contextRoot = contextRoot;
     }
 
     private Integer port;
     private String domain;
+    private String contextRoot;
 
     public Integer getPort() {
         return port;
@@ -29,5 +33,13 @@ public class ServerConfig {
 
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    public String getContextRoot() {
+        return contextRoot;
+    }
+
+    public void setContextRoot(String contextRoot) {
+        this.contextRoot = contextRoot;
     }
 }

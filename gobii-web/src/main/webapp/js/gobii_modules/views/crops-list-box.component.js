@@ -37,7 +37,7 @@ System.register(["@angular/core", "../model/server-config", "../services/core/dt
                             scope$.serverConfigList = serverConfigs;
                         }
                         else {
-                            scope$.serverConfigList = [new server_config_1.ServerConfig("<undefined>", "<undefined>", 0)];
+                            scope$.serverConfigList = [new server_config_1.ServerConfig("<undefined>", "<undefined>", "<undefined>", 0)];
                         }
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });

@@ -45,8 +45,9 @@ System.register(["@angular/core", "../../model/type-process", "../../model/serve
                     arrayOfIds.forEach(function (crop) {
                         var currentCrop = crop;
                         var currentDomain = json.serverConfigs[crop].domain;
+                        var currentContextRoot = json.serverConfigs[crop].contextRoot;
                         var currentPort = Number(json.serverConfigs[crop].port);
-                        returnVal.push(new server_config_1.ServerConfig(currentCrop, currentDomain, currentPort));
+                        returnVal.push(new server_config_1.ServerConfig(currentCrop, currentDomain, currentContextRoot, currentPort));
                     });
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];

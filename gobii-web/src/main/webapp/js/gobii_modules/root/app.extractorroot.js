@@ -83,6 +83,16 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 };
                 ExtractorRoot.prototype.handleServerSelected = function (arg) {
                     this.selectedServerConfig = arg;
+                    var currentPath = window.location.pathname;
+                    var currentPage = currentPath.substr(currentPath.lastIndexOf('/') + 1, currentPath.length);
+                    var newDestination = "http://"
+                        + this.selectedServerConfig.domain
+                        + ":"
+                        + this.selectedServerConfig.port
+                        + this.selectedServerConfig.contextRoot
+                        + currentPage;
+                    //        console.log(newDestination);
+                    window.location.href = newDestination;
                 }; // handleServerSelected()
                 ExtractorRoot.prototype.handleCheckedDataSetItem = function (arg) {
                     if (type_process_1.ProcessType.CREATE == arg.processType) {

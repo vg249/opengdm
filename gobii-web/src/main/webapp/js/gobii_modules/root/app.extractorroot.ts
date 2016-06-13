@@ -124,6 +124,7 @@ export class ExtractorRoot {
 
     private gobiiDatasetExtracts:GobiiDataSetExtract[] = [];
 
+
     constructor() {
         let foo = "foo";
     }
@@ -150,8 +151,19 @@ export class ExtractorRoot {
     }
 
     private selectedServerConfig:ServerConfig;
+
     private handleServerSelected(arg) {
         this.selectedServerConfig = arg;
+        let currentPath = window.location.pathname;
+        let currentPage:string = currentPath.substr(currentPath.lastIndexOf('/') + 1, currentPath.length);
+        let newDestination = "http://"
+            + this.selectedServerConfig.domain
+            + ":"
+            + this.selectedServerConfig.port
+            + this.selectedServerConfig.contextRoot
+            + currentPage;
+//        console.log(newDestination);
+        window.location.href = newDestination;
     } // handleServerSelected()
 
     private handleCheckedDataSetItem(arg:CheckBoxEvent) {
