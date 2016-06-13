@@ -643,20 +643,20 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
 
-            switch (nameIdListDTO.getEntityName()) {
+            switch (nameIdListDTO.getEntityName().toLowerCase()) {
 
                 case "analysis":
                     returnVal = getNameIdListForAnalysis(nameIdListDTO);
                     break;
 
-                case "analysisNameByTypeId":
+                case "analysisnamebytypeid":
                     returnVal = getNameIdListForAnalysisNameByTypeId(nameIdListDTO);
                     break;
 
                 case "contact":
                     returnVal = getNameIdListForContacts(nameIdListDTO);
                     break;
-                case "allContacts":
+                case "allcontacts":
                     returnVal = getNameIdListForAllContacts(nameIdListDTO);
                     break;
 
@@ -684,7 +684,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     returnVal = getNameIdListForPlatforms(nameIdListDTO);
                     break;
 
-                case "platformByTypeId":
+                case "platformbytypeId":
                     returnVal = getNameIdListForPlatformsByTypeId(nameIdListDTO);
                     break;
 
@@ -696,7 +696,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     returnVal = getNameIdListForMap(nameIdListDTO);
                     break;
 
-                case "mapNameByTypeId":
+                case "mapnamebytypeid":
                     returnVal = getNameIdListForMapByTypeId(nameIdListDTO);
                     break;
 

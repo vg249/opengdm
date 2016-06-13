@@ -16,7 +16,8 @@ import {ProcessType} from "../model/type-process";
 import {CheckBoxEvent} from "../model/event-checkbox";
 import {ServerConfig} from "../model/server-config"
 import {CropsListBoxComponent} from "../views/crops-list-box.component"
-
+import {UsersListBoxComponent} from "../views/users-list-box.component"
+import {NameId} from "../model/name-id";
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
@@ -30,7 +31,8 @@ import {CropsListBoxComponent} from "../views/crops-list-box.component"
         ExperimentListBoxComponent,
         DataSetCheckListBoxComponent,
         CriteriaDisplayComponent,
-        CropsListBoxComponent],
+        CropsListBoxComponent,
+        UsersListBoxComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -54,7 +56,14 @@ import {CropsListBoxComponent} from "../views/crops-list-box.component"
                         <legend class="the-legend">Crop</legend>
                         <crops-list-box (onServerSelected)="handleServerSelected($event)"></crops-list-box>
                         </fieldset>
+                        
+                        <fieldset class="well the-fieldset">
+                        <legend class="the-legend">Submit As</legend>
+                        <users-list-box (onUserSelected)="handleUserSelected($event)"></users-list-box>
+                        </fieldset>
+                        
                     </div>  <!-- outer grid column 1-->
+                
                 
                 
                     <div class="col-md-4"> 
@@ -151,7 +160,6 @@ export class ExtractorRoot {
     }
 
     private selectedServerConfig:ServerConfig;
-
     private handleServerSelected(arg) {
         this.selectedServerConfig = arg;
         let currentPath = window.location.pathname;
@@ -165,6 +173,11 @@ export class ExtractorRoot {
 //        console.log(newDestination);
         window.location.href = newDestination;
     } // handleServerSelected()
+
+    private selectedUser: NameId
+    private handleUserSelected(arg) {
+
+    }
 
     private handleCheckedDataSetItem(arg:CheckBoxEvent) {
         if (ProcessType.CREATE == arg.processType) {
