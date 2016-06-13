@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/server-config", "../services/core/dto-request.service", "../services/app/dto-request-item-serverconfigs", "../model/type-crop"], function(exports_1, context_1) {
+System.register(["@angular/core", "../model/server-config", "../services/core/dto-request.service", "../services/app/dto-request-item-serverconfigs"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,8 +10,8 @@ System.register(["@angular/core", "../model/server-config", "../services/core/dt
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, server_config_1, dto_request_service_1, dto_request_item_serverconfigs_1, type_crop_1;
-    var ContactsListBoxComponent;
+    var core_1, server_config_1, dto_request_service_1, dto_request_item_serverconfigs_1;
+    var CropsListBoxComponent;
     return {
         setters:[
             function (core_1_1) {
@@ -25,13 +25,10 @@ System.register(["@angular/core", "../model/server-config", "../services/core/dt
             },
             function (dto_request_item_serverconfigs_1_1) {
                 dto_request_item_serverconfigs_1 = dto_request_item_serverconfigs_1_1;
-            },
-            function (type_crop_1_1) {
-                type_crop_1 = type_crop_1_1;
             }],
         execute: function() {
-            ContactsListBoxComponent = (function () {
-                function ContactsListBoxComponent(_dtoRequestService) {
+            CropsListBoxComponent = (function () {
+                function CropsListBoxComponent(_dtoRequestService) {
                     this._dtoRequestService = _dtoRequestService;
                     this.onServerSelected = new core_1.EventEmitter();
                     var scope$ = this;
@@ -40,29 +37,29 @@ System.register(["@angular/core", "../model/server-config", "../services/core/dt
                             scope$.serverConfigList = serverConfigs;
                         }
                         else {
-                            scope$.serverConfigList = [new server_config_1.ServerConfig(type_crop_1.GobiiCropType.UNDEFINED, "<undefined>", 0)];
+                            scope$.serverConfigList = [new server_config_1.ServerConfig("<undefined>", "<undefined>", 0)];
                         }
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
                     });
                 } // ctor
-                ContactsListBoxComponent.prototype.handleServerSelected = function (arg) {
+                CropsListBoxComponent.prototype.handleServerSelected = function (arg) {
                     this.onServerSelected.emit(this.serverConfigList[arg.srcElement.selectedIndex]);
                 };
-                ContactsListBoxComponent.prototype.ngOnInit = function () {
+                CropsListBoxComponent.prototype.ngOnInit = function () {
                     return null;
                 };
-                ContactsListBoxComponent = __decorate([
+                CropsListBoxComponent = __decorate([
                     core_1.Component({
-                        selector: 'contacts-list-box',
-                        outputs: ['onContactSelected'],
-                        template: "<select name=\"serverConfigs\" (change)=\"handleServerSelected($event)\" >\n\t\t\t<option *ngFor=\"let serverConfig of serverConfigList\" \n\t\t\t\tvalue={{nameId.id}}>{{serverConfig.crop}}</option>\n\t\t</select>\n" // end template
+                        selector: 'crops-list-box',
+                        outputs: ['onServerSelected'],
+                        template: "<select name=\"serverConfigs\" (change)=\"handleServerSelected($event)\" >\n\t\t\t<option *ngFor=\"let serverConfig of serverConfigList\" \n\t\t\t\tvalue={{serverConfig.domain}}>{{serverConfig.crop}}</option>\n\t\t</select>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
-                ], ContactsListBoxComponent);
-                return ContactsListBoxComponent;
+                ], CropsListBoxComponent);
+                return CropsListBoxComponent;
             }());
-            exports_1("ContactsListBoxComponent", ContactsListBoxComponent);
+            exports_1("CropsListBoxComponent", CropsListBoxComponent);
         }
     }
 });

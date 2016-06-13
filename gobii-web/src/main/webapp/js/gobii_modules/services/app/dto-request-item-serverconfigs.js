@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-process", "../../model/server-config", "../../model/type-crop"], function(exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-process", "../../model/server-config"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/serve
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, type_process_1, server_config_1, type_crop_1;
+    var core_1, type_process_1, server_config_1;
     var DtoRequestItemServerConfigs;
     return {
         setters:[
@@ -22,9 +22,6 @@ System.register(["@angular/core", "../../model/type-process", "../../model/serve
             },
             function (server_config_1_1) {
                 server_config_1 = server_config_1_1;
-            },
-            function (type_crop_1_1) {
-                type_crop_1 = type_crop_1_1;
             }],
         execute: function() {
             DtoRequestItemServerConfigs = (function () {
@@ -46,7 +43,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/serve
                     console.log(json.namesById);
                     var arrayOfIds = Object.keys(json.serverConfigs);
                     arrayOfIds.forEach(function (crop) {
-                        var currentCrop = type_crop_1.GobiiCropType[crop];
+                        var currentCrop = crop;
                         var currentDomain = json.serverConfigs[crop].domain;
                         var currentPort = Number(json.serverConfigs[crop].port);
                         returnVal.push(new server_config_1.ServerConfig(currentCrop, currentDomain, currentPort));

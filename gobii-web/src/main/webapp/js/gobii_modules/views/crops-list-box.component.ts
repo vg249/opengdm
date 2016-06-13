@@ -10,17 +10,17 @@ import {GobiiCropType} from "../model/type-crop";
 
 
 @Component({
-    selector: 'contacts-list-box',
-    outputs: ['onContactSelected'],
+    selector: 'crops-list-box',
+    outputs: ['onServerSelected'],
     template: `<select name="serverConfigs" (change)="handleServerSelected($event)" >
 			<option *ngFor="let serverConfig of serverConfigList" 
-				value={{nameId.id}}>{{serverConfig.crop}}</option>
+				value={{serverConfig.domain}}>{{serverConfig.crop}}</option>
 		</select>
 ` // end template
 
 })
 
-export class ContactsListBoxComponent implements OnInit {
+export class CropsListBoxComponent implements OnInit {
 
 
     // useg
@@ -37,9 +37,9 @@ export class ContactsListBoxComponent implements OnInit {
         let scope$ = this;
         _dtoRequestService.getItemList(new DtoRequestItemServerConfigs()).subscribe(serverConfigs => {
                 if (serverConfigs && ( serverConfigs.length > 0 )) {
-                    scope$.serverConfigList = serverConfigs
+                    scope$.serverConfigList = serverConfigs;
                 } else {
-                    scope$.serverConfigList = [new ServerConfig(GobiiCropType.UNDEFINED,"<undefined>",0)];
+                    scope$.serverConfigList = [new ServerConfig("<undefined>","<undefined>",0)];
                 }
             },
             dtoHeaderResponse => {

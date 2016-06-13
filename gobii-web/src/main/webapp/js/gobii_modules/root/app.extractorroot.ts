@@ -14,6 +14,8 @@ import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extr
 import {CriteriaDisplayComponent} from "../views/criteria-display.component";
 import {ProcessType} from "../model/type-process";
 import {CheckBoxEvent} from "../model/event-checkbox";
+import {ServerConfig} from "../model/server-config"
+import {CropsListBoxComponent} from "../views/crops-list-box.component"
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -27,7 +29,8 @@ import {CheckBoxEvent} from "../model/event-checkbox";
         ProjectListBoxComponent,
         ExperimentListBoxComponent,
         DataSetCheckListBoxComponent,
-        CriteriaDisplayComponent],
+        CriteriaDisplayComponent,
+        CropsListBoxComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -45,7 +48,16 @@ import {CheckBoxEvent} from "../model/event-checkbox";
             <div class="container-fluid">
             
                 <div class="row">
-                    <div class="col-md-3"> 
+                
+                    <div class="col-md-4">
+                        <fieldset class="well the-fieldset">
+                        <legend class="the-legend">Crop</legend>
+                        <crops-list-box (onServerSelected)="handleServerSelected($event)"></crops-list-box>
+                        </fieldset>
+                    </div>  <!-- outer grid column 1-->
+                
+                
+                    <div class="col-md-4"> 
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Principle Investigator</legend>
                         <contacts-list-box (onContactSelected)="handleContactSelected($event)"></contacts-list-box>
@@ -66,8 +78,8 @@ import {CheckBoxEvent} from "../model/event-checkbox";
                         <dataset-checklist-box [experimentId] = "selectedExperimentId" (onItemChecked)="handleCheckedDataSetItem($event)"></dataset-checklist-box>
                         </fieldset>
                         
-                    </div>  <!-- outer grid column 1-->
-                    <div class="col-md-5"> 
+                    </div>  <!-- outer grid column 2-->
+                    <div class="col-md-4"> 
                             <div class="row">
                                 <div class="col-md-12">							
                                     <page-by-project></page-by-project>
@@ -91,12 +103,8 @@ import {CheckBoxEvent} from "../model/event-checkbox";
         
         
                          
-                    </div>  <!-- outer grid column 2 (inner grid)-->
-                    
-                    <div class="col-md-4">
-                        FILTERS GO HERE
-                    </div>  <!-- outer grid column 3-->
-                    
+                    </div>  <!-- outer grid column 3 (inner grid)-->
+                                        
                 </div> <!-- .row of outer grid -->
                 
                     <div class="row"><!-- begin .row 2 of outer grid-->
@@ -140,6 +148,11 @@ export class ExtractorRoot {
         this.selectedExperimentId = arg;
         //console.log("selected contact id:" + arg);
     }
+
+    private selectedServerConfig:ServerConfig;
+    private handleServerSelected(arg) {
+        this.selectedServerConfig = arg;
+    } // handleServerSelected()
 
     private handleCheckedDataSetItem(arg:CheckBoxEvent) {
         if (ProcessType.CREATE == arg.processType) {

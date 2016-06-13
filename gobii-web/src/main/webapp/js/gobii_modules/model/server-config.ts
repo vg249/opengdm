@@ -2,7 +2,7 @@ import {GobiiCropType} from  "./type-crop"
 
 export class ServerConfig {
     
-    constructor(public crop:GobiiCropType,
+    constructor(public crop:string,
                 public domain:string, 
                 public port:number) {
         
