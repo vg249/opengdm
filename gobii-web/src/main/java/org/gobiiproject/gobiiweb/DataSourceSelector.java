@@ -30,6 +30,7 @@ public class DataSourceSelector extends AbstractRoutingDataSource {
 
 
         GobiiCropType gobiiCropType = cropRequestAnalyzer.getCropTypeFromHeaders();
+
         if (null != gobiiCropType) {
             returnVal = gobiiCropType.toString();
 
@@ -37,7 +38,11 @@ public class DataSourceSelector extends AbstractRoutingDataSource {
 
             gobiiCropType = cropRequestAnalyzer.getCropTypeFromUri();
 
-            if (null == gobiiCropType) {
+            if (null != gobiiCropType) {
+
+                returnVal = gobiiCropType.toString();
+
+            } else {
                 LOGGER.error("Unable to determine crop type from header or uri; setting crop type to "
                         + returnVal
                         + " database connectioins will be made accordingly");
