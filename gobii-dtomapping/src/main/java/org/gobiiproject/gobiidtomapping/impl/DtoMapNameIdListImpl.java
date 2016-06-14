@@ -684,7 +684,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     returnVal = getNameIdListForPlatforms(nameIdListDTO);
                     break;
 
-                case "platformbytypeId":
+                case "platformbytypeid":
                     returnVal = getNameIdListForPlatformsByTypeId(nameIdListDTO);
                     break;
 
