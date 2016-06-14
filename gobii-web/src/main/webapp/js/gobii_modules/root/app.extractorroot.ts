@@ -9,16 +9,16 @@ import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
 import {ProjectListBoxComponent} from "../views/project-list-box.component";
 import {ExperimentListBoxComponent} from "../views/experiment-list-box.component";
 import {DataSetCheckListBoxComponent} from "../views/dataset-checklist-box.component";
-import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract"
+import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract";
 import {CriteriaDisplayComponent} from "../views/criteria-display.component";
 import {ProcessType} from "../model/type-process";
 import {CheckBoxEvent} from "../model/event-checkbox";
-import {ServerConfig} from "../model/server-config"
-import {CropsListBoxComponent} from "../views/crops-list-box.component"
-import {UsersListBoxComponent} from "../views/users-list-box.component"
+import {ServerConfig} from "../model/server-config";
+import {CropsListBoxComponent} from "../views/crops-list-box.component";
+import {UsersListBoxComponent} from "../views/users-list-box.component";
 import {NameId} from "../model/name-id";
-import {DatasetDetailBoxComponent} from "../views/dataset-detail.component"
-import {DataSet} from "../model/dataset"
+import {DatasetDetailBoxComponent} from "../views/dataset-detail.component";
+import {ExperimentDetailBoxComponent} from "../views/experiment-detail-component";
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
@@ -34,15 +34,15 @@ import {DataSet} from "../model/dataset"
         CriteriaDisplayComponent,
         CropsListBoxComponent,
         UsersListBoxComponent,
-        DatasetDetailBoxComponent],
+        DatasetDetailBoxComponent,
+        ExperimentDetailBoxComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
         AuthenticationService,
         DtoRequestService
     ],
-    template: `
-        <div class = "panel panel-default">
+    template: `<div class = "panel panel-default">
         
            <div class = "panel-heading">
               <h1 class = "panel-title">GOBii Extractor</h1>
@@ -93,26 +93,29 @@ import {DataSet} from "../model/dataset"
                         <legend class="the-legend">Data Sets</legend>
                         <dataset-checklist-box [experimentId] = "selectedExperimentId" 
                             (onItemChecked)="handleCheckedDataSetItem($event)"
-                            (onItemSelected)="handleDataSetSelected($event)">
+                            (onItemSelected)="handleDataSetDetailSelected($event)">
                         </dataset-checklist-box>
                         </fieldset>
                         
                     </div>  <!-- outer grid column 2-->
                     <div class="col-md-4">
                      
-                        <fieldset class="well the-fieldset" style="vertical-align: top;">
-                        <legend class="the-legend">Detail</legend>
-                        <dataset-detail-box [dataSetId] = "selectedDataSetId"></dataset-detail-box>
-                        </fieldset>
+                            <fieldset [hidden]="!displayDataSetDetail" class="well the-fieldset" style="vertical-align: top;">
+                                <legend class="the-legend">Data Set</legend>
+                                <dataset-detail-box [dataSetId] = "selectedDataSetDetailId"></dataset-detail-box>
+                            </fieldset>
+                     
+                            <fieldset [hidden]="!displayExperimentDetail" class="well the-fieldset" style="vertical-align: top;">
+                                <legend class="the-legend">Experiment</legend>
+                                <experiment-detail-box [experimentId] = "selectedExperimentDetailId"></experiment-detail-box>
+                            </fieldset>
                      
                            
-                        <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                        <legend class="the-legend">Extract Critiera</legend>
-                        <criteria-display [gobiiDatasetExtracts] = "gobiiDatasetExtracts"></criteria-display>
-                        </fieldset>
+                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
+                            <legend class="the-legend">Extract Critiera</legend>
+                            <criteria-display [gobiiDatasetExtracts] = "gobiiDatasetExtracts"></criteria-display>
+                            </fieldset>
        
-        
-                         
                     </div>  <!-- outer grid column 3 (inner grid)-->
                                         
                 </div> <!-- .row of outer grid -->
@@ -124,8 +127,7 @@ import {DataSet} from "../model/dataset"
                     
                     </div><!-- end .row 2 of outer grid-->
                 
-            </div> 
-	` // end template
+            </div>` // end template
 }) // @Component
 
 export class ExtractorRoot {
@@ -150,15 +152,29 @@ export class ExtractorRoot {
 
     private handleProjectSelected(arg) {
         this.selectedProjectId = arg;
-        //console.log("selected contact id:" + arg);
+        this.displayExperimentDetail = false;
+        this.displayDataSetDetail = false;
     }
 
+    private displayExperimentDetail:boolean = false;
     private selectedExperimentId:string = "0";
-
+    private selectedExperimentDetailId:string = "0";
     private handleExperimentSelected(arg) {
         this.selectedExperimentId = arg;
+        this.selectedExperimentDetailId = arg;
+        this.displayExperimentDetail = true;
+
         //console.log("selected contact id:" + arg);
     }
+
+    private displayDataSetDetail:boolean = false;
+    private selectedDataSetDetailId:number;
+    private handleDataSetDetailSelected(arg) {
+        this.selectedDataSetDetailId = arg;
+        this.selectedExperimentDetailId = undefined;
+        this.displayDataSetDetail = true;
+    }
+
 
     private selectedServerConfig:ServerConfig;
 
@@ -194,10 +210,6 @@ export class ExtractorRoot {
         } // if-else we're adding
     }
 
-    private selectedDataSetId:number;
-    private handleDataSetSelected(arg) {
-        this.selectedDataSetId = arg;
-    }
 
 }
 
