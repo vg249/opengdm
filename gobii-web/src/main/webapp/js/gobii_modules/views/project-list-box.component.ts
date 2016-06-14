@@ -47,7 +47,7 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
     private setList():void {
 
         let scope$ = this;
-        this._dtoRequestService.getItemList(new DtoRequestItemNameIds(ProcessType.READ,
+        this._dtoRequestService.getResult(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.Project,
             this.primaryInvestigatorId)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {

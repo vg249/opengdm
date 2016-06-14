@@ -40,16 +40,20 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 function DataSetCheckListBoxComponent(_dtoRequestService) {
                     this._dtoRequestService = _dtoRequestService;
                     this.onItemChecked = new core_1.EventEmitter();
+                    this.onItemSelected = new core_1.EventEmitter();
                 } // ctor
-                DataSetCheckListBoxComponent.prototype.handleItemSelected = function (arg) {
-                    var foo = arg;
+                DataSetCheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var checkEvent = new event_checkbox_1.CheckBoxEvent(arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE, arg.currentTarget.value, arg.currentTarget.name);
                     this.onItemChecked.emit(checkEvent);
+                };
+                DataSetCheckListBoxComponent.prototype.handleItemSelected = function (arg) {
+                    var selectedDataSetId = Number(arg.currentTarget.children[0].value);
+                    this.onItemSelected.emit(selectedDataSetId);
                 };
                 DataSetCheckListBoxComponent.prototype.setList = function () {
                     // we can get this event whenver the item is clicked, not necessarily when the checkbox
                     var scope$ = this;
-                    this._dtoRequestService.getItemList(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNamesByExperimentId, this.experimentId)).subscribe(function (nameIds) {
+                    this._dtoRequestService.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNamesByExperimentId, this.experimentId)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.nameIdList = nameIds;
                         }
@@ -71,8 +75,8 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     core_1.Component({
                         selector: 'dataset-checklist-box',
                         inputs: ['experimentId'],
-                        outputs: ['onItemChecked'],
-                        template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n \n                        <div *ngFor=\"let nameId of nameIdList\" >\n                            <input  type=\"checkbox\" \n                                (click)=handleItemSelected($event)\n                                value={{nameId.id}} \n                                name=\"{{nameId.name}}\">&nbsp;{{nameId.name}}\n                        </div>            \n     \n                    </div>        \n                </form>\n" // end template
+                        outputs: ['onItemChecked', 'onItemSelected'],
+                        template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let nameId of nameIdList\" (click)=handleItemSelected($event) >\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                value={{nameId.id}} \n                                name=\"{{nameId.name}}\">&nbsp;{{nameId.name}}\n                        </div>            \n                    </div>\n                </form>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
                 ], DataSetCheckListBoxComponent);

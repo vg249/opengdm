@@ -35,7 +35,7 @@ export class CropsListBoxComponent implements OnInit {
     constructor(private _dtoRequestService:DtoRequestService<ServerConfig[]>) {
 
         let scope$ = this;
-        _dtoRequestService.getItemList(new DtoRequestItemServerConfigs()).subscribe(serverConfigs => {
+        _dtoRequestService.getResult(new DtoRequestItemServerConfigs()).subscribe(serverConfigs => {
                 if (serverConfigs && ( serverConfigs.length > 0 )) {
                     scope$.serverConfigList = serverConfigs;
                 } else {

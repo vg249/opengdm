@@ -32,7 +32,7 @@ System.register(["@angular/core", "../model/server-config", "../services/core/dt
                     this._dtoRequestService = _dtoRequestService;
                     this.onServerSelected = new core_1.EventEmitter();
                     var scope$ = this;
-                    _dtoRequestService.getItemList(new dto_request_item_serverconfigs_1.DtoRequestItemServerConfigs()).subscribe(function (serverConfigs) {
+                    _dtoRequestService.getResult(new dto_request_item_serverconfigs_1.DtoRequestItemServerConfigs()).subscribe(function (serverConfigs) {
                         if (serverConfigs && (serverConfigs.length > 0)) {
                             scope$.serverConfigList = serverConfigs;
                         }

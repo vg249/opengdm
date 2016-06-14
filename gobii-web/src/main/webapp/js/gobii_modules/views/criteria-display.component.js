@@ -34,7 +34,7 @@ System.register(["@angular/core"], function(exports_1, context_1) {
                         selector: 'criteria-display',
                         inputs: ['gobiiDatasetExtracts'],
                         //directives: [RADIO_GROUP_DIRECTIVES]
-                        template: "<div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                    <div *ngFor=\"let gobiiDataSetExtract of gobiiDatasetExtracts\" >{{gobiiDataSetExtract.dataSetName}}</div>\n                </div>\n" // end template
+                        template: "<div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px;\">\n                    <div *ngFor=\"let gobiiDataSetExtract of gobiiDatasetExtracts\" >{{gobiiDataSetExtract.dataSetName}}</div>\n                </div>\n                <form>\n                    <input type=\"button\" value=\"Submit\" >\n                </form>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [])
                 ], CriteriaDisplayComponent);

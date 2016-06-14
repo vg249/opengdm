@@ -42,7 +42,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", '.
                 DtoRequestService.prototype.getAString = function () {
                     return 'a string';
                 };
-                DtoRequestService.prototype.getItemList = function (dtoRequestItem) {
+                DtoRequestService.prototype.getResult = function (dtoRequestItem) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
                         _this._authenticationService

@@ -43,7 +43,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 };
                 ProjectListBoxComponent.prototype.setList = function () {
                     var scope$ = this;
-                    this._dtoRequestService.getItemList(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Project, this.primaryInvestigatorId)).subscribe(function (nameIds) {
+                    this._dtoRequestService.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Project, this.primaryInvestigatorId)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.nameIdList = nameIds;
                         }

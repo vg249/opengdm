@@ -42,7 +42,7 @@ export class ExperimentListBoxComponent implements OnInit,OnChanges {
     private setList():void {
 
         let scope$ = this;
-        this._dtoRequestService.getItemList(new DtoRequestItemNameIds(ProcessType.READ,
+        this._dtoRequestService.getResult(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.Experiment,
             this.projectId)).subscribe(nameIds => {
                 if(nameIds && ( nameIds.length > 0 ) ) {

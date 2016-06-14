@@ -1,5 +1,3 @@
-import {GobiiCropType} from  "./type-crop"
-
 export class ServerConfig {
     
     constructor(public crop:string,

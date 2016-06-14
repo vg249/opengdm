@@ -33,7 +33,7 @@ export class UsersListBoxComponent implements OnInit {
     constructor(private _dtoRequestService:DtoRequestService<NameId[]>) {
 
         let scope$ = this;
-        _dtoRequestService.getItemList(new DtoRequestItemNameIds(ProcessType.READ,
+        _dtoRequestService.getResult(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.AllContacts)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.nameIdList = nameIds

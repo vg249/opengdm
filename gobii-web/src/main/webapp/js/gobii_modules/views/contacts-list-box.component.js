@@ -41,7 +41,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this._dtoRequestService = _dtoRequestService;
                     this.onContactSelected = new core_1.EventEmitter();
                     var scope$ = this;
-                    _dtoRequestService.getItemList(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Contact, EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(function (nameIds) {
+                    _dtoRequestService.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Contact, EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.nameIdList = nameIds;
                         }

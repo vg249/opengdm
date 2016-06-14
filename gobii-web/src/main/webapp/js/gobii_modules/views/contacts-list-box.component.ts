@@ -33,7 +33,7 @@ export class ContactsListBoxComponent implements OnInit {
     constructor(private _dtoRequestService:DtoRequestService<NameId[]>) {
 
         let scope$ = this;
-        _dtoRequestService.getItemList(new DtoRequestItemNameIds(ProcessType.READ,
+        _dtoRequestService.getResult(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.Contact,
             EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {

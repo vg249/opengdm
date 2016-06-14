@@ -10,18 +10,16 @@ import {CheckBoxEvent} from "../model/event-checkbox";
 @Component({
     selector: 'dataset-checklist-box',
     inputs: ['experimentId'],
-    outputs: ['onItemChecked'],
+    outputs: ['onItemChecked','onItemSelected'],
     template: `<form>
                     <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
- 
-                        <div *ngFor="let nameId of nameIdList" >
+                        <div *ngFor="let nameId of nameIdList" (click)=handleItemSelected($event) >
                             <input  type="checkbox" 
-                                (click)=handleItemSelected($event)
+                                (click)=handleItemChecked($event)
                                 value={{nameId.id}} 
                                 name="{{nameId.name}}">&nbsp;{{nameId.name}}
                         </div>            
-     
-                    </div>        
+                    </div>
                 </form>
 ` // end template
 
@@ -35,13 +33,18 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private nameIdList:NameId[];
     private experimentId:string;
     private onItemChecked:EventEmitter<CheckBoxEvent> = new EventEmitter();
+    private onItemSelected:EventEmitter<number> = new EventEmitter();
 
-    private handleItemSelected(arg) {
-        let foo = arg;
+    private handleItemChecked(arg) {
         let checkEvent:CheckBoxEvent = new CheckBoxEvent(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE,
             arg.currentTarget.value,
             arg.currentTarget.name);
         this.onItemChecked.emit(checkEvent);
+    }
+    
+    private handleItemSelected(arg) {
+        let selectedDataSetId:number = Number(arg.currentTarget.children[0].value);
+        this.onItemSelected.emit(selectedDataSetId);
     }
 
     constructor(private _dtoRequestService:DtoRequestService<NameId[]>) {
@@ -53,7 +56,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
         // we can get this event whenver the item is clicked, not necessarily when the checkbox
         let scope$ = this;
-        this._dtoRequestService.getItemList(new DtoRequestItemNameIds(ProcessType.READ,
+        this._dtoRequestService.getResult(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.DataSetNamesByExperimentId,
             this.experimentId)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {

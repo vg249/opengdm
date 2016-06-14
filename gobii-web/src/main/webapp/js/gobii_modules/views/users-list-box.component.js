@@ -11,7 +11,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, name_id_1, dto_request_service_1, dto_request_item_nameids_1, type_process_1, type_entity_1;
-    var ExperimentListBoxComponent;
+    var UsersListBoxComponent;
     return {
         setters:[
             function (core_1_1) {
@@ -33,17 +33,12 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 type_entity_1 = type_entity_1_1;
             }],
         execute: function() {
-            ExperimentListBoxComponent = (function () {
-                function ExperimentListBoxComponent(_dtoRequestService) {
+            UsersListBoxComponent = (function () {
+                function UsersListBoxComponent(_dtoRequestService) {
                     this._dtoRequestService = _dtoRequestService;
-                    this.onExperimentSelected = new core_1.EventEmitter();
-                } // ctor
-                ExperimentListBoxComponent.prototype.handleExperimentSelected = function (arg) {
-                    this.onExperimentSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
-                };
-                ExperimentListBoxComponent.prototype.setList = function () {
+                    this.onUserSelected = new core_1.EventEmitter();
                     var scope$ = this;
-                    this._dtoRequestService.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Experiment, this.projectId)).subscribe(function (nameIds) {
+                    _dtoRequestService.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.AllContacts)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.nameIdList = nameIds;
                         }
@@ -53,27 +48,25 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
                     });
-                }; // setList()
-                ExperimentListBoxComponent.prototype.ngOnInit = function () {
-                    this.setList();
+                } // ctor
+                UsersListBoxComponent.prototype.handleUserSelected = function (arg) {
+                    this.onUserSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
                 };
-                ExperimentListBoxComponent.prototype.ngOnChanges = function (changes) {
-                    this.projectId = changes['projectId'].currentValue;
-                    this.setList();
+                UsersListBoxComponent.prototype.ngOnInit = function () {
+                    return null;
                 };
-                ExperimentListBoxComponent = __decorate([
+                UsersListBoxComponent = __decorate([
                     core_1.Component({
-                        selector: 'experiment-list-box',
-                        inputs: ['projectId'],
-                        outputs: ['onExperimentSelected'],
-                        template: "<select name=\"experiment\" \n                multiple=\"multiple\" \n                (change)=\"handleExperimentSelected($event)\">\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
+                        selector: 'users-list-box',
+                        outputs: ['onUserSelected'],
+                        template: "<select name=\"users\" (change)=\"handleUserSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
-                ], ExperimentListBoxComponent);
-                return ExperimentListBoxComponent;
+                ], UsersListBoxComponent);
+                return UsersListBoxComponent;
             }());
-            exports_1("ExperimentListBoxComponent", ExperimentListBoxComponent);
+            exports_1("UsersListBoxComponent", UsersListBoxComponent);
         }
     }
 });
-//# sourceMappingURL=experiment-list-box.component.js.map
+//# sourceMappingURL=users-list-box.component.js.map

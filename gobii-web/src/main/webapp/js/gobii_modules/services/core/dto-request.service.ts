@@ -23,7 +23,7 @@ export class DtoRequestService<T> {
     }
 
 
-    public getItemList(dtoRequestItem:DtoRequestItem<T>):Observable < T > {
+    public getResult(dtoRequestItem:DtoRequestItem<T>):Observable < T > {
 
         return Observable.create(observer => {
 
