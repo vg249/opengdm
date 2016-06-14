@@ -6,6 +6,8 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
+import jdk.nashorn.internal.runtime.ECMAException;
+import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
@@ -14,6 +16,11 @@ import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
+import org.gobiiproject.gobiimodel.types.SystemUserDetail;
+import org.gobiiproject.gobiimodel.types.SystemUserNames;
+import org.gobiiproject.gobiimodel.types.SystemUsers;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -168,7 +175,7 @@ public class DtoRequestDataSetTest {
                         entityParamValues));
 
         for (AnalysisDTO currentAnalysis : analysesToCreate) {
-            AnalysisDTO newAnalysis =  dtoRequestAnalysis.process(currentAnalysis);
+            AnalysisDTO newAnalysis = dtoRequestAnalysis.process(currentAnalysis);
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(newAnalysis));
             analysesNew.add(newAnalysis);
         }
@@ -295,5 +302,34 @@ public class DtoRequestDataSetTest {
 
     }
 
+    @Test
+    public void testRawUpdate() throws Exception {
 
+        // set up authentication and so forth
+        // you'll need to get the current from the instruction file
+        ClientContext.getInstance().setCurrentClientCrop(GobiiCropType.DEV);
+        SystemUsers systemUsers = new SystemUsers();
+        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
+        // you'll do an if-then for succesfull login
+        Assert.assertTrue(ClientContext.getInstance().login(userDetail.getUserName(), userDetail.getPassword()));
+
+
+        Integer dataSetIdYouGotFromFile = 2;
+        DataSetDTO dataSetRequest = new DataSetDTO(DtoMetaData.ProcessType.UPDATE);
+        dataSetRequest.setDataSetId(dataSetIdYouGotFromFile);
+        dataSetRequest.setDataTable("your table name");
+        dataSetRequest.setDataFile("your file name");
+
+        DtoRequestDataSet dtoRequestDataSet = new DtoRequestDataSet();
+        DataSetDTO dataSetResponse = dtoRequestDataSet.process(dataSetRequest);
+
+        // if you didn't succeed, do not pass go, but do log errors to your log file
+        if (!dataSetResponse.getDtoHeaderResponse().isSucceeded()) {
+            System.out.println();
+            System.out.println("*** Header errors: ");
+            for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getDtoHeaderResponse().getStatusMessages()) {
+                System.out.println(currentStatusMesage.getMessage());
+            }
+        }
+    }
 }
