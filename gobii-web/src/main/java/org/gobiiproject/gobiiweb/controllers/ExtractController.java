@@ -6,6 +6,7 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
+import org.gobiiproject.gobidomain.services.OrganizationService;
 import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
@@ -32,6 +33,9 @@ public class ExtractController {
 
     @Autowired
     private PingService pingService = null;
+
+    @Autowired
+    private ExtractorInstructionFilesService extractorInstructionFilesService = null;
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
