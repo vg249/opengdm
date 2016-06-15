@@ -84,6 +84,14 @@
     <bean id="loaderInstructionFilesService"
           class="org.gobiiproject.gobidomain.services.impl.LoaderInstructionFileServiceImpl"/>
 
+    <!-- **** Extractor File Beans *************************************** -->
+    <bean id="extractorFileDAO"
+          class="org.gobiiproject.gobiidao.filesystem.impl.ExtractorInstructionsDAOImpl"/>
+    <bean id="dtoMapExtractorInstructions"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapExtractorInstructionsImpl"/>
+    <bean id="ExtractorInstructionFilesService"
+          class="org.gobiiproject.gobidomain.services.impl.ExtractorInstructionFileServiceImpl"/>
+
     <!-- **** Contact Beans *************************************** -->
     <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.impl.DtoMapContactImpl"/>
     <bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl"/>
@@ -176,6 +184,10 @@
     <bean id="ManifestService" class="org.gobiiproject.gobidomain.services.impl.ManifestServiceImpl"/>
 
 
+    <!-- **** Organization Beans *************************************** -->
+    <bean id="rsOrganizationDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsOrganizationDaoImpl"/>
+    <bean id="dtoMapOrganization" class="org.gobiiproject.gobiidtomapping.impl.DtoMapOrganizationImpl"/>
+    <bean id="OrganizationService" class="org.gobiiproject.gobidomain.services.impl.OrganizationServiceImpl"/>
 
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 

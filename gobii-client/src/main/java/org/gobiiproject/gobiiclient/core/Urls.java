@@ -90,6 +90,10 @@ public class Urls {
                 returnVal += "manifest";
                 break;
 
+            case URL_ORGANIZATION:
+                returnVal += "organization";
+                break;
+
             case URL_PLATFORM:
                 returnVal += "platform";
                 break;

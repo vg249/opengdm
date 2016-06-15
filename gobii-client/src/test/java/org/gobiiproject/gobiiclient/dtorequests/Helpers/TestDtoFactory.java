@@ -191,6 +191,24 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
     }
 
 
+    public static OrganizationDTO makePopulatedOrganizationDTO(DtoMetaData.ProcessType processType,
+                                                       Integer uniqueStem) {
+
+        OrganizationDTO returnVal = new OrganizationDTO(processType);
+
+        String uniqueStemString = uniqueStem.toString();
+        returnVal.setName(uniqueStem + ": reference");
+        returnVal.setAddress("address:" + uniqueStem);
+        returnVal.setWebsite(uniqueStem + ".com");
+        returnVal.setCreatedBy(1);
+        returnVal.setCreatedDate(new Date());
+        returnVal.setModifiedBy(1);
+        returnVal.setModifiedDate(new Date());
+
+        return returnVal;
+
+    }
+
     public static ManifestDTO makePopulatedManifestDTO(DtoMetaData.ProcessType processType,
                                                        Integer uniqueStem) {
 

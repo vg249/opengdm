@@ -53,6 +53,9 @@ public class LoadController {
     private MarkerGroupService markerGroupService = null;
 
     @Autowired
+    private OrganizationService organizationService = null;
+
+    @Autowired
     private ExperimentService experimentService = null;
 
     @Autowired
@@ -219,6 +222,22 @@ public class LoadController {
         return (returnVal);
 
     }//processManifest
+
+    @RequestMapping(value = "/organization", method = RequestMethod.POST)
+    @ResponseBody
+    public OrganizationDTO process(@RequestBody OrganizationDTO organizationDTO) {
+
+        OrganizationDTO returnVal = new OrganizationDTO();
+        try {
+            returnVal = organizationService.process(organizationDTO);
+        } catch (Exception e) {
+
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+        return (returnVal);
+
+    }//processOrganization
 
     @RequestMapping(value = "/nameidlist", method = RequestMethod.POST)
     @ResponseBody
