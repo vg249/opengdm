@@ -95,8 +95,12 @@ public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
                 throw new GobiiDaoException("Unable to create directory " + pathName);
             }
 
-            if (!(pathToCreate.setReadable(true, false) && pathToCreate.setWritable(true, false))) {
-                throw new GobiiDaoException("Unable to set permissions on directory " + pathName);
+            if (!pathToCreate.canRead() && !pathToCreate.setReadable(true, false)) {
+                throw new GobiiDaoException("Unable to set read permissions on directory " + pathName);
+            }
+
+            if (!pathToCreate.canWrite() && !pathToCreate.setWritable(true, false)) {
+                throw new GobiiDaoException("Unable to set write permissions on directory " + pathName);
             }
 
         } else {

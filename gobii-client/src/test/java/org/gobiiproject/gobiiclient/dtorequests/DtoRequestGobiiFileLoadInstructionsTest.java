@@ -39,14 +39,12 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
     }
 
 
-    @Ignore
+    @Test
     public void testSendInstructionFile() throws Exception {
 
 
         LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
 
-
-        ClientContext.getInstance().setCurrentClientCrop(GobiiCropType.RICE);
 
         String instructionFileName = "testapp_" + DateUtils.makeDateIdString();
 
@@ -63,9 +61,14 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
 
         String instructionOneTableName = "foo_table";
+        Integer instructionOneDataSetId = 112;
+        GobiiCropType gobiiCropTypeTargetOne = ClientContext.getInstance().getCurrentClientCropType();
 
         GobiiLoaderInstruction gobiiLoaderInstructionOne = new GobiiLoaderInstruction();
         gobiiLoaderInstructionOne.setTable(instructionOneTableName);
+        gobiiLoaderInstructionOne.setDataSetId(instructionOneDataSetId );
+        gobiiLoaderInstructionOne.setGobiiCropType(gobiiCropTypeTargetOne);
+
 
         // column one
         String instructionOneColumnOneName = "my_foo_column";
@@ -191,6 +194,24 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                         .getGobiiLoaderInstructions()
                         .size()
         );
+
+
+        Assert.assertTrue(
+                loaderInstructionFilesDTOretrieveResponse
+                        .getGobiiLoaderInstructions()
+                        .get(0)
+                        .getDataSetId().equals(instructionOneDataSetId)
+        );
+
+
+        Assert.assertTrue(
+                loaderInstructionFilesDTOretrieveResponse
+                        .getGobiiLoaderInstructions()
+                        .get(0)
+                        .getGobiiCropType().equals(gobiiCropTypeTargetOne)
+        );
+
+
 
         Assert.assertTrue(
                 loaderInstructionFilesDTOretrieveResponse

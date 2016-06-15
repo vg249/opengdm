@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.instructions.loader;
 
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,8 @@ public class GobiiLoaderInstruction {
     private String table = null;
     private List<GobiiFileColumn> gobiiFileColumns = new ArrayList<>();
     private VcfParameters vcfParameters = new VcfParameters();
-    ;
+    private Integer dataSetId;
+    private GobiiCropType gobiiCropType;
 
     public GobiiFile getGobiiFile() {
         return gobiiFile;
@@ -48,6 +51,24 @@ public class GobiiLoaderInstruction {
 
     public GobiiLoaderInstruction setVcfParameters(VcfParameters vcfParameters) {
         this.vcfParameters = vcfParameters;
+        return this;
+    }
+
+    public Integer getDataSetId() {
+        return dataSetId;
+    }
+
+    public GobiiLoaderInstruction setDataSetId(Integer dataSetId) {
+        this.dataSetId = dataSetId;
+        return this;
+    }
+
+    public GobiiCropType getGobiiCropType() {
+        return gobiiCropType;
+    }
+
+    public GobiiLoaderInstruction setGobiiCropType(GobiiCropType gobiiCropType) {
+        this.gobiiCropType = gobiiCropType;
         return this;
     }
 }
