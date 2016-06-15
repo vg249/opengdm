@@ -19,4 +19,6 @@ public interface LoaderInstructionsDAO {
 
     void makeDirectory(String pathName) throws GobiiDaoException;
 
+    void verifyDirectoryPermissions(String pathName) throws GobiiDaoException;
+
 }

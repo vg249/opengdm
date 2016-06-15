@@ -84,6 +84,20 @@ public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
         return new File(pathName).exists();
     }
 
+
+    @Override
+    public void verifyDirectoryPermissions(String pathName) throws GobiiDaoException {
+
+        File pathToCreate = new File(pathName);
+        if (!pathToCreate.canRead() && !pathToCreate.setReadable(true, false)) {
+            throw new GobiiDaoException("Unable to set read permissions on directory " + pathName);
+        }
+
+        if (!pathToCreate.canWrite() && !pathToCreate.setWritable(true, false)) {
+            throw new GobiiDaoException("Unable to set write permissions on directory " + pathName);
+        }
+    }
+
     @Override
     public void makeDirectory(String pathName) throws GobiiDaoException {
 
@@ -95,13 +109,7 @@ public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
                 throw new GobiiDaoException("Unable to create directory " + pathName);
             }
 
-            if (!pathToCreate.canRead() && !pathToCreate.setReadable(true, false)) {
-                throw new GobiiDaoException("Unable to set read permissions on directory " + pathName);
-            }
-
-            if (!pathToCreate.canWrite() && !pathToCreate.setWritable(true, false)) {
-                throw new GobiiDaoException("Unable to set write permissions on directory " + pathName);
-            }
+            verifyDirectoryPermissions(pathName);
 
         } else {
             throw new GobiiDaoException("The specified path already exists: " + pathName);

@@ -35,17 +35,23 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
         if (null != instructionFileDirectory) {
             if (!loaderInstructionsDAO.doesPathExist(instructionFileDirectory)) {
                 loaderInstructionsDAO.makeDirectory(instructionFileDirectory);
+            } else {
+                loaderInstructionsDAO.verifyDirectoryPermissions(instructionFileDirectory);
             }
         }
 
         if (gobiiFile.isCreateSource()) {
             if (!loaderInstructionsDAO.doesPathExist(gobiiFile.getSource())) {
                 loaderInstructionsDAO.makeDirectory(gobiiFile.getSource());
+            } else {
+                loaderInstructionsDAO.verifyDirectoryPermissions(gobiiFile.getSource());
             }
         }
 
         if (!loaderInstructionsDAO.doesPathExist(gobiiFile.getDestination())) {
             loaderInstructionsDAO.makeDirectory(gobiiFile.getDestination());
+        } else {
+            loaderInstructionsDAO.verifyDirectoryPermissions(gobiiFile.getDestination());
         }
 
     } // createDirectories()
