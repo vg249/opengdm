@@ -334,6 +334,21 @@ public class DtoRequestIdNameIdListTest {
     }
 
     @Test
+    public void testGetOrganizationNames() throws Exception {
+
+        // Assumes rice data with seed script is loaded
+        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+        nameIdListDTORequest.setEntityName("organization");
+        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+
+        Assert.assertNotEquals(null, nameIdListDtoResponse);
+        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+
+    }
+
+    @Test
     public void testGetDataSetFileNames() throws Exception {
 
         // Assumes rice data with seed script is loaded
