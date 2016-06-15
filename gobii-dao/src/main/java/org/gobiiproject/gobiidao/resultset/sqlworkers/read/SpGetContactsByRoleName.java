@@ -29,6 +29,7 @@ public class SpGetContactsByRoleName implements Work {
                 "\t\t\t\t\tc.firstname,\n" +
                 "\t\t\t\t\tc.code,\n" +
                 "\t\t\t\t\tc.email,\n" +
+                "\t\t\t\t\tc.organization_id,\n" +
                 "\t\t\t\t\tr.role_id,\n" +
                 "\t\t\t\t\tr.role_name,\n" +
                 "\t\t\t\t\tr.role_code\n" +

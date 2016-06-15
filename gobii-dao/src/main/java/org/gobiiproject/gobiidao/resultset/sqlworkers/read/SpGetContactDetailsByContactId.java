@@ -34,6 +34,7 @@ public class SpGetContactDetailsByContactId implements Work {
                 "c.code,\n" +
                 "c.email,\n" +
                 "c.roles,\n" +
+                "c.organization_id,\n" +
                 "c.created_by,\n" +
                 "c.created_date,\n" +
                 "c.modified_by,\n" +

@@ -30,6 +30,7 @@ public class ContactDTO extends DtoMetaData {
     private String code;
     private String email;
     private List<Integer> roles = new ArrayList<>();
+    private Integer organizationId;
     private Integer createdBy;
     private Date createdDate;
     private Integer modifiedBy;
@@ -86,6 +87,16 @@ public class ContactDTO extends DtoMetaData {
     @GobiiEntityColumn(columnName = "roles")
     public void setRoles( List<Integer> roles) {
         this.roles = roles;
+    }
+
+    @GobiiEntityParam(paramName = "organizationId")
+    public Integer getOrganizationId() {
+        return organizationId;
+    }
+
+    @GobiiEntityColumn(columnName = "organization_id")
+    public void setOrganizationId(Integer organizationId) {
+        this.organizationId = organizationId;
     }
 
     @GobiiEntityParam(paramName = "createdBy")
