@@ -1,5 +1,10 @@
 package org.gobiiproject.gobiimodel.config;
 
+import org.gobiiproject.gobiimodel.types.GobiiFileLocationTypes;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Phil on 6/10/2016.
  */
@@ -18,6 +23,7 @@ public class ServerConfig {
     private Integer port;
     private String domain;
     private String contextRoot;
+    private Map<GobiiFileLocationTypes,String> fileLocations = new HashMap<>();
 
     public Integer getPort() {
         return port;
@@ -41,5 +47,13 @@ public class ServerConfig {
 
     public void setContextRoot(String contextRoot) {
         this.contextRoot = contextRoot;
+    }
+
+    public Map<GobiiFileLocationTypes, String> getFileLocations() {
+        return fileLocations;
+    }
+
+    public void setFileLocations(Map<GobiiFileLocationTypes, String> fileLocations) {
+        this.fileLocations = fileLocations;
     }
 }

@@ -17,6 +17,7 @@ import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.types.GobiiFileLocationTypes;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -68,6 +69,8 @@ public class DtoRequestConfigSettingsTest {
                 .filter(e ->
                         (e.getValue().getDomain().equals(cropConfigArbitrary.getServiceDomain())) &&
                                 (e.getValue().getPort().equals(cropConfigArbitrary.getServicePort())) &&
+                                (e.getValue().getFileLocations().get(GobiiFileLocationTypes.EXTRACTORINSTRUCTION_FILES)
+                                        .equals(cropConfigArbitrary.getExtractorInstructionFilesDirectory())) &&
                                 (e.getKey().equals(cropConfigArbitrary.getGobiiCropType())))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
