@@ -55,12 +55,12 @@ public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
                         bufferedWriter.close();
                     } else {
                         throw new GobiiDaoException("Path of specified instruction file name is not a directory: "
-                                + instructionFileFqpn);
+                                + destinationDirectory);
                     } // if-else directory is really a directory
 
                 } else {
                     throw new GobiiDaoException("Path of specified instruction file does not exist: "
-                            + instructionFileFqpn);
+                            + destinationDirectory);
 
                 } // if-else destination directory exists
 

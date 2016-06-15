@@ -21,7 +21,6 @@ import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.stream.Collectors;
@@ -318,7 +317,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String instructionFileDirectory = ClientContext
                 .getInstance()
                 .getCurrentClientCropConfig()
-                .getInstructionFilesDirectory();
+                .getLoaderInstructionFilesDirectory();
         String bogusUserInputFile = instructionFileDirectory + newInstructionFileNameNoError + ".json";
 
         loaderInstructionFilesDTOToSend.setInstructionFileName("testapp_" + DateUtils.makeDateIdString());

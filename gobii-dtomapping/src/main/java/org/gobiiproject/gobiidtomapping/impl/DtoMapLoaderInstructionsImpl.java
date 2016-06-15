@@ -68,7 +68,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             String instructionFileDirectory = configSettings
                     .getCurrentCropConfig()
-                    .getInstructionFilesDirectory();
+                    .getLoaderInstructionFilesDirectory();
 
             String instructionFileFqpn = instructionFileDirectory
                     + loaderInstructionFilesDTO.getInstructionFileName()
@@ -194,7 +194,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             String instructionFileFqpn = configSettings
                     .getCurrentCropConfig()
-                    .getInstructionFilesDirectory()
+                    .getLoaderInstructionFilesDirectory()
                     + loaderInstructionFilesDTO.getInstructionFileName()
                     + INSTRUCTION_FILE_EXT;
 

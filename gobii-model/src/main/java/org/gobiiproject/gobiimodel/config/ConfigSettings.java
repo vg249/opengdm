@@ -40,6 +40,7 @@ public class ConfigSettings {
     private final String CROP_SUFFIX_SERVICE_PORT = "serviceport";
     private final String CROP_SUFFIX_USER_FILE_LOCLOCATION = "usrfloc";
     private final String CROP_SUFFIX_LOADR_FILE_LOCATION = "ldrfloc";
+    private final String CROP_SUFFIX_EXTRACTOR_FILE_LOCATION = "extrfloc";
     private final String CROP_SUFFIX_INTERMEDIATE_FILE_LOCATION = "intfloc";
     private final String CROP_SUFFIX_INTERMEDIATE_FILE_ACTIVE = "active";
 
@@ -129,6 +130,7 @@ public class ConfigSettings {
             Integer servicePort = Integer.parseInt(configReader.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_PORT));
             String userFilesLocation = configReader.getPropValue(currentPrefix + CROP_SUFFIX_USER_FILE_LOCLOCATION);
             String loaderFilesLocation = configReader.getPropValue(currentPrefix + CROP_SUFFIX_LOADR_FILE_LOCATION);
+            String extractorFilesLocation = configReader.getPropValue(currentPrefix + CROP_SUFFIX_EXTRACTOR_FILE_LOCATION);
             String intermediateFilesLocation = configReader.getPropValue(currentPrefix + CROP_SUFFIX_INTERMEDIATE_FILE_LOCATION);
             String isActiveString = configReader.getPropValue(currentPrefix + CROP_SUFFIX_INTERMEDIATE_FILE_ACTIVE);
             boolean isActive = isActiveString.toLowerCase().equals("true");
@@ -138,6 +140,7 @@ public class ConfigSettings {
                     serviceAppRoot,
                     servicePort,
                     loaderFilesLocation,
+                    extractorFilesLocation,
                     userFilesLocation,
                     intermediateFilesLocation,
                     isActive);

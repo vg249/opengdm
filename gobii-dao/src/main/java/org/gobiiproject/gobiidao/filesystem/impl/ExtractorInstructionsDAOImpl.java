@@ -49,12 +49,12 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
                         bufferedWriter.close();
                     } else {
                         throw new GobiiDaoException("Path of specified instruction file name is not a directory: "
-                                + instructionFileFqpn);
+                                + destinationDirectory);
                     } // if-else directory is really a directory
 
                 } else {
-                    throw new GobiiDaoException("Path of specified instruction file does not exist: "
-                            + instructionFileFqpn);
+                    throw new GobiiDaoException("Path of specified instruction file directory does not exist: "
+                            + destinationDirectory);
 
                 } // if-else destination directory exists
 
@@ -79,6 +79,20 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
     }
 
     @Override
+    public void verifyDirectoryPermissions(String pathName) throws GobiiDaoException {
+
+        File pathToCreate = new File(pathName);
+        if (!pathToCreate.canRead() && !pathToCreate.setReadable(true, false)) {
+            throw new GobiiDaoException("Unable to set read permissions on directory " + pathName);
+        }
+
+        if (!pathToCreate.canWrite() && !pathToCreate.setWritable(true, false)) {
+            throw new GobiiDaoException("Unable to set write permissions on directory " + pathName);
+        }
+    }
+
+
+    @Override
     public void makeDirectory(String pathName) throws GobiiDaoException {
 
         if (!doesPathExist(pathName)) {
@@ -89,9 +103,16 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
                 throw new GobiiDaoException("Unable to create directory " + pathName);
             }
 
-            if (!(pathToCreate.setReadable(true, false) && pathToCreate.setWritable(true, false))) {
-                throw new GobiiDaoException("Unable to set permissions on directory " + pathName);
+            if ((!pathToCreate.canRead()) && !(pathToCreate.setReadable(true, false))) {
+                throw new GobiiDaoException("Unable to set read on directory " + pathName);
             }
+
+            if ((!pathToCreate.canWrite()) && !(pathToCreate.setWritable(true, false))) {
+                throw new GobiiDaoException("Unable to set write on directory " + pathName);
+            }
+
+
+
 
         } else {
             throw new GobiiDaoException("The specified path already exists: " + pathName);

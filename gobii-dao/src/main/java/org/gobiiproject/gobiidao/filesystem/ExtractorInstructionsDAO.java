@@ -17,6 +17,8 @@ public interface ExtractorInstructionsDAO {
 
     boolean doesPathExist(String pathName) throws GobiiDaoException;
 
+    void verifyDirectoryPermissions(String pathName) throws GobiiDaoException;
+
     void makeDirectory(String pathName) throws GobiiDaoException;
 
 }

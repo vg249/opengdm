@@ -79,7 +79,7 @@ public class DtoRequestOrganizationTest {
         // so this would be the typical workflow for the client app
         organizationDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
         String newDataFile = UUID.randomUUID().toString();
-        organizationDTOReceived.setFilePath(newDataFile);
+        //organizationDTOReceived.setFilePath(newDataFile);
 
         OrganizationDTO OrganizationDTOResponse = dtoRequestOrganization.process(organizationDTOReceived);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(OrganizationDTOResponse));
@@ -89,7 +89,7 @@ public class DtoRequestOrganizationTest {
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestOrganizationReRetrieved));
 
-        Assert.assertTrue(dtoRequestOrganizationReRetrieved.getFilePath().equals(newDataFile));
+        //Assert.assertTrue(dtoRequestOrganizationReRetrieved.getFilePath().equals(newDataFile));
 
     }
 }

@@ -16,6 +16,7 @@ crops.dev.active=true
 # ---------- FILE MANAGEMENT
 crops.dev.usrfloc=/shared_data/gobii/crops/dev/files/
 crops.dev.ldrfloc=/shared_data/gobii/crops/dev/loader/instructions/
+crops.dev.extrfloc=/shared_data/gobii/crops/dev/extractor/instructions/
 crops.dev.intfloc=/shared_data/gobii/crops/dev/loader/digest/
 # ---------- MONET
 crops.dev.db.monetdb.host=cbsugobii06.tc.cornell.edu
@@ -39,6 +40,7 @@ crops.test.active=true
 # ---------- FILE MANAGEMENT
 crops.test.usrfloc=/shared_data/gobii/crops/test/files/
 crops.test.ldrfloc=/shared_data/gobii/crops/test/loader/instructions/
+crops.test.extrfloc=/shared_data/gobii/crops/test/extractor/instructions/
 crops.test.intfloc=/shared_data/gobii/crops/test/loader/digest/
 # ---------- MONET
 crops.test.db.monetdb.host=cbsugobii06.tc.cornell.edu
@@ -63,6 +65,7 @@ crops.chickpea.active=true
 # ---------- FILE MANAGEMENT
 crops.chickpea.usrfloc=/shared_data/gobii/crops/chickpea/files/
 crops.chickpea.ldrfloc=/shared_data/gobii/crops/chickpea/loader/instructions/
+crops.chickpea.extrfloc=/shared_data/gobii/crops/chickpea/extractor/instructions/
 crops.chickpea.intfloc=/shared_data/gobii/crops/chickpea/loader/digest/
 # ---------- MONET
 crops.chickpea.db.monetdb.host=cbsugobii06.tc.cornell.edu
@@ -86,6 +89,7 @@ crops.maize.active=true
 # ---------- FILE MANAGEMENT
 crops.maize.usrfloc=/shared_data/gobii/crops/maize/files/
 crops.maize.ldrfloc=/shared_data/gobii/crops/maize/loader/instructions/
+crops.maize.extrfloc=/shared_data/gobii/crops/maize/extractor/instructions/
 crops.maize.intfloc=/shared_data/gobii/crops/maize/loader/digest/
 # ---------- MONET
 crops.maize.db.monetdb.host=localhost
@@ -109,6 +113,7 @@ crops.rice.active=true
 # ---------- FILE MANAGEMENT
 crops.rice.usrfloc=/shared_data/gobii/crops/rice/files/
 crops.rice.ldrfloc=/shared_data/gobii/crops/rice/loader/instructions/
+crops.rice.extrfloc=/shared_data/gobii/crops/rice/extractor/instructions/
 crops.rice.intfloc=/shared_data/gobii/crops/rice/loader/digest/
 # ---------- MONET
 crops.rice.db.monetdb.host=cbsugobii06.tc.cornell.edu
@@ -132,6 +137,7 @@ crops.sorghum.active=true
 # ---------- FILE MANAGEMENT
 crops.sorghum.usrfloc=/shared_data/gobii/crops/sorghum/files/
 crops.sorghum.ldrfloc=/shared_data/gobii/crops/sorghum/loader/instructions/
+crops.sorghum.extrfloc=/shared_data/gobii/crops/sorghum/extractor/instructions/
 crops.sorghum.intfloc=/shared_data/gobii/crops/sorghum/loader/digest/
 # ---------- MONET
 crops.sorghum.db.monetdb.host=cbsugobii06.tc.cornell.edu
@@ -153,6 +159,7 @@ crops.wheat.serviceport=8080
 # ---------- FILE MANAGEMENT
 crops.wheat.usrfloc=/shared_data/gobii/crops/wheat/files/
 crops.wheat.ldrfloc=/shared_data/gobii/crops/wheat/loader/instructions/
+crops.wheat.extrfloc=/shared_data/gobii/crops/wheat/extractor/instructions/
 crops.wheat.intfloc=/shared_data/gobii/crops/wheat/loader/digest/
 crops.wheat.active=true
 # ---------- MONET

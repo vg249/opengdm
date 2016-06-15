@@ -28,13 +28,14 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
     @Autowired
     private ExtractorInstructionsDAO extractorInstructionsDAO;
 
-    private void createDirectories(String instructionFileDirectory,
-                                   GobiiDataSetExtract gobiiDataSetExtract) throws GobiiDaoException {
+    private void createDirectories(String instructionFileDirectory) throws GobiiDaoException {
 
 
         if (null != instructionFileDirectory) {
             if (!extractorInstructionsDAO.doesPathExist(instructionFileDirectory)) {
                 extractorInstructionsDAO.makeDirectory(instructionFileDirectory);
+            } else {
+                extractorInstructionsDAO.verifyDirectoryPermissions(instructionFileDirectory);
             }
         }
 
@@ -52,17 +53,19 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
             String instructionFileDirectory = configSettings
                     .getCurrentCropConfig()
-                    .getInstructionFilesDirectory();
+                    .getExtractorInstructionFilesDirectory();
+
+            createDirectories(instructionFileDirectory);
 
             String instructionFileFqpn = instructionFileDirectory
                     + extractorInstructionFilesDTO.getInstructionFileName()
                     + INSTRUCTION_FILE_EXT;
 
 
+            boolean allValuesSpecified = true;
             for (GobiiExtractorInstruction currentExtractorInstruction :
                     extractorInstructionFilesDTO.getGobiiExtractorInstructions()) {
 
-                boolean allValuesSpecified = true;
                 if (LineUtils.isNullOrEmpty(returnVal.getInstructionFileName())) {
                     allValuesSpecified = false;
                     returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
@@ -91,24 +94,33 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 }
 
 
-
             } // iterate instructions/files
 
-            if (0 ==
-                    returnVal
-                            .getDtoHeaderResponse()
-                            .getStatusMessages()
-                            .stream()
-                            .filter(m -> m.getStatusLevel().equals(DtoHeaderResponse.StatusLevel.ERROR))
-                            .collect(Collectors.toList())
-                            .size()
-                    ) {
+            if (allValuesSpecified) {
+
+                if (0 ==
+                        returnVal
+                                .getDtoHeaderResponse()
+                                .getStatusMessages()
+                                .stream()
+                                .filter(m -> m.getStatusLevel().equals(DtoHeaderResponse.StatusLevel.ERROR))
+                                .collect(Collectors.toList())
+                                .size()
+                        ) {
 
 
-                extractorInstructionsDAO.writeInstructions(instructionFileFqpn,
-                        returnVal.getGobiiExtractorInstructions());
-            }
+                    if( ! extractorInstructionsDAO.doesPathExist(instructionFileFqpn)) {
 
+                        extractorInstructionsDAO.writeInstructions(instructionFileFqpn,
+                                returnVal.getGobiiExtractorInstructions());
+                    } else {
+                        returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
+                                DtoHeaderResponse.ValidationStatusType.VALIDATION_NOT_UNIQUE,
+                                "The specified instruction file already exists: " + instructionFileFqpn);
+                    }
+                }
+
+            } // if all values were specified
 
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -131,7 +143,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
             String instructionFileFqpn = configSettings
                     .getCurrentCropConfig()
-                    .getInstructionFilesDirectory()
+                    .getExtractorInstructionFilesDirectory()
                     + extractorInstructionFilesDTO.getInstructionFileName()
                     + INSTRUCTION_FILE_EXT;
 

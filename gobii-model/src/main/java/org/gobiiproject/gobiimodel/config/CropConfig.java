@@ -17,16 +17,18 @@ public class CropConfig {
     private String serviceAppRoot;
     private Integer servicePort;
     private String rawUserFilesDirectory;
-    private String instructionFilesDirectory;
+    private String loaderInstructionFilesDirectory;
+    private String extractorInstructionFilesDirectory;
     private String intermediateFilesDirectory;
     private boolean isActive = false;
-    private Map<GobiiDbType,CropDbConfig> dbConfigByDbType = new HashMap<>();
+    private Map<GobiiDbType, CropDbConfig> dbConfigByDbType = new HashMap<>();
 
     public CropConfig(GobiiCropType gobiiCropType,
                       String serviceDomain,
                       String serviceAppRoot,
                       Integer servicePort,
-                      String instructionFilesDirectory,
+                      String loaderInstructionFilesDirectory,
+                      String extractorInstructionFilesDirectory,
                       String rawUserFilesDirectory,
                       String intermediateFilesDirectory,
                       boolean isActive) {
@@ -36,7 +38,8 @@ public class CropConfig {
         this.serviceAppRoot = serviceAppRoot;
         this.servicePort = servicePort;
         this.rawUserFilesDirectory = rawUserFilesDirectory;
-        this.instructionFilesDirectory = instructionFilesDirectory;
+        this.loaderInstructionFilesDirectory = loaderInstructionFilesDirectory;
+        this.extractorInstructionFilesDirectory = extractorInstructionFilesDirectory;
         this.intermediateFilesDirectory = intermediateFilesDirectory;
         this.isActive = isActive;
     }
@@ -49,8 +52,12 @@ public class CropConfig {
         return rawUserFilesDirectory;
     }
 
-    public String getInstructionFilesDirectory() {
-        return instructionFilesDirectory;
+    public String getLoaderInstructionFilesDirectory() {
+        return loaderInstructionFilesDirectory;
+    }
+
+    public String getExtractorInstructionFilesDirectory() {
+        return extractorInstructionFilesDirectory;
     }
 
     public String getIntermediateFilesDirectory() {
@@ -86,7 +93,7 @@ public class CropConfig {
     }
 
     public void addCropDbConfig(GobiiDbType gobiiDbTypee, CropDbConfig cropDbConfig) {
-        dbConfigByDbType.put(gobiiDbTypee,cropDbConfig);
+        dbConfigByDbType.put(gobiiDbTypee, cropDbConfig);
     } // addCropDbConfig()
 
     public CropDbConfig getCropDbConfig(GobiiDbType gobiiDbType) {
