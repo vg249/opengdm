@@ -43,15 +43,17 @@ public class DtoRequestAuthenticationTest {
     public void testSucceedWithOneAuthentication() throws Exception {
 
         Assert.assertTrue(Authenticator.authenticate());
-        String token = ClientContext.getInstance().getUserToken();
+        String token = ClientContext.getInstance(null, false).getUserToken();
 
         AnalysisDTO analysisDTORequest = new AnalysisDTO();
         analysisDTORequest.setAnalysisId(1);
 
-        AnalysisDTO analysisDTOResponse = new DtoRequestProcessor<AnalysisDTO>().process(analysisDTORequest,
+        AnalysisDTO analysisDTOResponse =  new DtoRequestProcessor<AnalysisDTO>().process(analysisDTORequest,
                 AnalysisDTO.class,
                 ControllerType.LOADER,
                 ServiceRequestId.URL_ANALYSIS,
+                ClientContext.getInstance(null, false).getCurrentCropDomain(),
+                ClientContext.getInstance(null, false).getCurrentCropPort(),
                 token);
 
         Assert.assertNotEquals(null, analysisDTOResponse);
@@ -60,26 +62,27 @@ public class DtoRequestAuthenticationTest {
 
     }
 
-
-
     @Test
     public void testFailOnSecondAuthentication() throws Exception {
 
         Assert.assertTrue(Authenticator.authenticate());
-        String oldToken = ClientContext.getInstance().getUserToken();
+        String oldToken = ClientContext.getInstance(null, false).getUserToken();
 
         Assert.assertTrue(Authenticator.authenticate());
-        String newToken = ClientContext.getInstance().getUserToken();
+        String newToken = ClientContext.getInstance(null, false).getUserToken();
 
         Assert.assertNotEquals(oldToken, newToken);
 
         AnalysisDTO analysisDTORequest = new AnalysisDTO();
         analysisDTORequest.setAnalysisId(1);
 
+
         AnalysisDTO analysisDTOResponse = new DtoRequestProcessor<AnalysisDTO>().process(analysisDTORequest,
                 AnalysisDTO.class,
                 ControllerType.LOADER,
                 ServiceRequestId.URL_ANALYSIS,
+                ClientContext.getInstance(null, false).getCurrentCropDomain(),
+                ClientContext.getInstance(null, false).getCurrentCropPort(),
                 oldToken);
 
         Assert.assertNotEquals(null, analysisDTOResponse);

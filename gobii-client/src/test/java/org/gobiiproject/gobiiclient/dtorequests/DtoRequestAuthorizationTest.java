@@ -38,8 +38,8 @@ public class DtoRequestAuthorizationTest {
 
 
         URI uri = new URIBuilder().setScheme("http")
-                .setHost(ClientContext.getInstance().getCurrentCropDomain())
-                .setPort(ClientContext.getInstance().getCurrentCropPort())
+                .setHost(ClientContext.getInstance(null, false).getCurrentCropDomain())
+                .setPort(ClientContext.getInstance(null, false).getCurrentCropPort())
                 .setPath(Urls.getRequestUrl(ControllerType.LOADER, serviceRequestId))
                 .build();
 
@@ -48,7 +48,7 @@ public class DtoRequestAuthorizationTest {
         returnVal.addHeader("Content-Type", "application/json");
         returnVal.addHeader("Accept", "application/json");
         returnVal.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP,
-                ClientContext.getInstance().getCurrentClientCropType().toString());
+                ClientContext.getInstance(null, false).getCurrentClientCropType().toString());
 
         return returnVal;
     }

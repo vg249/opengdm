@@ -22,4 +22,14 @@ public class ConfigSettingsDTO extends DtoMetaData {
     public void setServerConfigs(Map<GobiiCropType, ServerConfig> serverConfigs) {
         this.serverConfigs = serverConfigs;
     }
+
+    GobiiCropType defaultCrop = GobiiCropType.TEST;
+
+    public GobiiCropType getDefaultCrop() {
+        return defaultCrop;
+    }
+
+    public void setDefaultCrop(GobiiCropType defaultCrop) {
+        this.defaultCrop = defaultCrop;
+    }
 }

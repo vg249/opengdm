@@ -16,6 +16,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstructio
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
+import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
@@ -48,24 +49,23 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         String instructionFileName = "testapp_" + DateUtils.makeDateIdString();
 
         String digesterInputDirectory = ClientContext
-                .getInstance()
-                .getCurrentClientCropConfig()
-                .getRawUserFilesDirectory();
+                .getInstance(null, false)
+                .getFileLocationOfCurrenCrop(GobiiFileLocationType.LOADERINSTRUCTION_FILES);
 
-        String digesterOutputDirectory = ClientContext
-                .getInstance()
-                .getCurrentClientCropConfig()
-                .getIntermediateFilesDirectory();
+
+        String digesterOutputDirectory =
+                ClientContext.getInstance(null, false)
+                        .getFileLocationOfCurrenCrop(GobiiFileLocationType.INTERMEDIATE_FILES);
 
         loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
 
         String instructionOneTableName = "foo_table";
         Integer instructionOneDataSetId = 112;
-        GobiiCropType gobiiCropTypeTargetOne = ClientContext.getInstance().getCurrentClientCropType();
+        GobiiCropType gobiiCropTypeTargetOne = ClientContext.getInstance(null, false).getCurrentClientCropType();
 
         GobiiLoaderInstruction gobiiLoaderInstructionOne = new GobiiLoaderInstruction();
         gobiiLoaderInstructionOne.setTable(instructionOneTableName);
-        gobiiLoaderInstructionOne.setDataSetId(instructionOneDataSetId );
+        gobiiLoaderInstructionOne.setDataSetId(instructionOneDataSetId);
         gobiiLoaderInstructionOne.setGobiiCropType(gobiiCropTypeTargetOne);
 
 
@@ -211,7 +211,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         );
 
 
-
         Assert.assertTrue(
                 loaderInstructionFilesDTOretrieveResponse
                         .getGobiiLoaderInstructions()
@@ -315,9 +314,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         // that would not be the real use case; however, it is a file we created on the server
         // so it's handy way to test this functionality
         String instructionFileDirectory = ClientContext
-                .getInstance()
-                .getCurrentClientCropConfig()
-                .getLoaderInstructionFilesDirectory();
+                .getInstance(null, false)
+                .getFileLocationOfCurrenCrop(GobiiFileLocationType.LOADERINSTRUCTION_FILES);
         String bogusUserInputFile = instructionFileDirectory + newInstructionFileNameNoError + ".json";
 
         loaderInstructionFilesDTOToSend.setInstructionFileName("testapp_" + DateUtils.makeDateIdString());

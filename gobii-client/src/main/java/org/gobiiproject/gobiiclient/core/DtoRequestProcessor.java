@@ -16,44 +16,36 @@ public class DtoRequestProcessor<T> {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoRequestProcessor.class);
 
-    private TypedRestRequest<T> makeTypedRequest(Class<T> DtoType) {
-
-        TypedRestRequest<T> returnVal = null;
-
-        try {
-            String baseUrl = ClientContext.getInstance().getCurrentCropDomain();
-            Integer port = ClientContext.getInstance().getCurrentCropPort();
-            returnVal = new TypedRestRequest<>(baseUrl, port, DtoType);
-        } catch (Exception e) {
-            LOGGER.error("error configuring request", e);
-        }
-
-        return returnVal;
-
-    }
-
     public T process(T dtoToProcess, Class<T> DtoType,
                      ControllerType controllerType,
                      ServiceRequestId requestId) throws Exception {
 
-        String token = ClientContext.getInstance().getUserToken();
+        String token = ClientContext.getInstance(null, false).getUserToken();
+        String serviceDomain = ClientContext.getInstance(null, false).getCurrentCropDomain();
+        Integer servicePort = ClientContext.getInstance(null, false).getCurrentCropPort();
 
         return this.process(dtoToProcess,
                 DtoType,
                 controllerType,
                 requestId,
+                serviceDomain,
+                servicePort,
                 token);
 
     }
 
-    public T process(T dtoToProcess, Class<T> DtoType,
+    public T process(T dtoToProcess,
+                     Class<T> DtoType,
                      ControllerType controllerType,
                      ServiceRequestId requestId,
+                     String host,
+                     Integer port,
                      String token) throws Exception {
 
         T returnVal = null;
 
-        TypedRestRequest<T> typedRestRequest = makeTypedRequest(DtoType);
+        TypedRestRequest<T> typedRestRequest= new TypedRestRequest<>(host, port, DtoType);
+
 
         if (null == token || token.isEmpty()) {
             throw (new Exception("there is no user token; user must log in"));
@@ -69,6 +61,5 @@ public class DtoRequestProcessor<T> {
         return returnVal;
 
     }
-
 
 }

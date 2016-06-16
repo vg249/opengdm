@@ -307,11 +307,11 @@ public class DtoRequestDataSetTest {
 
         // set up authentication and so forth
         // you'll need to get the current from the instruction file
-        ClientContext.getInstance().setCurrentClientCrop(GobiiCropType.DEV);
+        ClientContext.getInstance(null, false).setCurrentClientCrop(GobiiCropType.DEV);
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
         // you'll do an if-then for succesfull login
-        Assert.assertTrue(ClientContext.getInstance().login(userDetail.getUserName(), userDetail.getPassword()));
+        Assert.assertTrue(ClientContext.getInstance(null, false).login(userDetail.getUserName(), userDetail.getPassword()));
 
 
         Integer dataSetIdYouGotFromFile = 2;

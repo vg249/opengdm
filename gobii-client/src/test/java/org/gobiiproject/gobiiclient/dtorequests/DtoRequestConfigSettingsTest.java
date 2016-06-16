@@ -7,17 +7,12 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
-import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
-import org.gobiiproject.gobiimodel.types.GobiiFileLocationTypes;
+import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -25,8 +20,6 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class DtoRequestConfigSettingsTest {
@@ -69,7 +62,7 @@ public class DtoRequestConfigSettingsTest {
                 .filter(e ->
                         (e.getValue().getDomain().equals(cropConfigArbitrary.getServiceDomain())) &&
                                 (e.getValue().getPort().equals(cropConfigArbitrary.getServicePort())) &&
-                                (e.getValue().getFileLocations().get(GobiiFileLocationTypes.EXTRACTORINSTRUCTION_FILES)
+                                (e.getValue().getFileLocations().get(GobiiFileLocationType.EXTRACTORINSTRUCTION_FILES)
                                         .equals(cropConfigArbitrary.getExtractorInstructionFilesDirectory())) &&
                                 (e.getKey().equals(cropConfigArbitrary.getGobiiCropType())))
                 .map(Map.Entry::getValue)

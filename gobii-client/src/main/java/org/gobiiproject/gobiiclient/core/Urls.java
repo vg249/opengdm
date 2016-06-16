@@ -16,7 +16,20 @@ public class Urls {
     private final static String CTRLR_LOAD = "load/";
 
 
-    public static String getRequestUrl(ControllerType controllerType, ServiceRequestId requestId) throws Exception {
+//        String contextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
+
+
+    public static String getRequestUrl(ControllerType controllerType,
+                                       ServiceRequestId requestId) throws Exception {
+
+                return Urls.getRequestUrl(controllerType,
+                requestId,
+                ClientContext.getInstance(null, false).getCurrentCropContextRoot());
+    }
+
+    public static String getRequestUrl(ControllerType controllerType,
+                                       ServiceRequestId requestId,
+                                       String contextRoot) throws Exception {
 
         String controller = null;
         if (controllerType == ControllerType.LOADER) {
@@ -25,8 +38,7 @@ public class Urls {
             controller = CTRLR_EXTRACT;
         }
 
-        String appRoot = ClientContext.getInstance().getCurrentCropAppRoot();
-        String returnVal = appRoot + controller;
+        String returnVal = contextRoot + controller;
 
         switch (requestId) {
 

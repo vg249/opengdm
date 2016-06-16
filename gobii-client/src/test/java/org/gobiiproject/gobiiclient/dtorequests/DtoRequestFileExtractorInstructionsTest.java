@@ -8,6 +8,7 @@ import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
@@ -48,9 +49,8 @@ public class DtoRequestFileExtractorInstructionsTest {
         // ************** INSTRUCTION ONE
         GobiiExtractorInstruction gobiiExtractorInstructionOne = new GobiiExtractorInstruction();
         String digesterOutputDirectory = ClientContext
-                .getInstance()
-                .getCurrentClientCropConfig()
-                .getIntermediateFilesDirectory();
+                .getInstance(null, false)
+                .getFileLocationOfCurrenCrop(GobiiFileLocationType.RAWUSER_FILES);
         gobiiExtractorInstructionOne.setExtractDestinationDirectory(digesterOutputDirectory);
 
         // ************** DATA SET EXTRACT ONE

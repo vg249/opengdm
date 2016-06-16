@@ -78,7 +78,7 @@ public class HttpCore {
 
 
         httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP,
-                ClientContext.getInstance().getCurrentClientCropType().toString());
+                ClientContext.getInstance(null, false).getCurrentClientCropType().toString());
 
         return (HttpClientBuilder.create().build().execute(httpUriRequest));
 

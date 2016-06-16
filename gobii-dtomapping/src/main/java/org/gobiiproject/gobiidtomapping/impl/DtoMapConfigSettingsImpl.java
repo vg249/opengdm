@@ -5,7 +5,6 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
-import org.gobiiproject.gobiimodel.types.GobiiFileLocationTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,31 +22,13 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
 
         try {
             ConfigSettings configSettings = new ConfigSettings();
+            returnVal.setDefaultCrop(configSettings.getDefaultGobiiCropType());
             for (CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
 
-               ServerConfig currentServerConfig = new ServerConfig(currentCropConfig.getServicePort(),
-                        currentCropConfig.getServiceDomain(),
-                        currentCropConfig.getServiceAppRoot());
-
-                currentServerConfig
-                        .getFileLocations()
-                        .put(GobiiFileLocationTypes.EXTRACTORINSTRUCTION_FILES,currentCropConfig.getExtractorInstructionFilesDirectory());
-
-                currentServerConfig
-                        .getFileLocations()
-                        .put(GobiiFileLocationTypes.LOADERINSTRUCTION_FILES,currentCropConfig.getLoaderInstructionFilesDirectory());
-
-                currentServerConfig
-                        .getFileLocations()
-                        .put(GobiiFileLocationTypes.INTERMEDIATE_FILES,currentCropConfig.getIntermediateFilesDirectory());
-
-                currentServerConfig
-                        .getFileLocations()
-                        .put(GobiiFileLocationTypes.RAWUSER_FILES,currentCropConfig.getRawUserFilesDirectory());
+                ServerConfig currentServerConfig = new ServerConfig(currentCropConfig);
 
                 returnVal.getServerConfigs().put(currentCropConfig.getGobiiCropType(),
                         currentServerConfig);
-
             }
 
         } catch (Exception e) {

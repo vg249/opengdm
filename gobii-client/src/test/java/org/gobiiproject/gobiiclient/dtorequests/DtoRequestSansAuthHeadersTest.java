@@ -23,8 +23,8 @@ public class DtoRequestSansAuthHeadersTest {
     public void testNoAuthFails() throws Exception {
 
         URI uri = new URIBuilder().setScheme("http")
-                .setHost(ClientContext.getInstance().getCurrentCropDomain())
-                .setPort(ClientContext.getInstance().getCurrentCropPort())
+                .setHost(ClientContext.getInstance(null, false).getCurrentCropDomain())
+                .setPort(ClientContext.getInstance(null, false).getCurrentCropPort())
                 .setPath(Urls.getRequestUrl(ControllerType.LOADER, ServiceRequestId.URL_AUTH))
                 .build();
 
@@ -35,7 +35,7 @@ public class DtoRequestSansAuthHeadersTest {
         // WE ARE _NOT_ ADDING ANY OF THE AUTHENTICATION TOKENS
 
         postRequest.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP,
-                ClientContext.getInstance().getCurrentClientCropType().toString());
+                ClientContext.getInstance(null, false).getCurrentClientCropType().toString());
 
 
         HttpResponse httpResponse = HttpClientBuilder.create().build().execute(postRequest);

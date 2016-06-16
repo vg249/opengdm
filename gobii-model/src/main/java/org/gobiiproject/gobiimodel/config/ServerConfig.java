@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.gobiiproject.gobiimodel.types.GobiiFileLocationTypes;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
+import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,20 +11,35 @@ import java.util.Map;
  */
 public class ServerConfig {
 
-    public ServerConfig() {}
+    public ServerConfig() {
+    }
 
-    public ServerConfig(Integer port,
-                        String domain,
-                        String contextRoot) {
-        this.port = port;
-        this.domain = domain;
-        this.contextRoot = contextRoot;
+    public ServerConfig(CropConfig cropConfig) {
+
+        this.port = cropConfig.getServicePort();
+        this.domain = cropConfig.getServiceDomain();
+        this.contextRoot = cropConfig.getServiceAppRoot();
+        this.gobiiCropType = cropConfig.getGobiiCropType();
+
+        fileLocations
+                .put(GobiiFileLocationType.EXTRACTORINSTRUCTION_FILES, cropConfig.getExtractorInstructionFilesDirectory());
+
+        fileLocations
+                .put(GobiiFileLocationType.LOADERINSTRUCTION_FILES, cropConfig.getLoaderInstructionFilesDirectory());
+
+        fileLocations
+                .put(GobiiFileLocationType.INTERMEDIATE_FILES, cropConfig.getIntermediateFilesDirectory());
+
+        fileLocations
+                .put(GobiiFileLocationType.RAWUSER_FILES, cropConfig.getRawUserFilesDirectory());
+
     }
 
     private Integer port;
     private String domain;
     private String contextRoot;
-    private Map<GobiiFileLocationTypes,String> fileLocations = new HashMap<>();
+    private GobiiCropType gobiiCropType;
+    private Map<GobiiFileLocationType, String> fileLocations = new HashMap<>();
 
     public Integer getPort() {
         return port;
@@ -49,11 +65,19 @@ public class ServerConfig {
         this.contextRoot = contextRoot;
     }
 
-    public Map<GobiiFileLocationTypes, String> getFileLocations() {
+    public GobiiCropType getGobiiCropType() {
+        return gobiiCropType;
+    }
+
+    public void setGobiiCropType(GobiiCropType gobiiCropType) {
+        this.gobiiCropType = gobiiCropType;
+    }
+
+    public Map<GobiiFileLocationType, String> getFileLocations() {
         return fileLocations;
     }
 
-    public void setFileLocations(Map<GobiiFileLocationTypes, String> fileLocations) {
+    public void setFileLocations(Map<GobiiFileLocationType, String> fileLocations) {
         this.fileLocations = fileLocations;
     }
 }
