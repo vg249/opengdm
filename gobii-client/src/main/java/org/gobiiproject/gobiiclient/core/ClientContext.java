@@ -46,6 +46,10 @@ public final class ClientContext {
             if (initConfigFromServer) {
                 if (!LineUtils.isNullOrEmpty(gobiiUrl)) {
 
+                    if ('/' != gobiiUrl.charAt(gobiiUrl.length()-1)) {
+                        gobiiUrl = gobiiUrl + '/';
+                    }
+
                     URL url = null;
                     try {
                         url = new URL(gobiiUrl);
@@ -70,11 +74,12 @@ public final class ClientContext {
 
                 clientContext = clientContext.makeFromProperties();
             }
+
+            clientContext.gobiiCropTypes.addAll(clientContext
+                    .serverConfigs
+                    .keySet());
         }
 
-        clientContext.gobiiCropTypes.addAll(clientContext
-                .serverConfigs
-                .keySet());
 
 
         return clientContext;

@@ -6,12 +6,14 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
+import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -71,5 +73,28 @@ public class DtoRequestConfigSettingsTest {
         Assert.assertTrue(1 == matches.size());
         Assert.assertNotNull(matches.get(0).getContextRoot());
     }
+
+    @Test
+    public void testClientConfig() throws Exception {
+        ConfigSettings configSettings = new ConfigSettings();
+        Integer port = configSettings.getCropConfig(configSettings.getDefaultGobiiCropType()).getServicePort();
+        String gobiiUrl = "http://"
+                + configSettings.getCropConfig(configSettings.getDefaultGobiiCropType()).getServiceDomain()
+                + ":"
+                + port.toString()
+                + "/"
+                + configSettings.getCropConfig(configSettings.getDefaultGobiiCropType()).getServiceAppRoot();
+
+
+        ClientContext.resetConfiguration();
+        List<GobiiCropType> gobiiCropTypes = ClientContext.getInstance(gobiiUrl,true).getCropTypeTypes();
+        Assert.assertTrue(gobiiCropTypes.size()
+                == configSettings.getActiveCropConfigs().size());
+
+        List<GobiiCropType> gobiiCropTypesASecondTime = ClientContext.getInstance(null,false).getCropTypeTypes();
+        Assert.assertTrue(gobiiCropTypesASecondTime.size()
+                == configSettings.getActiveCropConfigs().size());
+
+    } // testClientConfig()
 
 }
