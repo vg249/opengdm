@@ -22,7 +22,7 @@ public class Urls {
     public static String getRequestUrl(ControllerType controllerType,
                                        ServiceRequestId requestId) throws Exception {
 
-                return Urls.getRequestUrl(controllerType,
+        return Urls.getRequestUrl(controllerType,
                 requestId,
                 ClientContext.getInstance(null, false).getCurrentCropContextRoot());
     }

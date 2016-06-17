@@ -10,9 +10,6 @@ import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extr
     template: `<div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px;">
                     <div *ngFor="let gobiiDataSetExtract of gobiiDatasetExtracts" >{{gobiiDataSetExtract.dataSetName}}</div>
                 </div>
-                <form>
-                    <input type="button" value="Submit" >
-                </form>
 ` // end template
 
 })

@@ -5,7 +5,7 @@ import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {ProcessType} from "../model/type-process";
 import {EntityType} from "../model/type-entity";
-import * as EntityFilters from "../model/type-entity-filter"
+import * as EntityFilters from "../model/type-entity-filter";
 
 
 @Component({

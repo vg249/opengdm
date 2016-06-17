@@ -19,6 +19,13 @@ import {UsersListBoxComponent} from "../views/users-list-box.component";
 import {NameId} from "../model/name-id";
 import {DatasetDetailBoxComponent} from "../views/dataset-detail.component";
 import {ExperimentDetailBoxComponent} from "../views/experiment-detail-component";
+import {GobiiFileType} from "../model/type-gobii-file";
+import  {ExtractorInstructionFilesDTO} from "../model/extractor-instructions/dto-extractor-instruction-files";
+import {GobiiExtractorInstruction} from  "../model/extractor-instructions/gobii-extractor-instruction"
+import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
+import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-item-extractor-submission";
+
+
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
@@ -115,6 +122,11 @@ import {ExperimentDetailBoxComponent} from "../views/experiment-detail-component
                             <legend class="the-legend">Extract Critiera</legend>
                             <criteria-display [gobiiDatasetExtracts] = "gobiiDatasetExtracts"></criteria-display>
                             </fieldset>
+                            
+                            <form>
+                                <input type="button" value="Submit" (click)="handleExtractSubmission()" >
+                            </form>
+                            
        
                     </div>  <!-- outer grid column 3 (inner grid)-->
                                         
@@ -137,7 +149,7 @@ export class ExtractorRoot {
     private gobiiDatasetExtracts:GobiiDataSetExtract[] = [];
 
 
-    constructor() {
+    constructor(private _dtoRequestServiceExtractorFile:DtoRequestService<ExtractorInstructionFilesDTO>) {
         let foo = "foo";
     }
 
@@ -159,6 +171,7 @@ export class ExtractorRoot {
     private displayExperimentDetail:boolean = false;
     private selectedExperimentId:string = "0";
     private selectedExperimentDetailId:string = "0";
+
     private handleExperimentSelected(arg) {
         this.selectedExperimentId = arg;
         this.selectedExperimentDetailId = arg;
@@ -169,6 +182,7 @@ export class ExtractorRoot {
 
     private displayDataSetDetail:boolean = false;
     private selectedDataSetDetailId:number;
+
     private handleDataSetDetailSelected(arg) {
         this.selectedDataSetDetailId = arg;
         this.selectedExperimentDetailId = undefined;
@@ -193,13 +207,17 @@ export class ExtractorRoot {
     } // handleServerSelected()
 
     private selectedUser:NameId
+
     private handleUserSelected(arg) {
 
     }
 
     private handleCheckedDataSetItem(arg:CheckBoxEvent) {
         if (ProcessType.CREATE == arg.processType) {
-            this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(Number(arg.id), arg.name));
+            this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(GobiiFileType.GENERIC,
+                false,
+                Number(arg.id),
+                arg.name));
         } else {
 
             this.gobiiDatasetExtracts =
@@ -210,6 +228,44 @@ export class ExtractorRoot {
         } // if-else we're adding
     }
 
+    private handleExtractSubmission() {
+
+        let gobiiExtractorInstructions:GobiiExtractorInstruction[] = [];
+
+        gobiiExtractorInstructions.push(
+            new GobiiExtractorInstruction(
+                "foordir",
+                this.gobiiDatasetExtracts)
+        );
+
+        let date:Date = new Date();
+        let fileName:string = "extractor_"
+            + date.getFullYear()
+            + "_"
+            + date.getMonth()
+            + "_"
+            + date.getDay()
+            + "_"
+            + date.getHours()
+            + "_"
+            + date.getMinutes()
+            + "_"
+            + date.getSeconds();
+        let extractorInstructionFilesDTORequest:ExtractorInstructionFilesDTO =
+            new ExtractorInstructionFilesDTO(gobiiExtractorInstructions,
+                fileName,
+                ProcessType.CREATE);
+
+        let extractorInstructionFilesDTOResponse:ExtractorInstructionFilesDTO = null;
+        this._dtoRequestServiceExtractorFile.getResult(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
+            .subscribe(extractorInstructionFilesDTO => {
+                    extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
+                },
+                dtoHeaderResponse => {
+                    dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+                });
+
+    }
 
 }
 
