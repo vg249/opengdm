@@ -61,13 +61,14 @@
     </properties>
 
     <modules>
-        <module>gobii-web</module>
         <module>gobii-model</module>
+        <module>gobii-client</module>
         <module>gobii-dao</module>
+        <module>gobii-dtomapping</module>
         <module>gobii-domain</module>
         <module>gobii-process</module>
-        <module>gobii-client</module>
-        <module>gobii-dtomapping</module>
+        <module>gobii-web</module>
+
     </modules>
 
 
