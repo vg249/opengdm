@@ -140,7 +140,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 };
                 ExtractorRoot.prototype.handleExtractSubmission = function () {
                     var gobiiExtractorInstructions = [];
-                    gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction("foordir", this.gobiiDatasetExtracts));
+                    gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction("foordir", this.gobiiDatasetExtracts, Number(this.selectedContactId), null));
                     var date = new Date();
                     var fileName = "extractor_"
                         + date.getFullYear()

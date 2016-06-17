@@ -235,8 +235,11 @@ export class ExtractorRoot {
         gobiiExtractorInstructions.push(
             new GobiiExtractorInstruction(
                 "foordir",
-                this.gobiiDatasetExtracts)
+                this.gobiiDatasetExtracts,
+                Number(this.selectedContactId),
+                null)
         );
+
 
         let date:Date = new Date();
         let fileName:string = "extractor_"

@@ -3,26 +3,44 @@ import {GobiiDataSetExtract} from "./data-set-extract"
 export class GobiiExtractorInstruction {
 
     constructor(private extractDestinationDirectory:string,
-                private dataSetExtracts:GobiiDataSetExtract[]) {
+                private dataSetExtracts:GobiiDataSetExtract[],
+                private contactId:number,
+                private contactEmail:string) {
 
         this.extractDestinationDirectory = extractDestinationDirectory;
         this.dataSetExtracts = dataSetExtracts;
     }
 
-    getExtractDestinationDirectory():string {
+    public getExtractDestinationDirectory():string {
         return this.extractDestinationDirectory;
     }
 
-    setExtractDestinationDirectory(value:string) {
+    public setExtractDestinationDirectory(value:string) {
         this.extractDestinationDirectory = value;
     }
 
-    getDataSetExtracts():any {
+    public getDataSetExtracts():any {
         return this.dataSetExtracts;
     }
 
-    setDataSetExtracts(value:any) {
+    public setDataSetExtracts(value:any) {
         this.dataSetExtracts = value;
+    }
+
+    public getContactId():Number {
+        return this.contactId;
+    }
+
+    public setContactId(contactId:number):void {
+        this.contactId = contactId;
+    }
+
+    public setContactEmail(contactEmail:string):void {
+        this.contactEmail = contactEmail;
+    }
+
+    public getContactEmail(): string {
+        return this.contactEmail;
     }
 
     public getJson():any {
@@ -30,8 +48,10 @@ export class GobiiExtractorInstruction {
         let returnVal:any = {};
 
         returnVal.extractDestinationDirectory = this.extractDestinationDirectory;
-        returnVal.dataSetExtracts = [];
+        returnVal.contactId = this.contactId;
+        returnVal.contactEmail = this.contactEmail;
 
+        returnVal.dataSetExtracts = [];
         this.dataSetExtracts.forEach(e => {
             returnVal.dataSetExtracts.push(e.getJson());
         });
@@ -48,7 +68,9 @@ export class GobiiExtractorInstruction {
 
         let returnVal:GobiiExtractorInstruction = new GobiiExtractorInstruction(
             json.extractDestinationDirectory,
-            dataSetExtracts
+            dataSetExtracts,
+            json.contactId,
+            json.contactEmail
         );
 
         return returnVal;

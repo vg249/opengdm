@@ -2,8 +2,12 @@ package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.ExtractorInstructionsDAO;
+import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
+import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.DtoMapExtractorInstructions;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -13,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +32,9 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
     @Autowired
     private ExtractorInstructionsDAO extractorInstructionsDAO;
+
+    @Autowired
+    DtoMapContact dtoMapContact;
 
     private void createDirectories(String instructionFileDirectory) throws GobiiDaoException {
 
@@ -73,6 +81,28 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             "instruction file name is missing");
                 }
 
+                if (null != currentExtractorInstruction.getContactId() && currentExtractorInstruction.getContactId() > 0) {
+                    ContactDTO contactDTO = new ContactDTO();
+                    contactDTO.setContactId(currentExtractorInstruction.getContactId());
+                    contactDTO = dtoMapContact.getContactDetails(contactDTO);
+                    if (!LineUtils.isNullOrEmpty(contactDTO.getEmail())) {
+                        currentExtractorInstruction.setContactEmail(contactDTO.getEmail());
+                    } else {
+                        allValuesSpecified = false;
+                        returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
+                                DtoHeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
+                                "The contact record for contactId "
+                                        + currentExtractorInstruction.getContactId()
+                                        + " does not have an email address");
+                    }
+
+                } else {
+                    allValuesSpecified = false;
+                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
+                            DtoHeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
+                            "contactId is missing");
+                }
+
                 for (GobiiDataSetExtract currentGobiiDataSetExtract :
                         currentExtractorInstruction.getDataSetExtracts()) {
 
@@ -90,6 +120,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                 DtoHeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
                                 "Dataset ID is missing");
                     }
+
 
                 }
 
@@ -109,7 +140,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                         ) {
 
 
-                    if( ! extractorInstructionsDAO.doesPathExist(instructionFileFqpn)) {
+                    if (!extractorInstructionsDAO.doesPathExist(instructionFileFqpn)) {
 
                         extractorInstructionsDAO.writeInstructions(instructionFileFqpn,
                                 returnVal.getGobiiExtractorInstructions());

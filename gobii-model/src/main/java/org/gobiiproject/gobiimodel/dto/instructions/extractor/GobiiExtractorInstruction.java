@@ -11,6 +11,25 @@ public class GobiiExtractorInstruction {
     String extractDestinationDirectory = null;
     List<GobiiDataSetExtract> dataSetExtracts = new ArrayList<>();
 
+    Integer contactId;
+    String contactEmail;
+
+    public Integer getContactId() {
+        return contactId;
+    }
+
+    public void setContactId(Integer contactId) {
+        this.contactId = contactId;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
     public String getExtractDestinationDirectory() {
         return extractDestinationDirectory;
     }
