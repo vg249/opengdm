@@ -1,23 +1,22 @@
 import {RouteParams} from '@angular/router-deprecated';
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit,EventEmitter} from '@angular/core';
 
 
 @Component({
-  selector: 'export-format',
+    selector: 'export-format',
+    outputs: ['onFormatSelected'],
 //  inputs: ['hero'],
-  //directives: [RADIO_GROUP_DIRECTIVES]
+    //directives: [RADIO_GROUP_DIRECTIVES]
 //  directives: [Alert]
-	template: `
+    template: `
 		<form>
 			<fieldset class="well the-fieldset">
 			<legend class="the-legend">Export Format</legend>
-				<div class="control-group">
-							  <input type="radio" name="Hapmap" value="Hapmap">Hapmap<br>
-							  <input type="radio" name="FlapJack" value="FlapJack">FlapJack<br>
-							  <input type="radio" name="VCF" value="VCF">VCF<br>
-							  <input type="radio" name="HDF5" value="HDF5">HDF5<br>
-							  <input type="radio" name="PLINK CSV" value="PLINK CSV">PLINK CSV<br>
-				</div>
+              <input type="radio" (change)="handleContactSelected($event)" name="format" value="Hapmap" checked="checked">Hapmap<br>
+              <input type="radio" (change)="handleContactSelected($event)" name="format" value="FlapJack">FlapJack<br>
+              <input type="radio" (change)="handleContactSelected($event)" name="format" value="VCF" disabled="true">VCF<br>
+              <input type="radio" (change)="handleContactSelected($event)" name="format" value="HDF5" disabled="true">HDF5<br>
+              <input type="radio" (change)="handleContactSelected($event)" name="format" value="PLINK CSV" disabled="true">PLINK CSV<br>
 			</fieldset>
 			
 		</form>
@@ -25,19 +24,29 @@ import { Component, OnInit } from '@angular/core';
 })
 
 export class ExportFormatComponent implements OnInit {
-	
-	constructor(
-//	  private _heroService: HeroService,
-//	  private _routeParams: RouteParams
-	  ) {
-	} // ctor
-	
-	ngOnInit() {
-/*
-		let id = +this._routeParams.get('id');
-		this._heroService.getHero(id)
-		  .then(hero => this.hero = hero);
-*/		  
-	  }
+
+    constructor(//	  private _heroService: HeroService,
+                //	  private _routeParams: RouteParams
+    ) {
+    } // ctor
+
+    private onFormatSelected:EventEmitter<string> = new EventEmitter();
+    private handleContactSelected(arg) {
+        if( arg.srcElement.checked ) {
+        
+            this.onFormatSelected.emit(arg.srcElement.value)
+        }
+        let foo = arg;
+        //this.onContactSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
+    }
+
+
+    ngOnInit() {
+        /*
+         let id = +this._routeParams.get('id');
+         this._heroService.getHero(id)
+         .then(hero => this.hero = hero);
+         */
+    }
 
 }

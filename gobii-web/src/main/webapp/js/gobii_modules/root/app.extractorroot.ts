@@ -71,11 +71,9 @@ import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-ite
                         </fieldset>
                         
                         <div class="col-md-12">
-                            <export-format></export-format>
+                            <export-format (onFormatSelected)="handleFormatSelected($event)"></export-format>
                         </div>
-
-                        
-                        
+                       
                     </div>  <!-- outer grid column 1-->
                 
                 
@@ -154,9 +152,14 @@ export class ExtractorRoot {
     }
 
     private selectedContactId:string = "1";
-
     private handleContactSelected(arg) {
         this.selectedContactId = arg;
+        //console.log("selected contact id:" + arg);
+    }
+
+    private selectedFormatName:string = "Hapmap";
+    private handleFormatSelected(arg) {
+        this.selectedFormatName = arg;
         //console.log("selected contact id:" + arg);
     }
 
@@ -231,6 +234,9 @@ export class ExtractorRoot {
     private handleExtractSubmission() {
 
         let gobiiExtractorInstructions:GobiiExtractorInstruction[] = [];
+
+        let gobiiFileType:GobiiFileType = GobiiFileType[this.selectedFormatName.toUpperCase()];
+        this.gobiiDatasetExtracts.forEach(e => e.setGobiiFileType(gobiiFileType));
 
         gobiiExtractorInstructions.push(
             new GobiiExtractorInstruction(

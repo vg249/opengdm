@@ -7,8 +7,9 @@ System.register([], function(exports_1, context_1) {
         execute: function() {
             (function (GobiiFileType) {
                 GobiiFileType[GobiiFileType["HAPMAP"] = 0] = "HAPMAP";
-                GobiiFileType[GobiiFileType["GENERIC"] = 1] = "GENERIC";
-                GobiiFileType[GobiiFileType["VCF"] = 2] = "VCF";
+                GobiiFileType[GobiiFileType["FLAPJACK"] = 1] = "FLAPJACK";
+                GobiiFileType[GobiiFileType["GENERIC"] = 2] = "GENERIC";
+                GobiiFileType[GobiiFileType["VCF"] = 3] = "VCF";
             })(GobiiFileType || (GobiiFileType = {}));
             exports_1("GobiiFileType", GobiiFileType);
         }

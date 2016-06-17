@@ -5,6 +5,7 @@ package org.gobiiproject.gobiimodel.types;
  */
 public enum GobiiFileType {
     HAPMAP,
+    FLAPJACK,
     GENERIC,
     VCF
 }

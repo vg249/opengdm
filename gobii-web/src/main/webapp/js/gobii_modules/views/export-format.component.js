@@ -20,21 +20,30 @@ System.register(['@angular/core'], function(exports_1, context_1) {
         execute: function() {
             ExportFormatComponent = (function () {
                 function ExportFormatComponent() {
+                    this.onFormatSelected = new core_1.EventEmitter();
                 } // ctor
+                ExportFormatComponent.prototype.handleContactSelected = function (arg) {
+                    if (arg.srcElement.checked) {
+                        this.onFormatSelected.emit(arg.srcElement.value);
+                    }
+                    var foo = arg;
+                    //this.onContactSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
+                };
                 ExportFormatComponent.prototype.ngOnInit = function () {
                     /*
-                            let id = +this._routeParams.get('id');
-                            this._heroService.getHero(id)
-                              .then(hero => this.hero = hero);
-                    */
+                     let id = +this._routeParams.get('id');
+                     this._heroService.getHero(id)
+                     .then(hero => this.hero = hero);
+                     */
                 };
                 ExportFormatComponent = __decorate([
                     core_1.Component({
                         selector: 'export-format',
+                        outputs: ['onFormatSelected'],
                         //  inputs: ['hero'],
                         //directives: [RADIO_GROUP_DIRECTIVES]
                         //  directives: [Alert]
-                        template: "\n\t\t<form>\n\t\t\t<fieldset class=\"well the-fieldset\">\n\t\t\t<legend class=\"the-legend\">Export Format</legend>\n\t\t\t\t<div class=\"control-group\">\n\t\t\t\t\t\t\t  <input type=\"radio\" name=\"Hapmap\" value=\"Hapmap\">Hapmap<br>\n\t\t\t\t\t\t\t  <input type=\"radio\" name=\"FlapJack\" value=\"FlapJack\">FlapJack<br>\n\t\t\t\t\t\t\t  <input type=\"radio\" name=\"VCF\" value=\"VCF\">VCF<br>\n\t\t\t\t\t\t\t  <input type=\"radio\" name=\"HDF5\" value=\"HDF5\">HDF5<br>\n\t\t\t\t\t\t\t  <input type=\"radio\" name=\"PLINK CSV\" value=\"PLINK CSV\">PLINK CSV<br>\n\t\t\t\t</div>\n\t\t\t</fieldset>\n\t\t\t\n\t\t</form>\n\t" // end template
+                        template: "\n\t\t<form>\n\t\t\t<fieldset class=\"well the-fieldset\">\n\t\t\t<legend class=\"the-legend\">Export Format</legend>\n              <input type=\"radio\" (change)=\"handleContactSelected($event)\" name=\"format\" value=\"Hapmap\" checked=\"checked\">Hapmap<br>\n              <input type=\"radio\" (change)=\"handleContactSelected($event)\" name=\"format\" value=\"FlapJack\">FlapJack<br>\n              <input type=\"radio\" (change)=\"handleContactSelected($event)\" name=\"format\" value=\"VCF\" disabled=\"true\">VCF<br>\n              <input type=\"radio\" (change)=\"handleContactSelected($event)\" name=\"format\" value=\"HDF5\" disabled=\"true\">HDF5<br>\n              <input type=\"radio\" (change)=\"handleContactSelected($event)\" name=\"format\" value=\"PLINK CSV\" disabled=\"true\">PLINK CSV<br>\n\t\t\t</fieldset>\n\t\t\t\n\t\t</form>\n\t" // end template
                     }), 
                     __metadata('design:paramtypes', [])
                 ], ExportFormatComponent);
