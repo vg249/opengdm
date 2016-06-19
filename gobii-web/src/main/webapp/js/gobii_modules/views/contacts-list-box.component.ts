@@ -26,14 +26,19 @@ export class ContactsListBoxComponent implements OnInit {
     private nameIdList:NameId[];
 
     private onContactSelected:EventEmitter<string> = new EventEmitter();
+
     private handleContactSelected(arg) {
         this.onContactSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
     }
 
     constructor(private _dtoRequestService:DtoRequestService<NameId[]>) {
 
+    } // ctor
+
+
+    ngOnInit():any {
         let scope$ = this;
-        _dtoRequestService.getResult(new DtoRequestItemNameIds(ProcessType.READ,
+        this._dtoRequestService.getResult(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.Contact,
             EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {
@@ -41,15 +46,12 @@ export class ContactsListBoxComponent implements OnInit {
                 } else {
                     scope$.nameIdList = [new NameId(0, "<none>")];
                 }
+                this.handleContactSelected(scope$.nameIdList[0].id);
             },
             dtoHeaderResponse => {
                 dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
             });
 
-    } // ctor
-
-
-    ngOnInit():any {
         return null;
     }
 }

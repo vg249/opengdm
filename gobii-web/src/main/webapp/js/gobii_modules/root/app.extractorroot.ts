@@ -14,6 +14,7 @@ import {CriteriaDisplayComponent} from "../views/criteria-display.component";
 import {ProcessType} from "../model/type-process";
 import {CheckBoxEvent} from "../model/event-checkbox";
 import {ServerConfig} from "../model/server-config";
+import {EntityType} from "../model/type-entity";
 import {CropsListBoxComponent} from "../views/crops-list-box.component";
 import {UsersListBoxComponent} from "../views/users-list-box.component";
 import {NameId} from "../model/name-id";
@@ -24,6 +25,7 @@ import  {ExtractorInstructionFilesDTO} from "../model/extractor-instructions/dto
 import {GobiiExtractorInstruction} from  "../model/extractor-instructions/gobii-extractor-instruction"
 import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
 import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-item-extractor-submission";
+import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
@@ -67,7 +69,10 @@ import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-ite
                         
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Submit As</legend>
-                        <users-list-box (onUserSelected)="handleUserSelected($event)"></users-list-box>
+                        <users-list-box
+                            [nameIdList]="userNameIdList"
+                            (onUserSelected)="handleUserSelected($event)">
+                        </users-list-box>
                         </fieldset>
                         
                         <div class="col-md-12">
@@ -147,7 +152,8 @@ export class ExtractorRoot {
     private gobiiDatasetExtracts:GobiiDataSetExtract[] = [];
 
 
-    constructor(private _dtoRequestServiceExtractorFile:DtoRequestService<ExtractorInstructionFilesDTO>) {
+    constructor(private _dtoRequestServiceExtractorFile:DtoRequestService<ExtractorInstructionFilesDTO>,
+                private _dtoRequestServiceNameIds:DtoRequestService<NameId[]>) {
         let foo = "foo";
     }
 
@@ -209,10 +215,10 @@ export class ExtractorRoot {
         window.location.href = newDestination;
     } // handleServerSelected()
 
-    private selectedUser:NameId
-
+    private userNameIdList:NameId[];
+    private selectedUserId:string;
     private handleUserSelected(arg) {
-
+        this.selectedUserId = arg;
     }
 
     private handleCheckedDataSetItem(arg:CheckBoxEvent) {
@@ -242,7 +248,7 @@ export class ExtractorRoot {
             new GobiiExtractorInstruction(
                 "foordir",
                 this.gobiiDatasetExtracts,
-                Number(this.selectedContactId),
+                Number(this.selectedUserId),
                 null)
         );
 
@@ -274,6 +280,23 @@ export class ExtractorRoot {
                     dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
                 });
 
+    }
+
+    ngOnInit():any {
+
+        let scope$ = this;
+        this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
+            EntityType.AllContacts)).subscribe(nameIds => {
+                if (nameIds && ( nameIds.length > 0 )) {
+                    scope$.userNameIdList = nameIds
+                    scope$.selectedUserId = nameIds[0].id;
+                } else {
+                    scope$.userNameIdList = [new NameId(0, "ERROR NO USERS")];
+                }
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+            });
     }
 
 }
