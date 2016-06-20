@@ -16,7 +16,7 @@ public class SpUpdPlatform extends SpDef {
         this.addParamDef("platformId",Integer.class).setNullable(false);
         this.addParamDef("platformName", String.class).setNullable(false);
         this.addParamDef("platformCode", String.class).setNullable(false);
-        this.addParamDef("platformVendor", Integer.class).setNullable(false);
+        this.addParamDef("platformVendor", Integer.class).setNullable(true);
         this.addParamDef("platformDescription", String.class).setNullable(true);
         this.addParamDef("createdBy", Integer.class).setNullable(false);
         this.addParamDef("createdDate", java.util.Date.class).setNullable(false);
