@@ -121,12 +121,7 @@ import * as EntityFilters from "../model/type-entity-filter";
                                 <dataset-detail-box [dataSetId] = "selectedDataSetDetailId"></dataset-detail-box>
                             </fieldset>
                      
-                            <fieldset [hidden]="!displayExperimentDetail" class="well the-fieldset" style="vertical-align: top;">
-                                <legend class="the-legend">Experiment</legend>
-                                <experiment-detail-box [experimentId] = "selectedExperimentDetailId"></experiment-detail-box>
-                            </fieldset>
-                     
-                           
+                          
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                             <legend class="the-legend">Extract Critiera</legend>
                             <criteria-display [gobiiDatasetExtracts] = "gobiiDatasetExtracts"></criteria-display>
