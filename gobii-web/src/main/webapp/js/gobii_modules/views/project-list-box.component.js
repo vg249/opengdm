@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../services/app/dto-request-item-nameids", "../model/type-process", "../model/type-entity"], function(exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../services/app/dto-request-item-nameids", "../model/type-process", "../model/type-entity", "../services/app/dto-request-item-project"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, name_id_1, dto_request_service_1, dto_request_item_nameids_1, type_process_1, type_entity_1;
+    var core_1, name_id_1, dto_request_service_1, dto_request_item_nameids_1, type_process_1, type_entity_1, dto_request_item_project_1;
     var ProjectListBoxComponent;
     return {
         setters:[
@@ -31,21 +31,28 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             },
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
+            },
+            function (dto_request_item_project_1_1) {
+                dto_request_item_project_1 = dto_request_item_project_1_1;
             }],
         execute: function() {
             ProjectListBoxComponent = (function () {
-                function ProjectListBoxComponent(_dtoRequestService) {
-                    this._dtoRequestService = _dtoRequestService;
+                function ProjectListBoxComponent(_dtoRequestServiceNameId, _dtoRequestServiceProject) {
+                    this._dtoRequestServiceNameId = _dtoRequestServiceNameId;
+                    this._dtoRequestServiceProject = _dtoRequestServiceProject;
                     this.onProjectSelected = new core_1.EventEmitter();
                 } // ctor
                 ProjectListBoxComponent.prototype.handleProjectSelected = function (arg) {
-                    this.onProjectSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
+                    var selectedProjectId = this.nameIdList[arg.srcElement.selectedIndex].id;
+                    this.setProjectDetails(selectedProjectId);
+                    this.onProjectSelected.emit(selectedProjectId);
                 };
                 ProjectListBoxComponent.prototype.setList = function () {
                     var scope$ = this;
-                    this._dtoRequestService.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Project, this.primaryInvestigatorId)).subscribe(function (nameIds) {
+                    this._dtoRequestServiceNameId.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Project, this.primaryInvestigatorId)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.nameIdList = nameIds;
+                            scope$.setProjectDetails(scope$.nameIdList[0].id);
                         }
                         else {
                             scope$.nameIdList = [new name_id_1.NameId(0, "<none>")];
@@ -54,6 +61,17 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
                     });
                 }; // setList()
+                ProjectListBoxComponent.prototype.setProjectDetails = function (projectId) {
+                    var scope$ = this;
+                    this._dtoRequestServiceProject.getResult(new dto_request_item_project_1.DtoRequestItemProject(Number(projectId)))
+                        .subscribe(function (project) {
+                        if (project) {
+                            scope$.project = project;
+                        }
+                    }, function (dtoHeaderResponse) {
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
+                    });
+                };
                 ProjectListBoxComponent.prototype.ngOnInit = function () {
                     this.setList();
                 };
@@ -67,9 +85,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         selector: 'project-list-box',
                         inputs: ['primaryInvestigatorId'],
                         outputs: ['onProjectSelected'],
-                        template: "<select name=\"projects\" \n                multiple=\"multiple\"\n                 size=\"nameIdList.length\"\n                (change)=\"handleProjectSelected($event)\">\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
+                        template: "<select name=\"projects\" \n                    (change)=\"handleProjectSelected($event)\">\n                    <option *ngFor=\"let nameId of nameIdList \" \n                    value={{nameId.id}}>{{nameId.name}}</option>\n\t\t        </select>\n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        Name: {{project.projectName}}<BR>\n                        Description: {{project.projectDescription}}<BR>\n                      </fieldset> \n                </div>\t\t        \n" // end template
                     }), 
-                    __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
+                    __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService])
                 ], ProjectListBoxComponent);
                 return ProjectListBoxComponent;
             }());
