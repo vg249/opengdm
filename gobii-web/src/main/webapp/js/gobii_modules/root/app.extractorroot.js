@@ -112,8 +112,6 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                     // ********************************************************************
                     // ********************************************** EXPERIMENT ID
                     this.displayExperimentDetail = false;
-                    this.selectedExperimentId = "3";
-                    this.selectedExperimentDetailId = "3";
                     // ********************************************************************
                     // ********************************************** DATASET ID
                     this.displayDataSetDetail = false;
@@ -229,6 +227,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                     this._dtoRequestServiceNameIds.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Experiment, this.selectedProjectId)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.experimentNameIdList = nameIds;
+                            scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
                         }
                         else {
                             scope$.experimentNameIdList = [new name_id_1.NameId(0, "<none>")];

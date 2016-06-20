@@ -307,8 +307,8 @@ export class ExtractorRoot {
     private displayExperimentDetail:boolean = false;
 
     private experimentNameIdList:NameId[];
-    private selectedExperimentId:string = "3";
-    private selectedExperimentDetailId:string = "3";
+    private selectedExperimentId:string;
+    private selectedExperimentDetailId:string;
 
     private handleExperimentSelected(arg) {
         this.selectedExperimentId = arg;
@@ -326,6 +326,7 @@ export class ExtractorRoot {
             this.selectedProjectId)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.experimentNameIdList= nameIds
+                    scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
                 } else {
                     scope$.experimentNameIdList = [new NameId(0, "<none>")];
                 }
