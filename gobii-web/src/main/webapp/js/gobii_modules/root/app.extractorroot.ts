@@ -104,7 +104,9 @@ import * as EntityFilters from "../model/type-entity-filter";
                         
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Experiment</legend>
-                        <experiment-list-box [projectId] = "selectedProjectId" (onExperimentSelected)="handleExperimentSelected($event)"></experiment-list-box>
+                        <experiment-list-box [projectId] = "selectedProjectId"
+                            [nameIdList] = "experimentNameIdList"
+                            (onExperimentSelected)="handleExperimentSelected($event)"></experiment-list-box>
                         </fieldset>
                         
                         <fieldset class="well the-fieldset">
@@ -279,6 +281,7 @@ export class ExtractorRoot {
         this.selectedProjectId = arg;
         this.displayExperimentDetail = false;
         this.displayDataSetDetail = false;
+        this.initializeExperimentNameIds();
     }
 
     private initializeProjectNameIds() {
@@ -289,6 +292,7 @@ export class ExtractorRoot {
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.projectNameIdList = nameIds;
                     scope$.selectedProjectId = nameIds[0].id;
+                    this.initializeExperimentNameIds();
                 } else {
                     scope$.projectNameIdList= [new NameId(0, "<none>")];
                 }
@@ -298,7 +302,11 @@ export class ExtractorRoot {
             });
     }
 
+// ********************************************************************
+// ********************************************** EXPERIMENT ID
     private displayExperimentDetail:boolean = false;
+
+    private experimentNameIdList:NameId[];
     private selectedExperimentId:string = "3";
     private selectedExperimentDetailId:string = "3";
 
@@ -310,6 +318,28 @@ export class ExtractorRoot {
         //console.log("selected contact id:" + arg);
     }
 
+    private initializeExperimentNameIds() {
+
+        let scope$ = this;
+        this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
+            EntityType.Experiment,
+            this.selectedProjectId)).subscribe(nameIds => {
+                if (nameIds && ( nameIds.length > 0 )) {
+                    scope$.experimentNameIdList= nameIds
+                } else {
+                    scope$.experimentNameIdList = [new NameId(0, "<none>")];
+                }
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+            });
+
+    }
+
+
+
+// ********************************************************************
+// ********************************************** DATASET ID
     private displayDataSetDetail:boolean = false;
     private selectedDataSetDetailId:number;
 

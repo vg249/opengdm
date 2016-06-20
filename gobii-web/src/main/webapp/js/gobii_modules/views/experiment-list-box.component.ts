@@ -12,7 +12,7 @@ import {Experiment} from "../model/experiment"
 
 @Component({
     selector: 'experiment-list-box',
-    inputs: ['projectId'],
+    inputs: ['projectId','nameIdList'],
     outputs: ['onExperimentSelected'],
     template: `<select name="experiment" 
                     (change)="handleExperimentSelected($event)">
@@ -47,23 +47,23 @@ export class ExperimentListBoxComponent implements OnInit,OnChanges {
                 private _dtoRequestServiceExperiment:DtoRequestService<Experiment>) {
     } // ctor
 
-    private setList():void {
-
-        let scope$ = this;
-        this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
-            EntityType.Experiment,
-            this.projectId)).subscribe(nameIds => {
-                if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.nameIdList = nameIds
-                    scope$.setExperimentDetail(scope$.nameIdList[0].id)
-                } else {
-                    scope$.nameIdList = [new NameId(0, "<none>")];
-                }
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
-            });
-    } // setList()
+    // private setList():void {
+    //
+    //     let scope$ = this;
+    //     this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
+    //         EntityType.Experiment,
+    //         this.projectId)).subscribe(nameIds => {
+    //             if (nameIds && ( nameIds.length > 0 )) {
+    //                 scope$.nameIdList = nameIds
+    //                 scope$.setExperimentDetail(scope$.nameIdList[0].id)
+    //             } else {
+    //                 scope$.nameIdList = [new NameId(0, "<none>")];
+    //             }
+    //         },
+    //         dtoHeaderResponse => {
+    //             dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+    //         });
+    // } // setList()
 
     private setExperimentDetail(experimentId:string):void {
 
@@ -81,11 +81,20 @@ export class ExperimentListBoxComponent implements OnInit,OnChanges {
 
     ngOnInit():any {
 
-        this.setList();
+        //this.setList();
     }
 
     ngOnChanges(changes:{[propName:string]:SimpleChange}) {
-        this.projectId = changes['projectId'].currentValue;
-        this.setList();
+
+        if( changes['projectId'] && changes['projectId'].currentValue ) {
+            this.projectId = changes['projectId'].currentValue;
+        }
+        if( changes['nameIdList']  ) {
+            if(changes['nameIdList'].currentValue) {
+                this.nameIdList = changes['nameIdList'].currentValue;
+                this.setExperimentDetail(this.nameIdList[0].id);
+            }
+        }
+        //this.setList();
     }
 }
