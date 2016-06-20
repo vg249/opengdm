@@ -26,6 +26,8 @@ import {GobiiExtractorInstruction} from  "../model/extractor-instructions/gobii-
 import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
 import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-item-extractor-submission";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
+import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
+import {GobiiCropType} from "../model/type-crop";
 
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
@@ -51,7 +53,8 @@ import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
         AuthenticationService,
         DtoRequestService
     ],
-    template: `<div class = "panel panel-default">
+    template: `
+        <div class = "panel panel-default">
         
            <div class = "panel-heading">
               <h1 class = "panel-title">GOBii Extractor</h1>
@@ -64,7 +67,10 @@ import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
                     <div class="col-md-4">
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Crop</legend>
-                        <crops-list-box (onServerSelected)="handleServerSelected($event)"></crops-list-box>
+                        <crops-list-box
+                            [serverConfigList]="serverConfigList"
+                            [selectedServerConfig]="selectedServerConfig"
+                            (onServerSelected)="handleServerSelected($event)"></crops-list-box>
                         </fieldset>
                         
                         <fieldset class="well the-fieldset">
@@ -153,17 +159,97 @@ export class ExtractorRoot {
 
 
     constructor(private _dtoRequestServiceExtractorFile:DtoRequestService<ExtractorInstructionFilesDTO>,
-                private _dtoRequestServiceNameIds:DtoRequestService<NameId[]>) {
+                private _dtoRequestServiceNameIds:DtoRequestService<NameId[]>,
+                private _dtoRequestServiceServerConfigs:DtoRequestService<ServerConfig[]>) {
         let foo = "foo";
     }
 
+    // ****************************************************************
+    // ********************************************** SERVER SELECTION
+    private selectedServerConfig:ServerConfig;
+    private serverConfigList:ServerConfig[];
+
+    private initializeServerConfigs() {
+        let scope$ = this;
+        this._dtoRequestServiceServerConfigs.getResult(new DtoRequestItemServerConfigs()).subscribe(serverConfigs => {
+
+                if (serverConfigs && ( serverConfigs.length > 0 )) {
+                    scope$.serverConfigList = serverConfigs;
+
+                    let serverCrop:GobiiCropType =
+                        this._dtoRequestServiceServerConfigs.getGobiiCropType();
+
+                    scope$.selectedServerConfig =
+                        scope$.serverConfigList
+                            .filter(c => {
+                                    return c.crop === GobiiCropType[serverCrop];
+                                }
+                            )[0];
+                    scope$.initializeUsers();
+                } else {
+                    scope$.serverConfigList = [new ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
+                }
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+            }
+        )
+        ;
+    } // initializeServerConfigs()
+
+    private handleServerSelected(arg) {
+        this.selectedServerConfig = arg;
+        // this._dtoRequestServiceNameIds
+        //     .setGobiiCropType(GobiiCropType[this.selectedServerConfig.crop]);
+        let currentPath = window.location.pathname;
+        let currentPage:string = currentPath.substr(currentPath.lastIndexOf('/') + 1, currentPath.length);
+        let newDestination = "http://"
+            + this.selectedServerConfig.domain
+            + ":"
+            + this.selectedServerConfig.port
+            + this.selectedServerConfig.contextRoot
+            + currentPage;
+//        console.log(newDestination);
+        window.location.href = newDestination;
+    } // handleServerSelected()
+
+
+// ********************************************************************
+// ********************************************** SUBMIT-USER SELECTION
+    private userNameIdList:NameId[];
+    private selectedUserId:string;
+
+    private handleUserSelected(arg) {
+        this.selectedUserId = arg;
+    }
+
+    private initializeUsers() {
+        let scope$ = this;
+        this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
+            EntityType.AllContacts)).subscribe(nameIds => {
+                if (nameIds && ( nameIds.length > 0 )) {
+                    scope$.userNameIdList = nameIds
+                    scope$.selectedUserId = nameIds[0].id;
+                } else {
+                    scope$.userNameIdList = [new NameId(0, "ERROR NO USERS")];
+                }
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+            });
+
+    }
+
+
     private selectedContactId:string = "1";
+
     private handleContactSelected(arg) {
         this.selectedContactId = arg;
         //console.log("selected contact id:" + arg);
     }
 
     private selectedFormatName:string = "Hapmap";
+
     private handleFormatSelected(arg) {
         this.selectedFormatName = arg;
         //console.log("selected contact id:" + arg);
@@ -198,28 +284,6 @@ export class ExtractorRoot {
         this.displayDataSetDetail = true;
     }
 
-
-    private selectedServerConfig:ServerConfig;
-
-    private handleServerSelected(arg) {
-        this.selectedServerConfig = arg;
-        let currentPath = window.location.pathname;
-        let currentPage:string = currentPath.substr(currentPath.lastIndexOf('/') + 1, currentPath.length);
-        let newDestination = "http://"
-            + this.selectedServerConfig.domain
-            + ":"
-            + this.selectedServerConfig.port
-            + this.selectedServerConfig.contextRoot
-            + currentPage;
-//        console.log(newDestination);
-        window.location.href = newDestination;
-    } // handleServerSelected()
-
-    private userNameIdList:NameId[];
-    private selectedUserId:string;
-    private handleUserSelected(arg) {
-        this.selectedUserId = arg;
-    }
 
     private handleCheckedDataSetItem(arg:CheckBoxEvent) {
         if (ProcessType.CREATE == arg.processType) {
@@ -284,20 +348,9 @@ export class ExtractorRoot {
 
     ngOnInit():any {
 
-        let scope$ = this;
-        this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
-            EntityType.AllContacts)).subscribe(nameIds => {
-                if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.userNameIdList = nameIds
-                    scope$.selectedUserId = nameIds[0].id;
-                } else {
-                    scope$.userNameIdList = [new NameId(0, "ERROR NO USERS")];
-                }
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
-            });
+        this.initializeServerConfigs();
     }
+
 
 }
 

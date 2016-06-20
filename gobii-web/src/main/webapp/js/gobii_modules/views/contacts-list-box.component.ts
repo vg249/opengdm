@@ -46,7 +46,7 @@ export class ContactsListBoxComponent implements OnInit {
                 } else {
                     scope$.nameIdList = [new NameId(0, "<none>")];
                 }
-                this.handleContactSelected(scope$.nameIdList[0].id);
+//                this.handleContactSelected(scope$.nameIdList[0].id);
             },
             dtoHeaderResponse => {
                 dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))

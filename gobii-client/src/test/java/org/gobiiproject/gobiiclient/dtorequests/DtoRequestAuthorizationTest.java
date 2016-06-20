@@ -13,6 +13,7 @@ import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderAuth;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
@@ -119,6 +120,11 @@ public class DtoRequestAuthorizationTest {
         postRequestForToken.addHeader(GobiiHttpHeaderNames.HEADER_USERNAME, userDetail.getUserName());
         postRequestForToken.addHeader(GobiiHttpHeaderNames.HEADER_PASSWORD, userDetail.getPassword());
 
+
+        GobiiCropType gobiiCropType = GobiiCropType.TEST;
+        postRequestForToken.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP,
+                gobiiCropType.toString());
+
         HttpResponse httpResponse = HttpClientBuilder.create().build().execute(postRequestForToken);
         Integer httpStatusCode = httpResponse.getStatusLine().getStatusCode();
         Assert.assertTrue("Request with good user credentials should have succeded; "
@@ -128,12 +134,12 @@ public class DtoRequestAuthorizationTest {
                 httpStatusCode.equals(200));
 
         // verify that token was sent back in the header (for clients that use that)
-        List<Header> tokenHeaderist = Arrays.asList(httpResponse.getAllHeaders())
+        List<Header> tokenHeaderList = Arrays.asList(httpResponse.getAllHeaders())
                 .stream()
                 .filter(header -> header.getName().equals(GobiiHttpHeaderNames.HEADER_TOKEN))
                 .collect(Collectors.toList());
         Assert.assertTrue("No authentication token was returned",
-                tokenHeaderist.size() == 1);
+                tokenHeaderList.size() == 1);
 
         // verify that token is also sent as part of the body (for clients that need that because
         // the headers are blocked by the browser
@@ -155,10 +161,13 @@ public class DtoRequestAuthorizationTest {
         Assert.assertNotNull("No dto header was returned in response body", dtoHeaderAuth);
         String tokenFromBodyResponse = dtoHeaderAuth.getToken();
 
-        Header tokenHeader = tokenHeaderist.get(0);
+        Header tokenHeader = tokenHeaderList.get(0);
         String tokenValue = tokenHeader.getValue();
         Assert.assertTrue("Token from header and token from body do not match",
                 tokenFromBodyResponse.equals(tokenHeader.getValue()));
+
+        Assert.assertNotNull("Crop type was not returned", dtoHeaderAuth.getGobiiCropType());
+        Assert.assertTrue("Crop type in auth header does not match the one that was sent", dtoHeaderAuth.getGobiiCropType().equals(gobiiCropType));
 
         // now test we can do a request with the token we got
         HttpPost postRequestForPing = makePostRequest(ServiceRequestId.URL_PING);

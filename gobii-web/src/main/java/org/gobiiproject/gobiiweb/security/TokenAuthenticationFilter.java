@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderAuth;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
+import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
@@ -67,6 +69,10 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                 String userName = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_USERNAME);
                 String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_PASSWORD);
                 String authorization = httpRequest.getHeader("Authorization");
+
+                // we assume that the DataSource selector will have done the right thing with the header
+                // we are just echoing back to the client (the web client needs this)
+
                 if (null == authorization) {
 
                     // we're doing HTTP post authentication
@@ -81,9 +87,12 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
                     httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, tokenInfo.getToken());
 
+                    GobiiCropType gobiiCropType = CropRequestAnalyzer.getGobiiCropType(httpRequest);
                     DtoHeaderAuth dtoHeaderAuth = new DtoHeaderAuth();
                     dtoHeaderAuth.setToken(tokenInfo.getToken());
+                    dtoHeaderAuth.setGobiiCropType(gobiiCropType);
                     dtoHeaderAuth.setUserName(userName);
+
 
                     ObjectMapper objectMapper = new ObjectMapper();
                     String dtoHeaderAuthString = objectMapper.writeValueAsString(dtoHeaderAuth);

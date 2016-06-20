@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/http-values", "@angular/http", './authentication.service', "../../model/dto-header-response", "rxjs/Observable", "rxjs/add/operator/map"], function(exports_1, context_1) {
+System.register(["@angular/core", "../../model/http-values", "@angular/http", "./authentication.service", "../../model/dto-header-response", "rxjs/Observable", "rxjs/add/operator/map"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -41,6 +41,9 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", '.
                 }
                 DtoRequestService.prototype.getAString = function () {
                     return 'a string';
+                };
+                DtoRequestService.prototype.getGobiiCropType = function () {
+                    return this._authenticationService.getGobiiCropType();
                 };
                 DtoRequestService.prototype.getResult = function (dtoRequestItem) {
                     var _this = this;

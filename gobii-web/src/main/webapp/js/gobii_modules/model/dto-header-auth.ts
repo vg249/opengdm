@@ -1,19 +1,25 @@
-
+import {GobiiCropType} from "../model/type-crop";
 
 export class DtoHeaderAuth {
 
     public constructor(public userName:string,
                        public password:string,
-                       public token:string) {
+                       public token:string,
+                       public gobiiCropType:string ) {
 
         this.userName = userName;
         this.password = password;
         this.token = token;
+        this.gobiiCropType=gobiiCropType;
     }
 
 
     public getToken():string {
         return this.token;
+    }
+    
+    public getGobiiCropType():string {
+        return this.gobiiCropType;
     }
 
 
@@ -22,7 +28,8 @@ export class DtoHeaderAuth {
         return new DtoHeaderAuth(
             json['userName'],
             json['password'],
-            json['token']
+            json['token'],
+            json['gobiiCropType']
         );
 
     }

@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiimodel.dto.header;
 
 
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import java.io.Serializable;
 
 /**
@@ -12,8 +14,8 @@ public class DtoHeaderAuth implements Serializable {
     private String userName;
     private String password;
     private String token;
+    private GobiiCropType gobiiCropType;
 
-    
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -42,5 +44,15 @@ public class DtoHeaderAuth implements Serializable {
     public String getToken() {
         return (this.token);
     }
+
+    public GobiiCropType getGobiiCropType() {
+        return gobiiCropType;
+    }
+
+    public void setGobiiCropType(GobiiCropType gobiiCropType) {
+        this.gobiiCropType = gobiiCropType;
+    }
+
+
 
 }//DtoHeaderResponse

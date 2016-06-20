@@ -6,19 +6,24 @@ System.register([], function(exports_1, context_1) {
         setters:[],
         execute: function() {
             DtoHeaderAuth = (function () {
-                function DtoHeaderAuth(userName, password, token) {
+                function DtoHeaderAuth(userName, password, token, gobiiCropType) {
                     this.userName = userName;
                     this.password = password;
                     this.token = token;
+                    this.gobiiCropType = gobiiCropType;
                     this.userName = userName;
                     this.password = password;
                     this.token = token;
+                    this.gobiiCropType = gobiiCropType;
                 }
                 DtoHeaderAuth.prototype.getToken = function () {
                     return this.token;
                 };
+                DtoHeaderAuth.prototype.getGobiiCropType = function () {
+                    return this.gobiiCropType;
+                };
                 DtoHeaderAuth.fromJSON = function (json) {
-                    return new DtoHeaderAuth(json['userName'], json['password'], json['token']);
+                    return new DtoHeaderAuth(json['userName'], json['password'], json['token'], json['gobiiCropType']);
                 };
                 return DtoHeaderAuth;
             }());

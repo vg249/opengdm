@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/operator/map", "../../model/dto-header-auth", "../../model/http-values"], function(exports_1, context_1) {
+System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/operator/map", "../../model/dto-header-auth", "../../model/http-values", "../../model/type-crop"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1, Observable_1, dto_header_auth_1, http_values_1;
+    var core_1, http_1, Observable_1, dto_header_auth_1, http_values_1, type_crop_1;
     var AuthenticationService;
     return {
         setters:[
@@ -29,6 +29,9 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
             },
             function (http_values_1_1) {
                 http_values_1 = http_values_1_1;
+            },
+            function (type_crop_1_1) {
+                type_crop_1 = type_crop_1_1;
             }],
         execute: function() {
             AuthenticationService = (function () {
@@ -43,9 +46,10 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                     return Observable_1.Observable.create(function (observer) {
                         if (!scope$.token) {
                             scope$.authenticateDefault()
-                                .map(function (dtoHeaderAuth) { return dtoHeaderAuth.getToken(); })
-                                .subscribe(function (token) {
-                                observer.next(token);
+                                .subscribe(function (dtoHeaderAuth) {
+                                scope$.token = dtoHeaderAuth.getToken();
+                                scope$._gobiiCropType = type_crop_1.GobiiCropType[dtoHeaderAuth.getGobiiCropType()];
+                                observer.next(scope$.token);
                                 observer.complete();
                             }, function (error) { return observer.error(error); });
                         }
@@ -57,6 +61,9 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                 }; // getToken()
                 AuthenticationService.prototype.setToken = function (token) {
                     this.token = token;
+                };
+                AuthenticationService.prototype.getGobiiCropType = function () {
+                    return this._gobiiCropType;
                 };
                 AuthenticationService.prototype.authenticateDefault = function () {
                     return this.authenticate(null, null);

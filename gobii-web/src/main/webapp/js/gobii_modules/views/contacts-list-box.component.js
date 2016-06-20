@@ -45,7 +45,6 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this.onContactSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
                 };
                 ContactsListBoxComponent.prototype.ngOnInit = function () {
-                    var _this = this;
                     var scope$ = this;
                     this._dtoRequestService.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Contact, EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
@@ -54,7 +53,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         else {
                             scope$.nameIdList = [new name_id_1.NameId(0, "<none>")];
                         }
-                        _this.handleContactSelected(scope$.nameIdList[0].id);
+                        //                this.handleContactSelected(scope$.nameIdList[0].id);
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
                     });

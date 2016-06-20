@@ -5,6 +5,7 @@ import "rxjs/add/operator/map";
 
 import {DtoHeaderAuth} from "../../model/dto-header-auth";
 import {HttpValues} from "../../model/http-values";
+import {GobiiCropType} from "../../model/type-crop";
 
 @Injectable()
 export class AuthenticationService {
@@ -16,6 +17,7 @@ export class AuthenticationService {
     private defaultUser:string = 'USER_READER';
     private defaultPassword:string = 'reader';
     private token:string = '';
+    private _gobiiCropType:GobiiCropType;
 
     public getToken():Observable<string> {
 
@@ -26,9 +28,10 @@ export class AuthenticationService {
             if (!scope$.token) {
 
                 scope$.authenticateDefault()
-                    .map(dtoHeaderAuth => dtoHeaderAuth.getToken())
-                    .subscribe(token => {
-                            observer.next(token);
+                    .subscribe(dtoHeaderAuth => {
+                            scope$.token = dtoHeaderAuth.getToken();
+                            scope$._gobiiCropType = GobiiCropType[dtoHeaderAuth.getGobiiCropType()];
+                            observer.next(scope$.token);
                             observer.complete();
                         },
                         error => observer.error(error));
@@ -39,7 +42,6 @@ export class AuthenticationService {
             }// if we don't already have a token
 
 
-
         }); // Observable
 
     } // getToken()
@@ -48,6 +50,12 @@ export class AuthenticationService {
         this.token = token;
     }
 
+
+    getGobiiCropType():GobiiCropType {
+        return this._gobiiCropType;
+    }
+
+    
     public authenticateDefault():Observable<DtoHeaderAuth> {
         return this.authenticate(null, null);
     }

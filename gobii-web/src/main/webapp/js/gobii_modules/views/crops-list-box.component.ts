@@ -1,20 +1,25 @@
 //import {RouteParams} from '@angular/router-deprecated';
-import {Component, OnInit, EventEmitter} from "@angular/core";
+import {Component,
+    OnInit,
+    EventEmitter,
+    SimpleChange,
+    ElementRef} from "@angular/core";
 import {ServerConfig} from "../model/server-config";
 import {DtoRequestService} from "../services/core/dto-request.service";
-import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
-import {ProcessType} from "../model/type-process";
-import {EntityType} from "../model/type-entity";
-import * as EntityFilters from "../model/type-entity-filter";
 import {GobiiCropType} from "../model/type-crop";
 
 
 @Component({
     selector: 'crops-list-box',
+    inputs: ['serverConfigList', 'selectedServerConfig'],
     outputs: ['onServerSelected'],
     template: `<select name="serverConfigs" (change)="handleServerSelected($event)" >
 			<option *ngFor="let serverConfig of serverConfigList" 
-				value={{serverConfig.domain}}>{{serverConfig.crop}}</option>
+                    value={{serverConfig.domain}}
+                    [attr.selected]="selectedServerConfig.crop
+                    === serverConfig.crop ? true : null">
+                    {{serverConfig.crop}}
+			</option>
 		</select>
 ` // end template
 
@@ -25,6 +30,7 @@ export class CropsListBoxComponent implements OnInit {
 
     // useg
     private serverConfigList:ServerConfig[];
+    private selectedServerConfig:ServerConfig;
 
     private onServerSelected:EventEmitter<ServerConfig> = new EventEmitter();
 
@@ -32,19 +38,9 @@ export class CropsListBoxComponent implements OnInit {
         this.onServerSelected.emit(this.serverConfigList[arg.srcElement.selectedIndex]);
     }
 
-    constructor(private _dtoRequestService:DtoRequestService<ServerConfig[]>) {
+    constructor(private _dtoRequestService:DtoRequestService<ServerConfig[]>,
+    private elementRef:ElementRef) {
 
-        let scope$ = this;
-        _dtoRequestService.getResult(new DtoRequestItemServerConfigs()).subscribe(serverConfigs => {
-                if (serverConfigs && ( serverConfigs.length > 0 )) {
-                    scope$.serverConfigList = serverConfigs;
-                } else {
-                    scope$.serverConfigList = [new ServerConfig("<undefined>","<undefined>","<undefined>",0)];
-                }
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
-            });
 
     } // ctor
 
@@ -52,4 +48,10 @@ export class CropsListBoxComponent implements OnInit {
     ngOnInit():any {
         return null;
     }
+
+    ngOnChanges(changes:{[propName:string]:SimpleChange}) {
+        this.selectedServerConfig = changes['selectedServerConfig'].currentValue;
+
+    }
+
 }

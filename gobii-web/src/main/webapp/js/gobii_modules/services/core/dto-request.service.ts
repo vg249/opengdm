@@ -1,11 +1,10 @@
 import {Injectable} from "@angular/core";
-import {NameId} from "../../model/name-id";
 import {HttpValues} from "../../model/http-values";
-import {Http, Response, Headers} from "@angular/http";
-import {AuthenticationService} from './authentication.service';
+import {GobiiCropType} from "../../model/type-crop"
+import {Http} from "@angular/http";
+import {AuthenticationService} from "./authentication.service";
 import {DtoRequestItem} from "./dto-request-item";
-import {DtoHeaderResponse} from "../../model/dto-header-response"
-
+import {DtoHeaderResponse} from "../../model/dto-header-response";
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map";
 
@@ -22,7 +21,11 @@ export class DtoRequestService<T> {
         return 'a string';
     }
 
-
+    getGobiiCropType():GobiiCropType {
+        return this._authenticationService.getGobiiCropType();
+    }
+    
+    
     public getResult(dtoRequestItem:DtoRequestItem<T>):Observable < T > {
 
         return Observable.create(observer => {
