@@ -28,7 +28,7 @@ import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-ite
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
 import {GobiiCropType} from "../model/type-crop";
-
+import * as EntityFilters from "../model/type-entity-filter";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -76,8 +76,8 @@ import {GobiiCropType} from "../model/type-crop";
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Submit As</legend>
                         <users-list-box
-                            [nameIdList]="userNameIdList"
-                            (onUserSelected)="handleUserSelected($event)">
+                            [nameIdList]="contactNameIdListForSubmitter"
+                            (onUserSelected)="handleContactForSubmissionSelected($event)">
                         </users-list-box>
                         </fieldset>
                         
@@ -92,12 +92,12 @@ import {GobiiCropType} from "../model/type-crop";
                     <div class="col-md-4"> 
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Principle Investigator</legend>
-                        <contacts-list-box (onContactSelected)="handleContactSelected($event)"></contacts-list-box>
+                        <contacts-list-box [nameIdList]="contactNameIdListForPi" (onContactSelected)="handleContactForPiSelected($event)"></contacts-list-box>
                         </fieldset>
                         
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Projects</legend>
-                        <project-list-box [primaryInvestigatorId] = "selectedContactId" (onProjectSelected)="handleProjectSelected($event)" ></project-list-box>
+                        <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi" (onProjectSelected)="handleProjectSelected($event)" ></project-list-box>
                         </fieldset>
                         
                         <fieldset class="well the-fieldset">
@@ -161,7 +161,7 @@ export class ExtractorRoot {
     constructor(private _dtoRequestServiceExtractorFile:DtoRequestService<ExtractorInstructionFilesDTO>,
                 private _dtoRequestServiceNameIds:DtoRequestService<NameId[]>,
                 private _dtoRequestServiceServerConfigs:DtoRequestService<ServerConfig[]>) {
-        let foo = "foo";
+
     }
 
     // ****************************************************************
@@ -185,7 +185,10 @@ export class ExtractorRoot {
                                     return c.crop === GobiiCropType[serverCrop];
                                 }
                             )[0];
-                    scope$.initializeUsers();
+
+                    scope$.initializeContactsForSumission();
+                    scope$.initializeContactsForPi();
+
                 } else {
                     scope$.serverConfigList = [new ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
                 }
@@ -215,23 +218,22 @@ export class ExtractorRoot {
 
 
 // ********************************************************************
-// ********************************************** SUBMIT-USER SELECTION
-    private userNameIdList:NameId[];
-    private selectedUserId:string;
-
-    private handleUserSelected(arg) {
-        this.selectedUserId = arg;
+// ********************************************** SUBMISSION-USER SELECTION
+    private contactNameIdListForSubmitter:NameId[];
+    private selectedContactIdForSubmitter:string;
+    private handleContactForSubmissionSelected(arg) {
+        this.selectedContactIdForSubmitter = arg;
     }
 
-    private initializeUsers() {
+    private initializeContactsForSumission() {
         let scope$ = this;
         this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.AllContacts)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.userNameIdList = nameIds
-                    scope$.selectedUserId = nameIds[0].id;
+                    scope$.contactNameIdListForSubmitter = nameIds
+                    scope$.selectedContactIdForSubmitter = nameIds[0].id;
                 } else {
-                    scope$.userNameIdList = [new NameId(0, "ERROR NO USERS")];
+                    scope$.contactNameIdListForSubmitter = [new NameId(0, "ERROR NO USERS")];
                 }
             },
             dtoHeaderResponse => {
@@ -241,15 +243,33 @@ export class ExtractorRoot {
     }
 
 
-    private selectedContactId:string = "1";
-
-    private handleContactSelected(arg) {
-        this.selectedContactId = arg;
+// ********************************************************************
+// ********************************************** PI USER SELECTION
+    private contactNameIdListForPi:NameId[];
+    private selectedContactIdForPi:string;
+    private handleContactForPiSelected(arg) {
+        this.selectedContactIdForPi = arg;
         //console.log("selected contact id:" + arg);
     }
 
-    private selectedFormatName:string = "Hapmap";
+    private initializeContactsForPi() {
+        let scope$ = this;
+        scope$._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
+            EntityType.Contact,
+            EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(nameIds => {
+                if (nameIds && ( nameIds.length > 0 )) {
+                    scope$.contactNameIdListForPi = nameIds;
+                    scope$.selectedContactIdForPi = scope$.contactNameIdListForPi[0].id;
+                } else {
+                    scope$.contactNameIdListForPi = [new NameId(0, "ERROR NO USERS")];
+                }
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+            });
+    }
 
+    private selectedFormatName:string = "Hapmap";
     private handleFormatSelected(arg) {
         this.selectedFormatName = arg;
         //console.log("selected contact id:" + arg);
@@ -312,7 +332,7 @@ export class ExtractorRoot {
             new GobiiExtractorInstruction(
                 "foordir",
                 this.gobiiDatasetExtracts,
-                Number(this.selectedUserId),
+                Number(this.selectedContactIdForSubmitter),
                 null)
         );
 
@@ -349,6 +369,7 @@ export class ExtractorRoot {
     ngOnInit():any {
 
         this.initializeServerConfigs();
+
     }
 
 
