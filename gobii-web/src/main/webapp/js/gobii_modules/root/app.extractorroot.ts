@@ -96,12 +96,12 @@ import * as EntityFilters from "../model/type-entity-filter";
                         </fieldset>
                         
                         <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Projects</legend>
+                        <legend class="the-legend">Project</legend>
                         <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi" (onProjectSelected)="handleProjectSelected($event)" ></project-list-box>
                         </fieldset>
                         
                         <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Experiments</legend>
+                        <legend class="the-legend">Experiment</legend>
                         <experiment-list-box [projectId] = "selectedProjectId" (onExperimentSelected)="handleExperimentSelected($event)"></experiment-list-box>
                         </fieldset>
                         
