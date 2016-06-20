@@ -116,12 +116,7 @@ import * as EntityFilters from "../model/type-entity-filter";
                     </div>  <!-- outer grid column 2-->
                     <div class="col-md-4">
                      
-                            <fieldset [hidden]="!displayDataSetDetail" class="well the-fieldset" style="vertical-align: top;">
-                                <legend class="the-legend">Data Set</legend>
-                                <dataset-detail-box [dataSetId] = "selectedDataSetDetailId"></dataset-detail-box>
-                            </fieldset>
-                     
-                          
+                         
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                             <legend class="the-legend">Extract Critiera</legend>
                             <criteria-display [gobiiDatasetExtracts] = "gobiiDatasetExtracts"></criteria-display>
@@ -279,8 +274,8 @@ export class ExtractorRoot {
     }
 
     private displayExperimentDetail:boolean = false;
-    private selectedExperimentId:string = "0";
-    private selectedExperimentDetailId:string = "0";
+    private selectedExperimentId:string = "3";
+    private selectedExperimentDetailId:string = "3";
 
     private handleExperimentSelected(arg) {
         this.selectedExperimentId = arg;

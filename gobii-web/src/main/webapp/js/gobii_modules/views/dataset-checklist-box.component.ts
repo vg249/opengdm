@@ -6,6 +6,9 @@ import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {ProcessType} from "../model/type-process";
 import {EntityType} from "../model/type-entity";
 import {CheckBoxEvent} from "../model/event-checkbox";
+import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
+import {DataSet} from "../model/dataset"
+
 
 @Component({
     selector: 'dataset-checklist-box',
@@ -13,7 +16,9 @@ import {CheckBoxEvent} from "../model/event-checkbox";
     outputs: ['onItemChecked','onItemSelected'],
     template: `<form>
                     <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
-                        <div *ngFor="let nameId of nameIdList" (click)=handleItemSelected($event) >
+                        <div *ngFor="let nameId of nameIdList" 
+                            (click)=handleItemSelected($event) 
+                            (hover)=handleItemHover($event)>
                             <input  type="checkbox" 
                                 (click)=handleItemChecked($event)
                                 value={{nameId.id}} 
@@ -21,6 +26,16 @@ import {CheckBoxEvent} from "../model/event-checkbox";
                         </div>            
                     </div>
                 </form>
+                <div *ngIf="dataSet">
+                    <BR>
+                     <fieldset>
+                        Name: {{dataSet.name}}<BR>
+                        Data Table: {{dataSet.dataTable}}<BR>
+                        Data File: {{dataSet.dataFile}}<BR>
+                        Quality Table: {{dataSet.qualityTable}}<BR>
+                        Quality File: {{dataSet.qualityFile}}<BR>
+                      </fieldset> 
+                </div>                
 ` // end template
 
 })
@@ -34,6 +49,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private experimentId:string;
     private onItemChecked:EventEmitter<CheckBoxEvent> = new EventEmitter();
     private onItemSelected:EventEmitter<number> = new EventEmitter();
+    private dataSet:DataSet;
 
     private handleItemChecked(arg) {
         let checkEvent:CheckBoxEvent = new CheckBoxEvent(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE,
@@ -41,13 +57,19 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
             arg.currentTarget.name);
         this.onItemChecked.emit(checkEvent);
     }
-    
+
+    private previousSelectedItem:any;
     private handleItemSelected(arg) {
         let selectedDataSetId:number = Number(arg.currentTarget.children[0].value);
+        if( this.previousSelectedItem ) {this.previousSelectedItem.style = ""}
+        arg.currentTarget.style = "background-color:#b3d9ff";
+        this.previousSelectedItem = arg.currentTarget;
+        this.setDatasetDetails(selectedDataSetId);
         this.onItemSelected.emit(selectedDataSetId);
     }
 
-    constructor(private _dtoRequestService:DtoRequestService<NameId[]>) {
+    constructor(private _dtoRequestServiceNameId:DtoRequestService<NameId[]>,
+                private _dtoRequestServiceDataSetDetail:DtoRequestService<DataSet>) {
 
     } // ctor
 
@@ -56,11 +78,12 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
         // we can get this event whenver the item is clicked, not necessarily when the checkbox
         let scope$ = this;
-        this._dtoRequestService.getResult(new DtoRequestItemNameIds(ProcessType.READ,
+        this._dtoRequestServiceNameId.getResult(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.DataSetNamesByExperimentId,
             this.experimentId)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.nameIdList = nameIds
+                    scope$.nameIdList = nameIds;
+                    scope$.setDatasetDetails(scope$.nameIdList[0].id);
                 } else {
                     scope$.nameIdList = [new NameId(0, "<none>")];
                 }
@@ -69,6 +92,21 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                 dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
             });
     } // setList()
+
+    private setDatasetDetails(dataSetId:number):void {
+
+        let scope$ = this;
+        scope$._dtoRequestServiceDataSetDetail.getResult(new DtoRequestItemDataSet(dataSetId)).subscribe(dataSet => {
+                if (dataSet) {
+                    scope$.dataSet = dataSet;
+                }
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message));
+            });
+
+    } // setList()
+
 
     ngOnInit():any {
 
