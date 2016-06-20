@@ -10,7 +10,7 @@ import {DtoRequestItemProject} from "../services/app/dto-request-item-project";
 
 @Component({
     selector: 'project-list-box',
-    inputs: ['primaryInvestigatorId'],
+    inputs: ['primaryInvestigatorId','nameIdList'],
     outputs: ['onProjectSelected'],
     template: `<select name="projects" 
                     (change)="handleProjectSelected($event)">
@@ -51,21 +51,21 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
 
     private setList():void {
 
-        let scope$ = this;
-        this._dtoRequestServiceNameId.getResult(new DtoRequestItemNameIds(ProcessType.READ,
-            EntityType.Project,
-            this.primaryInvestigatorId)).subscribe(nameIds => {
-                if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.nameIdList = nameIds;
-                    scope$.setProjectDetails(scope$.nameIdList[0].id);
-
-                } else {
-                    scope$.nameIdList = [new NameId(0, "<none>")];
-                }
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
-            });
+        // let scope$ = this;
+        // this._dtoRequestServiceNameId.getResult(new DtoRequestItemNameIds(ProcessType.READ,
+        //     EntityType.Project,
+        //     this.primaryInvestigatorId)).subscribe(nameIds => {
+        //         if (nameIds && ( nameIds.length > 0 )) {
+        //             scope$.nameIdList = nameIds;
+        //             scope$.setProjectDetails(scope$.nameIdList[0].id);
+        //
+        //         } else {
+        //             scope$.nameIdList = [new NameId(0, "<none>")];
+        //         }
+        //     },
+        //     dtoHeaderResponse => {
+        //         dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+        //     });
     } // setList()
 
     private setProjectDetails(projectId:string):void {
@@ -83,12 +83,21 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
 
     ngOnInit():any {
 
-        this.setList();
+        //this.setList();
     }
 
     ngOnChanges(changes:{[propName:string]:SimpleChange}) {
-        this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
-        this.setList();
+
+        if(changes['primaryInvestigatorId'] && changes['primaryInvestigatorId'].currentValue ) {
+            this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
+        }
+
+        if( changes['nameIdList']  ) {
+            if(changes['nameIdList'].currentValue) {
+                this.nameIdList = changes['nameIdList'].currentValue;
+                this.setProjectDetails(this.nameIdList[0].id);
+            }
+        }
 //        console.log('ngOnChanges - myProp = ' + changes['primaryInvestigatorId'].currentValue);
     }
 }

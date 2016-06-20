@@ -97,7 +97,9 @@ import * as EntityFilters from "../model/type-entity-filter";
                         
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Project</legend>
-                        <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi" (onProjectSelected)="handleProjectSelected($event)" ></project-list-box>
+                        <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi"
+                            [nameIdList]="projectNameIdList"
+                            (onProjectSelected)="handleProjectSelected($event)" ></project-list-box>
                         </fieldset>
                         
                         <fieldset class="well the-fieldset">
@@ -239,6 +241,7 @@ export class ExtractorRoot {
     private selectedContactIdForPi:string;
     private handleContactForPiSelected(arg) {
         this.selectedContactIdForPi = arg;
+        this.initializeProjectNameIds();
         //console.log("selected contact id:" + arg);
     }
 
@@ -250,6 +253,7 @@ export class ExtractorRoot {
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.contactNameIdListForPi = nameIds;
                     scope$.selectedContactIdForPi = scope$.contactNameIdListForPi[0].id;
+                    scope$.initializeProjectNameIds();
                 } else {
                     scope$.contactNameIdListForPi = [new NameId(0, "ERROR NO USERS")];
                 }
@@ -259,18 +263,39 @@ export class ExtractorRoot {
             });
     }
 
+// ********************************************************************
+// ********************************************** HAPMAP SELECTION
     private selectedFormatName:string = "Hapmap";
     private handleFormatSelected(arg) {
         this.selectedFormatName = arg;
         //console.log("selected contact id:" + arg);
     }
 
-    private selectedProjectId:string = "0";
-
+// ********************************************************************
+// ********************************************** PROJECT ID
+    private projectNameIdList:NameId[];
+    private selectedProjectId:string;
     private handleProjectSelected(arg) {
         this.selectedProjectId = arg;
         this.displayExperimentDetail = false;
         this.displayDataSetDetail = false;
+    }
+
+    private initializeProjectNameIds() {
+        let scope$ = this;
+        scope$._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
+            EntityType.Project,
+            this.selectedContactIdForPi)).subscribe(nameIds => {
+                if (nameIds && ( nameIds.length > 0 )) {
+                    scope$.projectNameIdList = nameIds;
+                    scope$.selectedProjectId = nameIds[0].id;
+                } else {
+                    scope$.projectNameIdList= [new NameId(0, "<none>")];
+                }
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+            });
     }
 
     private displayExperimentDetail:boolean = false;
