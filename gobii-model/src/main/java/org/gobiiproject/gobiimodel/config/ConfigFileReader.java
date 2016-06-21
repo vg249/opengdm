@@ -31,7 +31,7 @@ public class ConfigFileReader {
 
                 String configFileWebPath = SystemUtils.IS_OS_WINDOWS ?
                         locationProperites.getProperty(FILE_LOC_PROP_PATH_WINDOWS) :
-                        locationProperites.getProperty(FILE_LOC_PROP_PATH_WINDOWS);
+                        locationProperites.getProperty(FILE_LOC_PROP_PATH_LINUX);
 
                 File configFileWeb = new File(configFileWebPath);
 
