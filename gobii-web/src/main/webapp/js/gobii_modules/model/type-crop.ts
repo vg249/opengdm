@@ -10,3 +10,4 @@ export enum GobiiCropType {
     SORGHUM,
     WHEAT
 }
+
