@@ -74,27 +74,4 @@ public class DtoRequestConfigSettingsTest {
         Assert.assertNotNull(matches.get(0).getContextRoot());
     }
 
-    @Test
-    public void testClientConfig() throws Exception {
-        ConfigSettings configSettings = new ConfigSettings();
-        Integer port = configSettings.getCropConfig(configSettings.getDefaultGobiiCropType()).getServicePort();
-        String gobiiUrl = "http://"
-                + configSettings.getCropConfig(configSettings.getDefaultGobiiCropType()).getServiceDomain()
-                + ":"
-                + port.toString()
-                + "/"
-                + configSettings.getCropConfig(configSettings.getDefaultGobiiCropType()).getServiceAppRoot();
-
-
-        ClientContext.resetConfiguration();
-        List<GobiiCropType> gobiiCropTypes = ClientContext.getInstance(gobiiUrl,true).getCropTypeTypes();
-        Assert.assertTrue(gobiiCropTypes.size()
-                == configSettings.getActiveCropConfigs().size());
-
-        List<GobiiCropType> gobiiCropTypesASecondTime = ClientContext.getInstance(null,false).getCropTypeTypes();
-        Assert.assertTrue(gobiiCropTypesASecondTime.size()
-                == configSettings.getActiveCropConfigs().size());
-
-    } // testClientConfig()
-
 }

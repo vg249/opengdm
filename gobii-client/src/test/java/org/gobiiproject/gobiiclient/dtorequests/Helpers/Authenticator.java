@@ -13,6 +13,8 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
  */
 public class Authenticator {
 
+    private static String INTITIAL_CONFIG_URL = "http://localhost:8282/gobii-dev";
+
 
     public static boolean authenticate(GobiiCropType gobiiCropType) throws Exception {
 
@@ -34,24 +36,15 @@ public class Authenticator {
         // end-user will specify (for example, http://biotech.cornell.edu:8080/gobii-rice)
         // the url _must_ include the protocol and port and context path -- everything
         // as if you were navigating to that path in a web browser
-        ConfigSettings configSettings = new ConfigSettings();
-        Integer port = configSettings.getCropConfig(configSettings.getDefaultGobiiCropType()).getServicePort();
-        String gobiiUrl = "http://"
-                + configSettings.getCropConfig(configSettings.getDefaultGobiiCropType()).getServiceDomain()
-                + ":"
-                + port.toString()
-                + "/"
-                + configSettings.getCropConfig(configSettings.getDefaultGobiiCropType()).getServiceAppRoot();
 
-        // Calling ClientContext.getInstance() with the url and initFromServerConfig == true
-        // establishes the context with server config data. From this point all, we cal call
-        // getInstance() with parameter values null,false -- the data are already there and initialized.
-        GobiiCropType gobiiCropTypeDefault = ClientContext.getInstance(gobiiUrl,true).getDefaultCropType();
+
+        GobiiCropType gobiiCropTypeDefault = ClientContext.getInstance(Authenticator.INTITIAL_CONFIG_URL,true).getDefaultCropType();
         return Authenticator.authenticate(gobiiCropTypeDefault);
     }
 
     // not implemented yet
     public static boolean deAuthenticate() throws Exception {
+        ClientContext.resetConfiguration();
         return true;
     }
 }

@@ -77,8 +77,10 @@ public class HttpCore {
         }
 
 
-        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP,
-                ClientContext.getInstance(null, false).getCurrentClientCropType().toString());
+        if( ClientContext.isInitialized() ) {
+            httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP,
+                    ClientContext.getInstance(null, false).getCurrentClientCropType().toString());
+        }
 
         return (HttpClientBuilder.create().build().execute(httpUriRequest));
 

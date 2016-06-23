@@ -33,6 +33,10 @@ public final class ClientContext {
     // this may not be effective if more thn one classloader is used
     private static ClientContext clientContext = null;
 
+    public static boolean isInitialized() {
+        return null != clientContext;
+    }
+
     public synchronized static void resetConfiguration() {
         clientContext = null;
     }
@@ -41,12 +45,12 @@ public final class ClientContext {
 
         if (null == clientContext) {
 
-            clientContext = new ClientContext();
-
             if (initConfigFromServer) {
+
+
                 if (!LineUtils.isNullOrEmpty(gobiiUrl)) {
 
-                    if ('/' != gobiiUrl.charAt(gobiiUrl.length()-1)) {
+                    if ('/' != gobiiUrl.charAt(gobiiUrl.length() - 1)) {
                         gobiiUrl = gobiiUrl + '/';
                     }
 
@@ -59,7 +63,7 @@ public final class ClientContext {
                                 + "; url must be in this format: http://host:port/context-root");
                     }
 
-                    clientContext = clientContext.makeFromServer(url);
+                    clientContext = (new ClientContext()).makeFromServer(url);
 
                 } else {
                     throw new Exception("initConfigFromServer is specfied, but the gobiiUrl parameter is null or empty");
@@ -67,12 +71,7 @@ public final class ClientContext {
 
             } else {
 
-                LOGGER.error("The client context is being configured from properties file "
-                        + " instead of from server configuration; the client will require "
-                        + "binary update when configuration changes; "
-                        + "set gobiiUrl and initConfigFromServer params to initialize from server");
-
-                clientContext = clientContext.makeFromProperties();
+                throw new Exception("Client configuration must be initialized from a web server url");
             }
 
             clientContext.gobiiCropTypes.addAll(clientContext
@@ -80,29 +79,7 @@ public final class ClientContext {
                     .keySet());
         }
 
-
-
         return clientContext;
-    }
-
-    private ClientContext makeFromProperties() throws Exception {
-
-        ClientContext returnVal = new ClientContext();
-
-        ConfigSettings configSettings = new ConfigSettings();
-
-        returnVal.defaultGobiiCropType = configSettings.getDefaultGobiiCropType();
-        returnVal.currentGobiiCropType = returnVal.defaultGobiiCropType;
-
-        for (CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
-
-            ServerConfig currentServerConfig = new ServerConfig(currentCropConfig);
-
-            returnVal.serverConfigs.put(currentCropConfig.getGobiiCropType(),
-                    currentServerConfig);
-        }
-
-        return returnVal;
     }
 
     private ClientContext makeFromServer(URL url) throws Exception {
