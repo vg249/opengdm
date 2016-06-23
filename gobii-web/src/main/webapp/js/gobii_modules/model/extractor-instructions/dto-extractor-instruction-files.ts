@@ -1,20 +1,27 @@
 import {ProcessType} from "../../model/type-process";
-import {GobiiExtractorInstruction} from "./gobii-extractor-instruction"
+import {GobiiExtractorInstruction} from "./gobii-extractor-instruction";
+import {GobiiCropType} from "../type-crop";
 
 export class ExtractorInstructionFilesDTO {
 
     constructor(private gobiiExtractorInstructions:GobiiExtractorInstruction[],
                 private instructionFileName:string,
-                private processType:ProcessType) {
+                private processType:ProcessType,
+                private gobiiCropType:GobiiCropType) {
 
         this.gobiiExtractorInstructions = gobiiExtractorInstructions;
         this.instructionFileName = instructionFileName;
         this.processType = processType;
+        this.gobiiCropType = gobiiCropType;
 
     } // ctor
 
     public getProcessType():ProcessType {
         return this.processType;
+    }
+
+    public getGobiiCropType():GobiiCropType {
+        return this.gobiiCropType;
     }
 
     public setProcessType(value:ProcessType) {
@@ -44,6 +51,7 @@ export class ExtractorInstructionFilesDTO {
 
         returnVal.processType = this.processType;
         returnVal.instructionFileName = this.instructionFileName;
+        returnVal.gobiiCropType = this.gobiiCropType;
         returnVal.gobiiExtractorInstructions = [];
 
         this.gobiiExtractorInstructions.forEach(i => {
@@ -64,7 +72,8 @@ export class ExtractorInstructionFilesDTO {
         let returnVal:ExtractorInstructionFilesDTO = new ExtractorInstructionFilesDTO(
             gobiiExtractorInstructions,
             json.instructionFileName,
-            json.processType
+            json.processType,
+            json.gobiiCropType
         );
 
         return returnVal;

@@ -6,6 +6,8 @@ System.register([], function(exports_1, context_1) {
         setters:[],
         execute: function() {
             (function (GobiiCropType) {
+                // order is meaningful -- do not change it
+                // it has to align with the same enum on the server
                 GobiiCropType[GobiiCropType["UNDEFINED"] = 0] = "UNDEFINED";
                 GobiiCropType[GobiiCropType["DEV"] = 1] = "DEV";
                 GobiiCropType[GobiiCropType["TEST"] = 2] = "TEST";

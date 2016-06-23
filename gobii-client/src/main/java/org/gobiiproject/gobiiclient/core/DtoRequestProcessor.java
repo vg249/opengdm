@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiclient.core;
 
+import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Phil on 5/13/2016.
  */
-public class DtoRequestProcessor<T> {
+public class DtoRequestProcessor<T extends DtoMetaData> {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoRequestProcessor.class);
 

@@ -215,6 +215,7 @@ export class ExtractorRoot {
 // ********************************************** SUBMISSION-USER SELECTION
     private contactNameIdListForSubmitter:NameId[];
     private selectedContactIdForSubmitter:string;
+
     private handleContactForSubmissionSelected(arg) {
         this.selectedContactIdForSubmitter = arg;
     }
@@ -241,6 +242,7 @@ export class ExtractorRoot {
 // ********************************************** PI USER SELECTION
     private contactNameIdListForPi:NameId[];
     private selectedContactIdForPi:string;
+
     private handleContactForPiSelected(arg) {
         this.selectedContactIdForPi = arg;
         this.initializeProjectNameIds();
@@ -268,6 +270,7 @@ export class ExtractorRoot {
 // ********************************************************************
 // ********************************************** HAPMAP SELECTION
     private selectedFormatName:string = "Hapmap";
+
     private handleFormatSelected(arg) {
         this.selectedFormatName = arg;
         //console.log("selected contact id:" + arg);
@@ -277,6 +280,7 @@ export class ExtractorRoot {
 // ********************************************** PROJECT ID
     private projectNameIdList:NameId[];
     private selectedProjectId:string;
+
     private handleProjectSelected(arg) {
         this.selectedProjectId = arg;
         this.displayExperimentDetail = false;
@@ -294,7 +298,7 @@ export class ExtractorRoot {
                     scope$.selectedProjectId = nameIds[0].id;
                     this.initializeExperimentNameIds();
                 } else {
-                    scope$.projectNameIdList= [new NameId(0, "<none>")];
+                    scope$.projectNameIdList = [new NameId(0, "<none>")];
                 }
             },
             dtoHeaderResponse => {
@@ -325,7 +329,7 @@ export class ExtractorRoot {
             EntityType.Experiment,
             this.selectedProjectId)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.experimentNameIdList= nameIds
+                    scope$.experimentNameIdList = nameIds
                     scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
                 } else {
                     scope$.experimentNameIdList = [new NameId(0, "<none>")];
@@ -336,7 +340,6 @@ export class ExtractorRoot {
             });
 
     }
-
 
 
 // ********************************************************************
@@ -399,7 +402,9 @@ export class ExtractorRoot {
         let extractorInstructionFilesDTORequest:ExtractorInstructionFilesDTO =
             new ExtractorInstructionFilesDTO(gobiiExtractorInstructions,
                 fileName,
-                ProcessType.CREATE);
+                ProcessType.CREATE,
+                GobiiCropType[this.selectedServerConfig.crop]);
+
 
         let extractorInstructionFilesDTOResponse:ExtractorInstructionFilesDTO = null;
         this._dtoRequestServiceExtractorFile.getResult(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))

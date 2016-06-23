@@ -12,6 +12,7 @@ import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +60,13 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
             ConfigSettings configSettings = new ConfigSettings();
 
+            GobiiCropType currentGobiiCropType = extractorInstructionFilesDTO.getGobiiCropType();
+            if( null == currentGobiiCropType ) {
+                throw new Exception("Extractor instruction request does not specify a crop");
+            }
+
             String instructionFileDirectory = configSettings
-                    .getCurrentCropConfig()
+                    .getCropConfig(currentGobiiCropType)
                     .getExtractorInstructionFilesDirectory();
 
             createDirectories(instructionFileDirectory);

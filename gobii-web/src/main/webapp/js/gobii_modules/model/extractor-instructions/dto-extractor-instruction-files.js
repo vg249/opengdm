@@ -10,16 +10,21 @@ System.register(["./gobii-extractor-instruction"], function(exports_1, context_1
             }],
         execute: function() {
             ExtractorInstructionFilesDTO = (function () {
-                function ExtractorInstructionFilesDTO(gobiiExtractorInstructions, instructionFileName, processType) {
+                function ExtractorInstructionFilesDTO(gobiiExtractorInstructions, instructionFileName, processType, gobiiCropType) {
                     this.gobiiExtractorInstructions = gobiiExtractorInstructions;
                     this.instructionFileName = instructionFileName;
                     this.processType = processType;
+                    this.gobiiCropType = gobiiCropType;
                     this.gobiiExtractorInstructions = gobiiExtractorInstructions;
                     this.instructionFileName = instructionFileName;
                     this.processType = processType;
+                    this.gobiiCropType = gobiiCropType;
                 } // ctor
                 ExtractorInstructionFilesDTO.prototype.getProcessType = function () {
                     return this.processType;
+                };
+                ExtractorInstructionFilesDTO.prototype.getGobiiCropType = function () {
+                    return this.gobiiCropType;
                 };
                 ExtractorInstructionFilesDTO.prototype.setProcessType = function (value) {
                     this.processType = value;
@@ -40,6 +45,7 @@ System.register(["./gobii-extractor-instruction"], function(exports_1, context_1
                     var returnVal = {};
                     returnVal.processType = this.processType;
                     returnVal.instructionFileName = this.instructionFileName;
+                    returnVal.gobiiCropType = this.gobiiCropType;
                     returnVal.gobiiExtractorInstructions = [];
                     this.gobiiExtractorInstructions.forEach(function (i) {
                         returnVal.gobiiExtractorInstructions.push(i.getJson());
@@ -51,7 +57,7 @@ System.register(["./gobii-extractor-instruction"], function(exports_1, context_1
                     json.gobiiExtractorInstructions.forEach(function (i) {
                         return gobiiExtractorInstructions.push(gobii_extractor_instruction_1.GobiiExtractorInstruction.fromJson(i));
                     });
-                    var returnVal = new ExtractorInstructionFilesDTO(gobiiExtractorInstructions, json.instructionFileName, json.processType);
+                    var returnVal = new ExtractorInstructionFilesDTO(gobiiExtractorInstructions, json.instructionFileName, json.processType, json.gobiiCropType);
                     return returnVal;
                 };
                 return ExtractorInstructionFilesDTO;
