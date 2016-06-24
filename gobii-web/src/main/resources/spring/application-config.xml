@@ -191,11 +191,6 @@
 
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
-    <!--<bean id="gobiiProperties"-->
-    <!--class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
-    <!--<property name="location" value="classpath:gobii.properties"/>-->
-    <!--</bean>-->
-
     <!--************************** SET UP CONFIGURAITON FOR JDBC settings-->
     <bean id="configSettings" class="org.gobiiproject.gobiimodel.config.ConfigSettings"/>
     <!--**************** JDBC Configuraiton: RICE *********************************-->

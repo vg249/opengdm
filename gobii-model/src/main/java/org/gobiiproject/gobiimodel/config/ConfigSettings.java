@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -21,6 +22,7 @@ public class ConfigSettings {
 
     private final String PROP_NAME_MAIL_SVR_TYPE = "mailsvr.type";
     private final String PROP_NAME_MAIL_SVR_DOMAIN = "mailsvr.domain";
+    private final String PROP_NAME_MAIL_SVR_PORT = "mailsvr.port";
     private final String PROP_NAME_MAIL_SVR_USER = "mailsvr.user";
     private final String PROP_NAME_MAIL_SVR_HASHTYPE = "mailsvr.hashtype";
     private final String PROP_NAME_MAIL_SVR_PWD = "mailsvr.pwd";
@@ -76,6 +78,7 @@ public class ConfigSettings {
     private String emailSvrUser;
     private String emailSvrHashType;
     private String emailSvrPassword;
+    private Integer emailServerPort = 0;
     private boolean iflIntegrityCheck = false;
 
 
@@ -100,6 +103,11 @@ public class ConfigSettings {
 
         emailSvrType = configReader.getPropValue(PROP_NAME_MAIL_SVR_TYPE);
         emailSvrDomain = configReader.getPropValue(PROP_NAME_MAIL_SVR_DOMAIN);
+
+        if (null != configReader.getPropValue(PROP_NAME_MAIL_SVR_PORT) && NumberUtils.isNumber(configReader.getPropValue(PROP_NAME_MAIL_SVR_PORT))) {
+            emailServerPort = Integer.parseInt(configReader.getPropValue(PROP_NAME_MAIL_SVR_PORT));
+        }
+
         emailSvrUser = configReader.getPropValue(PROP_NAME_MAIL_SVR_USER);
         emailSvrHashType = configReader.getPropValue(PROP_NAME_MAIL_SVR_HASHTYPE);
         emailSvrPassword = configReader.getPropValue(PROP_NAME_MAIL_SVR_PWD);
@@ -211,6 +219,8 @@ public class ConfigSettings {
         return defaultGobiiCropType;
     }
 
+
+
     public void setDefaultGobiiCropType(GobiiCropType defaultGobiiCropType) {
         this.defaultGobiiCropType = defaultGobiiCropType;
     }
@@ -235,6 +245,14 @@ public class ConfigSettings {
         return emailSvrType;
     }
 
+    public Integer getEmailServerPort() {
+        return emailServerPort;
+    }
+
+    public void setEmailServerPort(Integer emailServerPort) {
+        this.emailServerPort = emailServerPort;
+    }
+
     public boolean isIflIntegrityCheck() {
         return iflIntegrityCheck;
     }
@@ -242,4 +260,5 @@ public class ConfigSettings {
     public void setIflIntegrityCheck(boolean iflIntegrityCheck) {
         this.iflIntegrityCheck = iflIntegrityCheck;
     }
+
 }

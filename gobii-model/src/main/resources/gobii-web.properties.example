@@ -1,10 +1,11 @@
 ## GLOBAL SETTINGS -------------------------------------
 websvr.defaultcrop=TEST
-mailsvr.type=type_example
-mailsvr.domain=domain_example
-mailsvr.user=user_example
-mailsvr.hashtype=hashtype_example
-mailsvr.pwd=password_example
+mailsvr.type=SMTP
+mailsvr.domain=smtp.gmail.com
+mailsvr.user=gobii.jira@gmail.com
+mailsvr.port=465
+mailsvr.hashtype=na
+mailsvr.pwd=na
 ifl.integritycheck=false
 
 
