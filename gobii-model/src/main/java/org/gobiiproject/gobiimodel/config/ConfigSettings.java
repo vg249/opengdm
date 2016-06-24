@@ -66,7 +66,6 @@ public class ConfigSettings {
             CROP_PREFIX_WHEAT
     };
 
-    private ConfigFileReader configReader = new ConfigFileReader();
 
     private Map<GobiiCropType, CropConfig> cropConfigs = new HashMap<>();
 
@@ -82,7 +81,15 @@ public class ConfigSettings {
     private boolean iflIntegrityCheck = false;
 
 
+    private ConfigFileReader configReader = null;
+
     public ConfigSettings() throws Exception {
+        this(null);
+    }
+
+    public ConfigSettings(String fqpn) throws Exception {
+
+        this.configReader = new ConfigFileReader(fqpn);
 
         String currentPrefix = null;
 

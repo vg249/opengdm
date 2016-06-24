@@ -48,6 +48,7 @@ public class LoaderInstructionsDAOImpl implements LoaderInstructionsDAO {
 
                         ObjectMapper objectMapper = new ObjectMapper();
                         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+                        objectMapper.enable(SerializationFeature.WRITE_NULL_MAP_VALUES);
                         String instructionsAsJson = objectMapper.writeValueAsString(instructions);
                         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(instructionFileFqpn));
                         bufferedWriter.write(instructionsAsJson);

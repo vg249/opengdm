@@ -14,6 +14,13 @@ import java.util.Properties;
  */
 public class ConfigFileReader {
 
+    private String fqpn = null;
+    public ConfigFileReader(String fqpn) {
+
+        this.fqpn = fqpn;
+
+    }
+
 
     private Properties webProperties = null;
 
@@ -21,11 +28,17 @@ public class ConfigFileReader {
 
         if (null == webProperties) {
 
-            JndiTemplate jndi = new JndiTemplate();
-            String configFileWebPath = (String) jndi.lookup("java:comp/env/gobiipropsloc");
-            File configFileWeb = new File(configFileWebPath);
+            String configFileWebPath = null;
+            if( null == this.fqpn ) {
 
-            if (!LineUtils.isNullOrEmpty(configFileWebPath) || (null == configFileWeb)) {
+                JndiTemplate jndi = new JndiTemplate();
+                configFileWebPath = (String) jndi.lookup("java:comp/env/gobiipropsloc");
+            } else {
+                configFileWebPath = this.fqpn;
+            }
+
+            if (!LineUtils.isNullOrEmpty(configFileWebPath) ) {
+
                 InputStream configFileWebStream = new FileInputStream(configFileWebPath);
                 if (null != configFileWebStream) {
 

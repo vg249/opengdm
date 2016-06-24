@@ -16,6 +16,9 @@ public class GobiiLoaderInstruction {
     private VcfParameters vcfParameters = new VcfParameters();
     private Integer dataSetId;
     private GobiiCropType gobiiCropType;
+    Integer contactId;
+    String contactEmail;
+
 
     public GobiiFile getGobiiFile() {
         return gobiiFile;
@@ -70,5 +73,21 @@ public class GobiiLoaderInstruction {
     public GobiiLoaderInstruction setGobiiCropType(GobiiCropType gobiiCropType) {
         this.gobiiCropType = gobiiCropType;
         return this;
+    }
+
+    public Integer getContactId() {
+        return contactId;
+    }
+
+    public void setContactId(Integer contactId) {
+        this.contactId = contactId;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
     }
 }
