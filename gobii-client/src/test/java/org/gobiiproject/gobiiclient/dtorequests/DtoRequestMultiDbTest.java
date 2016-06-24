@@ -44,7 +44,7 @@ public class DtoRequestMultiDbTest {
     @Test
     public void testGetPingDatabaseConfig() throws Exception {
 
-        ConfigSettings configSettings = new ConfigSettings(); // we're deliberately going to the source instead of using ClientContext
+        ConfigSettings configSettings = new ConfigSettings("C:\\gobii-config\\gobii-web.properties"); // we're deliberately going to the source instead of using ClientContext
 
 
         List<GobiiCropType> activeCropTypes = configSettings
@@ -88,7 +88,7 @@ public class DtoRequestMultiDbTest {
     @Test
     public void testCreateCvOnMultipleDb() throws Exception {
 
-        ConfigSettings configSettings = new ConfigSettings(); // we're deliberately going to the source instead of using ClientContext
+        ConfigSettings configSettings = new ConfigSettings("C:\\gobii-config\\gobii-web.properties"); // we're deliberately going to the source instead of using ClientContext
 
 
         List<GobiiCropType> activeCropTypes = configSettings

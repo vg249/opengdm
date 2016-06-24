@@ -48,7 +48,7 @@ public class DtoRequestConfigSettingsTest {
 
         // this works because in our test environment we know that our gobii.config
         // here on the client is the same as on the server
-        ConfigSettings configSettings = new ConfigSettings();
+        ConfigSettings configSettings = new ConfigSettings("C:\\gobii-config\\gobii-web.properties");
         Assert.assertTrue(configSettings
                 .getActiveCropConfigs()
                 .size() == configSettingsDTOResponse.getServerConfigs().size());
