@@ -79,15 +79,17 @@ public class GobiiLoaderInstruction {
         return contactId;
     }
 
-    public void setContactId(Integer contactId) {
+    public GobiiLoaderInstruction setContactId(Integer contactId) {
         this.contactId = contactId;
+        return this;
     }
 
     public String getContactEmail() {
         return contactEmail;
     }
 
-    public void setContactEmail(String contactEmail) {
+    public GobiiLoaderInstruction setContactEmail(String contactEmail) {
         this.contactEmail = contactEmail;
+        return this;
     }
 }
