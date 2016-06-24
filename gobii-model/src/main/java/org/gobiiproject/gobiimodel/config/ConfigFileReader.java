@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.config;
 
 import org.apache.commons.lang.SystemUtils;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.springframework.jndi.JndiTemplate;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,43 +15,31 @@ import java.util.Properties;
 public class ConfigFileReader {
 
 
-    private final String PROP_FILE_NAME = "/gobii.properties";
     private Properties webProperties = null;
-    private final String FILE_LOC_PROP_PATH_WINDOWS = "configfileloc.windows";
-    private final String FILE_LOC_PROP_PATH_LINUX = "configfileloc.linux";
 
     private Properties getWebProperties() throws Exception {
 
         if (null == webProperties) {
 
-            InputStream locationPropFileStream = getClass().getResourceAsStream(PROP_FILE_NAME);
+            JndiTemplate jndi = new JndiTemplate();
+            String configFileWebPath = (String) jndi.lookup("java:comp/env/gobiipropsloc");
+            File configFileWeb = new File(configFileWebPath);
 
-            if (null != locationPropFileStream) {
-                Properties locationProperites = new Properties();
-                locationProperites.load(locationPropFileStream);
+            if (!LineUtils.isNullOrEmpty(configFileWebPath) || (null == configFileWeb)) {
+                InputStream configFileWebStream = new FileInputStream(configFileWebPath);
+                if (null != configFileWebStream) {
 
-                String configFileWebPath = SystemUtils.IS_OS_WINDOWS ?
-                        locationProperites.getProperty(FILE_LOC_PROP_PATH_WINDOWS) :
-                        locationProperites.getProperty(FILE_LOC_PROP_PATH_LINUX);
-
-                File configFileWeb = new File(configFileWebPath);
-
-                if (!LineUtils.isNullOrEmpty(configFileWebPath) || (null == configFileWeb) ) {
-                    InputStream configFileWebStream = new FileInputStream(configFileWebPath);
-                    if (null != configFileWebStream) {
-                        webProperties = new Properties();
-                        webProperties.load(configFileWebStream);
-                    } else {
-                        throw new Exception("Unable to create input stream for config file: " + configFileWebPath);
-                    }
+                    webProperties = new Properties();
+                    webProperties.load(configFileWebStream);
 
                 } else {
-                    throw new Exception("Config file for prp file location does not specify property: " + PROP_FILE_NAME);
+                    throw new Exception("Unable to create input stream for config file: " + configFileWebPath);
                 }
 
             } else {
-                throw new Exception("Config file for prp file location not found: " + PROP_FILE_NAME);
+                throw new Exception("JNDI lookup on prop file location is null or empty" );
             }
+
         }
 
         return webProperties;

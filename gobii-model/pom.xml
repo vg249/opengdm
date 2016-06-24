@@ -36,40 +36,48 @@
             <version>${commons-lang-version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring-framework.version}</version>
+        </dependency>
+
+
     </dependencies>
 
     <!--<build>-->
-        <!--<plugins>-->
-            <!--<plugin>-->
-                <!--<artifactId>maven-resources-plugin</artifactId>-->
-                <!--<version>2.6</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>prepare-package-resources</id>-->
-                        <!--<phase>prepare-package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy-resources</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--&lt;!&ndash; Copy all generated javascript files into the final directory structure &ndash;&gt;-->
-                            <!--&lt;!&ndash;<outputDirectory>${project.build.outputDirectory}/${project.artifactId}</outputDirectory>&ndash;&gt;-->
-                            <!--<outputDirectory>${project.build.outputDirectory}/WEB-INF/</outputDirectory>-->
-                            <!--<resources>-->
-                                <!--<resource>-->
-                                    <!--&lt;!&ndash; Take the node-module code from where npm puts it &ndash;&gt;-->
-                                    <!--<directory>${project.basedir}//src/main/resources</directory>-->
-                                    <!--<includes>-->
-                                        <!--<include>gobii.properties</include>-->
-                                    <!--</includes>-->
-                                    <!--<filtering>false</filtering>-->
-                                <!--</resource>-->
-                            <!--</resources>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
+    <!--<plugins>-->
+    <!--<plugin>-->
+    <!--<artifactId>maven-resources-plugin</artifactId>-->
+    <!--<version>2.6</version>-->
+    <!--<executions>-->
+    <!--<execution>-->
+    <!--<id>prepare-package-resources</id>-->
+    <!--<phase>prepare-package</phase>-->
+    <!--<goals>-->
+    <!--<goal>copy-resources</goal>-->
+    <!--</goals>-->
+    <!--<configuration>-->
+    <!--&lt;!&ndash; Copy all generated javascript files into the final directory structure &ndash;&gt;-->
+    <!--&lt;!&ndash;<outputDirectory>${project.build.outputDirectory}/${project.artifactId}</outputDirectory>&ndash;&gt;-->
+    <!--<outputDirectory>${project.build.outputDirectory}/WEB-INF/</outputDirectory>-->
+    <!--<resources>-->
+    <!--<resource>-->
+    <!--&lt;!&ndash; Take the node-module code from where npm puts it &ndash;&gt;-->
+    <!--<directory>${project.basedir}//src/main/resources</directory>-->
+    <!--<includes>-->
+    <!--<include>gobii.properties</include>-->
+    <!--</includes>-->
+    <!--<filtering>false</filtering>-->
+    <!--</resource>-->
+    <!--</resources>-->
+    <!--</configuration>-->
+    <!--</execution>-->
 
-                <!--</executions>-->
-            <!--</plugin>-->
-        <!--</plugins>-->
+    <!--</executions>-->
+    <!--</plugin>-->
+    <!--</plugins>-->
     <!--</build>-->
 
 </project>
