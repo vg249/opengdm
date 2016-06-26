@@ -1,7 +1,5 @@
 package org.gobiiproject.gobiiclient.core;
 
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
@@ -32,13 +30,33 @@ public final class ClientContext {
     // configure as a singleton
     // this may not be effective if more thn one classloader is used
     private static ClientContext clientContext = null;
+    private static String sshOverrideHost = null;
+    private static Integer sshOverridePort = null;
+
+    public static void setSshOverride(String sshOverrideHost, Integer sshOverridePort) throws  Exception {
+
+        if( null == sshOverrideHost) {
+            throw new Exception("SSH port and host must be specified");
+        }
+
+        if( null == sshOverridePort) {
+            throw new Exception("SSH host and port must be specified");
+        }
+
+        ClientContext.sshOverrideHost = sshOverrideHost;
+        ClientContext.sshOverridePort = sshOverridePort;
+    }
+
 
     public static boolean isInitialized() {
         return null != clientContext;
     }
 
     public synchronized static void resetConfiguration() {
+
         clientContext = null;
+        sshOverrideHost = null;
+        sshOverridePort = null;
     }
 
     public synchronized static ClientContext getInstance(String gobiiUrl, boolean initConfigFromServer) throws Exception {
@@ -159,7 +177,17 @@ public final class ClientContext {
 
 
     public String getCurrentCropDomain() {
-        return serverConfigs.get(this.currentGobiiCropType).getDomain();
+
+        String returnVal;
+
+        if (null == sshOverrideHost) {
+            returnVal = serverConfigs.get(this.currentGobiiCropType).getDomain();
+        } else {
+            returnVal = sshOverrideHost;
+        }
+
+
+        return returnVal;
     }
 
     public String getCurrentCropContextRoot() {
@@ -168,7 +196,17 @@ public final class ClientContext {
 
 
     public Integer getCurrentCropPort() {
-        return serverConfigs.get(this.currentGobiiCropType).getPort();
+
+        Integer returnVal;
+
+        if( null == sshOverridePort ) {
+
+            returnVal = serverConfigs.get(this.currentGobiiCropType).getPort();
+        } else {
+            returnVal = sshOverridePort;
+        }
+
+        return returnVal;
     }
 
 

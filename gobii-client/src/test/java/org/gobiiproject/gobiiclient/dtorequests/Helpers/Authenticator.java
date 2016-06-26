@@ -14,7 +14,10 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
 public class Authenticator {
 
     private static String INTITIAL_CONFIG_URL = "http://localhost:8282/gobii-dev";
-
+    private static String SSH_OVERRKDE_INTITIAL_CONFIG_URL = "http://localhost:8080/gobii-dev";
+    private static String SSH_OVERRIDE_HOST = "localhost";
+    private static Integer SSH_OVERRIDE_PORT = 8080;
+    private static boolean TEST_SSH = false;
 
     public static boolean authenticate(GobiiCropType gobiiCropType) throws Exception {
 
@@ -28,8 +31,22 @@ public class Authenticator {
 
     public static boolean authenticate() throws Exception {
 
-        // clear the current context so that we start from scratch populating server configs
         ClientContext.resetConfiguration();
+
+        String initialConfigUrl = null;
+        // clear the current context so that we start from scratch populating server configs
+        if (!TEST_SSH) {
+
+            initialConfigUrl = INTITIAL_CONFIG_URL;
+        } else {
+            if (null == SSH_OVERRIDE_HOST || null == SSH_OVERRIDE_PORT) {
+                throw new Exception("Cannot test SSH override without host and port");
+            }
+
+            initialConfigUrl = SSH_OVERRKDE_INTITIAL_CONFIG_URL;
+            ClientContext.setSshOverride(SSH_OVERRIDE_HOST, SSH_OVERRIDE_PORT);
+        }
+
 
         // in a real client, the user would supply the complete url (including protocol an dport) at startup.
         // the URL we are constructing here should look like what the
@@ -38,7 +55,7 @@ public class Authenticator {
         // as if you were navigating to that path in a web browser
 
 
-        GobiiCropType gobiiCropTypeDefault = ClientContext.getInstance(Authenticator.INTITIAL_CONFIG_URL,true).getDefaultCropType();
+        GobiiCropType gobiiCropTypeDefault = ClientContext.getInstance(initialConfigUrl, true).getDefaultCropType();
         return Authenticator.authenticate(gobiiCropTypeDefault);
     }
 
