@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiiclient.core;
 
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
@@ -59,22 +61,49 @@ public final class ClientContext {
         sshOverridePort = null;
     }
 
-    public synchronized static ClientContext getInstance(String gobiiUrl, boolean initConfigFromServer) throws Exception {
+
+    public synchronized static ClientContext getInstance(ConfigSettings configSettings) throws Exception {
+
+        if (null == clientContext) {
+
+            if( null == configSettings ) {
+                throw new Exception("Client context cannot be null!");
+            }
+
+            clientContext = new ClientContext();
+            clientContext.defaultGobiiCropType = configSettings.getDefaultGobiiCropType();
+            clientContext.currentGobiiCropType = clientContext.defaultGobiiCropType;
+
+            for (CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
+
+                ServerConfig currentServerConfig = new ServerConfig(currentCropConfig);
+
+                clientContext.serverConfigs.put(currentCropConfig.getGobiiCropType(),
+                        currentServerConfig);
+            }
+        }
+
+        return  clientContext;
+
+    }// getInstance
+    
+
+    public synchronized static ClientContext getInstance(String gobiiURL, boolean initConfigFromServer) throws Exception {
 
         if (null == clientContext) {
 
             if (initConfigFromServer) {
 
 
-                if (!LineUtils.isNullOrEmpty(gobiiUrl)) {
+                if (!LineUtils.isNullOrEmpty(gobiiURL)) {
 
-                    if ('/' != gobiiUrl.charAt(gobiiUrl.length() - 1)) {
-                        gobiiUrl = gobiiUrl + '/';
+                    if ('/' != gobiiURL.charAt(gobiiURL.length() - 1)) {
+                        gobiiURL = gobiiURL + '/';
                     }
 
                     URL url = null;
                     try {
-                        url = new URL(gobiiUrl);
+                        url = new URL(gobiiURL);
                     } catch (Exception e) {
                         throw new Exception("Error retrieving server configuration due to invalid url: "
                                 + e.getMessage()
@@ -89,7 +118,7 @@ public final class ClientContext {
 
             } else {
 
-                throw new Exception("Client configuration must be initialized from a web server url");
+                    throw new Exception("Client configuration must be initialized from a web server url or fqpn to gobii properties file");
             }
 
             clientContext.gobiiCropTypes.addAll(clientContext
@@ -155,6 +184,7 @@ public final class ClientContext {
 
         return returnVal;
     }
+
 
 
     private ClientContext() throws Exception {

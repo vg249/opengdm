@@ -8,16 +8,12 @@ import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
 
 
+
 /**
  * Created by Phil on 5/13/2016.
  */
 public class Authenticator {
 
-    private static String INTITIAL_CONFIG_URL = "http://localhost:8282/gobii-dev";
-    private static String SSH_OVERRKDE_INTITIAL_CONFIG_URL = "http://localhost:8080/gobii-dev";
-    private static String SSH_OVERRIDE_HOST = "localhost";
-    private static Integer SSH_OVERRIDE_PORT = 8080;
-    private static boolean TEST_SSH = false;
 
     public static boolean authenticate(GobiiCropType gobiiCropType) throws Exception {
 
@@ -35,16 +31,16 @@ public class Authenticator {
 
         String initialConfigUrl = null;
         // clear the current context so that we start from scratch populating server configs
-        if (!TEST_SSH) {
+        if (!TestValues.TEST_SSH) {
 
-            initialConfigUrl = INTITIAL_CONFIG_URL;
+            initialConfigUrl = TestValues.INTITIAL_CONFIG_URL;
         } else {
-            if (null == SSH_OVERRIDE_HOST || null == SSH_OVERRIDE_PORT) {
+            if (null == TestValues.SSH_OVERRIDE_HOST || null == TestValues.SSH_OVERRIDE_PORT) {
                 throw new Exception("Cannot test SSH override without host and port");
             }
 
-            initialConfigUrl = SSH_OVERRKDE_INTITIAL_CONFIG_URL;
-            ClientContext.setSshOverride(SSH_OVERRIDE_HOST, SSH_OVERRIDE_PORT);
+            initialConfigUrl = TestValues.SSH_OVERRKDE_INTITIAL_CONFIG_URL;
+            ClientContext.setSshOverride(TestValues.SSH_OVERRIDE_HOST, TestValues.SSH_OVERRIDE_PORT);
         }
 
 
