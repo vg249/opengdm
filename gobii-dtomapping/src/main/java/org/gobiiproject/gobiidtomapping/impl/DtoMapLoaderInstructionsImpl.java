@@ -68,7 +68,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             ConfigSettings configSettings = new ConfigSettings();
 
             GobiiCropType currentGobiiCropType = loaderInstructionFilesDTO.getGobiiCropType();
-            if( null == currentGobiiCropType ) {
+            if (null == currentGobiiCropType) {
                 throw new Exception("Loader instruction request does not specify a crop");
             }
 
@@ -83,6 +83,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             for (GobiiLoaderInstruction currentLoaderInstruction :
                     loaderInstructionFilesDTO.getGobiiLoaderInstructions()) {
+
 
                 GobiiFile currentGobiiFile = currentLoaderInstruction.getGobiiFile();
 

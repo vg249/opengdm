@@ -377,9 +377,10 @@ export class ExtractorRoot {
         let gobiiFileType:GobiiFileType = GobiiFileType[this.selectedFormatName.toUpperCase()];
         this.gobiiDatasetExtracts.forEach(e => e.setGobiiFileType(gobiiFileType));
 
+
         gobiiExtractorInstructions.push(
             new GobiiExtractorInstruction(
-                "foordir",
+                null,
                 this.gobiiDatasetExtracts,
                 Number(this.selectedContactIdForSubmitter),
                 null)

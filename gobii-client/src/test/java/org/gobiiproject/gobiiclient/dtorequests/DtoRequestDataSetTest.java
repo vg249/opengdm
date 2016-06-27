@@ -6,6 +6,7 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import jdk.nashorn.internal.runtime.ECMAException;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
@@ -331,5 +332,75 @@ public class DtoRequestDataSetTest {
                 System.out.println(currentStatusMesage.getMessage());
             }
         }
+    }
+
+    //This doesn't work yet -- the server doesn't handle updates without the required values in the DTO
+    @Ignore
+    public void testUpdateDataSetWithDataSetIdOnly() throws Exception {
+
+        // ******** make analyses we'll need for the new data set
+        EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
+        DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
+        AnalysisDTO analysisDTORequest = TestDtoFactory
+                .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
+
+        AnalysisDTO newCallingAnalysisDTO = dtoRequestAnalysis.process(analysisDTORequest);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(newCallingAnalysisDTO));
+
+        List<AnalysisDTO> analysesToCreate = new ArrayList<>();
+        List<AnalysisDTO> analysesNew = new ArrayList<>();
+        analysesToCreate.add(TestDtoFactory
+                .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE,
+                        2,
+                        entityParamValues));
+        analysesToCreate.add(TestDtoFactory
+                .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE,
+                        3,
+                        entityParamValues));
+        analysesToCreate.add(TestDtoFactory
+                .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE,
+                        4,
+                        entityParamValues));
+
+        for (AnalysisDTO currentAnalysis : analysesToCreate) {
+            AnalysisDTO newAnalysis = dtoRequestAnalysis.process(currentAnalysis);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(newAnalysis));
+            analysesNew.add(newAnalysis);
+        }
+
+        List<Integer> analysisIds = analysesNew
+                .stream()
+                .map(a -> a.getAnalysisId())
+                .collect(Collectors.toList());
+
+
+        DtoRequestDataSet dtoRequestDataSet = new DtoRequestDataSet();
+
+        // create a new aataSet for our test
+        DataSetDTO newDataSetDto = TestDtoFactory
+                .makePopulatedDataSetDTO(DtoMetaData.ProcessType.CREATE,
+                        1,
+                        newCallingAnalysisDTO.getAnalysisId(),
+                        analysisIds);
+
+        DataSetDTO newDataSetDTOResponse = dtoRequestDataSet.process(newDataSetDto);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(newDataSetDto));
+
+        // re-retrieve the aataSet we just created so we start with a fresh READ mode dto
+        DataSetDTO dataSetDTORequest = new DataSetDTO();
+        dataSetDTORequest.setDataSetId(newDataSetDTOResponse.getDataSetId());
+        DataSetDTO dataSetDTOReceived = dtoRequestDataSet.process(dataSetDTORequest);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dataSetDTOReceived));
+
+        Integer dataSetId = dataSetDTOReceived.getDataSetId();
+        String oldDataFileName = dataSetDTOReceived.getDataFile();
+        String newDataFilename = UUID.randomUUID().toString();
+        DataSetDTO simpleDataSetUpdate = new DataSetDTO(DtoMetaData.ProcessType.UPDATE);
+        simpleDataSetUpdate.setDataSetId(dataSetId);
+        simpleDataSetUpdate.setDataFile(newDataFilename);
+        DataSetDTO dataSEtDtoUpdated = dtoRequestDataSet.process(simpleDataSetUpdate);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dataSEtDtoUpdated ));
+        Assert.assertTrue(!oldDataFileName.equals(newDataFilename));
+
     }
 }

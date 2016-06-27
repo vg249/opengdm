@@ -61,7 +61,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
             ConfigSettings configSettings = new ConfigSettings();
 
             GobiiCropType currentGobiiCropType = extractorInstructionFilesDTO.getGobiiCropType();
-            if( null == currentGobiiCropType ) {
+            if (null == currentGobiiCropType) {
                 throw new Exception("Extractor instruction request does not specify a crop");
             }
 
@@ -109,6 +109,11 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             "contactId is missing");
                 }
 
+                String extractionFileDestinationPath = configSettings
+                        .getCropConfig(returnVal.getGobiiCropType())
+                        .getExtractorInstructionFilesOutputDirectory();
+
+
                 for (GobiiDataSetExtract currentGobiiDataSetExtract :
                         currentExtractorInstruction.getDataSetExtracts()) {
 
@@ -127,6 +132,24 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                 "Dataset ID is missing");
                     }
 
+                    String formatName = currentGobiiDataSetExtract.getGobiiFileType().toString().toLowerCase();
+                    String dataSetId = currentGobiiDataSetExtract.getDataSetId().toString();
+                    String extractorFileDestinationLocation =
+                            extractionFileDestinationPath
+                                    + formatName
+                                    + "/"
+                                    + "ds_"
+                                    + dataSetId
+                                    + "/";
+
+                    if (!extractorInstructionsDAO.doesPathExist(extractorFileDestinationLocation)) {
+                        extractorInstructionsDAO.makeDirectory(extractorFileDestinationLocation);
+                    } else {
+                        extractorInstructionsDAO.verifyDirectoryPermissions(extractorFileDestinationLocation);
+                    }
+
+
+                    currentExtractorInstruction.setExtractDestinationDirectory(extractorFileDestinationLocation);
 
                 }
 

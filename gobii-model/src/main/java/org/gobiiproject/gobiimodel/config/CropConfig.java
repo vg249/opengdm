@@ -19,6 +19,7 @@ public class CropConfig {
     private String rawUserFilesDirectory;
     private String loaderInstructionFilesDirectory;
     private String extractorInstructionFilesDirectory;
+    private String extractorInstructionFilesOutputDirectory;
     private String intermediateFilesDirectory;
     private boolean isActive = false;
     private Map<GobiiDbType, CropDbConfig> dbConfigByDbType = new HashMap<>();
@@ -29,6 +30,7 @@ public class CropConfig {
                       Integer servicePort,
                       String loaderInstructionFilesDirectory,
                       String extractorInstructionFilesDirectory,
+                      String extractorInstructionFilesOutputDirectory,
                       String rawUserFilesDirectory,
                       String intermediateFilesDirectory,
                       boolean isActive) {
@@ -40,6 +42,7 @@ public class CropConfig {
         this.rawUserFilesDirectory = rawUserFilesDirectory;
         this.loaderInstructionFilesDirectory = loaderInstructionFilesDirectory;
         this.extractorInstructionFilesDirectory = extractorInstructionFilesDirectory;
+        this.extractorInstructionFilesOutputDirectory = extractorInstructionFilesOutputDirectory;
         this.intermediateFilesDirectory = intermediateFilesDirectory;
         this.isActive = isActive;
     }
@@ -58,6 +61,10 @@ public class CropConfig {
 
     public String getExtractorInstructionFilesDirectory() {
         return extractorInstructionFilesDirectory;
+    }
+
+    public String getExtractorInstructionFilesOutputDirectory() {
+        return extractorInstructionFilesOutputDirectory;
     }
 
     public String getIntermediateFilesDirectory() {

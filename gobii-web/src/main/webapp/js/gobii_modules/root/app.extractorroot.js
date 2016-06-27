@@ -257,7 +257,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                     var gobiiExtractorInstructions = [];
                     var gobiiFileType = type_gobii_file_1.GobiiFileType[this.selectedFormatName.toUpperCase()];
                     this.gobiiDatasetExtracts.forEach(function (e) { return e.setGobiiFileType(gobiiFileType); });
-                    gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction("foordir", this.gobiiDatasetExtracts, Number(this.selectedContactIdForSubmitter), null));
+                    gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction(null, this.gobiiDatasetExtracts, Number(this.selectedContactIdForSubmitter), null));
                     var date = new Date();
                     var fileName = "extractor_"
                         + date.getFullYear()
