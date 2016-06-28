@@ -114,7 +114,8 @@ import * as EntityFilters from "../model/type-entity-filter";
                         <legend class="the-legend">Data Sets</legend>
                         <dataset-checklist-box [experimentId] = "selectedExperimentId" 
                             (onItemChecked)="handleCheckedDataSetItem($event)"
-                            (onItemSelected)="handleDataSetDetailSelected($event)">
+                            (onItemSelected)="handleDataSetDetailSelected($event)"
+                            (onAddMessage) = "handleAddMessage($event)">
                         </dataset-checklist-box>
                         </fieldset>
                         
@@ -358,6 +359,10 @@ export class ExtractorRoot {
         this.selectedDataSetDetailId = arg;
         this.selectedExperimentDetailId = undefined;
         this.displayDataSetDetail = true;
+    }
+
+    private handleAddMessage(arg) {
+        this.messages.push(arg);
     }
 
 

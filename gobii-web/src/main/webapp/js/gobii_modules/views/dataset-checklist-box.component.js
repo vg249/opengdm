@@ -45,10 +45,14 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this._dtoRequestServiceDataSetDetail = _dtoRequestServiceDataSetDetail;
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
+                    this.onAddMessage = new core_1.EventEmitter();
                 } // ctor
                 DataSetCheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var checkEvent = new event_checkbox_1.CheckBoxEvent(arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE, arg.currentTarget.value, arg.currentTarget.name);
                     this.onItemChecked.emit(checkEvent);
+                };
+                DataSetCheckListBoxComponent.prototype.handleAddMessage = function (arg) {
+                    this.onAddMessage.emit(arg);
                 };
                 DataSetCheckListBoxComponent.prototype.handleItemSelected = function (arg) {
                     var selectedDataSetId = Number(arg.currentTarget.children[0].value);
@@ -72,7 +76,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                             scope$.nameIdList = [new name_id_1.NameId(0, "<none>")];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage(m.message); });
                     });
                 }; // setList()
                 DataSetCheckListBoxComponent.prototype.setDatasetDetails = function (dataSetId) {
@@ -96,7 +100,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     core_1.Component({
                         selector: 'dataset-checklist-box',
                         inputs: ['experimentId'],
-                        outputs: ['onItemChecked', 'onItemSelected'],
+                        outputs: ['onItemChecked', 'onItemSelected', 'onAddMessage'],
                         template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let nameId of nameIdList\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                value={{nameId.id}} \n                                name=\"{{nameId.name}}\">&nbsp;{{nameId.name}}\n                        </div>            \n                    </div>\n                </form>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        Name: {{dataSet.name}}<BR>\n                        Data Table: {{dataSet.dataTable}}<BR>\n                        Data File: {{dataSet.dataFile}}<BR>\n                        Quality Table: {{dataSet.qualityTable}}<BR>\n                        Quality File: {{dataSet.qualityFile}}<BR>\n                      </fieldset> \n                </div>                \n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService])

@@ -7,7 +7,7 @@ import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extr
     selector: 'status-display',
     inputs: ['messages'],
     //directives: [RADIO_GROUP_DIRECTIVES]
-    template: `<div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px;">
+    template: `<div style="overflow:auto; height: 240px; border: 1px solid #336699; padding-left: 5px;">
                     <ol>
                     <li *ngFor="let message of messages">{{message}}</li>
                     </ol>

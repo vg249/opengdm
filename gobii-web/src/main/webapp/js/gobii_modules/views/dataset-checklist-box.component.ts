@@ -13,7 +13,7 @@ import {DataSet} from "../model/dataset"
 @Component({
     selector: 'dataset-checklist-box',
     inputs: ['experimentId'],
-    outputs: ['onItemChecked','onItemSelected'],
+    outputs: ['onItemChecked','onItemSelected','onAddMessage'],
     template: `<form>
                     <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
                         <div *ngFor="let nameId of nameIdList" 
@@ -49,6 +49,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private experimentId:string;
     private onItemChecked:EventEmitter<CheckBoxEvent> = new EventEmitter();
     private onItemSelected:EventEmitter<number> = new EventEmitter();
+    private onAddMessage:EventEmitter<string> = new EventEmitter();
     private dataSet:DataSet;
 
     private handleItemChecked(arg) {
@@ -56,6 +57,10 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
             arg.currentTarget.value,
             arg.currentTarget.name);
         this.onItemChecked.emit(checkEvent);
+    }
+    
+    private handleAddMessage(arg) {
+        this.onAddMessage.emit(arg);
     }
 
     private previousSelectedItem:any;
@@ -89,7 +94,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message))
             });
     } // setList()
 
