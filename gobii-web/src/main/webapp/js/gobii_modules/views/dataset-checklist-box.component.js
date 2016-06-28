@@ -86,7 +86,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                             scope$.dataSet = dataSet;
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage(m.message); });
                     });
                 }; // setList()
                 DataSetCheckListBoxComponent.prototype.ngOnInit = function () {

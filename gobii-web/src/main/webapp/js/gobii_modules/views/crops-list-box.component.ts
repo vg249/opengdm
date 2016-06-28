@@ -1,12 +1,7 @@
 //import {RouteParams} from '@angular/router-deprecated';
-import {Component,
-    OnInit,
-    EventEmitter,
-    SimpleChange,
-    ElementRef} from "@angular/core";
+import {Component, OnInit, EventEmitter, SimpleChange} from "@angular/core";
 import {ServerConfig} from "../model/server-config";
-import {DtoRequestService} from "../services/core/dto-request.service";
-import {GobiiCropType} from "../model/type-crop";
+
 
 
 @Component({
@@ -38,12 +33,7 @@ export class CropsListBoxComponent implements OnInit {
         this.onServerSelected.emit(this.serverConfigList[arg.srcElement.selectedIndex]);
     }
 
-    constructor(private _dtoRequestService:DtoRequestService<ServerConfig[]>,
-    private elementRef:ElementRef) {
-
-
-    } // ctor
-
+    constructor(){}
 
     ngOnInit():any {
         return null;

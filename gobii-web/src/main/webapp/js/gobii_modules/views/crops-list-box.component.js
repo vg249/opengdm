@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service"], function(exports_1, context_1) {
+System.register(["@angular/core"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,23 +10,18 @@ System.register(["@angular/core", "../services/core/dto-request.service"], funct
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, dto_request_service_1;
+    var core_1;
     var CropsListBoxComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
-            },
-            function (dto_request_service_1_1) {
-                dto_request_service_1 = dto_request_service_1_1;
             }],
         execute: function() {
             CropsListBoxComponent = (function () {
-                function CropsListBoxComponent(_dtoRequestService, elementRef) {
-                    this._dtoRequestService = _dtoRequestService;
-                    this.elementRef = elementRef;
+                function CropsListBoxComponent() {
                     this.onServerSelected = new core_1.EventEmitter();
-                } // ctor
+                }
                 CropsListBoxComponent.prototype.handleServerSelected = function (arg) {
                     this.onServerSelected.emit(this.serverConfigList[arg.srcElement.selectedIndex]);
                 };
@@ -43,7 +38,7 @@ System.register(["@angular/core", "../services/core/dto-request.service"], funct
                         outputs: ['onServerSelected'],
                         template: "<select name=\"serverConfigs\" (change)=\"handleServerSelected($event)\" >\n\t\t\t<option *ngFor=\"let serverConfig of serverConfigList\" \n                    value={{serverConfig.domain}}\n                    [attr.selected]=\"selectedServerConfig.crop\n                    === serverConfig.crop ? true : null\">\n                    {{serverConfig.crop}}\n\t\t\t</option>\n\t\t</select>\n" // end template
                     }), 
-                    __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService, core_1.ElementRef])
+                    __metadata('design:paramtypes', [])
                 ], CropsListBoxComponent);
                 return CropsListBoxComponent;
             }());

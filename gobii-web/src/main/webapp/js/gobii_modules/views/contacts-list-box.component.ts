@@ -1,10 +1,6 @@
 //import {RouteParams} from '@angular/router-deprecated';
 import {Component, OnInit, EventEmitter} from "@angular/core";
 import {NameId} from "../model/name-id";
-import {DtoRequestService} from "../services/core/dto-request.service";
-import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
-import {ProcessType} from "../model/type-process";
-import {EntityType} from "../model/type-entity";
 
 
 @Component({
@@ -31,7 +27,7 @@ export class ContactsListBoxComponent implements OnInit {
         this.onContactSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
     }
 
-    constructor(private _dtoRequestService:DtoRequestService<NameId[]>) {
+    constructor() {
 
     } // ctor
 

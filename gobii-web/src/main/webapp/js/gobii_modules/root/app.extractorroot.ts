@@ -19,8 +19,6 @@ import {EntityType} from "../model/type-entity";
 import {CropsListBoxComponent} from "../views/crops-list-box.component";
 import {UsersListBoxComponent} from "../views/users-list-box.component";
 import {NameId} from "../model/name-id";
-import {DatasetDetailBoxComponent} from "../views/dataset-detail.component";
-import {ExperimentDetailBoxComponent} from "../views/experiment-detail-component";
 import {GobiiFileType} from "../model/type-gobii-file";
 import {ExtractorInstructionFilesDTO} from "../model/extractor-instructions/dto-extractor-instruction-files";
 import {GobiiExtractorInstruction} from "../model/extractor-instructions/gobii-extractor-instruction";
@@ -45,9 +43,7 @@ import * as EntityFilters from "../model/type-entity-filter";
         CriteriaDisplayComponent,
         StatusDisplayComponent,
         CropsListBoxComponent,
-        UsersListBoxComponent,
-        DatasetDetailBoxComponent,
-        ExperimentDetailBoxComponent],
+        UsersListBoxComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -100,14 +96,16 @@ import * as EntityFilters from "../model/type-entity-filter";
                         <legend class="the-legend">Project</legend>
                         <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi"
                             [nameIdList]="projectNameIdList"
-                            (onProjectSelected)="handleProjectSelected($event)" ></project-list-box>
+                            (onProjectSelected)="handleProjectSelected($event)"
+                            (onAddMessage)="handleAddMessage($event)"></project-list-box>
                         </fieldset>
                         
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Experiment</legend>
                         <experiment-list-box [projectId] = "selectedProjectId"
                             [nameIdList] = "experimentNameIdList"
-                            (onExperimentSelected)="handleExperimentSelected($event)"></experiment-list-box>
+                            (onExperimentSelected)="handleExperimentSelected($event)"
+                            (onAddMessage)="handleAddMessage($event)"></experiment-list-box>
                         </fieldset>
                         
                         <fieldset class="well the-fieldset">

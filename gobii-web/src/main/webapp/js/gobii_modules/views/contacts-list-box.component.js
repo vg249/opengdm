@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service"], function(exports_1, context_1) {
+System.register(["@angular/core"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,20 +10,16 @@ System.register(["@angular/core", "../services/core/dto-request.service"], funct
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, dto_request_service_1;
+    var core_1;
     var ContactsListBoxComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
-            },
-            function (dto_request_service_1_1) {
-                dto_request_service_1 = dto_request_service_1_1;
             }],
         execute: function() {
             ContactsListBoxComponent = (function () {
-                function ContactsListBoxComponent(_dtoRequestService) {
-                    this._dtoRequestService = _dtoRequestService;
+                function ContactsListBoxComponent() {
                     this.onContactSelected = new core_1.EventEmitter();
                 } // ctor
                 ContactsListBoxComponent.prototype.handleContactSelected = function (arg) {
@@ -39,7 +35,7 @@ System.register(["@angular/core", "../services/core/dto-request.service"], funct
                         inputs: ['nameIdList'],
                         template: "<select name=\"principleInvestigators\" (change)=\"handleContactSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                     }), 
-                    __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
+                    __metadata('design:paramtypes', [])
                 ], ContactsListBoxComponent);
                 return ContactsListBoxComponent;
             }());

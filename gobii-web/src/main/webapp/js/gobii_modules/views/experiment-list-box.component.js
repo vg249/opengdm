@@ -29,27 +29,14 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     this._dtoRequestServiceNameIds = _dtoRequestServiceNameIds;
                     this._dtoRequestServiceExperiment = _dtoRequestServiceExperiment;
                     this.onExperimentSelected = new core_1.EventEmitter();
+                    this.onAddMessage = new core_1.EventEmitter();
                 } // ctor
                 ExperimentListBoxComponent.prototype.handleExperimentSelected = function (arg) {
                     this.onExperimentSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
                 };
-                // private setList():void {
-                //
-                //     let scope$ = this;
-                //     this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
-                //         EntityType.Experiment,
-                //         this.projectId)).subscribe(nameIds => {
-                //             if (nameIds && ( nameIds.length > 0 )) {
-                //                 scope$.nameIdList = nameIds
-                //                 scope$.setExperimentDetail(scope$.nameIdList[0].id)
-                //             } else {
-                //                 scope$.nameIdList = [new NameId(0, "<none>")];
-                //             }
-                //         },
-                //         dtoHeaderResponse => {
-                //             dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
-                //         });
-                // } // setList()
+                ExperimentListBoxComponent.prototype.handleAddMessage = function (arg) {
+                    this.onAddMessage.emit(arg);
+                };
                 ExperimentListBoxComponent.prototype.setExperimentDetail = function (experimentId) {
                     var scope$ = this;
                     scope$._dtoRequestServiceExperiment.getResult(new dto_request_item_experiment_1.DtoRequestItemExperiment(Number(experimentId))).subscribe(function (experiment) {
@@ -57,7 +44,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                             scope$.experiment = experiment;
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage(m.message); });
                     });
                 }; // setList()
                 ExperimentListBoxComponent.prototype.ngOnInit = function () {
@@ -79,7 +66,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     core_1.Component({
                         selector: 'experiment-list-box',
                         inputs: ['projectId', 'nameIdList'],
-                        outputs: ['onExperimentSelected'],
+                        outputs: ['onExperimentSelected', 'onAddMessage'],
                         template: "<select name=\"experiment\" \n                    (change)=\"handleExperimentSelected($event)\">\n                    <option *ngFor=\"let nameId of nameIdList \" \n                    value={{nameId.id}}>{{nameId.name}}</option>\n\t\t        </select>\n                <div *ngIf=\"experiment\">\n    \t\t        <BR>\n                     <fieldset>\n                        Name: {{experiment.experimentName}}<BR>\n                        Code: {{experiment.experimentCode}}<BR>\n                      </fieldset> \n                </div>\t\t        \n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService])

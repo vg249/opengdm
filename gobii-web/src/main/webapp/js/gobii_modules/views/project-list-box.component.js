@@ -25,33 +25,19 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
             }],
         execute: function() {
             ProjectListBoxComponent = (function () {
-                function ProjectListBoxComponent(_dtoRequestServiceNameId, _dtoRequestServiceProject) {
-                    this._dtoRequestServiceNameId = _dtoRequestServiceNameId;
+                function ProjectListBoxComponent(_dtoRequestServiceProject) {
                     this._dtoRequestServiceProject = _dtoRequestServiceProject;
                     this.onProjectSelected = new core_1.EventEmitter();
+                    this.onAddMessage = new core_1.EventEmitter();
                 } // ctor
                 ProjectListBoxComponent.prototype.handleProjectSelected = function (arg) {
                     var selectedProjectId = this.nameIdList[arg.srcElement.selectedIndex].id;
                     this.setProjectDetails(selectedProjectId);
                     this.onProjectSelected.emit(selectedProjectId);
                 };
-                ProjectListBoxComponent.prototype.setList = function () {
-                    // let scope$ = this;
-                    // this._dtoRequestServiceNameId.getResult(new DtoRequestItemNameIds(ProcessType.READ,
-                    //     EntityType.Project,
-                    //     this.primaryInvestigatorId)).subscribe(nameIds => {
-                    //         if (nameIds && ( nameIds.length > 0 )) {
-                    //             scope$.nameIdList = nameIds;
-                    //             scope$.setProjectDetails(scope$.nameIdList[0].id);
-                    //
-                    //         } else {
-                    //             scope$.nameIdList = [new NameId(0, "<none>")];
-                    //         }
-                    //     },
-                    //     dtoHeaderResponse => {
-                    //         dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
-                    //     });
-                }; // setList()
+                ProjectListBoxComponent.prototype.handleAddMessage = function (arg) {
+                    this.onAddMessage.emit(arg);
+                };
                 ProjectListBoxComponent.prototype.setProjectDetails = function (projectId) {
                     var scope$ = this;
                     this._dtoRequestServiceProject.getResult(new dto_request_item_project_1.DtoRequestItemProject(Number(projectId)))
@@ -60,7 +46,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                             scope$.project = project;
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage(m.message); });
                     });
                 };
                 ProjectListBoxComponent.prototype.ngOnInit = function () {
@@ -82,10 +68,10 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     core_1.Component({
                         selector: 'project-list-box',
                         inputs: ['primaryInvestigatorId', 'nameIdList'],
-                        outputs: ['onProjectSelected'],
+                        outputs: ['onProjectSelected', 'onAddMessage'],
                         template: "<select name=\"projects\" \n                    (change)=\"handleProjectSelected($event)\">\n                    <option *ngFor=\"let nameId of nameIdList \" \n                    value={{nameId.id}}>{{nameId.name}}</option>\n\t\t        </select>\n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        Name: {{project.projectName}}<BR>\n                        Description: {{project.projectDescription}}<BR>\n                      </fieldset> \n                </div>\t\t        \n" // end template
                     }), 
-                    __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService])
+                    __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
                 ], ProjectListBoxComponent);
                 return ProjectListBoxComponent;
             }());

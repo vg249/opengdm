@@ -107,7 +107,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message));
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
             });
 
     } // setList()

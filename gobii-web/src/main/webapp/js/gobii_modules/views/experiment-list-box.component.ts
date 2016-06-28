@@ -13,7 +13,7 @@ import {Experiment} from "../model/experiment"
 @Component({
     selector: 'experiment-list-box',
     inputs: ['projectId','nameIdList'],
-    outputs: ['onExperimentSelected'],
+    outputs: ['onExperimentSelected','onAddMessage'],
     template: `<select name="experiment" 
                     (change)="handleExperimentSelected($event)">
                     <option *ngFor="let nameId of nameIdList " 
@@ -38,6 +38,7 @@ export class ExperimentListBoxComponent implements OnInit,OnChanges {
     private projectId:string;
     private experiment:Experiment;
     private onExperimentSelected:EventEmitter<string> = new EventEmitter();
+    private onAddMessage:EventEmitter<string> = new EventEmitter();
 
     private handleExperimentSelected(arg) {
         this.onExperimentSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
@@ -47,23 +48,11 @@ export class ExperimentListBoxComponent implements OnInit,OnChanges {
                 private _dtoRequestServiceExperiment:DtoRequestService<Experiment>) {
     } // ctor
 
-    // private setList():void {
-    //
-    //     let scope$ = this;
-    //     this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
-    //         EntityType.Experiment,
-    //         this.projectId)).subscribe(nameIds => {
-    //             if (nameIds && ( nameIds.length > 0 )) {
-    //                 scope$.nameIdList = nameIds
-    //                 scope$.setExperimentDetail(scope$.nameIdList[0].id)
-    //             } else {
-    //                 scope$.nameIdList = [new NameId(0, "<none>")];
-    //             }
-    //         },
-    //         dtoHeaderResponse => {
-    //             dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
-    //         });
-    // } // setList()
+
+    private handleAddMessage(arg) {
+        this.onAddMessage.emit(arg);
+    }
+
 
     private setExperimentDetail(experimentId:string):void {
 
@@ -74,7 +63,7 @@ export class ExperimentListBoxComponent implements OnInit,OnChanges {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message))
             });
     } // setList()
 
