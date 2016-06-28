@@ -132,6 +132,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                                     .filter(function (c) {
                                     return c.crop === type_crop_1.GobiiCropType[serverCrop_1];
                                 })[0];
+                            scope$.messages.push("Connected to databae: " + scope$.selectedServerConfig.crop);
                             scope$.initializeContactsForSumission();
                             scope$.initializeContactsForPi();
                         }
@@ -139,7 +140,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                             scope$.serverConfigList = [new server_config_1.ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push(m.message); });
                     });
                 }; // initializeServerConfigs()
                 ExtractorRoot.prototype.handleServerSelected = function (arg) {
@@ -171,7 +172,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                             scope$.contactNameIdListForSubmitter = [new name_id_1.NameId(0, "ERROR NO USERS")];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push(m.message); });
                     });
                 };
                 ExtractorRoot.prototype.handleContactForPiSelected = function (arg) {
@@ -191,7 +192,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                             scope$.contactNameIdListForPi = [new name_id_1.NameId(0, "ERROR NO USERS")];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push(m.message); });
                     });
                 };
                 ExtractorRoot.prototype.handleFormatSelected = function (arg) {
@@ -217,7 +218,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                             scope$.projectNameIdList = [new name_id_1.NameId(0, "<none>")];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push(m.message); });
                     });
                 };
                 ExtractorRoot.prototype.handleExperimentSelected = function (arg) {
@@ -237,7 +238,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                             scope$.experimentNameIdList = [new name_id_1.NameId(0, "<none>")];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return console.log(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push(m.message); });
                     });
                 };
                 ExtractorRoot.prototype.handleDataSetDetailSelected = function (arg) {
@@ -277,14 +278,14 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                         + date.getSeconds();
                     var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName, type_process_1.ProcessType.CREATE, type_crop_1.GobiiCropType[this.selectedServerConfig.crop]);
                     var extractorInstructionFilesDTOResponse = null;
-                    var $scope = this;
+                    var scope$ = this;
                     this._dtoRequestServiceExtractorFile.getResult(new dto_request_item_extractor_submission_1.DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
                         .subscribe(function (extractorInstructionFilesDTO) {
                         extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
-                        $scope.messages.push("Extractor instruction file created on server: "
+                        scope$.messages.push("Extractor instruction file created on server: "
                             + extractorInstructionFilesDTOResponse.getInstructionFileName());
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return $scope.messages.push(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push(m.message); });
                     });
                 };
                 ExtractorRoot.prototype.ngOnInit = function () {

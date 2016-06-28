@@ -186,6 +186,7 @@ export class ExtractorRoot {
                                 }
                             )[0];
 
+                    scope$.messages.push("Connected to databae: " + scope$.selectedServerConfig.crop);
                     scope$.initializeContactsForSumission();
                     scope$.initializeContactsForPi();
 
@@ -194,7 +195,7 @@ export class ExtractorRoot {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push(m.message))
             }
         )
         ;
@@ -238,7 +239,7 @@ export class ExtractorRoot {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push(m.message))
             });
 
     }
@@ -269,7 +270,7 @@ export class ExtractorRoot {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push(m.message))
             });
     }
 
@@ -308,7 +309,7 @@ export class ExtractorRoot {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push(m.message))
             });
     }
 
@@ -342,7 +343,7 @@ export class ExtractorRoot {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push(m.message))
             });
 
     }
@@ -414,15 +415,15 @@ export class ExtractorRoot {
 
 
         let extractorInstructionFilesDTOResponse:ExtractorInstructionFilesDTO = null;
-        let $scope = this;
+        let scope$ = this;
         this._dtoRequestServiceExtractorFile.getResult(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
             .subscribe(extractorInstructionFilesDTO => {
                     extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
-                $scope.messages.push("Extractor instruction file created on server: "
+                scope$.messages.push("Extractor instruction file created on server: "
                     + extractorInstructionFilesDTOResponse.getInstructionFileName());
                 },
                 dtoHeaderResponse => {
-                    dtoHeaderResponse.statusMessages.forEach(m => $scope.messages.push(m.message))
+                    dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push(m.message))
                 });
 
     }
