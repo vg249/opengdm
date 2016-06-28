@@ -46,7 +46,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                             scope$.project = project;
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retrieving project detail: "
+                            + m.message); });
                     });
                 };
                 ProjectListBoxComponent.prototype.ngOnInit = function () {

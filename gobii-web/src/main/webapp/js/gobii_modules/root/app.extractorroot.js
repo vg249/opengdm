@@ -134,7 +134,8 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                             scope$.serverConfigList = [new server_config_1.ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retrieving server configs: "
+                            + m.message); });
                     });
                 }; // initializeServerConfigs()
                 ExtractorRoot.prototype.handleServerSelected = function (arg) {
@@ -166,7 +167,8 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                             scope$.contactNameIdListForSubmitter = [new name_id_1.NameId(0, "ERROR NO USERS")];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Rettrieving contacts: "
+                            + m.message); });
                     });
                 };
                 ExtractorRoot.prototype.handleContactForPiSelected = function (arg) {
@@ -186,7 +188,8 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                             scope$.contactNameIdListForPi = [new name_id_1.NameId(0, "ERROR NO USERS")];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retrieving contacts for PIs: "
+                            + m.message); });
                     });
                 };
                 ExtractorRoot.prototype.handleFormatSelected = function (arg) {
@@ -212,7 +215,8 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                             scope$.projectNameIdList = [new name_id_1.NameId(0, "<none>")];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retriving project names: "
+                            + m.message); });
                     });
                 };
                 ExtractorRoot.prototype.handleExperimentSelected = function (arg) {
@@ -232,7 +236,8 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                             scope$.experimentNameIdList = [new name_id_1.NameId(0, "<none>")];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retreving experiment names: "
+                            + m.message); });
                     });
                 };
                 ExtractorRoot.prototype.handleDataSetDetailSelected = function (arg) {
@@ -282,7 +287,8 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                         scope$.messages.push("Extractor instruction file created on server: "
                             + extractorInstructionFilesDTOResponse.getInstructionFileName());
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Submitting extractor instructions: "
+                            + m.message); });
                     });
                 };
                 ExtractorRoot.prototype.ngOnInit = function () {

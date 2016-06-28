@@ -76,7 +76,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                             scope$.nameIdList = [new name_id_1.NameId(0, "<none>")];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retrieving dataset names by experiment id: "
+                            + ": "
+                            + m.message); });
                     });
                 }; // setList()
                 DataSetCheckListBoxComponent.prototype.setDatasetDetails = function (dataSetId) {
@@ -90,11 +92,15 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     });
                 }; // setList()
                 DataSetCheckListBoxComponent.prototype.ngOnInit = function () {
-                    this.setList();
+                    if (this.experimentId) {
+                        this.setList();
+                    }
                 };
                 DataSetCheckListBoxComponent.prototype.ngOnChanges = function (changes) {
                     this.experimentId = changes['experimentId'].currentValue;
-                    this.setList();
+                    if (this.experimentId) {
+                        this.setList();
+                    }
                 };
                 DataSetCheckListBoxComponent = __decorate([
                     core_1.Component({

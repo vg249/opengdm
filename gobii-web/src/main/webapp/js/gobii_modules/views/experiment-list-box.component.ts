@@ -63,7 +63,8 @@ export class ExperimentListBoxComponent implements OnInit,OnChanges {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving experiment detail: " 
+                + m.message))
             });
     } // setList()
 

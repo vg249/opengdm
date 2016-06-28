@@ -44,7 +44,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                             scope$.experiment = experiment;
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage(m.message); });
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retrieving experiment detail: "
+                            + m.message); });
                     });
                 }; // setList()
                 ExperimentListBoxComponent.prototype.ngOnInit = function () {

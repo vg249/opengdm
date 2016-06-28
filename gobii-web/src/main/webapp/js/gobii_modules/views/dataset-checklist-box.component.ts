@@ -13,7 +13,7 @@ import {DataSet} from "../model/dataset"
 @Component({
     selector: 'dataset-checklist-box',
     inputs: ['experimentId'],
-    outputs: ['onItemChecked','onItemSelected','onAddMessage'],
+    outputs: ['onItemChecked', 'onItemSelected', 'onAddMessage'],
     template: `<form>
                     <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
                         <div *ngFor="let nameId of nameIdList" 
@@ -58,15 +58,18 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
             arg.currentTarget.name);
         this.onItemChecked.emit(checkEvent);
     }
-    
+
     private handleAddMessage(arg) {
         this.onAddMessage.emit(arg);
     }
 
     private previousSelectedItem:any;
+
     private handleItemSelected(arg) {
         let selectedDataSetId:number = Number(arg.currentTarget.children[0].value);
-        if( this.previousSelectedItem ) {this.previousSelectedItem.style = ""}
+        if (this.previousSelectedItem) {
+            this.previousSelectedItem.style = ""
+        }
         arg.currentTarget.style = "background-color:#b3d9ff";
         this.previousSelectedItem = arg.currentTarget;
         this.setDatasetDetails(selectedDataSetId);
@@ -79,6 +82,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     } // ctor
 
     private checkedItems:string[];
+
     private setList():void {
 
         // we can get this event whenver the item is clicked, not necessarily when the checkbox
@@ -94,7 +98,9 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving dataset names by experiment id: "
+                    + ": "
+                    + m.message))
             });
     } // setList()
 
@@ -115,11 +121,15 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     ngOnInit():any {
 
-        this.setList();
+        if( this.experimentId) {
+            this.setList();
+        }
     }
 
     ngOnChanges(changes:{[propName:string]:SimpleChange}) {
         this.experimentId = changes['experimentId'].currentValue;
-        this.setList();
+        if( this.experimentId) {
+            this.setList();
+        }
     }
 }

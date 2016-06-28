@@ -194,7 +194,8 @@ export class ExtractorRoot {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving server configs: "
+                + m.message))
             }
         )
         ;
@@ -238,7 +239,8 @@ export class ExtractorRoot {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Rettrieving contacts: "
+                + m.message))
             });
 
     }
@@ -269,7 +271,8 @@ export class ExtractorRoot {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving contacts for PIs: "
+                + m.message))
             });
     }
 
@@ -308,7 +311,8 @@ export class ExtractorRoot {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retriving project names: "
+                    + m.message))
             });
     }
 
@@ -342,7 +346,8 @@ export class ExtractorRoot {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push(m.message))
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retreving experiment names: "
+                    + m.message))
             });
 
     }
@@ -426,7 +431,8 @@ export class ExtractorRoot {
                     + extractorInstructionFilesDTOResponse.getInstructionFileName());
                 },
                 dtoHeaderResponse => {
-                    dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push(m.message))
+                    dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Submitting extractor instructions: "
+                        + m.message))
                 });
 
     }
