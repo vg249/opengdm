@@ -11,6 +11,7 @@ import {ExperimentListBoxComponent} from "../views/experiment-list-box.component
 import {DataSetCheckListBoxComponent} from "../views/dataset-checklist-box.component";
 import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract";
 import {CriteriaDisplayComponent} from "../views/criteria-display.component";
+import {StatusDisplayComponent} from "../views/status-display-box.component";
 import {ProcessType} from "../model/type-process";
 import {CheckBoxEvent} from "../model/event-checkbox";
 import {ServerConfig} from "../model/server-config";
@@ -21,9 +22,8 @@ import {NameId} from "../model/name-id";
 import {DatasetDetailBoxComponent} from "../views/dataset-detail.component";
 import {ExperimentDetailBoxComponent} from "../views/experiment-detail-component";
 import {GobiiFileType} from "../model/type-gobii-file";
-import  {ExtractorInstructionFilesDTO} from "../model/extractor-instructions/dto-extractor-instruction-files";
-import {GobiiExtractorInstruction} from  "../model/extractor-instructions/gobii-extractor-instruction"
-import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
+import {ExtractorInstructionFilesDTO} from "../model/extractor-instructions/dto-extractor-instruction-files";
+import {GobiiExtractorInstruction} from "../model/extractor-instructions/gobii-extractor-instruction";
 import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-item-extractor-submission";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
@@ -43,6 +43,7 @@ import * as EntityFilters from "../model/type-entity-filter";
         ExperimentListBoxComponent,
         DataSetCheckListBoxComponent,
         CriteriaDisplayComponent,
+        StatusDisplayComponent,
         CropsListBoxComponent,
         UsersListBoxComponent,
         DatasetDetailBoxComponent,
@@ -122,15 +123,19 @@ import * as EntityFilters from "../model/type-entity-filter";
                      
                          
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                            <legend class="the-legend">Extract Critiera</legend>
-                            <criteria-display [gobiiDatasetExtracts] = "gobiiDatasetExtracts"></criteria-display>
+                                <legend class="the-legend">Extract Critiera</legend>
+                                <criteria-display [gobiiDatasetExtracts] = "gobiiDatasetExtracts"></criteria-display>
                             </fieldset>
                             
                             <form>
                                 <input type="button" value="Submit" (click)="handleExtractSubmission()" >
                             </form>
                             
-       
+                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
+                                <legend class="the-legend">Status</legend>
+                                <status-display [messages] = "messages"></status-display>
+                            </fieldset>
+                                   
                     </div>  <!-- outer grid column 3 (inner grid)-->
                                         
                 </div> <!-- .row of outer grid -->
@@ -150,6 +155,7 @@ export class ExtractorRoot {
 
 
     private gobiiDatasetExtracts:GobiiDataSetExtract[] = [];
+    private messages:string[] = [];
 
 
     constructor(private _dtoRequestServiceExtractorFile:DtoRequestService<ExtractorInstructionFilesDTO>,
@@ -408,12 +414,15 @@ export class ExtractorRoot {
 
 
         let extractorInstructionFilesDTOResponse:ExtractorInstructionFilesDTO = null;
+        let $scope = this;
         this._dtoRequestServiceExtractorFile.getResult(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
             .subscribe(extractorInstructionFilesDTO => {
                     extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
+                $scope.messages.push("Extractor instruction file created on server: "
+                    + extractorInstructionFilesDTOResponse.getInstructionFileName());
                 },
                 dtoHeaderResponse => {
-                    dtoHeaderResponse.statusMessages.forEach(m => console.log(m.message))
+                    dtoHeaderResponse.statusMessages.forEach(m => $scope.messages.push(m.message))
                 });
 
     }

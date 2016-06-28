@@ -9,14 +9,14 @@ import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extr
     //directives: [RADIO_GROUP_DIRECTIVES]
     template: `<div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px;">
                     <ol>
-                    <li *ngFor="let message of messages" >{{message}}<li/>
+                    <li *ngFor="let message of messages">{{message}}</li>
                     </ol>
                 </div>
 ` // end template
 
 })
 
-export class CriteriaDisplayComponent implements OnInit {
+export class StatusDisplayComponent implements OnInit {
 
 
     // useg
