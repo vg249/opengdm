@@ -7,7 +7,9 @@ import {ProcessType} from "../model/type-process";
 import {EntityType} from "../model/type-entity";
 import {CheckBoxEvent} from "../model/event-checkbox";
 import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
-import {DataSet} from "../model/dataset"
+import {DataSet} from "../model/dataset";
+import {DtoRequestItemAnalysis} from "../services/app/dto-request-item-analysis";
+import {Analysis} from "../model/analysis";
 
 
 @Component({
@@ -34,6 +36,11 @@ import {DataSet} from "../model/dataset"
                         Data File: {{dataSet.dataFile}}<BR>
                         Quality Table: {{dataSet.qualityTable}}<BR>
                         Quality File: {{dataSet.qualityFile}}<BR>
+                        <div *ngIf="analysisNames && (analysisNames.length > 0)">
+                        Analyses: <ul style="list-style-type:none">
+                                        <li *ngFor="let analysisName of analysisNames" >{{analysisName}}</li>
+                                </ul>
+                        </div>
                       </fieldset> 
                 </div>                
 ` // end template
@@ -43,6 +50,11 @@ import {DataSet} from "../model/dataset"
 
 export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
+    constructor(private _dtoRequestServiceNameId:DtoRequestService<NameId[]>,
+                private _dtoRequestServiceDataSetDetail:DtoRequestService<DataSet>,
+                private _dtoRequestServiceAnalysisDetail:DtoRequestService<Analysis>) {
+
+    } // ctor
 
     // useg
     private nameIdList:NameId[];
@@ -51,6 +63,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private onItemSelected:EventEmitter<number> = new EventEmitter();
     private onAddMessage:EventEmitter<string> = new EventEmitter();
     private dataSet:DataSet;
+    private analysisNames:string[] = [];
 
     private handleItemChecked(arg) {
         let checkEvent:CheckBoxEvent = new CheckBoxEvent(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE,
@@ -76,10 +89,6 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
         this.onItemSelected.emit(selectedDataSetId);
     }
 
-    constructor(private _dtoRequestServiceNameId:DtoRequestService<NameId[]>,
-                private _dtoRequestServiceDataSetDetail:DtoRequestService<DataSet>) {
-
-    } // ctor
 
     private checkedItems:string[];
 
@@ -107,28 +116,46 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private setDatasetDetails(dataSetId:number):void {
 
         let scope$ = this;
-        scope$._dtoRequestServiceDataSetDetail.getResult(new DtoRequestItemDataSet(dataSetId)).subscribe(dataSet => {
-                if (dataSet) {
-                    scope$.dataSet = dataSet;
-                }
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
-            });
+        scope$._dtoRequestServiceDataSetDetail.getResult(new DtoRequestItemDataSet(dataSetId))
+            .subscribe(dataSet => {
+                    if (dataSet) {
+                        scope$.dataSet = dataSet;
+                        scope$.analysisNames = [];
+
+                        scope$.dataSet.analysesIds.forEach(
+                            analysisId => {
+                                let currentAnalysisId:number = analysisId;
+                                if(currentAnalysisId) {
+                                    scope$._dtoRequestServiceAnalysisDetail
+                                        .getResult(new DtoRequestItemAnalysis(currentAnalysisId))
+                                        .subscribe(analysis => {
+                                                scope$.analysisNames.push(analysis.analysisName);
+                                            },
+                                            dtoHeaderResponse => {
+                                                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
+                                            });
+                                }
+                            }
+                        );
+                    }
+                },
+                dtoHeaderResponse => {
+                    dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
+                });
 
     } // setList()
 
 
     ngOnInit():any {
 
-        if( this.experimentId) {
+        if (this.experimentId) {
             this.setList();
         }
     }
 
     ngOnChanges(changes:{[propName:string]:SimpleChange}) {
         this.experimentId = changes['experimentId'].currentValue;
-        if( this.experimentId) {
+        if (this.experimentId) {
             this.setList();
         }
     }
