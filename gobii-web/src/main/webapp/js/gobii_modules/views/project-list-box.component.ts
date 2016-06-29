@@ -17,8 +17,8 @@ import {DtoRequestItemProject} from "../services/app/dto-request-item-project";
                 <div *ngIf="project">
                     <BR>
                      <fieldset class="form-group">
-                        Name: {{project.projectName}}<BR>
-                        Description: {{project.projectDescription}}<BR>
+                        <b>Name:</b> {{project.projectName}}<BR>
+                        <b>Description:</b> {{project.projectDescription}}<BR>
                       </fieldset> 
                 </div>		        
 ` // end template

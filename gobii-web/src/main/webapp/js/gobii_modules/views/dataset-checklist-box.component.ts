@@ -10,6 +10,8 @@ import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
 import {DataSet} from "../model/dataset";
 import {DtoRequestItemAnalysis} from "../services/app/dto-request-item-analysis";
 import {Analysis} from "../model/analysis";
+import {DtoRequestItemCv} from "../services/app/dto-request-item-cv";
+import {Cv} from "../model/cv";
 
 
 @Component({
@@ -31,15 +33,20 @@ import {Analysis} from "../model/analysis";
                 <div *ngIf="dataSet">
                     <BR>
                      <fieldset>
-                        Name: {{dataSet.name}}<BR>
-                        Data Table: {{dataSet.dataTable}}<BR>
-                        Data File: {{dataSet.dataFile}}<BR>
-                        Quality Table: {{dataSet.qualityTable}}<BR>
-                        Quality File: {{dataSet.qualityFile}}<BR>
+                        <b>Name:</b> {{dataSet.name}}<BR>
+                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>
+                        <b>Data File:</b> {{dataSet.dataFile}}<BR>
+                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>
+                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>
                         <div *ngIf="analysisNames && (analysisNames.length > 0)">
-                        Analyses: <ul style="list-style-type:none">
-                                        <li *ngFor="let analysisName of analysisNames" >{{analysisName}}</li>
-                                </ul>
+                            <b>Analyses:</b> <ul style="list-style-type:none">
+                                            <li *ngFor= "let analysisName of analysisNames" >{{analysisName}}</li>
+                                    </ul>
+                        </div>
+                        <div *ngIf="analysisTypes && (analysisTypes.length > 0)">
+                            <b>Analysis Types:</b> <ul style="list-style-type:none">
+                                            <li *ngFor= "let analysisType of analysisTypes" >{{analysisType}}</li>
+                                    </ul>
                         </div>
                       </fieldset> 
                 </div>                
@@ -52,7 +59,8 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     constructor(private _dtoRequestServiceNameId:DtoRequestService<NameId[]>,
                 private _dtoRequestServiceDataSetDetail:DtoRequestService<DataSet>,
-                private _dtoRequestServiceAnalysisDetail:DtoRequestService<Analysis>) {
+                private _dtoRequestServiceAnalysisDetail:DtoRequestService<Analysis>,
+                private _dtoRequestServiceCvDetail:DtoRequestService<Cv>) {
 
     } // ctor
 
@@ -64,6 +72,8 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private onAddMessage:EventEmitter<string> = new EventEmitter();
     private dataSet:DataSet;
     private analysisNames:string[] = [];
+    private analysisTypes:string[] = [];
+    private nameIdListAnalysisTypes:NameId[];
 
     private handleItemChecked(arg) {
         let checkEvent:CheckBoxEvent = new CheckBoxEvent(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE,
@@ -121,15 +131,28 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                     if (dataSet) {
                         scope$.dataSet = dataSet;
                         scope$.analysisNames = [];
+                        scope$.analysisTypes = [];
 
                         scope$.dataSet.analysesIds.forEach(
                             analysisId => {
                                 let currentAnalysisId:number = analysisId;
-                                if(currentAnalysisId) {
+                                if (currentAnalysisId) {
                                     scope$._dtoRequestServiceAnalysisDetail
                                         .getResult(new DtoRequestItemAnalysis(currentAnalysisId))
                                         .subscribe(analysis => {
                                                 scope$.analysisNames.push(analysis.analysisName);
+                                                if (analysis.anlaysisTypeId && scope$.nameIdListAnalysisTypes) {
+
+                                                       scope$
+                                                        .nameIdListAnalysisTypes
+                                                        .forEach( t => {
+                                                            if(Number(t.id) === analysis.anlaysisTypeId) {
+                                                                scope$.analysisTypes.push(t.name);
+                                                            }
+                                                        });
+
+
+                                                } // if we have an analysis type id
                                             },
                                             dtoHeaderResponse => {
                                                 dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
@@ -148,9 +171,19 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     ngOnInit():any {
 
-        if (this.experimentId) {
-            this.setList();
-        }
+        let scope$ = this;
+        scope$._dtoRequestServiceNameId
+            .getResult(new DtoRequestItemNameIds(ProcessType.READ, EntityType.CvGroupTerms, "analysis_type"))
+            .subscribe(nameIdList => {
+                    scope$.nameIdListAnalysisTypes = nameIdList;
+                    if (this.experimentId) {
+                        this.setList();
+                    }
+                },
+                dtoHeaderResponse => {
+                    dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
+                });
+
     }
 
     ngOnChanges(changes:{[propName:string]:SimpleChange}) {

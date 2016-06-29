@@ -43,14 +43,16 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             }],
         execute: function() {
             DataSetCheckListBoxComponent = (function () {
-                function DataSetCheckListBoxComponent(_dtoRequestServiceNameId, _dtoRequestServiceDataSetDetail, _dtoRequestServiceAnalysisDetail) {
+                function DataSetCheckListBoxComponent(_dtoRequestServiceNameId, _dtoRequestServiceDataSetDetail, _dtoRequestServiceAnalysisDetail, _dtoRequestServiceCvDetail) {
                     this._dtoRequestServiceNameId = _dtoRequestServiceNameId;
                     this._dtoRequestServiceDataSetDetail = _dtoRequestServiceDataSetDetail;
                     this._dtoRequestServiceAnalysisDetail = _dtoRequestServiceAnalysisDetail;
+                    this._dtoRequestServiceCvDetail = _dtoRequestServiceCvDetail;
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                     this.onAddMessage = new core_1.EventEmitter();
                     this.analysisNames = [];
+                    this.analysisTypes = [];
                 } // ctor
                 DataSetCheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var checkEvent = new event_checkbox_1.CheckBoxEvent(arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE, arg.currentTarget.value, arg.currentTarget.name);
@@ -93,6 +95,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         if (dataSet) {
                             scope$.dataSet = dataSet;
                             scope$.analysisNames = [];
+                            scope$.analysisTypes = [];
                             scope$.dataSet.analysesIds.forEach(function (analysisId) {
                                 var currentAnalysisId = analysisId;
                                 if (currentAnalysisId) {
@@ -100,6 +103,15 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                                         .getResult(new dto_request_item_analysis_1.DtoRequestItemAnalysis(currentAnalysisId))
                                         .subscribe(function (analysis) {
                                         scope$.analysisNames.push(analysis.analysisName);
+                                        if (analysis.anlaysisTypeId && scope$.nameIdListAnalysisTypes) {
+                                            scope$
+                                                .nameIdListAnalysisTypes
+                                                .forEach(function (t) {
+                                                if (Number(t.id) === analysis.anlaysisTypeId) {
+                                                    scope$.analysisTypes.push(t.name);
+                                                }
+                                            });
+                                        } // if we have an analysis type id
                                     }, function (dtoHeaderResponse) {
                                         dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage(m.message); });
                                     });
@@ -111,9 +123,18 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     });
                 }; // setList()
                 DataSetCheckListBoxComponent.prototype.ngOnInit = function () {
-                    if (this.experimentId) {
-                        this.setList();
-                    }
+                    var _this = this;
+                    var scope$ = this;
+                    scope$._dtoRequestServiceNameId
+                        .getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.CvGroupTerms, "analysis_type"))
+                        .subscribe(function (nameIdList) {
+                        scope$.nameIdListAnalysisTypes = nameIdList;
+                        if (_this.experimentId) {
+                            _this.setList();
+                        }
+                    }, function (dtoHeaderResponse) {
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage(m.message); });
+                    });
                 };
                 DataSetCheckListBoxComponent.prototype.ngOnChanges = function (changes) {
                     this.experimentId = changes['experimentId'].currentValue;
@@ -126,9 +147,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         selector: 'dataset-checklist-box',
                         inputs: ['experimentId'],
                         outputs: ['onItemChecked', 'onItemSelected', 'onAddMessage'],
-                        template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let nameId of nameIdList\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                value={{nameId.id}} \n                                name=\"{{nameId.name}}\">&nbsp;{{nameId.name}}\n                        </div>            \n                    </div>\n                </form>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        Name: {{dataSet.name}}<BR>\n                        Data Table: {{dataSet.dataTable}}<BR>\n                        Data File: {{dataSet.dataFile}}<BR>\n                        Quality Table: {{dataSet.qualityTable}}<BR>\n                        Quality File: {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                        Analyses: <ul style=\"list-style-type:none\">\n                                        <li *ngFor=\"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
+                        template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let nameId of nameIdList\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                value={{nameId.id}} \n                                name=\"{{nameId.name}}\">&nbsp;{{nameId.name}}\n                        </div>            \n                    </div>\n                </form>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        <b>Name:</b> {{dataSet.name}}<BR>\n                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>\n                        <b>Data File:</b> {{dataSet.dataFile}}<BR>\n                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>\n                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                            <b>Analyses:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                    </ul>\n                        </div>\n                        <div *ngIf=\"analysisTypes && (analysisTypes.length > 0)\">\n                            <b>Analysis Types:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisType of analysisTypes\" >{{analysisType}}</li>\n                                    </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
                     }), 
-                    __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService])
+                    __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService])
                 ], DataSetCheckListBoxComponent);
                 return DataSetCheckListBoxComponent;
             }());

@@ -122,7 +122,7 @@ import * as EntityFilters from "../model/type-entity-filter";
                      
                          
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Extract Critiera</legend>
+                                <legend class="the-legend">Extract</legend>
                                 <criteria-display [gobiiDatasetExtracts] = "gobiiDatasetExtracts"></criteria-display>
                             </fieldset>
                             

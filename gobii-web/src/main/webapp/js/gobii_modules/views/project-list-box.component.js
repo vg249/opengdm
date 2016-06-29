@@ -70,7 +70,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                         selector: 'project-list-box',
                         inputs: ['primaryInvestigatorId', 'nameIdList'],
                         outputs: ['onProjectSelected', 'onAddMessage'],
-                        template: "<select name=\"projects\" \n                    (change)=\"handleProjectSelected($event)\">\n                    <option *ngFor=\"let nameId of nameIdList \" \n                    value={{nameId.id}}>{{nameId.name}}</option>\n\t\t        </select>\n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        Name: {{project.projectName}}<BR>\n                        Description: {{project.projectDescription}}<BR>\n                      </fieldset> \n                </div>\t\t        \n" // end template
+                        template: "<select name=\"projects\" \n                    (change)=\"handleProjectSelected($event)\">\n                    <option *ngFor=\"let nameId of nameIdList \" \n                    value={{nameId.id}}>{{nameId.name}}</option>\n\t\t        </select>\n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        <b>Name:</b> {{project.projectName}}<BR>\n                        <b>Description:</b> {{project.projectDescription}}<BR>\n                      </fieldset> \n                </div>\t\t        \n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
                 ], ProjectListBoxComponent);
