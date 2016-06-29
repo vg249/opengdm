@@ -127,7 +127,10 @@ import * as EntityFilters from "../model/type-entity-filter";
                             </fieldset>
                             
                             <form>
-                                <input type="button" value="Submit" (click)="handleExtractSubmission()" >
+                                <input type="button" 
+                                value="Submit"
+                                 [disabled]="(gobiiDatasetExtracts.length === 0)"
+                                (click)="handleExtractSubmission()" >
                             </form>
                             
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
@@ -185,7 +188,7 @@ export class ExtractorRoot {
                                 }
                             )[0];
 
-                    scope$.messages.push("Connected to databae: " + scope$.selectedServerConfig.crop);
+                    scope$.messages.push("Connected to database: " + scope$.selectedServerConfig.crop);
                     scope$.initializeContactsForSumission();
                     scope$.initializeContactsForPi();
 
@@ -406,7 +409,7 @@ export class ExtractorRoot {
         let fileName:string = "extractor_"
             + date.getFullYear()
             + "_"
-            + date.getMonth()
+            + (date.getMonth() + 1)
             + "_"
             + date.getDay()
             + "_"
