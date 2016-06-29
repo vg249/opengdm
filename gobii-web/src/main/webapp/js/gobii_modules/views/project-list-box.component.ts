@@ -7,7 +7,7 @@ import {DtoRequestItemProject} from "../services/app/dto-request-item-project";
 
 @Component({
     selector: 'project-list-box',
-    inputs: ['primaryInvestigatorId', 'nameIdList'],
+    inputs: ['primaryInvestigatorId', 'nameIdList','nameIdListPIs'],
     outputs: ['onProjectSelected', 'onAddMessage'],
     template: `<select name="projects" 
                     (change)="handleProjectSelected($event)">
@@ -19,6 +19,7 @@ import {DtoRequestItemProject} from "../services/app/dto-request-item-project";
                      <fieldset class="form-group">
                         <b>Name:</b> {{project.projectName}}<BR>
                         <b>Description:</b> {{project.projectDescription}}<BR>
+                        <b>Principle Investigator:</b> {{primaryInvestigatorName}}
                       </fieldset> 
                 </div>		        
 ` // end template
@@ -31,7 +32,9 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
     // useg    privatre
     private project:Project;
     private nameIdList:NameId[];
+    private nameIdListPIs:NameId[];
     private primaryInvestigatorId:string;
+    private primaryInvestigatorName:string;
     private onProjectSelected:EventEmitter<string> = new EventEmitter();
     private onAddMessage:EventEmitter<string> = new EventEmitter();
 
@@ -56,7 +59,9 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
         this._dtoRequestServiceProject.getResult(new DtoRequestItemProject(Number(projectId)))
             .subscribe(project => {
                     if (project) {
-                        scope$.project = project
+                        scope$.project = project;
+                        scope$.primaryInvestigatorId = String(project.piContact);
+                        scope$.setPiName();
                     }
                 },
                 dtoHeaderResponse => {
@@ -71,10 +76,24 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
         //this.setList();
     }
 
+    private setPiName() {
+
+        this.primaryInvestigatorName = undefined;
+        if( this.primaryInvestigatorId && this.nameIdListPIs) {
+            this.nameIdListPIs.forEach(n => {
+                if(n.id === this.primaryInvestigatorId) {
+                    this.primaryInvestigatorName = n.name;
+
+                }
+            })
+        }
+    }
+
     ngOnChanges(changes:{[propName:string]:SimpleChange}) {
 
         if (changes['primaryInvestigatorId'] && changes['primaryInvestigatorId'].currentValue) {
             this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
+            
         }
 
         if (changes['nameIdList']) {
@@ -83,6 +102,14 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
                 this.setProjectDetails(this.nameIdList[0].id);
             }
         }
-//        console.log('ngOnChanges - myProp = ' + changes['primaryInvestigatorId'].currentValue);
+
+        if (changes['nameIdListPIs']) {
+            if (changes['nameIdListPIs'].currentValue) {
+                this.nameIdListPIs = changes['nameIdListPIs'].currentValue;
+            }
+        }
+
+        //
+
     }
 }

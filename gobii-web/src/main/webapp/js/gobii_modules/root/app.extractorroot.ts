@@ -96,6 +96,7 @@ import * as EntityFilters from "../model/type-entity-filter";
                         <legend class="the-legend">Project</legend>
                         <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi"
                             [nameIdList]="projectNameIdList"
+                            [nameIdListPIs]="contactNameIdListForPi"
                             (onProjectSelected)="handleProjectSelected($event)"
                             (onAddMessage)="handleAddMessage($event)"></project-list-box>
                         </fieldset>
@@ -342,7 +343,7 @@ export class ExtractorRoot {
             EntityType.Experiment,
             this.selectedProjectId)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.experimentNameIdList = nameIds
+                    scope$.experimentNameIdList = nameIds;
                     scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
                 } else {
                     scope$.experimentNameIdList = [new NameId(0, "<none>")];

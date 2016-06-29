@@ -44,6 +44,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                         .subscribe(function (project) {
                         if (project) {
                             scope$.project = project;
+                            scope$.primaryInvestigatorId = String(project.piContact);
+                            scope$.setPiName();
                         }
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retrieving project detail: "
@@ -52,6 +54,17 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                 };
                 ProjectListBoxComponent.prototype.ngOnInit = function () {
                     //this.setList();
+                };
+                ProjectListBoxComponent.prototype.setPiName = function () {
+                    var _this = this;
+                    this.primaryInvestigatorName = undefined;
+                    if (this.primaryInvestigatorId && this.nameIdListPIs) {
+                        this.nameIdListPIs.forEach(function (n) {
+                            if (n.id === _this.primaryInvestigatorId) {
+                                _this.primaryInvestigatorName = n.name;
+                            }
+                        });
+                    }
                 };
                 ProjectListBoxComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['primaryInvestigatorId'] && changes['primaryInvestigatorId'].currentValue) {
@@ -63,14 +76,19 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                             this.setProjectDetails(this.nameIdList[0].id);
                         }
                     }
-                    //        console.log('ngOnChanges - myProp = ' + changes['primaryInvestigatorId'].currentValue);
+                    if (changes['nameIdListPIs']) {
+                        if (changes['nameIdListPIs'].currentValue) {
+                            this.nameIdListPIs = changes['nameIdListPIs'].currentValue;
+                        }
+                    }
+                    //
                 };
                 ProjectListBoxComponent = __decorate([
                     core_1.Component({
                         selector: 'project-list-box',
-                        inputs: ['primaryInvestigatorId', 'nameIdList'],
+                        inputs: ['primaryInvestigatorId', 'nameIdList', 'nameIdListPIs'],
                         outputs: ['onProjectSelected', 'onAddMessage'],
-                        template: "<select name=\"projects\" \n                    (change)=\"handleProjectSelected($event)\">\n                    <option *ngFor=\"let nameId of nameIdList \" \n                    value={{nameId.id}}>{{nameId.name}}</option>\n\t\t        </select>\n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        <b>Name:</b> {{project.projectName}}<BR>\n                        <b>Description:</b> {{project.projectDescription}}<BR>\n                      </fieldset> \n                </div>\t\t        \n" // end template
+                        template: "<select name=\"projects\" \n                    (change)=\"handleProjectSelected($event)\">\n                    <option *ngFor=\"let nameId of nameIdList \" \n                    value={{nameId.id}}>{{nameId.name}}</option>\n\t\t        </select>\n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        <b>Name:</b> {{project.projectName}}<BR>\n                        <b>Description:</b> {{project.projectDescription}}<BR>\n                        <b>Principle Investigator:</b> {{primaryInvestigatorName}}\n                      </fieldset> \n                </div>\t\t        \n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService])
                 ], ProjectListBoxComponent);
