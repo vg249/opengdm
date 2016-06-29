@@ -54,7 +54,8 @@ export class DtoRequestItemExperiment implements DtoRequestItem<Experiment> {
             json.createdstring,
             json.modifiedBy,
             json.modifiedstring,
-            json.status
+            json.status,
+            json.platformName
         );
 
 

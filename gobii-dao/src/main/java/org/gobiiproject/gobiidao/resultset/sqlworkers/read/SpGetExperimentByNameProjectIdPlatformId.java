@@ -31,11 +31,12 @@ public class SpGetExperimentByNameProjectIdPlatformId implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String Sql = "\tselect * \n" +
-                "\tfrom experiment\n" +
-                "\twhere name= ?  \n" +
-                "\t\t\tAND project_id= ?\n" +
-                "\t\t\tand platform_id = ?\n ";
+        String Sql = "select p.name \"platform_name\",e.*\n" +
+                "from experiment e\n" +
+                "join platform p on (e.platform_id=p.platform_id)\n" +
+                "\twhere e.name= ?  \n" +
+                "\t\t\tAND e.project_id= ?\n" +
+                "\t\t\tand e.platform_id = ?\n ";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
         String experimentName = (String) parameters.get("experimentName");

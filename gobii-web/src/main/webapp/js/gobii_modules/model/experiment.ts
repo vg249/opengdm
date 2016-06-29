@@ -11,6 +11,7 @@ export class Experiment {
                 public createdstring:string,
                 public modifiedBy:number,
                 public modifiedstring:string,
-                public status:number) {
+                public status:number,
+                public platformName) {
     }
 }

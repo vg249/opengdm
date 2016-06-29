@@ -55,7 +55,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/exper
                     //         currentContextRoot,
                     //         currentPort));
                     // });
-                    returnVal = new experiment_1.Experiment(json.experimentId, json.experimentName, json.experimentCode, json.experimentDataFile, json.projectId, json.platformId, json.manifestId, json.createdBy, json.createdstring, json.modifiedBy, json.modifiedstring, json.status);
+                    returnVal = new experiment_1.Experiment(json.experimentId, json.experimentName, json.experimentCode, json.experimentDataFile, json.projectId, json.platformId, json.manifestId, json.createdBy, json.createdstring, json.modifiedBy, json.modifiedstring, json.status, json.platformName);
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
                 };

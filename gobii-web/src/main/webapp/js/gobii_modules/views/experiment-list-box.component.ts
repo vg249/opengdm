@@ -22,8 +22,9 @@ import {Experiment} from "../model/experiment"
                 <div *ngIf="experiment">
     		        <BR>
                      <fieldset>
-                        Name: {{experiment.experimentName}}<BR>
-                        Code: {{experiment.experimentCode}}<BR>
+                        <b>Name:</b> {{experiment.experimentName}}<BR>
+                        <b>Platform:</b> {{experiment.platformName}}<BR>
+                        <b>Code:</b> {{experiment.experimentCode}}<BR>
                       </fieldset> 
                 </div>		        
 ` // end template

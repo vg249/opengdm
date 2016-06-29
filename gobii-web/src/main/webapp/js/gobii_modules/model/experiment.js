@@ -6,7 +6,7 @@ System.register([], function(exports_1, context_1) {
         setters:[],
         execute: function() {
             Experiment = (function () {
-                function Experiment(experimentId, experimentName, experimentCode, experimentDataFile, projectId, platformId, manifestId, createdBy, createdstring, modifiedBy, modifiedstring, status) {
+                function Experiment(experimentId, experimentName, experimentCode, experimentDataFile, projectId, platformId, manifestId, createdBy, createdstring, modifiedBy, modifiedstring, status, platformName) {
                     this.experimentId = experimentId;
                     this.experimentName = experimentName;
                     this.experimentCode = experimentCode;
@@ -19,6 +19,7 @@ System.register([], function(exports_1, context_1) {
                     this.modifiedBy = modifiedBy;
                     this.modifiedstring = modifiedstring;
                     this.status = status;
+                    this.platformName = platformName;
                 }
                 return Experiment;
             }());

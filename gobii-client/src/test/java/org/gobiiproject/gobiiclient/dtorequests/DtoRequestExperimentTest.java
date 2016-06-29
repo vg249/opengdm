@@ -50,6 +50,7 @@ public class DtoRequestExperimentTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(experimentDTOResponse));
         Assert.assertNotEquals(experimentDTOResponse, null);
         Assert.assertTrue(experimentDTOResponse.getExperimentId() > 0);
+        Assert.assertNotNull(experimentDTOResponse.getPlatformName());
 
     } // testGetMarkers()
 

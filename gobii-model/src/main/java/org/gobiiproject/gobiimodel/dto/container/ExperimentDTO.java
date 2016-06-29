@@ -24,6 +24,7 @@ public class ExperimentDTO extends DtoMetaData {
     private String experimentDataFile = null;
     private Integer projectId;
     private Integer platformId;
+    private String platformName;
     private Integer manifestId;
     private Integer createdBy;
     private Date createdDate;
@@ -90,6 +91,16 @@ public class ExperimentDTO extends DtoMetaData {
     @GobiiEntityColumn(columnName = "platform_id")
     public void setPlatformId(Integer platformId) {
         this.platformId = platformId;
+    }
+
+    @GobiiEntityParam(paramName = "platformName")
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    @GobiiEntityColumn(columnName = "platform_name")
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
     }
 
     @GobiiEntityParam(paramName = "manifestId")
