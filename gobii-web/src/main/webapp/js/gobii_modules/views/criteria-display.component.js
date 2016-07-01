@@ -1,4 +1,4 @@
-System.register(["@angular/core"], function(exports_1, context_1) {
+System.register(["@angular/core", "../model/event-checkbox", "../model/type-process"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,21 +10,51 @@ System.register(["@angular/core"], function(exports_1, context_1) {
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1;
+    var core_1, event_checkbox_1, type_process_1;
     var CriteriaDisplayComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (event_checkbox_1_1) {
+                event_checkbox_1 = event_checkbox_1_1;
+            },
+            function (type_process_1_1) {
+                type_process_1 = type_process_1_1;
             }],
         execute: function() {
             CriteriaDisplayComponent = (function () {
                 function CriteriaDisplayComponent() {
                     // useg
                     this.gobiiDatasetExtracts = [];
+                    this.onItemUnChecked = new core_1.EventEmitter();
+                    this.onItemSelected = new core_1.EventEmitter();
                 } // ctor
                 CriteriaDisplayComponent.prototype.ngOnInit = function () {
                     return null;
+                };
+                // In this component, every item starts out checked; unchecking it removes it
+                CriteriaDisplayComponent.prototype.handleItemUnChecked = function (arg) {
+                    var checkEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.DELETE, arg.currentTarget.value, arg.currentTarget.name);
+                    var itemToRemove = this.gobiiDatasetExtracts
+                        .filter(function (e) {
+                        return e.getDataSetId() === Number(arg.currentTarget.value);
+                    })[0];
+                    var indexOfItemToRemove = this.gobiiDatasetExtracts.indexOf(itemToRemove);
+                    if (indexOfItemToRemove > -1) {
+                        this.gobiiDatasetExtracts.splice(indexOfItemToRemove, 1);
+                    }
+                    this.onItemUnChecked.emit(checkEvent);
+                };
+                CriteriaDisplayComponent.prototype.handleItemSelected = function (arg) {
+                    var selectedDataSetId = Number(arg.currentTarget.children[0].value);
+                    if (this.previousSelectedItem) {
+                        this.previousSelectedItem.style = "";
+                    }
+                    arg.currentTarget.style = "background-color:#b3d9ff";
+                    this.previousSelectedItem = arg.currentTarget;
+                    this.onItemSelected.emit(selectedDataSetId);
                 };
                 CriteriaDisplayComponent.prototype.ngOnChanges = function (changes) {
                     this.gobiiDatasetExtracts = changes['gobiiDatasetExtracts'].currentValue;
@@ -33,8 +63,8 @@ System.register(["@angular/core"], function(exports_1, context_1) {
                     core_1.Component({
                         selector: 'criteria-display',
                         inputs: ['gobiiDatasetExtracts'],
-                        //directives: [RADIO_GROUP_DIRECTIVES]
-                        template: "<div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px;\">\n                    <div *ngFor=\"let gobiiDataSetExtract of gobiiDatasetExtracts\" >{{gobiiDataSetExtract.dataSetName}}</div>\n                </div>\n" // end template
+                        outputs: ['onItemUnChecked', 'onItemSelected'],
+                        template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let gobiiDataSetExtract of gobiiDatasetExtracts\"\n                                (click)=handleItemSelected($event)\n                                (hover)=handleItemHover($event)>\n                                <input  type=\"checkbox\"\n                                    (click)=handleItemUnChecked($event)\n                                    value={{gobiiDataSetExtract.dataSetId}}\n                                    name=\"{{gobiiDataSetExtract.dataSetName}}\"\n                                    checked>&nbsp;{{gobiiDataSetExtract.dataSetName}}\n                        </div>\n                    </div>\n                </form>"
                     }), 
                     __metadata('design:paramtypes', [])
                 ], CriteriaDisplayComponent);

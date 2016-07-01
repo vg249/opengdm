@@ -16,7 +16,7 @@ import {Cv} from "../model/cv";
 
 @Component({
     selector: 'dataset-checklist-box',
-    inputs: ['experimentId'],
+    inputs: ['experimentId', 'dataSetIdToUncheck'],
     outputs: ['onItemChecked', 'onItemSelected', 'onAddMessage'],
     template: `<form>
                     <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
@@ -143,10 +143,10 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                                                 scope$.analysisNames.push(analysis.analysisName);
                                                 if (analysis.anlaysisTypeId && scope$.nameIdListAnalysisTypes) {
 
-                                                       scope$
+                                                    scope$
                                                         .nameIdListAnalysisTypes
-                                                        .forEach( t => {
-                                                            if(Number(t.id) === analysis.anlaysisTypeId) {
+                                                        .forEach(t => {
+                                                            if (Number(t.id) === analysis.anlaysisTypeId) {
                                                                 scope$.analysisTypes.push(t.name);
                                                             }
                                                         });
@@ -186,10 +186,34 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     }
 
+
+    private dataSetIdToUncheckFromEvent:number;
     ngOnChanges(changes:{[propName:string]:SimpleChange}) {
-        this.experimentId = changes['experimentId'].currentValue;
-        if (this.experimentId) {
-            this.setList();
+
+        if (changes['experimentId']) {
+            this.experimentId = changes['experimentId'].currentValue;
+            if (this.experimentId) {
+                this.setList();
+            }
+        }
+
+        if (changes['dataSetIdToUncheck']) {
+            this.dataSetIdToUncheckFromEvent = changes['dataSetIdToUncheck'].currentValue;
+            if (this.dataSetIdToUncheckFromEvent) {
+
+                let nameIdItemToRemove:NameId =
+                    this.nameIdList
+                        .filter(n => {
+                            return Number(n.id) === this.dataSetIdToUncheckFromEvent
+                        })[0];
+
+                if( nameIdItemToRemove ) {
+                    let indexOfItemToRemove = this.nameIdList.indexOf(nameIdItemToRemove);
+
+                    this.nameIdList.splice(indexOfItemToRemove, 1);
+                    this.nameIdList.splice(indexOfItemToRemove, 0, nameIdItemToRemove);
+                }
+            }
         }
     }
 }

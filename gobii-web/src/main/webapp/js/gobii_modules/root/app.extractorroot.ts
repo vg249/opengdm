@@ -111,7 +111,9 @@ import * as EntityFilters from "../model/type-entity-filter";
                         
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Data Sets</legend>
-                        <dataset-checklist-box [experimentId] = "selectedExperimentId" 
+                        <dataset-checklist-box
+                            [dataSetIdToUncheck]= "dataSetIdToUncheck"
+                            [experimentId] = "selectedExperimentId" 
                             (onItemChecked)="handleCheckedDataSetItem($event)"
                             (onItemSelected)="handleDataSetDetailSelected($event)"
                             (onAddMessage) = "handleAddMessage($event)">
@@ -120,11 +122,12 @@ import * as EntityFilters from "../model/type-entity-filter";
                         
                     </div>  <!-- outer grid column 2-->
                     <div class="col-md-4">
-                     
                          
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Extract</legend>
-                                <criteria-display [gobiiDatasetExtracts] = "gobiiDatasetExtracts"></criteria-display>
+                                <criteria-display 
+                                    [gobiiDatasetExtracts] = "gobiiDatasetExtracts"
+                                    (onItemUnChecked) = "handleExtractDataSetUnchecked($event)"></criteria-display>
                             </fieldset>
                             
                             <form>
@@ -361,6 +364,7 @@ export class ExtractorRoot {
 // ********************************************** DATASET ID
     private displayDataSetDetail:boolean = false;
     private selectedDataSetDetailId:number;
+    private dataSetIdToUncheck:number;
 
     private handleDataSetDetailSelected(arg) {
         this.selectedDataSetDetailId = arg;
@@ -387,6 +391,10 @@ export class ExtractorRoot {
                         return item.getDataSetId() != Number(arg.id)
                     });
         } // if-else we're adding
+    }
+
+    private handleExtractDataSetUnchecked(arg:CheckBoxEvent) {
+        this.dataSetIdToUncheck = Number(arg.id);
     }
 
     private handleExtractSubmission() {
