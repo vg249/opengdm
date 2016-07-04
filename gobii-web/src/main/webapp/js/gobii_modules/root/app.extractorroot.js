@@ -184,11 +184,11 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.contactNameIdListForPi = nameIds;
                             scope$.selectedContactIdForPi = scope$.contactNameIdListForPi[0].id;
-                            scope$.initializeProjectNameIds();
                         }
                         else {
                             scope$.contactNameIdListForPi = [new name_id_1.NameId(0, "ERROR NO USERS")];
                         }
+                        scope$.initializeProjectNameIds();
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retrieving contacts for PIs: "
                             + m.message); });
@@ -211,11 +211,12 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.projectNameIdList = nameIds;
                             scope$.selectedProjectId = nameIds[0].id;
-                            _this.initializeExperimentNameIds();
                         }
                         else {
                             scope$.projectNameIdList = [new name_id_1.NameId(0, "<none>")];
+                            scope$.selectedProjectId = undefined;
                         }
+                        _this.initializeExperimentNameIds();
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retriving project names: "
                             + m.message); });
@@ -229,18 +230,25 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 };
                 ExtractorRoot.prototype.initializeExperimentNameIds = function () {
                     var scope$ = this;
-                    this._dtoRequestServiceNameIds.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Experiment, this.selectedProjectId)).subscribe(function (nameIds) {
-                        if (nameIds && (nameIds.length > 0)) {
-                            scope$.experimentNameIdList = nameIds;
-                            scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
-                        }
-                        else {
-                            scope$.experimentNameIdList = [new name_id_1.NameId(0, "<none>")];
-                        }
-                    }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retreving experiment names: "
-                            + m.message); });
-                    });
+                    if (this.selectedProjectId) {
+                        this._dtoRequestServiceNameIds.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Experiment, this.selectedProjectId)).subscribe(function (nameIds) {
+                            if (nameIds && (nameIds.length > 0)) {
+                                scope$.experimentNameIdList = nameIds;
+                                scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
+                            }
+                            else {
+                                scope$.experimentNameIdList = [new name_id_1.NameId(0, "<none>")];
+                                scope$.selectedExperimentId = undefined;
+                            }
+                        }, function (dtoHeaderResponse) {
+                            dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retreving experiment names: "
+                                + m.message); });
+                        });
+                    }
+                    else {
+                        scope$.experimentNameIdList = [new name_id_1.NameId(0, "<none>")];
+                        scope$.selectedExperimentId = undefined;
+                    }
                 };
                 ExtractorRoot.prototype.handleAddMessage = function (arg) {
                     this.messages.push(arg);

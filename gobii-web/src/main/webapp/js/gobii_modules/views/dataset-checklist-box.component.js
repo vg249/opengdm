@@ -77,56 +77,70 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 DataSetCheckListBoxComponent.prototype.setList = function () {
                     // we can get this event whenver the item is clicked, not necessarily when the checkbox
                     var scope$ = this;
-                    this._dtoRequestServiceNameId.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNamesByExperimentId, this.experimentId)).subscribe(function (nameIds) {
-                        if (nameIds && (nameIds.length > 0)) {
-                            scope$.nameIdList = nameIds;
-                            scope$.nameIdList.forEach(function (n) {
-                                scope$.checkBoxEvents.push(new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.CREATE, n.id, n.name, false));
-                            });
-                            scope$.setDatasetDetails(scope$.nameIdList[0].id);
-                        }
-                        else {
-                            scope$.nameIdList = [new name_id_1.NameId(0, "<none>")];
-                        }
-                    }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retrieving dataset names by experiment id: "
-                            + ": "
-                            + m.message); });
-                    });
+                    scope$.nameIdList = [];
+                    scope$.checkBoxEvents = [];
+                    scope$.setDatasetDetails(undefined);
+                    if (scope$.experimentId) {
+                        this._dtoRequestServiceNameId.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNamesByExperimentId, this.experimentId)).subscribe(function (nameIds) {
+                            if (nameIds && (nameIds.length > 0)) {
+                                scope$.nameIdList = nameIds;
+                                scope$.checkBoxEvents = [];
+                                scope$.nameIdList.forEach(function (n) {
+                                    scope$.checkBoxEvents.push(new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.CREATE, n.id, n.name, false));
+                                });
+                                scope$.setDatasetDetails(scope$.nameIdList[0].id);
+                            }
+                            else {
+                                scope$.nameIdList = [new name_id_1.NameId(0, "<none>")];
+                                scope$.setDatasetDetails(undefined);
+                            }
+                        }, function (dtoHeaderResponse) {
+                            dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retrieving dataset names by experiment id: "
+                                + ": "
+                                + m.message); });
+                        });
+                    } // if we have an experiment id
                 }; // setList()
                 DataSetCheckListBoxComponent.prototype.setDatasetDetails = function (dataSetId) {
-                    var scope$ = this;
-                    scope$._dtoRequestServiceDataSetDetail.getResult(new dto_request_item_dataset_1.DtoRequestItemDataSet(dataSetId))
-                        .subscribe(function (dataSet) {
-                        if (dataSet) {
-                            scope$.dataSet = dataSet;
-                            scope$.analysisNames = [];
-                            scope$.analysisTypes = [];
-                            scope$.dataSet.analysesIds.forEach(function (analysisId) {
-                                var currentAnalysisId = analysisId;
-                                if (currentAnalysisId) {
-                                    scope$._dtoRequestServiceAnalysisDetail
-                                        .getResult(new dto_request_item_analysis_1.DtoRequestItemAnalysis(currentAnalysisId))
-                                        .subscribe(function (analysis) {
-                                        scope$.analysisNames.push(analysis.analysisName);
-                                        if (analysis.anlaysisTypeId && scope$.nameIdListAnalysisTypes) {
-                                            scope$
-                                                .nameIdListAnalysisTypes
-                                                .forEach(function (t) {
-                                                if (Number(t.id) === analysis.anlaysisTypeId) {
-                                                    scope$.analysisTypes.push(t.name);
-                                                }
-                                            });
-                                        } // if we have an analysis type id
-                                    }, function (dtoHeaderResponse) {
-                                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage(m.message); });
-                                    });
-                                }
-                            });
-                        }
-                    }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage(m.message); });
-                    });
+                    if (dataSetId) {
+                        var scope$_1 = this;
+                        scope$_1._dtoRequestServiceDataSetDetail.getResult(new dto_request_item_dataset_1.DtoRequestItemDataSet(dataSetId))
+                            .subscribe(function (dataSet) {
+                            if (dataSet) {
+                                scope$_1.dataSet = dataSet;
+                                scope$_1.analysisNames = [];
+                                scope$_1.analysisTypes = [];
+                                scope$_1.dataSet.analysesIds.forEach(function (analysisId) {
+                                    var currentAnalysisId = analysisId;
+                                    if (currentAnalysisId) {
+                                        scope$_1._dtoRequestServiceAnalysisDetail
+                                            .getResult(new dto_request_item_analysis_1.DtoRequestItemAnalysis(currentAnalysisId))
+                                            .subscribe(function (analysis) {
+                                            scope$_1.analysisNames.push(analysis.analysisName);
+                                            if (analysis.anlaysisTypeId && scope$_1.nameIdListAnalysisTypes) {
+                                                scope$_1
+                                                    .nameIdListAnalysisTypes
+                                                    .forEach(function (t) {
+                                                    if (Number(t.id) === analysis.anlaysisTypeId) {
+                                                        scope$_1.analysisTypes.push(t.name);
+                                                    }
+                                                });
+                                            } // if we have an analysis type id
+                                        }, function (dtoHeaderResponse) {
+                                            dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$_1.handleAddMessage(m.message); });
+                                        });
+                                    }
+                                });
+                            }
+                        }, function (dtoHeaderResponse) {
+                            dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$_1.handleAddMessage(m.message); });
+                        });
+                    }
+                    else {
+                        this.dataSet = undefined;
+                        this.analysisNames = [];
+                        this.analysisTypes = [];
+                    } // if else we got a dataset id
                 }; // setList()
                 DataSetCheckListBoxComponent.prototype.ngOnInit = function () {
                     var _this = this;
@@ -145,18 +159,20 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 DataSetCheckListBoxComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['experimentId']) {
                         this.experimentId = changes['experimentId'].currentValue;
-                        if (this.experimentId) {
-                            this.setList();
-                        }
+                        this.setList();
                     }
                     if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
                         this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
-                        var itemToChange = this.checkBoxEvents.filter(function (e) {
-                            return e.id == changes['checkBoxEventChange'].currentValue.id;
-                        })[0];
-                        //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
-                        itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
-                        itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
+                        if (this.itemChangedEvent) {
+                            var itemToChange = this.checkBoxEvents.filter(function (e) {
+                                return e.id == changes['checkBoxEventChange'].currentValue.id;
+                            })[0];
+                            //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+                            if (itemToChange) {
+                                itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
+                                itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
+                            }
+                        }
                     }
                 };
                 __decorate([

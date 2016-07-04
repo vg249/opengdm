@@ -76,7 +76,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private handleItemChecked(arg) {
 
         let itemToChange:CheckBoxEvent =
-            this.checkBoxEvents.filter( e => {
+            this.checkBoxEvents.filter(e => {
                 return e.id == arg.currentTarget.value;
             })[0];
 
@@ -107,74 +107,98 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
         // we can get this event whenver the item is clicked, not necessarily when the checkbox
         let scope$ = this;
-        this._dtoRequestServiceNameId.getResult(new DtoRequestItemNameIds(ProcessType.READ,
-            EntityType.DataSetNamesByExperimentId,
-            this.experimentId)).subscribe(nameIds => {
-                if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.nameIdList = nameIds;
-                    scope$.nameIdList.forEach( n => {
-                        scope$.checkBoxEvents.push( new CheckBoxEvent(
-                            ProcessType.CREATE,
-                            n.id,
-                            n.name,
-                            false
-                        ));
-                    });
-                    scope$.setDatasetDetails(scope$.nameIdList[0].id);
-                } else {
-                    scope$.nameIdList = [new NameId(0, "<none>")];
-                }
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving dataset names by experiment id: "
-                    + ": "
-                    + m.message))
-            });
+
+        scope$.nameIdList = [];
+        scope$.checkBoxEvents = [];
+        scope$.setDatasetDetails(undefined);
+
+        if( scope$.experimentId) {
+
+            this._dtoRequestServiceNameId.getResult(new DtoRequestItemNameIds(ProcessType.READ,
+                EntityType.DataSetNamesByExperimentId,
+                this.experimentId)).subscribe(nameIds => {
+                    if (nameIds && ( nameIds.length > 0 )) {
+
+                        scope$.nameIdList = nameIds;
+                        scope$.checkBoxEvents = [];
+                        scope$.nameIdList.forEach(n => {
+                            scope$.checkBoxEvents.push(new CheckBoxEvent(
+                                ProcessType.CREATE,
+                                n.id,
+                                n.name,
+                                false
+                            ));
+                        });
+
+                        scope$.setDatasetDetails(scope$.nameIdList[0].id);
+
+                    } else {
+                        scope$.nameIdList = [new NameId(0, "<none>")];
+                        scope$.setDatasetDetails(undefined);
+                    }
+                },
+                dtoHeaderResponse => {
+                    dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving dataset names by experiment id: "
+                        + ": "
+                        + m.message))
+                });
+
+        } // if we have an experiment id
+
     } // setList()
 
     private setDatasetDetails(dataSetId:number):void {
 
-        let scope$ = this;
-        scope$._dtoRequestServiceDataSetDetail.getResult(new DtoRequestItemDataSet(dataSetId))
-            .subscribe(dataSet => {
-                    if (dataSet) {
-                        scope$.dataSet = dataSet;
-                        scope$.analysisNames = [];
-                        scope$.analysisTypes = [];
+        if( dataSetId ) {
+            let scope$ = this;
+            scope$._dtoRequestServiceDataSetDetail.getResult(new DtoRequestItemDataSet(dataSetId))
+                .subscribe(dataSet => {
 
-                        scope$.dataSet.analysesIds.forEach(
-                            analysisId => {
-                                let currentAnalysisId:number = analysisId;
-                                if (currentAnalysisId) {
-                                    scope$._dtoRequestServiceAnalysisDetail
-                                        .getResult(new DtoRequestItemAnalysis(currentAnalysisId))
-                                        .subscribe(analysis => {
-                                                scope$.analysisNames.push(analysis.analysisName);
-                                                if (analysis.anlaysisTypeId && scope$.nameIdListAnalysisTypes) {
+                        if (dataSet) {
 
-                                                    scope$
-                                                        .nameIdListAnalysisTypes
-                                                        .forEach(t => {
-                                                            if (Number(t.id) === analysis.anlaysisTypeId) {
-                                                                scope$.analysisTypes.push(t.name);
-                                                            }
-                                                        });
+                            scope$.dataSet = dataSet;
+                            scope$.analysisNames = [];
+                            scope$.analysisTypes = [];
+
+                            scope$.dataSet.analysesIds.forEach(
+                                analysisId => {
+                                    let currentAnalysisId:number = analysisId;
+                                    if (currentAnalysisId) {
+                                        scope$._dtoRequestServiceAnalysisDetail
+                                            .getResult(new DtoRequestItemAnalysis(currentAnalysisId))
+                                            .subscribe(analysis => {
+                                                    scope$.analysisNames.push(analysis.analysisName);
+                                                    if (analysis.anlaysisTypeId && scope$.nameIdListAnalysisTypes) {
+
+                                                        scope$
+                                                            .nameIdListAnalysisTypes
+                                                            .forEach(t => {
+                                                                if (Number(t.id) === analysis.anlaysisTypeId) {
+                                                                    scope$.analysisTypes.push(t.name);
+                                                                }
+                                                            });
 
 
-                                                } // if we have an analysis type id
-                                            },
-                                            dtoHeaderResponse => {
-                                                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
-                                            });
+                                                    } // if we have an analysis type id
+                                                },
+                                                dtoHeaderResponse => {
+                                                    dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
+                                                });
+                                    }
                                 }
-                            }
-                        );
-                    }
-                },
-                dtoHeaderResponse => {
-                    dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
-                });
+                            );
+                        }
+                    },
+                    dtoHeaderResponse => {
+                        dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
+                    });
+        } else {
 
+            this.dataSet = undefined;
+            this.analysisNames = [];
+            this.analysisTypes = [];
+
+        } // if else we got a dataset id
     } // setList()
 
 
@@ -200,28 +224,30 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
 
     private itemChangedEvent:CheckBoxEvent;
+
     ngOnChanges(changes:{[propName:string]:SimpleChange}) {
 
         if (changes['experimentId']) {
             this.experimentId = changes['experimentId'].currentValue;
-            if (this.experimentId) {
-                this.setList();
-            }
+            this.setList();
         }
 
-        if(changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
+        if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
 
             this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
 
-            let itemToChange:CheckBoxEvent =
-                this.checkBoxEvents.filter( e => {
-                    return e.id == changes['checkBoxEventChange'].currentValue.id;
-                })[0];
+            if( this.itemChangedEvent  ) {
+                let itemToChange:CheckBoxEvent =
+                    this.checkBoxEvents.filter(e => {
+                        return e.id == changes['checkBoxEventChange'].currentValue.id;
+                    })[0];
 
-            //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
-            itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
-            itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
-
+                //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+                if(itemToChange) {
+                    itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
+                    itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
+                }
+            }
         }
     }
 }

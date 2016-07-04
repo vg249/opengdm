@@ -269,13 +269,16 @@ export class ExtractorRoot {
         scope$._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.Contact,
             EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(nameIds => {
+
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.contactNameIdListForPi = nameIds;
                     scope$.selectedContactIdForPi = scope$.contactNameIdListForPi[0].id;
-                    scope$.initializeProjectNameIds();
                 } else {
                     scope$.contactNameIdListForPi = [new NameId(0, "ERROR NO USERS")];
                 }
+
+                scope$.initializeProjectNameIds();
+
             },
             dtoHeaderResponse => {
                 dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving contacts for PIs: "
@@ -309,13 +312,16 @@ export class ExtractorRoot {
         scope$._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
             EntityType.Project,
             this.selectedContactIdForPi)).subscribe(nameIds => {
+
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.projectNameIdList = nameIds;
                     scope$.selectedProjectId = nameIds[0].id;
-                    this.initializeExperimentNameIds();
                 } else {
                     scope$.projectNameIdList = [new NameId(0, "<none>")];
+                    scope$.selectedProjectId = undefined;
                 }
+
+                this.initializeExperimentNameIds();
             },
             dtoHeaderResponse => {
                 dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retriving project names: "
@@ -342,20 +348,26 @@ export class ExtractorRoot {
     private initializeExperimentNameIds() {
 
         let scope$ = this;
-        this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
-            EntityType.Experiment,
-            this.selectedProjectId)).subscribe(nameIds => {
-                if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.experimentNameIdList = nameIds;
-                    scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
-                } else {
-                    scope$.experimentNameIdList = [new NameId(0, "<none>")];
-                }
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retreving experiment names: "
-                    + m.message))
-            });
+        if( this.selectedProjectId ) {
+            this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
+                EntityType.Experiment,
+                this.selectedProjectId)).subscribe(nameIds => {
+                    if (nameIds && ( nameIds.length > 0 )) {
+                        scope$.experimentNameIdList = nameIds;
+                        scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
+                    } else {
+                        scope$.experimentNameIdList = [new NameId(0, "<none>")];
+                        scope$.selectedExperimentId = undefined;
+                    }
+                },
+                dtoHeaderResponse => {
+                    dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retreving experiment names: "
+                        + m.message))
+                });
+        } else {
+            scope$.experimentNameIdList = [new NameId(0, "<none>")];
+            scope$.selectedExperimentId = undefined;
+        }
 
     }
 
