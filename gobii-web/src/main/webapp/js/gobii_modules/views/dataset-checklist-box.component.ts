@@ -14,7 +14,7 @@ import {Analysis} from "../model/analysis";
 
 @Component({
     selector: 'dataset-checklist-box',
-    inputs: ['experimentId', 'dataSetIdToUncheck','changeTrigger', 'checkBoxEventChange'],
+    inputs: ['experimentId', 'checkBoxEventChange'],
     outputs: ['onItemChecked', 'onAddMessage'],
     template: `<form>
                     <div #checklistitems style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
@@ -198,7 +198,6 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     @ViewChild('checklistitems')
     checklistItems;
 
-    private dataSetIdToUncheckFromEvent:number;
 
     private itemChangedEvent:CheckBoxEvent;
     ngOnChanges(changes:{[propName:string]:SimpleChange}) {
@@ -224,23 +223,5 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
             itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
 
         }
-
-        // if (changes['dataSetIdToUncheck'] || changes['changeTrigger']) {
-        //     this.dataSetIdToUncheckFromEvent = changes['dataSetIdToUncheck'].currentValue;
-        //     if (this.dataSetIdToUncheckFromEvent) {
-        //
-        //         let nameIdItemToRemove:NameId =
-        //             this.nameIdList
-        //                 .filter(n => {
-        //                     return Number(n.id) === this.dataSetIdToUncheckFromEvent
-        //                 })[0];
-        //
-        //         if (nameIdItemToRemove) {
-        //
-        //             let indexOfItemToRemove = this.checkedItems.indexOf(nameIdItemToRemove.name);
-        //             this.checkedItems.splice(indexOfItemToRemove,1);
-        //         }
-        //     }
-        // }
     }
 }

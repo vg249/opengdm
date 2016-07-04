@@ -112,8 +112,6 @@ import * as EntityFilters from "../model/type-entity-filter";
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Data Sets</legend>
                         <dataset-checklist-box
-                            [dataSetIdToUncheck]= "dataSetIdToUncheck"
-                            [changeTrigger] = "changeTrigger"
                             [checkBoxEventChange] = "checkBoxEventChange"
                             [experimentId] = "selectedExperimentId" 
                             (onItemChecked)="handleCheckedDataSetItem($event)"
