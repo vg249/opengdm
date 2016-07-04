@@ -1,5 +1,5 @@
 //import {RouteParams} from '@angular/router-deprecated';
-import {Component, OnInit, OnChanges, SimpleChange, EventEmitter, ViewChild} from "@angular/core";
+import {Component, OnInit, OnChanges, SimpleChange, EventEmitter} from "@angular/core";
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
@@ -17,7 +17,7 @@ import {Analysis} from "../model/analysis";
     inputs: ['experimentId', 'checkBoxEventChange'],
     outputs: ['onItemChecked', 'onAddMessage'],
     template: `<form>
-                    <div #checklistitems style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
+                    <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
                         <div *ngFor="let checkBoxEvent of checkBoxEvents" 
                             (click)=handleItemSelected($event) 
                             (hover)=handleItemHover($event)>
@@ -218,10 +218,6 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                 });
 
     }
-
-    @ViewChild('checklistitems')
-    checklistItems;
-
 
     private itemChangedEvent:CheckBoxEvent;
 
