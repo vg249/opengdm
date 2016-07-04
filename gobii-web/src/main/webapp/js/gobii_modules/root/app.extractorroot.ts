@@ -117,7 +117,6 @@ import * as EntityFilters from "../model/type-entity-filter";
                             [checkBoxEventChange] = "checkBoxEventChange"
                             [experimentId] = "selectedExperimentId" 
                             (onItemChecked)="handleCheckedDataSetItem($event)"
-                            (onItemSelected)="handleDataSetDetailSelected($event)"
                             (onAddMessage) = "handleAddMessage($event)">
                         </dataset-checklist-box>
                         </fieldset>
@@ -366,14 +365,7 @@ export class ExtractorRoot {
 // ********************************************************************
 // ********************************************** DATASET ID
     private displayDataSetDetail:boolean = false;
-    private selectedDataSetDetailId:number;
     private dataSetIdToUncheck:number;
-
-    private handleDataSetDetailSelected(arg) {
-        this.selectedDataSetDetailId = arg;
-        this.selectedExperimentDetailId = undefined;
-        this.displayDataSetDetail = true;
-    }
 
     private handleAddMessage(arg) {
         this.messages.push(arg);

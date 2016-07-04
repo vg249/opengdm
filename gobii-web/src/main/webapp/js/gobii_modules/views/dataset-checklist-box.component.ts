@@ -10,13 +10,12 @@ import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
 import {DataSet} from "../model/dataset";
 import {DtoRequestItemAnalysis} from "../services/app/dto-request-item-analysis";
 import {Analysis} from "../model/analysis";
-import {Cv} from "../model/cv";
 
 
 @Component({
     selector: 'dataset-checklist-box',
     inputs: ['experimentId', 'dataSetIdToUncheck','changeTrigger', 'checkBoxEventChange'],
-    outputs: ['onItemChecked', 'onItemSelected', 'onAddMessage'],
+    outputs: ['onItemChecked', 'onAddMessage'],
     template: `<form>
                     <div #checklistitems style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
                         <div *ngFor="let checkBoxEvent of checkBoxEvents" 
@@ -68,7 +67,6 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private checkBoxEvents:CheckBoxEvent[] = [];
     private experimentId:string;
     private onItemChecked:EventEmitter<CheckBoxEvent> = new EventEmitter();
-    private onItemSelected:EventEmitter<number> = new EventEmitter();
     private onAddMessage:EventEmitter<string> = new EventEmitter();
     private dataSet:DataSet;
     private analysisNames:string[] = [];
@@ -103,7 +101,6 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
         arg.currentTarget.style = "background-color:#b3d9ff";
         this.previousSelectedItem = arg.currentTarget;
         this.setDatasetDetails(selectedDataSetId);
-        this.onItemSelected.emit(selectedDataSetId);
     }
 
     private setList():void {

@@ -49,7 +49,6 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this._dtoRequestServiceAnalysisDetail = _dtoRequestServiceAnalysisDetail;
                     this.checkBoxEvents = [];
                     this.onItemChecked = new core_1.EventEmitter();
-                    this.onItemSelected = new core_1.EventEmitter();
                     this.onAddMessage = new core_1.EventEmitter();
                     this.analysisNames = [];
                     this.analysisTypes = [];
@@ -74,7 +73,6 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     arg.currentTarget.style = "background-color:#b3d9ff";
                     this.previousSelectedItem = arg.currentTarget;
                     this.setDatasetDetails(selectedDataSetId);
-                    this.onItemSelected.emit(selectedDataSetId);
                 };
                 DataSetCheckListBoxComponent.prototype.setList = function () {
                     // we can get this event whenver the item is clicked, not necessarily when the checkbox
@@ -186,7 +184,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     core_1.Component({
                         selector: 'dataset-checklist-box',
                         inputs: ['experimentId', 'dataSetIdToUncheck', 'changeTrigger', 'checkBoxEventChange'],
-                        outputs: ['onItemChecked', 'onItemSelected', 'onAddMessage'],
+                        outputs: ['onItemChecked', 'onAddMessage'],
                         template: "<form>\n                    <div #checklistitems style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let checkBoxEvent of checkBoxEvents\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                [checked]=\"checkBoxEvent.checked\"\n                                value={{checkBoxEvent.id}} \n                                name=\"{{checkBoxEvent.name}}\">&nbsp;{{checkBoxEvent.name}}\n                        </div>            \n                    </div>\n                </form>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        <b>Name:</b> {{dataSet.name}}<BR>\n                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>\n                        <b>Data File:</b> {{dataSet.dataFile}}<BR>\n                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>\n                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                            <b>Analyses:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                    </ul>\n                        </div>\n                        <div *ngIf=\"analysisTypes && (analysisTypes.length > 0)\">\n                            <b>Analysis Types:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisType of analysisTypes\" >{{analysisType}}</li>\n                                    </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService])
