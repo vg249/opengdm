@@ -271,6 +271,12 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 ExtractorRoot.prototype.handleExtractDataSetUnchecked = function (arg) {
                     // this.changeTrigger++;
                     // this.dataSetIdToUncheck = Number(arg.id);
+                    var dataSetExtractsToRemove = this.gobiiDatasetExtracts
+                        .filter(function (e) { return e.getDataSetId() === Number(arg.id); });
+                    if (dataSetExtractsToRemove.length > 0) {
+                        var idxToRemove = this.gobiiDatasetExtracts.indexOf(dataSetExtractsToRemove[0]);
+                        this.gobiiDatasetExtracts.splice(idxToRemove, 1);
+                    }
                     this.checkBoxEventChange = arg;
                 };
                 ExtractorRoot.prototype.handleExtractSubmission = function () {

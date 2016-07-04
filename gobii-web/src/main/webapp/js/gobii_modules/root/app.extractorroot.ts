@@ -410,6 +410,16 @@ export class ExtractorRoot {
     private handleExtractDataSetUnchecked(arg:CheckBoxEvent) {
         // this.changeTrigger++;
         // this.dataSetIdToUncheck = Number(arg.id);
+
+        let dataSetExtractsToRemove:GobiiDataSetExtract[] = this.gobiiDatasetExtracts
+            .filter( e => { return e.getDataSetId() === Number(arg.id) });
+
+        if( dataSetExtractsToRemove.length > 0  ) {
+            let idxToRemove = this.gobiiDatasetExtracts.indexOf(dataSetExtractsToRemove[0]);
+
+            this.gobiiDatasetExtracts.splice(idxToRemove,1);
+        }
+
         this.checkBoxEventChange = arg;
     }
 
