@@ -27,7 +27,7 @@ System.register(["@angular/core", "../model/event-checkbox", "../model/type-proc
             CriteriaDisplayComponent = (function () {
                 function CriteriaDisplayComponent() {
                     // useg
-                    this.gobiiDatasetExtracts = [];
+                    this.dataSetCheckBoxEvents = [];
                     this.onItemUnChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                 } // ctor
@@ -36,14 +36,14 @@ System.register(["@angular/core", "../model/event-checkbox", "../model/type-proc
                 };
                 // In this component, every item starts out checked; unchecking it removes it
                 CriteriaDisplayComponent.prototype.handleItemUnChecked = function (arg) {
-                    var checkEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.DELETE, arg.currentTarget.value, arg.currentTarget.name);
-                    var itemToRemove = this.gobiiDatasetExtracts
+                    var checkEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.DELETE, arg.currentTarget.value, arg.currentTarget.name, false);
+                    var itemToRemove = this.dataSetCheckBoxEvents
                         .filter(function (e) {
-                        return e.getDataSetId() === Number(arg.currentTarget.value);
+                        return e.id === arg.currentTarget.value;
                     })[0];
-                    var indexOfItemToRemove = this.gobiiDatasetExtracts.indexOf(itemToRemove);
+                    var indexOfItemToRemove = this.dataSetCheckBoxEvents.indexOf(itemToRemove);
                     if (indexOfItemToRemove > -1) {
-                        this.gobiiDatasetExtracts.splice(indexOfItemToRemove, 1);
+                        this.dataSetCheckBoxEvents.splice(indexOfItemToRemove, 1);
                     }
                     this.onItemUnChecked.emit(checkEvent);
                 };
@@ -57,14 +57,14 @@ System.register(["@angular/core", "../model/event-checkbox", "../model/type-proc
                     this.onItemSelected.emit(selectedDataSetId);
                 };
                 CriteriaDisplayComponent.prototype.ngOnChanges = function (changes) {
-                    this.gobiiDatasetExtracts = changes['gobiiDatasetExtracts'].currentValue;
+                    this.dataSetCheckBoxEvents = changes['dataSetCheckBoxEvents'].currentValue;
                 };
                 CriteriaDisplayComponent = __decorate([
                     core_1.Component({
                         selector: 'criteria-display',
-                        inputs: ['gobiiDatasetExtracts'],
+                        inputs: ['dataSetCheckBoxEvents'],
                         outputs: ['onItemUnChecked', 'onItemSelected'],
-                        template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let gobiiDataSetExtract of gobiiDatasetExtracts\"\n                                (click)=handleItemSelected($event)\n                                (hover)=handleItemHover($event)>\n                                <input  type=\"checkbox\"\n                                    (click)=handleItemUnChecked($event)\n                                    value={{gobiiDataSetExtract.dataSetId}}\n                                    name=\"{{gobiiDataSetExtract.dataSetName}}\"\n                                    checked>&nbsp;{{gobiiDataSetExtract.dataSetName}}\n                        </div>\n                    </div>\n                </form>"
+                        template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let dataSetCheckBoxEvent of dataSetCheckBoxEvents\"\n                                (click)=handleItemSelected($event)\n                                (hover)=handleItemHover($event)>\n                                <input  type=\"checkbox\"\n                                    (click)=handleItemUnChecked($event)\n                                    value={{dataSetCheckBoxEvent.id}}\n                                    name=\"{{dataSetCheckBoxEvent.name}}\"\n                                    checked>&nbsp;{{dataSetCheckBoxEvent.name}}\n                        </div>\n                    </div>\n                </form>"
                     }), 
                     __metadata('design:paramtypes', [])
                 ], CriteriaDisplayComponent);

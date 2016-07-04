@@ -1,5 +1,5 @@
 //import {RouteParams} from '@angular/router-deprecated';
-import {Component, OnInit, OnChanges, SimpleChange, EventEmitter} from "@angular/core";
+import {Component, OnInit, OnChanges, SimpleChange, EventEmitter, ViewChild} from "@angular/core";
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
@@ -10,23 +10,23 @@ import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
 import {DataSet} from "../model/dataset";
 import {DtoRequestItemAnalysis} from "../services/app/dto-request-item-analysis";
 import {Analysis} from "../model/analysis";
-import {DtoRequestItemCv} from "../services/app/dto-request-item-cv";
 import {Cv} from "../model/cv";
 
 
 @Component({
     selector: 'dataset-checklist-box',
-    inputs: ['experimentId', 'dataSetIdToUncheck'],
+    inputs: ['experimentId', 'dataSetIdToUncheck','changeTrigger', 'checkBoxEventChange'],
     outputs: ['onItemChecked', 'onItemSelected', 'onAddMessage'],
     template: `<form>
-                    <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
-                        <div *ngFor="let nameId of nameIdList" 
+                    <div #checklistitems style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
+                        <div *ngFor="let checkBoxEvent of checkBoxEvents" 
                             (click)=handleItemSelected($event) 
                             (hover)=handleItemHover($event)>
                             <input  type="checkbox" 
                                 (click)=handleItemChecked($event)
-                                value={{nameId.id}} 
-                                name="{{nameId.name}}">&nbsp;{{nameId.name}}
+                                [checked]="checkBoxEvent.checked"
+                                value={{checkBoxEvent.id}} 
+                                name="{{checkBoxEvent.name}}">&nbsp;{{checkBoxEvent.name}}
                         </div>            
                     </div>
                 </form>
@@ -59,13 +59,13 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     constructor(private _dtoRequestServiceNameId:DtoRequestService<NameId[]>,
                 private _dtoRequestServiceDataSetDetail:DtoRequestService<DataSet>,
-                private _dtoRequestServiceAnalysisDetail:DtoRequestService<Analysis>,
-                private _dtoRequestServiceCvDetail:DtoRequestService<Cv>) {
+                private _dtoRequestServiceAnalysisDetail:DtoRequestService<Analysis>) {
 
     } // ctor
 
     // useg
     private nameIdList:NameId[];
+    private checkBoxEvents:CheckBoxEvent[] = [];
     private experimentId:string;
     private onItemChecked:EventEmitter<CheckBoxEvent> = new EventEmitter();
     private onItemSelected:EventEmitter<number> = new EventEmitter();
@@ -76,11 +76,18 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private nameIdListAnalysisTypes:NameId[];
 
     private handleItemChecked(arg) {
-        let checkEvent:CheckBoxEvent = new CheckBoxEvent(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE,
-            arg.currentTarget.value,
-            arg.currentTarget.name);
-        this.onItemChecked.emit(checkEvent);
-    }
+
+        let itemToChange:CheckBoxEvent =
+            this.checkBoxEvents.filter( e => {
+                return e.id == arg.currentTarget.value;
+            })[0];
+
+        //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+        itemToChange.processType = arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE;
+        itemToChange.checked = arg.currentTarget.checked;
+        this.onItemChecked.emit(itemToChange);
+
+    } // handleItemChecked()
 
     private handleAddMessage(arg) {
         this.onAddMessage.emit(arg);
@@ -99,9 +106,6 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
         this.onItemSelected.emit(selectedDataSetId);
     }
 
-
-    private checkedItems:string[];
-
     private setList():void {
 
         // we can get this event whenver the item is clicked, not necessarily when the checkbox
@@ -111,6 +115,14 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
             this.experimentId)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.nameIdList = nameIds;
+                    scope$.nameIdList.forEach( n => {
+                        scope$.checkBoxEvents.push( new CheckBoxEvent(
+                            ProcessType.CREATE,
+                            n.id,
+                            n.name,
+                            false
+                        ));
+                    });
                     scope$.setDatasetDetails(scope$.nameIdList[0].id);
                 } else {
                     scope$.nameIdList = [new NameId(0, "<none>")];
@@ -186,8 +198,12 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     }
 
+    @ViewChild('checklistitems')
+    checklistItems;
 
     private dataSetIdToUncheckFromEvent:number;
+
+    private itemChangedEvent:CheckBoxEvent;
     ngOnChanges(changes:{[propName:string]:SimpleChange}) {
 
         if (changes['experimentId']) {
@@ -197,23 +213,37 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
             }
         }
 
-        if (changes['dataSetIdToUncheck']) {
-            this.dataSetIdToUncheckFromEvent = changes['dataSetIdToUncheck'].currentValue;
-            if (this.dataSetIdToUncheckFromEvent) {
+        if(changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
 
-                let nameIdItemToRemove:NameId =
-                    this.nameIdList
-                        .filter(n => {
-                            return Number(n.id) === this.dataSetIdToUncheckFromEvent
-                        })[0];
+            this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
 
-                if( nameIdItemToRemove ) {
-                    let indexOfItemToRemove = this.nameIdList.indexOf(nameIdItemToRemove);
+            let itemToChange:CheckBoxEvent =
+                this.checkBoxEvents.filter( e => {
+                    return e.id == changes['checkBoxEventChange'].currentValue.id;
+                })[0];
 
-                    this.nameIdList.splice(indexOfItemToRemove, 1);
-                    this.nameIdList.splice(indexOfItemToRemove, 0, nameIdItemToRemove);
-                }
-            }
+            //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+            itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
+            itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
+
         }
+
+        // if (changes['dataSetIdToUncheck'] || changes['changeTrigger']) {
+        //     this.dataSetIdToUncheckFromEvent = changes['dataSetIdToUncheck'].currentValue;
+        //     if (this.dataSetIdToUncheckFromEvent) {
+        //
+        //         let nameIdItemToRemove:NameId =
+        //             this.nameIdList
+        //                 .filter(n => {
+        //                     return Number(n.id) === this.dataSetIdToUncheckFromEvent
+        //                 })[0];
+        //
+        //         if (nameIdItemToRemove) {
+        //
+        //             let indexOfItemToRemove = this.checkedItems.indexOf(nameIdItemToRemove.name);
+        //             this.checkedItems.splice(indexOfItemToRemove,1);
+        //         }
+        //     }
+        // }
     }
 }

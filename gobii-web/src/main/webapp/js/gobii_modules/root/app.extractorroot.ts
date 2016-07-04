@@ -113,6 +113,8 @@ import * as EntityFilters from "../model/type-entity-filter";
                         <legend class="the-legend">Data Sets</legend>
                         <dataset-checklist-box
                             [dataSetIdToUncheck]= "dataSetIdToUncheck"
+                            [changeTrigger] = "changeTrigger"
+                            [checkBoxEventChange] = "checkBoxEventChange"
                             [experimentId] = "selectedExperimentId" 
                             (onItemChecked)="handleCheckedDataSetItem($event)"
                             (onItemSelected)="handleDataSetDetailSelected($event)"
@@ -126,7 +128,7 @@ import * as EntityFilters from "../model/type-entity-filter";
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Extract</legend>
                                 <criteria-display 
-                                    [gobiiDatasetExtracts] = "gobiiDatasetExtracts"
+                                    [dataSetCheckBoxEvents] = "dataSetCheckBoxEvents"
                                     (onItemUnChecked) = "handleExtractDataSetUnchecked($event)"></criteria-display>
                             </fieldset>
                             
@@ -159,7 +161,8 @@ import * as EntityFilters from "../model/type-entity-filter";
 export class ExtractorRoot {
     title = 'Gobii Web';
 
-
+    
+    private dataSetCheckBoxEvents:CheckBoxEvent[] = [];
     private gobiiDatasetExtracts:GobiiDataSetExtract[] = [];
     private messages:string[] = [];
 
@@ -378,12 +381,19 @@ export class ExtractorRoot {
 
 
     private handleCheckedDataSetItem(arg:CheckBoxEvent) {
+
+
         if (ProcessType.CREATE == arg.processType) {
+            this.dataSetCheckBoxEvents.push(arg);
             this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(GobiiFileType.GENERIC,
                 false,
                 Number(arg.id),
                 arg.name));
+
         } else {
+
+            let indexOfEventToRemove:number = this.dataSetCheckBoxEvents.indexOf(arg);
+            this.dataSetCheckBoxEvents.splice(indexOfEventToRemove,1);
 
             this.gobiiDatasetExtracts =
                 this.gobiiDatasetExtracts
@@ -393,8 +403,12 @@ export class ExtractorRoot {
         } // if-else we're adding
     }
 
+    private checkBoxEventChange:CheckBoxEvent;
+    private changeTrigger:number = 0;
     private handleExtractDataSetUnchecked(arg:CheckBoxEvent) {
-        this.dataSetIdToUncheck = Number(arg.id);
+        // this.changeTrigger++;
+        // this.dataSetIdToUncheck = Number(arg.id);
+        this.checkBoxEventChange = arg;
     }
 
     private handleExtractSubmission() {

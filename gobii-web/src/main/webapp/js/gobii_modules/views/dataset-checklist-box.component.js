@@ -43,11 +43,11 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             }],
         execute: function() {
             DataSetCheckListBoxComponent = (function () {
-                function DataSetCheckListBoxComponent(_dtoRequestServiceNameId, _dtoRequestServiceDataSetDetail, _dtoRequestServiceAnalysisDetail, _dtoRequestServiceCvDetail) {
+                function DataSetCheckListBoxComponent(_dtoRequestServiceNameId, _dtoRequestServiceDataSetDetail, _dtoRequestServiceAnalysisDetail) {
                     this._dtoRequestServiceNameId = _dtoRequestServiceNameId;
                     this._dtoRequestServiceDataSetDetail = _dtoRequestServiceDataSetDetail;
                     this._dtoRequestServiceAnalysisDetail = _dtoRequestServiceAnalysisDetail;
-                    this._dtoRequestServiceCvDetail = _dtoRequestServiceCvDetail;
+                    this.checkBoxEvents = [];
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                     this.onAddMessage = new core_1.EventEmitter();
@@ -55,9 +55,14 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this.analysisTypes = [];
                 } // ctor
                 DataSetCheckListBoxComponent.prototype.handleItemChecked = function (arg) {
-                    var checkEvent = new event_checkbox_1.CheckBoxEvent(arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE, arg.currentTarget.value, arg.currentTarget.name);
-                    this.onItemChecked.emit(checkEvent);
-                };
+                    var itemToChange = this.checkBoxEvents.filter(function (e) {
+                        return e.id == arg.currentTarget.value;
+                    })[0];
+                    //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+                    itemToChange.processType = arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE;
+                    itemToChange.checked = arg.currentTarget.checked;
+                    this.onItemChecked.emit(itemToChange);
+                }; // handleItemChecked()
                 DataSetCheckListBoxComponent.prototype.handleAddMessage = function (arg) {
                     this.onAddMessage.emit(arg);
                 };
@@ -77,6 +82,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this._dtoRequestServiceNameId.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.DataSetNamesByExperimentId, this.experimentId)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.nameIdList = nameIds;
+                            scope$.nameIdList.forEach(function (n) {
+                                scope$.checkBoxEvents.push(new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.CREATE, n.id, n.name, false));
+                            });
                             scope$.setDatasetDetails(scope$.nameIdList[0].id);
                         }
                         else {
@@ -137,36 +145,51 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     });
                 };
                 DataSetCheckListBoxComponent.prototype.ngOnChanges = function (changes) {
-                    var _this = this;
                     if (changes['experimentId']) {
                         this.experimentId = changes['experimentId'].currentValue;
                         if (this.experimentId) {
                             this.setList();
                         }
                     }
-                    if (changes['dataSetIdToUncheck']) {
-                        this.dataSetIdToUncheckFromEvent = changes['dataSetIdToUncheck'].currentValue;
-                        if (this.dataSetIdToUncheckFromEvent) {
-                            var nameIdItemToRemove = this.nameIdList
-                                .filter(function (n) {
-                                return Number(n.id) === _this.dataSetIdToUncheckFromEvent;
-                            })[0];
-                            if (nameIdItemToRemove) {
-                                var indexOfItemToRemove = this.nameIdList.indexOf(nameIdItemToRemove);
-                                this.nameIdList.splice(indexOfItemToRemove, 1);
-                                this.nameIdList.splice(indexOfItemToRemove, 0, nameIdItemToRemove);
-                            }
-                        }
+                    if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
+                        this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
+                        var itemToChange = this.checkBoxEvents.filter(function (e) {
+                            return e.id == changes['checkBoxEventChange'].currentValue.id;
+                        })[0];
+                        //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+                        itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
+                        itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
                     }
+                    // if (changes['dataSetIdToUncheck'] || changes['changeTrigger']) {
+                    //     this.dataSetIdToUncheckFromEvent = changes['dataSetIdToUncheck'].currentValue;
+                    //     if (this.dataSetIdToUncheckFromEvent) {
+                    //
+                    //         let nameIdItemToRemove:NameId =
+                    //             this.nameIdList
+                    //                 .filter(n => {
+                    //                     return Number(n.id) === this.dataSetIdToUncheckFromEvent
+                    //                 })[0];
+                    //
+                    //         if (nameIdItemToRemove) {
+                    //
+                    //             let indexOfItemToRemove = this.checkedItems.indexOf(nameIdItemToRemove.name);
+                    //             this.checkedItems.splice(indexOfItemToRemove,1);
+                    //         }
+                    //     }
+                    // }
                 };
+                __decorate([
+                    core_1.ViewChild('checklistitems'), 
+                    __metadata('design:type', Object)
+                ], DataSetCheckListBoxComponent.prototype, "checklistItems", void 0);
                 DataSetCheckListBoxComponent = __decorate([
                     core_1.Component({
                         selector: 'dataset-checklist-box',
-                        inputs: ['experimentId', 'dataSetIdToUncheck'],
+                        inputs: ['experimentId', 'dataSetIdToUncheck', 'changeTrigger', 'checkBoxEventChange'],
                         outputs: ['onItemChecked', 'onItemSelected', 'onAddMessage'],
-                        template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let nameId of nameIdList\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                value={{nameId.id}} \n                                name=\"{{nameId.name}}\">&nbsp;{{nameId.name}}\n                        </div>            \n                    </div>\n                </form>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        <b>Name:</b> {{dataSet.name}}<BR>\n                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>\n                        <b>Data File:</b> {{dataSet.dataFile}}<BR>\n                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>\n                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                            <b>Analyses:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                    </ul>\n                        </div>\n                        <div *ngIf=\"analysisTypes && (analysisTypes.length > 0)\">\n                            <b>Analysis Types:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisType of analysisTypes\" >{{analysisType}}</li>\n                                    </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
+                        template: "<form>\n                    <div #checklistitems style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let checkBoxEvent of checkBoxEvents\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                [checked]=\"checkBoxEvent.checked\"\n                                value={{checkBoxEvent.id}} \n                                name=\"{{checkBoxEvent.name}}\">&nbsp;{{checkBoxEvent.name}}\n                        </div>            \n                    </div>\n                </form>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        <b>Name:</b> {{dataSet.name}}<BR>\n                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>\n                        <b>Data File:</b> {{dataSet.dataFile}}<BR>\n                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>\n                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                            <b>Analyses:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                    </ul>\n                        </div>\n                        <div *ngIf=\"analysisTypes && (analysisTypes.length > 0)\">\n                            <b>Analysis Types:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisType of analysisTypes\" >{{analysisType}}</li>\n                                    </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
                     }), 
-                    __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService])
+                    __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService])
                 ], DataSetCheckListBoxComponent);
                 return DataSetCheckListBoxComponent;
             }());

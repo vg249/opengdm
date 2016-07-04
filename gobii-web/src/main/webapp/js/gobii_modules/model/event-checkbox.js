@@ -6,10 +6,11 @@ System.register([], function(exports_1, context_1) {
         setters:[],
         execute: function() {
             CheckBoxEvent = (function () {
-                function CheckBoxEvent(processType, id, name) {
+                function CheckBoxEvent(processType, id, name, checked) {
                     this.processType = processType;
                     this.id = id;
                     this.name = name;
+                    this.checked = checked;
                     this.processType = processType;
                     this.id = id;
                     this.name = name;
