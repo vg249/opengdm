@@ -6,7 +6,7 @@
 
     <groupId>org.gobiiproject</groupId>
     <artifactId>parent</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <description>Parent for GOBii project genotype application</description>
@@ -84,6 +84,7 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
         </plugins>
 
     </build>
