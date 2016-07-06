@@ -13,5 +13,6 @@ public enum GobiiColumnType {
     VCF_METADATA,
     VCF_INFO,
     CONSTANT,
-    AUTOINCREMENT
+    AUTOINCREMENT,
+    VCF_MARKER_POS
 }
