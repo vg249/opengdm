@@ -38,6 +38,7 @@ public class ConfigCheck {
 
     private static String NAME_COMMAND = "ConfigCheck";
     private static String TOMCAT_BASE_DIR = "tbase";
+    private static String CONFIG_BASE_URL = "burl";
 
 
     private static void printSeparator() {
