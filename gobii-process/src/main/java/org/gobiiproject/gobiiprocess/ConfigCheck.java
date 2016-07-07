@@ -1,15 +1,14 @@
 package org.gobiiproject.gobiiprocess;
 
-import com.sun.xml.internal.ws.api.policy.PolicyResolver;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.codehaus.jackson.map.DeserializerFactory;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
@@ -20,7 +19,6 @@ import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -72,28 +70,30 @@ public class ConfigCheck {
 
                 if (tomcatDirectory.exists()) {
 
-                    String configFileFqpn = tomcatBaseDirectory + "/conf/server.xml";
+                    String configFileServerFqpn = tomcatBaseDirectory + "/conf/server.xml";
 
-                    File configFile = new File(configFileFqpn);
-                    if (configFile.exists()) {
+                    File configFileServer = new File(configFileServerFqpn);
+                    if (configFileServer.exists()) {
 
                         ConfigCheck.printSeparator();
                         ConfigCheck.printField("Configuration Mode", "From tomcat server configuration");
-                        ConfigCheck.printField("Tomcat file", configFileFqpn);
+                        ConfigCheck.printField("Tomcat file found", configFileServerFqpn);
 
 
                         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
                         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-                        Document documentServer = documentBuilder.parse(new FileInputStream(configFile));
+                        Document documentServer = documentBuilder.parse(new FileInputStream(configFileServer));
 
 
-                        XPath xPath = XPathFactory.newInstance().newXPath();
-                        NodeList nodes = (NodeList) xPath.evaluate("//Server/GlobalNamingResources/Environment[@name='gobiipropsloc']",
+                        XPath xPathPropsLoc = XPathFactory.newInstance().newXPath();
+                        NodeList nodesServer = (NodeList) xPathPropsLoc.evaluate("//Server/GlobalNamingResources/Environment[@name='gobiipropsloc']",
                                 documentServer.getDocumentElement(), XPathConstants.NODESET);
 
-                        Element locationElement = (Element) nodes.item(0);
+                        Element locationElement = (Element) nodesServer.item(0);
 
                         if (null != locationElement) {
+
+                            ConfigCheck.printField("Server configuration","Proper node found");
 
                             String propertiesFileFqpn = locationElement.getAttribute("value");
                             File propertiesFile = new File(propertiesFileFqpn);
@@ -111,22 +111,50 @@ public class ConfigCheck {
                                         + "/"
                                         + configSettings.getCurrentCropConfig().getServiceAppRoot();
 
-                                ConfigCheck.showServerInfo(configServerUrl);
+                                String configFileContextFqpn = tomcatBaseDirectory + "/conf/context.xml";
+                                File configFileContext = new File(configFileContextFqpn);
+                                if( configFileContext.exists()) {
+
+                                    ConfigCheck.printField("Tomcat file found", configFileContextFqpn);
+
+
+                                    Document documentContext = documentBuilder.parse(new FileInputStream(configFileContext));
+                                    XPath xPath = XPathFactory.newInstance().newXPath();
+                                    NodeList nodesContext = (NodeList) xPath.evaluate("//Context/ResourceLink[@name='gobiipropsloc']",
+                                            documentContext.getDocumentElement(), XPathConstants.NODESET);
+
+                                    Element locationElementForLink = (Element) nodesContext.item(0);
+
+                                    if( null != locationElementForLink ) {
+                                        ConfigCheck.printField("Context configuration","Proper node found");
+                                    } else {
+                                        System.err.print("The configuration in server.xml does not define ResourceLink to the properties file: " + configFileServerFqpn);
+                                    }
+
+
+                                    ConfigCheck.showServerInfo(configServerUrl);
+
+
+                                } else {
+                                    System.err.println("Cannot find config file: : " + configFileContextFqpn);
+
+                                }
+
 
 
                             } else {
                                 System.err.print("The property file specified in "
-                                        + configFileFqpn
+                                        + configFileServerFqpn
                                         + " does not exist: "
                                         + propertiesFileFqpn);
                             }
 
                         } else {
-                            System.err.print("The configuration does not define the properties file location: " + configFileFqpn);
+                            System.err.print("The configuration does not define the properties file location: " + configFileServerFqpn);
                         }
 
                     } else {
-                        System.err.print("Cannot find config file: : " + configFileFqpn);
+                        System.err.print("Cannot find config file: : " + configFileServerFqpn);
                     }
 
                 } else {
@@ -159,12 +187,17 @@ public class ConfigCheck {
         System.out.println();
         System.out.println();
         ConfigCheck.printSeparator();
+        ConfigCheck.printField("Config request server", configServerUrl);
+
+        System.out.println();
+        System.out.println();
+        ConfigCheck.printSeparator();
+
+
         List<GobiiCropType> gobiiCropTypes = ClientContext.getInstance(configServerUrl, true).getCropTypeTypes();
         ConfigCheck.printSeparator();
 
-        ConfigCheck.printField("Config request server", configServerUrl);
         ConfigCheck.printField("Default crop", ClientContext.getInstance(null, false).getDefaultCropType().toString());
-
 
         for (GobiiCropType currentCropType : gobiiCropTypes) {
 
