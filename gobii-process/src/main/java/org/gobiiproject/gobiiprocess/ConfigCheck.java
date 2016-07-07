@@ -11,6 +11,7 @@ import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
@@ -56,6 +57,7 @@ public class ConfigCheck {
             // define commandline options
             Options options = new Options();
             options.addOption(TOMCAT_BASE_DIR, true, "Tomcat base directory (e.g., /usr/local/tomcat7)");
+            options.addOption(CONFIG_BASE_URL, true, "url of server from which to get initial config settings");
 
             // parse our commandline
             CommandLineParser parser = new DefaultParser();
@@ -75,6 +77,11 @@ public class ConfigCheck {
                     File configFile = new File(configFileFqpn);
                     if (configFile.exists()) {
 
+                        ConfigCheck.printSeparator();
+                        ConfigCheck.printField("Configuration Mode", "From tomcat server configuration");
+                        ConfigCheck.printField("Tomcat file", configFileFqpn);
+
+
                         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
                         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
                         Document documentServer = documentBuilder.parse(new FileInputStream(configFile));
@@ -91,12 +98,11 @@ public class ConfigCheck {
                             String propertiesFileFqpn = locationElement.getAttribute("value");
                             File propertiesFile = new File(propertiesFileFqpn);
                             if (propertiesFile.exists()) {
+
                                 ConfigSettings configSettings = new ConfigSettings(propertiesFileFqpn);
 
                                 GobiiCropType defaultCropType = configSettings.getDefaultGobiiCropType();
                                 configSettings.setCurrentGobiiCropType(defaultCropType);
-
-                                ConfigCheck.printField("Default Crop", defaultCropType.toString());
 
                                 String configServerUrl = "http://"
                                         + configSettings.getCurrentCropConfig().getServiceDomain()
@@ -104,42 +110,9 @@ public class ConfigCheck {
                                         + configSettings.getCurrentCropConfig().getServicePort().toString()
                                         + "/"
                                         + configSettings.getCurrentCropConfig().getServiceAppRoot();
-                                ConfigCheck.printField("Config request server", configServerUrl);
 
+                                ConfigCheck.showServerInfo(configServerUrl);
 
-                                List<GobiiCropType> gobiiCropTypes = ClientContext.getInstance(configServerUrl, true).getCropTypeTypes();
-                                for (GobiiCropType currentCropType : gobiiCropTypes) {
-                                    ConfigCheck.printSeparator();
-                                    ConfigCheck.printField("Crop Type", currentCropType.toString());
-                                    ConfigCheck.printField("Host", ClientContext.getInstance(null, false).getCurrentCropDomain());
-                                    ConfigCheck.printField("Port", ClientContext.getInstance(null, false).getCurrentCropPort().toString());
-                                    ConfigCheck.printField("Context root", ClientContext.getInstance(null, false).getCurrentCropContextRoot());
-                                    ConfigCheck.printField("Loader instructions directory", ClientContext.getInstance(null, false).getFileLocationOfCurrenCrop(GobiiFileLocationType.LOADERINSTRUCTION_FILES));
-                                    ConfigCheck.printField("User file upload directory", ClientContext.getInstance(null, false).getFileLocationOfCurrenCrop(GobiiFileLocationType.RAWUSER_FILES));
-                                    ConfigCheck.printField("Digester output directory ", ClientContext.getInstance(null, false).getFileLocationOfCurrenCrop(GobiiFileLocationType.INTERMEDIATE_FILES));
-                                    ConfigCheck.printField("Extractor instructions directory", ClientContext.getInstance(null, false).getFileLocationOfCurrenCrop(GobiiFileLocationType.EXTRACTORINSTRUCTION_FILES));
-
-                                    ClientContext.getInstance(null, false).setCurrentClientCrop(currentCropType);
-                                    SystemUsers systemUsers = new SystemUsers();
-                                    SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-
-                                    if (ClientContext.getInstance(null, false).login(userDetail.getUserName(), userDetail.getPassword())) {
-
-                                        PingDTO pingDTORequest = new PingDTO();
-                                        pingDTORequest.setControllerType(ControllerType.LOADER);
-
-                                        DtoRequestPing dtoRequestPing = new DtoRequestPing();
-                                        PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
-
-                                        Integer responseNum = 1;
-                                        for (String currentResponse : pingDTOResponse.getPingResponses()) {
-                                            ConfigCheck.printField("Ping response " + (responseNum++).toString(), currentResponse);
-                                        }
-                                    } else {
-                                        System.err.println("Authentication to server for crop failed: " + currentCropType.toString());
-                                    }
-
-                                }
 
                             } else {
                                 System.err.print("The property file specified in "
@@ -160,13 +133,83 @@ public class ConfigCheck {
                     System.err.print("Specified tomcat base directory does not exist: " + tomcatBaseDirectory);
                 }
 
+            } else if (commandLine.hasOption(CONFIG_BASE_URL)) {
+
+                String configUrl = commandLine.getOptionValue(CONFIG_BASE_URL);
+
+                ConfigCheck.printSeparator();
+                ConfigCheck.printField("Configuration Mode", "From url");
+
+                ConfigCheck.showServerInfo(configUrl);
+
             } else {
                 formatter.printHelp(NAME_COMMAND, options);
             }
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-    } // main()
+
+    }// main()
+
+    private static void showServerInfo(String configServerUrl) throws Exception {
+
+        // The logging framework emits debugging messages before it knows not to emit them.
+        // Until we solve this problem, we we'll visually set those messages aside
+        System.out.println();
+        System.out.println();
+        ConfigCheck.printSeparator();
+        List<GobiiCropType> gobiiCropTypes = ClientContext.getInstance(configServerUrl, true).getCropTypeTypes();
+        ConfigCheck.printSeparator();
+
+        ConfigCheck.printField("Config request server", configServerUrl);
+        ConfigCheck.printField("Default crop", ClientContext.getInstance(null, false).getDefaultCropType().toString());
+
+
+        for (GobiiCropType currentCropType : gobiiCropTypes) {
+
+            ClientContext.getInstance(null, false).setCurrentClientCrop(currentCropType);
+
+            ConfigCheck.printSeparator();
+            ConfigCheck.printField("Crop Type", currentCropType.toString());
+            ConfigCheck.printField("Host", ClientContext.getInstance(null, false).getCurrentCropDomain());
+            ConfigCheck.printField("Port", ClientContext.getInstance(null, false).getCurrentCropPort().toString());
+            ConfigCheck.printField("Context root", ClientContext.getInstance(null, false).getCurrentCropContextRoot());
+
+            ConfigCheck.printField("Loader instructions directory", ClientContext.getInstance(null, false)
+                    .getFileLocationOfCurrenCrop(GobiiFileLocationType.LOADERINSTRUCTION_FILES));
+            ConfigCheck.printField("User file upload directory", ClientContext.getInstance(null, false)
+                    .getFileLocationOfCurrenCrop(GobiiFileLocationType.RAWUSER_FILES));
+            ConfigCheck.printField("Digester output directory ", ClientContext.getInstance(null, false)
+                    .getFileLocationOfCurrenCrop(GobiiFileLocationType.INTERMEDIATE_FILES));
+            ConfigCheck.printField("Extractor instructions directory", ClientContext.getInstance(null, false)
+                    .getFileLocationOfCurrenCrop(GobiiFileLocationType.EXTRACTORINSTRUCTION_FILES));
+
+
+            SystemUsers systemUsers = new SystemUsers();
+            SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
+
+            if (ClientContext.getInstance(null, false).login(userDetail.getUserName(), userDetail.getPassword())) {
+
+                PingDTO pingDTORequest = new PingDTO();
+                pingDTORequest.setControllerType(ControllerType.LOADER);
+
+                DtoRequestPing dtoRequestPing = new DtoRequestPing();
+                PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
+
+                Integer responseNum = 1;
+                if( pingDTOResponse.getDtoHeaderResponse().isSucceeded()) {
+                    for (String currentResponse : pingDTOResponse.getPingResponses()) {
+                        ConfigCheck.printField("Ping response " + (responseNum++).toString(), currentResponse);
+                    }
+                } else {
+                    for( HeaderStatusMessage currentHeader :  pingDTOResponse.getDtoHeaderResponse().getStatusMessages()) {
+                        ConfigCheck.printField("Service error " + (responseNum++).toString(), currentHeader.getMessage());
+                    }
+                }
+            } else {
+                System.err.println("Authentication to server for crop failed: " + currentCropType.toString());
+            }
+        }
+    }
 }
