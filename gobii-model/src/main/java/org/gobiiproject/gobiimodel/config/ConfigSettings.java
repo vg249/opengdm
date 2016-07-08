@@ -191,6 +191,13 @@ public class ConfigSettings {
 
         }
 
+        if ( 0 == this.getActiveCropConfigs()
+                .stream()
+                .filter(c -> c.getGobiiCropType().equals(this.getDefaultGobiiCropType()))
+                .collect(Collectors.toList())
+            .size() ) {
+            throw(new Exception("The server for the default crop type " + this.getDefaultGobiiCropType().toString() + " is not marked active!" ));
+        }
 
     } // ctor
 
