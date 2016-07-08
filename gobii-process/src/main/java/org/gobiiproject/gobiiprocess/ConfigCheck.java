@@ -99,6 +99,8 @@ public class ConfigCheck {
                             File propertiesFile = new File(propertiesFileFqpn);
                             if (propertiesFile.exists()) {
 
+                                ConfigCheck.printField("Local properties file",propertiesFileFqpn);
+
                                 ConfigSettings configSettings = new ConfigSettings(propertiesFileFqpn);
 
                                 GobiiCropType defaultCropType = configSettings.getDefaultGobiiCropType();
