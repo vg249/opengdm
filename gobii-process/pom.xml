@@ -116,9 +116,8 @@
     </dependencies>
 
     <build>
-        <finalName>gobii-process</finalName>
-        <plugins>
 
+        <plugins>
 
             <!-- Maven Assembly Plugin -->
             <plugin>
@@ -127,6 +126,8 @@
                 <version>2.4.1</version>
                 <configuration>
                     <!-- get all project dependencies -->
+                    <finalName>gobii-config-check</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
