@@ -5,12 +5,14 @@ export class GobiiDataSetExtract {
     constructor(private gobiiFileType:GobiiFileType,
                 private accolate:boolean,
                 private dataSetId:number,
-                private dataSetName:string) {
+                private dataSetName:string,
+                private extractDestinationDirectory:string) {
 
         this.setGobiiFileType(gobiiFileType);
         this.setAccolate(accolate);
         this.setDataSetName(dataSetName);
         this.setDataSetId(dataSetId);
+
     } // ctor 
 
     public getGobiiFileType():GobiiFileType {
@@ -45,6 +47,14 @@ export class GobiiDataSetExtract {
         this.dataSetId = dataSetId;
     }
 
+    public getExtractDestinationDirectory(): string {
+        return this.extractDestinationDirectory;
+    }
+
+    public sgetExtractDestinationDirectory(extractDestinationDirectory:string ){
+        this.extractDestinationDirectory = extractDestinationDirectory;
+    }
+
     public getJson():any {
 
         let returnVal:any = {};
@@ -53,6 +63,7 @@ export class GobiiDataSetExtract {
         returnVal.accolate = this.accolate;
         returnVal.dataSetName = this.dataSetName;
         returnVal.dataSetId = this.dataSetId;
+        returnVal.extractDestinationDirectory = this.extractDestinationDirectory;
 
         return returnVal;
     }
@@ -62,7 +73,8 @@ export class GobiiDataSetExtract {
         let returnVal:GobiiDataSetExtract = new GobiiDataSetExtract(json.gobiiFileType,
             json.accolate,
             json.dataSetId,
-            json.dataSetName);
+            json.dataSetName,
+            json.extractDestinationDirectory);
 
         return returnVal;
     }

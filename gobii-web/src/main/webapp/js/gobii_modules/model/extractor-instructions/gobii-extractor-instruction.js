@@ -10,20 +10,12 @@ System.register(["./data-set-extract"], function(exports_1, context_1) {
             }],
         execute: function() {
             GobiiExtractorInstruction = (function () {
-                function GobiiExtractorInstruction(extractDestinationDirectory, dataSetExtracts, contactId, contactEmail) {
-                    this.extractDestinationDirectory = extractDestinationDirectory;
+                function GobiiExtractorInstruction(dataSetExtracts, contactId, contactEmail) {
                     this.dataSetExtracts = dataSetExtracts;
                     this.contactId = contactId;
                     this.contactEmail = contactEmail;
-                    this.extractDestinationDirectory = extractDestinationDirectory;
                     this.dataSetExtracts = dataSetExtracts;
                 }
-                GobiiExtractorInstruction.prototype.getExtractDestinationDirectory = function () {
-                    return this.extractDestinationDirectory;
-                };
-                GobiiExtractorInstruction.prototype.setExtractDestinationDirectory = function (value) {
-                    this.extractDestinationDirectory = value;
-                };
                 GobiiExtractorInstruction.prototype.getDataSetExtracts = function () {
                     return this.dataSetExtracts;
                 };
@@ -44,7 +36,6 @@ System.register(["./data-set-extract"], function(exports_1, context_1) {
                 };
                 GobiiExtractorInstruction.prototype.getJson = function () {
                     var returnVal = {};
-                    returnVal.extractDestinationDirectory = this.extractDestinationDirectory;
                     returnVal.contactId = this.contactId;
                     returnVal.contactEmail = this.contactEmail;
                     returnVal.dataSetExtracts = [];
@@ -56,7 +47,7 @@ System.register(["./data-set-extract"], function(exports_1, context_1) {
                 GobiiExtractorInstruction.fromJson = function (json) {
                     var dataSetExtracts = [];
                     json.dataSetExtracts.forEach(function (e) { return dataSetExtracts.push(data_set_extract_1.GobiiDataSetExtract.fromJson(e)); });
-                    var returnVal = new GobiiExtractorInstruction(json.extractDestinationDirectory, dataSetExtracts, json.contactId, json.contactEmail);
+                    var returnVal = new GobiiExtractorInstruction(dataSetExtracts, json.contactId, json.contactEmail);
                     return returnVal;
                 };
                 return GobiiExtractorInstruction;

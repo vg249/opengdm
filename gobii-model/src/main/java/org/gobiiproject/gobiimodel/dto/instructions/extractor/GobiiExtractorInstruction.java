@@ -8,7 +8,6 @@ import java.util.List;
  */
 public class GobiiExtractorInstruction {
 
-    String extractDestinationDirectory = null;
     List<GobiiDataSetExtract> dataSetExtracts = new ArrayList<>();
 
     Integer contactId;
@@ -30,13 +29,6 @@ public class GobiiExtractorInstruction {
         this.contactEmail = contactEmail;
     }
 
-    public String getExtractDestinationDirectory() {
-        return extractDestinationDirectory;
-    }
-
-    public void setExtractDestinationDirectory(String extractDestinationDirectory) {
-        this.extractDestinationDirectory = extractDestinationDirectory;
-    }
 
     public List<GobiiDataSetExtract> getDataSetExtracts() {
         return dataSetExtracts;

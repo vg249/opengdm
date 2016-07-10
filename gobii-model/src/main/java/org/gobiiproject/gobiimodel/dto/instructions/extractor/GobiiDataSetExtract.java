@@ -11,7 +11,7 @@ public class GobiiDataSetExtract {
     private boolean accolate = false;
     private String dataSetName = null;
     private Integer dataSetId = null;
-
+    String extractDestinationDirectory = null;
 
     public GobiiFileType getGobiiFileType() {
         return gobiiFileType;
@@ -44,4 +44,14 @@ public class GobiiDataSetExtract {
     public void setDataSetId(Integer dataSetId) {
         this.dataSetId = dataSetId;
     }
+
+    public String getExtractDestinationDirectory() {
+        return extractDestinationDirectory;
+    }
+
+    public void setExtractDestinationDirectory(String extractDestinationDirectory) {
+        this.extractDestinationDirectory = extractDestinationDirectory;
+    }
+
+
 }

@@ -256,7 +256,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 ExtractorRoot.prototype.handleCheckedDataSetItem = function (arg) {
                     if (type_process_1.ProcessType.CREATE == arg.processType) {
                         this.dataSetCheckBoxEvents.push(arg);
-                        this.gobiiDatasetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(type_gobii_file_1.GobiiFileType.GENERIC, false, Number(arg.id), arg.name));
+                        this.gobiiDatasetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(type_gobii_file_1.GobiiFileType.GENERIC, false, Number(arg.id), arg.name, null));
                     }
                     else {
                         var indexOfEventToRemove = this.dataSetCheckBoxEvents.indexOf(arg);
@@ -272,7 +272,9 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                     // this.changeTrigger++;
                     // this.dataSetIdToUncheck = Number(arg.id);
                     var dataSetExtractsToRemove = this.gobiiDatasetExtracts
-                        .filter(function (e) { return e.getDataSetId() === Number(arg.id); });
+                        .filter(function (e) {
+                        return e.getDataSetId() === Number(arg.id);
+                    });
                     if (dataSetExtractsToRemove.length > 0) {
                         var idxToRemove = this.gobiiDatasetExtracts.indexOf(dataSetExtractsToRemove[0]);
                         this.gobiiDatasetExtracts.splice(idxToRemove, 1);
@@ -283,7 +285,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                     var gobiiExtractorInstructions = [];
                     var gobiiFileType = type_gobii_file_1.GobiiFileType[this.selectedFormatName.toUpperCase()];
                     this.gobiiDatasetExtracts.forEach(function (e) { return e.setGobiiFileType(gobiiFileType); });
-                    gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction(null, this.gobiiDatasetExtracts, Number(this.selectedContactIdForSubmitter), null));
+                    gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction(this.gobiiDatasetExtracts, Number(this.selectedContactIdForSubmitter), null));
                     var date = new Date();
                     var fileName = "extractor_"
                         + date.getFullYear()

@@ -2,21 +2,11 @@ import {GobiiDataSetExtract} from "./data-set-extract"
 
 export class GobiiExtractorInstruction {
 
-    constructor(private extractDestinationDirectory:string,
-                private dataSetExtracts:GobiiDataSetExtract[],
+    constructor(private dataSetExtracts:GobiiDataSetExtract[],
                 private contactId:number,
                 private contactEmail:string) {
 
-        this.extractDestinationDirectory = extractDestinationDirectory;
         this.dataSetExtracts = dataSetExtracts;
-    }
-
-    public getExtractDestinationDirectory():string {
-        return this.extractDestinationDirectory;
-    }
-
-    public setExtractDestinationDirectory(value:string) {
-        this.extractDestinationDirectory = value;
     }
 
     public getDataSetExtracts():any {
@@ -47,7 +37,6 @@ export class GobiiExtractorInstruction {
 
         let returnVal:any = {};
 
-        returnVal.extractDestinationDirectory = this.extractDestinationDirectory;
         returnVal.contactId = this.contactId;
         returnVal.contactEmail = this.contactEmail;
 
@@ -67,7 +56,6 @@ export class GobiiExtractorInstruction {
         json.dataSetExtracts.forEach(e => dataSetExtracts.push(GobiiDataSetExtract.fromJson(e)));
 
         let returnVal:GobiiExtractorInstruction = new GobiiExtractorInstruction(
-            json.extractDestinationDirectory,
             dataSetExtracts,
             json.contactId,
             json.contactEmail

@@ -6,11 +6,12 @@ System.register([], function(exports_1, context_1) {
         setters:[],
         execute: function() {
             GobiiDataSetExtract = (function () {
-                function GobiiDataSetExtract(gobiiFileType, accolate, dataSetId, dataSetName) {
+                function GobiiDataSetExtract(gobiiFileType, accolate, dataSetId, dataSetName, extractDestinationDirectory) {
                     this.gobiiFileType = gobiiFileType;
                     this.accolate = accolate;
                     this.dataSetId = dataSetId;
                     this.dataSetName = dataSetName;
+                    this.extractDestinationDirectory = extractDestinationDirectory;
                     this.setGobiiFileType(gobiiFileType);
                     this.setAccolate(accolate);
                     this.setDataSetName(dataSetName);
@@ -40,16 +41,23 @@ System.register([], function(exports_1, context_1) {
                 GobiiDataSetExtract.prototype.setDataSetId = function (dataSetId) {
                     this.dataSetId = dataSetId;
                 };
+                GobiiDataSetExtract.prototype.getExtractDestinationDirectory = function () {
+                    return this.extractDestinationDirectory;
+                };
+                GobiiDataSetExtract.prototype.sgetExtractDestinationDirectory = function (extractDestinationDirectory) {
+                    this.extractDestinationDirectory = extractDestinationDirectory;
+                };
                 GobiiDataSetExtract.prototype.getJson = function () {
                     var returnVal = {};
                     returnVal.gobiiFileType = this.gobiiFileType;
                     returnVal.accolate = this.accolate;
                     returnVal.dataSetName = this.dataSetName;
                     returnVal.dataSetId = this.dataSetId;
+                    returnVal.extractDestinationDirectory = this.extractDestinationDirectory;
                     return returnVal;
                 };
                 GobiiDataSetExtract.fromJson = function (json) {
-                    var returnVal = new GobiiDataSetExtract(json.gobiiFileType, json.accolate, json.dataSetId, json.dataSetName);
+                    var returnVal = new GobiiDataSetExtract(json.gobiiFileType, json.accolate, json.dataSetId, json.dataSetName, json.extractDestinationDirectory);
                     return returnVal;
                 };
                 return GobiiDataSetExtract;

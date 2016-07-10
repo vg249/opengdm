@@ -49,10 +49,6 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         // ************** INSTRUCTION ONE
         GobiiExtractorInstruction gobiiExtractorInstructionOne = new GobiiExtractorInstruction();
-        String digesterOutputDirectory = ClientContext
-                .getInstance(null, false)
-                .getFileLocationOfCurrenCrop(GobiiFileLocationType.RAWUSER_FILES);
-        gobiiExtractorInstructionOne.setExtractDestinationDirectory(digesterOutputDirectory);
         gobiiExtractorInstructionOne.setContactId(1);
 
         // ************** DATA SET EXTRACT ONE

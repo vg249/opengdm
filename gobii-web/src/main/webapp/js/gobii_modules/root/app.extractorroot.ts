@@ -158,7 +158,7 @@ import * as EntityFilters from "../model/type-entity-filter";
 export class ExtractorRoot {
     title = 'Gobii Web';
 
-    
+
     private dataSetCheckBoxEvents:CheckBoxEvent[] = [];
     private gobiiDatasetExtracts:GobiiDataSetExtract[] = [];
     private messages:string[] = [];
@@ -202,7 +202,7 @@ export class ExtractorRoot {
             },
             dtoHeaderResponse => {
                 dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving server configs: "
-                + m.message))
+                    + m.message))
             }
         )
         ;
@@ -247,7 +247,7 @@ export class ExtractorRoot {
             },
             dtoHeaderResponse => {
                 dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Rettrieving contacts: "
-                + m.message))
+                    + m.message))
             });
 
     }
@@ -282,7 +282,7 @@ export class ExtractorRoot {
             },
             dtoHeaderResponse => {
                 dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving contacts for PIs: "
-                + m.message))
+                    + m.message))
             });
     }
 
@@ -348,7 +348,7 @@ export class ExtractorRoot {
     private initializeExperimentNameIds() {
 
         let scope$ = this;
-        if( this.selectedProjectId ) {
+        if (this.selectedProjectId) {
             this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
                 EntityType.Experiment,
                 this.selectedProjectId)).subscribe(nameIds => {
@@ -390,12 +390,13 @@ export class ExtractorRoot {
             this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(GobiiFileType.GENERIC,
                 false,
                 Number(arg.id),
-                arg.name));
+                arg.name,
+                null));
 
         } else {
 
             let indexOfEventToRemove:number = this.dataSetCheckBoxEvents.indexOf(arg);
-            this.dataSetCheckBoxEvents.splice(indexOfEventToRemove,1);
+            this.dataSetCheckBoxEvents.splice(indexOfEventToRemove, 1);
 
             this.gobiiDatasetExtracts =
                 this.gobiiDatasetExtracts
@@ -407,17 +408,20 @@ export class ExtractorRoot {
 
     private checkBoxEventChange:CheckBoxEvent;
     private changeTrigger:number = 0;
+
     private handleExtractDataSetUnchecked(arg:CheckBoxEvent) {
         // this.changeTrigger++;
         // this.dataSetIdToUncheck = Number(arg.id);
 
         let dataSetExtractsToRemove:GobiiDataSetExtract[] = this.gobiiDatasetExtracts
-            .filter( e => { return e.getDataSetId() === Number(arg.id) });
+            .filter(e => {
+                return e.getDataSetId() === Number(arg.id)
+            });
 
-        if( dataSetExtractsToRemove.length > 0  ) {
+        if (dataSetExtractsToRemove.length > 0) {
             let idxToRemove = this.gobiiDatasetExtracts.indexOf(dataSetExtractsToRemove[0]);
 
-            this.gobiiDatasetExtracts.splice(idxToRemove,1);
+            this.gobiiDatasetExtracts.splice(idxToRemove, 1);
         }
 
         this.checkBoxEventChange = arg;
@@ -433,7 +437,6 @@ export class ExtractorRoot {
 
         gobiiExtractorInstructions.push(
             new GobiiExtractorInstruction(
-                null,
                 this.gobiiDatasetExtracts,
                 Number(this.selectedContactIdForSubmitter),
                 null)
@@ -465,8 +468,8 @@ export class ExtractorRoot {
         this._dtoRequestServiceExtractorFile.getResult(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
             .subscribe(extractorInstructionFilesDTO => {
                     extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
-                scope$.messages.push("Extractor instruction file created on server: "
-                    + extractorInstructionFilesDTOResponse.getInstructionFileName());
+                    scope$.messages.push("Extractor instruction file created on server: "
+                        + extractorInstructionFilesDTOResponse.getInstructionFileName());
                 },
                 dtoHeaderResponse => {
                     dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Submitting extractor instructions: "

@@ -149,7 +149,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     }
 
 
-                    currentExtractorInstruction.setExtractDestinationDirectory(extractorFileDestinationLocation);
+                    currentGobiiDataSetExtract.setExtractDestinationDirectory(extractorFileDestinationLocation);
 
                 }
 
