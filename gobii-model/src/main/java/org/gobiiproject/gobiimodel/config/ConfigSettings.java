@@ -29,6 +29,8 @@ public class ConfigSettings {
 
     private final String PROP_NAME_IFL_INTEGRITY_CHECK = "ifl.integritycheck";
 
+    private final String PROP_NAME_FILE_SYSTEM_ROOT = "filesys.root";
+
     private final String DB_PREFX = "db.";
     private final String DB_SUFFIX_HOST = "host";
     private final String DB_SUFFIX_PORT = "port";
@@ -80,6 +82,7 @@ public class ConfigSettings {
     private String emailSvrPassword;
     private Integer emailServerPort = 0;
     private boolean iflIntegrityCheck = false;
+    private String fileSystemRoot;
 
 
     private ConfigFileReader configReader = null;
@@ -120,6 +123,8 @@ public class ConfigSettings {
         emailSvrHashType = configReader.getPropValue(PROP_NAME_MAIL_SVR_HASHTYPE);
         emailSvrPassword = configReader.getPropValue(PROP_NAME_MAIL_SVR_PWD);
         iflIntegrityCheck = configReader.getPropValue(PROP_NAME_IFL_INTEGRITY_CHECK).equals("true");
+
+        fileSystemRoot = configReader.getPropValue(PROP_NAME_FILE_SYSTEM_ROOT);
 
 
         for (int idx = 0; idx < cropPrefixes.length; idx++) {
@@ -278,4 +283,7 @@ public class ConfigSettings {
         this.iflIntegrityCheck = iflIntegrityCheck;
     }
 
+    public String getFileSystemRoot() {
+        return fileSystemRoot;
+    }
 }

@@ -71,6 +71,7 @@ public final class ClientContext {
             }
 
             clientContext = new ClientContext();
+            clientContext.fileSystemRoot = configSettings.getFileSystemRoot();
             clientContext.defaultGobiiCropType = configSettings.getDefaultGobiiCropType();
             clientContext.currentGobiiCropType = clientContext.defaultGobiiCropType;
 
@@ -194,6 +195,8 @@ public final class ClientContext {
 
     public enum ProcessMode {Asynch, Block}
 
+    String fileSystemRoot;
+
     private Map<GobiiCropType, ServerConfig> serverConfigs = new HashMap<>();
 
 
@@ -284,5 +287,7 @@ public final class ClientContext {
         return userToken;
     }
 
-
+    public String getFileSystemRoot() {
+        return fileSystemRoot;
+    }
 }

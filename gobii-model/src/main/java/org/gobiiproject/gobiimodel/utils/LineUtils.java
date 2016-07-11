@@ -19,4 +19,5 @@ public class LineUtils {
 
         return (null == value || value.isEmpty());
     }
+
 }
