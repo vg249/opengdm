@@ -32,6 +32,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,18 +46,22 @@ public class ConfigCheck {
     private static String TOMCAT_BASE_DIR = "tbase";
     private static String CONFIG_BASE_URL = "burl";
     private static String CONFIG_MKDIRS = "mdirs";
+    private static String COPY_WARS = "wcopy";
     private static String PROP_FILE_FQPN = "pfqpn";
 
+    private static String WAR_FILES_DIR = "wars/";
+
     private static List<String> directoriesRelativeToEachCrop = Arrays.asList(
-            "extractor/inprogress",
-            "extractor/instructions",
-            "extractor/output/flapjack",
-            "extractor/output/hapmap",
-            "files",
-            "hdf5",
-            "loader/digest",
-            "loader/inprogress",
-            "loader/instructions"
+            WAR_FILES_DIR,
+            "extractor/inprogress/",
+            "extractor/instructions/",
+            "extractor/output/flapjack/",
+            "extractor/output/hapmap/",
+            "files/",
+            "hdf5/",
+            "loader/digest/",
+            "loader/inprogress/",
+            "loader/instructions/"
     );
 
 
@@ -70,14 +75,17 @@ public class ConfigCheck {
 
     public static void main(String[] args) {
 
+        int exitCode = -1;
+
         try {
 
             // define commandline options
             Options options = new Options();
             options.addOption(TOMCAT_BASE_DIR, true, "Tomcat base directory (e.g., /usr/local/tomcat7)");
             options.addOption(CONFIG_BASE_URL, true, "url of server from which to get initial config settings");
-            options.addOption(CONFIG_MKDIRS, false, "make gobii directory structure relative to the specified root");
-            options.addOption(PROP_FILE_FQPN, true, "fully qualified path name of gobii properties file");
+            options.addOption(CONFIG_MKDIRS, false, "make gobii directories from root in the specified properties file (requires " + PROP_FILE_FQPN + ")");
+            options.addOption(COPY_WARS, true, "create war files for active crops from the specified war file (requires " + PROP_FILE_FQPN + ")");
+            options.addOption(PROP_FILE_FQPN, true, "fqpn of gobii properties file");
 
             // parse our commandline
             CommandLineParser parser = new DefaultParser();
@@ -156,7 +164,12 @@ public class ConfigCheck {
                                     }
 
                                     ClientContext clientContext = configClientContext(configServerUrl);
-                                    ConfigCheck.showServerInfo(clientContext);
+
+
+                                    if( ConfigCheck.showServerInfo(clientContext) ) {
+                                        exitCode = 0;
+                                    }
+
 
 
                                 } else {
@@ -191,15 +204,32 @@ public class ConfigCheck {
                 ConfigCheck.printField("Configuration Mode", "From url");
 
                 ClientContext clientContext = configClientContext(configUrl);
-                ConfigCheck.showServerInfo(clientContext);
 
-            } else if (commandLine.hasOption(CONFIG_MKDIRS)) {
+                if( ConfigCheck.showServerInfo(clientContext)) {
+                    exitCode = 0;
+                }
 
-                if (commandLine.hasOption(PROP_FILE_FQPN)) {
-                    String propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
-                    ConfigCheck.makeGobiiDirectories(propFileFqpn);
-                } else {
-                    System.err.println("The " + CONFIG_MKDIRS + " requires a value for " + PROP_FILE_FQPN);
+
+            } else if (commandLine.hasOption(CONFIG_MKDIRS)
+                    && commandLine.hasOption(PROP_FILE_FQPN)) {
+
+                String propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
+
+
+                if( ConfigCheck.makeGobiiDirectories(propFileFqpn) ) {
+                    exitCode = 0;
+                }
+
+
+            } else if (commandLine.hasOption(COPY_WARS)
+                    && commandLine.hasOption(PROP_FILE_FQPN)) {
+
+                String propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
+                String warFileFqpn = commandLine.getOptionValue(COPY_WARS);
+
+
+                if( ConfigCheck.copyWars(propFileFqpn, warFileFqpn) ) {
+                    exitCode = 0;
                 }
 
             } else {
@@ -209,6 +239,9 @@ public class ConfigCheck {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+        System.exit(exitCode);
 
     }// main()
 
@@ -226,7 +259,9 @@ public class ConfigCheck {
 
     }
 
-    private static void showServerInfo(ClientContext clientContext) throws Exception {
+    private static boolean showServerInfo(ClientContext clientContext) throws Exception {
+
+        boolean returnVal = true;
 
         // The logging framework emits debugging messages before it knows not to emit them.
         // Until we solve this problem, we we'll visually set those messages aside
@@ -275,15 +310,21 @@ public class ConfigCheck {
                 } else {
                     for (HeaderStatusMessage currentHeader : pingDTOResponse.getDtoHeaderResponse().getStatusMessages()) {
                         ConfigCheck.printField("Service error " + (responseNum++).toString(), currentHeader.getMessage());
+                        returnVal = false;
                     }
                 }
             } else {
                 System.err.println("Authentication to server for crop failed: " + currentCropType.toString());
+                returnVal = false;
             }
         }
+
+        return returnVal;
     }
 
-    private static void makeGobiiDirectories(String propFileFqpn) {
+    private static boolean makeGobiiDirectories(String propFileFqpn) {
+
+        boolean returnVal = true;
 
         try {
 
@@ -307,7 +348,8 @@ public class ConfigCheck {
 
                         printField("Creating new directory", directoryToMake);
                         if (!currentFile.mkdirs()) {
-                            throw new Exception("Unable to create directory " + directoryToMake);
+                            System.err.println("Unable to create directory " + directoryToMake);
+                            returnVal = false;
                         }
 
                     } else {
@@ -316,11 +358,14 @@ public class ConfigCheck {
                     }
 
                     if (!currentFile.canRead() && !currentFile.setReadable(true, false)) {
-                        throw new GobiiDaoException("Unable to set read permissions on directory " + directoryToMake);
+                        System.err.println("Unable to set read permissions on directory " + directoryToMake);
+                        returnVal = false;
                     }
 
                     if (!currentFile.canWrite() && !currentFile.setWritable(true, false)) {
-                        throw new GobiiDaoException("Unable to set write permissions on directory " + directoryToMake);
+                        System.err.println("Unable to set write permissions on directory " + directoryToMake);
+                        returnVal = false;
+
                     }
                 } // iterate directories
             } // iterate crops
@@ -328,6 +373,84 @@ public class ConfigCheck {
 
         } catch (Exception e) {
 
+            e.printStackTrace();
+            returnVal = false;
+
         }
+
+        return returnVal;
+    }
+
+    private static boolean copyWars(String configFileFqpn, String warFileFqpn) {
+
+        boolean returnVal = true;
+
+        try {
+
+
+            File sourceFile = new File(warFileFqpn);
+            if (sourceFile.exists()) {
+
+                ConfigSettings configSettings = new ConfigSettings(configFileFqpn);
+                String warDestinationRoot = configSettings.getFileSystemRoot() + WAR_FILES_DIR;
+
+                File destinationRootPath = new File(warDestinationRoot);
+                if (!destinationRootPath.exists()) {
+                    if (!destinationRootPath.mkdirs()) {
+                        System.err.println("Unable to create war directory: " + warDestinationRoot);
+                        returnVal = false;
+
+                    }
+                }
+
+                if (!destinationRootPath.canRead() && !destinationRootPath.setReadable(true, false)) {
+
+                    System.err.println("Unable to set read permissions on war directory: " + warDestinationRoot);
+                    returnVal = false;
+
+                }
+
+                if (!destinationRootPath.canWrite() && !destinationRootPath.setWritable(true, false)) {
+
+                    System.err.println("Unable to set write permissions on war directory: " + warDestinationRoot);
+                    returnVal = false;
+
+                }
+
+                if (returnVal) {
+                    for (CropConfig currentCrop : configSettings.getActiveCropConfigs()) {
+
+                        String warDestinationFqpn = warDestinationRoot + "gobii-" + currentCrop
+                                .getGobiiCropType()
+                                .toString()
+                                .toLowerCase()
+                                + ".war";
+
+                        File destinationFile = new File(warDestinationFqpn);
+
+                        if (destinationFile.exists()) {
+                            destinationFile.delete();
+                        }
+
+                        Files.copy(sourceFile.toPath(), destinationFile.toPath());
+                        printField("Created war", warDestinationFqpn);
+
+                    }
+                }
+
+            } else {
+                System.err.println("Source war file does not exist: " + warFileFqpn);
+                returnVal = false;
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnVal = false;
+
+        }
+
+        return returnVal;
+
     }
 }
