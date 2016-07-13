@@ -13,6 +13,7 @@ import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.types.DataSetOrientationType;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
@@ -83,7 +84,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setName(instructionOneColumnOneName)
                 .setFindText(findTextTableOneColumnOne)
                 .setReplaceText(replaceTextTextTableOneColumnOne)
-                .setDataSetType(dataSetTypeTableOneColumnOne);
+                .setDataSetType(dataSetTypeTableOneColumnOne)
+                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
 
         // column two
         GobiiFileColumn gobiiFileColumnTwo = new GobiiFileColumn()
