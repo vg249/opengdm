@@ -24,7 +24,7 @@ public class GobiiFileColumn {
     private String subcolumnDelimiter = null;
 
     private DataSetType dataSetType = DataSetType.IUPAC;
-    private DataSetOrientationType dataSetOrientationType = DataSetOrientationType.SAMPLE_FAST;
+    private DataSetOrientationType dataSetOrientationType = DataSetOrientationType.MARKER_FAST;
 
 
     private String metaDataId = null;
