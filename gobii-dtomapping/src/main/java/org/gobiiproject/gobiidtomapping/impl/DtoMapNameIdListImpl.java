@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by Phil on 4/6/2016.
@@ -119,7 +120,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             ResultSet contactList = rsContactDao.getContactNamesForRoleName(nameIdListDTO.getFilter());
 
-            Map<String, String> contactNamesById = new HashMap<>();
+            Map<String, String> contactNamesById = new TreeMap<>();
             while (contactList.next()) {
 
                 Integer contactId = contactList.getInt("contact_id");
@@ -148,7 +149,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             ResultSet contactList = rsContactDao.getAllContactNames();
 
-            Map<String, String> contactNamesById = new HashMap<>();
+            Map<String, String> contactNamesById = new TreeMap<>();
             while (contactList.next()) {
 
                 Integer contactId = contactList.getInt("contact_id");
@@ -601,7 +602,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     private Map<String, String> makeMapOfDataSetNames(ResultSet resultSet) throws Exception {
 
-        Map<String, String> returnVal = new HashMap<>();
+        Map<String, String> returnVal = new TreeMap<>();
 
         while (resultSet.next()) {
             Integer dataSetId = resultSet.getInt("dataset_id");
