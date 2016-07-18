@@ -88,7 +88,7 @@ import * as EntityFilters from "../model/type-entity-filter";
                 
                     <div class="col-md-4"> 
                         <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Principle Investigator</legend>
+                        <legend class="the-legend">Principal Investigator</legend>
                         <contacts-list-box [nameIdList]="contactNameIdListForPi" (onContactSelected)="handleContactForPiSelected($event)"></contacts-list-box>
                         </fieldset>
                         
