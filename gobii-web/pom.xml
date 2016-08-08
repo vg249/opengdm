@@ -397,7 +397,7 @@
                                         <include>core-js/client/shim.min.js</include>
                                         <include>reflect-metadata/Reflect.js</include>
                                         <include>rxjs/bundles/Rx.js</include>
-                                        <include>rxjs/add/**</include>
+                                        <include>rxjs/**</include>
 
 
                                         <!-- ***** GROUP 2: angular files from beta 2 that we probably don't want-->
