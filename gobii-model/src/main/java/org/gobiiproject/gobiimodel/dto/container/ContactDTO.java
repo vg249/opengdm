@@ -30,11 +30,11 @@ public class ContactDTO extends DtoMetaData {
     private String code;
     private String email;
     private List<Integer> roles = new ArrayList<>();
-    private Integer organizationId;
     private Integer createdBy;
     private Date createdDate;
     private Integer modifiedBy;
     private Date modifiedDate;
+    private Integer organizationId;
 
     @GobiiEntityParam(paramName = "contactId")
     public Integer getContactId() {return contactId;}
@@ -138,5 +138,7 @@ public class ContactDTO extends DtoMetaData {
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
+
+
 
 }
