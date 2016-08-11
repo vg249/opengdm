@@ -66,7 +66,7 @@ public final class ClientContext {
 
         if (null == clientContext) {
 
-            if( null == configSettings ) {
+            if( null == configSettings) {
                 throw new Exception("Client context cannot be null!");
             }
 

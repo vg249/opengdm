@@ -12,10 +12,10 @@ import java.util.Properties;
 /**
  * Created by Phil on 4/12/2016.
  */
-public class ConfigFileReader {
+public class ConfigFileReaderProps {
 
     private String fqpn = null;
-    public ConfigFileReader(String fqpn) {
+    public ConfigFileReaderProps(String fqpn) {
 
         this.fqpn = fqpn;
 
@@ -29,12 +29,11 @@ public class ConfigFileReader {
         if (null == webProperties) {
 
             String configFileWebPath = null;
-            if( null == this.fqpn ) {
-
-                JndiTemplate jndi = new JndiTemplate();
-                configFileWebPath = (String) jndi.lookup("java:comp/env/gobiipropsloc");
-            } else {
+            if( null != this.fqpn ) {
                 configFileWebPath = this.fqpn;
+
+            } else {
+                throw new Exception("Configuration file location is null");
             }
 
             if (!LineUtils.isNullOrEmpty(configFileWebPath) ) {
@@ -70,4 +69,4 @@ public class ConfigFileReader {
 
     } // getPropValue()
 
-} // ConfigFileReader
+} // ConfigFileReaderProps

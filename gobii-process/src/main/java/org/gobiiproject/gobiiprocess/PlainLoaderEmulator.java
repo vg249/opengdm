@@ -3,8 +3,6 @@ package org.gobiiproject.gobiiprocess;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 
-import java.io.Console;
-
 /**
  * Created by Phil on 6/24/2016.
  */
