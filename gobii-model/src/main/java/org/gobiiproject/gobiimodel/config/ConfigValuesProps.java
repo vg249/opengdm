@@ -4,6 +4,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
@@ -83,15 +84,32 @@ public class ConfigValuesProps implements ConfigValues {
     private Map<GobiiCropType, CropConfig> cropConfigs = new HashMap<>();
 
     private GobiiCropType currentGobiiCropType = GobiiCropType.TEST;
+
+    @Element
     private GobiiCropType defaultGobiiCropType = GobiiCropType.TEST; // default crop
 
+    @Element
     private String emailSvrType;
+
+    @Element
     private String emailSvrDomain;
+
+    @Element
     private String emailSvrUser;
+
+    @Element
     private String emailSvrHashType;
+
+    @Element
     private String emailSvrPassword;
+
+    @Element
     private Integer emailServerPort = 0;
+
+    @Element
     private boolean iflIntegrityCheck = false;
+
+    @Element
     private String fileSystemRoot;
 
 
