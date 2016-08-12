@@ -1,13 +1,15 @@
 package org.gobiiproject.gobiimodel.config;
 
 
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
 
-
-
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.StringWriter;
 
 /**
  * Created by Phil on 4/12/2016.
@@ -16,14 +18,20 @@ public class ConfigFileReaderXml {
 
     public void write(ConfigValues configValues, String fileName) throws Exception {
 
-        JacksonXmlModule module = new JacksonXmlModule();
-        module.setDefaultUseWrapper(false);
-        XmlMapper xmlMapper = new XmlMapper(module);
-        xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        xmlMapper.enable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+        Serializer serializer = new Persister();
+        File result = new File(fileName);
 
-        xmlMapper.writeValue(new File(fileName), configValues);
-    }
+        serializer.write(configValues, result);
 
-
-} // ConfigFileReaderProps
+//        StringWriter stringWriter = new StringWriter();
+//        JAXBContext carContext = JAXBContext.newInstance(ConfigValuesProps.class);
+//        Marshaller marshaller = carContext.createMarshaller();
+//        marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
+//        marshaller.marshal(configValues, stringWriter);
+//        String xmlAsString = stringWriter.toString();
+//        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName));
+//        bufferedWriter.write(xmlAsString);
+//        bufferedWriter.flush();
+//        bufferedWriter.close();
+    } // ConfigFileReaderProps
+}

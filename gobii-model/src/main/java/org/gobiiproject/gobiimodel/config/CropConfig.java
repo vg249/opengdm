@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.config;
 
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
+import org.simpleframework.xml.Root;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.Map;
 /**
  * Created by Phil on 5/5/2016.
  */
+@Root
 public class CropConfig {
 
 

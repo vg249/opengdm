@@ -4,7 +4,11 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.Root;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Phil on 5/5/2016.
  */
+@Root
 public class ConfigValuesProps implements ConfigValues {
 
 
@@ -69,6 +74,11 @@ public class ConfigValuesProps implements ConfigValues {
             CROP_PREFIX_WHEAT
     };
 
+
+
+
+    @ElementList
+    List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
 
     private Map<GobiiCropType, CropConfig> cropConfigs = new HashMap<>();
 
@@ -193,6 +203,7 @@ public class ConfigValuesProps implements ConfigValues {
 
 
             cropConfigs.put(currentGobiiCropType, currentCropConfig);
+            cropConfigsToSerialize.add(currentCropConfig);
 
         }
 
