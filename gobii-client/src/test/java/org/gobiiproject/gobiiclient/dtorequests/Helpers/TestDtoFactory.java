@@ -196,14 +196,15 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
 
         OrganizationDTO returnVal = new OrganizationDTO(processType);
 
-        String uniqueStemString = uniqueStem.toString();
-        returnVal.setName(uniqueStem + ": reference");
+        String uniqueStemString = UUID.randomUUID().toString();
+        returnVal.setName(uniqueStemString + ": reference");
         returnVal.setAddress("address:" + uniqueStem);
         returnVal.setWebsite(uniqueStem + ".com");
         returnVal.setCreatedBy(1);
         returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
+        returnVal.setStatus(1);
 
         return returnVal;
 
