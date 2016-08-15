@@ -54,6 +54,8 @@ public class ConfigSettings {
 
                     configFileReaderXml.write(configValuesProps, xmlFileEquivalent);
 
+                    configValues = configFileReaderXml.read(xmlFileEquivalent);
+
                 } else {
                     throw (new Exception("File does not exist: " + fqpn));
                 }

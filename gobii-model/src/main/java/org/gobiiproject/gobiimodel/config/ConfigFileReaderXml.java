@@ -19,19 +19,23 @@ public class ConfigFileReaderXml {
     public void write(ConfigValues configValues, String fileName) throws Exception {
 
         Serializer serializer = new Persister();
-        File result = new File(fileName);
+        File file = new File(fileName);
 
-        serializer.write(configValues, result);
+        serializer.write(configValues, file);
 
-//        StringWriter stringWriter = new StringWriter();
-//        JAXBContext carContext = JAXBContext.newInstance(ConfigValuesProps.class);
-//        Marshaller marshaller = carContext.createMarshaller();
-//        marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
-//        marshaller.marshal(configValues, stringWriter);
-//        String xmlAsString = stringWriter.toString();
-//        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName));
-//        bufferedWriter.write(xmlAsString);
-//        bufferedWriter.flush();
-//        bufferedWriter.close();
     } // ConfigFileReaderProps
+
+    public ConfigValues read(String fileName ) throws  Exception {
+
+        ConfigValues returnVal = null;
+
+        Serializer serializer = new Persister();
+        File file = new File(fileName);
+
+        returnVal = serializer.read(ConfigValuesProps.class,file);
+
+        return returnVal;
+
+
+    }
 }
