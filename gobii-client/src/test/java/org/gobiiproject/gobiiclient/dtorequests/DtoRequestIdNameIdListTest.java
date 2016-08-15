@@ -343,7 +343,8 @@ public class DtoRequestIdNameIdListTest {
         NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
         Assert.assertNotEquals(null, nameIdListDtoResponse);
-        Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        //Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
 
     }
