@@ -22,8 +22,8 @@ public class SpUpdContact extends SpDef {
         this.addParamDef("createdBy", Integer.class).setNullable(false);
         this.addParamDef("createdDate", java.util.Date.class).setNullable(false);
         this.addParamDef("modifiedBy", Integer.class).setNullable(true);
-        this.addParamDef("organizationId", Integer.class).setNullable(true);
         this.addParamDef("modifiedDate", java.util.Date.class).setNullable(true);
+        this.addParamDef("organizationId", Integer.class).setNullable(true);
 
 
     } // ctor
