@@ -31,7 +31,7 @@ class ConfigValuesFactory {
         String extension = FilenameUtils.getExtension(fqpn);
         if (extension.equals("properties")) {
 
-            String fileNameStem = FilenameUtils.getPath(fqpn)
+            String fileNameStem = FilenameUtils.getFullPath(fqpn)
                     + FilenameUtils.getBaseName(fqpn);
 
             String xmlFileEquivalent = fileNameStem + ".xml";
