@@ -10,7 +10,9 @@ import org.simpleframework.xml.Root;
 @Root
 public class CropDbConfig {
 
-    CropDbConfig(GobiiDbType gobiiDbType,
+    public CropDbConfig() {}
+
+    public CropDbConfig(GobiiDbType gobiiDbType,
                  String host,
                  String dbName,
                  Integer port,
@@ -43,6 +45,10 @@ public class CropDbConfig {
 
     @Element
     private String password = null;
+
+    public GobiiDbType getGobiiDbType() {
+        return gobiiDbType;
+    }
 
     public String getHost() {
         return host;

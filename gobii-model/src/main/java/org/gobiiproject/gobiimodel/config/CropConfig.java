@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 5/5/2016.
@@ -52,6 +53,8 @@ public class CropConfig {
 
     @ElementList
     private List<CropDbConfig> cropDbConfigForSerialization = new ArrayList<>();
+
+    public CropConfig() {}
 
     public CropConfig(GobiiCropType gobiiCropType,
                       String serviceDomain,
@@ -134,7 +137,11 @@ public class CropConfig {
     } // addCropDbConfig()
 
     public CropDbConfig getCropDbConfig(GobiiDbType gobiiDbType) {
-        return dbConfigByDbType.get(gobiiDbType);
+        return cropDbConfigForSerialization
+                .stream()
+                .filter(d -> d.getGobiiDbType().equals(gobiiDbType))
+                .collect(Collectors.toList())
+                .get(0);
     } // getCropDbConfig()
 
 

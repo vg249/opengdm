@@ -25,14 +25,14 @@ public class ConfigFileReaderXml {
 
     } // ConfigFileReaderProps
 
-    public ConfigValues read(String fileName ) throws  Exception {
+    public ConfigValues read(String fileName) throws Exception {
 
         ConfigValues returnVal = null;
 
         Serializer serializer = new Persister();
         File file = new File(fileName);
 
-        returnVal = serializer.read(ConfigValuesProps.class,file);
+        returnVal = serializer.read(ConfigValues.class, file);
 
         return returnVal;
 

@@ -1,20 +1,80 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
+import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.springframework.jndi.JndiTemplate;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 4/12/2016.
  */
 public class ConfigFileReaderProps {
 
+
+    private final String PROP_NAME_WEB_SVR_DEFAULT_CROP = "websvr.defaultcrop";
+
+    private final String PROP_NAME_MAIL_SVR_TYPE = "mailsvr.type";
+    private final String PROP_NAME_MAIL_SVR_DOMAIN = "mailsvr.domain";
+    private final String PROP_NAME_MAIL_SVR_PORT = "mailsvr.port";
+    private final String PROP_NAME_MAIL_SVR_USER = "mailsvr.user";
+    private final String PROP_NAME_MAIL_SVR_HASHTYPE = "mailsvr.hashtype";
+    private final String PROP_NAME_MAIL_SVR_PWD = "mailsvr.pwd";
+
+    private final String PROP_NAME_IFL_INTEGRITY_CHECK = "ifl.integritycheck";
+
+    private final String PROP_NAME_FILE_SYSTEM_ROOT = "filesys.root";
+
+    private final String DB_PREFX = "db.";
+    private final String DB_SUFFIX_HOST = "host";
+    private final String DB_SUFFIX_PORT = "port";
+    private final String DB_SUFFIX_DBNAME = "dbname";
+    private final String DB_SUFFIX_USER = "username";
+    private final String DB_SUFFIX_PASSWORD = "password";
+
+
+    private final String CROP_SUFFIX_SERVICE_DOMAIN = "servicedomain";
+    private final String CROP_SUFFIX_SERVICE_APPROOT = "serviceapproot";
+    private final String CROP_SUFFIX_SERVICE_PORT = "serviceport";
+    private final String CROP_SUFFIX_USER_FILE_LOCLOCATION = "usrfloc";
+    private final String CROP_SUFFIX_LOADR_FILE_LOCATION = "ldrfloc";
+    private final String CROP_SUFFIX_EXTRACTOR_FILE_LOCATION = "extrfloc";
+    private final String CROP_SUFFIX_EXTRACTOR_FILE_OUTPUT = "extrout";
+    private final String CROP_SUFFIX_INTERMEDIATE_FILE_LOCATION = "intfloc";
+    private final String CROP_SUFFIX_INTERMEDIATE_FILE_ACTIVE = "active";
+
+    private final String CROP_PREFIX = "crops.";
+    private final String CROP_PREFIX_DEV = CROP_PREFIX + "dev.";
+    private final String CROP_PREFIX_TEST = CROP_PREFIX + "test.";
+    private final String CROP_PREFIX_CHICKPEA = CROP_PREFIX + "chickpea.";
+    private final String CROP_PREFIX_MAIZE = CROP_PREFIX + "maize.";
+    private final String CROP_PREFIX_RICE = CROP_PREFIX + "rice.";
+    private final String CROP_PREFIX_SORGHUM = CROP_PREFIX + "sorghum.";
+    private final String CROP_PREFIX_WHEAT = CROP_PREFIX + "wheat.";
+
+
+    private String[] cropPrefixes = {
+            CROP_PREFIX_DEV,
+            CROP_PREFIX_TEST,
+            CROP_PREFIX_CHICKPEA,
+            CROP_PREFIX_MAIZE,
+            CROP_PREFIX_RICE,
+            CROP_PREFIX_SORGHUM,
+            CROP_PREFIX_WHEAT
+    };
+
+
     private String fqpn = null;
+
     public ConfigFileReaderProps(String fqpn) {
 
         this.fqpn = fqpn;
@@ -29,14 +89,14 @@ public class ConfigFileReaderProps {
         if (null == webProperties) {
 
             String configFileWebPath = null;
-            if( null != this.fqpn ) {
+            if (null != this.fqpn) {
                 configFileWebPath = this.fqpn;
 
             } else {
                 throw new Exception("Configuration file location is null");
             }
 
-            if (!LineUtils.isNullOrEmpty(configFileWebPath) ) {
+            if (!LineUtils.isNullOrEmpty(configFileWebPath)) {
 
                 InputStream configFileWebStream = new FileInputStream(configFileWebPath);
                 if (null != configFileWebStream) {
@@ -49,7 +109,7 @@ public class ConfigFileReaderProps {
                 }
 
             } else {
-                throw new Exception("JNDI lookup on prop file location is null or empty" );
+                throw new Exception("JNDI lookup on prop file location is null or empty");
             }
 
         }
@@ -68,5 +128,130 @@ public class ConfigFileReaderProps {
         return returnVal;
 
     } // getPropValue()
+
+    public ConfigValues makeConfigValues() throws Exception {
+
+        ConfigValues returnVal = new ConfigValues();
+
+        String currentPrefix = null;
+
+        String candidateCropName = this.getPropValue(PROP_NAME_WEB_SVR_DEFAULT_CROP).toUpperCase();
+        if (!LineUtils.isNullOrEmpty(candidateCropName)) {
+            if (0 == Arrays.asList(GobiiCropType.values())
+                    .stream()
+                    .filter(c -> c.toString().toUpperCase().equals(candidateCropName))
+                    .count()) {
+                throw new Exception("The configuration file specifies an instance type that does not correspond to a crop type: " + candidateCropName);
+            }
+
+            returnVal.setDefaultGobiiCropType(GobiiCropType.valueOf(candidateCropName));
+            returnVal.setCurrentGobiiCropType(returnVal.getDefaultGobiiCropType());
+        } else {
+            throw new Exception("The configuration does not specify a default crop");
+        }
+
+        returnVal.setEmailSvrType(this.getPropValue(PROP_NAME_MAIL_SVR_TYPE));
+        returnVal.setEmailSvrDomain(this.getPropValue(PROP_NAME_MAIL_SVR_DOMAIN));
+
+        if (null != this.getPropValue(PROP_NAME_MAIL_SVR_PORT) && NumberUtils.isNumber(this.getPropValue(PROP_NAME_MAIL_SVR_PORT))) {
+            returnVal.setEmailSvrPort(Integer.parseInt(this.getPropValue(PROP_NAME_MAIL_SVR_PORT)));
+        }
+
+        returnVal.setEmailSvrUser(this.getPropValue(PROP_NAME_MAIL_SVR_USER));
+        returnVal.setEmailSvrHashType(this.getPropValue(PROP_NAME_MAIL_SVR_HASHTYPE));
+        returnVal.setEmailSvrPassword(this.getPropValue(PROP_NAME_MAIL_SVR_PWD));
+        returnVal.setIflIntegrityCheck(this.getPropValue(PROP_NAME_IFL_INTEGRITY_CHECK).equals("true"));
+
+        returnVal.setFileSystemRoot(this.getPropValue(PROP_NAME_FILE_SYSTEM_ROOT));
+
+
+        List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
+        Map<GobiiCropType, CropConfig> cropConfigs = new HashMap<>();
+        for (int idx = 0; idx < cropPrefixes.length; idx++) {
+
+            currentPrefix = cropPrefixes[idx];
+
+            final String cropTypeFromProp = currentPrefix
+                    .replace(CROP_PREFIX, "")
+                    .replace(".", "")
+                    .toUpperCase();
+
+
+            if (0 == Arrays.asList(GobiiCropType.values())
+                    .stream()
+                    .filter(c -> c.toString().toUpperCase().equals(cropTypeFromProp.toUpperCase()))
+                    .count()) {
+                throw new Exception("The configuration file specifies a non-existent crop type: " + cropTypeFromProp);
+            }
+
+            GobiiCropType currentGobiiCropType = GobiiCropType.valueOf(cropTypeFromProp.toUpperCase());
+
+
+            String serviceDomain = this.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_DOMAIN);
+            String serviceAppRoot = this.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_APPROOT);
+            Integer servicePort = Integer.parseInt(this.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_PORT));
+            String userFilesLocation = this.getPropValue(currentPrefix + CROP_SUFFIX_USER_FILE_LOCLOCATION);
+            String loaderFilesLocation = this.getPropValue(currentPrefix + CROP_SUFFIX_LOADR_FILE_LOCATION);
+            String extractorFilesLocation = this.getPropValue(currentPrefix + CROP_SUFFIX_EXTRACTOR_FILE_LOCATION);
+            String extractorFilesOutputLocation = this.getPropValue(currentPrefix + CROP_SUFFIX_EXTRACTOR_FILE_OUTPUT);
+            String intermediateFilesLocation = this.getPropValue(currentPrefix + CROP_SUFFIX_INTERMEDIATE_FILE_LOCATION);
+            String isActiveString = this.getPropValue(currentPrefix + CROP_SUFFIX_INTERMEDIATE_FILE_ACTIVE);
+            boolean isActive = isActiveString.toLowerCase().equals("true");
+
+            CropConfig currentCropConfig = new CropConfig(currentGobiiCropType,
+                    serviceDomain,
+                    serviceAppRoot,
+                    servicePort,
+                    loaderFilesLocation,
+                    extractorFilesLocation,
+                    extractorFilesOutputLocation,
+                    userFilesLocation,
+                    intermediateFilesLocation,
+                    isActive);
+
+            //crops.rice.db.monetdb.password=appuser
+            for (GobiiDbType currentDbType : GobiiDbType.values()) {
+
+                String currentDbTypeSegment = currentDbType.toString().toLowerCase() + ".";
+                String currentDbPrefix = currentPrefix + DB_PREFX + currentDbTypeSegment;
+                String currentHost = this.getPropValue(currentDbPrefix + DB_SUFFIX_HOST);
+                String currentDbName = this.getPropValue(currentDbPrefix + DB_SUFFIX_DBNAME);
+                Integer currentPort = Integer.parseInt(this.getPropValue(currentDbPrefix + DB_SUFFIX_PORT));
+                String currentUserName = this.getPropValue(currentDbPrefix + DB_SUFFIX_USER);
+                String currentPassword = this.getPropValue(currentDbPrefix + DB_SUFFIX_PASSWORD);
+
+                CropDbConfig currentCropDbConfig = new CropDbConfig(
+                        currentDbType,
+                        currentHost,
+                        currentDbName,
+                        currentPort,
+                        currentUserName,
+                        currentPassword
+                );
+
+                currentCropConfig.addCropDbConfig(currentDbType, currentCropDbConfig);
+            }
+
+
+            cropConfigs.put(currentGobiiCropType, currentCropConfig);
+            cropConfigsToSerialize.add(currentCropConfig);
+
+        } // iterate crop configs
+
+        returnVal.setCropConfigs(cropConfigs);
+        returnVal.setCropConfigsToSerialize(cropConfigsToSerialize);
+
+
+        if (0 == returnVal.getActiveCropConfigs()
+                .stream()
+                .filter(c -> c.getGobiiCropType().equals(returnVal.getDefaultGobiiCropType()))
+                .collect(Collectors.toList())
+                .size()) {
+            throw (new Exception("The server for the default crop type " + returnVal.getDefaultGobiiCropType().toString() + " is not marked active!"));
+        }
+
+        return returnVal;
+
+    } // makeConfigValues()()
 
 } // ConfigFileReaderProps
