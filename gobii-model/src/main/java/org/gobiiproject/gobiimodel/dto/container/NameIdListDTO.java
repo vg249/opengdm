@@ -2,7 +2,9 @@ package org.gobiiproject.gobiimodel.dto.container;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,7 +15,7 @@ public class NameIdListDTO extends DtoMetaData {
     public enum EntityType {DBTABLE, CVTERM};
     private EntityType entityType = EntityType.DBTABLE;
     private String entityName = null;
-    private Map<String, String> namesById = new HashMap<>();
+    private List<NameIdDTO> namesById = new ArrayList<>();
     private String filter = null;
 
     public EntityType getEntityType() {
@@ -40,11 +42,11 @@ public class NameIdListDTO extends DtoMetaData {
         this.entityName = entityName;
     }
 
-    public Map<String, String> getNamesById() {
+    public List<NameIdDTO> getNamesById() {
         return namesById;
     }
 
-    public void setNamesById(Map<String, String> namesById) {
+    public void setNamesById(List<NameIdDTO> namesById) {
         this.namesById = namesById;
     }
 }
