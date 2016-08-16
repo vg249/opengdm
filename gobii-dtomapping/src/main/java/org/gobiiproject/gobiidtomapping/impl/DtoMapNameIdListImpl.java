@@ -43,6 +43,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     private RsMapSetDao rsMapSetDao = null;
 
     @Autowired
+    private RsOrganizationDao rsOrganizationDao = null;
+
+    @Autowired
     private RsMarkerGroupDao rsMarkerGroupDao = null;
 
     @Autowired
@@ -461,6 +464,35 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
     }
 
+    private NameIdListDTO getNameIdListForOrganizationById(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsOrganizationDao.getOrganizationNames();
+            List<NameIdDTO> listDTO = new ArrayList<>();
+
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("organization_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
+            }
+
+
+            returnVal.setNamesById(listDTO);
+
+
+        } catch (Exception e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error("Gobii Maping Error", e);
+        }
+
+        return returnVal;
+    }
+
     private NameIdListDTO getNameIdListForManifest(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -721,6 +753,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
                 case "project":
                     returnVal = getNameIdListForProjectNameByContact(nameIdListDTO);
+                    break;
+
+                case "organization":
+                    returnVal = getNameIdListForOrganizationById(nameIdListDTO);
                     break;
 
                 case "projectnames":

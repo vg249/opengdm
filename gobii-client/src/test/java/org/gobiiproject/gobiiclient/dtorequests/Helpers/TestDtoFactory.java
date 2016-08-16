@@ -25,14 +25,14 @@ public class TestDtoFactory {
         return returnVal;
     }
 
-    public static EntityParamValues makeConstrainedEntityParams(List<String> propNames,
+    public static EntityParamValues makeConstrainedEntityParams(List<NameIdDTO> propNames,
                                                                 Integer nameStem) {
 
         EntityParamValues returnVal = new EntityParamValues();
 
-        for (String currentPropName : propNames) {
+        for (NameIdDTO currentPropName : propNames) {
 
-            returnVal.add(currentPropName, "fooval " + (nameStem++));
+            returnVal.add(currentPropName.getName(), "fooval " + (nameStem++));
         }
 
         return returnVal;
