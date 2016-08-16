@@ -199,7 +199,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
             ConfigSettings configSettings = new ConfigSettings();
 
             String instructionFileFqpn = configSettings
-                    .getCurrentCropConfig()
+                    .getCropConfig(extractorInstructionFilesDTO.getGobiiCropType())
                     .getExtractorInstructionFilesDirectory()
                     + extractorInstructionFilesDTO.getInstructionFileName()
                     + INSTRUCTION_FILE_EXT;

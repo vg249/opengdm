@@ -200,7 +200,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             ConfigSettings configSettings = new ConfigSettings();
 
             String instructionFileFqpn = configSettings
-                    .getCurrentCropConfig()
+                    .getCropConfig(loaderInstructionFilesDTO.getGobiiCropType())
                     .getLoaderInstructionFilesDirectory()
                     + loaderInstructionFilesDTO.getInstructionFileName()
                     + INSTRUCTION_FILE_EXT;
