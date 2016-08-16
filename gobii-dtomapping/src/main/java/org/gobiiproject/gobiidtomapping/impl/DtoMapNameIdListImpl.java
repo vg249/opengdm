@@ -44,6 +44,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     private RsMarkerGroupDao rsMarkerGroupDao = null;
 
     @Autowired
+    private RsOrganizationDao rsOrganizationDao = null;
+
+    @Autowired
     private RsCvDao rsCvDao = null;
 
     @Autowired
@@ -574,6 +577,32 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     }
 
+    private NameIdListDTO getNameIdListForOrganization(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsOrganizationDao.getOrganizationNames();
+
+            Map<String, String> cvGroupTermList = new HashMap<>();
+
+            while (resultSet.next()) {
+                Integer cvId = resultSet.getInt("organization_id");
+                String name = resultSet.getString("name");
+                cvGroupTermList.put(cvId.toString(), name);
+            }
+
+            returnVal.setNamesById(cvGroupTermList);
+        } catch (Exception e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error("Gobii Maping Error", e);
+        }
+
+        return returnVal;
+
+    }
+
     private NameIdListDTO getNameIdListForCvGroupTerms(NameIdListDTO nameIdListDTO) {
 
         NameIdListDTO returnVal = new NameIdListDTO();
@@ -671,6 +700,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
                 case "cvnames":
                     returnVal = getNameIdListForCv(nameIdListDTO);
+                    break;
+
+                case "organization":
+                    returnVal = getNameIdListForOrganization(nameIdListDTO);
                     break;
 
                 case "project":
