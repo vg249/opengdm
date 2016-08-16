@@ -37,6 +37,7 @@ public class DtoRequestOrganizationTest {
         OrganizationDTO OrganizationDTOResponse = dtoRequestOrganization.process(OrganizationDTORequest);
 
         Assert.assertNotEquals(null, OrganizationDTOResponse);
+        Assert.assertNotNull(OrganizationDTOResponse.getName());
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(OrganizationDTOResponse));
     }
 
