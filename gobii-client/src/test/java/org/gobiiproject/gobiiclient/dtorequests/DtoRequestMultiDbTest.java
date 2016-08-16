@@ -15,7 +15,7 @@ import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -44,14 +44,14 @@ public class DtoRequestMultiDbTest {
         ConfigSettings configSettings = new ConfigSettings(TestValues.PROP_FILE_FQPN); // we're deliberately going to the source instead of using ClientContext
 
 
-        List<GobiiCropType> activeCropTypes = configSettings
+        List<String> activeCropTypes = configSettings
                 .getActiveCropConfigs()
                 .stream()
                 .map(CropConfig::getGobiiCropType)
                 .collect(Collectors.toList());
 
         PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
-        for (GobiiCropType currentCropType : activeCropTypes) {
+        for (String currentCropType : activeCropTypes) {
 
             // should cause server to assign the correct datasource
             Assert.assertTrue(Authenticator.authenticate(currentCropType));
@@ -88,14 +88,14 @@ public class DtoRequestMultiDbTest {
         ConfigSettings configSettings = new ConfigSettings(TestValues.PROP_FILE_FQPN); // we're deliberately going to the source instead of using ClientContext
 
 
-        List<GobiiCropType> activeCropTypes = configSettings
+        List<String> activeCropTypes = configSettings
                 .getActiveCropConfigs()
                 .stream()
                 .map(CropConfig::getGobiiCropType)
                 .collect(Collectors.toList());
 
 
-        for (GobiiCropType currentCropType : activeCropTypes) {
+        for (String currentCropType : activeCropTypes) {
 
             // should cause server to assign the correct datasource
             Assert.assertTrue(Authenticator.authenticate(currentCropType));

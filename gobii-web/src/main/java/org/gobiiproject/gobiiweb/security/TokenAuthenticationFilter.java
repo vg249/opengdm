@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderAuth;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +87,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
                     httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, tokenInfo.getToken());
 
-                    GobiiCropType gobiiCropType = CropRequestAnalyzer.getGobiiCropType(httpRequest);
+                    String gobiiCropType = CropRequestAnalyzer.getGobiiCropType(httpRequest);
                     DtoHeaderAuth dtoHeaderAuth = new DtoHeaderAuth();
                     dtoHeaderAuth.setToken(tokenInfo.getToken());
                     dtoHeaderAuth.setGobiiCropType(gobiiCropType);

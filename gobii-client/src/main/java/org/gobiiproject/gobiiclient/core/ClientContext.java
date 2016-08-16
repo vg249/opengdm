@@ -6,7 +6,6 @@ import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
@@ -197,16 +196,16 @@ public final class ClientContext {
 
     String fileSystemRoot;
 
-    private Map<GobiiCropType, ServerConfig> serverConfigs = new HashMap<>();
+    private Map<String, ServerConfig> serverConfigs = new HashMap<>();
 
 
     private ProcessMode processMode = ProcessMode.Asynch;
     private String userToken = null;
 
-    GobiiCropType currentGobiiCropType = GobiiCropType.TEST;
+    String currentGobiiCropType;
 
-    GobiiCropType defaultGobiiCropType = GobiiCropType.TEST;
-    List<GobiiCropType> gobiiCropTypes = new ArrayList<>();
+    String defaultGobiiCropType;
+    List<String> gobiiCropTypes = new ArrayList<>();
 
 
     public String getCurrentCropDomain() {
@@ -243,20 +242,20 @@ public final class ClientContext {
     }
 
 
-    public List<GobiiCropType> getCropTypeTypes() {
+    public List<String> getCropTypeTypes() {
         return gobiiCropTypes;
     }
 
 
-    public GobiiCropType getCurrentClientCropType() {
+    public String getCurrentClientCropType() {
         return this.currentGobiiCropType;
     }
 
-    public void setCurrentClientCrop(GobiiCropType currentClientCrop) {
+    public void setCurrentClientCrop(String currentClientCrop) {
         this.currentGobiiCropType = currentClientCrop;
     }
 
-    public GobiiCropType getDefaultCropType() {
+    public String getDefaultCropType() {
         return this.defaultGobiiCropType;
     }
 

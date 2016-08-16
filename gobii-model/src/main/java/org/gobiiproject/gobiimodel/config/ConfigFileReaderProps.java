@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiimodel.config;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 
@@ -137,14 +137,7 @@ public class ConfigFileReaderProps {
 
         String candidateCropName = this.getPropValue(PROP_NAME_WEB_SVR_DEFAULT_CROP).toUpperCase();
         if (!LineUtils.isNullOrEmpty(candidateCropName)) {
-            if (0 == Arrays.asList(GobiiCropType.values())
-                    .stream()
-                    .filter(c -> c.toString().toUpperCase().equals(candidateCropName))
-                    .count()) {
-                throw new Exception("The configuration file specifies an instance type that does not correspond to a crop type: " + candidateCropName);
-            }
-
-            returnVal.setDefaultGobiiCropType(GobiiCropType.valueOf(candidateCropName));
+            returnVal.setDefaultGobiiCropType(candidateCropName);
             returnVal.setCurrentGobiiCropType(returnVal.getDefaultGobiiCropType());
         } else {
             throw new Exception("The configuration does not specify a default crop");
@@ -166,7 +159,7 @@ public class ConfigFileReaderProps {
 
 
         List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
-        Map<GobiiCropType, CropConfig> cropConfigs = new HashMap<>();
+        Map<String, CropConfig> cropConfigs = new HashMap<>();
         for (int idx = 0; idx < cropPrefixes.length; idx++) {
 
             currentPrefix = cropPrefixes[idx];
@@ -177,14 +170,7 @@ public class ConfigFileReaderProps {
                     .toUpperCase();
 
 
-            if (0 == Arrays.asList(GobiiCropType.values())
-                    .stream()
-                    .filter(c -> c.toString().toUpperCase().equals(cropTypeFromProp.toUpperCase()))
-                    .count()) {
-                throw new Exception("The configuration file specifies a non-existent crop type: " + cropTypeFromProp);
-            }
-
-            GobiiCropType currentGobiiCropType = GobiiCropType.valueOf(cropTypeFromProp.toUpperCase());
+            String currentGobiiCropType = cropTypeFromProp.toUpperCase();
 
 
             String serviceDomain = this.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_DOMAIN);

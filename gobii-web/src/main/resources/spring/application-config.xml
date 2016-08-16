@@ -198,7 +198,7 @@
           class="org.gobiiproject.gobiimodel.config.CropConfig"
           factory-bean="configSettings"
           factory-method="getCropConfig">
-        <constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).RICE}"/>
+        <constructor-arg value="RICE"/>
     </bean>
 
     <bean id="cropDbConfigRice"
@@ -222,7 +222,7 @@
           class="org.gobiiproject.gobiimodel.config.CropConfig"
           factory-bean="configSettings"
           factory-method="getCropConfig">
-        <constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).WHEAT}"/>
+        <constructor-arg value="WHEAT"/>
     </bean>
 
     <bean id="cropDbConfigWheat"
@@ -245,7 +245,7 @@
           class="org.gobiiproject.gobiimodel.config.CropConfig"
           factory-bean="configSettings"
           factory-method="getCropConfig">
-        <constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).MAIZE}"/>
+        <constructor-arg value="MAIZE"/>
     </bean>
 
     <bean id="cropDbConfigMaize"
@@ -268,7 +268,7 @@
           class="org.gobiiproject.gobiimodel.config.CropConfig"
           factory-bean="configSettings"
           factory-method="getCropConfig">
-        <constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).DEV}"/>
+        <constructor-arg value="DEV"/>
     </bean>
 
     <bean id="cropDbConfigDev"
@@ -291,7 +291,7 @@
           class="org.gobiiproject.gobiimodel.config.CropConfig"
           factory-bean="configSettings"
           factory-method="getCropConfig">
-        <constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).TEST}"/>
+        <constructor-arg value="TEST"/>
     </bean>
 
     <bean id="cropDbConfigTest"
@@ -315,7 +315,7 @@
           class="org.gobiiproject.gobiimodel.config.CropConfig"
           factory-bean="configSettings"
           factory-method="getCropConfig">
-        <constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).SORGHUM}"/>
+        <constructor-arg value="SORGHUM"/>
     </bean>
 
     <bean id="cropDbConfigSorghum"
@@ -338,7 +338,7 @@
           class="org.gobiiproject.gobiimodel.config.CropConfig"
           factory-bean="configSettings"
           factory-method="getCropConfig">
-        <constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).CHICKPEA}"/>
+        <constructor-arg value="CHICKPEA"/>
     </bean>
 
     <bean id="cropDbConfigChickpea"
@@ -363,13 +363,13 @@
     <bean id="dataSourceMulti" class="org.gobiiproject.gobiiweb.DataSourceSelector">
         <property name="targetDataSources">
             <map key-type="java.lang.String">
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).DEV.toString()}" value-ref="dataSourceDev"/>
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).TEST.toString()}" value-ref="dataSourceTest"/>
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).RICE.toString()}" value-ref="dataSourceRice"/>
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).WHEAT.toString()}" value-ref="dataSourceWheat"/>
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).MAIZE.toString()}" value-ref="dataSourceMaize"/>
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).SORGHUM.toString()}" value-ref="dataSourceSorghum"/>
-                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiCropType).CHICKPEA.toString()}" value-ref="dataSourceChickpea"/>
+                <entry key="DEV" value-ref="dataSourceDev"/>
+                <entry key="TEST" value-ref="dataSourceTest"/>
+                <entry key="RICE" value-ref="dataSourceRice"/>
+                <entry key="WHEAT" value-ref="dataSourceWheat"/>
+                <entry key="MAIZE" value-ref="dataSourceMaize"/>
+                <entry key="SORGHUM" value-ref="dataSourceSorghum"/>
+                <entry key="CHICKPEA" value-ref="dataSourceChickpea"/>
             </map>
         </property>
         <!-- <property name="defaultTargetDataSource" ref="concreteDataSourceOne"/> -->

@@ -12,7 +12,6 @@ import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
@@ -130,7 +129,7 @@ public class ConfigCheck {
 
                                 ConfigSettings configSettings = new ConfigSettings(propertiesFileFqpn);
 
-                                GobiiCropType defaultCropType = configSettings.getDefaultGobiiCropType();
+                                String defaultCropType = configSettings.getDefaultGobiiCropType();
                                 configSettings.setCurrentGobiiCropType(defaultCropType);
 
                                 String configServerUrl = "http://"
@@ -277,12 +276,12 @@ public class ConfigCheck {
 
         // The logging framework emits debugging messages before it knows not to emit them.
         // Until we solve this problem, we we'll visually set those messages aside
-        List<GobiiCropType> gobiiCropTypes = clientContext.getInstance(null, false).getCropTypeTypes();
+        List<String> gobiiCropTypes = clientContext.getInstance(null, false).getCropTypeTypes();
         ConfigCheck.printSeparator();
 
         ConfigCheck.printField("Default crop", ClientContext.getInstance(null, false).getDefaultCropType().toString());
 
-        for (GobiiCropType currentCropType : gobiiCropTypes) {
+        for (String currentCropType : gobiiCropTypes) {
 
             ClientContext.getInstance(null, false).setCurrentClientCrop(currentCropType);
 

@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
@@ -21,7 +21,7 @@ public class CropConfig {
 
 
     @Element
-    private GobiiCropType gobiiCropType;
+    private String gobiiCropType;
 
     @Element
     private String serviceDomain;
@@ -56,7 +56,7 @@ public class CropConfig {
 
     public CropConfig() {}
 
-    public CropConfig(GobiiCropType gobiiCropType,
+    public CropConfig(String gobiiCropType,
                       String serviceDomain,
                       String serviceAppRoot,
                       Integer servicePort,
@@ -123,11 +123,11 @@ public class CropConfig {
         this.serviceAppRoot = serviceAppRoot;
     }
 
-    public GobiiCropType getGobiiCropType() {
+    public String getGobiiCropType() {
         return gobiiCropType;
     }
 
-    public void setGobiiCropType(GobiiCropType gobiiCropType) {
+    public void setGobiiCropType(String gobiiCropType) {
         this.gobiiCropType = gobiiCropType;
     }
 

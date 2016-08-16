@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
@@ -23,12 +22,12 @@ class ConfigValues {
     @ElementList
     List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
 
-    private Map<GobiiCropType, CropConfig> cropConfigs = new HashMap<>();
+    private Map<String, CropConfig> cropConfigs = new HashMap<>();
 
-    private GobiiCropType currentGobiiCropType = GobiiCropType.TEST;
+    private String currentGobiiCropType;
 
     @Element
-    private GobiiCropType defaultGobiiCropType = GobiiCropType.TEST; // default crop
+    private String defaultGobiiCropType;
 
     @Element
     private String emailSvrType;
@@ -55,7 +54,7 @@ class ConfigValues {
     private String fileSystemRoot;
 
 
-    public CropConfig getCropConfig(GobiiCropType gobiiCropType) {
+    public CropConfig getCropConfig(String gobiiCropType) {
 
         CropConfig returnVal = null;
         returnVal = getCropConfigs().get(gobiiCropType);
@@ -76,21 +75,21 @@ class ConfigValues {
     }
 
 
-    public void setCurrentGobiiCropType(GobiiCropType currentGobiiCropType) {
+    public void setCurrentGobiiCropType(String currentGobiiCropType) {
         this.currentGobiiCropType = currentGobiiCropType;
 
     }
 
-    public GobiiCropType getCurrentGobiiCropType() {
+    public String getCurrentGobiiCropType() {
         return currentGobiiCropType;
     }
 
-    public GobiiCropType getDefaultGobiiCropType() {
+    public String getDefaultGobiiCropType() {
         return defaultGobiiCropType;
     }
 
 
-    public void setDefaultGobiiCropType(GobiiCropType defaultGobiiCropType) {
+    public void setDefaultGobiiCropType(String defaultGobiiCropType) {
         this.defaultGobiiCropType = defaultGobiiCropType;
     }
 
@@ -102,7 +101,7 @@ class ConfigValues {
         this.cropConfigsToSerialize = cropConfigsToSerialize;
     }
 
-    public Map<GobiiCropType, CropConfig> getCropConfigs() {
+    public Map<String, CropConfig> getCropConfigs() {
 
         if (null == cropConfigs) {
 
@@ -119,7 +118,7 @@ class ConfigValues {
         return cropConfigs;
     }
 
-    public void setCropConfigs(Map<GobiiCropType, CropConfig> cropConfigs) {
+    public void setCropConfigs(Map<String, CropConfig> cropConfigs) {
         this.cropConfigs = cropConfigs;
     }
 

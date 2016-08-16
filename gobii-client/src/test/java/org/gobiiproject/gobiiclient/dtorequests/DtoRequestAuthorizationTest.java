@@ -14,7 +14,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderAuth;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
@@ -45,7 +45,7 @@ public class DtoRequestAuthorizationTest {
     }
 
 
-    private HttpPost makePostRequest(ServiceRequestId serviceRequestId, GobiiCropType gobiiCropType) throws Exception {
+    private HttpPost makePostRequest(ServiceRequestId serviceRequestId, String gobiiCropType) throws Exception {
 
         // Aside from crop domain, port, and type, we don't want the tests relying
         // on ClientContext. Authentication will fill the clientContext with config data,
@@ -53,7 +53,7 @@ public class DtoRequestAuthorizationTest {
         Assert.assertTrue(Authenticator.authenticate());
         String currentCropDomain = ClientContext.getInstance(null, false).getCurrentCropDomain();
         Integer currentCropPort = ClientContext.getInstance(null, false).getCurrentCropPort();
-        GobiiCropType currentGobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
+        String currentGobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
         String url = Urls.getRequestUrl(ControllerType.LOADER, ServiceRequestId.URL_AUTH);
         Assert.assertTrue(Authenticator.deAuthenticate());
 
@@ -136,7 +136,7 @@ public class DtoRequestAuthorizationTest {
     @Test
     public void testGoodCredentailsWithToken() throws Exception {
 
-        GobiiCropType gobiiCropTypeSent = GobiiCropType.TEST;
+        String gobiiCropTypeSent = "TEST";
         HttpPost postRequestForToken = makePostRequest(ServiceRequestId.URL_AUTH,gobiiCropTypeSent );
 
         // add good credentials
@@ -192,7 +192,7 @@ public class DtoRequestAuthorizationTest {
                 tokenFromBodyResponse.equals(tokenHeader.getValue()));
 
         Assert.assertNotNull("Crop type was not returned", dtoHeaderAuth.getGobiiCropType());
-        GobiiCropType gobiiCropTypeReceived = dtoHeaderAuth.getGobiiCropType();
+        String gobiiCropTypeReceived = dtoHeaderAuth.getGobiiCropType();
         Assert.assertTrue("Crop type in auth header does not match the one that was sent", gobiiCropTypeReceived.equals(gobiiCropTypeSent));
 
         // now test we can do a request with the token we got
