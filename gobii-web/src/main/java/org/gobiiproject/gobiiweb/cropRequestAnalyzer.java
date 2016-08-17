@@ -43,24 +43,15 @@ public class CropRequestAnalyzer {
         String returnVal = null;
 
         if (null != httpRequest) {
-            String gobiiCrop = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP);
-            if (!LineUtils.isNullOrEmpty(gobiiCrop)) {
 
-                if (CONFIG_SETTINGS.getActiveCropTypes().contains(gobiiCrop)) {
+            returnVal = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP);
 
-                    returnVal = gobiiCrop;
+            if (LineUtils.isNullOrEmpty(returnVal)) {
 
-                } else {
-                    LOGGER.error("The value in header "
-                            + GobiiHttpHeaderNames.HEADER_GOBII_CROP
-                            + ": "
-                            + gobiiCrop
-                            + " does not correspond to a known crop type");
-                }
-
-            } else {
-                LOGGER.error("Request did not include the header " + GobiiHttpHeaderNames.HEADER_GOBII_CROP);
+                LOGGER.error("Request did not include the header "
+                        + GobiiHttpHeaderNames.HEADER_GOBII_CROP);
             }
+
         } else {
             LOGGER.error("Unable to retreive servlet request for crop type analysis from header");
         }
