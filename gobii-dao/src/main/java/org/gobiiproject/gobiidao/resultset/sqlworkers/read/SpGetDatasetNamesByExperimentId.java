@@ -30,7 +30,7 @@ public class SpGetDatasetNamesByExperimentId implements Work {
 
         String sql = "select dataset_id, name\n" +
                 "from dataset\n" +
-                "where experiment_id=? ";
+                "where experiment_id=? order by lower(name)";
 
         PreparedStatement preparedStatement = dbConnection.prepareCall(sql);
         preparedStatement.setInt(1, (Integer) parameters.get("experimentId"));
