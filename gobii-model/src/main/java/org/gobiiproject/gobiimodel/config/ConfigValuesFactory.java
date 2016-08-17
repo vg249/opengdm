@@ -5,6 +5,7 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.jndi.JndiTemplate;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 
 
@@ -12,6 +13,14 @@ import java.util.List;
  * Created by Phil on 5/5/2016.
  */
 class ConfigValuesFactory {
+
+    private static void renamePropsFile(String fqpn) {
+        File propsFile = new File(fqpn);
+        if(propsFile.exists()) {
+            File newPropsFile = new File(fqpn + ".unused");
+            propsFile.renameTo(newPropsFile);
+        }
+    }
 
     public static ConfigValues make(String configFileWebPath) throws Exception {
 
@@ -37,6 +46,12 @@ class ConfigValuesFactory {
             String xmlFileEquivalent = fileNameStem + ".xml";
             File xmlFile = new File(xmlFileEquivalent);
             if (xmlFile.exists()) {
+
+                //Since we've got  an XML file, that will now be used going forward
+                //mark the properties file unused
+
+                renamePropsFile(fqpn);
+                // now read our xml
                 returnVal = configFileReaderXml.read(xmlFileEquivalent);
 
             } else {
@@ -56,6 +71,7 @@ class ConfigValuesFactory {
             }
         } else {
 
+            renamePropsFile(fqpn);
             returnVal = configFileReaderXml.read(fqpn);
 
         } // if else the file we got has ".properties" as extension
