@@ -1,7 +1,9 @@
 package org.gobiiproject.gobiimodel.config;
 
+import com.sun.media.jfxmedia.logging.Logger;
 import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.jndi.JndiTemplate;
 
 import java.io.File;
@@ -13,6 +15,9 @@ import java.util.List;
  * Created by Phil on 5/5/2016.
  */
 class ConfigValuesFactory {
+
+    private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ConfigValuesFactory.class);
+
 
     private static void renamePropsFile(String fqpn) {
         File propsFile = new File(fqpn);
@@ -68,7 +73,11 @@ class ConfigValuesFactory {
                     throw (new Exception("File does not exist: " + fqpn));
                 }
 
+
             }
+
+            LOGGER.error("JNDI specifies the configuration file as " + fqpn + "; this file has been re-written to " + xmlFileEquivalent);
+
         } else {
 
             renamePropsFile(fqpn);
