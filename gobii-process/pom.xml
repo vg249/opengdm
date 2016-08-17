@@ -134,7 +134,7 @@
                     <!-- MainClass in mainfest make a executable jar -->
                     <archive>
                         <manifest>
-                            <mainClass>org.gobiiproject.gobiiprocess.ConfigCheck</mainClass>
+                            <mainClass>org.gobiiproject.gobiiprocess.web.ConfigCheck</mainClass>
                         </manifest>
                     </archive>
 
