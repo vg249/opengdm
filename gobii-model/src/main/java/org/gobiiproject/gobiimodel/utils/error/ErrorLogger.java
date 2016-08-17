@@ -1,11 +1,15 @@
 package org.gobiiproject.gobiimodel.utils.error;
 
+import ch.qos.logback.classic.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
+
+import static ch.qos.logback.classic.Level.ERROR;
+import static ch.qos.logback.classic.Level.WARN;
 
 /**
  * Horribly simplistic error logger.
@@ -21,12 +25,37 @@ public class ErrorLogger {
 	public static Set<Error> errors = new HashSet();
 
 	/**
+	 * Assuming Logback under slf4j, sets the log level to the logback item. Otherwise this will burn.
+	 * @param level Level object from Logback
+	 */
+	public static void setLogLevel(Level level) {
+		ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+		root.setLevel(level);
+	}
+
+	/**
+	 * Sets Root level logging level for Logback.
+	 * If string is not a valid logging level, sets logging level to 'ERROR' only.
+	 * @param level Level of logging to set to. One of {ERROR, INFO, TRACE, DEBUG, WARN,ALL,OFF}
+	 * @return true if log level is valid, else false.
+	 */
+public static boolean setLogLevel(String level){
+		Level logLevel=null;
+		logLevel=Level.toLevel(level,logLevel);//New log level, or null
+		if(logLevel==null){
+			return false;
+		}
+		setLogLevel(logLevel);//Ignoring the param just makes it 'debug', which is suboptimal
+		return true;
+	}
+
+	/**
 	 * Logs an error that has occurred in the process.
 	 * @param e "Error" to be logged
 	 */
 	public static void logError(Error e){
 		errors.add(e);
-		log.error("Error in {}: {}",e.name,e.reason);
+		log(Level.ERROR,e);
 		if(e.file!=""){
 			logErrorFile(new File(e.file));
 		}
@@ -58,35 +87,45 @@ public class ErrorLogger {
 
 		}
 	}
-
 	/**
 	 * Logs an error through ErrorLogger, as well as notifying ErrorLogger that an important error
 	 * has occurred (see {@link ErrorLogger#success success})
 	 * @param name Name of the component being logged
 	 * @param reason Reason given for error
 	 * @param file File containing additional error details (if exists) Nullable
-	 * @throws InvalidErrorException
 	 */
-	public static void logError(String name, String reason, String file) throws InvalidErrorException{
-		if(name==null || reason==null)throw new InvalidErrorException();
+	public static void logError(String name, String reason, String file){
 		logError(new Error(name,reason,file));
 	}
 
-	public static void logWarning(String name, String reason, String file) throws InvalidErrorException{
-		if(name==null || reason==null)throw new InvalidErrorException();
+	public static void logWarning(String name, String reason){
+		log(Level.WARN,new Error(name,reason));
 	}
-	public static void logDebug(String name, String reason, String file) throws InvalidErrorException{
-		if(name==null || reason==null)throw new InvalidErrorException();
+	private static void log(Level l, Error e){
+		if(l.equals(Level.ERROR))
+			log.error("{}: {}", e.name, e.reason);
+		else if(l.equals(Level.WARN))
+			log.warn("{}: {}", e.name, e.reason);
+		else if(l.equals(Level.DEBUG))
+			log.debug("{}: {}", e.name, e.reason);
+		else if(l.equals(Level.INFO))
+			log.info("{}: {}", e.name, e.reason);
+		else if(l.equals(Level.TRACE))
+			log.trace("{}: {}", e.name, e.reason);
+		else
+			log.error("Invalid log level",new Throwable());
 	}
 
-	public static void logInfo(String name, String reason, String file) throws InvalidErrorException{
-
+	public static void logDebug(String name, String reason){
+		log(Level.DEBUG,new Error(name,reason));
+	}
+	public static void logInfo(String name, String reason){
+		log(Level.INFO,new Error(name,reason));
 	}
 
-	public static void logTrace(String name, String reason, String file) throws InvalidErrorException{
-
+	public static void logTrace(String name, String reason){
+		log(Level.TRACE,new Error(name,reason));
 	}
-
 
 
 	/**
@@ -129,8 +168,10 @@ public class ErrorLogger {
 		this.reason=reason;
 		this.file=file;
 	}
+	Error(String name, String reason){
+		this(name,reason,null);
+	}
 	public String toString(){
 		return name+": "+reason+(file!=null?"\nAn log for this error may be available at "+file:"");
 	}
 }
-class InvalidErrorException extends Exception{}
