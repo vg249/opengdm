@@ -10,6 +10,6 @@ public class TestValues {
     public static String SSH_OVERRIDE_HOST = "localhost";
     public static Integer SSH_OVERRIDE_PORT = 8080;
     public static boolean TEST_SSH = false;
-    public static String PROP_FILE_FQPN = "E:\\gobii\\config\\gobii-web.properties";
+    public static String PROP_FILE_FQPN = "C:\\gobii-config\\gobii-web.properties";
     
 }
