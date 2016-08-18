@@ -1,8 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
@@ -15,7 +13,7 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
 public class Authenticator {
 
 
-    public static boolean authenticate(GobiiCropType gobiiCropType) throws Exception {
+    public static boolean authenticate(String gobiiCropType) throws Exception {
 
         // this method assumes we've already initialized the context with the server URL
         ClientContext.getInstance(null, false).setCurrentClientCrop(gobiiCropType);
@@ -51,7 +49,7 @@ public class Authenticator {
         // as if you were navigating to that path in a web browser
 
 
-        GobiiCropType gobiiCropTypeDefault = ClientContext.getInstance(initialConfigUrl, true).getDefaultCropType();
+        String gobiiCropTypeDefault = ClientContext.getInstance(initialConfigUrl, true).getDefaultCropType();
         return Authenticator.authenticate(gobiiCropTypeDefault);
     }
 

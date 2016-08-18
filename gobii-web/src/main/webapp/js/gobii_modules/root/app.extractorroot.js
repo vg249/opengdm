@@ -1,5 +1,5 @@
 ///<reference path="../../../../../../typings/index.d.ts"/>
-System.register(["@angular/core", "@angular/http", "../views/export-format.component", "../services/core/dto-request.service", "../services/core/authentication.service", "../views/contacts-list-box.component", "../views/project-list-box.component", "../views/experiment-list-box.component", "../views/dataset-checklist-box.component", "../model/extractor-instructions/data-set-extract", "../views/criteria-display.component", "../views/status-display-box.component", "../model/type-process", "../model/server-config", "../model/type-entity", "../views/crops-list-box.component", "../views/users-list-box.component", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-nameids", "../services/app/dto-request-item-serverconfigs", "../model/type-crop", "../model/type-entity-filter"], function(exports_1, context_1) {
+System.register(["@angular/core", "@angular/http", "../views/export-format.component", "../services/core/dto-request.service", "../services/core/authentication.service", "../views/contacts-list-box.component", "../views/project-list-box.component", "../views/experiment-list-box.component", "../views/dataset-checklist-box.component", "../model/extractor-instructions/data-set-extract", "../views/criteria-display.component", "../views/status-display-box.component", "../model/type-process", "../model/server-config", "../model/type-entity", "../views/crops-list-box.component", "../views/users-list-box.component", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-nameids", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -11,7 +11,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1, export_format_component_1, dto_request_service_1, authentication_service_1, contacts_list_box_component_1, project_list_box_component_1, experiment_list_box_component_1, dataset_checklist_box_component_1, data_set_extract_1, criteria_display_component_1, status_display_box_component_1, type_process_1, server_config_1, type_entity_1, crops_list_box_component_1, users_list_box_component_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_nameids_1, dto_request_item_serverconfigs_1, type_crop_1, EntityFilters;
+    var core_1, http_1, export_format_component_1, dto_request_service_1, authentication_service_1, contacts_list_box_component_1, project_list_box_component_1, experiment_list_box_component_1, dataset_checklist_box_component_1, data_set_extract_1, criteria_display_component_1, status_display_box_component_1, type_process_1, server_config_1, type_entity_1, crops_list_box_component_1, users_list_box_component_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_nameids_1, dto_request_item_serverconfigs_1, EntityFilters;
     var ExtractorRoot;
     return {
         setters:[
@@ -87,9 +87,6 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
             function (dto_request_item_serverconfigs_1_1) {
                 dto_request_item_serverconfigs_1 = dto_request_item_serverconfigs_1_1;
             },
-            function (type_crop_1_1) {
-                type_crop_1 = type_crop_1_1;
-            },
             function (EntityFilters_1) {
                 EntityFilters = EntityFilters_1;
             }],
@@ -126,7 +123,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                             scope$.selectedServerConfig =
                                 scope$.serverConfigList
                                     .filter(function (c) {
-                                    return c.crop === type_crop_1.GobiiCropType[serverCrop_1];
+                                    return c.crop === serverCrop_1;
                                 })[0];
                             scope$.messages.push("Connected to database: " + scope$.selectedServerConfig.crop);
                             scope$.initializeContactsForSumission();
@@ -299,7 +296,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                         + date.getMinutes()
                         + "_"
                         + date.getSeconds();
-                    var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName, type_process_1.ProcessType.CREATE, type_crop_1.GobiiCropType[this.selectedServerConfig.crop]);
+                    var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName, type_process_1.ProcessType.CREATE, this.selectedServerConfig.crop);
                     var extractorInstructionFilesDTOResponse = null;
                     var scope$ = this;
                     this._dtoRequestServiceExtractorFile.getResult(new dto_request_item_extractor_submission_1.DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))

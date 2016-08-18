@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public class TypedRestRequest<T extends DtoMetaData> {
 
 
         if( ClientContext.isInitialized() ) {
-            GobiiCropType gobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
+            String gobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
             dtoInstance.setGobiiCropType(gobiiCropType);
         }
 

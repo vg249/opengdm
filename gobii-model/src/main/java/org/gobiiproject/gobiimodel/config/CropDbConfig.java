@@ -1,13 +1,18 @@
 package org.gobiiproject.gobiimodel.config;
 
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  * Created by Phil on 5/18/2016.
  */
+@Root
 public class CropDbConfig {
 
-    CropDbConfig(GobiiDbType gobiiDbType,
+    public CropDbConfig() {}
+
+    public CropDbConfig(GobiiDbType gobiiDbType,
                  String host,
                  String dbName,
                  Integer port,
@@ -22,12 +27,28 @@ public class CropDbConfig {
         this.password = password;
     }
 
+
+    @Element
     private GobiiDbType gobiiDbType = null;
+
+    @Element
     private String host = null;
+
+    @Element
     private String dbName = null;
+
+    @Element
     private Integer port = null;
+
+    @Element
     private String userName = null;
+
+    @Element
     private String password = null;
+
+    public GobiiDbType getGobiiDbType() {
+        return gobiiDbType;
+    }
 
     public String getHost() {
         return host;

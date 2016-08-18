@@ -18,7 +18,7 @@ import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
@@ -308,7 +308,7 @@ public class DtoRequestDataSetTest {
 
         // set up authentication and so forth
         // you'll need to get the current from the instruction file
-        ClientContext.getInstance(null, false).setCurrentClientCrop(GobiiCropType.DEV);
+        ClientContext.getInstance(null, false).setCurrentClientCrop("DEV");
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
         // you'll do an if-then for succesfull login

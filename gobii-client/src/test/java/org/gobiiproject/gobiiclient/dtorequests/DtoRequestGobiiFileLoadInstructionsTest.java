@@ -16,7 +16,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstructio
 import org.gobiiproject.gobiimodel.types.DataSetOrientationType;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -62,7 +62,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         String instructionOneTableName = "foo_table";
         Integer instructionOneDataSetId = 112;
-        GobiiCropType gobiiCropTypeTargetOne = ClientContext.getInstance(null, false).getCurrentClientCropType();
+        String gobiiCropTypeTargetOne = ClientContext.getInstance(null, false).getCurrentClientCropType();
 
         GobiiLoaderInstruction gobiiLoaderInstructionOne = new GobiiLoaderInstruction();
         gobiiLoaderInstructionOne.setTable(instructionOneTableName);
