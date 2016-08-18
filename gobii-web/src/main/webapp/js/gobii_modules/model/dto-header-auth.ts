@@ -1,4 +1,3 @@
-import {GobiiCropType} from "../model/type-crop";
 
 export class DtoHeaderAuth {
 

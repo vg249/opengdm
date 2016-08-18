@@ -1,6 +1,5 @@
 import {Injectable} from "@angular/core";
 import {HttpValues} from "../../model/http-values";
-import {GobiiCropType} from "../../model/type-crop"
 import {Http} from "@angular/http";
 import {AuthenticationService} from "./authentication.service";
 import {DtoRequestItem} from "./dto-request-item";
@@ -21,7 +20,7 @@ export class DtoRequestService<T> {
         return 'a string';
     }
 
-    getGobiiCropType():GobiiCropType {
+    getGobiiCropType():string {
         return this._authenticationService.getGobiiCropType();
     }
     

@@ -25,7 +25,6 @@ import {GobiiExtractorInstruction} from "../model/extractor-instructions/gobii-e
 import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-item-extractor-submission";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
-import {GobiiCropType} from "../model/type-crop";
 import * as EntityFilters from "../model/type-entity-filter";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
@@ -182,13 +181,13 @@ export class ExtractorRoot {
                 if (serverConfigs && ( serverConfigs.length > 0 )) {
                     scope$.serverConfigList = serverConfigs;
 
-                    let serverCrop:GobiiCropType =
+                    let serverCrop:String =
                         this._dtoRequestServiceServerConfigs.getGobiiCropType();
 
                     scope$.selectedServerConfig =
                         scope$.serverConfigList
                             .filter(c => {
-                                    return c.crop === GobiiCropType[serverCrop];
+                                    return c.crop === serverCrop;
                                 }
                             )[0];
 
@@ -460,7 +459,7 @@ export class ExtractorRoot {
             new ExtractorInstructionFilesDTO(gobiiExtractorInstructions,
                 fileName,
                 ProcessType.CREATE,
-                GobiiCropType[this.selectedServerConfig.crop]);
+                this.selectedServerConfig.crop);
 
 
         let extractorInstructionFilesDTOResponse:ExtractorInstructionFilesDTO = null;

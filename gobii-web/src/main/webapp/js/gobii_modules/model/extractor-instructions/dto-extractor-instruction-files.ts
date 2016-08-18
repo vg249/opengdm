@@ -1,13 +1,12 @@
 import {ProcessType} from "../../model/type-process";
 import {GobiiExtractorInstruction} from "./gobii-extractor-instruction";
-import {GobiiCropType} from "../type-crop";
 
 export class ExtractorInstructionFilesDTO {
 
     constructor(private gobiiExtractorInstructions:GobiiExtractorInstruction[],
                 private instructionFileName:string,
                 private processType:ProcessType,
-                private gobiiCropType:GobiiCropType) {
+                private gobiiCropType:string) {
 
         this.gobiiExtractorInstructions = gobiiExtractorInstructions;
         this.instructionFileName = instructionFileName;
@@ -20,7 +19,7 @@ export class ExtractorInstructionFilesDTO {
         return this.processType;
     }
 
-    public getGobiiCropType():GobiiCropType {
+    public getGobiiCropType():string {
         return this.gobiiCropType;
     }
 
