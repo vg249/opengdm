@@ -9,6 +9,7 @@ import org.simpleframework.xml.ElementList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ class ConfigValues {
     @ElementList
     List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
 
-    private Map<String, CropConfig> cropConfigs = new HashMap<>();
+    private Map<String, CropConfig> cropConfigs = new LinkedHashMap<>();
 
     private String currentGobiiCropType;
 
@@ -102,12 +103,6 @@ class ConfigValues {
     }
 
     public Map<String, CropConfig> getCropConfigs() {
-
-        if (null == cropConfigs) {
-
-            cropConfigs = new HashMap<>();
-
-        }
 
         if (0 == cropConfigs.size()){
             for (CropConfig currentCropConfig : cropConfigsToSerialize) {
