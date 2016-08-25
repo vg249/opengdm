@@ -21,7 +21,7 @@ import static ch.qos.logback.classic.Level.WARN;
 
 
 public class ErrorLogger {
-	private static final Logger log = LoggerFactory.getLogger("Gobii Error Log");
+	private static final Logger log = LoggerFactory.getLogger("Error Log");
 	public static Set<Error> errors = new HashSet();
 
 	/**
@@ -56,10 +56,17 @@ public static boolean setLogLevel(String level){
 	public static void logError(Error e){
 		errors.add(e);
 		log(Level.ERROR,e);
-		if(e.file!=""){
+		if(e.file!=null){
 			logErrorFile(new File(e.file));
 		}
 	}
+
+	public static void logError(String name, String message, Throwable e){
+		Error err=new Error(name,message);
+		errors.add(err);
+		log.error(name+":"+message,e);
+	}
+
 
 	/**
 	 * Adds an entire file to the error stream
@@ -97,6 +104,9 @@ public static boolean setLogLevel(String level){
 	public static void logError(String name, String reason, String file){
 		logError(new Error(name,reason,file));
 	}
+	public static void logError(String name, String reason){
+		logError(new Error(name,reason,null));
+	}
 
 	public static void logWarning(String name, String reason){
 		log(Level.WARN,new Error(name,reason));
@@ -126,7 +136,6 @@ public static boolean setLogLevel(String level){
 	public static void logTrace(String name, String reason){
 		log(Level.TRACE,new Error(name,reason));
 	}
-
 
 	/**
 	 * Determine if the current process is 'successful'.

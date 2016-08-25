@@ -26,7 +26,6 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 //import com.sun.jna.Native;
 
 public class HelperFunctions {
-	private static Runtime runtime;
 	private static boolean showTempFiles=true;
 
 	/**
@@ -104,15 +103,7 @@ public class HelperFunctions {
 		return args;
 	}
 	
-	public static void processAllIFs(String filePath) throws IOException{
-		
-	}
-	public static boolean processIF(GobiiLoaderInstruction inst){
-		
-		
-		return true;
-	}
-	
+
 	
 	
 	
@@ -139,27 +130,10 @@ public class HelperFunctions {
 	
 /**
  * Helper method which executes a string as a command line argument, and waits for it to complete using Runtime.getRuntime.exec.
- * NOTE: Cannot do shell expansions, input or output file redirections.
- * Note: InterruptedExceptions cause failures.
- * Note: Prints stack trace to standard error
- * @param toExec
  * @return true if successful
  */
 	public static boolean tryExec(String toExec){
-		Process p;
-		try {
-			if(runtime==null)runtime=Runtime.getRuntime();
-			p=runtime.exec(toExec);
-			p.waitFor();
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-			return false;
-		}
-		if(p.exitValue()!=0){
-			System.out.println("Failed executing " + toExec);//TODO: Debug output
-			return false;
-		}
-		return true;
+		return tryExec(toExec,null,null);
 	}
 
 	
@@ -169,11 +143,6 @@ public class HelperFunctions {
 	
 	/**
 	 * Like TryExec, but tries an "External Function Call"
-	 * @param functionName
-	 * @param functionDescription
-	 * @param execString
-	 * @param outputFile
-	 * @param errorFile
 	 */
 	public static void tryFunc(ExternalFunctionCall efc,String outputFile,String errorFile){
 		boolean success=tryExec(efc.getCommand(),outputFile,errorFile);
@@ -193,18 +162,18 @@ public class HelperFunctions {
 	public static boolean tryExec(String execString,String outputFile, String errorFile, String inputFile){
         ProcessBuilder builder = new ProcessBuilder(execString.split(" "));
         if(outputFile!=null)builder.redirectOutput(new File(outputFile));
-        builder.redirectError(new File(errorFile));
+        if(errorFile!=null)builder.redirectError(new File(errorFile));
         if(inputFile!=null)builder.redirectInput(new File(inputFile));
         Process p;
 		try {
 			p = builder.start();
 		    p.waitFor();
 	} catch (Exception e) {
-			e.printStackTrace();
+			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exception in process",e);
 			return false;
 		}
 		if(p.exitValue()!=0){
-			System.out.println("Failed executing " + execString);//TODO: Debug Output
+			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exit code " + p.exitValue(),errorFile);
 			return false;
 		}
 		return true;
@@ -218,8 +187,7 @@ public class HelperFunctions {
 	 }
 	 else return destination+"/"+"digest."+instruction.getTable();
  }
- 
- public static String getPostgresConnectionString(CropConfig config){
+	public static String getPostgresConnectionString(CropConfig config){
 	 CropDbConfig crop=config.getCropDbConfig(GobiiDbType.POSTGRESQL);
 	 String ret = "postgresql://"
 	 		+ crop.getUserName()
@@ -233,70 +201,68 @@ public class HelperFunctions {
 	 		+ crop.getDbName();
 	 return ret;
  }
- 
- public static boolean sendEmail(String jobName, String fileLocation,boolean success,String errorLogLoc, ConfigSettings config, String recipientAddress){
-	 return sendEmail(jobName,fileLocation,success,errorLogLoc,config,recipientAddress,null);
- }
 
- public static boolean sendEmail(String jobName, String fileLocation,boolean success,String errorLogLoc, ConfigSettings config, String recipientAddress,String[] digestTempFiles){
-	  String host=config.getEmailSvrDomain();
-	 String port=config.getEmailServerPort().toString();
-	 config.getEmailSvrHashType();//ignore
-	 String password=config.getEmailSvrPassword();
-	 String protocol=config.getEmailSvrType().toLowerCase();
-	 String fromUser=config.getEmailSvrUser();
-	 String emailAddress=recipientAddress;
-	 String user=fromUser;
-	 try{
-		 sendEmail(jobName,fileLocation,success,errorLogLoc,host,port,emailAddress,fromUser,password,user,protocol,digestTempFiles);
-	 }catch(Exception e){
-		 e.printStackTrace();
-		return false; 
-	 }
-	 return true;
- }
- 
-/**
- * 
- * @param jobName
- * @param fileLocation
- * @param success
- * @param host smtp.cornell.edu
- * @param port 587
- * @param emailAddress
- * @param fromUser
- * @param password
- * @param username
- * @param protocol "smtp"
- * @throws Exception
- */
- private static void sendEmail(String jobName, String fileLocation,boolean success,String errorLogLoc, String host,String port, String emailAddress,String fromUser,String password,String username, String protocol,String[] digestTempFiles) throws Exception{
- 	if(emailAddress==null || emailAddress.equals(""))return;
-     Properties props = new Properties();
-     props.setProperty("mail.smtp.auth", "true");
+	public static boolean sendEmail(String jobName, String fileLocation,boolean success,String errorLogLoc, ConfigSettings config, String recipientAddress){
+		return sendEmail(jobName,fileLocation,success,errorLogLoc,config,recipientAddress,null);
+	}
+	public static boolean sendEmail(String jobName, String fileLocation,boolean success,String errorLogLoc, ConfigSettings config, String recipientAddress,String[] digestTempFiles){
+		String host=config.getEmailSvrDomain();
+		String port=config.getEmailServerPort().toString();
+		config.getEmailSvrHashType();//ignore
+		String password=config.getEmailSvrPassword();
+		String protocol=config.getEmailSvrType().toLowerCase();
+		String fromUser=config.getEmailSvrUser();
+		String emailAddress=recipientAddress;
+		String user=fromUser;
+		try{
+			sendEmail(jobName,fileLocation,success,errorLogLoc,host,port,emailAddress,fromUser,password,user,protocol,digestTempFiles);
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	/**
+	 *
+	 * @param jobName
+	 * @param fileLocation
+	 * @param success
+	 * @param host smtp.cornell.edu
+	 * @param port 587
+	 * @param emailAddress
+	 * @param fromUser
+	 * @param password
+	 * @param username
+	 * @param protocol "smtp"
+	 * @throws Exception
+	 */
+	private static void sendEmail(String jobName, String fileLocation,boolean success,String errorLogLoc, String host,String port, String emailAddress,String fromUser,String password,String username, String protocol,String[] digestTempFiles) throws Exception{
+		if(emailAddress==null || emailAddress.equals(""))return;
+		Properties props = new Properties();
+		props.setProperty("mail.smtp.auth", "true");
 		props.setProperty("mail.smtp.starttls.enable", "true");
 		props.setProperty("mail.smtp.starttls.required", "true");
-     props.setProperty("mail.transport.protocol", protocol);
-     props.setProperty("mail.smtp.host", host);
-     props.setProperty("mail.smtp.port", port);
-     props.setProperty("mail.host", host);
-     props.setProperty("mail.port", port);
-     props.setProperty("mail.user", username);
-     props.setProperty("mail.password", password);
-     
+		props.setProperty("mail.transport.protocol", protocol);
+		props.setProperty("mail.smtp.host", host);
+		props.setProperty("mail.smtp.port", port);
+		props.setProperty("mail.host", host);
+		props.setProperty("mail.port", port);
+		props.setProperty("mail.user", username);
+		props.setProperty("mail.password", password);
+
 		Session mailSession = Session.getInstance(props,
-				  new javax.mail.Authenticator() {
+				new javax.mail.Authenticator() {
 					protected PasswordAuthentication getPasswordAuthentication() {
 						return new PasswordAuthentication(username, password);
 					}
-				  });
-     Transport transport = mailSession.getTransport(protocol);
+			});
+		Transport transport = mailSession.getTransport(protocol);
 
-     MimeMessage message = new MimeMessage(mailSession);
-     message.setFrom(new InternetAddress(fromUser));
-     String subject=jobName+(success?" Completed Successfully":" Failed");
-	 message.setSubject(subject);
-	 String content=subject+"\n";
+		MimeMessage message = new MimeMessage(mailSession);
+		message.setFrom(new InternetAddress(fromUser));
+		String subject=jobName+(success?" Completed Successfully":" Failed");
+		message.setSubject(subject);
+		String content=subject+"\n";
 		if(success && fileLocation!=null)content+="Your file is available at "+fileLocation;
 		if(success && showTempFiles){
 			for(String file:digestTempFiles){
@@ -316,36 +282,33 @@ public class HelperFunctions {
 				}
 			}
 		}
-     message.setContent(content, "text/plain");
-     message.addRecipient(Message.RecipientType.TO,
-          new InternetAddress(emailAddress));
-     transport.connect(username,password);
-     transport.sendMessage(message,
-         message.getRecipients(Message.RecipientType.TO));
-     transport.close();
-   }
-
-
-
+		message.setContent(content, "text/plain");
+		message.addRecipient(Message.RecipientType.TO,
+				new InternetAddress(emailAddress));
+		transport.connect(username,password);
+		transport.sendMessage(message,
+				message.getRecipients(Message.RecipientType.TO));
+		transport.close();
+	}
 
 private static boolean checkFileExistance(String fileLocation) {
 	if(fileLocation==null)return false;
 	File f = new File(fileLocation);
 	return f.exists() && f.getTotalSpace()!=0;
 }
- 
- 
 
- /**
-  * Wizardry.
-  * Uses C Library to (On Unix systems) get the PID of the current process.
-  * @return Process ID
-  *
- public static int getPID(){
+
+
+	/**
+	 * Wizardry.
+	 * Uses C Library to (On Unix systems) get the PID of the current process.
+	 * @return Process ID
+	 *
+	public static int getPID(){
 	 return CLibrary.Instance.getpid();
  }
- private interface CLibrary extends Library{
-	 CLibrary Instance = (CLibrary) Native.loadLibrary("c",CLibrary.class);
-	 int getpid();
- }*/
+	private interface CLibrary extends Library{
+	CLibrary Instance = (CLibrary) Native.loadLibrary("c",CLibrary.class);
+	int getpid();
+	}*/
 }

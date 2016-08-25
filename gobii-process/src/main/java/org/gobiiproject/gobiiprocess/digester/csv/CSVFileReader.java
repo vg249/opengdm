@@ -4,6 +4,7 @@ import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,18 +23,14 @@ import java.util.*;
  */
 public class CSVFileReader {
 	private static final String NEWLINE = "\n";//jdl232 - Lets make this a constant, so if we do have to change it, we can.
-	private String fileLocation;
-	private File inFile;
 	private List<String> column_keys;
 	private Map<String, String> constant_values = new HashMap<String, String>();
-	private String outputSeparator = "\t";
 	private String tmpFileLocation = "E:\\GOBII\\temp_files";
 	private String tmpFileSeparator="\\";
 	private int maxSize = 0;
 	Map<String, String> file_column_constant;
 	Map<String, String> file_column_autoincrement;
 	int countMax;
-	int counter;
 	int startNo = 0; // starting number for auto increment; can be 1; waiting for confirmation
 	
 	public CSVFileReader(String tmpFileLocation, String tmpFileSeparator){
@@ -44,9 +41,7 @@ public class CSVFileReader {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, InterruptedException{
-		
 		parseInstructionFile("E:\\GOBII\\instruction_files\\sample1.json");
-		
 	}
 	
 	/*
@@ -57,7 +52,7 @@ public class CSVFileReader {
 			for(GobiiLoaderInstruction loaderInstruction:HelperFunctions.parseInstructionFile(filePath)){
 			reader.processCSV(loaderInstruction);
 			}
-			HelperFunctions.printDoneFile(filePath);
+			//'Done' file is an anacronism now
 		}
 	
 	/*
@@ -65,11 +60,8 @@ public class CSVFileReader {
 	 *	Returns a List of records.
 	 * 
 	 */
-	public boolean processCSV(GobiiLoaderInstruction loaderInstruction) throws IOException, InterruptedException{
-		boolean success=true;
-		Scanner lr = null;
-		String line = "";
-		List<String> tempFiles = new ArrayList<>();
+	public void processCSV(GobiiLoaderInstruction loaderInstruction) throws IOException, InterruptedException{
+	List<String> tempFiles = new ArrayList<>();
 		file_column_constant = new HashMap<String, String>();
 		file_column_autoincrement= new HashMap<String, String>();
 		try {
@@ -155,22 +147,15 @@ public class CSVFileReader {
 	         */
 	        delimiterString=delimiterString+"\\n";
 	        String commandStr = "paste -d"+delimiterString+""+fileListString;//+" > "+loaderInstruction.getFile().getDestination()+" 2>>/home/jdl232/err.log";
-	       success|=HelperFunctions.tryExec(commandStr, HelperFunctions.getDestinationFile(loaderInstruction),"err.log" );
+	       HelperFunctions.tryExec(commandStr, HelperFunctions.getDestinationFile(loaderInstruction),"err.log" );
 	        for(String filename:tempFiles){
 	        	HelperFunctions.tryExec("rm " + filename);
 	        }
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			success=false;
+			ErrorLogger.logError("CSVReader","Unexpected Missing File",e);
 		} catch (IOException e) {
-			e.printStackTrace();
-			success=false;
-		} finally {
-			if (lr != null) {
-				lr.close();
-			}
+			ErrorLogger.logError("CSVReader","Unexpected IO Error",e);
 		}
-		return success;
 	}
 	
 	/*
@@ -178,22 +163,24 @@ public class CSVFileReader {
 	 *	This method also writes the files into the temporary files;
 	 *	@vcc 
 	 */
-	public boolean listFilesFromFolder(File folder, FileWriter tmpFileWriter, GobiiFileColumn column, GobiiLoaderInstruction loaderInstruction, boolean first, String tmpFileName){
-		boolean success=true;
+	public void listFilesFromFolder(File folder, FileWriter tmpFileWriter, GobiiFileColumn column, GobiiLoaderInstruction loaderInstruction, boolean first, String tmpFileName){
+		if(folder==null){
+			ErrorLogger.logWarning("CSVFileReader","Read from null folder");
+			return;
+		}
 		for(File file : folder.listFiles()){
 			if(file.isDirectory()){
-				success&=listFilesFromFolder(file, tmpFileWriter, column, loaderInstruction, first, tmpFileName);
+				listFilesFromFolder(file, tmpFileWriter, column, loaderInstruction, first, tmpFileName);
 			}else{
 				try {
 					writeToTempFiles(file, tmpFileWriter, column, loaderInstruction, first, tmpFileName);
 				} catch (IOException e) {
-					success=false;
-					e.printStackTrace();
+					ErrorLogger.logError("CSVReader","Failure to write temp files",e);
 				}
 				first = false;
 			}
 		}
-		return success;
+		return;
 	}
 	
 	
@@ -281,22 +268,9 @@ public class CSVFileReader {
 			file_column_autoincrement.put(tmpFileName, column.getName());
 		break;
 		default:
-			System.err.println("No method for " + type);
+			ErrorLogger.logError("CSVReader","No method for " + type);
 			break;
 		}
 		lr.close();
-	}
-	
-	
-	public boolean setFile(String fileLocation) {
-		this.fileLocation = fileLocation;
-		inFile = new File(fileLocation);
-		if(!inFile.exists()){
-			return false;
-		}
-		if(!inFile.canRead()){
-			return false;
-		}
-		return false;
 	}
 }

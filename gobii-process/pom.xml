@@ -148,6 +148,46 @@
                             <goal>single</goal>
                         </goals>
                     </execution>
+
+                    <!--Digester Execution-->
+                    <execution>
+                        <configuration>
+                            <finalName>Digester</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.digester.GobiiFileReader</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-digester</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
+
+                    <!--Extractor Execution-->
+                    <execution>
+                        <configuration>
+                            <finalName>Extractor</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.extractor.GobiiExtractor</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-extractor</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
                 </executions>
             </plugin>
         </plugins>

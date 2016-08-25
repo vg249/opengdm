@@ -4,6 +4,7 @@ package org.gobiiproject.gobiiprocess.extractor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
@@ -92,16 +93,15 @@ public class GobiiExtractor {
 		
 		List<GobiiExtractorInstruction> list= parseExtractorInstructionFile(instructionFile);
 		if(list==null){
-			System.err.println("No instruction for file "+instructionFile);
-			success=false;
-			//return;
+			ErrorLogger.logError("Extractor","No instruction for file "+instructionFile);
+			return;
 		}
 		for(GobiiExtractorInstruction inst:list){
 			for(GobiiDataSetExtract extract:inst.getDataSetExtracts()){
 				String extractDir=extract.getExtractDestinationDirectory();
 				tryExec("rm -f "+extractDir+"*");
 				//TODO: Fix underlying permissions issues
-				tryExec("chmod -R 777 " +extractDir.substring(0, extractDir.lastIndexOf('/')));
+				//tryExec("chmod -R 777 " +extractDir.substring(0, extractDir.lastIndexOf('/')));
 				String markerFile=extractDir+"marker.file";
 				String sampleFile=extractDir+"sample.file";
 				String projectFile=extractDir+"project.file";
@@ -111,7 +111,7 @@ public class GobiiExtractor {
 					" -p "+projectFile+
 					" -d "+extract.getDataSetId();
 				String errorFile=getLogName(extract,cropConfig,crop,extract.getDataSetId());
-				System.out.println("Executing MDEs");
+				ErrorLogger.logInfo("Extractor","Executing MDEs");
 				tryExec(gobiiMDE, null, errorFile);
 				Integer dataSetId=extract.getDataSetId();
 
@@ -125,9 +125,10 @@ public class GobiiExtractor {
 				if(extract.getGobiiFileType()==GobiiFileType.HAPMAP)markerFast=true;
 				String ordering="samples-fast";
 				if(markerFast)ordering="markers-fast";
-				System.out.println("Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
-				success&=HelperFunctions.tryExec(hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile,null,errorFile);
-				System.out.println(success?"Success ":"Failure " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
+				ErrorLogger.logDebug("Extractor","HDF5 Ordering is "+ordering);
+				ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
+				HelperFunctions.tryExec(hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile,null,errorFile);
+				ErrorLogger.logDebug("Extractor",(success?"Success ":"Failure " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile));
 				
 				switch(extract.getGobiiFileType()){
 
@@ -136,14 +137,14 @@ public class GobiiExtractor {
 					String mapOutFile=extractDir+"DS"+dataSetId+".map";
 					lastErrorFile=errorFile;
 					if(new File(genoOutFile).exists() && new File(mapOutFile).exists()&&false){ //TODO: Remove when stable
-						HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success, errorFile, configuration, inst.getContactEmail());	
-						HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success, errorFile, configuration, inst.getContactEmail());
+						HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+						HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 					}
 					else{
-					success &=FlapjackTransformer.generateMapFile(markerFile, sampleFile, dataSetId, tempFolder, mapOutFile,errorFile);
-					HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success, errorFile, configuration, inst.getContactEmail());
-					success &=FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
-					HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success, errorFile, configuration, inst.getContactEmail());
+					FlapjackTransformer.generateMapFile(markerFile, sampleFile, dataSetId, tempFolder, mapOutFile,errorFile);
+					HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+					FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
+					HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 					}
 					break;
 				
@@ -160,17 +161,14 @@ public class GobiiExtractor {
 						//HapmapTransformer.generateFile(markerFile,sampleFile,projectFile,tempFolder,hapmapOutFile,errorFile);
 					  success&=HelperFunctions.tryExec(hapmapTransform, null, errorFile);
 					}catch(Exception e){
-						e.printStackTrace();
-						success=false;
+						ErrorLogger.logError("Extractor","Exception in HapMap creation",e);
 					}
-					HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success,errorFile,configuration,inst.getContactEmail());
+					HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
 					break;
 					
 					default:
-						System.err.println("Unknown Extract Type "+extract.getGobiiFileType());
-						System.out.println("Unknown Extract Type "+extract.getGobiiFileType());	
+						ErrorLogger.logError("Extractor","Unknown Extract Type "+extract.getGobiiFileType());
 						HelperFunctions.sendEmail(extract.getDataSetName()+" "+extract.getGobiiFileType()+" Extract",null,false,errorFile,configuration,inst.getContactEmail());
-
 				}
 				System.out.println("DataSet "+dataSetId+" Created");	
 				}			
@@ -184,7 +182,7 @@ public class GobiiExtractor {
 		try {
 			file = objectMapper.readValue(new FileInputStream(filename), GobiiExtractorInstruction[].class);
 		} catch (Exception e) {
-			e.printStackTrace();
+			ErrorLogger.logError("Extractor","ObjectMapper could not read instructions",e);
 		}
 		if(file==null)return null;
 		 return Arrays.asList(file);

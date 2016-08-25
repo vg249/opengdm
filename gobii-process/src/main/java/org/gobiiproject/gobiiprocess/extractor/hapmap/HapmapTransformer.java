@@ -67,7 +67,7 @@ public class HapmapTransformer {
 		String delimiterString = delimiter + "\\n";
 		String commandStr = "paste -d"+delimiterString+markerFile+addtlFilePath+fileListString;
 
-        success|=HelperFunctions.tryExec(commandStr, outFile,"err.log" );
+        success&=HelperFunctions.tryExec(commandStr, outFile,"err.log" );
 		//remove temp files
         HelperFunctions.tryExec("rm " + addtlFilePath);
         HelperFunctions.tryExec("rm " + parsedFilePath);

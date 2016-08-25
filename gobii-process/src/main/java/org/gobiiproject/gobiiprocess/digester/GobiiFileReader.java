@@ -16,6 +16,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.*;
+import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 
@@ -29,6 +30,7 @@ import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.parseInstructionFile;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
+import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
 
 /**
  * Base class for processing instruction files. Start of chain of control for Digester. Takes first argument as instruction file, or promts user.
@@ -107,11 +109,11 @@ public class GobiiFileReader {
 		}
 		
 		//Error logs go to a file based on crop (for human readability) and 
-		
+
+		ErrorLogger.logInfo("Digester","Beginning read of "+instructionFile);
 		List<GobiiLoaderInstruction> list= parseInstructionFile(instructionFile);
 		if(list==null || list.isEmpty()){
-			System.err.println("No instruction for file "+instructionFile);
-			success=false;
+			logError("Digester","No instruction for file "+instructionFile);
 			return;
 		}
 		GobiiLoaderInstruction zero=list.iterator().next();
@@ -130,27 +132,25 @@ public class GobiiFileReader {
 		String jobName = getJobName(crop,list);
 		String jobUser=zero.getContactEmail();
 		
-		System.out.println("Beginning List Processing");
+		ErrorLogger.logTrace("Digester","Beginning List Processing");
 		success=true;
 		for(GobiiLoaderInstruction inst:list){
 			if(inst==null){
-				System.err.println("Missing or malformed instruction in " + instructionFile );
+				logError("Digester","Missing or malformed instruction in " + instructionFile );
 				continue;
 			}
 			if(dataSetId==null){
 				dataSetId=inst.getDataSetId();//Pick it up from relevant instruction
 			}
 			String destinationFile=HelperFunctions.getDestinationFile(inst);//Intermediate file
-			//Bah, I don't care if this fails, not adding to 'success'
-			HelperFunctions.tryExec("chmod -R 777 " +destinationFile.substring(0, destinationFile.lastIndexOf("/")));//TODO: This is here for permissions issues - also lastindexof is wrong
 			GobiiFile file = inst.getGobiiFile();
 			if(file==null){
-				System.err.println("Instruction " + instructionFile + " Table " + inst.getTable() + " has bad 'file' column" );
+				logError("Digester","Instruction " + instructionFile + " Table " + inst.getTable() + " has bad 'file' column" );
 				continue;
 			}
 			GobiiFileType instructionFileType = file.getGobiiFileType();
 			if(instructionFileType==null){
-				System.err.println("Instruction " + instructionFile + " Table " + inst.getTable() + " has missing filetype" );
+				logError("Digester","Instruction " + instructionFile + " Table " + inst.getTable() + " has missing filetype" );
 				continue;
 			}
 			
@@ -174,8 +174,7 @@ public class GobiiFileReader {
 				try {
 					new LoaderInstructionsDAOImpl().writeInstructions(tmpFile, justTheOne );
 				} catch (GobiiDaoException e) {
-					e.printStackTrace();
-					success=false;
+					logError("GobiiDAO","Instruction Writing Error",e);
 				}
 				success&=HelperFunctions.tryExec(loaderScriptPath+"etc/parse_hmp.pl"+" "+tmpFile, null, errorPath);
 				break;
@@ -193,7 +192,7 @@ public class GobiiFileReader {
 				}
 			}
 			if(dst!=null && inst.getTable().equals(VARIANT_CALL_TABNAME)){
-				errorPath=getLogName(inst, cropConfig, crop, "Matrix_Processing");
+				errorPath=getLogName(inst, cropConfig, crop, "Matrix_Processing"); //Temporary Error File Name
 				String function=null;
 				boolean functionStripsHeader=false;
 				String fromFile=HelperFunctions.getDestinationFile(inst);
@@ -268,7 +267,7 @@ public class GobiiFileReader {
 				String inputFile=" -i "+loaderInstructionMap.get(key);
 				String integrityCheck="";//Kevin - what the heck, you removed a parameter on me
 				String outputFile=outputDir;
-				System.out.println("Running IFL: "+pathToIFL+connectionString+integrityCheck+inputFile+outputFile);				
+				ErrorLogger.logInfo("Digester","Running IFL: "+pathToIFL+connectionString+integrityCheck+inputFile+outputFile);
 				success&=HelperFunctions.tryExec(pathToIFL+connectionString+integrityCheck+inputFile+outputFile,null,errorPath );
 				}
 			}
@@ -281,8 +280,7 @@ public class GobiiFileReader {
 			String sampleFileLoc=pathToHDF5Files+"DS"+dataSetId+".dnarun_id";		
 			
 		if(variantFile!=null && dataSetId==null){
-				System.err.println("Data Set ID is null for variant call");
-				success=false;
+				logError("Digester","Data Set ID is null for variant call");
 		}
 		if((variantFile!=null)&&dataSetId!=null){	
 				String loadVariantMatrix=loaderScriptPath+"monet/loadVariantMatrix.py";
@@ -291,7 +289,7 @@ public class GobiiFileReader {
 				String loadVariantUserPort=monetConf.getHost()+" "+monetConf.getPort() + " " +monetConf.getUserName()+ " " + monetConf.getPassword() + " " + monetConf.getDbName();
 				System.out.println("Not Running MonetDB (Testing Shutoff)");//TODO: Fix Monet DB
 				generateIdLists(cropConfig, markerFileLoc, sampleFileLoc, dataSetId, errorPath);
-				//success&=HelperFunctions.tryExec("python "+loadVariantMatrix+" "+variantFile.getPath()+" "+markerFileLoc+" "+sampleFileLoc+" "+loadVariantUserPort,null,errorPath);
+				HelperFunctions.tryExec("python "+loadVariantMatrix+" "+variantFile.getPath()+" "+markerFileLoc+" "+sampleFileLoc+" "+loadVariantUserPort,null,errorPath);
 			
 				//HDF-5
 				//Usage: %s <datasize> <input file> <output HDF5 file
@@ -304,23 +302,24 @@ public class GobiiFileReader {
 					case SSR_ALLELE_SIZE:size=8;break;
 					case CO_DOMINANT_NON_NUCLEOTIDE:
 					case DOMINANT_NON_NUCLEOTIDE:size=1;break;
-					default:System.err.println("Unknown type "+dst.toString());break;
+					default:
+						logError("Digester","Unknown type "+dst.toString());break;
 				}
-				System.out.println("Running HDF5 Loader. HDF5 Generating at "+HDF5File);
-				success&=HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
+				ErrorLogger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
+				HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
 				updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
 			}
-			if(success){
-				System.out.println("Successfully Uploaded files");
+			if(success && ErrorLogger.success()){
+				ErrorLogger.logInfo("Digester","Successfully Uploaded files");
 			}
 			else{
-				System.out.println("Unsuccessfully Uploaded files");
+				ErrorLogger.logWarning("Digester","Unsuccessfully Uploaded files");
 			}
 			
 			
 		}//endif(success)
 		else{
-			System.out.println("Unsuccessfully Generated files");
+			ErrorLogger.logWarning("Digester","Unsuccessfully Generated files");
 		}
 		HelperFunctions.sendEmail(jobName, null, success, errorPath, configuration, jobUser,HelperFunctions.getDoneFileAsArray(instructionFile));
 	}
@@ -337,10 +336,10 @@ public class GobiiFileReader {
 		
 		return jobName;
 	}
-	
+
 	/**
 	 * Generates a log file location given a crop name, crop type, and process ID. (Given by the process calling this method).
-	 * 
+	 *
 	 * Currently works by placing logs in the intermediate file directory.
 	 * @param config Crop configuration
 	 * @param crop Crop type
@@ -392,21 +391,19 @@ public class GobiiFileReader {
 	 * @param errorFile We might blow up
 	 * @return if we blew up
 	 */
-	private static boolean generateIdLists(CropConfig cropConfig,String markerFile,String dnaRunFile,int dsid,String errorFile){
+	private static void generateIdLists(CropConfig cropConfig,String markerFile,String dnaRunFile,int dsid,String errorFile){
 		String gobiiIFL="python " + extractorScriptPath+"postgres/gobii_mde/gobii_mde.py"+" -c "+HelperFunctions.getPostgresConnectionString(cropConfig)+
 			" -m "+markerFile+".tmp"+
 			" -s "+dnaRunFile+".tmp"+
 			" -d "+dsid;
-		boolean success=true;
-		success &=tryExec(gobiiIFL, null, errorFile);
-		success &=tryExec("cut -f1 "+markerFile	+".tmp | tail -n +2 > "+markerFile, null, errorFile);
+		tryExec(gobiiIFL, null, errorFile);
+		tryExec("cut -f1 "+markerFile	+".tmp | tail -n +2 > "+markerFile, null, errorFile);
 		rm(markerFile+".tmp");
-		success &=tryExec("cut -f1 "+dnaRunFile+".tmp > "+dnaRunFile, null, errorFile);
+		tryExec("cut -f1 "+dnaRunFile+".tmp > "+dnaRunFile, null, errorFile);
 		rm(dnaRunFile+".tmp");
-		
-		return success;
 	}
-	public static boolean updateValues(ConfigSettings config,GobiiCropType type, Integer dataSetId,String monetTableName,String hdfFileName) {
+
+	public static void updateValues(ConfigSettings config,GobiiCropType type, Integer dataSetId,String monetTableName,String hdfFileName) {
 		try{
 			// set up authentication and so forth
 			// you'll need to get the current from the instruction file
@@ -416,7 +413,8 @@ public class GobiiFileReader {
 			SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
 
 			if(! context.login(userDetail.getUserName(), userDetail.getPassword())){
-				return false;
+				logError("Digester","Login error for login:"+userDetail.getUserName()+ "-"+userDetail.getPassword());
+				return;
 			}
 
 
@@ -429,11 +427,11 @@ public class GobiiFileReader {
 
 			if (!dataSetResponse.getDtoHeaderResponse().isSucceeded()) {
 				System.out.println();
-				System.out.println("*** Header errors: ");
+				logError("Digester","Data set response header errors");
 				for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getDtoHeaderResponse().getStatusMessages()) {
-					System.out.println(currentStatusMesage.getMessage());
+					logError("HeaderError",currentStatusMesage.getMessage());
 				}
-				return false;
+				return;
 			}
 
 			dataSetResponse.setDataTable(monetTableName);
@@ -444,18 +442,16 @@ public class GobiiFileReader {
 			dataSetResponse = dtoProcessor.process(dataSetResponse);
 			// if you didn't succeed, do not pass go, but do log errors to your log file
 			if (!dataSetResponse.getDtoHeaderResponse().isSucceeded()) {
-				System.out.println();
-				System.out.println("*** Header errors: ");
+				logError("Digester","Data set response header errors");
 				for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getDtoHeaderResponse().getStatusMessages()) {
-					System.out.println(currentStatusMesage.getMessage());
+					logError("HeaderError",currentStatusMesage.getMessage());
 				}
-				return false;
+				return;
 			}
-			return true;
 		}
 		catch(Exception e){
-			e.printStackTrace();
-			return false;
+			logError("Digester","Exception while processing data sets",e);
+			return;
 		}
 	}
 }
