@@ -163,7 +163,6 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
         Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
-        TestUtils.printNameIdList(nameIdListDtoResponse.getNamesById());
 
     } // testGetMarkers()
 
@@ -315,8 +314,6 @@ public class DtoRequestIdNameIdListTest {
         Assert.assertNotEquals(null, nameIdListDtoResponse);
         Assert.assertEquals(true, nameIdListDtoResponse.getDtoHeaderResponse().isSucceeded());
         Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-        TestUtils.printNameIdList(nameIdListDtoResponse.getNamesById());
-        TestUtils.printNameIdList(TestUtils.sortNameIdList(nameIdListDtoResponse.getNamesById()));
         Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
     } // testGetAnalysisNames()
 

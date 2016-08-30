@@ -5,6 +5,7 @@ import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,11 +34,12 @@ public class TestUtils {
 
     public static List<NameIdDTO> sortNameIdList(List<NameIdDTO> nameIdListDtoResponse){
         List<NameIdDTO> sortedNameIdList = nameIdListDtoResponse;
+        Collator myCollator = Collator.getInstance();
 
         Collections.sort(sortedNameIdList, new Comparator<NameIdDTO>() {
             @Override
             public int compare(NameIdDTO lhs, NameIdDTO rhs) {
-                return lhs.getName().compareTo(rhs.getName());
+                return myCollator.compare(lhs.getName().toLowerCase(),rhs.getName().toLowerCase());
             }
         });
         return sortedNameIdList;
@@ -45,13 +47,18 @@ public class TestUtils {
 
 
     public static boolean isNameIdListSorted(List<NameIdDTO> nameIdListDtoResponse){
-        if (nameIdListDtoResponse.size() == 0) return true; //if empty, exit
-
-        String prev=nameIdListDtoResponse.get(0).getName();
-        for(NameIdDTO nameIdDTO : nameIdListDtoResponse){
-            if(prev.compareTo(nameIdDTO.getName())>0) return false;
+        boolean isSorted = true;
+        if (nameIdListDtoResponse.size() >0) {//if empty, exit
+            Collator myCollator = Collator.getInstance();
+            String prev = nameIdListDtoResponse.get(0).getName();
+            for (NameIdDTO nameIdDTO : nameIdListDtoResponse) {
+                if (myCollator.compare(prev.toLowerCase(), nameIdDTO.getName().toLowerCase()) > 0){
+                    isSorted = false;
+                    break;
+                }
+            }
         }
-        return true;
+        return isSorted;
     }
 
     public static void printNameIdList(List<NameIdDTO> nameIdListDtoResponse){
