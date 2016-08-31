@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.utils.error;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,16 @@ public class ErrorLogger {
 	public static void setLogLevel(Level level) {
 		ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
 		root.setLevel(level);
+	}
+
+	/**
+	 * Sets property for logging directory and resets the logger (so the new file is used).
+	 * @param filepath
+	 */
+	public static void setLogFilepath(String filepath){
+		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+		context.putProperty("log-dir",filepath);
+		context.reset();
 	}
 
 	/**

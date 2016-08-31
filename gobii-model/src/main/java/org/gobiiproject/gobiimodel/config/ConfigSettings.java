@@ -30,6 +30,7 @@ public class ConfigSettings {
     private final String PROP_NAME_IFL_INTEGRITY_CHECK = "ifl.integritycheck";
 
     private final String PROP_NAME_FILE_SYSTEM_ROOT = "filesys.root";
+    private final String PROP_NAME_FILE_SYSTEM_LOG = "filesys.log";
 
     private final String DB_PREFX = "db.";
     private final String DB_SUFFIX_HOST = "host";
@@ -83,6 +84,7 @@ public class ConfigSettings {
     private Integer emailServerPort = 0;
     private boolean iflIntegrityCheck = false;
     private String fileSystemRoot;
+    private String fileSystemLog;
 
 
     private ConfigFileReader configReader = null;
@@ -125,6 +127,7 @@ public class ConfigSettings {
         iflIntegrityCheck = configReader.getPropValue(PROP_NAME_IFL_INTEGRITY_CHECK).equals("true");
 
         fileSystemRoot = configReader.getPropValue(PROP_NAME_FILE_SYSTEM_ROOT);
+        fileSystemLog = configReader.getPropValue(PROP_NAME_FILE_SYSTEM_LOG);
 
 
         for (int idx = 0; idx < cropPrefixes.length; idx++) {
@@ -286,4 +289,9 @@ public class ConfigSettings {
     public String getFileSystemRoot() {
         return fileSystemRoot;
     }
+
+    public String getFileSystemLog() {
+        return fileSystemLog;
+    }
+
 }
