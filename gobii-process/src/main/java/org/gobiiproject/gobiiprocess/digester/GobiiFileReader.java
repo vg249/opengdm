@@ -95,7 +95,9 @@ public class GobiiFileReader {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		
+		String logDir=configuration.getFileSystemLog();
+		ErrorLogger.setLogFilepath(logDir);
+
 		String instructionFile=null;
 		if(args.length==0 ||args[0]==""){
 			Scanner s=new Scanner(System.in);
@@ -165,7 +167,7 @@ public class GobiiFileReader {
 					dstDir=destinationFile.substring(0, destinationFile.lastIndexOf("/"));
 				}
 				CSVFileReader reader = new CSVFileReader(dstDir,"/");
-				success&=reader.processCSV(inst);
+				reader.processCSV(inst);
 				break;
 			case HAPMAP:
 				String tmpFile=inst.getGobiiFile().getSource()+list.indexOf(inst);

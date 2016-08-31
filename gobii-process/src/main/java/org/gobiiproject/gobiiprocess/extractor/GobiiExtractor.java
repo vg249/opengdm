@@ -26,7 +26,7 @@ import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 
 public class GobiiExtractor {
 	//Paths
-	private static String extractorScriptPath, pathToHDF5, propertiesFile,pathToHDF5Files;
+	private static String  pathToHDF5, propertiesFile,pathToHDF5Files;
 	
 	private static String lastErrorFile=null;
 	private static String errorLogOverride;
@@ -70,10 +70,12 @@ public class GobiiExtractor {
 		ConfigSettings configuration=null;
 		try {
 			configuration = new ConfigSettings(propertiesFile);
-		} catch (Exception e1) {
-			e1.printStackTrace();
+		} catch (Exception e) {
+			ErrorLogger.logError("Extractor","Failure to read Configurations",e);
+			return;
 		}
-		
+		String logDir=configuration.getFileSystemLog();
+		ErrorLogger.setLogFilepath(logDir);
 		String instructionFile=null;
 		if(args.length==0 ||args[0]==""){
 			Scanner s=new Scanner(System.in);
@@ -121,13 +123,14 @@ public class GobiiExtractor {
 				String hdf5Extractor=pathToHDF5+"dumpdataset";
 				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
 				// %s <orientation> <HDF5 file> <output file>
-				boolean markerFast=false;//TODO: Make Config
+				boolean markerFast=false;
 				if(extract.getGobiiFileType()==GobiiFileType.HAPMAP)markerFast=true;
 				String ordering="samples-fast";
 				if(markerFast)ordering="markers-fast";
 				ErrorLogger.logDebug("Extractor","HDF5 Ordering is "+ordering);
 				ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
 				HelperFunctions.tryExec(hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile,null,errorFile);
+				success&=ErrorLogger.success();
 				ErrorLogger.logDebug("Extractor",(success?"Success ":"Failure " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile));
 				
 				switch(extract.getGobiiFileType()){
@@ -159,7 +162,7 @@ public class GobiiExtractor {
 								" -m "+genoFile+ 
 								" -o "+hapmapOutFile;
 						//HapmapTransformer.generateFile(markerFile,sampleFile,projectFile,tempFolder,hapmapOutFile,errorFile);
-					  success&=HelperFunctions.tryExec(hapmapTransform, null, errorFile);
+					  HelperFunctions.tryExec(hapmapTransform, null, errorFile);
 					}catch(Exception e){
 						ErrorLogger.logError("Extractor","Exception in HapMap creation",e);
 					}

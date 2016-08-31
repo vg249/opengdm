@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+//Note: This is not currently in use. Yaw has created a python script to do it.
 public class HapmapTransformer {
 
 	private static String delimiter = "\t";
