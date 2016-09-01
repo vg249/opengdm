@@ -178,7 +178,7 @@ public class GobiiFileReader {
 				} catch (GobiiDaoException e) {
 					logError("GobiiDAO","Instruction Writing Error",e);
 				}
-				success&=HelperFunctions.tryExec(loaderScriptPath+"etc/parse_hmp.pl"+" "+tmpFile, null, errorPath);
+				HelperFunctions.tryExec(loaderScriptPath+"etc/parse_hmp.pl"+" "+tmpFile, null, errorPath);
 				break;
 			default:
 				System.err.println("Unable to deal with file type " + inst.getGobiiFile().getGobiiFileType());
