@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class ServerConfig {
     private Integer port;
     private String domain;
     private String contextRoot;
-    private GobiiCropType gobiiCropType;
+    private String gobiiCropType;
     private Map<GobiiFileLocationType, String> fileLocations = new HashMap<>();
 
     public Integer getPort() {
@@ -65,11 +65,11 @@ public class ServerConfig {
         this.contextRoot = contextRoot;
     }
 
-    public GobiiCropType getGobiiCropType() {
+    public String getGobiiCropType() {
         return gobiiCropType;
     }
 
-    public void setGobiiCropType(GobiiCropType gobiiCropType) {
+    public void setGobiiCropType(String gobiiCropType) {
         this.gobiiCropType = gobiiCropType;
     }
 

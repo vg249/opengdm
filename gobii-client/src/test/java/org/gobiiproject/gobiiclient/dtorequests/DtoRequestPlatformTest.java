@@ -55,9 +55,8 @@ public class DtoRequestPlatformTest {
         nameIdListDTORequest.setFilter("platform_type");
 
         NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<String> platformProperTerms = new ArrayList<>(nameIdListDTO
-                .getNamesById()
-                .values());
+        List<NameIdDTO> platformProperTerms = new ArrayList<>(nameIdListDTO
+                .getNamesById());
         EntityParamValues entityParamValues = TestDtoFactory
                 .makeConstrainedEntityParams(platformProperTerms, 1);
 
@@ -114,9 +113,8 @@ public class DtoRequestPlatformTest {
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("platform_type");
         NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<String> platformProperTerms = new ArrayList<>(nameIdListDTO
-                .getNamesById()
-                .values());
+        List<NameIdDTO> platformProperTerms = new ArrayList<>(nameIdListDTO
+                .getNamesById());
         EntityParamValues entityParamValues = TestDtoFactory
                 .makeConstrainedEntityParams(platformProperTerms, 1);
 

@@ -120,10 +120,10 @@ public class GobiiFileReader {
 		}
 		GobiiLoaderInstruction zero=list.iterator().next();
 		Integer dataSetId=zero.getDataSetId();
-		GobiiCropType crop=zero.getGobiiCropType();
-		if(crop==null) crop=divineCrop(instructionFile);
-		CropConfig cropConfig=configuration.getCropConfig(crop);	
-		if(pathToHDF5Files==null)pathToHDF5Files=rootDir+"crops/"+crop.toString().toLowerCase()+"/hdf5/";
+		String crop=zero.getGobiiCropType();
+//		if(crop==null) crop=divineCrop(instructionFile);
+		CropConfig cropConfig=configuration.getCropConfig(crop);
+		if(pathToHDF5Files==null)pathToHDF5Files=rootDir+"crops/"+crop.toLowerCase()+"/hdf5/";
 
 		
 		String errorPath=getLogName(zero,cropConfig,crop);
@@ -326,9 +326,7 @@ public class GobiiFileReader {
 		HelperFunctions.sendEmail(jobName, null, success, errorPath, configuration, jobUser,HelperFunctions.getDoneFileAsArray(instructionFile));
 	}
 
-	private static String getJobName(GobiiCropType crop, List<GobiiLoaderInstruction> list) {
-		String cropName=crop.name();
-		cropName=cropName.charAt(0)+cropName.substring(1,cropName.length()).toLowerCase();
+	private static String getJobName(String cropName, List<GobiiLoaderInstruction> list) {
 		String jobName=cropName + " digest of ";
 		String source=list.get(0).getGobiiFile().getSource();
 		File sourceFolder=new File(source);
@@ -347,8 +345,7 @@ public class GobiiFileReader {
 	 * @param crop Crop type
 	 * @return The logfile location for this process
 	 */
-	private static String getLogName(GobiiLoaderInstruction gli,CropConfig config,GobiiCropType crop){
-		String cropName=crop.name();
+	private static String getLogName(GobiiLoaderInstruction gli,CropConfig config,String cropName){
 		String destination=gli.getGobiiFile().getDestination();
 		String table=gli.getTable();
 		return destination +"/"+cropName+"_Table-"+table+".log";
@@ -361,8 +358,7 @@ public class GobiiFileReader {
 	 * @param crop Crop type
 	 * @return The logfile location for this process
 	 */
-	private static String getLogName(GobiiLoaderInstruction gli,CropConfig config,GobiiCropType crop, String process){
-		String cropName=crop.name();
+	private static String getLogName(GobiiLoaderInstruction gli,CropConfig config,String cropName, String process){
 		String destination=gli.getGobiiFile().getDestination();
 		return destination +"/"+cropName+"_Process-"+process+".log";
 	}
@@ -405,12 +401,12 @@ public class GobiiFileReader {
 		rm(dnaRunFile+".tmp");
 	}
 
-	public static void updateValues(ConfigSettings config,GobiiCropType type, Integer dataSetId,String monetTableName,String hdfFileName) {
+	public static void updateValues(ConfigSettings config,String cropName, Integer dataSetId,String monetTableName,String hdfFileName) {
 		try{
 			// set up authentication and so forth
 			// you'll need to get the current from the instruction file
 			ClientContext context=ClientContext.getInstance(config);
-			context.setCurrentClientCrop(type);
+			context.setCurrentClientCrop(cropName);
 			SystemUsers systemUsers = new SystemUsers();
 			SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
 

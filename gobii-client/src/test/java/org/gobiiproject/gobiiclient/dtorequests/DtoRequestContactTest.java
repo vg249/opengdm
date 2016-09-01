@@ -62,7 +62,7 @@ public class DtoRequestContactTest {
         contactDTORequest.setCreatedDate(new Date());
         contactDTORequest.setModifiedBy(1);
         contactDTORequest.setModifiedDate(new Date());
-
+        contactDTORequest.setOrganizationId(1);
         contactDTORequest.getRoles().add(1);
         contactDTORequest.getRoles().add(2);
         ContactDTO contactDTOResponse = dtoRequestContact.process(contactDTORequest);

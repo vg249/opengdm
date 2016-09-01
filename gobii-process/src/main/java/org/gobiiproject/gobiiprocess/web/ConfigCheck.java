@@ -12,7 +12,6 @@ import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
@@ -43,6 +42,7 @@ public class ConfigCheck {
     private static String CONFIG_MKDIRS = "mdirs";
     private static String COPY_WARS = "wcopy";
     private static String PROP_FILE_FQPN = "pfqpn";
+    private static String PROP_FILE_PROPS_TO_XML = "toxml";
 
     private static String WAR_FILES_DIR = "wars/";
 
@@ -81,6 +81,7 @@ public class ConfigCheck {
             options.addOption(CONFIG_MKDIRS, false, "make gobii directories from root in the specified properties file (requires " + PROP_FILE_FQPN + ")");
             options.addOption(COPY_WARS, true, "create war files for active crops from the specified war file (requires " + PROP_FILE_FQPN + ")");
             options.addOption(PROP_FILE_FQPN, true, "fqpn of gobii properties file");
+            options.addOption(PROP_FILE_PROPS_TO_XML, false, "Convert existing gobii-properties file to xml (requires " + PROP_FILE_FQPN + ")");
 
             // parse our commandline
             CommandLineParser parser = new DefaultParser();
@@ -128,7 +129,7 @@ public class ConfigCheck {
 
                                 ConfigSettings configSettings = new ConfigSettings(propertiesFileFqpn);
 
-                                GobiiCropType defaultCropType = configSettings.getDefaultGobiiCropType();
+                                String defaultCropType = configSettings.getDefaultGobiiCropType();
                                 configSettings.setCurrentGobiiCropType(defaultCropType);
 
                                 String configServerUrl = "http://"
@@ -161,10 +162,9 @@ public class ConfigCheck {
                                     ClientContext clientContext = configClientContext(configServerUrl);
 
 
-                                    if( ConfigCheck.showServerInfo(clientContext) ) {
+                                    if (ConfigCheck.showServerInfo(clientContext)) {
                                         exitCode = 0;
                                     }
-
 
 
                                 } else {
@@ -200,7 +200,7 @@ public class ConfigCheck {
 
                 ClientContext clientContext = configClientContext(configUrl);
 
-                if( ConfigCheck.showServerInfo(clientContext)) {
+                if (ConfigCheck.showServerInfo(clientContext)) {
                     exitCode = 0;
                 }
 
@@ -211,7 +211,7 @@ public class ConfigCheck {
                 String propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
 
 
-                if( ConfigCheck.makeGobiiDirectories(propFileFqpn) ) {
+                if (ConfigCheck.makeGobiiDirectories(propFileFqpn)) {
                     exitCode = 0;
                 }
 
@@ -223,9 +223,25 @@ public class ConfigCheck {
                 String warFileFqpn = commandLine.getOptionValue(COPY_WARS);
 
 
-                if( ConfigCheck.copyWars(propFileFqpn, warFileFqpn) ) {
+                if (ConfigCheck.copyWars(propFileFqpn, warFileFqpn)) {
                     exitCode = 0;
                 }
+
+            } else if (commandLine.hasOption(PROP_FILE_PROPS_TO_XML) && commandLine.hasOption(PROP_FILE_FQPN)) {
+
+                String propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
+
+                File propsFile = new File(propFileFqpn);
+                if (propsFile.exists() && !propsFile.isDirectory()) {
+
+
+                    exitCode = 0;
+
+                } else {
+                    System.err.println("Cannot find config file: : " + propFileFqpn);
+                }
+
+                ConfigSettings configSettings = new ConfigSettings(propFileFqpn);
 
             } else {
                 formatter.printHelp(NAME_COMMAND, options);
@@ -260,12 +276,12 @@ public class ConfigCheck {
 
         // The logging framework emits debugging messages before it knows not to emit them.
         // Until we solve this problem, we we'll visually set those messages aside
-        List<GobiiCropType> gobiiCropTypes = clientContext.getInstance(null, false).getCropTypeTypes();
+        List<String> gobiiCropTypes = clientContext.getInstance(null, false).getCropTypeTypes();
         ConfigCheck.printSeparator();
 
         ConfigCheck.printField("Default crop", ClientContext.getInstance(null, false).getDefaultCropType().toString());
 
-        for (GobiiCropType currentCropType : gobiiCropTypes) {
+        for (String currentCropType : gobiiCropTypes) {
 
             ClientContext.getInstance(null, false).setCurrentClientCrop(currentCropType);
 

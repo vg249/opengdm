@@ -3,7 +3,6 @@ import {NameId} from "../../model/name-id";
 import {DtoRequestItem} from "./../core/dto-request-item";
 import {ProcessType} from "../../model/type-process";
 import {ServerConfig} from "../../model/server-config";
-import {GobiiCropType} from "../../model/type-crop"
 
 @Injectable()
 export class DtoRequestItemServerConfigs implements DtoRequestItem<ServerConfig[]> {

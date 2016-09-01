@@ -7,6 +7,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
+import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -58,9 +59,8 @@ public class DtoRequestMapsetTest {
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("mapset_type");
         NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<String> mapsetProperTerms = new ArrayList<>(nameIdListDTO
-                .getNamesById()
-                .values());
+        List<NameIdDTO> mapsetProperTerms = new ArrayList<>(nameIdListDTO
+                .getNamesById());
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
         EntityParamValues entityParamValues = TestDtoFactory
                 .makeConstrainedEntityParams(mapsetProperTerms, 1);
@@ -100,9 +100,8 @@ public class DtoRequestMapsetTest {
         nameIdListDTORequest.setEntityName("cvgroupterms");
         nameIdListDTORequest.setFilter("mapset_type");
         NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<String> mapsetProperTerms = new ArrayList<>(nameIdListDTO
-                .getNamesById()
-                .values());
+        List<NameIdDTO> mapsetProperTerms = new ArrayList<>(nameIdListDTO
+                .getNamesById());
         EntityParamValues entityParamValues = TestDtoFactory
                 .makeConstrainedEntityParams(mapsetProperTerms, 1);
 

@@ -25,14 +25,14 @@ public class TestDtoFactory {
         return returnVal;
     }
 
-    public static EntityParamValues makeConstrainedEntityParams(List<String> propNames,
+    public static EntityParamValues makeConstrainedEntityParams(List<NameIdDTO> propNames,
                                                                 Integer nameStem) {
 
         EntityParamValues returnVal = new EntityParamValues();
 
-        for (String currentPropName : propNames) {
+        for (NameIdDTO currentPropName : propNames) {
 
-            returnVal.add(currentPropName, "fooval " + (nameStem++));
+            returnVal.add(currentPropName.getName(), "fooval " + (nameStem++));
         }
 
         return returnVal;
@@ -196,14 +196,15 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
 
         OrganizationDTO returnVal = new OrganizationDTO(processType);
 
-        String uniqueStemString = uniqueStem.toString();
-        returnVal.setName(uniqueStem + ": reference");
+        String uniqueStemString = UUID.randomUUID().toString();
+        returnVal.setName(uniqueStemString + ": reference");
         returnVal.setAddress("address:" + uniqueStem);
         returnVal.setWebsite(uniqueStem + ".com");
         returnVal.setCreatedBy(1);
         returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
+        returnVal.setStatus(1);
 
         return returnVal;
 
@@ -242,7 +243,7 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
         returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
-
+        returnVal.setOrganizationId(1);
         returnVal.getRoles().add(1);
         returnVal.getRoles().add(2);
 

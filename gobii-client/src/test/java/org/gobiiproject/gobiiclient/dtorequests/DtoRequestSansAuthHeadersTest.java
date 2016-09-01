@@ -9,7 +9,7 @@ import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class DtoRequestSansAuthHeadersTest {
         Assert.assertTrue(Authenticator.authenticate());
         String currentCropDomain = ClientContext.getInstance(null, false).getCurrentCropDomain();
         Integer currentCropPort = ClientContext.getInstance(null, false).getCurrentCropPort();
-        GobiiCropType currentGobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
+        String currentGobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
         String url = Urls.getRequestUrl(ControllerType.LOADER, ServiceRequestId.URL_AUTH);
         Assert.assertTrue(Authenticator.deAuthenticate());
 

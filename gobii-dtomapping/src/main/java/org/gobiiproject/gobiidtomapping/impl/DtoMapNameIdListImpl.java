@@ -3,6 +3,7 @@ package org.gobiiproject.gobiidtomapping.impl;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobiidao.resultset.access.*;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
+import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
 import org.slf4j.Logger;
@@ -10,9 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Phil on 4/6/2016.
@@ -41,6 +41,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     private RsMapSetDao rsMapSetDao = null;
 
     @Autowired
+    private RsOrganizationDao rsOrganizationDao = null;
+
+    @Autowired
     private RsMarkerGroupDao rsMarkerGroupDao = null;
 
     @Autowired
@@ -65,16 +68,18 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsAnalysisDao.getAnalysisNames();
-            Map<String, String> analysisNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer analysisId = resultSet.getInt("analysis_id");
-                String name = resultSet.getString("name");
-                analysisNamesById.put(analysisId.toString(), name);
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("analysis_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
             }
 
 
-            returnVal.setNamesById(analysisNamesById);
+            returnVal.setNamesById(listDTO);
 
 
         } catch (Exception e) {
@@ -92,16 +97,18 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsAnalysisDao.getAnalysisNamesByTypeId(Integer.parseInt(nameIdListDTO.getFilter()));
-            Map<String, String> analysisNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer analysisId = resultSet.getInt("analysis_id");
-                String name = resultSet.getString("name");
-                analysisNamesById.put(analysisId.toString(), name);
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("analysis_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
             }
 
 
-            returnVal.setNamesById(analysisNamesById);
+            returnVal.setNamesById(listDTO);
 
 
         } catch (Exception e) {
@@ -118,19 +125,21 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         try {
 
-            ResultSet contactList = rsContactDao.getContactNamesForRoleName(nameIdListDTO.getFilter());
+            ResultSet resultSet = rsContactDao.getContactNamesForRoleName(nameIdListDTO.getFilter());
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-            Map<String, String> contactNamesById = new TreeMap<>();
-            while (contactList.next()) {
-
-                Integer contactId = contactList.getInt("contact_id");
-                String lastName = contactList.getString("lastname");
-                String firstName = contactList.getString("firstname");
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("contact_id"));
+                String lastName = resultSet.getString("lastname");
+                String firstName = resultSet.getString("firstname");
                 String name = lastName + ", " + firstName;
-                contactNamesById.put(contactId.toString(), name);
+                nameIdDTO.setName(name);
+                listDTO.add(nameIdDTO);
             }
 
-            returnVal.setNamesById(contactNamesById);
+            returnVal.setNamesById(listDTO);
 
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -147,19 +156,22 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         try {
 
-            ResultSet contactList = rsContactDao.getAllContactNames();
+            ResultSet resultSet = rsContactDao.getAllContactNames();
 
-            Map<String, String> contactNamesById = new TreeMap<>();
-            while (contactList.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer contactId = contactList.getInt("contact_id");
-                String lastName = contactList.getString("lastname");
-                String firstName = contactList.getString("firstname");
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("contact_id"));
+                String lastName = resultSet.getString("lastname");
+                String firstName = resultSet.getString("firstname");
                 String name = lastName + ", " + firstName;
-                contactNamesById.put(contactId.toString(), name);
+                nameIdDTO.setName(name);
+                listDTO.add(nameIdDTO);
             }
 
-            returnVal.setNamesById(contactNamesById);
+            returnVal.setNamesById(listDTO);
 
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -178,16 +190,18 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsMarkerGroupDao.getMarkerGroupNames();
-            Map<String, String> markerGroupNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer markerGroupId = resultSet.getInt("marker_group_id");
-                String markerGroupName = resultSet.getString("name");
-                markerGroupNamesById.put(markerGroupId.toString(), markerGroupName);
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("marker_group_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
             }
 
 
-            returnVal.setNamesById(markerGroupNamesById);
+            returnVal.setNamesById(listDTO);
 
 
         } catch (Exception e) {
@@ -206,16 +220,18 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsExperimentDao.getExperimentNames();
-            Map<String, String> experimentNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer experimentId = resultSet.getInt("experiment_id");
-                String experimentName = resultSet.getString("name");
-                experimentNamesById.put(experimentId.toString(), experimentName);
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("experiment_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
             }
 
 
-            returnVal.setNamesById(experimentNamesById);
+            returnVal.setNamesById(listDTO);
 
 
         } catch (Exception e) {
@@ -234,9 +250,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             ResultSet resultSet = rsDataSetDao.getDatasetNames();
 
-            Map<String, String> datasetNamesById = makeMapOfDataSetNames(resultSet);
+            List<NameIdDTO> listDTO = makeMapOfDataSetNames(resultSet);
 
-            returnVal.setNamesById(datasetNamesById);
+            returnVal.setNamesById(listDTO);
 
 
         } catch (Exception e) {
@@ -254,17 +270,18 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsPlatformDao.getPlatformNames();
-            Map<String, String> platformNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer platformId = resultSet.getInt("platform_id");
-                String platformName = resultSet.getString("name");
-                platformNamesById.put(platformId.toString(), platformName);
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("platform_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
             }
 
 
-            returnVal.setNamesById(platformNamesById);
-
+            returnVal.setNamesById(listDTO);
 
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -281,17 +298,18 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsPlatformDao.getPlatformNamesByTypeId(Integer.parseInt(nameIdListDTO.getFilter()));
-            Map<String, String> platformNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer platformId = resultSet.getInt("platform_id");
-                String platformName = resultSet.getString("name");
-                platformNamesById.put(platformId.toString(), platformName);
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("platform_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
             }
 
 
-            returnVal.setNamesById(platformNamesById);
-
+            returnVal.setNamesById(listDTO);
 
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -308,17 +326,18 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsProjectDao.getProjectNames();
-            Map<String, String> projectNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer projectId = resultSet.getInt("project_id");
-                String projectName = resultSet.getString("name");
-                projectNamesById.put(projectId.toString(), projectName);
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("project_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
             }
 
 
-            returnVal.setNamesById(projectNamesById);
-
+            returnVal.setNamesById(listDTO);
 
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -335,16 +354,18 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsReferenceDao.getReferenceNames();
-            Map<String, String> referenceNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer referenceId = resultSet.getInt("reference_id");
-                String referenceName = resultSet.getString("name");
-                referenceNamesById.put(referenceId.toString(), referenceName);
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("reference_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
             }
 
 
-            returnVal.setNamesById(referenceNamesById);
+            returnVal.setNamesById(listDTO);
 
 
         } catch (Exception e) {
@@ -362,16 +383,18 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsRoleDao.getContactRoleNames();
-            Map<String, String> roleNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer roleId = resultSet.getInt("role_id");
-                String roleName = resultSet.getString("role_name");
-                roleNamesById.put(roleId.toString(), roleName);
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("role_id"));
+                nameIdDTO.setName(resultSet.getString("role_name"));
+                listDTO.add(nameIdDTO);
             }
 
 
-            returnVal.setNamesById(roleNamesById);
+            returnVal.setNamesById(listDTO);
 
 
         } catch (Exception e) {
@@ -389,15 +412,18 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsMapSetDao.getMapNamesByTypeId(Integer.parseInt(nameIdListDTO.getFilter()));
-            Map<String, String> mapNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer mapId = resultSet.getInt("mapset_id");
-                String mapName = resultSet.getString("name");
-                mapNamesById.put(mapId.toString(), mapName);
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("mapset_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
             }
 
-            returnVal.setNamesById(mapNamesById);
+
+            returnVal.setNamesById(listDTO);
 
 
         } catch (Exception e) {
@@ -415,15 +441,46 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsMapSetDao.getMapNames();
-            Map<String, String> mapNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer mapId = resultSet.getInt("mapset_id");
-                String mapName = resultSet.getString("name");
-                mapNamesById.put(mapId.toString(), mapName);
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("mapset_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
             }
 
-            returnVal.setNamesById(mapNamesById);
+
+            returnVal.setNamesById(listDTO);
+
+        } catch (Exception e) {
+            returnVal.getDtoHeaderResponse().addException(e);
+            LOGGER.error("Gobii Maping Error", e);
+        }
+
+        return returnVal;
+    }
+
+    private NameIdListDTO getNameIdListForOrganizationById(NameIdListDTO nameIdListDTO) {
+
+        NameIdListDTO returnVal = new NameIdListDTO();
+
+        try {
+
+            ResultSet resultSet = rsOrganizationDao.getOrganizationNames();
+            List<NameIdDTO> listDTO = new ArrayList<>();
+
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("organization_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
+            }
+
+
+            returnVal.setNamesById(listDTO);
 
 
         } catch (Exception e) {
@@ -441,17 +498,18 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsManifestDao.getManifestNames();
-            Map<String, String> manifestNamesById = new HashMap<>();
-            while (resultSet.next()) {
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-                Integer manifestId = resultSet.getInt("manifest_id");
-                String manifestName = resultSet.getString("name");
-                manifestNamesById.put(manifestId.toString(), manifestName);
+            NameIdDTO nameIdDTO;
+            while (resultSet.next()) {
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("manifest_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
             }
 
 
-            returnVal.setNamesById(manifestNamesById);
-
+            returnVal.setNamesById(listDTO);
 
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -471,15 +529,17 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             if (NumberUtils.isNumber(filter)) {
                 ResultSet resultSet = rsProjectDao.getProjectNamesForContactId(Integer.parseInt(filter));
 
-                Map<String, String> projectNameIdList = new HashMap<>();
+                List<NameIdDTO> listDTO = new ArrayList<>();
+                NameIdDTO nameIdDTO;
 
                 while (resultSet.next()) {
-                    Integer projectId = resultSet.getInt("project_id");
-                    String name = resultSet.getString("name").toString();
-                    projectNameIdList.put(projectId.toString(), name);
+                    nameIdDTO = new NameIdDTO();
+                    nameIdDTO.setId(resultSet.getInt("project_id"));
+                    nameIdDTO.setName(resultSet.getString("name"));
+                    listDTO.add(nameIdDTO);
                 }
 
-                returnVal.setNamesById(projectNameIdList);
+                returnVal.setNamesById(listDTO);
             } else {
                 nameIdListDTO.getDtoHeaderResponse()
                         .addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
@@ -502,15 +562,18 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             ResultSet resultSet = rsExperimentDao.getExperimentNamesByProjectId(Integer.parseInt(nameIdListDTO.getFilter()));
 
-            Map<String, String> experimentNameIdList = new HashMap<>();
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
+            NameIdDTO nameIdDTO;
             while (resultSet.next()) {
-                Integer experimentId = resultSet.getInt("experiment_id");
-                String name = resultSet.getString("name").toString();
-                experimentNameIdList.put(experimentId.toString(), name);
+                nameIdDTO = new NameIdDTO();
+
+                nameIdDTO.setId(resultSet.getInt("experiment_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
+                listDTO.add(nameIdDTO);
             }
 
-            returnVal.setNamesById(experimentNameIdList);
+            returnVal.setNamesById(listDTO);
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error("Gobii Maping Error", e);
@@ -527,16 +590,19 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsCvDao.getCvGroups();
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
-            Map<String, String> cvGroupTermList = new HashMap<>();
-
+            NameIdDTO nameIdDTO;
             while (resultSet.next()) {
-                Integer cvId = resultSet.getInt("cv_id");
-                String name = resultSet.getString("lower").toString();
-                cvGroupTermList.put(cvId.toString(), name);
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("cv_id"));
+                nameIdDTO.setName(resultSet.getString("lower").toString());
+                listDTO.add(nameIdDTO);
             }
 
-            returnVal.setNamesById(cvGroupTermList);
+
+            returnVal.setNamesById(listDTO);
+
 
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -556,15 +622,19 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             ResultSet resultSet = rsCvDao.getCvNames();
 
-            Map<String, String> cvGroupTermList = new HashMap<>();
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
+            NameIdDTO nameIdDTO;
             while (resultSet.next()) {
-                Integer cvId = resultSet.getInt("cv_id");
-                String name = resultSet.getString("term").toString();
-                cvGroupTermList.put(cvId.toString(), name);
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("cv_id"));
+                nameIdDTO.setName(resultSet.getString("term").toString());
+                listDTO.add(nameIdDTO);
             }
 
-            returnVal.setNamesById(cvGroupTermList);
+
+            returnVal.setNamesById(listDTO);
+
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error("Gobii Maping Error", e);
@@ -582,15 +652,19 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             ResultSet resultSet = rsCvDao.getCvTermsByGroup(nameIdListDTO.getFilter());
 
-            Map<String, String> cvGroupTermList = new HashMap<>();
+            List<NameIdDTO> listDTO = new ArrayList<>();
 
+            NameIdDTO nameIdDTO;
             while (resultSet.next()) {
-                Integer cvId = resultSet.getInt("cv_id");
-                String name = resultSet.getString("term").toString();
-                cvGroupTermList.put(cvId.toString(), name);
+                nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("cv_id"));
+                nameIdDTO.setName(resultSet.getString("term").toString());
+                listDTO.add(nameIdDTO);
             }
 
-            returnVal.setNamesById(cvGroupTermList);
+
+            returnVal.setNamesById(listDTO);
+
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
             LOGGER.error("Gobii Maping Error", e);
@@ -600,18 +674,20 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     } // getNameIdListForCvGroupTerms()
 
-    private Map<String, String> makeMapOfDataSetNames(ResultSet resultSet) throws Exception {
+    private List makeMapOfDataSetNames(ResultSet resultSet) throws Exception {
 
-        Map<String, String> returnVal = new TreeMap<>();
+        List<NameIdDTO> returnVal = new ArrayList<>();
 
+        NameIdDTO nameIdDTO;
         while (resultSet.next()) {
-            Integer dataSetId = resultSet.getInt("dataset_id");
-            String dataSetName = resultSet.getString("name");
-            if (resultSet.wasNull()) {
-                dataSetName = "<no name>";
-            }
+            nameIdDTO = new NameIdDTO();
+            nameIdDTO.setId(resultSet.getInt("dataset_id"));
+            nameIdDTO.setName(resultSet.getString("name"));
 
-            returnVal.put(dataSetId.toString(), dataSetName);
+            if (resultSet.wasNull()) {
+                nameIdDTO.setName("<no name>");
+            }
+            returnVal.add(nameIdDTO);
         }
 
         return returnVal;
@@ -624,9 +700,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsDataSetDao.getDatasetNamesByExperimentId(Integer.parseInt(nameIdListDTO.getFilter()));
-            Map<String, String> datasetNameIdList = makeMapOfDataSetNames(resultSet);
+            List<NameIdDTO> listDTO   = makeMapOfDataSetNames(resultSet);
 
-            returnVal.setNamesById(datasetNameIdList);
+            returnVal.setNamesById(listDTO );
 
         } catch (Exception e) {
             returnVal.getDtoHeaderResponse().addException(e);
@@ -675,6 +751,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
                 case "project":
                     returnVal = getNameIdListForProjectNameByContact(nameIdListDTO);
+                    break;
+
+                case "organization":
+                    returnVal = getNameIdListForOrganizationById(nameIdListDTO);
                     break;
 
                 case "projectnames":

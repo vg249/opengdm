@@ -2,9 +2,10 @@ package org.gobiiproject.gobiimodel.dto.container;
 
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
+
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -13,23 +14,23 @@ import java.util.Map;
 public class ConfigSettingsDTO extends DtoMetaData {
 
 
-    private Map<GobiiCropType, ServerConfig> serverConfigs = new HashMap<>();
+    private Map<String, ServerConfig> serverConfigs = new LinkedHashMap<>();
 
-    public Map<GobiiCropType, ServerConfig> getServerConfigs() {
+    public Map<String, ServerConfig> getServerConfigs() {
         return serverConfigs;
     }
 
-    public void setServerConfigs(Map<GobiiCropType, ServerConfig> serverConfigs) {
+    public void setServerConfigs(Map<String, ServerConfig> serverConfigs) {
         this.serverConfigs = serverConfigs;
     }
 
-    GobiiCropType defaultCrop = GobiiCropType.TEST;
+    String defaultCrop;
 
-    public GobiiCropType getDefaultCrop() {
+    public String getDefaultCrop() {
         return defaultCrop;
     }
 
-    public void setDefaultCrop(GobiiCropType defaultCrop) {
+    public void setDefaultCrop(String defaultCrop) {
         this.defaultCrop = defaultCrop;
     }
 }

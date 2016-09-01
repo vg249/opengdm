@@ -89,8 +89,8 @@ public class GobiiExtractor {
 		}
 		
 		
-		GobiiCropType crop = divineCrop(instructionFile);
-		CropConfig cropConfig=configuration.getCropConfig(crop);	
+		String crop = divineCrop(instructionFile);
+		CropConfig cropConfig=configuration.getCropConfig(crop);
 		if(pathToHDF5Files==null)pathToHDF5Files=rootDir+"crops/"+crop.toString().toLowerCase()+"/hdf5/";
 		
 		List<GobiiExtractorInstruction> list= parseExtractorInstructionFile(instructionFile);
@@ -112,7 +112,7 @@ public class GobiiExtractor {
 					" -s "+sampleFile+
 					" -p "+projectFile+
 					" -d "+extract.getDataSetId();
-				String errorFile=getLogName(extract,cropConfig,crop,extract.getDataSetId());
+				String errorFile=getLogName(extract,cropConfig,extract.getDataSetId());
 				ErrorLogger.logInfo("Extractor","Executing MDEs");
 				tryExec(gobiiMDE, null, errorFile);
 				Integer dataSetId=extract.getDataSetId();
@@ -191,23 +191,23 @@ public class GobiiExtractor {
 		 return Arrays.asList(file);
 	}
 	
-	private static GobiiCropType divineCrop(String instructionFile) {
+	private static String divineCrop(String instructionFile) {
 		String upper=instructionFile.toUpperCase();
-		GobiiCropType crop = null;
+		String crop = null;
 		for(GobiiCropType c:GobiiCropType.values()){
 				if(upper.contains(c.toString())){
-					crop=c;
+					crop=c.name();
 					break;
 				}
 		}
 		return crop;
 	}
 	
-	private static String getLogName(GobiiExtractorInstruction gli,CropConfig config,GobiiCropType crop, Integer dsid){
-		return getLogName(gli.getDataSetExtracts().get(0),config,crop,dsid);
+	private static String getLogName(GobiiExtractorInstruction gli,CropConfig config, Integer dsid){
+		return getLogName(gli.getDataSetExtracts().get(0),config,dsid);
 	}
-	private static String getLogName(GobiiDataSetExtract gli,CropConfig config,GobiiCropType crop, Integer dsid){
-		String cropName=crop.name();
+	private static String getLogName(GobiiDataSetExtract gli,CropConfig config,Integer dsid){
+		String cropName=config.getGobiiCropType();
 		String destination=gli.getExtractDestinationDirectory();
 		return destination +"/"+cropName+"_DS-"+dsid+".log";
 	}
