@@ -126,28 +126,74 @@
                 <version>2.4.1</version>
                 <configuration>
                     <!-- get all project dependencies -->
-                    <finalName>gobii-config-check</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <!-- MainClass in mainfest make a executable jar -->
-                    <archive>
-                        <manifest>
-                            <mainClass>org.gobiiproject.gobiiprocess.ConfigCheck</mainClass>
-                        </manifest>
-                    </archive>
 
                 </configuration>
                 <executions>
+
+
+                    <!--gobii config check Execution-->
                     <execution>
+                        <configuration>
+                            <finalName>gobii-config-check</finalName>
+                            <!-- MainClass in mainfest make a executable jar -->
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.web.ConfigCheck</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
                         <id>make-assembly</id>
                         <!-- bind to the packaging phase -->
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
+
                     </execution>
+
+                    <!--Digester Execution-->
+                    <execution>
+                        <configuration>
+                            <finalName>Digester</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.digester.GobiiFileReader</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-digester</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
+
+                    <!--Extractor Execution-->
+                    <execution>
+                        <configuration>
+                            <finalName>Extractor</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.extractor.GobiiExtractor</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-extractor</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
                 </executions>
             </plugin>
         </plugins>

@@ -33,6 +33,7 @@ public class ConfigFileReaderProps {
     private final String PROP_NAME_IFL_INTEGRITY_CHECK = "ifl.integritycheck";
 
     private final String PROP_NAME_FILE_SYSTEM_ROOT = "filesys.root";
+    private final String PROP_NAME_FILE_SYSTEM_LOG = "filesys.log";
 
     private final String DB_PREFX = "db.";
     private final String DB_SUFFIX_HOST = "host";
@@ -156,6 +157,7 @@ public class ConfigFileReaderProps {
         returnVal.setIflIntegrityCheck(this.getPropValue(PROP_NAME_IFL_INTEGRITY_CHECK).equals("true"));
 
         returnVal.setFileSystemRoot(this.getPropValue(PROP_NAME_FILE_SYSTEM_ROOT));
+        returnVal.setFileSystemLog(this.getPropValue(PROP_NAME_FILE_SYSTEM_LOG));
 
 
         List<CropConfig> cropConfigsToSerialize = new ArrayList<>();

@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
-package org.gobiiproject.gobiiprocess;
+package org.gobiiproject.gobiiprocess.web;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

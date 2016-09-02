@@ -54,6 +54,9 @@ class ConfigValues {
     @Element
     private String fileSystemRoot;
 
+    @Element
+    private String fileSystemLog;
+
 
     public CropConfig getCropConfig(String gobiiCropType) {
 
@@ -181,4 +184,11 @@ class ConfigValues {
         this.fileSystemRoot = fileSystemRoot;
     }
 
+    public String getFileSystemLog() {
+        return fileSystemLog;
+    }
+
+    public void setFileSystemLog(String fileSystemLog) {
+        this.fileSystemLog = fileSystemLog;
+    }
 }

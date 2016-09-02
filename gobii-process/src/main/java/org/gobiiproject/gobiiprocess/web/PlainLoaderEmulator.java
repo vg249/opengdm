@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess;
+package org.gobiiproject.gobiiprocess.web;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;

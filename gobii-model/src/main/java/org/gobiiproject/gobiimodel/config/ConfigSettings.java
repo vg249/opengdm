@@ -122,4 +122,13 @@ public class ConfigSettings {
         return this.configValues.getFileSystemRoot();
     }
 
+    public String getFileSystemLog() {
+        return this.configValues.getFileSystemLog();
+    }
+
+    public void setFileSystemLog(String fileSystemLog) {
+        this.configValues.setFileSystemLog(fileSystemLog);
+    }
+
+
 }

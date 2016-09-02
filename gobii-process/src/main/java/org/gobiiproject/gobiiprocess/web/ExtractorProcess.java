@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
-package org.gobiiproject.gobiiprocess;
+package org.gobiiproject.gobiiprocess.web;
 
 import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;

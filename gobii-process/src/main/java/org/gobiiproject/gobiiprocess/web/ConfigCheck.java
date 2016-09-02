@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess;
+package org.gobiiproject.gobiiprocess.web;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
