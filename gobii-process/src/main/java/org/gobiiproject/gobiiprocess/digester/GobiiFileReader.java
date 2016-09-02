@@ -47,7 +47,6 @@ public class GobiiFileReader {
 	private static String errorLogOverride;
 	private static String propertiesFile;
 	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, InterruptedException{
-
 		Options o = new Options()
          		.addOption("v", "verbose", false, "Verbose output")
          		.addOption("e", "errlog", true, "Error log override location")
@@ -121,7 +120,7 @@ public class GobiiFileReader {
 		GobiiLoaderInstruction zero=list.iterator().next();
 		Integer dataSetId=zero.getDataSetId();
 		String crop=zero.getGobiiCropType();
-//		if(crop==null) crop=divineCrop(instructionFile);
+		if(crop==null) crop=divineCrop(instructionFile);
 		CropConfig cropConfig=configuration.getCropConfig(crop);
 		if(pathToHDF5Files==null)pathToHDF5Files=rootDir+"crops/"+crop.toLowerCase()+"/hdf5/";
 
@@ -327,6 +326,7 @@ public class GobiiFileReader {
 	}
 
 	private static String getJobName(String cropName, List<GobiiLoaderInstruction> list) {
+		cropName=cropName.charAt(0)+cropName.substring(1).toLowerCase();// MAIZE -> Maize
 		String jobName=cropName + " digest of ";
 		String source=list.get(0).getGobiiFile().getSource();
 		File sourceFolder=new File(source);
@@ -342,7 +342,6 @@ public class GobiiFileReader {
 	 *
 	 * Currently works by placing logs in the intermediate file directory.
 	 * @param config Crop configuration
-	 * @param crop Crop type
 	 * @return The logfile location for this process
 	 */
 	private static String getLogName(GobiiLoaderInstruction gli,CropConfig config,String cropName){
@@ -355,7 +354,6 @@ public class GobiiFileReader {
 	 * 
 	 * Currently works by placing logs in the intermediate file directory.
 	 * @param config Crop configuration
-	 * @param crop Crop type
 	 * @return The logfile location for this process
 	 */
 	private static String getLogName(GobiiLoaderInstruction gli,CropConfig config,String cropName, String process){
@@ -367,15 +365,11 @@ public class GobiiFileReader {
 	 * @param instructionFile
 	 * @return GobiiCropType
 	 */
-	private static GobiiCropType divineCrop(String instructionFile) {
+	private static String divineCrop(String instructionFile) {
 		String upper=instructionFile.toUpperCase();
-		GobiiCropType crop = null;
-		for(GobiiCropType c:GobiiCropType.values()){
-				if(upper.contains(c.toString())){
-					crop=c;
-					break;
-				}
-		}
+		String from="/CROPS/";
+		int fromIndex=upper.indexOf(from)+from.length();
+		String crop=upper.substring(fromIndex,upper.indexOf('/',fromIndex));
 		return crop;
 	}
 

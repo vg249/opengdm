@@ -33,10 +33,8 @@ public class VCFFileReader {
 	private String tpedFile;
 	private String tempVCF;
 	public boolean hasError=false;
-	private static ExternalFunctionCall mv=extern("mv(unix)","mv");
 	private static ExternalFunctionCall cut=extern("cut(unix)","cut");
-	private static ExternalFunctionCall rm=extern("rm(unix)","rm");
-	
+
 	public static void main(String[] args){
 		System.out.println("Test harness " +/*LOL*/ "for VCF FileReader");
 		String filename;
