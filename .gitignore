@@ -19,3 +19,6 @@ gobii-web/src/main/ts/.baseDir.ts
 gobii-web/node_modules
 gobii-web/.tscache
 
+
+gobii-model/src/main/resources/gobii.properties
+gobii-client/gobii-web.xml

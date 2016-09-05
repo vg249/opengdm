@@ -25,9 +25,14 @@ public class ConfigSettings {
 
     ConfigValues configValues = null;
 
-    public ConfigSettings(String configFileWebPath) throws Exception {
+    public ConfigSettings(String configFileWebPath){
 
-        configValues = ConfigValuesFactory.make(configFileWebPath);
+        try {
+            configValues = ConfigValuesFactory.make(configFileWebPath);
+        } catch(Exception e ) {
+            LOGGER.error("Error instancing ConfigValues with fqpn: " + configFileWebPath,e);
+
+        }
     } // ctor
 
 

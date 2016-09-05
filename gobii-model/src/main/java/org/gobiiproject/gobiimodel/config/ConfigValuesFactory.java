@@ -31,59 +31,66 @@ class ConfigValuesFactory {
 
         ConfigValues returnVal = null;
 
-        String fqpn = configFileWebPath;
+        try {
 
-        if (LineUtils.isNullOrEmpty(fqpn)) {
-            JndiTemplate jndi = new JndiTemplate();
-            fqpn = (String) jndi.lookup("java:comp/env/gobiipropsloc");
+            String fqpn = configFileWebPath;
+
             if (LineUtils.isNullOrEmpty(fqpn)) {
-                throw new Exception("JNDI configuration does specify configuration file; see user manual for configuration instructions");
+                JndiTemplate jndi = new JndiTemplate();
+                fqpn = (String) jndi.lookup("java:comp/env/gobiipropsloc");
+                if (LineUtils.isNullOrEmpty(fqpn)) {
+                    throw new Exception("JNDI configuration does specify configuration file; see user manual for configuration instructions");
+                }
             }
-        }
 
-        ConfigFileReaderXml configFileReaderXml = new ConfigFileReaderXml();
-        String extension = FilenameUtils.getExtension(fqpn);
-        if (extension.equals("properties")) {
+            ConfigFileReaderXml configFileReaderXml = new ConfigFileReaderXml();
+            String extension = FilenameUtils.getExtension(fqpn);
+            if (extension.equals("properties")) {
 
-            String fileNameStem = FilenameUtils.getFullPath(fqpn)
-                    + FilenameUtils.getBaseName(fqpn);
+                String fileNameStem = FilenameUtils.getFullPath(fqpn)
+                        + FilenameUtils.getBaseName(fqpn);
 
-            String xmlFileEquivalent = fileNameStem + ".xml";
-            File xmlFile = new File(xmlFileEquivalent);
-            if (xmlFile.exists()) {
+                String xmlFileEquivalent = fileNameStem + ".xml";
+                File xmlFile = new File(xmlFileEquivalent);
+                if (xmlFile.exists()) {
 
-                //Since we've got  an XML file, that will now be used going forward
-                //mark the properties file unused
+                    //Since we've got  an XML file, that will now be used going forward
+                    //mark the properties file unused
 
-                renamePropsFile(fqpn);
-                // now read our xml
-                returnVal = configFileReaderXml.read(xmlFileEquivalent);
-
-            } else {
-
-                File propsFile = new File(fqpn);
-                if (propsFile.exists()) {
-
-                    ConfigFileReaderProps configFileReaderProps = new ConfigFileReaderProps(fqpn);
-                    ConfigValues configValues = configFileReaderProps.makeConfigValues();
-                    configFileReaderXml.write(configValues, xmlFileEquivalent);
+                    renamePropsFile(fqpn);
+                    // now read our xml
                     returnVal = configFileReaderXml.read(xmlFileEquivalent);
 
                 } else {
-                    throw (new Exception("File does not exist: " + fqpn));
+
+                    File propsFile = new File(fqpn);
+                    if (propsFile.exists()) {
+
+                        ConfigFileReaderProps configFileReaderProps = new ConfigFileReaderProps(fqpn);
+                        ConfigValues configValues = configFileReaderProps.makeConfigValues();
+                        configFileReaderXml.write(configValues, xmlFileEquivalent);
+                        returnVal = configFileReaderXml.read(xmlFileEquivalent);
+
+                    } else {
+                        throw (new Exception("File does not exist: " + fqpn));
+                    }
+
+
                 }
 
+                LOGGER.error("JNDI specifies the configuration file as " + fqpn + "; this file has been re-written to " + xmlFileEquivalent);
 
-            }
+            } else {
 
-            LOGGER.error("JNDI specifies the configuration file as " + fqpn + "; this file has been re-written to " + xmlFileEquivalent);
+                renamePropsFile(fqpn);
+                returnVal = configFileReaderXml.read(fqpn);
 
-        } else {
+            } // if else the file we got has ".properties" as extension
 
-            renamePropsFile(fqpn);
-            returnVal = configFileReaderXml.read(fqpn);
-
-        } // if else the file we got has ".properties" as extension
+        } catch (Exception e ) {
+            LOGGER.error("Error creating configuration POJO",e);
+            throw(e);
+        }
 
 
         return returnVal;
