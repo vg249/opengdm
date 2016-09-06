@@ -9,7 +9,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.Status;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -65,7 +65,7 @@ public class DtoRequestExperimentTest {
         experimentDTORequest.setModifiedBy(2);
         experimentDTORequest.setExperimentCode("foocode");
         experimentDTORequest.setExperimentDataFile("foofile");
-        experimentDTORequest.setStatus(1);
+        experimentDTORequest.setStatusId(1);
         experimentDTORequest.setExperimentName(UUID.randomUUID().toString());
 
         dtoRequestExperiment.process(experimentDTORequest);
@@ -95,10 +95,10 @@ public class DtoRequestExperimentTest {
 
 
         List<HeaderStatusMessage> headerStatusMessages = ExperimentDTOResponse
-                .getDtoHeaderResponse()
+                .getStatus()
                 .getStatusMessages()
                 .stream()
-                .filter(m -> m.getValidationStatusType().equals(HeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE))
+                .filter(m -> m.getValidationStatusType().equals(Status.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE))
                 .collect(Collectors.toList());
 
 

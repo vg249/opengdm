@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.DisplayService;
 import org.gobiiproject.gobiidtomapping.DtoMapDisplay;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
-import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,8 @@ public class DisplayServiceImpl implements DisplayService {
                     break;
 
                 default:
-                    returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
-                            HeaderResponse.ValidationStatusType.BAD_REQUEST,
+                    returnVal.getStatus().addStatusMessage(Status.StatusLevel.ERROR,
+                            Status.ValidationStatusType.BAD_REQUEST,
                             "Unsupported proces type " + returnVal.getProcessType().toString());
                     break;
 
@@ -53,7 +53,7 @@ public class DisplayServiceImpl implements DisplayService {
 
         } catch (Exception e) {
 
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii service error", e);
         }
 

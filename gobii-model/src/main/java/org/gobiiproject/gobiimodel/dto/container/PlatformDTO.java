@@ -29,7 +29,7 @@ public class PlatformDTO extends Header {
     private Date createdDate;
     private Integer modifiedBy;
     private Date modifiedDate;
-    private Integer status;
+    private Integer statusId;
     private Integer typeId;
     private List<EntityPropertyDTO> properties = new ArrayList<>();
 
@@ -125,13 +125,13 @@ public class PlatformDTO extends Header {
     }
 
     @GobiiEntityParam(paramName = "status")
-    public Integer getStatus() {
-        return status;
+    public Integer getStatusId() {
+        return statusId;
     }
 
     @GobiiEntityColumn(columnName ="status")
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
     }
 
     @GobiiEntityParam(paramName = "typeId")

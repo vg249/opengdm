@@ -314,12 +314,12 @@ public class ConfigCheck {
                 PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
 
                 Integer responseNum = 1;
-                if (pingDTOResponse.getDtoHeaderResponse().isSucceeded()) {
+                if (pingDTOResponse.getStatus().isSucceeded()) {
                     for (String currentResponse : pingDTOResponse.getPingResponses()) {
                         ConfigCheck.printField("Ping response " + (responseNum++).toString(), currentResponse);
                     }
                 } else {
-                    for (HeaderStatusMessage currentHeader : pingDTOResponse.getDtoHeaderResponse().getStatusMessages()) {
+                    for (HeaderStatusMessage currentHeader : pingDTOResponse.getStatus().getStatusMessages()) {
                         ConfigCheck.printField("Service error " + (responseNum++).toString(), currentHeader.getMessage());
                         returnVal = false;
                     }

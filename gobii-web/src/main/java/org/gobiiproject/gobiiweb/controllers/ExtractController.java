@@ -6,7 +6,6 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
-import org.gobiiproject.gobidomain.services.OrganizationService;
 import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
@@ -70,7 +69,7 @@ public class ExtractController {
             returnVal = extractorInstructionFilesService.processExtractorFileInstructions(extractorInstructionFilesDTO);
         } catch (AccessDeniedException e) {
 
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error(e.getMessage());
         }
 

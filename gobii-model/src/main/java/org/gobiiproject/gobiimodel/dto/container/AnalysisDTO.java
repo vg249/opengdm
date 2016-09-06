@@ -32,7 +32,7 @@ public class AnalysisDTO extends Header {
     private String sourceUri;
     private Integer referenceId;
     private Date timeExecuted;
-    private Integer status;
+    private Integer statusId;
     private List<EntityPropertyDTO> parameters = new ArrayList<>();
 
     @GobiiEntityParam(paramName = "analysisId")
@@ -156,13 +156,13 @@ public class AnalysisDTO extends Header {
     }
 
     @GobiiEntityParam(paramName = "status")
-    public Integer getStatus() {
-        return status;
+    public Integer getStatusId() {
+        return statusId;
     }
 
     @GobiiEntityColumn(columnName = "status")
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
     }
 
     public List<EntityPropertyDTO> getParameters() {

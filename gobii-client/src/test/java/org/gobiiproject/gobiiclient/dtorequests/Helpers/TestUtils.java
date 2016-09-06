@@ -18,11 +18,11 @@ public class TestUtils {
 
         boolean returnVal = false;
 
-        if (!dtoMetaData.getDtoHeaderResponse().isSucceeded()) {
+        if (!dtoMetaData.getStatus().isSucceeded()) {
             returnVal = true;
             System.out.println();
             System.out.println("*** Header errors: ");
-            for (HeaderStatusMessage currentStatusMesage : dtoMetaData.getDtoHeaderResponse().getStatusMessages()) {
+            for (HeaderStatusMessage currentStatusMesage : dtoMetaData.getStatus().getStatusMessages()) {
                 System.out.println(currentStatusMesage.getMessage());
             }
         }

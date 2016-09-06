@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.OrganizationService;
 import org.gobiiproject.gobiidtomapping.DtoMapOrganization;
 import org.gobiiproject.gobiimodel.dto.container.OrganizationDTO;
-import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,15 +44,15 @@ public class OrganizationServiceImpl implements OrganizationService {
                     break;
 
                 default:
-                    returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
-                            HeaderResponse.ValidationStatusType.BAD_REQUEST,
+                    returnVal.getStatus().addStatusMessage(Status.StatusLevel.ERROR,
+                            Status.ValidationStatusType.BAD_REQUEST,
                             "Unsupported proces Organization type " + organizationDTO.getProcessType().toString());
 
             }
 
         } catch (Exception e) {
 
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii service error", e);
         }
 

@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.Status;
 
 /**
  * Created by Phil on 5/10/2016.
@@ -8,15 +8,15 @@ import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
 public class GobiiException extends RuntimeException {
 
 
-    private HeaderResponse.StatusLevel statusLevel;
-    private HeaderResponse.ValidationStatusType validationStatusType;
+    private Status.StatusLevel statusLevel;
+    private Status.ValidationStatusType validationStatusType;
 
     public GobiiException(String message) {
         super(message);
     }
 
-    public GobiiException(HeaderResponse.StatusLevel statusLevel,
-                          HeaderResponse.ValidationStatusType validationStatusType,
+    public GobiiException(Status.StatusLevel statusLevel,
+                          Status.ValidationStatusType validationStatusType,
                           String message) {
 
         super(message);
@@ -26,19 +26,19 @@ public class GobiiException extends RuntimeException {
     } //
 
 
-    public HeaderResponse.StatusLevel getStatusLevel() {
+    public Status.StatusLevel getStatusLevel() {
         return statusLevel;
     }
 
-    public void setStatusLevel(HeaderResponse.StatusLevel statusLevel) {
+    public void setStatusLevel(Status.StatusLevel statusLevel) {
         this.statusLevel = statusLevel;
     }
 
-    public HeaderResponse.ValidationStatusType getValidationStatusType() {
+    public Status.ValidationStatusType getValidationStatusType() {
         return validationStatusType;
     }
 
-    public void setValidationStatusType(HeaderResponse.ValidationStatusType validationStatusType) {
+    public void setValidationStatusType(Status.ValidationStatusType validationStatusType) {
         this.validationStatusType = validationStatusType;
     }
 

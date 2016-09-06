@@ -417,10 +417,10 @@ public class GobiiFileReader {
 			DtoRequestDataSet dtoProcessor = new DtoRequestDataSet();
 			DataSetDTO dataSetResponse = dtoProcessor.process(dataSetRequest);
 
-			if (!dataSetResponse.getDtoHeaderResponse().isSucceeded()) {
+			if (!dataSetResponse.getStatus().isSucceeded()) {
 				System.out.println();
 				logError("Digester","Data set response header errors");
-				for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getDtoHeaderResponse().getStatusMessages()) {
+				for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getStatus().getStatusMessages()) {
 					logError("HeaderError",currentStatusMesage.getMessage());
 				}
 				return;
@@ -433,9 +433,9 @@ public class GobiiFileReader {
 
 			dataSetResponse = dtoProcessor.process(dataSetResponse);
 			// if you didn't succeed, do not pass go, but do log errors to your log file
-			if (!dataSetResponse.getDtoHeaderResponse().isSucceeded()) {
+			if (!dataSetResponse.getStatus().isSucceeded()) {
 				logError("Digester","Data set response header errors");
-				for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getDtoHeaderResponse().getStatusMessages()) {
+				for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getStatus().getStatusMessages()) {
 					logError("HeaderError",currentStatusMesage.getMessage());
 				}
 				return;

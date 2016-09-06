@@ -111,7 +111,7 @@ public class BRAPIController {
             returnVal.getPingResponses().add(newResponseString);
         } catch (Exception e) {
 
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error(e.getMessage());
         }
 

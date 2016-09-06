@@ -5,9 +5,6 @@
 // ************************************************************************
 package org.gobiiproject.gobiimodel.dto.header;
 
-import org.gobiiproject.gobiimodel.dto.header.HeaderAuth;
-import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
-
 
 import java.io.Serializable;
 
@@ -26,8 +23,8 @@ abstract public class Header implements Serializable {
 
     private ProcessType processType = ProcessType.READ;
     private HeaderAuth dtoHeaderAuth = new HeaderAuth();
-    private HeaderResponse dtoHeaderResponse = new HeaderResponse();
-    private HeaderPagination headerPagination = null;
+    private Status status = new Status();
+    private Pagination pagination = null;
 
 
 
@@ -45,8 +42,12 @@ abstract public class Header implements Serializable {
         return dtoHeaderAuth;
     }
 
-    public HeaderResponse getDtoHeaderResponse() {
-        return dtoHeaderResponse;
+    public Status getStatus()
+    {
+        if( null == this.status ) {
+            this.status = new Status();
+        }
+        return this.status;
     }
 
     public ProcessType getProcessType() {
@@ -71,7 +72,7 @@ abstract public class Header implements Serializable {
                               Integer totalPages,
                               Integer currentPage) {
         
-        this.headerPagination = new HeaderPagination(totalCount,
+        this.pagination = new Pagination(totalCount,
                 pageSize,
                 totalPages,
                 currentPage);

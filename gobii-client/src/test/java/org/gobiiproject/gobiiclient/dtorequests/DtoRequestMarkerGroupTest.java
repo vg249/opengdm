@@ -12,7 +12,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
-import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.Status;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -154,15 +154,15 @@ public class DtoRequestMarkerGroupTest {
         MarkerGroupDTO markerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTORequest);
 
         Assert.assertNotEquals(null, markerGroupDTOResponse);
-        Assert.assertFalse(markerGroupDTOResponse.getDtoHeaderResponse().isSucceeded());
+        Assert.assertFalse(markerGroupDTOResponse.getStatus().isSucceeded());
 
         Assert.assertTrue(null == markerGroupDTOResponse.getMarkerGroupId() || markerGroupDTOResponse.getMarkerGroupId() > 0);
 
         List<HeaderStatusMessage> invalidResponses = markerGroupDTOResponse
-                .getDtoHeaderResponse()
+                .getStatus()
                 .getStatusMessages()
                 .stream()
-                .filter(m -> m.getValidationStatusType() == HeaderResponse.ValidationStatusType.NONEXISTENT_FK_ENTITY)
+                .filter(m -> m.getValidationStatusType() == Status.ValidationStatusType.NONEXISTENT_FK_ENTITY)
                 .collect(Collectors.toList());
 
         Assert.assertTrue(invalidResponses.size() == 1);

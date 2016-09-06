@@ -10,7 +10,7 @@ import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
-import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +65,8 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
                 } else {
                     currentMarkerGroupMarkerDTO.setMarkerId(currentMarkerId);
                     currentMarkerGroupMarkerDTO.setMarkerExists(false);
-                    returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.OK,
-                            HeaderResponse.ValidationStatusType.NONEXISTENT_FK_ENTITY,
+                    returnVal.getStatus().addStatusMessage(Status.StatusLevel.OK,
+                            Status.ValidationStatusType.NONEXISTENT_FK_ENTITY,
                             "A marker id in the marker_group table does not exist " + currentMarkerId);
                 }
 
@@ -74,7 +74,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
             }
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -146,8 +146,8 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
             if (null == currentMarkerGroupMarkerDTO.getFavorableAllele() ||
                     currentMarkerGroupMarkerDTO.getFavorableAllele().isEmpty()) {
-                throw new GobiiDtoMappingException(HeaderResponse.StatusLevel.ERROR,
-                        HeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
+                throw new GobiiDtoMappingException(Status.StatusLevel.ERROR,
+                        Status.ValidationStatusType.MISSING_REQUIRED_VALUE,
                         "The no allele value was specified for marker nane " + currentMarkerGroupMarkerDTO.getMarkerName());
             }
 
@@ -193,8 +193,8 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
                 } else {
 
-                    returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
-                            HeaderResponse.ValidationStatusType.NONEXISTENT_FK_ENTITY,
+                    returnVal.getStatus().addStatusMessage(Status.StatusLevel.ERROR,
+                            Status.ValidationStatusType.NONEXISTENT_FK_ENTITY,
                             "None of the specified markers exists");
 
                 } // if else at least one marker is valid
@@ -203,7 +203,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -246,17 +246,17 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
             } else if (nonExistingMarkers.size() > 0) {
 
-                throw new GobiiDtoMappingException(HeaderResponse.StatusLevel.ERROR,
-                        HeaderResponse.ValidationStatusType.NONEXISTENT_FK_ENTITY,
+                throw new GobiiDtoMappingException(Status.StatusLevel.ERROR,
+                        Status.ValidationStatusType.NONEXISTENT_FK_ENTITY,
                         "None of the specified markers exists");
 
             } // if else at least one marker is valid
 
             if (nonExistingMarkers.size() > 0) {
                 markerGroupDTO
-                        .getDtoHeaderResponse()
-                        .addStatusMessage(HeaderResponse.StatusLevel.VALIDATION,
-                                HeaderResponse.ValidationStatusType.NONEXISTENT_FK_ENTITY,
+                        .getStatus()
+                        .addStatusMessage(Status.StatusLevel.VALIDATION,
+                                Status.ValidationStatusType.NONEXISTENT_FK_ENTITY,
                                 "Some or all of the specified markers to be created do not exist");
             }
 
@@ -292,7 +292,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 

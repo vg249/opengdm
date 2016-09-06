@@ -30,7 +30,7 @@ public class ExperimentDTO extends Header {
     private Date createdDate;
     private Integer modifiedBy;
     private Date modifiedDate;
-    private Integer status;
+    private Integer statusId;
 
 
     @GobiiEntityParam(paramName = "experimentId")
@@ -154,13 +154,13 @@ public class ExperimentDTO extends Header {
     }
 
     @GobiiEntityParam(paramName = "status")
-    public Integer getStatus() {
-        return status;
+    public Integer getStatusId() {
+        return statusId;
     }
 
     @GobiiEntityColumn(columnName = "status")
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
     }
 
 

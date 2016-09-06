@@ -53,7 +53,7 @@ public class TestDtoFactory {
         returnVal.setProgram(uniqueStem + ":  foo program");
         returnVal.setProgramVersion(uniqueStem + ":  foo version");
         returnVal.setAnlaysisTypeId(1);
-        returnVal.setStatus(1);
+        returnVal.setStatusId(1);
 
         returnVal.setParameters(entityParamValues.getProperties());
 
@@ -69,7 +69,7 @@ public class TestDtoFactory {
 
         String uniqueStemString = uniqueStem.toString();
         // set the plain properties
-        returnVal.setStatus(1);
+        returnVal.setStatusId(1);
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
         returnVal.setCreatedBy(1);
@@ -132,7 +132,7 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
 
         // set the plain properties
         returnVal.setName(uniqueStem + ": foo name");
-        returnVal.setStatus(1);
+        returnVal.setStatusId(1);
         returnVal.setCreatedBy(1);
         returnVal.setCreatedDate(new Date());
         returnVal.setDataFile(uniqueStem + ": foo file");
@@ -167,7 +167,7 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
         returnVal.setReferenceId(1);
-        returnVal.setStatus(1);
+        returnVal.setStatusId(1);
 
         returnVal.setProperties(entityParamValues.getProperties());
 
@@ -204,7 +204,7 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
         returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
-        returnVal.setStatus(1);
+        returnVal.setStatusId(1);
 
         return returnVal;
 
@@ -277,7 +277,7 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
         MarkerGroupDTO returnVal = new MarkerGroupDTO(processType);
 
         returnVal.setMarkers(markerGroupMarkers);
-        returnVal.setStatus(1);
+        returnVal.setStatusId(1);
         returnVal.setCode( uniqueStem + "_code");
         returnVal.setGermplasmGroup(uniqueStem + "_germplasmGroup");
         returnVal.setName(uniqueStem + "_name");

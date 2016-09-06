@@ -171,7 +171,7 @@ public final class ClientContext {
                 configSettingsDTORequest,
                 returnVal.userToken);
 
-        if (configSettingsDTOResponse.getDtoHeaderResponse().isSucceeded()) {
+        if (configSettingsDTOResponse.getStatus().isSucceeded()) {
 
             returnVal.defaultGobiiCropType = configSettingsDTOResponse.getDefaultCrop();
             returnVal.serverConfigs = configSettingsDTOResponse.getServerConfigs();
@@ -179,7 +179,7 @@ public final class ClientContext {
         } else {
             throw new Exception("Unable to get server configuration from "
                     + url.toString()
-                    + configSettingsDTOResponse.getDtoHeaderResponse().getStatusMessages().get(0).getMessage());
+                    + configSettingsDTOResponse.getStatus().getStatusMessages().get(0).getMessage());
         }
 
         return returnVal;

@@ -43,7 +43,7 @@ public class DtoMapContactImpl implements DtoMapContact {
             } // iterate resultSet
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -63,7 +63,7 @@ public class DtoMapContactImpl implements DtoMapContact {
             returnVal.setContactId(contactId);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -82,7 +82,7 @@ public class DtoMapContactImpl implements DtoMapContact {
             rsContactDao.updateContact(parameters);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 

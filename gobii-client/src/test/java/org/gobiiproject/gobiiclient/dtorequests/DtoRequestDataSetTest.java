@@ -322,10 +322,10 @@ public class DtoRequestDataSetTest {
         DataSetDTO dataSetResponse = dtoRequestDataSet.process(dataSetRequest);
 
         // if you didn't succeed, do not pass go, but do log errors to your log file
-        if (!dataSetResponse.getDtoHeaderResponse().isSucceeded()) {
+        if (!dataSetResponse.getStatus().isSucceeded()) {
             System.out.println();
             System.out.println("*** Header errors: ");
-            for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getDtoHeaderResponse().getStatusMessages()) {
+            for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getStatus().getStatusMessages()) {
                 System.out.println(currentStatusMesage.getMessage());
             }
         }

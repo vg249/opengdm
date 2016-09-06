@@ -51,7 +51,7 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
             } // if result set has a row
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -72,7 +72,7 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
             List<EntityPropertyDTO> platformParameters = platformDTO.getProperties();
             upsertPlatformProperties(platformDTO.getPlatformId(), platformParameters);
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -116,7 +116,7 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
                         platformDTO.getProperties());
             }
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 

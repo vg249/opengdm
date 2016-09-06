@@ -4,7 +4,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.Status;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
@@ -149,10 +149,10 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         Assert.assertTrue(1 ==
         testForuserInputFileExistsError
-                .getDtoHeaderResponse()
+                .getStatus()
                 .getStatusMessages()
                 .stream()
-                .filter(m -> m.getValidationStatusType().equals(HeaderResponse.ValidationStatusType.VALIDATION_NOT_UNIQUE))
+                .filter(m -> m.getValidationStatusType().equals(Status.ValidationStatusType.VALIDATION_NOT_UNIQUE))
                 .collect(Collectors.toList())
                 .size() );
 

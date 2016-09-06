@@ -55,4 +55,4 @@ public class HeaderAuth implements Serializable {
 
 
 
-}//HeaderResponse
+}//Status

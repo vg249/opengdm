@@ -5,32 +5,32 @@ import java.io.Serializable;
 public class HeaderStatusMessage implements Serializable {
 
 
-    private HeaderResponse.StatusLevel statusLevel;
+    private Status.StatusLevel statusLevel;
 
 
-    private HeaderResponse.ValidationStatusType validationStatusType;
+    private Status.ValidationStatusType validationStatusType;
     private String message;
 
     public HeaderStatusMessage() {
     }
 
-    public HeaderStatusMessage(HeaderResponse.StatusLevel statusLevel,
-                               HeaderResponse.ValidationStatusType validationStatusType,
+    public HeaderStatusMessage(Status.StatusLevel statusLevel,
+                               Status.ValidationStatusType validationStatusType,
                                String message) {
         this.statusLevel = statusLevel;
         this.validationStatusType = validationStatusType;
         this.message = message;
     }
 
-    public HeaderResponse.StatusLevel getStatusLevel() {
+    public Status.StatusLevel getStatusLevel() {
         return statusLevel;
     }
 
-    public HeaderResponse.ValidationStatusType getValidationStatusType() {
+    public Status.ValidationStatusType getValidationStatusType() {
         return validationStatusType;
     }
 
-    public void setStatusLevel(HeaderResponse.StatusLevel statusLevel) {
+    public void setStatusLevel(Status.StatusLevel statusLevel) {
         this.statusLevel = statusLevel;
     }
 

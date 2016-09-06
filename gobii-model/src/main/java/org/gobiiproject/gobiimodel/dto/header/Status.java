@@ -11,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Created by MrPhil on 6/18/2015.
  */
-public class HeaderResponse implements Serializable {
+public class Status implements Serializable {
 
     public enum StatusLevel {ERROR, VALIDATION, WARNING, INFO, OK}
 
@@ -77,4 +77,4 @@ public class HeaderResponse implements Serializable {
     }
 
 
-}//HeaderResponse
+}//Status

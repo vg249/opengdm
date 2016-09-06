@@ -6,7 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,8 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             while (resultSet.next()) {
 
                 if (true == retrievedOneRecord) {
-                    throw (new GobiiDtoMappingException(HeaderResponse.StatusLevel.ERROR,
-                            HeaderResponse.ValidationStatusType.VALIDATION_NOT_UNIQUE,
+                    throw (new GobiiDtoMappingException(Status.StatusLevel.ERROR,
+                            Status.ValidationStatusType.VALIDATION_NOT_UNIQUE,
                             "There are more than one project records for project id: " + experimentDTO.getExperimentId()));
                 }
 
@@ -48,7 +48,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             }
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -69,8 +69,8 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             if (resultSetExistingProject.next()) {
 
                 returnVal = false;
-                experimentDTO.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.OK,
-                        HeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
+                experimentDTO.getStatus().addStatusMessage(Status.StatusLevel.OK,
+                        Status.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
                         "An experiment with name "
                                 + experimentName
                                 + " and project id "
@@ -98,7 +98,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             }
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -116,7 +116,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             rsExperimentDao.updateExperiment(parameters);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 

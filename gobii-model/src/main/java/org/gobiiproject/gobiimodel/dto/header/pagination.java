@@ -3,12 +3,12 @@ package org.gobiiproject.gobiimodel.dto.header;
 /**
  * Created by Phil on 9/6/2016.
  */
-public class HeaderPagination {
+public class Pagination {
 
-    public HeaderPagination(Integer totalCount,
-                            Integer pageSize,
-                            Integer totalPages,
-                            Integer currentPage
+    public Pagination(Integer totalCount,
+                      Integer pageSize,
+                      Integer totalPages,
+                      Integer currentPage
     ) {
         this.totalCount= totalCount;
         this.pageSize= pageSize;

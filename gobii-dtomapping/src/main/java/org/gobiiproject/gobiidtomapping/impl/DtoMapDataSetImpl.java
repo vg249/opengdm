@@ -73,7 +73,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
             }
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -92,7 +92,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
             returnVal.setDataSetId(datasetId);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -122,7 +122,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
