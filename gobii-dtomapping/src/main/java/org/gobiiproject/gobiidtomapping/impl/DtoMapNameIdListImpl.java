@@ -5,7 +5,7 @@ import org.gobiiproject.gobiidao.resultset.access.*;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
-import org.gobiiproject.gobiimodel.dto.header.Status;
+import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

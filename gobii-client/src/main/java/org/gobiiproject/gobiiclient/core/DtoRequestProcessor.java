@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiiclient.core;
 
-import org.gobiiproject.gobiimodel.dto.header.Header;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 import org.slf4j.Logger;

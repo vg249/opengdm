@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.header.Header;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 
 /**
  * Created by Phil on 4/8/2016.

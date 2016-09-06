@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiidtomapping.DtoMapReference;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
-import org.gobiiproject.gobiimodel.dto.header.Status;
+import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,7 +7,7 @@ import org.gobiiproject.gobiidtomapping.DtoMapExtractorInstructions;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.header.Status;
+import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 

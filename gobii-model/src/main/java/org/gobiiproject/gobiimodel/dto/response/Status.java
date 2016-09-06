@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.header;
+package org.gobiiproject.gobiimodel.dto.response;
 
 
 import org.codehaus.jackson.annotate.JsonIgnore;

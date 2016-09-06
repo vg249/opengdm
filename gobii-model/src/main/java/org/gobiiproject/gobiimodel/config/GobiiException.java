@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.gobiiproject.gobiimodel.dto.header.Status;
+import org.gobiiproject.gobiimodel.dto.response.Status;
 
 /**
  * Created by Phil on 5/10/2016.

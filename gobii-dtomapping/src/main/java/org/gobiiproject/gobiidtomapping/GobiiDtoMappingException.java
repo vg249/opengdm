@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiidtomapping;
 
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.header.Status;
+import org.gobiiproject.gobiimodel.dto.response.Status;
 
 /**
  * Created by Phil on 4/7/2016.

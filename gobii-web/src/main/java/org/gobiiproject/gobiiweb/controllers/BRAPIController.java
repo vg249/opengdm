@@ -22,7 +22,7 @@ import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobidomain.services.PlatformService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
-import org.gobiiproject.gobiimodel.dto.header.Header;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;

@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.header;
+package org.gobiiproject.gobiimodel.dto.response;
 
 /**
  * Created by Phil on 9/6/2016.

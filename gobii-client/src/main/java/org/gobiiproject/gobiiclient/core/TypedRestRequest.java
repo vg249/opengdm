@@ -9,7 +9,7 @@ package org.gobiiproject.gobiiclient.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 
-import org.gobiiproject.gobiimodel.dto.header.Header;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
