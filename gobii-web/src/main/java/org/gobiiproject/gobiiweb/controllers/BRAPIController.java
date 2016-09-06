@@ -25,6 +25,7 @@ import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -138,19 +139,17 @@ public class BRAPIController {
 
     @RequestMapping(value = "/contact/{contactId}", method = RequestMethod.GET)
     @ResponseBody
-    public String getContactsById(@PathVariable Integer contactId) {
+    public ResultEnvelope<ContactDTO> getContactsById(@PathVariable Integer contactId) {
 
-        String returnVal = null;
+        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
         try {
 
             ContactDTO contactRequestDTO = new ContactDTO(Header.ProcessType.READ);
             contactRequestDTO.setContactId(contactId);
-            ContactDTO contactResponseDTO = contactService.processContact(contactRequestDTO);
-            returnVal = "Authenticated: " +  (new Date()).toString();
+            returnVal = contactService.processContact(contactRequestDTO);
+
         } catch (Exception e) {
-            String msg = e.getMessage();
-            String tmp = msg;
-            throw (e);
+            returnVal.getHeader().getStatus().addException(e);
         }
 
         return (returnVal);

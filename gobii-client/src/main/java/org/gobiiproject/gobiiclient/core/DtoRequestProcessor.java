@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiclient.core;
 
 import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 import org.slf4j.Logger;
@@ -30,6 +31,35 @@ public class DtoRequestProcessor<T extends Header> {
                 token);
 
     }
+
+
+    public ResultEnvelope<T> processEnvelope(T dtoToProcess, Class<T> DtoType,
+                                            ControllerType controllerType,
+                                            ServiceRequestId requestId) throws Exception {
+
+        String token = ClientContext.getInstance(null, false).getUserToken();
+        String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
+        Integer port = ClientContext.getInstance(null, false).getCurrentCropPort();
+
+        ResultEnvelope<T> returnVal = null;
+
+        TypedRestRequest<T> typedRestRequest= new TypedRestRequest<>(host, port, DtoType);
+
+
+        if (null == token || token.isEmpty()) {
+            throw (new Exception("there is no user token; user must log in"));
+        }
+
+        String url = Urls.getRequestUrl(controllerType,
+                requestId);
+
+        returnVal = typedRestRequest.getTypedHtppResponseForDtoEnvelope(url,
+                dtoToProcess,
+                token);
+
+        return returnVal;
+    }
+
 
     public T process(T dtoToProcess,
                      Class<T> DtoType,

@@ -3,6 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,9 @@ public class ContactServiceImpl implements ContactService {
     DtoMapContact dtoMapContact = null;
 
     @Override
-    public ContactDTO processContact(ContactDTO contactDTO) {
+    public ResultEnvelope<ContactDTO> processContact(ContactDTO contactDTO) {
 
-        ContactDTO returnVal = new ContactDTO();
+        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
 
         try {
             switch (contactDTO.getProcessType()) {
@@ -32,19 +33,19 @@ public class ContactServiceImpl implements ContactService {
                     break;
 
                 case CREATE:
+                    contactDTO.setCreatedDate(new Date());
+                    contactDTO.setModifiedDate(new Date());
                     returnVal = dtoMapContact.createContact(contactDTO);
-                    returnVal.setCreatedDate(new Date());
-                    returnVal.setModifiedDate(new Date());
                     break;
 
                 case UPDATE:
+                    contactDTO.setCreatedDate(new Date());
+                    contactDTO.setModifiedDate(new Date());
                     returnVal = dtoMapContact.updateContact(contactDTO);
-                    returnVal.setCreatedDate(new Date());
-                    returnVal.setModifiedDate(new Date());
                     break;
 
                 default:
-                    returnVal.getStatus().addStatusMessage(Status.StatusLevel.ERROR,
+                    returnVal.getHeader().getStatus().addStatusMessage(Status.StatusLevel.ERROR,
                             Status.ValidationStatusType.BAD_REQUEST,
                             "Unsupported proces contact type " + contactDTO.getProcessType().toString());
 
@@ -52,7 +53,7 @@ public class ContactServiceImpl implements ContactService {
 
         } catch (Exception e) {
 
-            returnVal.getStatus().addException(e);
+            returnVal.getHeader().getStatus().addException(e);
             LOGGER.error("Gobii service error", e);
         }
 

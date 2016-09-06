@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,9 @@ public class DtoMapContactImpl implements DtoMapContact {
 
     @Transactional
     @Override
-    public ContactDTO getContactDetails(ContactDTO contactDTO) throws GobiiDtoMappingException {
+    public ResultEnvelope<ContactDTO> getContactDetails(ContactDTO contactDTO) throws GobiiDtoMappingException {
 
-        ContactDTO returnVal = contactDTO;
+        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
 
         try {
 
@@ -38,51 +39,52 @@ public class DtoMapContactImpl implements DtoMapContact {
             if (resultSet.next()) {
 
                 // apply contact values
-                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+                ResultColumnApplicator.applyColumnValues(resultSet, contactDTO);
 
             } // iterate resultSet
 
+            returnVal.getResult().getData().add(contactDTO);
+
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
+            returnVal.getHeader().getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
-
         return returnVal;
-
     }
 
     @Override
-    public ContactDTO createContact(ContactDTO contactDTO) throws GobiiDtoMappingException {
-        ContactDTO returnVal = contactDTO;
+    public ResultEnvelope<ContactDTO> createContact(ContactDTO contactDTO) throws GobiiDtoMappingException {
+
+        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
 
         try {
 
             Map<String, Object> parameters = ParamExtractor.makeParamVals(contactDTO);
             Integer contactId = rsContactDao.createContact(parameters);
-            returnVal.setContactId(contactId);
+            contactDTO.setContactId(contactId);
+            returnVal.getResult().getData().add(contactDTO);
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
+            returnVal.getHeader().getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
-
 
         return returnVal;
     }
 
     @Override
-    public ContactDTO updateContact(ContactDTO contactDTO) throws GobiiDtoMappingException {
+    public ResultEnvelope<ContactDTO> updateContact(ContactDTO contactDTO) throws GobiiDtoMappingException {
 
-        ContactDTO returnVal = contactDTO;
+        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
 
         try {
 
-            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(contactDTO);
             rsContactDao.updateContact(parameters);
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
+            returnVal.getHeader().getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 

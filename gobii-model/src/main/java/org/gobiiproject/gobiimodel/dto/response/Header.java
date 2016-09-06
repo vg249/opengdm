@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * Created by Phil on 3/24/2016.
  */
-abstract public class Header implements Serializable {
+public class Header implements Serializable {
 
     public Header() {}
 

@@ -1,12 +1,14 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiidao.entity.pojos.Contact;
 import org.gobiiproject.gobiidao.filesystem.ExtractorInstructionsDAO;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.DtoMapExtractorInstructions;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
@@ -85,9 +87,13 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 }
 
                 if (null != currentExtractorInstruction.getContactId() && currentExtractorInstruction.getContactId() > 0) {
-                    ContactDTO contactDTO = new ContactDTO();
-                    contactDTO.setContactId(currentExtractorInstruction.getContactId());
-                    contactDTO = dtoMapContact.getContactDetails(contactDTO);
+                    ContactDTO contactDTORequest = new ContactDTO();
+                    contactDTORequest.setContactId(currentExtractorInstruction.getContactId());
+
+                    ResultEnvelope<ContactDTO> contactDTOResultEnvelope = dtoMapContact.getContactDetails(contactDTORequest);
+                    ContactDTO contactDTO = contactDTOResultEnvelope.getResult().getData().get(0);
+
+
                     if (!LineUtils.isNullOrEmpty(contactDTO.getEmail())) {
                         currentExtractorInstruction.setContactEmail(contactDTO.getEmail());
                     } else {

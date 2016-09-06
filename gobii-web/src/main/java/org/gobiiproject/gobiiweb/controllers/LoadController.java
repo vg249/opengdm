@@ -8,6 +8,7 @@ package org.gobiiproject.gobiiweb.controllers;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -172,17 +173,18 @@ public class LoadController {
 
     @RequestMapping(value = "/contact", method = RequestMethod.POST)
     @ResponseBody
-    public ContactDTO processContact(@RequestBody ContactDTO contactDTO) {
+    public ResultEnvelope<ContactDTO> processContact(@RequestBody ContactDTO contactDTO) {
 
-        ContactDTO returnVal = new ContactDTO();
-        //PingDTO pingDTORequest = new PingDTO();
+        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+
         try {
             returnVal = contactService.processContact(contactDTO);
         } catch (Exception e) {
 
-            returnVal.getStatus().addException(e);
+            returnVal.getHeader().getStatus().addException(e);
             LOGGER.error(e.getMessage());
         }
+
         return (returnVal);
 
     }//processCOntact

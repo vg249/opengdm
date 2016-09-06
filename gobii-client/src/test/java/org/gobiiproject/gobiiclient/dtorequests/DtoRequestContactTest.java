@@ -12,6 +12,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -39,10 +40,13 @@ public class DtoRequestContactTest {
         DtoRequestContact dtoRequestContact = new DtoRequestContact();
         ContactDTO contactDTORequest = new ContactDTO();
         contactDTORequest.setContactId(6);
-        ContactDTO contactDTOResponse = dtoRequestContact.process(contactDTORequest);
+        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(contactDTORequest);
 
-        Assert.assertNotEquals(null, contactDTOResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponse));
+        Assert.assertNotEquals(null, contactDTOResponseEnvelope);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
+        ContactDTO contactDTOResponse = contactDTOResponseEnvelope.getResult().getData().get(0);
+
+        Assert.assertTrue(contactDTOResponse.getContactId() > 0);
 
     } //
 
@@ -65,14 +69,19 @@ public class DtoRequestContactTest {
         contactDTORequest.setOrganizationId(1);
         contactDTORequest.getRoles().add(1);
         contactDTORequest.getRoles().add(2);
-        ContactDTO contactDTOResponse = dtoRequestContact.process(contactDTORequest);
+
+        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(contactDTORequest);
+        Assert.assertNotEquals(null, contactDTOResponseEnvelope);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
+        ContactDTO contactDTOResponse = contactDTOResponseEnvelope.getResult().getData().get(0);
+
 
         Assert.assertNotEquals(null, contactDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponse));
         Assert.assertTrue(contactDTOResponse.getContactId() > 0);
 
     }
-    
+
     @Test
     public void testUpdateContact() throws Exception {
 
@@ -82,13 +91,22 @@ public class DtoRequestContactTest {
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         ContactDTO newContactDto = TestDtoFactory
                 .makePopulatedContactDTO(Header.ProcessType.CREATE, 1);
-        ContactDTO newContactDTOResponse = dtoRequestContact.process(newContactDto);
+
+
+        ResultEnvelope<ContactDTO> resultEnvelopeNewContact = dtoRequestContact.process(newContactDto);
+
+        ContactDTO newContactDTOResponse = resultEnvelopeNewContact.getResult().getData().get(0);
 
 
         // re-retrieve the contact we just created so we start with a fresh READ mode dto
         ContactDTO ContactDTORequest = new ContactDTO();
         ContactDTORequest.setContactId(newContactDTOResponse.getContactId());
-        ContactDTO contactDTOReceived = dtoRequestContact.process(ContactDTORequest);
+
+        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(newContactDTOResponse);
+        Assert.assertNotEquals(null, contactDTOResponseEnvelope);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
+        ContactDTO contactDTOReceived = contactDTOResponseEnvelope.getResult().getData().get(0);
+
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOReceived));
 
 
@@ -97,12 +115,15 @@ public class DtoRequestContactTest {
         String newName = UUID.randomUUID().toString();
         contactDTOReceived.setLastName(newName);
 
-        ContactDTO ContactDTOResponse = dtoRequestContact.process(contactDTOReceived);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(ContactDTOResponse));
+        ResultEnvelope<ContactDTO> contactDTOResponseEnvelopeUpdate = dtoRequestContact.process(contactDTOReceived);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelopeUpdate.getHeader()));
 
 
+        ContactDTO contactDTOReRequest = new ContactDTO(Header.ProcessType.READ);
+        contactDTOReRequest.setContactId(contactDTOReceived.getContactId());
+        ResultEnvelope<ContactDTO> contactDTOResponseEnvelopeReRetrieved = dtoRequestContact.process(contactDTOReRequest);
         ContactDTO dtoRequestContactReRetrieved =
-                dtoRequestContact.process(ContactDTORequest);
+                contactDTOResponseEnvelopeReRetrieved.getResult().getData().get(0);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestContactReRetrieved));
 
