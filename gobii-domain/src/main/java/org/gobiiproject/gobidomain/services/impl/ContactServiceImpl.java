@@ -2,9 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +44,8 @@ public class ContactServiceImpl implements ContactService {
                     break;
 
                 default:
-                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                            DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
+                    returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
+                            HeaderResponse.ValidationStatusType.BAD_REQUEST,
                             "Unsupported proces contact type " + contactDTO.getProcessType().toString());
 
             }

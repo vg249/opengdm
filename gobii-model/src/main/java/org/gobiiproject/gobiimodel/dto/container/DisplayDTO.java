@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.entity.TableColDisplay;
@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by Phil on 4/6/2016.
  */
-public class DisplayDTO extends DtoMetaData {
+public class DisplayDTO extends Header {
 
 	public DisplayDTO() {}
 

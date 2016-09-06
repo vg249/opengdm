@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.ManifestService;
 import org.gobiiproject.gobiidtomapping.DtoMapManifest;
 import org.gobiiproject.gobiimodel.dto.container.ManifestDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,8 @@ public class ManifestServiceImpl implements ManifestService {
                     break;
 
                 default:
-                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                            DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
+                    returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
+                            HeaderResponse.ValidationStatusType.BAD_REQUEST,
                             "Unsupported proces Manifest type " + manifestDTO.getProcessType().toString());
 
             }

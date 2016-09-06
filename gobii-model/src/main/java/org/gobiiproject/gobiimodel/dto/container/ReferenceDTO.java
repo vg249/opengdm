@@ -1,18 +1,14 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 
 /**
  * Created by Angel on 5/6/2016.
  */
-public class ReferenceDTO extends DtoMetaData {
+public class ReferenceDTO extends Header {
 
     public ReferenceDTO() {}
 

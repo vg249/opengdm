@@ -1,11 +1,11 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 
 /**
  * Created by Phil on 4/8/2016.
  */
-public class NameIdDTO extends DtoMetaData {
+public class NameIdDTO extends Header {
 
     private Integer id;
     private String name = null;

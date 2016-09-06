@@ -1,12 +1,10 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 
 import java.text.Collator;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,7 +14,7 @@ import java.util.List;
  */
 public class TestUtils {
 
-    public static boolean  checkAndPrintHeaderMessages(DtoMetaData dtoMetaData ) {
+    public static boolean  checkAndPrintHeaderMessages(Header dtoMetaData ) {
 
         boolean returnVal = false;
 

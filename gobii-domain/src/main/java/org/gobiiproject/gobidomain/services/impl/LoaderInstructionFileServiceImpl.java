@@ -2,10 +2,8 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
 import org.gobiiproject.gobiidtomapping.DtoMapLoaderInstructions;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +38,8 @@ public class LoaderInstructionFileServiceImpl implements LoaderInstructionFilesS
                     break;
 
                 default:
-                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                            DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
+                    returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
+                            HeaderResponse.ValidationStatusType.BAD_REQUEST,
                             "Unsupported proces type " + returnVal.getProcessType().toString());
 
             } // switch

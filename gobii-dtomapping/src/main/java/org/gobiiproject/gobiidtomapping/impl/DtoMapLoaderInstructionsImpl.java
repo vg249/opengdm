@@ -5,7 +5,7 @@ import org.gobiiproject.gobiidao.filesystem.LoaderInstructionsDAO;
 import org.gobiiproject.gobiidtomapping.DtoMapLoaderInstructions;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 
@@ -67,7 +67,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             ConfigSettings configSettings = new ConfigSettings();
 
-            String currentGobiiCropType = loaderInstructionFilesDTO.getGobiiCropType();
+            String currentGobiiCropType = loaderInstructionFilesDTO.getCropType();
             if (null == currentGobiiCropType) {
                 throw new Exception("Loader instruction request does not specify a crop");
             }
@@ -91,22 +91,22 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                 boolean allValuesSpecified = true;
                 if (LineUtils.isNullOrEmpty(returnVal.getInstructionFileName())) {
                     allValuesSpecified = false;
-                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                            DtoHeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
+                    returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
+                            HeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
                             "instruction file name is missing");
                 }
 
                 if (LineUtils.isNullOrEmpty(currentGobiiFile.getSource())) {
                     allValuesSpecified = false;
-                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                            DtoHeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
+                    returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
+                            HeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
                             "User file source is missing");
                 }
 
                 if (LineUtils.isNullOrEmpty(currentGobiiFile.getDestination())) {
                     allValuesSpecified = false;
-                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                            DtoHeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
+                    returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
+                            HeaderResponse.ValidationStatusType.MISSING_REQUIRED_VALUE,
                             "User file destination is missing");
                 }
 
@@ -114,16 +114,16 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                     if (!loaderInstructionsDAO.doesPathExist(currentGobiiFile.getSource())) {
                         allValuesSpecified = false;
-                        returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                                DtoHeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
+                                HeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST,
                                 "require-to-exist was set to true, but the source file path does not exist: "
                                         + currentGobiiFile.getSource());
                     }
 
                     if (!loaderInstructionsDAO.doesPathExist(currentGobiiFile.getDestination())) {
                         allValuesSpecified = false;
-                        returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                                DtoHeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
+                                HeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST,
                                 "require-to-exist was set to true, but the destination file path does not exist: "
                                         + currentGobiiFile.getDestination());
                     }
@@ -151,8 +151,8 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                                     currentGobiiFile);
                         } else {
 
-                            returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                                    DtoHeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                            returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
+                                    HeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST,
                                     "The load file was specified to exist, but does not exist: " +
                                             instructionFileFqpn);
 
@@ -169,7 +169,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                             .getDtoHeaderResponse()
                             .getStatusMessages()
                             .stream()
-                            .filter(m -> m.getStatusLevel().equals(DtoHeaderResponse.StatusLevel.ERROR))
+                            .filter(m -> m.getStatusLevel().equals(HeaderResponse.StatusLevel.ERROR))
                             .collect(Collectors.toList())
                             .size()
                     ) {
@@ -200,7 +200,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             ConfigSettings configSettings = new ConfigSettings();
 
             String instructionFileFqpn = configSettings
-                    .getCropConfig(loaderInstructionFilesDTO.getGobiiCropType())
+                    .getCropConfig(loaderInstructionFilesDTO.getCropType())
                     .getLoaderInstructionFilesDirectory()
                     + loaderInstructionFilesDTO.getInstructionFileName()
                     + INSTRUCTION_FILE_EXT;
@@ -217,8 +217,8 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     loaderInstructionFilesDTO.setGobiiLoaderInstructions(instructions);
                 } else {
                     returnVal.getDtoHeaderResponse()
-                            .addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                                    DtoHeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                            .addStatusMessage(HeaderResponse.StatusLevel.ERROR,
+                                    HeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST,
                                     "The instruction file exists, but could not be read: " +
                                             instructionFileFqpn);
                 }
@@ -226,8 +226,8 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             } else {
 
                 returnVal.getDtoHeaderResponse()
-                        .addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                                DtoHeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        .addStatusMessage(HeaderResponse.StatusLevel.ERROR,
+                                HeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST,
                                 "The specified instruction file does not exist: " +
                                         instructionFileFqpn);
 

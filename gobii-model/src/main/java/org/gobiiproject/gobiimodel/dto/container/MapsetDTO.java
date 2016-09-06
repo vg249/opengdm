@@ -1,7 +1,7 @@
 
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by Angel on 4/13/2016.
  */
-public class MapsetDTO extends DtoMetaData {
+public class MapsetDTO extends Header {
 
 	public MapsetDTO() {}
 

@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiprocess.digester;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestDataSet;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
@@ -411,7 +411,7 @@ public class GobiiFileReader {
 
 
 
-			DataSetDTO dataSetRequest = new DataSetDTO(DtoMetaData.ProcessType.READ);
+			DataSetDTO dataSetRequest = new DataSetDTO(Header.ProcessType.READ);
 
 			dataSetRequest.setDataSetId(dataSetId);
 			DtoRequestDataSet dtoProcessor = new DtoRequestDataSet();
@@ -428,7 +428,7 @@ public class GobiiFileReader {
 
 			dataSetResponse.setDataTable(monetTableName);
 			dataSetResponse.setDataFile(hdfFileName);
-			dataSetResponse.setProcessType(DtoMetaData.ProcessType.UPDATE);
+			dataSetResponse.setProcessType(Header.ProcessType.UPDATE);
 
 
 			dataSetResponse = dtoProcessor.process(dataSetResponse);

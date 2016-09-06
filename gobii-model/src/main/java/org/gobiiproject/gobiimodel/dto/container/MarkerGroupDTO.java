@@ -7,13 +7,13 @@ package org.gobiiproject.gobiimodel.dto.container;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
 import java.util.*;
 
-public class MarkerGroupDTO extends DtoMetaData {
+public class MarkerGroupDTO extends Header {
 
 
     public MarkerGroupDTO() {

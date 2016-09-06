@@ -9,13 +9,13 @@ package org.gobiiproject.gobiiclient.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class TypedRestRequest<T extends DtoMetaData> {
+public class TypedRestRequest<T extends Header> {
 
 
     private final Class<T> paramType;
@@ -41,7 +41,7 @@ public class TypedRestRequest<T extends DtoMetaData> {
 
         if( ClientContext.isInitialized() ) {
             String gobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
-            dtoInstance.setGobiiCropType(gobiiCropType);
+            dtoInstance.setCropType(gobiiCropType);
         }
 
 

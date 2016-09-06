@@ -1,19 +1,15 @@
 package org.gobiiproject.gobiiclient.core;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
-import org.gobiiproject.gobiimodel.types.SystemUserDetail;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
-import org.gobiiproject.gobiimodel.types.SystemUsers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Created by Phil on 5/13/2016.
  */
-public class DtoRequestProcessor<T extends DtoMetaData> {
+public class DtoRequestProcessor<T extends Header> {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoRequestProcessor.class);
 

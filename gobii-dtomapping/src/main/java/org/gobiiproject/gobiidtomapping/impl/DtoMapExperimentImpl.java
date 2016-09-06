@@ -1,22 +1,17 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,8 +37,8 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             while (resultSet.next()) {
 
                 if (true == retrievedOneRecord) {
-                    throw (new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
-                            DtoHeaderResponse.ValidationStatusType.VALIDATION_NOT_UNIQUE,
+                    throw (new GobiiDtoMappingException(HeaderResponse.StatusLevel.ERROR,
+                            HeaderResponse.ValidationStatusType.VALIDATION_NOT_UNIQUE,
                             "There are more than one project records for project id: " + experimentDTO.getExperimentId()));
                 }
 
@@ -74,8 +69,8 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             if (resultSetExistingProject.next()) {
 
                 returnVal = false;
-                experimentDTO.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.OK,
-                        DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
+                experimentDTO.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.OK,
+                        HeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
                         "An experiment with name "
                                 + experimentName
                                 + " and project id "

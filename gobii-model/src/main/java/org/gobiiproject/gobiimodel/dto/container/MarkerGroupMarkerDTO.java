@@ -6,10 +6,10 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 
-public class MarkerGroupMarkerDTO extends DtoMetaData {
+public class MarkerGroupMarkerDTO extends Header {
 
 
     public MarkerGroupMarkerDTO() {

@@ -6,12 +6,12 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 
 import java.util.*;
 
-public class PingDTO extends DtoMetaData {
+public class PingDTO extends Header {
 
     public PingDTO() {
     }

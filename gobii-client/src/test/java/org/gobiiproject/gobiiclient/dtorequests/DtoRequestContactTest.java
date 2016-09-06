@@ -10,7 +10,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -51,7 +51,7 @@ public class DtoRequestContactTest {
     public void testCreateContact() throws Exception {
 
         DtoRequestContact dtoRequestContact = new DtoRequestContact();
-        ContactDTO contactDTORequest = new ContactDTO(DtoMetaData.ProcessType.CREATE);
+        ContactDTO contactDTORequest = new ContactDTO(Header.ProcessType.CREATE);
 
         // set the plain properties
         contactDTORequest.setFirstName("Angel Manica");
@@ -81,7 +81,7 @@ public class DtoRequestContactTest {
         // create a new contact for our test
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         ContactDTO newContactDto = TestDtoFactory
-                .makePopulatedContactDTO(DtoMetaData.ProcessType.CREATE, 1);
+                .makePopulatedContactDTO(Header.ProcessType.CREATE, 1);
         ContactDTO newContactDTOResponse = dtoRequestContact.process(newContactDto);
 
 
@@ -93,7 +93,7 @@ public class DtoRequestContactTest {
 
 
         // so this would be the typical workflow for the client app
-        contactDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
+        contactDTOReceived.setProcessType(Header.ProcessType.UPDATE);
         String newName = UUID.randomUUID().toString();
         contactDTOReceived.setLastName(newName);
 

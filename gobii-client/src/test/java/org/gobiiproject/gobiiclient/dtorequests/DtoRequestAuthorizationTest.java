@@ -11,7 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderAuth;
+import org.gobiiproject.gobiimodel.dto.header.HeaderAuth;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
@@ -21,8 +21,6 @@ import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -180,8 +178,8 @@ public class DtoRequestAuthorizationTest {
         JsonObject jsonBodyForToken = parser.parse(jsonAsString).getAsJsonObject();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        DtoHeaderAuth dtoHeaderAuth = objectMapper.readValue(jsonBodyForToken.toString(),
-                DtoHeaderAuth.class);
+        HeaderAuth dtoHeaderAuth = objectMapper.readValue(jsonBodyForToken.toString(),
+                HeaderAuth.class);
         Assert.assertNotNull("No dto header was returned in response body", dtoHeaderAuth);
         String tokenFromBodyResponse = dtoHeaderAuth.getToken();
 

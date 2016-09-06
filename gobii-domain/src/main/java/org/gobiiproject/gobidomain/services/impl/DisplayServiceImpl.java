@@ -1,16 +1,9 @@
 package org.gobiiproject.gobidomain.services.impl;
 
-import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.DisplayService;
-import org.gobiiproject.gobidomain.services.NameIdListService;
 import org.gobiiproject.gobiidtomapping.DtoMapDisplay;
-import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
-import org.gobiiproject.gobiidtomapping.DtoMapDisplay;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
-import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
-import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +44,8 @@ public class DisplayServiceImpl implements DisplayService {
                     break;
 
                 default:
-                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                            DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
+                    returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
+                            HeaderResponse.ValidationStatusType.BAD_REQUEST,
                             "Unsupported proces type " + returnVal.getProcessType().toString());
                     break;
 

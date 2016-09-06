@@ -5,7 +5,7 @@ import org.gobiiproject.gobiidao.resultset.access.*;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.header.HeaderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -542,7 +542,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                 returnVal.setNamesById(listDTO);
             } else {
                 nameIdListDTO.getDtoHeaderResponse()
-                        .addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
+                        .addStatusMessage(HeaderResponse.StatusLevel.ERROR,
                         "Filter value is not numeric: " + filter);
             }
         } catch (Exception e) {
@@ -809,7 +809,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     returnVal = getNameIdListForRole(nameIdListDTO);
                     break;
                 default:
-                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
+                    returnVal.getDtoHeaderResponse().addStatusMessage(HeaderResponse.StatusLevel.ERROR,
                             "Unsupported entity for list request: " + nameIdListDTO.getEntityName());
             }
 

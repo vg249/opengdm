@@ -11,7 +11,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestValues;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
@@ -101,7 +101,7 @@ public class DtoRequestMultiDbTest {
             Assert.assertTrue(Authenticator.authenticate(currentCropType));
 
             CvDTO currentCvDtoRequest = TestDtoFactory
-                    .makePopulatedCvDTO(DtoMetaData.ProcessType.CREATE, 1);
+                    .makePopulatedCvDTO(Header.ProcessType.CREATE, 1);
             currentCvDtoRequest.setDefinition("Destination DB should be: " + currentCropType.toString());
 
             DtoRequestCv dtoRequestCv = new DtoRequestCv();

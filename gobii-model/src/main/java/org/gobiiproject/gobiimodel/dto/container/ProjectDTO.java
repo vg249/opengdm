@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.header.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
 import java.util.Date;
@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by Phil on 4/6/2016.
  */
-public class ProjectDTO extends DtoMetaData {
+public class ProjectDTO extends Header {
 
     public ProjectDTO() {}
 
