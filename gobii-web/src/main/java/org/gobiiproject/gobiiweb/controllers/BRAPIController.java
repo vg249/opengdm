@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
@@ -147,6 +148,31 @@ public class BRAPIController {
 
             ContactDTO contactRequestDTO = new ContactDTO();
             contactRequestDTO.setContactId(contactId);
+            returnVal = contactService.processContact(new RequestEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        return (returnVal);
+
+    }
+
+    // Example: http://localhost:8282/gobii-dev/brapi/v1/contact-search?email=foo&lastName=bar&firstName=snot
+    // all parameters must be present, but they don't all neeed a value
+    @RequestMapping(value = "/contact-search",
+            params =  {"email", "lastName", "firstName"},
+            method = RequestMethod.GET)
+    @ResponseBody
+    public ResultEnvelope<ContactDTO> getContactsBySearch(@RequestParam("email") String email,
+                                                          @RequestParam("lastName") String lastName,
+                                                          @RequestParam("firstName") String firstName) {
+
+        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        try {
+
+            ContactDTO contactRequestDTO = new ContactDTO();
+            contactRequestDTO.setContactId(1);
             returnVal = contactService.processContact(new RequestEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
 
         } catch (Exception e) {
