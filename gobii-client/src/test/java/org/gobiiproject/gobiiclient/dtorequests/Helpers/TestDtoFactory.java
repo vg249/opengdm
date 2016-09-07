@@ -232,7 +232,7 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
                                                      Integer uniqueStem) {
 
         String uniqueStemString = uniqueStem.toString();
-        ContactDTO returnVal = new ContactDTO(processType);
+        ContactDTO returnVal = new ContactDTO();
         // set the plain properties
 
         returnVal.setFirstName(uniqueStem + " new contact");

@@ -56,7 +56,7 @@ public class DtoRequestContactTest {
     public void testCreateContact() throws Exception {
 
         DtoRequestContact dtoRequestContact = new DtoRequestContact();
-        ContactDTO contactDTORequest = new ContactDTO(Header.ProcessType.CREATE);
+        ContactDTO contactDTORequest = new ContactDTO();
 
         // set the plain properties
         contactDTORequest.setFirstName("Angel Manica");
@@ -74,11 +74,11 @@ public class DtoRequestContactTest {
         ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(new RequestEnvelope<>(contactDTORequest, Header.ProcessType.CREATE));
         Assert.assertNotEquals(null, contactDTOResponseEnvelope);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
+
         ContactDTO contactDTOResponse = contactDTOResponseEnvelope.getResult().getData().get(0);
-
-
         Assert.assertNotEquals(null, contactDTOResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponse));
         Assert.assertTrue(contactDTOResponse.getContactId() > 0);
 
     }
@@ -108,11 +108,11 @@ public class DtoRequestContactTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
         ContactDTO contactDTOReceived = contactDTOResponseEnvelope.getResult().getData().get(0);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOReceived));
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
 
 
         // so this would be the typical workflow for the client app
-        contactDTOReceived.setProcessType(Header.ProcessType.UPDATE);
+
         String newName = UUID.randomUUID().toString();
         contactDTOReceived.setLastName(newName);
 
@@ -120,13 +120,13 @@ public class DtoRequestContactTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelopeUpdate.getHeader()));
 
 
-        ContactDTO contactDTOReRequest = new ContactDTO(Header.ProcessType.READ);
+        ContactDTO contactDTOReRequest = new ContactDTO();
         contactDTOReRequest.setContactId(contactDTOReceived.getContactId());
         ResultEnvelope<ContactDTO> contactDTOResponseEnvelopeReRetrieved = dtoRequestContact.process(new RequestEnvelope<>(contactDTOReRequest, Header.ProcessType.READ));
         ContactDTO dtoRequestContactReRetrieved =
                 contactDTOResponseEnvelopeReRetrieved.getResult().getData().get(0);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestContactReRetrieved));
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelopeReRetrieved.getHeader()));
 
         Assert.assertTrue(dtoRequestContactReRetrieved.getLastName().equals(newName));
 

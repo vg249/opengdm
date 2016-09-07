@@ -12,14 +12,11 @@ import java.util.List;
 /**
  * Created by Angel on 5/6/2016.
  */
-public class
-ContactDTO extends Header {
+public class ContactDTO {
 
-    public ContactDTO() {}
-
-    public ContactDTO(ProcessType processType) {
-        super(processType);
+    public ContactDTO() {
     }
+
 
     // we are waiting until we a have a view to retirn
     // properties for that property: we don't know how to represent them yet
@@ -37,7 +34,10 @@ ContactDTO extends Header {
     private Integer organizationId;
 
     @GobiiEntityParam(paramName = "contactId")
-    public Integer getContactId() {return contactId;}
+    public Integer getContactId() {
+        return contactId;
+    }
+
     @GobiiEntityColumn(columnName = "contact_id")
     public void setContactId(Integer contactId) {
         this.contactId = contactId;
@@ -74,7 +74,9 @@ ContactDTO extends Header {
     }
 
     @GobiiEntityParam(paramName = "email")
-    public String getEmail() {return email;}
+    public String getEmail() {
+        return email;
+    }
 
     @GobiiEntityColumn(columnName = "email")
     public void setEmail(String email) {
@@ -82,10 +84,12 @@ ContactDTO extends Header {
     }
 
     @GobiiEntityParam(paramName = "roles")
-    public  List<Integer> getRoles() { return roles;}
+    public List<Integer> getRoles() {
+        return roles;
+    }
 
     @GobiiEntityColumn(columnName = "roles")
-    public void setRoles( List<Integer> roles) {
+    public void setRoles(List<Integer> roles) {
         this.roles = roles;
     }
 
@@ -138,7 +142,6 @@ ContactDTO extends Header {
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
-
 
 
 }
