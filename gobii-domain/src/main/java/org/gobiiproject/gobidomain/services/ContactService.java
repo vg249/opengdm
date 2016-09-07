@@ -1,6 +1,7 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 
 /**
@@ -8,6 +9,6 @@ import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
  */
 public interface ContactService {
 
-    ResultEnvelope<ContactDTO> processContact(ContactDTO contactDTO);
+    ResultEnvelope<ContactDTO> processContact(RequestEnvelope<ContactDTO> requestEnvelope);
 
 }

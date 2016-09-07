@@ -25,6 +25,7 @@ import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +85,7 @@ public class BRAPIController {
 
     @Autowired
     private DisplayService displayService = null;
-    
+
     @Autowired
     private CvService cvService = null;
 
@@ -126,7 +127,7 @@ public class BRAPIController {
 
         String returnVal = null;
         try {
-            returnVal = "Authenticated: " +  (new Date()).toString();
+            returnVal = "Authenticated: " + (new Date()).toString();
         } catch (Exception e) {
             String msg = e.getMessage();
             String tmp = msg;
@@ -144,9 +145,9 @@ public class BRAPIController {
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
         try {
 
-            ContactDTO contactRequestDTO = new ContactDTO(Header.ProcessType.READ);
+            ContactDTO contactRequestDTO = new ContactDTO();
             contactRequestDTO.setContactId(contactId);
-            returnVal = contactService.processContact(contactRequestDTO);
+            returnVal = contactService.processContact(new RequestEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -155,7 +156,6 @@ public class BRAPIController {
         return (returnVal);
 
     }
-
 
 
 }// LoadController

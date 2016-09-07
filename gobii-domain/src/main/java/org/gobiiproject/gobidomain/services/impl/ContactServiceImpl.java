@@ -3,6 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.slf4j.Logger;
@@ -22,32 +23,32 @@ public class ContactServiceImpl implements ContactService {
     DtoMapContact dtoMapContact = null;
 
     @Override
-    public ResultEnvelope<ContactDTO> processContact(ContactDTO contactDTO) {
+    public ResultEnvelope<ContactDTO> processContact(RequestEnvelope<ContactDTO> requestEnvelope) {
 
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
 
         try {
-            switch (contactDTO.getProcessType()) {
+            switch (requestEnvelope.getHeader().getProcessType()) {
                 case READ:
-                    returnVal = dtoMapContact.getContactDetails(contactDTO);
+                    returnVal = dtoMapContact.getContactDetails(requestEnvelope);
                     break;
 
                 case CREATE:
-                    contactDTO.setCreatedDate(new Date());
-                    contactDTO.setModifiedDate(new Date());
-                    returnVal = dtoMapContact.createContact(contactDTO);
+                    requestEnvelope.getRequestData().setCreatedDate(new Date());
+                    requestEnvelope.getRequestData().setModifiedDate(new Date());
+                    returnVal = dtoMapContact.createContact(requestEnvelope);
                     break;
 
                 case UPDATE:
-                    contactDTO.setCreatedDate(new Date());
-                    contactDTO.setModifiedDate(new Date());
-                    returnVal = dtoMapContact.updateContact(contactDTO);
+                    requestEnvelope.getRequestData().setCreatedDate(new Date());
+                    requestEnvelope.getRequestData().setModifiedDate(new Date());
+                    returnVal = dtoMapContact.updateContact(requestEnvelope);
                     break;
 
                 default:
                     returnVal.getHeader().getStatus().addStatusMessage(Status.StatusLevel.ERROR,
                             Status.ValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces contact type " + contactDTO.getProcessType().toString());
+                            "Unsupported proces contact type " + requestEnvelope.getHeader().getProcessType().toString());
 
             }
 

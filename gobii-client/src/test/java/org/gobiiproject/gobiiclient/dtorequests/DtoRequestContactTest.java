@@ -12,6 +12,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -40,7 +41,7 @@ public class DtoRequestContactTest {
         DtoRequestContact dtoRequestContact = new DtoRequestContact();
         ContactDTO contactDTORequest = new ContactDTO();
         contactDTORequest.setContactId(6);
-        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(contactDTORequest);
+        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(new RequestEnvelope<>(contactDTORequest, Header.ProcessType.READ));
 
         Assert.assertNotEquals(null, contactDTOResponseEnvelope);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
@@ -70,7 +71,7 @@ public class DtoRequestContactTest {
         contactDTORequest.getRoles().add(1);
         contactDTORequest.getRoles().add(2);
 
-        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(contactDTORequest);
+        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(new RequestEnvelope<>(contactDTORequest, Header.ProcessType.CREATE));
         Assert.assertNotEquals(null, contactDTOResponseEnvelope);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
         ContactDTO contactDTOResponse = contactDTOResponseEnvelope.getResult().getData().get(0);
@@ -93,7 +94,7 @@ public class DtoRequestContactTest {
                 .makePopulatedContactDTO(Header.ProcessType.CREATE, 1);
 
 
-        ResultEnvelope<ContactDTO> resultEnvelopeNewContact = dtoRequestContact.process(newContactDto);
+        ResultEnvelope<ContactDTO> resultEnvelopeNewContact = dtoRequestContact.process(new RequestEnvelope<>(newContactDto, Header.ProcessType.CREATE));
 
         ContactDTO newContactDTOResponse = resultEnvelopeNewContact.getResult().getData().get(0);
 
@@ -102,7 +103,7 @@ public class DtoRequestContactTest {
         ContactDTO ContactDTORequest = new ContactDTO();
         ContactDTORequest.setContactId(newContactDTOResponse.getContactId());
 
-        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(newContactDTOResponse);
+        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(new RequestEnvelope<>(newContactDTOResponse, Header.ProcessType.READ));
         Assert.assertNotEquals(null, contactDTOResponseEnvelope);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
         ContactDTO contactDTOReceived = contactDTOResponseEnvelope.getResult().getData().get(0);
@@ -115,13 +116,13 @@ public class DtoRequestContactTest {
         String newName = UUID.randomUUID().toString();
         contactDTOReceived.setLastName(newName);
 
-        ResultEnvelope<ContactDTO> contactDTOResponseEnvelopeUpdate = dtoRequestContact.process(contactDTOReceived);
+        ResultEnvelope<ContactDTO> contactDTOResponseEnvelopeUpdate = dtoRequestContact.process(new RequestEnvelope<>(contactDTOReceived, Header.ProcessType.UPDATE));
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelopeUpdate.getHeader()));
 
 
         ContactDTO contactDTOReRequest = new ContactDTO(Header.ProcessType.READ);
         contactDTOReRequest.setContactId(contactDTOReceived.getContactId());
-        ResultEnvelope<ContactDTO> contactDTOResponseEnvelopeReRetrieved = dtoRequestContact.process(contactDTOReRequest);
+        ResultEnvelope<ContactDTO> contactDTOResponseEnvelopeReRetrieved = dtoRequestContact.process(new RequestEnvelope<>(contactDTOReRequest, Header.ProcessType.READ));
         ContactDTO dtoRequestContactReRetrieved =
                 contactDTOResponseEnvelopeReRetrieved.getResult().getData().get(0);
 

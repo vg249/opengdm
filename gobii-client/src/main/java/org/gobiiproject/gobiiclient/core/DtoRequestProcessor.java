@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiclient.core;
 
 import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
@@ -33,9 +34,9 @@ public class DtoRequestProcessor<T extends Header> {
     }
 
 
-    public ResultEnvelope<T> processEnvelope(T dtoToProcess, Class<T> DtoType,
-                                            ControllerType controllerType,
-                                            ServiceRequestId requestId) throws Exception {
+    public ResultEnvelope<T> processEnvelope(RequestEnvelope<T> requestEnvelope, Class<T> DtoType,
+                                             ControllerType controllerType,
+                                             ServiceRequestId requestId) throws Exception {
 
         String token = ClientContext.getInstance(null, false).getUserToken();
         String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
@@ -54,7 +55,7 @@ public class DtoRequestProcessor<T extends Header> {
                 requestId);
 
         returnVal = typedRestRequest.getTypedHtppResponseForDtoEnvelope(url,
-                dtoToProcess,
+                requestEnvelope,
                 token);
 
         return returnVal;

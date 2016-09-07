@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 
 import org.gobiiproject.gobiimodel.dto.response.Header;
 
+import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,19 +63,20 @@ public class TypedRestRequest<T extends Header> {
     } // getTypedHtppResponseForDto()
 
     public ResultEnvelope<T> getTypedHtppResponseForDtoEnvelope(String url,
-                                                                T dtoInstance,
+                                                                RequestEnvelope<T> requestEnvelope,
                                                                 String token) throws Exception {
         ResultEnvelope<T> returnVal = null;
 
 
+
+
         if (ClientContext.isInitialized()) {
             String gobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
-            dtoInstance.setCropType(gobiiCropType);
         }
 
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String dtoRequestJson = objectMapper.writeValueAsString(dtoInstance);
+        String dtoRequestJson = objectMapper.writeValueAsString(requestEnvelope);
         JsonObject responseJson = httpCore.getResponseBody(url, dtoRequestJson, token);
 
         returnVal = objectMapper.readValue(responseJson.toString(), ResultEnvelope.class);

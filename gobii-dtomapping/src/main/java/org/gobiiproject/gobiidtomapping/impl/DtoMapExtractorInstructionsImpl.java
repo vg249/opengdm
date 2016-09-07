@@ -8,6 +8,8 @@ import org.gobiiproject.gobiidtomapping.DtoMapExtractorInstructions;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -90,7 +92,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     ContactDTO contactDTORequest = new ContactDTO();
                     contactDTORequest.setContactId(currentExtractorInstruction.getContactId());
 
-                    ResultEnvelope<ContactDTO> contactDTOResultEnvelope = dtoMapContact.getContactDetails(contactDTORequest);
+
+                    ResultEnvelope<ContactDTO> contactDTOResultEnvelope = dtoMapContact.getContactDetails(new RequestEnvelope<>(contactDTORequest, Header.ProcessType.READ));
                     ContactDTO contactDTO = contactDTOResultEnvelope.getResult().getData().get(0);
 
 

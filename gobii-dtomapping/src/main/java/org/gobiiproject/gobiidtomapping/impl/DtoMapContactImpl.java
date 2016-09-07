@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,22 +29,22 @@ public class DtoMapContactImpl implements DtoMapContact {
 
     @Transactional
     @Override
-    public ResultEnvelope<ContactDTO> getContactDetails(ContactDTO contactDTO) throws GobiiDtoMappingException {
+    public ResultEnvelope<ContactDTO> getContactDetails(RequestEnvelope<ContactDTO> requestEnvelope) throws GobiiDtoMappingException {
 
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
 
         try {
 
-            ResultSet resultSet = rsContactDao.getContactDetailsByContactId(contactDTO.getContactId());
+            ResultSet resultSet = rsContactDao.getContactDetailsByContactId(requestEnvelope.getRequestData().getContactId());
 
             if (resultSet.next()) {
 
                 // apply contact values
-                ResultColumnApplicator.applyColumnValues(resultSet, contactDTO);
+                ResultColumnApplicator.applyColumnValues(resultSet, requestEnvelope.getRequestData());
 
             } // iterate resultSet
 
-            returnVal.getResult().getData().add(contactDTO);
+            returnVal.getResult().getData().add(requestEnvelope.getRequestData());
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -54,16 +55,16 @@ public class DtoMapContactImpl implements DtoMapContact {
     }
 
     @Override
-    public ResultEnvelope<ContactDTO> createContact(ContactDTO contactDTO) throws GobiiDtoMappingException {
+    public ResultEnvelope<ContactDTO> createContact(RequestEnvelope<ContactDTO> requestEnvelope) throws GobiiDtoMappingException {
 
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
 
         try {
 
-            Map<String, Object> parameters = ParamExtractor.makeParamVals(contactDTO);
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(requestEnvelope.getRequestData());
             Integer contactId = rsContactDao.createContact(parameters);
-            contactDTO.setContactId(contactId);
-            returnVal.getResult().getData().add(contactDTO);
+            requestEnvelope.getRequestData().setContactId(contactId);
+            returnVal.getResult().getData().add(requestEnvelope.getRequestData());
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -74,13 +75,13 @@ public class DtoMapContactImpl implements DtoMapContact {
     }
 
     @Override
-    public ResultEnvelope<ContactDTO> updateContact(ContactDTO contactDTO) throws GobiiDtoMappingException {
+    public ResultEnvelope<ContactDTO> updateContact(RequestEnvelope<ContactDTO> requestEnvelope) throws GobiiDtoMappingException {
 
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
 
         try {
 
-            Map<String, Object> parameters = ParamExtractor.makeParamVals(contactDTO);
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(requestEnvelope.getRequestData());
             rsContactDao.updateContact(parameters);
 
         } catch (Exception e) {
