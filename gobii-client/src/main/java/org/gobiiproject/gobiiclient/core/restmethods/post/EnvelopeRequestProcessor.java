@@ -1,6 +1,7 @@
-package org.gobiiproject.gobiiclient.core;
+package org.gobiiproject.gobiiclient.core.restmethods.post;
 
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
@@ -35,6 +36,8 @@ public class EnvelopeRequestProcessor<T> {
 
         String url = Urls.getRequestUrl(controllerType,
                 requestId);
+
+
 
         returnVal = envelopeRestRequest.getTypedHtppResponseForDtoEnvelope(url,
                 requestEnvelope,

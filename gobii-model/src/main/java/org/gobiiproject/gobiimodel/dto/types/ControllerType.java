@@ -5,5 +5,6 @@ package org.gobiiproject.gobiimodel.dto.types;
  */
 public enum ControllerType {
     LOADER,
-    EXTRACTOR
+    EXTRACTOR,
+    BRAPI
 }

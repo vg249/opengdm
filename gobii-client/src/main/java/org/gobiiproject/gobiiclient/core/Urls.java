@@ -14,6 +14,8 @@ public class Urls {
     //private final static String APP_ROOT = "/gobii-web/";
     private final static String CTRLR_EXTRACT = "extract/";
     private final static String CTRLR_LOAD = "load/";
+    private final static String CTRLR_BRAPI = "brapi/v1/";
+
 
 
 //        String contextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
@@ -36,6 +38,8 @@ public class Urls {
             controller = CTRLR_LOAD;
         } else if (controllerType == ControllerType.EXTRACTOR) {
             controller = CTRLR_EXTRACT;
+        } else if (controllerType == ControllerType.BRAPI) {
+            controller = CTRLR_BRAPI;
         }
 
         String returnVal = contextRoot + controller;

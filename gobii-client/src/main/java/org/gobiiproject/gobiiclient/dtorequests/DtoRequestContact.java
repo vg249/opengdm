@@ -5,8 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
-import org.gobiiproject.gobiiclient.core.EnvelopeRequestProcessor;
+import org.gobiiproject.gobiiclient.core.restmethods.post.EnvelopeRequestProcessor;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;

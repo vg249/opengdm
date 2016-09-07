@@ -3,33 +3,32 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.core;
+package org.gobiiproject.gobiiclient.core.restmethods.post;
 
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
-import org.gobiiproject.gobiimodel.dto.response.Header;
-
+import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.HttpCore;
 import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 
-public class TypedRestRequest<T extends Header> {
+public class EnvelopeRestRequest<T> {
 
 
     private final Class<T> paramType;
     private HttpCore httpCore = null;
-    Logger LOGGER = LoggerFactory.getLogger(TypedRestRequest.class);
+    Logger LOGGER = LoggerFactory.getLogger(EnvelopeRestRequest.class);
 
-    public TypedRestRequest(String baseUrl,
-                            Integer port,
-                            Class<T> paramType) {
+    public EnvelopeRestRequest(String baseUrl,
+                               Integer port,
+                               Class<T> paramType) {
 
         this.paramType = paramType;
 
@@ -38,29 +37,6 @@ public class TypedRestRequest<T extends Header> {
     } // ctor
 
 
-    public T getTypedHtppResponseForDto(String url,
-                                        T dtoInstance,
-                                        String token) throws Exception {
-
-        T returnVal = null;
-
-
-        if (ClientContext.isInitialized()) {
-            String gobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
-            dtoInstance.setCropType(gobiiCropType);
-        }
-
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String dtoRequestJson = objectMapper.writeValueAsString(dtoInstance);
-        JsonObject responseJson = httpCore.getResponseBody(url, dtoRequestJson, token);
-
-        returnVal = objectMapper.readValue(responseJson.toString(), paramType);
-
-        return returnVal;
-
-
-    } // getTypedHtppResponseForDto()
 
     public ResultEnvelope<T> getTypedHtppResponseForDtoEnvelope(String url,
                                                                 RequestEnvelope<T> requestEnvelope,

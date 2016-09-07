@@ -139,7 +139,7 @@ public class BRAPIController {
 
     }
 
-    @RequestMapping(value = "/contact/{contactId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/contact/{contactId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public ResultEnvelope<ContactDTO> getContactsById(@PathVariable Integer contactId) {
 
@@ -148,6 +148,32 @@ public class BRAPIController {
 
             ContactDTO contactRequestDTO = new ContactDTO();
             contactRequestDTO.setContactId(contactId);
+            returnVal = contactService.processContact(new RequestEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        return (returnVal);
+
+    }
+
+    //Technically, this regex specifies an email address format, and it actually works.
+    //However, when you execute this, you get back an error "The resource identified by this request is only
+    // capable of generating responses with characteristics not acceptable according to the request "accept" headers."
+    // In other words, the email address is telling the server that you're asking for some other format
+    // So for email based searches, you'll have to use the request parameter version
+    @RequestMapping(value = "/contact/{email:[a-zA-Z-]+@[a-zA-Z-]+.[a-zA-Z-]+}",
+            method = RequestMethod.GET)
+    @ResponseBody
+    public ResultEnvelope<ContactDTO> getContactsByEmail(@PathVariable String email) {
+
+        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        try {
+
+            ContactDTO contactRequestDTO = new ContactDTO();
+            contactRequestDTO.setContactId(1);
+            //contactRequestDTO.setEmail(email);
             returnVal = contactService.processContact(new RequestEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
 
         } catch (Exception e) {

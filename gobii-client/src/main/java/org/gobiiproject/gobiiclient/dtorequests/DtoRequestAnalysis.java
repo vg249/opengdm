@@ -6,8 +6,7 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
-import org.gobiiproject.gobiiclient.core.DtoRequestProcessor;
-import org.gobiiproject.gobiiclient.core.Urls;
+import org.gobiiproject.gobiiclient.core.restmethods.post.DtoRequestProcessor;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;

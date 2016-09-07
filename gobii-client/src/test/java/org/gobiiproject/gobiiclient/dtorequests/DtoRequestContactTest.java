@@ -6,6 +6,10 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
+import org.gobiiproject.gobiiclient.core.restmethods.get.EnvelopeGetRequestProcessor;
+import org.gobiiproject.gobiiclient.core.restmethods.get.GetRequest;
+import org.gobiiproject.gobiiclient.core.restmethods.get.GetRequestFactory;
+import org.gobiiproject.gobiiclient.core.restmethods.post.EnvelopeRestRequest;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
@@ -17,9 +21,12 @@ import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import java.net.URI;
 import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 
 public class DtoRequestContactTest {
@@ -130,6 +137,22 @@ public class DtoRequestContactTest {
 
         Assert.assertTrue(dtoRequestContactReRetrieved.getLastName().equals(newName));
 
+    }
+
+    @Test
+    public void getContactWithHttpGet() throws Exception {
+
+        GetRequest getRequestContact = GetRequestFactory.makeGetRequestContactById();
+        getRequestContact.setParamValue("contactId", "1");
+        EnvelopeGetRequestProcessor<ContactDTO> envelopeGetRequestProcessor = new EnvelopeGetRequestProcessor<>();
+        ResultEnvelope<ContactDTO> resultEnvelope = envelopeGetRequestProcessor
+                .processGetRequest(getRequestContact,ContactDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        ContactDTO contactDTO = resultEnvelope.getResult().getData().get(0);
+        Assert.assertNotNull(contactDTO.getEmail());
+
+        //getRequestContact.setParamValue(Param);
     }
 
 }
