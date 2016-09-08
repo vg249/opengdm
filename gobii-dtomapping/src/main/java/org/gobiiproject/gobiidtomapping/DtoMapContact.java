@@ -10,6 +10,7 @@ import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 public interface DtoMapContact {
 
     ContactDTO getContactDetails(Integer contactId) throws Exception;
+    ContactDTO getContactByEamil(String email) throws Exception;
     ContactDTO createContact(ContactDTO contactDTO) throws Exception;
     ContactDTO updateContact(ContactDTO contactDTO) throws Exception;
 

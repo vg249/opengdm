@@ -53,6 +53,12 @@ public class DtoMapContactImpl implements DtoMapContact {
         return returnVal;
     }
 
+    @Transactional
+    @Override
+    public ContactDTO getContactByEamil(String email) throws Exception {
+        return null;
+    }
+
     @Override
     public ContactDTO createContact(ContactDTO contactDTO) throws Exception {
 
