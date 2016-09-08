@@ -6,10 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsContact;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdContact;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactNames;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactNamesByRoleName;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactsByRoleName;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetContactDetailsByContactId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +95,32 @@ public class RsContactDaoImpl implements RsContactDao {
             storedProcExec.doWithConnection(spGetContactDetailsByContactId);
 
             returnVal = spGetContactDetailsByContactId.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving contact details", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getContactDetailsByEmail(String email) throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("email", email);
+            SpGetContactDetailsByEmail spGetContactDetailsByEmail = new SpGetContactDetailsByEmail(parameters);
+
+            storedProcExec.doWithConnection(spGetContactDetailsByEmail);
+
+            returnVal = spGetContactDetailsByEmail.getResultSet();
 
         } catch (Exception e) {
 

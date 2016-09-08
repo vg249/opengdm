@@ -14,15 +14,15 @@ import java.util.List;
  */
 public class TestUtils {
 
-    public static boolean  checkAndPrintHeaderMessages(Header dtoMetaData ) {
+    public static boolean  checkAndPrintHeaderMessages(Header Header ) {
 
         boolean returnVal = false;
 
-        if (!dtoMetaData.getStatus().isSucceeded()) {
+        if (!Header.getStatus().isSucceeded()) {
             returnVal = true;
             System.out.println();
             System.out.println("*** Header errors: ");
-            for (HeaderStatusMessage currentStatusMesage : dtoMetaData.getStatus().getStatusMessages()) {
+            for (HeaderStatusMessage currentStatusMesage : Header.getStatus().getStatusMessages()) {
                 System.out.println(currentStatusMesage.getMessage());
             }
         }

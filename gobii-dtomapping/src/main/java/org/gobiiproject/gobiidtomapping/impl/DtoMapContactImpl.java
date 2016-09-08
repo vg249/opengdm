@@ -55,8 +55,28 @@ public class DtoMapContactImpl implements DtoMapContact {
 
     @Transactional
     @Override
-    public ContactDTO getContactByEamil(String email) throws Exception {
-        return null;
+    public ContactDTO getContactByEmail(String email) throws Exception {
+
+        ContactDTO returnVal = new ContactDTO();
+
+        try {
+
+            ResultSet resultSet = rsContactDao.getContactDetailsByEmail(email);
+
+            if (resultSet.next()) {
+
+                // apply contact values
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+
+            } // iterate resultSet
+
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw e;
+        }
+
+        return returnVal;
     }
 
     @Override

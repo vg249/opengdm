@@ -82,9 +82,16 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public ResultEnvelope<ContactDTO> getContactByEmail(String email) {
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
-        returnVal.getHeader().getStatus().addStatusMessage(Status.StatusLevel.ERROR,
-                Status.ValidationStatusType.NONE,
-                "Get contact by email is not supported yet");
+        try {
+            ContactDTO contactDTO = dtoMapContact.getContactByEmail(email);
+            returnVal.getResult().getData().add(contactDTO);
+
+        } catch(Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
 
         return returnVal;
     }
