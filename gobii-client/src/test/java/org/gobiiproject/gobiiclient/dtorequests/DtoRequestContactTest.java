@@ -45,17 +45,16 @@ public class DtoRequestContactTest {
     @Test
     public void testGetContact() throws Exception {
 
-        DtoRequestContact dtoRequestContact = new DtoRequestContact();
-        ContactDTO contactDTORequest = new ContactDTO();
-        contactDTORequest.setContactId(6);
-        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(new RequestEnvelope<>(contactDTORequest, Header.ProcessType.READ));
+        GetRequest getRequestContact = GetRequestFactory.makeGetRequestContactById();
+        getRequestContact.setParamValue("contactId", "6");
+        EnvelopeGetRequestProcessor<ContactDTO> envelopeGetRequestProcessor = new EnvelopeGetRequestProcessor<>();
+        ResultEnvelope<ContactDTO> resultEnvelope = envelopeGetRequestProcessor
+                .processGetRequest(getRequestContact,ContactDTO.class);
 
-        Assert.assertNotEquals(null, contactDTOResponseEnvelope);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
-        ContactDTO contactDTOResponse = contactDTOResponseEnvelope.getResult().getData().get(0);
-
-        Assert.assertTrue(contactDTOResponse.getContactId() > 0);
-
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        ContactDTO contactDTO = resultEnvelope.getResult().getData().get(0);
+        Assert.assertTrue(contactDTO.getContactId() > 0);
+        Assert.assertNotNull(contactDTO.getEmail());
     } //
 
 
@@ -106,11 +105,12 @@ public class DtoRequestContactTest {
         ContactDTO newContactDTOResponse = resultEnvelopeNewContact.getResult().getData().get(0);
 
 
-        // re-retrieve the contact we just created so we start with a fresh READ mode dto
-        ContactDTO ContactDTORequest = new ContactDTO();
-        ContactDTORequest.setContactId(newContactDTOResponse.getContactId());
+        GetRequest getRequestContact = GetRequestFactory.makeGetRequestContactById();
+        getRequestContact.setParamValue("contactId", newContactDTOResponse.getContactId().toString());
+        EnvelopeGetRequestProcessor<ContactDTO> envelopeGetRequestProcessor = new EnvelopeGetRequestProcessor<>();
+        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = envelopeGetRequestProcessor
+                .processGetRequest(getRequestContact,ContactDTO.class);
 
-        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(new RequestEnvelope<>(newContactDTOResponse, Header.ProcessType.READ));
         Assert.assertNotEquals(null, contactDTOResponseEnvelope);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
         ContactDTO contactDTOReceived = contactDTOResponseEnvelope.getResult().getData().get(0);
@@ -127,23 +127,42 @@ public class DtoRequestContactTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelopeUpdate.getHeader()));
 
 
-        ContactDTO contactDTOReRequest = new ContactDTO();
-        contactDTOReRequest.setContactId(contactDTOReceived.getContactId());
-        ResultEnvelope<ContactDTO> contactDTOResponseEnvelopeReRetrieved = dtoRequestContact.process(new RequestEnvelope<>(contactDTOReRequest, Header.ProcessType.READ));
-        ContactDTO dtoRequestContactReRetrieved =
-                contactDTOResponseEnvelopeReRetrieved.getResult().getData().get(0);
+        GetRequest getRequestContactReRetrive = GetRequestFactory.makeGetRequestContactById();
+        getRequestContactReRetrive.setParamValue("contactId", contactDTOReceived.getContactId().toString());
+        EnvelopeGetRequestProcessor<ContactDTO> envelopeGetRequestProcessorReRetrieve = new EnvelopeGetRequestProcessor<>();
+        ResultEnvelope<ContactDTO> contactDTOResponseEnvelopeReRetrieved = envelopeGetRequestProcessorReRetrieve
+                .processGetRequest(getRequestContactReRetrive,ContactDTO.class);
+
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelopeReRetrieved.getHeader()));
+        ContactDTO dtoRequestContactReRetrieved =
+                contactDTOResponseEnvelopeReRetrieved.getResult().getData().get(0);
 
         Assert.assertTrue(dtoRequestContactReRetrieved.getLastName().equals(newName));
 
     }
 
     @Test
-    public void getContactWithHttpGet() throws Exception {
+    public void getSingleContactWithHttpGet() throws Exception {
 
         GetRequest getRequestContact = GetRequestFactory.makeGetRequestContactById();
         getRequestContact.setParamValue("contactId", "1");
+        EnvelopeGetRequestProcessor<ContactDTO> envelopeGetRequestProcessor = new EnvelopeGetRequestProcessor<>();
+        ResultEnvelope<ContactDTO> resultEnvelope = envelopeGetRequestProcessor
+                .processGetRequest(getRequestContact,ContactDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        ContactDTO contactDTO = resultEnvelope.getResult().getData().get(0);
+        Assert.assertNotNull(contactDTO.getEmail());
+
+        //getRequestContact.setParamValue(Param);
+    }
+
+    @Test
+    public void getContactsBySearchWithHttpGet() throws Exception {
+
+        GetRequest getRequestContact = GetRequestFactory.makeGetRequestContactBySearch();
+        getRequestContact.setParamValue("email", "loader.user@temp.com");
         EnvelopeGetRequestProcessor<ContactDTO> envelopeGetRequestProcessor = new EnvelopeGetRequestProcessor<>();
         ResultEnvelope<ContactDTO> resultEnvelope = envelopeGetRequestProcessor
                 .processGetRequest(getRequestContact,ContactDTO.class);

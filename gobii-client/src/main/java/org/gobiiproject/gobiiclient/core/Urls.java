@@ -82,6 +82,10 @@ public class Urls {
                 returnVal += "contact";
                 break;
 
+            case URL_CONTACT_SEARCH:
+                returnVal += "contact-search";
+                break;
+
             case URL_REFERENCE:
                 returnVal += "reference";
                 break;

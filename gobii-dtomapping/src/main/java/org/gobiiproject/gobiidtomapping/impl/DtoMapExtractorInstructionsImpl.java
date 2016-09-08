@@ -89,12 +89,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 }
 
                 if (null != currentExtractorInstruction.getContactId() && currentExtractorInstruction.getContactId() > 0) {
-                    ContactDTO contactDTORequest = new ContactDTO();
-                    contactDTORequest.setContactId(currentExtractorInstruction.getContactId());
 
-
-                    ResultEnvelope<ContactDTO> contactDTOResultEnvelope = dtoMapContact.getContactDetails(new RequestEnvelope<>(contactDTORequest, Header.ProcessType.READ));
-                    ContactDTO contactDTO = contactDTOResultEnvelope.getResult().getData().get(0);
+                    ContactDTO contactDTO = dtoMapContact.getContactDetails(currentExtractorInstruction.getContactId());
 
 
                     if (!LineUtils.isNullOrEmpty(contactDTO.getEmail())) {

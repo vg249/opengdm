@@ -180,7 +180,7 @@ public class LoadController {
 
         try {
 
-            returnVal = contactService.processContact(requestEnvelope);
+            returnVal = contactService.processDml(requestEnvelope);
         } catch (Exception e) {
 
             returnVal.getHeader().getStatus().addException(e);

@@ -146,9 +146,7 @@ public class BRAPIController {
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
         try {
 
-            ContactDTO contactRequestDTO = new ContactDTO();
-            contactRequestDTO.setContactId(contactId);
-            returnVal = contactService.processContact(new RequestEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
+            returnVal = contactService.getContactById(contactId);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -174,7 +172,7 @@ public class BRAPIController {
             ContactDTO contactRequestDTO = new ContactDTO();
             contactRequestDTO.setContactId(1);
             //contactRequestDTO.setEmail(email);
-            returnVal = contactService.processContact(new RequestEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
+            returnVal = contactService.processDml(new RequestEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -197,9 +195,7 @@ public class BRAPIController {
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
         try {
 
-            ContactDTO contactRequestDTO = new ContactDTO();
-            contactRequestDTO.setContactId(1);
-            returnVal = contactService.processContact(new RequestEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
+            returnVal = contactService.getContactById(1);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);

@@ -9,6 +9,12 @@ import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
  */
 public interface ContactService {
 
-    ResultEnvelope<ContactDTO> processContact(RequestEnvelope<ContactDTO> requestEnvelope);
+    ResultEnvelope<ContactDTO> processDml(RequestEnvelope<ContactDTO> requestEnvelope);
+
+    ResultEnvelope<ContactDTO> getContactById(Integer contactId);
+    ResultEnvelope<ContactDTO> getContactByEmail(String email);
+    ResultEnvelope<ContactDTO> getContactByLastName(String lastName);
+    ResultEnvelope<ContactDTO> getContactByFirstName(String email, String lastName, String firstName);
+
 
 }

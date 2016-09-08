@@ -1,5 +1,6 @@
 package org.gobiiproject.gobidomain.services.impl;
 
+import javassist.bytecode.stackmap.BasicBlock;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
@@ -23,15 +24,12 @@ public class ContactServiceImpl implements ContactService {
     DtoMapContact dtoMapContact = null;
 
     @Override
-    public ResultEnvelope<ContactDTO> processContact(RequestEnvelope<ContactDTO> requestEnvelope) {
+    public ResultEnvelope<ContactDTO> processDml(RequestEnvelope<ContactDTO> requestEnvelope) {
 
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
 
         try {
             switch (requestEnvelope.getHeader().getProcessType()) {
-                case READ:
-                    returnVal = dtoMapContact.getContactDetails(requestEnvelope);
-                    break;
 
                 case CREATE:
                     requestEnvelope.getRequestData().setCreatedDate(new Date());
@@ -59,5 +57,37 @@ public class ContactServiceImpl implements ContactService {
         }
 
         return returnVal;
+    }
+
+    @Override
+    public ResultEnvelope<ContactDTO> getContactById(Integer contactId) {
+
+        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+
+        try {
+            ContactDTO contactDTO = dtoMapContact.getContactDetails(contactId);
+            returnVal.getResult().getData().add(contactDTO);
+
+        } catch(Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+        return returnVal;
+    }
+
+    @Override
+    public ResultEnvelope<ContactDTO> getContactByEmail(String email) {
+        return null;
+    }
+
+    @Override
+    public ResultEnvelope<ContactDTO> getContactByLastName(String lastName) {
+        return null;
+    }
+
+    @Override
+    public ResultEnvelope<ContactDTO> getContactByFirstName(String email, String lastName, String firstName) {
+        return null;
     }
 }

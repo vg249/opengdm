@@ -29,26 +29,25 @@ public class DtoMapContactImpl implements DtoMapContact {
 
     @Transactional
     @Override
-    public ResultEnvelope<ContactDTO> getContactDetails(RequestEnvelope<ContactDTO> requestEnvelope) throws GobiiDtoMappingException {
+    public ContactDTO getContactDetails(Integer contactId) throws Exception {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        ContactDTO returnVal = new ContactDTO();
 
         try {
 
-            ResultSet resultSet = rsContactDao.getContactDetailsByContactId(requestEnvelope.getRequestData().getContactId());
+            ResultSet resultSet = rsContactDao.getContactDetailsByContactId(contactId);
 
             if (resultSet.next()) {
 
                 // apply contact values
-                ResultColumnApplicator.applyColumnValues(resultSet, requestEnvelope.getRequestData());
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
 
             } // iterate resultSet
 
-            returnVal.getResult().getData().add(requestEnvelope.getRequestData());
 
         } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
+            LOGGER.error("Gobii Mapping Error", e);
+            throw e;
         }
 
         return returnVal;
