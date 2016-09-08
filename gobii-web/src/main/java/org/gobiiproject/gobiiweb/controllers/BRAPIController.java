@@ -132,7 +132,11 @@ public class BRAPIController {
         } catch (Exception e) {
             String msg = e.getMessage();
             String tmp = msg;
-            throw (e);
+            try {
+                throw (e);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }
 
         return (returnVal);
