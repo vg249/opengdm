@@ -195,7 +195,10 @@ public class BRAPIController {
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
         try {
 
-            returnVal = contactService.getContactById(1);
+            if( false == LineUtils.isNullOrEmpty(email)) {
+                returnVal = contactService.getContactByEmail(email);
+                //returnVal = contactService.getContactById(1);
+            }
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
