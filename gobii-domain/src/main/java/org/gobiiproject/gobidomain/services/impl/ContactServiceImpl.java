@@ -27,20 +27,23 @@ public class ContactServiceImpl implements ContactService {
     public ResultEnvelope<ContactDTO> processDml(RequestEnvelope<ContactDTO> requestEnvelope) {
 
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        ContactDTO contactDTOToProcess = requestEnvelope.getRequestData();
 
         try {
             switch (requestEnvelope.getHeader().getProcessType()) {
 
                 case CREATE:
-                    requestEnvelope.getRequestData().setCreatedDate(new Date());
-                    requestEnvelope.getRequestData().setModifiedDate(new Date());
-                    returnVal = dtoMapContact.createContact(requestEnvelope);
+                    contactDTOToProcess.setCreatedDate(new Date());
+                    contactDTOToProcess.setModifiedDate(new Date());
+                    contactDTOToProcess = dtoMapContact.createContact(contactDTOToProcess);
+                    returnVal.getResult().getData().add(contactDTOToProcess);
                     break;
 
                 case UPDATE:
-                    requestEnvelope.getRequestData().setCreatedDate(new Date());
-                    requestEnvelope.getRequestData().setModifiedDate(new Date());
-                    returnVal = dtoMapContact.updateContact(requestEnvelope);
+                    contactDTOToProcess.setCreatedDate(new Date());
+                    contactDTOToProcess.setModifiedDate(new Date());
+                    contactDTOToProcess = dtoMapContact.updateContact(contactDTOToProcess);
+                    returnVal.getResult().getData().add(contactDTOToProcess);
                     break;
 
                 default:

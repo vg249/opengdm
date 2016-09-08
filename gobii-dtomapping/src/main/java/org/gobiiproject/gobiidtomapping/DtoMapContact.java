@@ -10,7 +10,7 @@ import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 public interface DtoMapContact {
 
     ContactDTO getContactDetails(Integer contactId) throws Exception;
-    ResultEnvelope<ContactDTO> createContact(RequestEnvelope<ContactDTO> requestEnvelope) throws GobiiDtoMappingException;
-    ResultEnvelope<ContactDTO> updateContact(RequestEnvelope<ContactDTO> requestEnvelope) throws GobiiDtoMappingException;
+    ContactDTO createContact(ContactDTO contactDTO) throws Exception;
+    ContactDTO updateContact(ContactDTO contactDTO) throws Exception;
 
 }

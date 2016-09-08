@@ -54,38 +54,37 @@ public class DtoMapContactImpl implements DtoMapContact {
     }
 
     @Override
-    public ResultEnvelope<ContactDTO> createContact(RequestEnvelope<ContactDTO> requestEnvelope) throws GobiiDtoMappingException {
+    public ContactDTO createContact(ContactDTO contactDTO) throws Exception {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        ContactDTO returnVal = contactDTO;
 
         try {
 
-            Map<String, Object> parameters = ParamExtractor.makeParamVals(requestEnvelope.getRequestData());
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             Integer contactId = rsContactDao.createContact(parameters);
-            requestEnvelope.getRequestData().setContactId(contactId);
-            returnVal.getResult().getData().add(requestEnvelope.getRequestData());
+            returnVal.setContactId(contactId);
 
         } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
+            LOGGER.error("Gobii Mapping Error", e);
+            throw e;
         }
 
         return returnVal;
     }
 
     @Override
-    public ResultEnvelope<ContactDTO> updateContact(RequestEnvelope<ContactDTO> requestEnvelope) throws GobiiDtoMappingException {
+    public ContactDTO updateContact(ContactDTO contactDTO) throws Exception {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        ContactDTO returnVal = contactDTO;
 
         try {
 
-            Map<String, Object> parameters = ParamExtractor.makeParamVals(requestEnvelope.getRequestData());
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             rsContactDao.updateContact(parameters);
 
         } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
+            LOGGER.error("Gobii Mapping Error", e);
+            throw e;
         }
 
         return returnVal;
