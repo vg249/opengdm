@@ -4,16 +4,20 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.gobiiproject.gobiiclient.core.restmethods.get.GetParam;
+import org.gobiiproject.gobiiclient.core.restmethods.get.GetRequest;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 
@@ -40,7 +44,7 @@ public class HttpCore {
     final private static int HTTP_STATUS_CODE_UNAUTHORIZED = 401;  //not authenticated
     final private static int HTTP_STATUS_CODE_FORBIDDEN = 403; //not authorized
 
-    private URIBuilder getBaseBuilder() throws Exception {
+     URIBuilder getBaseBuilder() throws Exception {
         return (new URIBuilder().setScheme("http")
                 .setHost(host)
                 .setPort(port));
@@ -51,6 +55,24 @@ public class HttpCore {
         URI returnVal = getBaseBuilder()
                 .setPath(url)
                 .build();
+
+        return (returnVal);
+
+    }//byContentTypeUri()
+
+    private URI makeUri(GetRequest getRequest) throws Exception {
+
+        URI returnVal;
+
+        URIBuilder baseBuilder = getBaseBuilder()
+                .setPath(getRequest.makeUrl());
+
+        for(GetParam currentParam : getRequest.getRequestParams() ) {
+            baseBuilder.addParameter(currentParam.getName(),currentParam.getValue());
+        }
+
+        returnVal = baseBuilder.build();
+
 
         return (returnVal);
 
@@ -208,30 +230,12 @@ public class HttpCore {
     } // getTokenForUser()
 
 
-    public JsonObject getResponseBody(String url,
-                                      String jsonString,
-                                      String token) throws Exception {
+    private JsonObject getJsonFromInputStream( InputStream inputStream ) throws Exception {
 
-        JsonObject returnVal = null;
-
-        HttpResponse httpResponse = null;
-
-        URI uri = makeUri(url);
-
-        HttpPost postRequest = new HttpPost(uri);
-//        String jsonString = jsonObject.toString();
-        StringEntity input = new StringEntity(jsonString);
-        postRequest.setEntity(input);
-
-        httpResponse = submitUriRequest(postRequest, "", "", token);
-
-        if (HTTP_STATUS_CODE_OK != httpResponse.getStatusLine().getStatusCode()) {
-            throw new Exception("Request did not succeed: " + httpResponse.getStatusLine());
-        }
-
+        JsonObject returnVal;
 
         BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader((httpResponse.getEntity().getContent())));
+                new InputStreamReader(inputStream));
 
         StringBuilder stringBuilder = new StringBuilder();
         String currentLine = null;
@@ -243,6 +247,57 @@ public class HttpCore {
         JsonParser parser = new JsonParser();
         String jsonAsString = stringBuilder.toString();
         returnVal = parser.parse(jsonAsString).getAsJsonObject();
+
+        return  returnVal;
+    }
+
+    public JsonObject getResponseBody(String url,
+                                      String jsonString,
+                                      String token) throws Exception {
+
+        JsonObject returnVal = null;
+
+        HttpResponse httpResponse = null;
+
+        URI uri = makeUri(url);
+
+        HttpPost postRequest = new HttpPost(uri);
+        StringEntity input = new StringEntity(jsonString);
+        postRequest.setEntity(input);
+
+        httpResponse = submitUriRequest(postRequest, "", "", token);
+
+        if (HTTP_STATUS_CODE_OK != httpResponse.getStatusLine().getStatusCode()) {
+            throw new Exception("Request did not succeed: " + httpResponse.getStatusLine());
+        }
+
+        returnVal = getJsonFromInputStream(httpResponse.getEntity().getContent());
+
+
+
+        return returnVal;
+
+    }//accessResource_test
+
+    public JsonObject getFromGet(GetRequest getRequest,
+                                      String token) throws Exception {
+
+
+        JsonObject returnVal = null;
+
+        HttpResponse httpResponse = null;
+
+        URI uri = makeUri(getRequest);
+
+        HttpGet postRequest = new HttpGet(uri);
+
+        httpResponse = submitUriRequest(postRequest, "", "", token);
+
+        if (HTTP_STATUS_CODE_OK != httpResponse.getStatusLine().getStatusCode()) {
+            throw new Exception("Request did not succeed: " + httpResponse.getStatusLine());
+        }
+
+        returnVal = getJsonFromInputStream(httpResponse.getEntity().getContent());
 
         return returnVal;
 

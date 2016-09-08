@@ -2,27 +2,18 @@ package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
-import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
-import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapPlatform;
-import org.gobiiproject.gobiidtomapping.DtoMapPlatform;
-import org.gobiiproject.gobiidtomapping.DtoMapPlatform;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
-import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +51,7 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
             } // if result set has a row
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -81,7 +72,7 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
             List<EntityPropertyDTO> platformParameters = platformDTO.getProperties();
             upsertPlatformProperties(platformDTO.getPlatformId(), platformParameters);
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -125,7 +116,7 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
                         platformDTO.getProperties());
             }
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 

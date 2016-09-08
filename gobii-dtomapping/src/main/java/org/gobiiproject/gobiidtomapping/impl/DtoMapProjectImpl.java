@@ -8,7 +8,7 @@ import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +42,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
             while (resultSet.next()) {
 
                 if (true == retrievedOneRecord) {
-                    throw (new GobiiDtoMappingException(DtoHeaderResponse.StatusLevel.ERROR,
-                            DtoHeaderResponse.ValidationStatusType.VALIDATION_NOT_UNIQUE,
+                    throw (new GobiiDtoMappingException(Status.StatusLevel.ERROR,
+                            Status.ValidationStatusType.VALIDATION_NOT_UNIQUE,
                             "There are more than one project records for project id: " + projectDTO.getProjectId()));
                 }
 
@@ -77,7 +77,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
             addPropertiesToProject(returnVal);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -106,8 +106,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         if (resultSetExistingProject.next()) {
             returnVal = false;
-            projectDTO.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.OK,
-                    DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
+            projectDTO.getStatus().addStatusMessage(Status.StatusLevel.OK,
+                    Status.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
                     "A project with name " + projectName + " and contact id " + piContactId + "already exists");
         }
 
@@ -137,7 +137,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
             }
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -174,7 +174,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 

@@ -26,7 +26,7 @@ public class NameIdListServiceImpl implements NameIdListService {
             return dtoMapNameIdList.getNameIdList(nameIdListDTO);
         } catch (Exception e) {
 
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii service error", e);
         }
 

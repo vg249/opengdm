@@ -31,7 +31,7 @@ public class ConfigSettingsServiceImpl implements ConfigSettingsService {
 
         } catch (Exception e) {
 
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii service error", e);
         }
 

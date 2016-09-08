@@ -1,25 +1,22 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 
 /**
  * Created by Angel on 5/6/2016.
  */
-public class ContactDTO extends DtoMetaData {
+public class ContactDTO {
 
-    public ContactDTO() {}
-
-    public ContactDTO(ProcessType processType) {
-        super(processType);
+    public ContactDTO() {
     }
+
 
     // we are waiting until we a have a view to retirn
     // properties for that property: we don't know how to represent them yet
@@ -37,7 +34,10 @@ public class ContactDTO extends DtoMetaData {
     private Integer organizationId;
 
     @GobiiEntityParam(paramName = "contactId")
-    public Integer getContactId() {return contactId;}
+    public Integer getContactId() {
+        return contactId;
+    }
+
     @GobiiEntityColumn(columnName = "contact_id")
     public void setContactId(Integer contactId) {
         this.contactId = contactId;
@@ -74,7 +74,9 @@ public class ContactDTO extends DtoMetaData {
     }
 
     @GobiiEntityParam(paramName = "email")
-    public String getEmail() {return email;}
+    public String getEmail() {
+        return email;
+    }
 
     @GobiiEntityColumn(columnName = "email")
     public void setEmail(String email) {
@@ -82,10 +84,12 @@ public class ContactDTO extends DtoMetaData {
     }
 
     @GobiiEntityParam(paramName = "roles")
-    public  List<Integer> getRoles() { return roles;}
+    public List<Integer> getRoles() {
+        return roles;
+    }
 
     @GobiiEntityColumn(columnName = "roles")
-    public void setRoles( List<Integer> roles) {
+    public void setRoles(List<Integer> roles) {
         this.roles = roles;
     }
 
@@ -138,7 +142,6 @@ public class ContactDTO extends DtoMetaData {
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
-
 
 
 }

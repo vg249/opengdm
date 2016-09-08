@@ -1,36 +1,36 @@
-package org.gobiiproject.gobiimodel.dto.header;
+package org.gobiiproject.gobiimodel.dto.response;
 
 import java.io.Serializable;
 
 public class HeaderStatusMessage implements Serializable {
 
 
-    private DtoHeaderResponse.StatusLevel statusLevel;
+    private Status.StatusLevel statusLevel;
 
 
-    private DtoHeaderResponse.ValidationStatusType validationStatusType;
+    private Status.ValidationStatusType validationStatusType;
     private String message;
 
     public HeaderStatusMessage() {
     }
 
-    public HeaderStatusMessage(DtoHeaderResponse.StatusLevel statusLevel,
-                               DtoHeaderResponse.ValidationStatusType validationStatusType,
+    public HeaderStatusMessage(Status.StatusLevel statusLevel,
+                               Status.ValidationStatusType validationStatusType,
                                String message) {
         this.statusLevel = statusLevel;
         this.validationStatusType = validationStatusType;
         this.message = message;
     }
 
-    public DtoHeaderResponse.StatusLevel getStatusLevel() {
+    public Status.StatusLevel getStatusLevel() {
         return statusLevel;
     }
 
-    public DtoHeaderResponse.ValidationStatusType getValidationStatusType() {
+    public Status.ValidationStatusType getValidationStatusType() {
         return validationStatusType;
     }
 
-    public void setStatusLevel(DtoHeaderResponse.StatusLevel statusLevel) {
+    public void setStatusLevel(Status.StatusLevel statusLevel) {
         this.statusLevel = statusLevel;
     }
 

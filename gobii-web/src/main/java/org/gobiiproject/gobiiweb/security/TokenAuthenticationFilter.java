@@ -8,7 +8,7 @@ package org.gobiiproject.gobiiweb.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderAuth;
+import org.gobiiproject.gobiimodel.dto.response.HeaderAuth;
 
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                 String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_PASSWORD);
                 String authorization = httpRequest.getHeader("Authorization");
 
-                // we assume that the DataSource selector will have done the right thing with the header
+                // we assume that the DataSource selector will have done the right thing with the response
                 // we are just echoing back to the client (the web client needs this)
 
                 if (null == authorization) {
@@ -88,7 +88,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                     httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, tokenInfo.getToken());
 
                     String gobiiCropType = CropRequestAnalyzer.getGobiiCropType(httpRequest);
-                    DtoHeaderAuth dtoHeaderAuth = new DtoHeaderAuth();
+                    HeaderAuth dtoHeaderAuth = new HeaderAuth();
                     dtoHeaderAuth.setToken(tokenInfo.getToken());
                     dtoHeaderAuth.setGobiiCropType(gobiiCropType);
                     dtoHeaderAuth.setUserName(userName);

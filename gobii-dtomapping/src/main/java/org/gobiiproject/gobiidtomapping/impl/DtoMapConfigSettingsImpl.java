@@ -32,7 +32,7 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
             }
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 

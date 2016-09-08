@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -64,7 +62,7 @@ public class DtoMapCvImpl implements DtoMapCv {
                 }
             }
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -84,7 +82,7 @@ public class DtoMapCvImpl implements DtoMapCv {
             returnVal.setCvId(cvId);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -102,7 +100,7 @@ public class DtoMapCvImpl implements DtoMapCv {
             rsCvDao.updateCv(parameters);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -120,7 +118,7 @@ public class DtoMapCvImpl implements DtoMapCv {
             rsCvDao.deleteCv(parameters);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 

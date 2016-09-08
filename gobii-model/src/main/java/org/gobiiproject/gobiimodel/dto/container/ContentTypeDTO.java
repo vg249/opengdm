@@ -5,10 +5,9 @@
 // ************************************************************************
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.header.*;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 
-public class ContentTypeDTO extends DtoMetaData {
+public class ContentTypeDTO extends Header {
 
     private Integer contentTypeId;
     private String name;

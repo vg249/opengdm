@@ -1,24 +1,19 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
-import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
-import org.gobiiproject.gobiidao.resultset.access.RsDataSetDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
-import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
+import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -34,13 +29,13 @@ public class DtoMapContactImpl implements DtoMapContact {
 
     @Transactional
     @Override
-    public ContactDTO getContactDetails(ContactDTO contactDTO) throws GobiiDtoMappingException {
+    public ContactDTO getContactDetails(Integer contactId) throws Exception {
 
-        ContactDTO returnVal = contactDTO;
+        ContactDTO returnVal = new ContactDTO();
 
         try {
 
-            ResultSet resultSet = rsContactDao.getContactDetailsByContactId(contactDTO.getContactId());
+            ResultSet resultSet = rsContactDao.getContactDetailsByContactId(contactId);
 
             if (resultSet.next()) {
 
@@ -49,37 +44,42 @@ public class DtoMapContactImpl implements DtoMapContact {
 
             } // iterate resultSet
 
+
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
+            LOGGER.error("Gobii Mapping Error", e);
+            throw e;
         }
 
-
         return returnVal;
+    }
 
+    @Transactional
+    @Override
+    public ContactDTO getContactByEamil(String email) throws Exception {
+        return null;
     }
 
     @Override
-    public ContactDTO createContact(ContactDTO contactDTO) throws GobiiDtoMappingException {
+    public ContactDTO createContact(ContactDTO contactDTO) throws Exception {
+
         ContactDTO returnVal = contactDTO;
 
         try {
 
-            Map<String, Object> parameters = ParamExtractor.makeParamVals(contactDTO);
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             Integer contactId = rsContactDao.createContact(parameters);
             returnVal.setContactId(contactId);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
+            LOGGER.error("Gobii Mapping Error", e);
+            throw e;
         }
-
 
         return returnVal;
     }
 
     @Override
-    public ContactDTO updateContact(ContactDTO contactDTO) throws GobiiDtoMappingException {
+    public ContactDTO updateContact(ContactDTO contactDTO) throws Exception {
 
         ContactDTO returnVal = contactDTO;
 
@@ -89,8 +89,8 @@ public class DtoMapContactImpl implements DtoMapContact {
             rsContactDao.updateContact(parameters);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
+            LOGGER.error("Gobii Mapping Error", e);
+            throw e;
         }
 
         return returnVal;

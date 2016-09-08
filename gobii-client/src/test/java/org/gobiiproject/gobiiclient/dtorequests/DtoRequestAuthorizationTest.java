@@ -11,7 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.Urls;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderAuth;
+import org.gobiiproject.gobiimodel.dto.response.HeaderAuth;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
@@ -21,8 +21,6 @@ import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -157,7 +155,7 @@ public class DtoRequestAuthorizationTest {
                         + "(" + httpResponse.getStatusLine().getReasonPhrase() + ")",
                 httpStatusCode.equals(200));
 
-        // verify that token was sent back in the header (for clients that use that)
+        // verify that token was sent back in the response (for clients that use that)
         List<Header> tokenHeaderList = Arrays.asList(httpResponse.getAllHeaders())
                 .stream()
                 .filter(header -> header.getName().equals(GobiiHttpHeaderNames.HEADER_TOKEN))
@@ -180,19 +178,19 @@ public class DtoRequestAuthorizationTest {
         JsonObject jsonBodyForToken = parser.parse(jsonAsString).getAsJsonObject();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        DtoHeaderAuth dtoHeaderAuth = objectMapper.readValue(jsonBodyForToken.toString(),
-                DtoHeaderAuth.class);
-        Assert.assertNotNull("No dto header was returned in response body", dtoHeaderAuth);
+        HeaderAuth dtoHeaderAuth = objectMapper.readValue(jsonBodyForToken.toString(),
+                HeaderAuth.class);
+        Assert.assertNotNull("No dto response was returned in response body", dtoHeaderAuth);
         String tokenFromBodyResponse = dtoHeaderAuth.getToken();
 
         Header tokenHeader = tokenHeaderList.get(0);
         String tokenValue = tokenHeader.getValue();
-        Assert.assertTrue("Token from header and token from body do not match",
+        Assert.assertTrue("Token from response and token from body do not match",
                 tokenFromBodyResponse.equals(tokenHeader.getValue()));
 
         Assert.assertNotNull("Crop type was not returned", dtoHeaderAuth.getGobiiCropType());
         String gobiiCropTypeReceived = dtoHeaderAuth.getGobiiCropType();
-        Assert.assertEquals("Crop type in auth header does not match the one that was sent", gobiiCropTypeSent, gobiiCropTypeReceived);
+        Assert.assertEquals("Crop type in auth response does not match the one that was sent", gobiiCropTypeSent, gobiiCropTypeReceived);
 
         // now test we can do a request with the token we got
         HttpPost postRequestForPing = makePostRequest(ServiceRequestId.URL_PING, gobiiCropTypeSent);

@@ -140,7 +140,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 ExtractorRoot.prototype.handleServerSelected = function (arg) {
                     this.selectedServerConfig = arg;
                     // this._dtoRequestServiceNameIds
-                    //     .setGobiiCropType(GobiiCropType[this.selectedServerConfig.crop]);
+                    //     .setCropType(GobiiCropType[this.selectedServerConfig.crop]);
                     var currentPath = window.location.pathname;
                     var currentPage = currentPath.substr(currentPath.lastIndexOf('/') + 1, currentPath.length);
                     var newDestination = "http://"

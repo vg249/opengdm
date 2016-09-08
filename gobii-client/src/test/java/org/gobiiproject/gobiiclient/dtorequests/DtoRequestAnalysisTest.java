@@ -6,25 +6,18 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
-import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.types.SystemUserDetail;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
-import org.gobiiproject.gobiimodel.types.SystemUsers;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -63,7 +56,7 @@ public class DtoRequestAnalysisTest {
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         AnalysisDTO analysisDTORequest = TestDtoFactory
-                .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
+                .makePopulatedAnalysisDTO(Header.ProcessType.CREATE, 1, entityParamValues);
 
         AnalysisDTO analysisDTOResponse = dtoRequestAnalysis.process(analysisDTORequest);
 
@@ -93,7 +86,7 @@ public class DtoRequestAnalysisTest {
         // create a new analysis for our test
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         AnalysisDTO newAnalysisDto = TestDtoFactory
-                .makePopulatedAnalysisDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
+                .makePopulatedAnalysisDTO(Header.ProcessType.CREATE, 1, entityParamValues);
         AnalysisDTO newAnalysisDTOResponse = dtoRequestAnalysis.process(newAnalysisDto);
 
 
@@ -105,7 +98,7 @@ public class DtoRequestAnalysisTest {
 
 
         // so this would be the typical workflow for the client app
-        analysisDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
+        analysisDTOReceived.setProcessType(Header.ProcessType.UPDATE);
         String newDataFile = UUID.randomUUID().toString();
         analysisDTOReceived.setSourceName(newDataFile);
 

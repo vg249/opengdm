@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
 import org.gobiiproject.gobiidao.resultset.access.RsDataSetDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
@@ -8,8 +7,6 @@ import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapAnalysis;
 import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -77,7 +73,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
             }
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -96,7 +92,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
             returnVal.setDataSetId(datasetId);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -113,7 +109,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
 //            for (AnalysisDTO currentAnalysisDTO : returnVal.getAnalyses()) {
 //
-//                if(DtoMetaData.ProcessType.CREATE == currentAnalysisDTO.getProcessType() ) {
+//                if(Header.ProcessType.CREATE == currentAnalysisDTO.getProcessType() ) {
 //                    dtoMapAnalysis.createAnalysis(currentAnalysisDTO);
 //                    returnVal.getAnalysesIds().add(currentAnalysisDTO.getAnalysisId());
 //
@@ -126,7 +122,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 

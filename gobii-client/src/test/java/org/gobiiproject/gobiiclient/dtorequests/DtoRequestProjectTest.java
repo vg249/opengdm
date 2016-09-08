@@ -7,15 +7,14 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
-import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.dto.response.HeaderStatusMessage;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -55,7 +54,7 @@ public class DtoRequestProjectTest {
 
 
         DtoRequestProject dtoRequestProject = new DtoRequestProject();
-        ProjectDTO projectDTORequest = new ProjectDTO(DtoMetaData.ProcessType.CREATE);
+        ProjectDTO projectDTORequest = new ProjectDTO(Header.ProcessType.CREATE);
         projectDTORequest.setCreatedBy(1);
         projectDTORequest.setProjectName(UUID.randomUUID().toString());
         projectDTORequest.setProjectDescription("foo description");
@@ -97,7 +96,7 @@ public class DtoRequestProjectTest {
         ProjectDTO projectDTORequest = new ProjectDTO();
         projectDTORequest.setProjectId(1);
         ProjectDTO projectDTOExisting = dtoRequestProject.process(projectDTORequest);
-        projectDTOExisting.setProcessType(DtoMetaData.ProcessType.CREATE);
+        projectDTOExisting.setProcessType(Header.ProcessType.CREATE);
 
 
         ProjectDTO projectDTOResponse = dtoRequestProject.process(projectDTOExisting);
@@ -107,10 +106,10 @@ public class DtoRequestProjectTest {
 
 
         List<HeaderStatusMessage> headerStatusMessages = projectDTOResponse
-                .getDtoHeaderResponse()
+                .getStatus()
                 .getStatusMessages()
                 .stream()
-                .filter(m -> m.getValidationStatusType().equals(DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE))
+                .filter(m -> m.getValidationStatusType().equals(Status.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE))
                 .collect(Collectors.toList());
 
 
@@ -131,7 +130,7 @@ public class DtoRequestProjectTest {
         projectDTORequest.setProjectId(1);
         ProjectDTO projectDTORequestReceived = dtoRequestProject.process(projectDTORequest);
 
-        projectDTORequestReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
+        projectDTORequestReceived.setProcessType(Header.ProcessType.UPDATE);
 
         String newDescription = UUID.randomUUID().toString();
 

@@ -1,14 +1,12 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
@@ -117,7 +115,7 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOretrieve = new ExtractorInstructionFilesDTO();
-        extractorInstructionFilesDTOretrieve.setProcessType(DtoMetaData.ProcessType.READ);
+        extractorInstructionFilesDTOretrieve.setProcessType(Header.ProcessType.READ);
         extractorInstructionFilesDTOretrieve
                 .setInstructionFileName(extractorInstructionFilesDTOResponse.getInstructionFileName());
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOretrieveResponse
@@ -151,10 +149,10 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         Assert.assertTrue(1 ==
         testForuserInputFileExistsError
-                .getDtoHeaderResponse()
+                .getStatus()
                 .getStatusMessages()
                 .stream()
-                .filter(m -> m.getValidationStatusType().equals(DtoHeaderResponse.ValidationStatusType.VALIDATION_NOT_UNIQUE))
+                .filter(m -> m.getValidationStatusType().equals(Status.ValidationStatusType.VALIDATION_NOT_UNIQUE))
                 .collect(Collectors.toList())
                 .size() );
 

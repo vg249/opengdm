@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +51,7 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
             } // if result set has a row
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -73,7 +72,7 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
             upsertMapsetProperties(mapsetDTO.getMapsetId(), mapsetParameters);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -117,7 +116,7 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
             }
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 

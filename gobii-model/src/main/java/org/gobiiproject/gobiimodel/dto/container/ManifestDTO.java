@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * Created by Angel on 5/6/2016.
  */
-public class ManifestDTO extends DtoMetaData {
+public class ManifestDTO extends Header {
 
     public ManifestDTO() {}
 

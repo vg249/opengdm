@@ -8,9 +8,9 @@ package org.gobiiproject.gobiiclient.dtorequests;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.DataSetOrientationType;
@@ -182,7 +182,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE
         LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieve = new LoaderInstructionFilesDTO();
-        loaderInstructionFilesDTOretrieve.setProcessType(DtoMetaData.ProcessType.READ);
+        loaderInstructionFilesDTOretrieve.setProcessType(Header.ProcessType.READ);
         loaderInstructionFilesDTOretrieve
                 .setInstructionFileName(loaderInstructionFilesDTOResponse.getInstructionFileName());
         LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieveResponse
@@ -240,12 +240,12 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertTrue(
                 2 ==
                         requiredDirectoriesResponse
-                                .getDtoHeaderResponse()
+                                .getStatus()
                                 .getStatusMessages()
                                 .stream()
                                 .filter(r ->
                                         r.getValidationStatusType()
-                                                .equals(DtoHeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST))
+                                                .equals(Status.ValidationStatusType.ENTITY_DOES_NOT_EXIST))
                                 .collect(Collectors.toList())
                                 .size()
         );
@@ -272,11 +272,11 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         LoaderInstructionFilesDTO requiredDirectoriesResponseDuplicateNameError =
                 dtoRequestFileLoadInstructions.process(loaderInstructionFilesDTOToSend);
         Assert.assertTrue(1 == requiredDirectoriesResponseDuplicateNameError
-                .getDtoHeaderResponse()
+                .getStatus()
                 .getStatusMessages().size());
 
         Assert.assertTrue(requiredDirectoriesResponseDuplicateNameError
-                .getDtoHeaderResponse()
+                .getStatus()
                 .getStatusMessages()
                 .get(0)
                 .getMessage().toLowerCase().contains("already exists"));
@@ -301,12 +301,12 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertTrue(
                 2 ==
                         testForuserInputFileExistsCausesError
-                                .getDtoHeaderResponse()
+                                .getStatus()
                                 .getStatusMessages()
                                 .stream()
                                 .filter(r ->
                                         r.getValidationStatusType()
-                                                .equals(DtoHeaderResponse.ValidationStatusType.ENTITY_DOES_NOT_EXIST))
+                                                .equals(Status.ValidationStatusType.ENTITY_DOES_NOT_EXIST))
                                 .collect(Collectors.toList())
                                 .size()
         );

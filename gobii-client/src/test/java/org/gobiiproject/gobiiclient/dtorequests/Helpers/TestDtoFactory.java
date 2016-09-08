@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.*;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class TestDtoFactory {
         return returnVal;
     }
 
-    public static AnalysisDTO makePopulatedAnalysisDTO(DtoMetaData.ProcessType processType,
+    public static AnalysisDTO makePopulatedAnalysisDTO(Header.ProcessType processType,
                                                        Integer uniqueStem,
                                                        EntityParamValues entityParamValues) {
 
@@ -53,7 +53,7 @@ public class TestDtoFactory {
         returnVal.setProgram(uniqueStem + ":  foo program");
         returnVal.setProgramVersion(uniqueStem + ":  foo version");
         returnVal.setAnlaysisTypeId(1);
-        returnVal.setStatus(1);
+        returnVal.setStatusId(1);
 
         returnVal.setParameters(entityParamValues.getProperties());
 
@@ -61,7 +61,7 @@ public class TestDtoFactory {
 
     }
 
-    public static PlatformDTO makePopulatedPlatformDTO(DtoMetaData.ProcessType processType,
+    public static PlatformDTO makePopulatedPlatformDTO(Header.ProcessType processType,
                                                        Integer uniqueStem,
                                                        EntityParamValues entityParamValues) {
 
@@ -69,7 +69,7 @@ public class TestDtoFactory {
 
         String uniqueStemString = uniqueStem.toString();
         // set the plain properties
-        returnVal.setStatus(1);
+        returnVal.setStatusId(1);
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
         returnVal.setCreatedBy(1);
@@ -86,7 +86,7 @@ public class TestDtoFactory {
     }
 
 
-public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
+public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
                                        Integer uniqueStem) {
 
         CvDTO returnVal = new CvDTO(processType);
@@ -99,7 +99,7 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
 
     }
 
-    public static DisplayDTO makePopulatedDisplayDTO(DtoMetaData.ProcessType processType,
+    public static DisplayDTO makePopulatedDisplayDTO(Header.ProcessType processType,
                                                      Integer uniqueStem) {
 
         DisplayDTO returnVal = new DisplayDTO(processType);
@@ -116,7 +116,7 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
 
         return returnVal;
 }
-    public static DataSetDTO makePopulatedDataSetDTO(DtoMetaData.ProcessType processType,
+    public static DataSetDTO makePopulatedDataSetDTO(Header.ProcessType processType,
                                                      Integer uniqueStem,
                                                      Integer callingAnalysisId,
                                                      List<Integer> analysisIds) {
@@ -132,7 +132,7 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
 
         // set the plain properties
         returnVal.setName(uniqueStem + ": foo name");
-        returnVal.setStatus(1);
+        returnVal.setStatusId(1);
         returnVal.setCreatedBy(1);
         returnVal.setCreatedDate(new Date());
         returnVal.setDataFile(uniqueStem + ": foo file");
@@ -150,7 +150,7 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
     }
 
 
-    public static MapsetDTO makePopulatedMapsetDTO(DtoMetaData.ProcessType processType,
+    public static MapsetDTO makePopulatedMapsetDTO(Header.ProcessType processType,
                                                    Integer uniqueStem,
                                                    EntityParamValues entityParamValues) {
 
@@ -167,7 +167,7 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
         returnVal.setReferenceId(1);
-        returnVal.setStatus(1);
+        returnVal.setStatusId(1);
 
         returnVal.setProperties(entityParamValues.getProperties());
 
@@ -175,7 +175,7 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
 
     }
 
-    public static ReferenceDTO makePopulatedReferenceDTO(DtoMetaData.ProcessType processType,
+    public static ReferenceDTO makePopulatedReferenceDTO(Header.ProcessType processType,
                                                          Integer uniqueStem) {
 
         ReferenceDTO returnVal = new ReferenceDTO(processType);
@@ -191,7 +191,7 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
     }
 
 
-    public static OrganizationDTO makePopulatedOrganizationDTO(DtoMetaData.ProcessType processType,
+    public static OrganizationDTO makePopulatedOrganizationDTO(Header.ProcessType processType,
                                                        Integer uniqueStem) {
 
         OrganizationDTO returnVal = new OrganizationDTO(processType);
@@ -204,13 +204,13 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
         returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
-        returnVal.setStatus(1);
+        returnVal.setStatusId(1);
 
         return returnVal;
 
     }
 
-    public static ManifestDTO makePopulatedManifestDTO(DtoMetaData.ProcessType processType,
+    public static ManifestDTO makePopulatedManifestDTO(Header.ProcessType processType,
                                                        Integer uniqueStem) {
 
         ManifestDTO returnVal = new ManifestDTO(processType);
@@ -228,11 +228,11 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
 
     }
 
-    public static ContactDTO makePopulatedContactDTO(DtoMetaData.ProcessType processType,
+    public static ContactDTO makePopulatedContactDTO(Header.ProcessType processType,
                                                      Integer uniqueStem) {
 
         String uniqueStemString = uniqueStem.toString();
-        ContactDTO returnVal = new ContactDTO(processType);
+        ContactDTO returnVal = new ContactDTO();
         // set the plain properties
 
         returnVal.setFirstName(uniqueStem + " new contact");
@@ -252,7 +252,7 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
     }
 
     public static List<MarkerGroupMarkerDTO> makeMarkerGroupMarkers(List<String> markerNames,
-                                                                    DtoMetaData.ProcessType processType) {
+                                                                    Header.ProcessType processType) {
 
         List<MarkerGroupMarkerDTO> returnVal = new ArrayList<>();
 
@@ -270,14 +270,14 @@ public static CvDTO makePopulatedCvDTO(DtoMetaData.ProcessType processType,
 
     }
 
-    public static MarkerGroupDTO makePopulatedMarkerGroupDTO(DtoMetaData.ProcessType processType,
+    public static MarkerGroupDTO makePopulatedMarkerGroupDTO(Header.ProcessType processType,
                                                              Integer uniqueStem,
                                                              List<MarkerGroupMarkerDTO> markerGroupMarkers) {
 
         MarkerGroupDTO returnVal = new MarkerGroupDTO(processType);
 
         returnVal.setMarkers(markerGroupMarkers);
-        returnVal.setStatus(1);
+        returnVal.setStatusId(1);
         returnVal.setCode( uniqueStem + "_code");
         returnVal.setGermplasmGroup(uniqueStem + "_germplasmGroup");
         returnVal.setName(uniqueStem + "_name");

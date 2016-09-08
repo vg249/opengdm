@@ -1,12 +1,10 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
-import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.dto.response.HeaderStatusMessage;
 
 import java.text.Collator;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,15 +14,15 @@ import java.util.List;
  */
 public class TestUtils {
 
-    public static boolean  checkAndPrintHeaderMessages(DtoMetaData dtoMetaData ) {
+    public static boolean  checkAndPrintHeaderMessages(Header dtoMetaData ) {
 
         boolean returnVal = false;
 
-        if (!dtoMetaData.getDtoHeaderResponse().isSucceeded()) {
+        if (!dtoMetaData.getStatus().isSucceeded()) {
             returnVal = true;
             System.out.println();
             System.out.println("*** Header errors: ");
-            for (HeaderStatusMessage currentStatusMesage : dtoMetaData.getDtoHeaderResponse().getStatusMessages()) {
+            for (HeaderStatusMessage currentStatusMesage : dtoMetaData.getStatus().getStatusMessages()) {
                 System.out.println(currentStatusMesage.getMessage());
             }
         }

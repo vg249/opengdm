@@ -8,25 +8,25 @@ public class FlapjackTransformer {
 /*		
 	2) cut marker, chromosome, position
 	3) remove headers
-	4) cat with header file
+	4) cat with response file
 	cut -f1,2,4 derp.txt | tail -n +2 > derp2.txt
 		
 */		
-		HelperFunctions.tryExec("echo # fjFile = MAP",tempDir+"map.header",errorFile);
+		HelperFunctions.tryExec("echo # fjFile = MAP",tempDir+"map.response",errorFile);
 		
 		HelperFunctions.tryExec("cut -f1,3,4 "+markerFile,tempDir+"tmp",errorFile);
 		HelperFunctions.tryExec("tail -n +2 "+tempDir+"tmp",tempDir+"map.body",errorFile);
 		rm(tempDir+"tmp");
 		
-		HelperFunctions.tryExec("cat "+tempDir+"map.header "+tempDir+"map.body",outFile,errorFile);
-		rm(tempDir+"map.header");
+		HelperFunctions.tryExec("cat "+tempDir+"map.response "+tempDir+"map.body",outFile,errorFile);
+		rm(tempDir+"map.response");
 		rm(tempDir+"map.body");
 		return true;
 	}
 	public static boolean generateGenotypeFile(String markerFile, String sampleFile, String genotypeFile, int datasetId, String tempDir, String outFile,String errorFile){
 		/**
 		 * Genotype file - 
-1) create header file
+1) create response file
   # fjFile = GENOTYPE
 2)
 cut marker names
@@ -35,14 +35,14 @@ transpose marker names
 4) get sample names
 5) add blank in front of first name
 6) paste sample names to genotype file
-7) add header file to top
+7) add response file to top
 		 */
 		//TODO: run slash adder on genotype file
 		String tempFile = tempDir + "tmp";
 		String markerList = tempDir + "genotype.markerList";
 		String inverseMarkerList = tempDir + "genotype.markerIList";
 		
-		HelperFunctions.tryExec("echo # fjFile = GENOTYPE",tempDir+"map.header",errorFile);
+		HelperFunctions.tryExec("echo # fjFile = GENOTYPE",tempDir+"map.response",errorFile);
 		HelperFunctions.tryExec("echo ",tempDir+"blank.file",errorFile);
 		
 		//Markerlist contains all marker names, sequentially
@@ -56,7 +56,7 @@ transpose marker names
 		rm(tempFile);
 		//Note, this file has no line ending.
 		
-		//Sample list is all samples, no header
+		//Sample list is all samples, no response
 		HelperFunctions.tryExec("cut -f1 "+sampleFile, tempFile,errorFile);
 		HelperFunctions.tryExec("tail -n +2 "+tempFile,tempDir+"genotype.sampleList",errorFile);
 		rm(tempFile);
@@ -64,9 +64,9 @@ transpose marker names
 		
 		
 		HelperFunctions.tryExec("paste "+ tempDir+"genotype.sampleList "+genotypeFile,tempDir+"sample.matrix",errorFile);//And now we have a matrix with the samples attached
-		HelperFunctions.tryExec("cat "+tempDir+"map.header "+ inverseMarkerList+" " + tempDir+"blank.file "+ tempDir+"sample.matrix",outFile,errorFile);
+		HelperFunctions.tryExec("cat "+tempDir+"map.response "+ inverseMarkerList+" " + tempDir+"blank.file "+ tempDir+"sample.matrix",outFile,errorFile);
 
-		rm(tempDir+"map.header");
+		rm(tempDir+"map.response");
 		rm(markerList);
 		rm(inverseMarkerList);
 		rm(tempDir+"genotype.sampleList");

@@ -1,8 +1,7 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/8/2016.
  */
-public class ExtractorInstructionFilesDTO extends DtoMetaData {
+public class ExtractorInstructionFilesDTO extends Header {
 
     public ExtractorInstructionFilesDTO() {
         super(ProcessType.CREATE);

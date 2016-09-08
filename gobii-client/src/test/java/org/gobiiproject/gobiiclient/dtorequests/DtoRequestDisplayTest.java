@@ -5,14 +5,12 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import java.util.Date;
 import java.util.UUID;
 
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -60,7 +58,7 @@ public class DtoRequestDisplayTest {
         DtoRequestDisplay dtoRequestDisplay = new DtoRequestDisplay();
 
         DisplayDTO displayDTORequest = TestDtoFactory
-                .makePopulatedDisplayDTO(DtoMetaData.ProcessType.CREATE, 1);
+                .makePopulatedDisplayDTO(Header.ProcessType.CREATE, 1);
 
         // set the plain properties
 
@@ -93,7 +91,7 @@ public class DtoRequestDisplayTest {
         // create a new reference for our test
 
         DisplayDTO newDisplayDto = TestDtoFactory
-                .makePopulatedDisplayDTO(DtoMetaData.ProcessType.CREATE, 1);
+                .makePopulatedDisplayDTO(Header.ProcessType.CREATE, 1);
         DisplayDTO newDisplayDTOResponse = dtoRequestDisplay.process(newDisplayDto);
 
 
@@ -105,7 +103,7 @@ public class DtoRequestDisplayTest {
 
 
         // so this would be the typical workflow for the client app
-        referenceDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
+        referenceDTOReceived.setProcessType(Header.ProcessType.UPDATE);
         String newDisplayName = UUID.randomUUID().toString();
         referenceDTOReceived.setDisplayName(newDisplayName);
 

@@ -99,7 +99,7 @@ class SingleLineFilteredIterator implements Iterator<String>{
 	}
 }
 /**
-* Exactly like SingleLineFilteredIterator, but takes a map of string -> string, or a filename containing one line of header, then string -> string.
+* Exactly like SingleLineFilteredIterator, but takes a map of string -> string, or a filename containing one line of response, then string -> string.
 * 
 * @author jdl232 Josh L.S.
 *

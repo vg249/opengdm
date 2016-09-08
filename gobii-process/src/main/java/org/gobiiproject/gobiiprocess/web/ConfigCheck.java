@@ -10,7 +10,7 @@ import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.dto.response.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
@@ -314,12 +314,12 @@ public class ConfigCheck {
                 PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
 
                 Integer responseNum = 1;
-                if (pingDTOResponse.getDtoHeaderResponse().isSucceeded()) {
+                if (pingDTOResponse.getStatus().isSucceeded()) {
                     for (String currentResponse : pingDTOResponse.getPingResponses()) {
                         ConfigCheck.printField("Ping response " + (responseNum++).toString(), currentResponse);
                     }
                 } else {
-                    for (HeaderStatusMessage currentHeader : pingDTOResponse.getDtoHeaderResponse().getStatusMessages()) {
+                    for (HeaderStatusMessage currentHeader : pingDTOResponse.getStatus().getStatusMessages()) {
                         ConfigCheck.printField("Service error " + (responseNum++).toString(), currentHeader.getMessage());
                         returnVal = false;
                     }

@@ -10,7 +10,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -50,7 +50,7 @@ public class DtoRequestReferenceTest {
     public void testCreateReference() throws Exception {
 
         DtoRequestReference dtoRequestReference = new DtoRequestReference();
-        ReferenceDTO referenceDTORequest = new ReferenceDTO(DtoMetaData.ProcessType.CREATE);
+        ReferenceDTO referenceDTORequest = new ReferenceDTO(Header.ProcessType.CREATE);
 
         // set the plain properties
         referenceDTORequest.setName("dummy reference name");
@@ -73,7 +73,7 @@ public class DtoRequestReferenceTest {
         // create a new reference for our test
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         ReferenceDTO newReferenceDto = TestDtoFactory
-                .makePopulatedReferenceDTO(DtoMetaData.ProcessType.CREATE, 1);
+                .makePopulatedReferenceDTO(Header.ProcessType.CREATE, 1);
         ReferenceDTO newReferenceDTOResponse = dtoRequestReference.process(newReferenceDto);
 
 
@@ -85,7 +85,7 @@ public class DtoRequestReferenceTest {
 
 
         // so this would be the typical workflow for the client app
-        referenceDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
+        referenceDTOReceived.setProcessType(Header.ProcessType.UPDATE);
         String newDataFile = UUID.randomUUID().toString();
         referenceDTOReceived.setFilePath(newDataFile);
 

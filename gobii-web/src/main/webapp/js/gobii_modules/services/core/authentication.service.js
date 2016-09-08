@@ -104,7 +104,7 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
     }
 });
 /*
- // doing a plain xhr request also does not allow access to token header
+ // doing a plain xhr request also does not allow access to token response
  var xhr = new XMLHttpRequest();
  var url = "load/auth";
  xhr.open("POST", url, true);

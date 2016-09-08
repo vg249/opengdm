@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/21/2016.
  */
-public class AnalysisDTO extends DtoMetaData {
+public class AnalysisDTO extends Header {
 
     public AnalysisDTO() {
     }
@@ -32,7 +32,7 @@ public class AnalysisDTO extends DtoMetaData {
     private String sourceUri;
     private Integer referenceId;
     private Date timeExecuted;
-    private Integer status;
+    private Integer statusId;
     private List<EntityPropertyDTO> parameters = new ArrayList<>();
 
     @GobiiEntityParam(paramName = "analysisId")
@@ -156,13 +156,13 @@ public class AnalysisDTO extends DtoMetaData {
     }
 
     @GobiiEntityParam(paramName = "status")
-    public Integer getStatus() {
-        return status;
+    public Integer getStatusId() {
+        return statusId;
     }
 
     @GobiiEntityColumn(columnName = "status")
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
     }
 
     public List<EntityPropertyDTO> getParameters() {

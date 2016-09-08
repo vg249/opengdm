@@ -43,7 +43,7 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
             } // iterate resultSet
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -62,7 +62,7 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
             returnVal.setOrganizationId(organizationId);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 
@@ -80,7 +80,7 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
             rsOrganizationDao.updateOrganization(parameters);
 
         } catch (Exception e) {
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
         }
 

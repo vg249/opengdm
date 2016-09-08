@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/21/2016.
  */
-public class PlatformDTO extends DtoMetaData {
+public class PlatformDTO extends Header {
 
     public PlatformDTO() {
     }
@@ -29,7 +29,7 @@ public class PlatformDTO extends DtoMetaData {
     private Date createdDate;
     private Integer modifiedBy;
     private Date modifiedDate;
-    private Integer status;
+    private Integer statusId;
     private Integer typeId;
     private List<EntityPropertyDTO> properties = new ArrayList<>();
 
@@ -125,13 +125,13 @@ public class PlatformDTO extends DtoMetaData {
     }
 
     @GobiiEntityParam(paramName = "status")
-    public Integer getStatus() {
-        return status;
+    public Integer getStatusId() {
+        return statusId;
     }
 
     @GobiiEntityColumn(columnName ="status")
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
     }
 
     @GobiiEntityParam(paramName = "typeId")

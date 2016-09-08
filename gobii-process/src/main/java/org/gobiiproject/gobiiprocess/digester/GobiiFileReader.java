@@ -3,9 +3,9 @@ package org.gobiiproject.gobiiprocess.digester;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestDataSet;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
-import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.dto.response.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.impl.LoaderInstructionsDAOImpl;
@@ -377,8 +377,8 @@ public class GobiiFileReader {
 	 * Generates appropriate monetDB files.
 	 * Reason - Raza is weird.
 	 * @param cropConfig Connection String
-	 * @param markerFile No header
-	 * @param dnaRunFile With header
+	 * @param markerFile No response
+	 * @param dnaRunFile With response
 	 * @param dsid Because
 	 * @param errorFile We might blow up
 	 * @return if we blew up
@@ -411,16 +411,16 @@ public class GobiiFileReader {
 
 
 
-			DataSetDTO dataSetRequest = new DataSetDTO(DtoMetaData.ProcessType.READ);
+			DataSetDTO dataSetRequest = new DataSetDTO(Header.ProcessType.READ);
 
 			dataSetRequest.setDataSetId(dataSetId);
 			DtoRequestDataSet dtoProcessor = new DtoRequestDataSet();
 			DataSetDTO dataSetResponse = dtoProcessor.process(dataSetRequest);
 
-			if (!dataSetResponse.getDtoHeaderResponse().isSucceeded()) {
+			if (!dataSetResponse.getStatus().isSucceeded()) {
 				System.out.println();
-				logError("Digester","Data set response header errors");
-				for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getDtoHeaderResponse().getStatusMessages()) {
+				logError("Digester","Data set response response errors");
+				for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getStatus().getStatusMessages()) {
 					logError("HeaderError",currentStatusMesage.getMessage());
 				}
 				return;
@@ -428,14 +428,14 @@ public class GobiiFileReader {
 
 			dataSetResponse.setDataTable(monetTableName);
 			dataSetResponse.setDataFile(hdfFileName);
-			dataSetResponse.setProcessType(DtoMetaData.ProcessType.UPDATE);
+			dataSetResponse.setProcessType(Header.ProcessType.UPDATE);
 
 
 			dataSetResponse = dtoProcessor.process(dataSetResponse);
 			// if you didn't succeed, do not pass go, but do log errors to your log file
-			if (!dataSetResponse.getDtoHeaderResponse().isSucceeded()) {
-				logError("Digester","Data set response header errors");
-				for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getDtoHeaderResponse().getStatusMessages()) {
+			if (!dataSetResponse.getStatus().isSucceeded()) {
+				logError("Digester","Data set response response errors");
+				for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getStatus().getStatusMessages()) {
 					logError("HeaderError",currentStatusMesage.getMessage());
 				}
 				return;

@@ -48,12 +48,12 @@ public class CropRequestAnalyzer {
 
             if (LineUtils.isNullOrEmpty(returnVal)) {
 
-                LOGGER.error("Request did not include the header "
+                LOGGER.error("Request did not include the response "
                         + GobiiHttpHeaderNames.HEADER_GOBII_CROP);
             }
 
         } else {
-            LOGGER.error("Unable to retreive servlet request for crop type analysis from header");
+            LOGGER.error("Unable to retreive servlet request for crop type analysis from response");
         }
 
         return returnVal;
@@ -143,7 +143,7 @@ public class CropRequestAnalyzer {
 
                 if (null == returnVal) {
 
-                    LOGGER.error("Unable to determine crop type from header or uri; setting crop type to "
+                    LOGGER.error("Unable to determine crop type from response or uri; setting crop type to "
                             + returnVal
                             + " database connectioins will be made accordingly");
                 }

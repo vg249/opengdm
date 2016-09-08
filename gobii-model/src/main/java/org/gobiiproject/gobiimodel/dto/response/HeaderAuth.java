@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.header;
+package org.gobiiproject.gobiimodel.dto.response;
 
 
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * Created by MrPhil on 6/18/2015.
  */
-public class DtoHeaderAuth implements Serializable {
+public class HeaderAuth implements Serializable {
 
 
     private String userName;
@@ -55,4 +55,4 @@ public class DtoHeaderAuth implements Serializable {
 
 
 
-}//DtoHeaderResponse
+}//Status

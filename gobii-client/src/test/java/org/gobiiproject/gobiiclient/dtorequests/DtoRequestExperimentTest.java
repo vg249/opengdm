@@ -7,16 +7,13 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
-import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
-import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.dto.response.HeaderStatusMessage;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -59,7 +56,7 @@ public class DtoRequestExperimentTest {
 
         DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 
-        ExperimentDTO experimentDTORequest = new ExperimentDTO(DtoMetaData.ProcessType.CREATE);
+        ExperimentDTO experimentDTORequest = new ExperimentDTO(Header.ProcessType.CREATE);
         experimentDTORequest.setExperimentId(1);
         experimentDTORequest.setManifestId(1);
         experimentDTORequest.setPlatformId(1);
@@ -68,7 +65,7 @@ public class DtoRequestExperimentTest {
         experimentDTORequest.setModifiedBy(2);
         experimentDTORequest.setExperimentCode("foocode");
         experimentDTORequest.setExperimentDataFile("foofile");
-        experimentDTORequest.setStatus(1);
+        experimentDTORequest.setStatusId(1);
         experimentDTORequest.setExperimentName(UUID.randomUUID().toString());
 
         dtoRequestExperiment.process(experimentDTORequest);
@@ -88,7 +85,7 @@ public class DtoRequestExperimentTest {
         ExperimentDTO experimentDTORequest = new ExperimentDTO();
         experimentDTORequest.setExperimentId(2);
         ExperimentDTO ExperimentDTOExisting = dtoRequestExperiment.process(experimentDTORequest);
-        ExperimentDTOExisting.setProcessType(DtoMetaData.ProcessType.CREATE);
+        ExperimentDTOExisting.setProcessType(Header.ProcessType.CREATE);
 
 
         ExperimentDTO ExperimentDTOResponse = dtoRequestExperiment.process(ExperimentDTOExisting);
@@ -98,10 +95,10 @@ public class DtoRequestExperimentTest {
 
 
         List<HeaderStatusMessage> headerStatusMessages = ExperimentDTOResponse
-                .getDtoHeaderResponse()
+                .getStatus()
                 .getStatusMessages()
                 .stream()
-                .filter(m -> m.getValidationStatusType().equals(DtoHeaderResponse.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE))
+                .filter(m -> m.getValidationStatusType().equals(Status.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE))
                 .collect(Collectors.toList());
 
 
@@ -125,7 +122,7 @@ public class DtoRequestExperimentTest {
 
 
 
-        experimentDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
+        experimentDTOReceived.setProcessType(Header.ProcessType.UPDATE);
 
         String newDataFile = UUID.randomUUID().toString();
 

@@ -1,10 +1,12 @@
 package org.gobiiproject.gobidomain.services.impl;
 
+import javassist.bytecode.stackmap.BasicBlock;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.header.DtoHeaderResponse;
+import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
+import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,41 +24,78 @@ public class ContactServiceImpl implements ContactService {
     DtoMapContact dtoMapContact = null;
 
     @Override
-    public ContactDTO processContact(ContactDTO contactDTO) {
+    public ResultEnvelope<ContactDTO> processDml(RequestEnvelope<ContactDTO> requestEnvelope) {
 
-        ContactDTO returnVal = new ContactDTO();
+        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        ContactDTO contactDTOToProcess = requestEnvelope.getRequestData();
 
         try {
-            switch (contactDTO.getProcessType()) {
-                case READ:
-                    returnVal = dtoMapContact.getContactDetails(contactDTO);
-                    break;
+            switch (requestEnvelope.getHeader().getProcessType()) {
 
                 case CREATE:
-                    returnVal = dtoMapContact.createContact(contactDTO);
-                    returnVal.setCreatedDate(new Date());
-                    returnVal.setModifiedDate(new Date());
+                    contactDTOToProcess.setCreatedDate(new Date());
+                    contactDTOToProcess.setModifiedDate(new Date());
+                    contactDTOToProcess = dtoMapContact.createContact(contactDTOToProcess);
+                    returnVal.getResult().getData().add(contactDTOToProcess);
                     break;
 
                 case UPDATE:
-                    returnVal = dtoMapContact.updateContact(contactDTO);
-                    returnVal.setCreatedDate(new Date());
-                    returnVal.setModifiedDate(new Date());
+                    contactDTOToProcess.setCreatedDate(new Date());
+                    contactDTOToProcess.setModifiedDate(new Date());
+                    contactDTOToProcess = dtoMapContact.updateContact(contactDTOToProcess);
+                    returnVal.getResult().getData().add(contactDTOToProcess);
                     break;
 
                 default:
-                    returnVal.getDtoHeaderResponse().addStatusMessage(DtoHeaderResponse.StatusLevel.ERROR,
-                            DtoHeaderResponse.ValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces contact type " + contactDTO.getProcessType().toString());
+                    returnVal.getHeader().getStatus().addStatusMessage(Status.StatusLevel.ERROR,
+                            Status.ValidationStatusType.BAD_REQUEST,
+                            "Unsupported proces contact type " + requestEnvelope.getHeader().getProcessType().toString());
 
             }
 
         } catch (Exception e) {
 
-            returnVal.getDtoHeaderResponse().addException(e);
+            returnVal.getHeader().getStatus().addException(e);
             LOGGER.error("Gobii service error", e);
         }
 
         return returnVal;
+    }
+
+    @Override
+    public ResultEnvelope<ContactDTO> getContactById(Integer contactId) {
+
+        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+
+        try {
+            ContactDTO contactDTO = dtoMapContact.getContactDetails(contactId);
+            returnVal.getResult().getData().add(contactDTO);
+
+        } catch(Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+        return returnVal;
+    }
+
+    @Override
+    public ResultEnvelope<ContactDTO> getContactByEmail(String email) {
+        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        returnVal.getHeader().getStatus().addStatusMessage(Status.StatusLevel.ERROR,
+                Status.ValidationStatusType.NONE,
+                "Get contact by email is not supported yet");
+
+        return returnVal;
+    }
+
+    @Override
+    public ResultEnvelope<ContactDTO> getContactByLastName(String lastName) {
+        return null;
+    }
+
+    @Override
+    public ResultEnvelope<ContactDTO> getContactByFirstName(String email, String lastName, String firstName) {
+        return null;
     }
 }

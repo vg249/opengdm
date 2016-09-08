@@ -4,7 +4,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 import org.junit.AfterClass;
@@ -63,7 +63,7 @@ public class DtoRequestPlatformTest {
         DtoRequestPlatform dtoRequestPlatform = new DtoRequestPlatform();
 
         PlatformDTO newPlatformDto = TestDtoFactory
-                .makePopulatedPlatformDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
+                .makePopulatedPlatformDTO(Header.ProcessType.CREATE, 1, entityParamValues);
 
         PlatformDTO platformDTOResponse = dtoRequestPlatform.process(newPlatformDto);
         Assert.assertNotEquals(null, platformDTOResponse);
@@ -120,7 +120,7 @@ public class DtoRequestPlatformTest {
 
         // create a new platform for our test
         PlatformDTO newPlatformDto = TestDtoFactory
-                .makePopulatedPlatformDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
+                .makePopulatedPlatformDTO(Header.ProcessType.CREATE, 1, entityParamValues);
         PlatformDTO newPlatformDTOResponse = dtoRequestPlatform.process(newPlatformDto);
 
 
@@ -131,7 +131,7 @@ public class DtoRequestPlatformTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOReceived));
 
         // so this would be the typical workflow for the client app
-        platformDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
+        platformDTOReceived.setProcessType(Header.ProcessType.UPDATE);
         String newName = UUID.randomUUID().toString();
         platformDTOReceived.setPlatformName(newName);
 

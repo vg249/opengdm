@@ -210,7 +210,7 @@ export class ExtractorRoot {
     private handleServerSelected(arg) {
         this.selectedServerConfig = arg;
         // this._dtoRequestServiceNameIds
-        //     .setGobiiCropType(GobiiCropType[this.selectedServerConfig.crop]);
+        //     .setCropType(GobiiCropType[this.selectedServerConfig.crop]);
         let currentPath = window.location.pathname;
         let currentPage:string = currentPath.substr(currentPath.lastIndexOf('/') + 1, currentPath.length);
         let newDestination = "http://"

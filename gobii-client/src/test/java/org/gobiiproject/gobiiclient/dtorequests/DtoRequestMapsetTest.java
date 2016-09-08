@@ -4,7 +4,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
@@ -66,7 +66,7 @@ public class DtoRequestMapsetTest {
                 .makeConstrainedEntityParams(mapsetProperTerms, 1);
 
         MapsetDTO mapsetDTORequest = TestDtoFactory
-                .makePopulatedMapsetDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
+                .makePopulatedMapsetDTO(Header.ProcessType.CREATE, 1, entityParamValues);
 
         MapsetDTO mapsetDTOResponse = dtoRequestMapset.process(mapsetDTORequest);
 
@@ -108,7 +108,7 @@ public class DtoRequestMapsetTest {
 
         // create a new mapset for our test
         MapsetDTO newMapsetDto = TestDtoFactory
-                .makePopulatedMapsetDTO(DtoMetaData.ProcessType.CREATE, 1, entityParamValues);
+                .makePopulatedMapsetDTO(Header.ProcessType.CREATE, 1, entityParamValues);
         MapsetDTO newMapsetDTOResponse = dtoRequestMapset.process(newMapsetDto);
 
 
@@ -120,7 +120,7 @@ public class DtoRequestMapsetTest {
 
 
         // so this would be the typical workflow for the client app
-        mapsetDTOReceived.setProcessType(DtoMetaData.ProcessType.UPDATE);
+        mapsetDTOReceived.setProcessType(Header.ProcessType.UPDATE);
         String newName = UUID.randomUUID().toString();
         mapsetDTOReceived.setName(newName);
 

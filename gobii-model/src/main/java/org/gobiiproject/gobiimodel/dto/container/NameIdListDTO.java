@@ -1,16 +1,14 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.DtoMetaData;
+import org.gobiiproject.gobiimodel.dto.response.Header;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Phil on 4/8/2016.
  */
-public class NameIdListDTO extends DtoMetaData {
+public class NameIdListDTO extends Header {
 
     public enum EntityType {DBTABLE, CVTERM};
     private EntityType entityType = EntityType.DBTABLE;
