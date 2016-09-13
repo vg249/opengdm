@@ -6,6 +6,7 @@ import org.gobiiproject.gobiiclient.dtorequests.DtoRequestDataSet;
 import org.gobiiproject.gobiimodel.dto.DtoMetaData;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
 import org.gobiiproject.gobiimodel.dto.header.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.impl.LoaderInstructionsDAOImpl;
@@ -16,6 +17,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.*;
+import org.gobiiproject.gobiimodel.utils.email.DigesterMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
@@ -23,6 +25,7 @@ import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.text.ParseException;
 import java.util.*;
 
@@ -54,7 +57,7 @@ public class GobiiFileReader {
          		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
          		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
          		;
-        
+        DigesterMessage dm = new DigesterMessage();
 		 CommandLineParser parser = new DefaultParser();
          try{
                CommandLine cli = parser.parse( o, args );
@@ -110,7 +113,7 @@ public class GobiiFileReader {
 		}
 		
 		//Error logs go to a file based on crop (for human readability) and 
-
+		dm.addPath("Instruction File",new File(instructionFile).getAbsolutePath());
 		ErrorLogger.logInfo("Digester","Beginning read of "+instructionFile);
 		List<GobiiLoaderInstruction> list= parseInstructionFile(instructionFile);
 		if(list==null || list.isEmpty()){
@@ -119,6 +122,18 @@ public class GobiiFileReader {
 		}
 		GobiiLoaderInstruction zero=list.iterator().next();
 		Integer dataSetId=zero.getDataSetId();
+
+		dm.addIdentifier("Project",zero.getProject());
+		dm.addIdentifier("Platform",zero.getPlatform());
+		dm.addIdentifier("Experiment",zero.getExperiment());
+		dm.addIdentifier("Dataset",zero.getDataSet());
+		dm.addIdentifier("Mapset",zero.getMapset());
+		dm.addIdentifier("Dataset Type",zero.getDatasetType());
+
+		dm.addPath("destination directory",HelperFunctions.getDestinationFile(zero));//Yeah, always a directory
+		dm.addPath("input directory",zero.getGobiiFile().getSource());
+
+
 		String crop=zero.getGobiiCropType();
 		if(crop==null) crop=divineCrop(instructionFile);
 		CropConfig cropConfig=configuration.getCropConfig(crop);
@@ -265,11 +280,12 @@ public class GobiiFileReader {
 			//Load PostgreSQL
 			for(String key:loaderInstructionList){
 				if(!VARIANT_CALL_TABNAME.equals(key)){
-				String inputFile=" -i "+loaderInstructionMap.get(key);
-				String integrityCheck="";//Kevin - what the heck, you removed a parameter on me
-				String outputFile=outputDir;
-				ErrorLogger.logInfo("Digester","Running IFL: "+pathToIFL+connectionString+integrityCheck+inputFile+outputFile);
-				success&=HelperFunctions.tryExec(pathToIFL+connectionString+integrityCheck+inputFile+outputFile,null,errorPath );
+					int totalLines= FileSystemInterface.lineCount(loaderInstructionMap.get(key).getAbsolutePath());
+					String inputFile=" -i "+loaderInstructionMap.get(key);
+					String outputFile=outputDir;
+					ErrorLogger.logInfo("Digester","Running IFL: "+pathToIFL+connectionString+inputFile+outputFile);
+					int linesLoaded=HelperFunctions.iExec(pathToIFL+connectionString+inputFile+outputFile,null,errorPath,null);
+					dm.addEntry(key,totalLines+"",linesLoaded+"",(totalLines-linesLoaded)+"");
 				}
 			}
 			
@@ -295,6 +311,7 @@ public class GobiiFileReader {
 				//HDF-5
 				//Usage: %s <datasize> <input file> <output HDF5 file
 				String loadHDF5=pathToHDF5+"loadHDF5";
+			dm.addPath("matrix directory",pathToHDF5Files);
 				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
 				int size=0;
 				switch(dst){		
