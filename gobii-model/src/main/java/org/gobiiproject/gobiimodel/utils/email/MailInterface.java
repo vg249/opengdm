@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.security.Decrypter;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.activation.URLDataSource;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -29,12 +31,28 @@ public class MailInterface {
 	private MailMessage message = new MailMessage();
 	
 	public static void main(String[] args) throws Exception{
-		
+
 		//sample use
-		ConfigSettings config = new ConfigSettings();
+		ConfigSettings config = new ConfigSettings(){
+			public String getEmailSvrDomain(){
+				return "smtp.gmail.com";
+			}
+			public Integer getEmailServerPort(){
+				return 587;
+			}
+			public String getEmailSvrUser(){
+				return "gobii.jira@gmail.com";
+			}
+			public String getEmailSvrPassword(){
+				return Decrypter.decrypt("sbNsrsFG5BA0gRXXY9WX2A==",null);
+			}
+			public String getEmailSvrType(){
+				return "SMTPS";
+			}
+		};
 		MailInterface outgoingMail = new MailInterface(config);
 		MailMessage message = outgoingMail.newMessage();
-		message.setUser("sample@email.com");
+		message.setUser("jdl232@cornell.edu");
 		message.setSubject("Data Extraction complete");
 		message.setBody("lorem ipsum asaga");
 		outgoingMail.send(message);
@@ -116,16 +134,18 @@ public class MailInterface {
 		messageBodyPart.setContent(htmlContent, "text/html");
 		multipart.addBodyPart(messageBodyPart);
 		messageBodyPart = new MimeBodyPart();
-		DataSource fds = new FileDataSource(message.getImg());
+		DataSource fds = new URLDataSource(message.getImg());
 		messageBodyPart.setDataHandler(new DataHandler(fds));
 		messageBodyPart.setHeader("Content-ID", "<image>");
 		multipart.addBodyPart(messageBodyPart);
 		mimeMessage.setContent(multipart);
 		mimeMessage.addRecipient(Message.RecipientType.TO,
 				new InternetAddress(message.getUser()));
+		ErrorLogger.logDebug("Mail Interface","Recipient.TO => "+message.getUser());
 		transport.connect(username, password);
 		transport.sendMessage(mimeMessage,
 				mimeMessage.getRecipients(Message.RecipientType.TO));
+		ErrorLogger.logDebug("Mail Interface","Sending To => "+mimeMessage.getRecipients(Message.RecipientType.TO));
 		transport.close();
 		ErrorLogger.logInfo("Mail Interface","Email sent");
 	}

@@ -172,12 +172,31 @@ public class HelperFunctions {
 			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exception in process",e);
 			return false;
 		}
-		if(p.exitValue()!=0){
+		if(p.exitValue()<0){
 			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exit code " + p.exitValue(),errorFile);
 			return false;
 		}
 		return true;
 	}
+	public static int iExec(String execString,String outputFile, String errorFile, String inputFile){
+		ProcessBuilder builder = new ProcessBuilder(execString.split(" "));
+		if(outputFile!=null)builder.redirectOutput(new File(outputFile));
+		if(errorFile!=null)builder.redirectError(new File(errorFile));
+		if(inputFile!=null)builder.redirectInput(new File(inputFile));
+		Process p;
+		try {
+			p = builder.start();
+			p.waitFor();
+		} catch (Exception e) {
+			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exception in process",e);
+			return -1;
+		}
+		if(p.exitValue()<0){
+			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exit code " + p.exitValue(),errorFile);
+		}
+		return p.exitValue();
+	}
+
 	//For a folder destination, returns /digest.<tablename>
  public static String getDestinationFile(GobiiLoaderInstruction instruction){
 	 String destination=instruction.getGobiiFile().getDestination();

@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiimodel.utils.email;
 
+import java.net.URL;
+
 public class MailMessage{
 	
 	private String user;
@@ -7,7 +9,7 @@ public class MailMessage{
 	private String body;
 	private String header;
 	private String footer;
-	private String img = "http://cbsugobii05.tc.cornell.edu/wordpress/wp-content/uploads/2015/11/GOBII-tm-e1448284547470.png"; // Note: This is full sized logo from the main page
+	private String img = "GobiiWebImg.png"; // Note: This is full sized logo from the main page
 	
 	MailMessage(){
 		header = "<b>Good day!</b><br/> Here is a summary of your transaction: <br/><br/>";
@@ -27,8 +29,8 @@ public class MailMessage{
 		return header;
 	}
 	
-	public String getImg(){
-		return img;
+	public URL getImg(){
+		return ClassLoader.getSystemClassLoader().getResource(img);
 	}
 	
 	public String getFooter(){
