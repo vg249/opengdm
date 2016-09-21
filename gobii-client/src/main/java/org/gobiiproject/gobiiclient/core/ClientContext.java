@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiiclient.core;
 
-import org.gobiiproject.gobiiclient.core.restmethods.post.TypedRestRequest;
+import org.gobiiproject.gobiiclient.core.restmethods.dtopost.TypedRestRequest;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;

@@ -75,7 +75,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
                 if (null == authorization) {
 
-                    // we're doing HTTP post authentication
+                    // we're doing HTTP dtopost authentication
                     tokenInfo = authenticationService.authenticate(userName, password);
 
                 } else {

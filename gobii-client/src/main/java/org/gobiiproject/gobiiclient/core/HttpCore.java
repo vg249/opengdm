@@ -11,7 +11,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiclient.core.restmethods.get.GetParam;
-import org.gobiiproject.gobiiclient.core.restmethods.get.GetRequest;
+import org.gobiiproject.gobiiclient.core.restmethods.get.RestUrl;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,14 +60,14 @@ public class HttpCore {
 
     }//byContentTypeUri()
 
-    private URI makeUri(GetRequest getRequest) throws Exception {
+    private URI makeUri(RestUrl restUrl) throws Exception {
 
         URI returnVal;
 
         URIBuilder baseBuilder = getBaseBuilder()
-                .setPath(getRequest.makeUrl());
+                .setPath(restUrl.makeUrl());
 
-        for(GetParam currentParam : getRequest.getRequestParams() ) {
+        for(GetParam currentParam : restUrl.getRequestParams() ) {
             baseBuilder.addParameter(currentParam.getName(),currentParam.getValue());
         }
 
@@ -279,7 +279,7 @@ public class HttpCore {
 
     }//accessResource_test
 
-    public JsonObject getFromGet(GetRequest getRequest,
+    public JsonObject getFromGet(RestUrl restUrl,
                                       String token) throws Exception {
 
 
@@ -287,7 +287,7 @@ public class HttpCore {
 
         HttpResponse httpResponse = null;
 
-        URI uri = makeUri(getRequest);
+        URI uri = makeUri(restUrl);
 
         HttpGet postRequest = new HttpGet(uri);
 

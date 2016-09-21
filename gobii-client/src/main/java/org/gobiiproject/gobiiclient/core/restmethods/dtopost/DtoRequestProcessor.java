@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.core.restmethods.post;
+package org.gobiiproject.gobiiclient.core.restmethods.dtopost;
 
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.Urls;

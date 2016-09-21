@@ -29,27 +29,27 @@ public class GetRequestFactory {
     }
 
 
-    public static GetRequest makeGetRequestContactById() throws Exception {
+    public static RestUrl makeGetRequestContactById() throws Exception {
 
-        GetRequest returnVal;
+        RestUrl returnVal;
 
         String baseUrl = Urls.getRequestUrl(ControllerType.BRAPI,
                 ServiceRequestId.URL_CONTACT);
         String parameterizedUrl = appendPathVariable(baseUrl, "contactId");
-        returnVal = new GetRequest(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        returnVal = new RestUrl(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
         returnVal.addParam(GetParam.ParamType.PathVariable, "contactId");
 
         return returnVal;
 
     } // makeGetRequestContactById();
 
-    public static GetRequest makeGetRequestContactBySearch() throws Exception {
+    public static RestUrl makeGetRequestContactBySearch() throws Exception {
 
-        GetRequest returnVal;
+        RestUrl returnVal;
 
         String baseUrl = Urls.getRequestUrl(ControllerType.BRAPI,
                 ServiceRequestId.URL_CONTACT_SEARCH);
-        returnVal = new GetRequest(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        returnVal = new RestUrl(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
         returnVal.addParam(GetParam.ParamType.RequestParam, "email");
         returnVal.addParam(GetParam.ParamType.RequestParam, "lastName");
         returnVal.addParam(GetParam.ParamType.RequestParam, "firstName");

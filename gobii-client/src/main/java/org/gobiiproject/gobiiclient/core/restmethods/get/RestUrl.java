@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 /**
  * Created by Phil on 9/7/2016.
  */
-public class GetRequest {
+public class RestUrl {
 
-    public GetRequest(String requestTemplate,
-                      String pathVarDelimBegin,
-                      String pathVarDelimEnd) {
+    public RestUrl(String requestTemplate,
+                   String pathVarDelimBegin,
+                   String pathVarDelimEnd) {
         this.requestTemplate = requestTemplate;
         this.pathVarDelimBegin = pathVarDelimBegin;
         this.pathVarDelimEnd = pathVarDelimEnd;
@@ -100,4 +100,4 @@ public class GetRequest {
 
     } // makeUrl
 
-} // class GetRequest
+} // class RestUrl

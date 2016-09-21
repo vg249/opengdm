@@ -5,12 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.HttpCore;
-import org.gobiiproject.gobiiclient.core.Urls;
-import org.gobiiproject.gobiiclient.core.restmethods.post.EnvelopeRestRequest;
-import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +19,7 @@ public class EnvelopeGetRequestProcessor<T> {
     Logger LOGGER = LoggerFactory.getLogger(EnvelopeGetRequestProcessor.class);
 
 
-    public ResultEnvelope<T> processGetRequest(GetRequest getRequest,
+    public ResultEnvelope<T> processGetRequest(RestUrl restUrl,
                                                Class<T> DtoType) throws Exception {
 
         ResultEnvelope<T> returnVal = null;
@@ -41,12 +36,12 @@ public class EnvelopeGetRequestProcessor<T> {
 
 
 //            EnvelopeGetRequest<T> envelopeGetRequest = new EnvelopeGetRequest<>(host, port, DtoType);
-//            returnVal = envelopeGetRequest.getTypedHtppResponseForDtoEnvelope(getRequest,
+//            returnVal = envelopeGetRequest.getTypedHtppResponseForDtoEnvelope(restUrl,
 //                    token);
 
 
             HttpCore httpCore = new HttpCore(host, port);
-            JsonObject responseJson = httpCore.getFromGet(getRequest, token);
+            JsonObject responseJson = httpCore.getFromGet(restUrl, token);
             ObjectMapper objectMapper = new ObjectMapper();
             returnVal = objectMapper.readValue(responseJson.toString(), ResultEnvelope.class);
 
