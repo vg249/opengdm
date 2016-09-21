@@ -1,15 +1,11 @@
 package org.gobiiproject.gobiiclient.core.restmethods;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.HttpCore;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * Created by Phil on 5/13/2016.
@@ -19,10 +15,10 @@ public class EnvelopeGetRequestProcessor<T> {
     Logger LOGGER = LoggerFactory.getLogger(EnvelopeGetRequestProcessor.class);
 
 
-    public ResultEnvelope<T> processGetRequest(RestUri restUri,
-                                               Class<T> dtoType) throws Exception {
+    public PayloadEnvelope<T> processGetRequest(RestUri restUri,
+                                                Class<T> dtoType) throws Exception {
 
-        ResultEnvelope<T> returnVal = null;
+        PayloadEnvelope<T> returnVal = null;
 
         if (ClientContext.isInitialized()) {
 
@@ -39,7 +35,7 @@ public class EnvelopeGetRequestProcessor<T> {
 
             JsonObject responseJson = httpCore.getFromGet(restUri, token);
 
-            returnVal = new ResultEnvelope<T>()
+            returnVal = new PayloadEnvelope<T>()
                     .fromJson(responseJson, dtoType);
 
         }

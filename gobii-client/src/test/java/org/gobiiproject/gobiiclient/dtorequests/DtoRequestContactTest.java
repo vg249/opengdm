@@ -15,8 +15,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -44,7 +43,7 @@ public class DtoRequestContactTest {
         RestUri restUriContact = UriFactory.makeGetRequestContactById();
         restUriContact.setParamValue("contactId", "6");
         EnvelopeGetRequestProcessor<ContactDTO> envelopeGetRequestProcessor = new EnvelopeGetRequestProcessor<>();
-        ResultEnvelope<ContactDTO> resultEnvelope = envelopeGetRequestProcessor
+        PayloadEnvelope<ContactDTO> resultEnvelope = envelopeGetRequestProcessor
                 .processGetRequest(restUriContact,ContactDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -73,7 +72,7 @@ public class DtoRequestContactTest {
         contactDTORequest.getRoles().add(1);
         contactDTORequest.getRoles().add(2);
 
-        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(new RequestEnvelope<>(contactDTORequest, Header.ProcessType.CREATE));
+        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(new PayloadEnvelope<>(contactDTORequest, Header.ProcessType.CREATE));
         Assert.assertNotEquals(null, contactDTOResponseEnvelope);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
 
@@ -96,7 +95,7 @@ public class DtoRequestContactTest {
                 .makePopulatedContactDTO(Header.ProcessType.CREATE, 1);
 
 
-        ResultEnvelope<ContactDTO> resultEnvelopeNewContact = dtoRequestContact.process(new RequestEnvelope<>(newContactDto, Header.ProcessType.CREATE));
+        PayloadEnvelope<ContactDTO> resultEnvelopeNewContact = dtoRequestContact.process(new PayloadEnvelope<>(newContactDto, Header.ProcessType.CREATE));
 
         ContactDTO newContactDTOResponse = resultEnvelopeNewContact.getPayload().getData().get(0);
 
@@ -104,7 +103,7 @@ public class DtoRequestContactTest {
         RestUri restUriContact = UriFactory.makeGetRequestContactById();
         restUriContact.setParamValue("contactId", newContactDTOResponse.getContactId().toString());
         EnvelopeGetRequestProcessor<ContactDTO> envelopeGetRequestProcessor = new EnvelopeGetRequestProcessor<>();
-        ResultEnvelope<ContactDTO> contactDTOResponseEnvelope = envelopeGetRequestProcessor
+        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = envelopeGetRequestProcessor
                 .processGetRequest(restUriContact,ContactDTO.class);
 
         Assert.assertNotEquals(null, contactDTOResponseEnvelope);
@@ -119,14 +118,14 @@ public class DtoRequestContactTest {
         String newName = UUID.randomUUID().toString();
         contactDTOReceived.setLastName(newName);
 
-        ResultEnvelope<ContactDTO> contactDTOResponseEnvelopeUpdate = dtoRequestContact.process(new RequestEnvelope<>(contactDTOReceived, Header.ProcessType.UPDATE));
+        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelopeUpdate = dtoRequestContact.process(new PayloadEnvelope<>(contactDTOReceived, Header.ProcessType.UPDATE));
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelopeUpdate.getHeader()));
 
 
         RestUri restUriContactReRetrive = UriFactory.makeGetRequestContactById();
         restUriContactReRetrive.setParamValue("contactId", contactDTOReceived.getContactId().toString());
         EnvelopeGetRequestProcessor<ContactDTO> envelopeGetRequestProcessorReRetrieve = new EnvelopeGetRequestProcessor<>();
-        ResultEnvelope<ContactDTO> contactDTOResponseEnvelopeReRetrieved = envelopeGetRequestProcessorReRetrieve
+        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelopeReRetrieved = envelopeGetRequestProcessorReRetrieve
                 .processGetRequest(restUriContactReRetrive,ContactDTO.class);
 
 
@@ -144,7 +143,7 @@ public class DtoRequestContactTest {
         RestUri restUriContact = UriFactory.makeGetRequestContactById();
         restUriContact.setParamValue("contactId", "1");
         EnvelopeGetRequestProcessor<ContactDTO> envelopeGetRequestProcessor = new EnvelopeGetRequestProcessor<>();
-        ResultEnvelope<ContactDTO> resultEnvelope = envelopeGetRequestProcessor
+        PayloadEnvelope<ContactDTO> resultEnvelope = envelopeGetRequestProcessor
                 .processGetRequest(restUriContact,ContactDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -160,7 +159,7 @@ public class DtoRequestContactTest {
         RestUri restUriContact = UriFactory.makeGetRequestContactBySearch();
         restUriContact.setParamValue("email", "loader.user@temp.com");
         EnvelopeGetRequestProcessor<ContactDTO> envelopeGetRequestProcessor = new EnvelopeGetRequestProcessor<>();
-        ResultEnvelope<ContactDTO> resultEnvelope = envelopeGetRequestProcessor
+        PayloadEnvelope<ContactDTO> resultEnvelope = envelopeGetRequestProcessor
                 .processGetRequest(restUriContact,ContactDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));

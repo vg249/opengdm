@@ -7,16 +7,15 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiiclient.core.restmethods.dtopost.EnvelopeDtoRequest;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
 public class DtoRequestContact {
 
-    public ResultEnvelope<ContactDTO> process(RequestEnvelope<ContactDTO> requestEnvelope) throws Exception {
+    public PayloadEnvelope<ContactDTO> process(PayloadEnvelope<ContactDTO> payloadEnvelope) throws Exception {
 
-        return new EnvelopeDtoRequest<ContactDTO>().processEnvelope(requestEnvelope,
+        return new EnvelopeDtoRequest<ContactDTO>().processEnvelope(payloadEnvelope,
                 ContactDTO.class,
                 ControllerType.LOADER,
                 ServiceRequestId.URL_CONTACT);

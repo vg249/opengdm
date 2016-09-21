@@ -25,8 +25,7 @@ import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -145,9 +144,9 @@ public class BRAPIController {
 
     @RequestMapping(value = "/contact/{contactId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public ResultEnvelope<ContactDTO> getContactsById(@PathVariable Integer contactId) {
+    public PayloadEnvelope<ContactDTO> getContactsById(@PathVariable Integer contactId) {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
 
             returnVal = contactService.getContactById(contactId);
@@ -168,15 +167,15 @@ public class BRAPIController {
     @RequestMapping(value = "/contact/{email:[a-zA-Z-]+@[a-zA-Z-]+.[a-zA-Z-]+}",
             method = RequestMethod.GET)
     @ResponseBody
-    public ResultEnvelope<ContactDTO> getContactsByEmail(@PathVariable String email) {
+    public PayloadEnvelope<ContactDTO> getContactsByEmail(@PathVariable String email) {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
 
             ContactDTO contactRequestDTO = new ContactDTO();
             contactRequestDTO.setContactId(1);
             //contactRequestDTO.setEmail(email);
-            returnVal = contactService.processDml(new RequestEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
+            returnVal = contactService.processDml(new PayloadEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -192,11 +191,11 @@ public class BRAPIController {
             params =  {"email", "lastName", "firstName"},
             method = RequestMethod.GET)
     @ResponseBody
-    public ResultEnvelope<ContactDTO> getContactsBySearch(@RequestParam("email") String email,
+    public PayloadEnvelope<ContactDTO> getContactsBySearch(@RequestParam("email") String email,
                                                           @RequestParam("lastName") String lastName,
                                                           @RequestParam("firstName") String firstName) {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
 
             if( false == LineUtils.isNullOrEmpty(email)) {

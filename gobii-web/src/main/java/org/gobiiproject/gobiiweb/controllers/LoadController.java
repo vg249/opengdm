@@ -8,8 +8,7 @@ package org.gobiiproject.gobiiweb.controllers;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -174,13 +173,13 @@ public class LoadController {
 
     @RequestMapping(value = "/contact", method = RequestMethod.POST)
     @ResponseBody
-    public ResultEnvelope<ContactDTO> processContact(@RequestBody RequestEnvelope<ContactDTO> requestEnvelope) {
+    public PayloadEnvelope<ContactDTO> processContact(@RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope) {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
 
         try {
 
-            returnVal = contactService.processDml(requestEnvelope);
+            returnVal = contactService.processDml(payloadEnvelope);
         } catch (Exception e) {
 
             returnVal.getHeader().getStatus().addException(e);

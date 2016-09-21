@@ -11,8 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.HttpCore;
-import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,10 +37,10 @@ public class EnvelopeRestRequest<T> {
 
 
 
-    public ResultEnvelope<T> getTypedHtppResponseForDtoEnvelope(String url,
-                                                                RequestEnvelope<T> requestEnvelope,
-                                                                String token) throws Exception {
-        ResultEnvelope<T> returnVal = null;
+    public PayloadEnvelope<T> getTypedHtppResponseForDtoEnvelope(String url,
+                                                                 PayloadEnvelope<T> payloadEnvelope,
+                                                                 String token) throws Exception {
+        PayloadEnvelope<T> returnVal = null;
 
 
 
@@ -52,10 +51,10 @@ public class EnvelopeRestRequest<T> {
 
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String dtoRequestJson = objectMapper.writeValueAsString(requestEnvelope);
+        String dtoRequestJson = objectMapper.writeValueAsString(payloadEnvelope);
         JsonObject responseJson = httpCore.getResponseBody(url, dtoRequestJson, token);
 
-        returnVal = objectMapper.readValue(responseJson.toString(), ResultEnvelope.class);
+        returnVal = objectMapper.readValue(responseJson.toString(), PayloadEnvelope.class);
 
 
         // The Jackson object mapper doesn't seem to have a means for knowing that the embedded list

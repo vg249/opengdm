@@ -3,8 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +22,13 @@ public class ContactServiceImpl implements ContactService {
     DtoMapContact dtoMapContact = null;
 
     @Override
-    public ResultEnvelope<ContactDTO> processDml(RequestEnvelope<ContactDTO> requestEnvelope) {
+    public PayloadEnvelope<ContactDTO> processDml(PayloadEnvelope<ContactDTO> payloadEnvelope) {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
-        ContactDTO contactDTOToProcess = requestEnvelope.getPayload().getData().get(0);
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
+        ContactDTO contactDTOToProcess = payloadEnvelope.getPayload().getData().get(0);
 
         try {
-            switch (requestEnvelope.getHeader().getProcessType()) {
+            switch (payloadEnvelope.getHeader().getProcessType()) {
 
                 case CREATE:
                     contactDTOToProcess.setCreatedDate(new Date());
@@ -48,7 +47,7 @@ public class ContactServiceImpl implements ContactService {
                 default:
                     returnVal.getHeader().getStatus().addStatusMessage(Status.StatusLevel.ERROR,
                             Status.ValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces contact type " + requestEnvelope.getHeader().getProcessType().toString());
+                            "Unsupported proces contact type " + payloadEnvelope.getHeader().getProcessType().toString());
 
             }
 
@@ -62,9 +61,9 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public ResultEnvelope<ContactDTO> getContactById(Integer contactId) {
+    public PayloadEnvelope<ContactDTO> getContactById(Integer contactId) {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
 
         try {
             ContactDTO contactDTO = dtoMapContact.getContactDetails(contactId);
@@ -79,8 +78,8 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public ResultEnvelope<ContactDTO> getContactByEmail(String email) {
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+    public PayloadEnvelope<ContactDTO> getContactByEmail(String email) {
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
             ContactDTO contactDTO = dtoMapContact.getContactByEmail(email);
             returnVal.getPayload().getData().add(contactDTO);
@@ -96,12 +95,12 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public ResultEnvelope<ContactDTO> getContactByLastName(String lastName) {
+    public PayloadEnvelope<ContactDTO> getContactByLastName(String lastName) {
         return null;
     }
 
     @Override
-    public ResultEnvelope<ContactDTO> getContactByFirstName(String email, String lastName, String firstName) {
+    public PayloadEnvelope<ContactDTO> getContactByFirstName(String email, String lastName, String firstName) {
         return null;
     }
 }

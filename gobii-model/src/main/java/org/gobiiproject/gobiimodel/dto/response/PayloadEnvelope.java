@@ -9,16 +9,16 @@ import java.util.List;
 /**
  * Created by Phil on 9/6/2016.
  */
-public class ResultEnvelope<T> {
+public class PayloadEnvelope<T> {
 
-    public ResultEnvelope() {
+    public PayloadEnvelope() {
     }
 
-    public ResultEnvelope<T> fromJson(JsonObject jsonObject,
+    public PayloadEnvelope<T> fromJson(JsonObject jsonObject,
                                       Class<T> dtoType) throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        ResultEnvelope returnVal = objectMapper.readValue(jsonObject.toString(), ResultEnvelope.class);
+        PayloadEnvelope<T> returnVal = objectMapper.readValue(jsonObject.toString(), PayloadEnvelope.class);
 
 
         // The Jackson object mapper doesn't seem to have a means for knowing that the embedded list
@@ -37,8 +37,14 @@ public class ResultEnvelope<T> {
 
     } // fromJson
 
-    private Header header = new Header();
+    public PayloadEnvelope(T requestData, Header.ProcessType processType) {
+        this.header.setProcessType(processType);
+        this.payload.getData().add(requestData);
+    }
+
     private Payload<T> payload = new Payload<>();
+
+    Header header = new Header();
 
     public Header getHeader() {
         return header;

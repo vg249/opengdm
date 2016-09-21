@@ -1,20 +1,20 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
+
 
 /**
  * Created by Angel on 5/4/2016.
  */
 public interface ContactService {
 
-    ResultEnvelope<ContactDTO> processDml(RequestEnvelope<ContactDTO> requestEnvelope);
+    PayloadEnvelope<ContactDTO> processDml(PayloadEnvelope<ContactDTO> payloadEnvelope);
 
-    ResultEnvelope<ContactDTO> getContactById(Integer contactId);
-    ResultEnvelope<ContactDTO> getContactByEmail(String email);
-    ResultEnvelope<ContactDTO> getContactByLastName(String lastName);
-    ResultEnvelope<ContactDTO> getContactByFirstName(String email, String lastName, String firstName);
+    PayloadEnvelope<ContactDTO> getContactById(Integer contactId);
+    PayloadEnvelope<ContactDTO> getContactByEmail(String email);
+    PayloadEnvelope<ContactDTO> getContactByLastName(String lastName);
+    PayloadEnvelope<ContactDTO> getContactByFirstName(String email, String lastName, String firstName);
 
 
 }
