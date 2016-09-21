@@ -16,7 +16,8 @@ public class EnvelopeDtoRequest<T> {
     Logger LOGGER = LoggerFactory.getLogger(EnvelopeDtoRequest.class);
 
 
-    public PayloadEnvelope<T> processEnvelope(PayloadEnvelope<T> payloadEnvelope, Class<T> DtoType,
+    public PayloadEnvelope<T> processEnvelope(PayloadEnvelope<T> payloadEnvelope,
+                                              Class<T> DtoType,
                                               ControllerType controllerType,
                                               ServiceRequestId requestId) throws Exception {
 

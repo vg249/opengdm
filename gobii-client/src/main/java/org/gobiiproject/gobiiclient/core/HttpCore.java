@@ -87,7 +87,11 @@ public class HttpCore {
         return (returnVal);
     }//byContentTypeUri()
 
-    private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest, String userName, String password, String token) throws Exception {
+    private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest,
+                                          String userName,
+                                          String password,
+                                          String token) throws Exception {
+
         httpUriRequest.addHeader("Content-Type", "application/json");
         httpUriRequest.addHeader("Accept", "application/json");
 
@@ -279,25 +283,27 @@ public class HttpCore {
 
     }//accessResource_test
 
-    public JsonObject getFromGet(RestUri restUri,
-                                      String token) throws Exception {
+    public HttpMethodResult get(RestUri restUri,
+                                String token) throws Exception {
 
 
-        JsonObject returnVal = null;
+        HttpMethodResult returnVal = new HttpMethodResult();
 
         HttpResponse httpResponse = null;
 
         URI uri = makeUri(restUri);
 
-        HttpGet postRequest = new HttpGet(uri);
+        HttpGet httpGet = new HttpGet(uri);
 
-        httpResponse = submitUriRequest(postRequest, "", "", token);
+        httpResponse = submitUriRequest(httpGet, "", "", token);
 
-        if (HTTP_STATUS_CODE_OK != httpResponse.getStatusLine().getStatusCode()) {
-            throw new Exception("Request did not succeed: " + httpResponse.getStatusLine());
+        int responseCode = httpResponse.getStatusLine().getStatusCode();
+        String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
+        returnVal.setResponse(responseCode,reasonPhrase);
+
+        if (HTTP_STATUS_CODE_OK == responseCode) {
+            returnVal.setPayLoad(getJsonFromInputStream(httpResponse.getEntity().getContent()));
         }
-
-        returnVal = getJsonFromInputStream(httpResponse.getEntity().getContent());
 
         return returnVal;
 
