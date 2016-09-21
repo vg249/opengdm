@@ -26,19 +26,19 @@ public class ResultEnvelope<T> {
         // this -- e.g., a custom deserialization mechanism. But this gets the job done. Most importantly,
         // by properly casting this list of DTO objects, we prevent the Java client from caring too badly
         // about the envelope request semantics.
-        JsonArray jsonArray = jsonObject.get("result").getAsJsonObject().get("data").getAsJsonArray();
+        JsonArray jsonArray = jsonObject.get("payload").getAsJsonObject().get("data").getAsJsonArray();
         String arrayAsString = jsonArray.toString();
         List<T> resultItemList = objectMapper.readValue(arrayAsString,
                 objectMapper.getTypeFactory().constructCollectionType(List.class, dtoType));
 
-        returnVal.getResult().setData(resultItemList);
+        returnVal.getPayload().setData(resultItemList);
 
         return returnVal;
 
     } // fromJson
 
-    Header header = new Header();
-    Result<T> result = new Result<>();
+    private Header header = new Header();
+    private Payload<T> payload = new Payload<>();
 
     public Header getHeader() {
         return header;
@@ -48,11 +48,11 @@ public class ResultEnvelope<T> {
         this.header = header;
     }
 
-    public Result<T> getResult() {
-        return result;
+    public Payload<T> getPayload() {
+        return payload;
     }
 
-    public void setResult(Result<T> result) {
-        this.result = result;
+    public void setPayload(Payload<T> payload) {
+        this.payload = payload;
     }
 }

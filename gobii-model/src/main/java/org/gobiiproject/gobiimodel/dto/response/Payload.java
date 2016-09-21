@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by Phil on 9/6/2016.
  */
-public class Result<T> {
+public class Payload<T> {
 
     private List<T> data = new ArrayList<>();
 

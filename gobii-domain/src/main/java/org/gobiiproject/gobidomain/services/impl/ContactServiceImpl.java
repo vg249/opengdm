@@ -1,6 +1,5 @@
 package org.gobiiproject.gobidomain.services.impl;
 
-import javassist.bytecode.stackmap.BasicBlock;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
@@ -27,7 +26,7 @@ public class ContactServiceImpl implements ContactService {
     public ResultEnvelope<ContactDTO> processDml(RequestEnvelope<ContactDTO> requestEnvelope) {
 
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
-        ContactDTO contactDTOToProcess = requestEnvelope.getRequestDataItems().get(0);
+        ContactDTO contactDTOToProcess = requestEnvelope.getPayload().getData().get(0);
 
         try {
             switch (requestEnvelope.getHeader().getProcessType()) {
@@ -36,14 +35,14 @@ public class ContactServiceImpl implements ContactService {
                     contactDTOToProcess.setCreatedDate(new Date());
                     contactDTOToProcess.setModifiedDate(new Date());
                     contactDTOToProcess = dtoMapContact.createContact(contactDTOToProcess);
-                    returnVal.getResult().getData().add(contactDTOToProcess);
+                    returnVal.getPayload().getData().add(contactDTOToProcess);
                     break;
 
                 case UPDATE:
                     contactDTOToProcess.setCreatedDate(new Date());
                     contactDTOToProcess.setModifiedDate(new Date());
                     contactDTOToProcess = dtoMapContact.updateContact(contactDTOToProcess);
-                    returnVal.getResult().getData().add(contactDTOToProcess);
+                    returnVal.getPayload().getData().add(contactDTOToProcess);
                     break;
 
                 default:
@@ -69,7 +68,7 @@ public class ContactServiceImpl implements ContactService {
 
         try {
             ContactDTO contactDTO = dtoMapContact.getContactDetails(contactId);
-            returnVal.getResult().getData().add(contactDTO);
+            returnVal.getPayload().getData().add(contactDTO);
 
         } catch(Exception e) {
 
@@ -84,7 +83,7 @@ public class ContactServiceImpl implements ContactService {
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
         try {
             ContactDTO contactDTO = dtoMapContact.getContactByEmail(email);
-            returnVal.getResult().getData().add(contactDTO);
+            returnVal.getPayload().getData().add(contactDTO);
 
         } catch(Exception e) {
 

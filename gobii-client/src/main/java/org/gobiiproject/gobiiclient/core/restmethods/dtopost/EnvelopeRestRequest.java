@@ -63,11 +63,11 @@ public class EnvelopeRestRequest<T> {
         // this -- e.g., a custom deserialization mechanism. But this gets the job done. Most importantly,
         // by properly casting this list of DTO objects, we prevent the Java client from caring too badly
         // about the envelope request semantics.
-        JsonArray jsonArray = responseJson.get("result").getAsJsonObject().get("data").getAsJsonArray();
+        JsonArray jsonArray = responseJson.get("payload").getAsJsonObject().get("data").getAsJsonArray();
         String arrayAsString = jsonArray.toString();
         List<T> resultItemList = objectMapper.readValue(arrayAsString ,
                 objectMapper.getTypeFactory().constructCollectionType(List.class, paramType));
-        returnVal.getResult().setData(resultItemList);
+        returnVal.getPayload().setData(resultItemList);
 
         return returnVal;
 
