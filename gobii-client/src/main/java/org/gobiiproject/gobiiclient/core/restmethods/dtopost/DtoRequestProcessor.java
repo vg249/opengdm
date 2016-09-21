@@ -22,27 +22,8 @@ public class DtoRequestProcessor<T extends Header> {
                      ServiceRequestId requestId) throws Exception {
 
         String token = ClientContext.getInstance(null, false).getUserToken();
-        String serviceDomain = ClientContext.getInstance(null, false).getCurrentCropDomain();
-        Integer servicePort = ClientContext.getInstance(null, false).getCurrentCropPort();
-
-        return this.process(dtoToProcess,
-                DtoType,
-                controllerType,
-                requestId,
-                serviceDomain,
-                servicePort,
-                token);
-
-    }
-
-
-    public T process(T dtoToProcess,
-                     Class<T> DtoType,
-                     ControllerType controllerType,
-                     ServiceRequestId requestId,
-                     String host,
-                     Integer port,
-                     String token) throws Exception {
+        String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
+        Integer port = ClientContext.getInstance(null, false).getCurrentCropPort();
 
         T returnVal = null;
 
@@ -61,7 +42,7 @@ public class DtoRequestProcessor<T extends Header> {
                 token);
 
         return returnVal;
-
     }
+
 
 }
