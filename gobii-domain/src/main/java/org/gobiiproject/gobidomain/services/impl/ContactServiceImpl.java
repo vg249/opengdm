@@ -27,7 +27,7 @@ public class ContactServiceImpl implements ContactService {
     public ResultEnvelope<ContactDTO> processDml(RequestEnvelope<ContactDTO> requestEnvelope) {
 
         ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
-        ContactDTO contactDTOToProcess = requestEnvelope.getRequestData();
+        ContactDTO contactDTOToProcess = requestEnvelope.getRequestDataItems().get(0);
 
         try {
             switch (requestEnvelope.getHeader().getProcessType()) {

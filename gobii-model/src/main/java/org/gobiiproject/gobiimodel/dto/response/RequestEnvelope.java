@@ -1,5 +1,8 @@
 package org.gobiiproject.gobiimodel.dto.response;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Phil on 9/6/2016.
  */
@@ -8,11 +11,11 @@ public class RequestEnvelope<T> {
     public RequestEnvelope() {}
 
     public RequestEnvelope(T requestData, Header.ProcessType processType) {
-        this.requestData = requestData;
+        this.requestDataItems.add(requestData);
         this.header.setProcessType(processType);
     }
 
-    private T requestData = null;
+    private List<T> requestDataItems = new ArrayList<>();
 
     Header header = new Header();
 
@@ -23,11 +26,11 @@ public class RequestEnvelope<T> {
         this.header = header;
     }
 
-    public T getRequestData() {
-        return requestData;
+    public List<T> getRequestDataItems() {
+        return requestDataItems;
     }
 
-    public void setRequestData(T requestData) {
-        this.requestData = requestData;
+    public void setRequestDataItems(List<T> requestDataItems) {
+        this.requestDataItems = requestDataItems;
     }
 }
