@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiiclient.core;
 
-import org.gobiiproject.gobiiclient.core.restmethods.dtopost.TypedRestRequest;
+import org.gobiiproject.gobiiclient.core.restmethods.dtopost.DtoRequestProcessor;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
@@ -27,7 +27,7 @@ import java.util.Map;
 public final class ClientContext {
 
 
-    private static Logger LOGGER = LoggerFactory.getLogger(TypedRestRequest.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ClientContext.class);
 
     // configure as a singleton
     // this may not be effective if more thn one classloader is used
@@ -167,8 +167,13 @@ public final class ClientContext {
                 ServiceRequestId.URL_CONFIGSETTINGS,
                 context);
         ConfigSettingsDTO configSettingsDTORequest = new ConfigSettingsDTO();
-        TypedRestRequest<ConfigSettingsDTO> typedRestRequest = new TypedRestRequest<>(host, port, ConfigSettingsDTO.class);
-        ConfigSettingsDTO configSettingsDTOResponse = typedRestRequest.getTypedHtppResponseForDto(settingsPath,
+
+        DtoRequestProcessor<ConfigSettingsDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
+        ConfigSettingsDTO configSettingsDTOResponse = dtoDtoRequestProcessor.getTypedHtppResponseForDto(
+                host,
+                port,
+                settingsPath,
+                ConfigSettingsDTO.class,
                 configSettingsDTORequest,
                 returnVal.userToken);
 
