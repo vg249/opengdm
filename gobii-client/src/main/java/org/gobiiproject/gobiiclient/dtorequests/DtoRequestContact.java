@@ -5,7 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import org.gobiiproject.gobiiclient.core.restmethods.dtopost.EnvelopeRequestProcessor;
+import org.gobiiproject.gobiiclient.core.restmethods.dtopost.EnvelopeDtoRequest;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
@@ -16,7 +16,7 @@ public class DtoRequestContact {
 
     public ResultEnvelope<ContactDTO> process(RequestEnvelope<ContactDTO> requestEnvelope) throws Exception {
 
-        return new EnvelopeRequestProcessor<ContactDTO>().processEnvelope(requestEnvelope,
+        return new EnvelopeDtoRequest<ContactDTO>().processEnvelope(requestEnvelope,
                 ContactDTO.class,
                 ControllerType.LOADER,
                 ServiceRequestId.URL_CONTACT);

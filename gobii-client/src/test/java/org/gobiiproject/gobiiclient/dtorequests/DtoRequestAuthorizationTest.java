@@ -9,7 +9,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.Urls;
+import org.gobiiproject.gobiiclient.core.ResourceBuilder;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiimodel.dto.response.HeaderAuth;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
@@ -52,7 +52,7 @@ public class DtoRequestAuthorizationTest {
         String currentCropDomain = ClientContext.getInstance(null, false).getCurrentCropDomain();
         Integer currentCropPort = ClientContext.getInstance(null, false).getCurrentCropPort();
         String currentGobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
-        String url = Urls.getRequestUrl(ControllerType.LOADER, ServiceRequestId.URL_AUTH);
+        String url = ResourceBuilder.getRequestUrl(ControllerType.LOADER, ServiceRequestId.URL_AUTH);
         Assert.assertTrue(Authenticator.deAuthenticate());
 
         URI uri = new URIBuilder().setScheme("http")

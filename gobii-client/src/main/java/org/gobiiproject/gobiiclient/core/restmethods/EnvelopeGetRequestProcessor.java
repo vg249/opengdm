@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.core.restmethods.get;
+package org.gobiiproject.gobiiclient.core.restmethods;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
@@ -19,7 +19,7 @@ public class EnvelopeGetRequestProcessor<T> {
     Logger LOGGER = LoggerFactory.getLogger(EnvelopeGetRequestProcessor.class);
 
 
-    public ResultEnvelope<T> processGetRequest(RestUrl restUrl,
+    public ResultEnvelope<T> processGetRequest(RestUri restUri,
                                                Class<T> DtoType) throws Exception {
 
         ResultEnvelope<T> returnVal = null;
@@ -36,12 +36,12 @@ public class EnvelopeGetRequestProcessor<T> {
 
 
 //            EnvelopeGetRequest<T> envelopeGetRequest = new EnvelopeGetRequest<>(host, port, DtoType);
-//            returnVal = envelopeGetRequest.getTypedHtppResponseForDtoEnvelope(restUrl,
+//            returnVal = envelopeGetRequest.getTypedHtppResponseForDtoEnvelope(restUri,
 //                    token);
 
 
             HttpCore httpCore = new HttpCore(host, port);
-            JsonObject responseJson = httpCore.getFromGet(restUrl, token);
+            JsonObject responseJson = httpCore.getFromGet(restUri, token);
             ObjectMapper objectMapper = new ObjectMapper();
             returnVal = objectMapper.readValue(responseJson.toString(), ResultEnvelope.class);
 

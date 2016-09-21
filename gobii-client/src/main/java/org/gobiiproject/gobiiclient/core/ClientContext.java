@@ -153,7 +153,7 @@ public final class ClientContext {
 
         // first authenticate
         // you can't use login() from here -- it assumes that ClientContext has already been constructed
-        String authPath = Urls.getRequestUrl(ControllerType.EXTRACTOR,
+        String authPath = ResourceBuilder.getRequestUrl(ControllerType.EXTRACTOR,
                 ServiceRequestId.URL_AUTH,
                 context);
         HttpCore httpCore = new HttpCore(host, port);
@@ -163,7 +163,7 @@ public final class ClientContext {
         returnVal.userToken = httpCore.getTokenForUser(authPath, userDetail.getUserName(), userDetail.getPassword());
 
         // now get the settings
-        String settingsPath = Urls.getRequestUrl(ControllerType.LOADER,
+        String settingsPath = ResourceBuilder.getRequestUrl(ControllerType.LOADER,
                 ServiceRequestId.URL_CONFIGSETTINGS,
                 context);
         ConfigSettingsDTO configSettingsDTORequest = new ConfigSettingsDTO();
@@ -268,7 +268,7 @@ public final class ClientContext {
         boolean returnVal = true;
 
         try {
-            String authUrl = Urls.getRequestUrl(ControllerType.EXTRACTOR,
+            String authUrl = ResourceBuilder.getRequestUrl(ControllerType.EXTRACTOR,
                     ServiceRequestId.URL_AUTH);
 
             HttpCore httpCore = new HttpCore(this.getCurrentCropDomain(),

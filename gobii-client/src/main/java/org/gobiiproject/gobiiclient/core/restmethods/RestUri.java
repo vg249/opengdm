@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.core.restmethods.get;
+package org.gobiiproject.gobiiclient.core.restmethods;
 
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 
@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 /**
  * Created by Phil on 9/7/2016.
  */
-public class RestUrl {
+public class RestUri {
 
-    public RestUrl(String requestTemplate,
+    public RestUri(String requestTemplate,
                    String pathVarDelimBegin,
                    String pathVarDelimEnd) {
         this.requestTemplate = requestTemplate;
@@ -25,22 +25,22 @@ public class RestUrl {
     private String pathVarDelimEnd;
 
     private String requestTemplate;
-    private Map<String, GetParam> paramMap = new HashMap<>();
-    private List<GetParam> getParams = new ArrayList<>();
+    private Map<String, ResourceParam> paramMap = new HashMap<>();
+    private List<ResourceParam> resourceParams = new ArrayList<>();
 
-    public List<GetParam> getRequestParams() {
-        return this.getParams
+    public List<ResourceParam> getRequestParams() {
+        return this.resourceParams
                 .stream()
-                .filter(getParam -> getParam.getParamType().equals(GetParam.ParamType.RequestParam))
+                .filter(getParam -> getParam.getResourceParamType().equals(ResourceParam.ResourceParamType.QueryParam))
                 .collect(Collectors.toList());
     }
 
-    public void addParam(GetParam.ParamType paramType,
+    public void addParam(ResourceParam.ResourceParamType resourceParamType,
                          String name) {
 
-        GetParam getParam = new GetParam(paramType, name, null);
-        this.paramMap.put(getParam.getName(), getParam);
-        this.getParams.add(getParam);
+        ResourceParam resourceParam = new ResourceParam(resourceParamType, name, null);
+        this.paramMap.put(resourceParam.getName(), resourceParam);
+        this.resourceParams.add(resourceParam);
 
     }
 
@@ -57,13 +57,13 @@ public class RestUrl {
 
         String returnVal = this.requestTemplate; // in case there are no path variables
 
-        List<GetParam> pathParams = getParams
+        List<ResourceParam> pathParams = resourceParams
                 .stream()
-                .filter(getRequestParam -> getRequestParam.getParamType()
-                        .equals(GetParam.ParamType.PathVariable))
+                .filter(getRequestParam -> getRequestParam.getResourceParamType()
+                        .equals(ResourceParam.ResourceParamType.UriParam))
                 .collect(Collectors.toList());
 
-        for (GetParam currentParam : pathParams) {
+        for (ResourceParam currentParam : pathParams) {
             String paramToReplace = pathVarDelimBegin
                     + currentParam.getName()
                     + pathVarDelimEnd;
@@ -100,4 +100,4 @@ public class RestUrl {
 
     } // makeUrl
 
-} // class RestUrl
+} // class RestUri

@@ -1,14 +1,14 @@
-package org.gobiiproject.gobiiclient.core.restmethods.get;
+package org.gobiiproject.gobiiclient.core.restmethods;
 
 
-import org.gobiiproject.gobiiclient.core.Urls;
+import org.gobiiproject.gobiiclient.core.ResourceBuilder;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
 /**
  * Created by Phil on 9/7/2016.
  */
-public class GetRequestFactory {
+public class UriFactory {
 
     private static final String DELIM_PARAM_BEGIN = "{";
     private static final String DELIM_PARAM_END = "}";
@@ -29,30 +29,30 @@ public class GetRequestFactory {
     }
 
 
-    public static RestUrl makeGetRequestContactById() throws Exception {
+    public static RestUri makeGetRequestContactById() throws Exception {
 
-        RestUrl returnVal;
+        RestUri returnVal;
 
-        String baseUrl = Urls.getRequestUrl(ControllerType.BRAPI,
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
                 ServiceRequestId.URL_CONTACT);
         String parameterizedUrl = appendPathVariable(baseUrl, "contactId");
-        returnVal = new RestUrl(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-        returnVal.addParam(GetParam.ParamType.PathVariable, "contactId");
+        returnVal = new RestUri(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        returnVal.addParam(ResourceParam.ResourceParamType.UriParam, "contactId");
 
         return returnVal;
 
     } // makeGetRequestContactById();
 
-    public static RestUrl makeGetRequestContactBySearch() throws Exception {
+    public static RestUri makeGetRequestContactBySearch() throws Exception {
 
-        RestUrl returnVal;
+        RestUri returnVal;
 
-        String baseUrl = Urls.getRequestUrl(ControllerType.BRAPI,
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
                 ServiceRequestId.URL_CONTACT_SEARCH);
-        returnVal = new RestUrl(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-        returnVal.addParam(GetParam.ParamType.RequestParam, "email");
-        returnVal.addParam(GetParam.ParamType.RequestParam, "lastName");
-        returnVal.addParam(GetParam.ParamType.RequestParam, "firstName");
+        returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "email");
+        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "lastName");
+        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "firstName");
 
         return returnVal;
 

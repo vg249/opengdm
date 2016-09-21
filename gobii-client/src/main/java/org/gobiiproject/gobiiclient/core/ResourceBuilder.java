@@ -8,7 +8,7 @@ package org.gobiiproject.gobiiclient.core;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
-public class Urls {
+public class ResourceBuilder {
 
 
     //private final static String APP_ROOT = "/gobii-web/";
@@ -24,7 +24,7 @@ public class Urls {
     public static String getRequestUrl(ControllerType controllerType,
                                        ServiceRequestId requestId) throws Exception {
 
-        return Urls.getRequestUrl(controllerType,
+        return ResourceBuilder.getRequestUrl(controllerType,
                 requestId,
                 ClientContext.getInstance(null, false).getCurrentCropContextRoot());
     }
@@ -133,4 +133,4 @@ public class Urls {
         return returnVal;
     }
 
-} // Urls
+} // ResourceBuilder

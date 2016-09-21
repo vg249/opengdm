@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiiclient.core.restmethods.dtopost;
 
 import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.Urls;
+import org.gobiiproject.gobiiclient.core.ResourceBuilder;
 import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Phil on 5/13/2016.
  */
-public class EnvelopeRequestProcessor<T> {
+public class EnvelopeDtoRequest<T> {
 
-    Logger LOGGER = LoggerFactory.getLogger(EnvelopeRequestProcessor.class);
+    Logger LOGGER = LoggerFactory.getLogger(EnvelopeDtoRequest.class);
 
 
     public ResultEnvelope<T> processEnvelope(RequestEnvelope<T> requestEnvelope, Class<T> DtoType,
@@ -34,7 +34,7 @@ public class EnvelopeRequestProcessor<T> {
             throw (new Exception("there is no user token; user must log in"));
         }
 
-        String url = Urls.getRequestUrl(controllerType,
+        String url = ResourceBuilder.getRequestUrl(controllerType,
                 requestId);
 
 

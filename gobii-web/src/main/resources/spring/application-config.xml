@@ -377,7 +377,7 @@
 
     <!-- We need these to make JavaConfig-based class visible -->
     <!--<bean class="org.gobiiproject.gobiiweb.spring.ConfigSupplement"/>-->
-    <!--&lt;!&ndash; be sure to include the JavaConfig bean dtopost-processor &ndash;&gt;-->
+    <!--&lt;!&ndash; be sure to include the JavaConfig bean post-processor &ndash;&gt;-->
     <!--<bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/>-->
 
     <context:component-scan base-package="org.gobiiproject.gobiiweb.spring" />

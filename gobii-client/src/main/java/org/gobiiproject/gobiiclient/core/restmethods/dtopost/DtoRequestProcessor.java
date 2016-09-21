@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiiclient.core.restmethods.dtopost;
 
 import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.Urls;
+import org.gobiiproject.gobiiclient.core.ResourceBuilder;
 import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
@@ -36,34 +36,6 @@ public class DtoRequestProcessor<T extends Header> {
     }
 
 
-    public ResultEnvelope<T> processEnvelope(RequestEnvelope<T> requestEnvelope, Class<T> DtoType,
-                                             ControllerType controllerType,
-                                             ServiceRequestId requestId) throws Exception {
-
-        String token = ClientContext.getInstance(null, false).getUserToken();
-        String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
-        Integer port = ClientContext.getInstance(null, false).getCurrentCropPort();
-
-        ResultEnvelope<T> returnVal = null;
-
-        TypedRestRequest<T> typedRestRequest= new TypedRestRequest<>(host, port, DtoType);
-
-
-        if (null == token || token.isEmpty()) {
-            throw (new Exception("there is no user token; user must log in"));
-        }
-
-        String url = Urls.getRequestUrl(controllerType,
-                requestId);
-
-        returnVal = typedRestRequest.getTypedHtppResponseForDtoEnvelope(url,
-                requestEnvelope,
-                token);
-
-        return returnVal;
-    }
-
-
     public T process(T dtoToProcess,
                      Class<T> DtoType,
                      ControllerType controllerType,
@@ -81,7 +53,7 @@ public class DtoRequestProcessor<T extends Header> {
             throw (new Exception("there is no user token; user must log in"));
         }
 
-        String url = Urls.getRequestUrl(controllerType,
+        String url = ResourceBuilder.getRequestUrl(controllerType,
                 requestId);
 
         returnVal = typedRestRequest.getTypedHtppResponseForDto(url,
