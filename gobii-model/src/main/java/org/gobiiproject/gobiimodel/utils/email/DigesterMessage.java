@@ -23,7 +23,7 @@ public class DigesterMessage extends MailMessage {
      * Sets the body of the DigesterMessage to the table format.
      * Note: call addIdentifier, addEntry, and addPath before this to populate those fields.
      * @param jobName Name of the job being processed
-     * @param shortError Short (100 character or less) error message to pass back in case of error
+     * @param shortError Short (100 character or less) error message to pass back in case of error (Or NULL)
      * @param success If the job was successful (true/false)
      * @param longError Long error message, HTML formatting allowed
      * @return this object
@@ -39,15 +39,17 @@ public class DigesterMessage extends MailMessage {
             identifierLine = HTMLTableEntity.getHTMLTable(identifiers,"Identifier Type","Name","ID");
         }
         if(!paths.isEmpty()) {
-            pathsLine = HTMLTableEntity.getHTMLTable(identifiers,"File Type","Path");
+            pathsLine = HTMLTableEntity.getHTMLTable(paths,"File Type","Path");
         }
 
+        String line="<br/>";
         StringBuilder body=new StringBuilder();
-        if(statusLine!=null)body.append(statusLine+"<br/>");
-        if(errorLine!=null)body.append(errorLine+"<br/>");
-        if(tableLine!=null)body.append(tableLine+"<br/>");
-        if(identifierLine!=null)body.append(identifierLine+"<br/>");
-        if(pathsLine!=null)body.append(pathsLine+"<br/>");
+        body.append(statusLine+line);
+        if(errorLine!=null)body.append(errorLine+line);
+        body.append(line);
+        if(identifierLine!=null)body.append(identifierLine+line);
+        if(tableLine!=null)body.append(tableLine+line);
+        if(pathsLine!=null)body.append(pathsLine+line);
         if(longError!=null)body.append(longError);
         this.setBody(body.toString());
         return this;
@@ -74,6 +76,7 @@ public class DigesterMessage extends MailMessage {
      * @return this object
      */
     public DigesterMessage addIdentifier(String type,String name, String id){
+        if((name==null) && ((id==null || id.equals("null"))))return this;
         identifiers.add(new HTMLTableEntity(type,name,id));
         return this;
     }

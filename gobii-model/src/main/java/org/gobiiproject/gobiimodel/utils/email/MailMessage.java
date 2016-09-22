@@ -12,8 +12,33 @@ public class MailMessage{
 	private String img = "GobiiWebImg.png"; // Note: This is full sized logo from the main page
 	
 	MailMessage(){
-		header = "<b>Good day!</b><br/> Here is a summary of your transaction: <br/><br/>";
-		footer = "<br/><br/>Cheers, <br/> <img src=\"cid:image\" width=\"300\">";
+		header = "<b>"+getHeaderSalutation()+"</b><br/> Here is a summary of your transaction: <br/><br/>";
+		footer = "<br/><br/>"+getFooterSalutation()+", <br/> <img src=\"cid:image\" width=\"300\">";
+	}
+	private static String getHeaderSalutation(){
+		int numChoices=10;//Several cases of Good Day
+		int choice=(int)Math.floor(Math.random()*numChoices);
+		switch(choice){
+			case 0: return "G'day.";
+			case 1: return "Lovely day for data loading.";
+			case 2:	return "Salutations!";
+			case 3: return "Hope you're doing well.";
+			default:
+				return "Good day!";
+		}
+	}
+
+	private static String getFooterSalutation(){
+		int numChoices=5;//Several cases of Good Day
+		int choice=(int)Math.floor(Math.random()*numChoices);
+		switch(choice){
+			case 0: return "Respectfully";
+			case 1: return "Enjoy";
+			case 2:	return "Thanks";
+			case 3: return "Cheers";
+			default:
+				return "Best";
+		}
 	}
 	
 	public String getUser(){

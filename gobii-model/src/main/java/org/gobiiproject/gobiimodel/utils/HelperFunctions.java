@@ -1,9 +1,6 @@
 package org.gobiiproject.gobiimodel.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import javax.mail.Message;
@@ -178,23 +175,31 @@ public class HelperFunctions {
 		}
 		return true;
 	}
-	public static int iExec(String execString,String outputFile, String errorFile, String inputFile){
+
+	/**
+	 * Returns a string from the output of a process
+	 * @param execString
+	 * @param errorFile
+	 * @return
+	 */
+	public static int iExec(String execString, String errorFile){
 		ProcessBuilder builder = new ProcessBuilder(execString.split(" "));
-		if(outputFile!=null)builder.redirectOutput(new File(outputFile));
 		if(errorFile!=null)builder.redirectError(new File(errorFile));
-		if(inputFile!=null)builder.redirectInput(new File(inputFile));
 		Process p;
+		BufferedReader reader=null;
 		try {
 			p = builder.start();
+			reader = new BufferedReader(new InputStreamReader(p.getInputStream()));//What terrible person makes 'InputStream' the type of the output of a process
 			p.waitFor();
+			if(p.exitValue()!=0){
+				ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exit code " + p.exitValue(),errorFile);
+				return -1;
+			}
+			return Integer.parseInt(reader.readLine().split(" ")[0]);
 		} catch (Exception e) {
-			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exception in process",e);
+			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),e.getMessage(),e);
 			return -1;
 		}
-		if(p.exitValue()<0){
-			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exit code " + p.exitValue(),errorFile);
-		}
-		return p.exitValue();
 	}
 
 	//For a folder destination, returns /digest.<tablename>

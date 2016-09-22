@@ -32,7 +32,7 @@ public class HTMLTableEntity {
         StringBuilder sb=new StringBuilder();
         sb.append("<table><tr>");
         for(String name:fieldNames) {
-            sb.append("<th>").append(name).append("</th>");
+            sb.append("<th align=\"left\">").append(name).append("</th>");//Left align to better align tables
         }
         return sb.append("</tr>").toString();
     }

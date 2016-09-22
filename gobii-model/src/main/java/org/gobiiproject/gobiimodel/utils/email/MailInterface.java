@@ -59,7 +59,7 @@ public class MailInterface {
 	}
 	
 	
-	MailInterface(ConfigSettings config){
+	public MailInterface(ConfigSettings config){
 		host = config.getEmailSvrDomain();
 		port = config.getEmailServerPort().toString();
 		user = config.getEmailSvrUser();
