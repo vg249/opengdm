@@ -78,8 +78,8 @@ public class ResourceBuilder {
                 returnVal += "cv";
                 break;
 
-            case URL_CONTACT:
-                returnVal += "contact";
+            case URL_CONTACTS:
+                returnVal += "contacts";
                 break;
 
             case URL_CONTACT_SEARCH:

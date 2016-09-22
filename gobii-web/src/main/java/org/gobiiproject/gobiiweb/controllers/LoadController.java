@@ -171,7 +171,7 @@ public class LoadController {
 
     }//getPingResponse()
 
-    @RequestMapping(value = "/contact", method = RequestMethod.POST)
+    @RequestMapping(value = "/contacts", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<ContactDTO> processContact(@RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope) {
 

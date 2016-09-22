@@ -28,22 +28,46 @@ public class UriFactory {
 
     }
 
+//    public static RestUri contactByContactUriParam() throws Exception {
+//
+//        RestUri returnVal;
+//
+//        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+//                ServiceRequestId.URL_CONTACTS);
+//        String parameterizedUrl = appendPathVariable(baseUrl, "contactId");
+//        returnVal = new RestUri(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+//        returnVal.addParam(ResourceParam.ResourceParamType.UriParam, "contactId");
+//
+//        return returnVal;
+//
+//    } // contactByContactUriParam();
 
-    public static RestUri makeGetRequestContactById() throws Exception {
+
+
+    public static RestUri contacts() throws Exception {
+
+        return new RestUri(ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+                ServiceRequestId.URL_CONTACTS),
+                DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+
+    } // contactByContactUriParam();
+
+
+    public static RestUri contactByContactUriParam() throws Exception {
 
         RestUri returnVal;
 
         String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
-                ServiceRequestId.URL_CONTACT);
+                ServiceRequestId.URL_CONTACTS);
         String parameterizedUrl = appendPathVariable(baseUrl, "contactId");
         returnVal = new RestUri(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
         returnVal.addParam(ResourceParam.ResourceParamType.UriParam, "contactId");
 
         return returnVal;
 
-    } // makeGetRequestContactById();
+    } // contactByContactUriParam();
 
-    public static RestUri makeGetRequestContactBySearch() throws Exception {
+    public static RestUri contactsByQueryParams() throws Exception {
 
         RestUri returnVal;
 
@@ -56,6 +80,6 @@ public class UriFactory {
 
         return returnVal;
 
-    } // makeGetRequestContactById();
+    } // contactByContactUriParam();
 
 }

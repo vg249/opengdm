@@ -18,6 +18,6 @@ public class DtoRequestContact {
         return new EnvelopeDtoRequest<ContactDTO>().processEnvelope(payloadEnvelope,
                 ContactDTO.class,
                 ControllerType.LOADER,
-                ServiceRequestId.URL_CONTACT);
+                ServiceRequestId.URL_CONTACTS);
     }
 }

@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Date;
@@ -40,7 +41,7 @@ public class DtoRequestContactTest {
     @Test
     public void testGetContact() throws Exception {
 
-        RestUri restUriContact = UriFactory.makeGetRequestContactById();
+        RestUri restUriContact = UriFactory.contactByContactUriParam();
         restUriContact.setParamValue("contactId", "6");
         RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<ContactDTO> resultEnvelope = restResource
@@ -100,7 +101,7 @@ public class DtoRequestContactTest {
         ContactDTO newContactDTOResponse = resultEnvelopeNewContact.getPayload().getData().get(0);
 
 
-        RestUri restUriContact = UriFactory.makeGetRequestContactById();
+        RestUri restUriContact = UriFactory.contactByContactUriParam();
         restUriContact.setParamValue("contactId", newContactDTOResponse.getContactId().toString());
         RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = restResource
@@ -122,7 +123,7 @@ public class DtoRequestContactTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelopeUpdate.getHeader()));
 
 
-        RestUri restUriContactReRetrive = UriFactory.makeGetRequestContactById();
+        RestUri restUriContactReRetrive = UriFactory.contactByContactUriParam();
         restUriContactReRetrive.setParamValue("contactId", contactDTOReceived.getContactId().toString());
         RestResource<ContactDTO> restResourceReRetrieve = new RestResource<>(restUriContactReRetrive);
         PayloadEnvelope<ContactDTO> contactDTOResponseEnvelopeReRetrieved = restResourceReRetrieve
@@ -140,7 +141,7 @@ public class DtoRequestContactTest {
     @Test
     public void getSingleContactWithHttpGet() throws Exception {
 
-        RestUri restUriContact = UriFactory.makeGetRequestContactById();
+        RestUri restUriContact = UriFactory.contactByContactUriParam();
         restUriContact.setParamValue("contactId", "1");
         RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<ContactDTO> resultEnvelope = restResource
@@ -156,7 +157,7 @@ public class DtoRequestContactTest {
     @Test
     public void getContactsBySearchWithHttpGet() throws Exception {
 
-        RestUri restUriContact = UriFactory.makeGetRequestContactBySearch();
+        RestUri restUriContact = UriFactory.contactsByQueryParams();
         restUriContact.setParamValue("email", "loader.user@temp.com");
         RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<ContactDTO> resultEnvelope = restResource
@@ -167,6 +168,43 @@ public class DtoRequestContactTest {
         Assert.assertNotNull(contactDTO.getEmail());
 
         //restUriContact.setParamValue(Param);
+    }
+
+    @Test
+    public void testCreateContactWithHttpPost() throws Exception {
+
+
+
+        ContactDTO newContactDTO = new ContactDTO();
+
+        // set the plain properties
+        newContactDTO.setFirstName("Angel Manica");
+        newContactDTO.setLastName("Raquel");
+        newContactDTO.setEmail("added dummy email");
+        newContactDTO.setCode("added New Code");
+        newContactDTO.setCreatedBy(1);
+        newContactDTO.setCreatedDate(new Date());
+        newContactDTO.setModifiedBy(1);
+        newContactDTO.setModifiedDate(new Date());
+        newContactDTO.setOrganizationId(1);
+        newContactDTO.getRoles().add(1);
+        newContactDTO.getRoles().add(2);
+
+        PayloadEnvelope<ContactDTO> payloadEnvelope =  new PayloadEnvelope<>(newContactDTO, Header.ProcessType.CREATE);
+        payloadEnvelope.getPayload().getData().add(newContactDTO);
+        RestResource<ContactDTO> restResource = new RestResource<>(UriFactory.contacts());
+        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = restResource.post(ContactDTO.class,
+                payloadEnvelope);
+
+
+        Assert.assertNotEquals(null, contactDTOResponseEnvelope);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
+
+        ContactDTO contactDTOResponse = contactDTOResponseEnvelope.getPayload().getData().get(0);
+        Assert.assertNotEquals(null, contactDTOResponse);
+        Assert.assertTrue(contactDTOResponse.getContactId() > 0);
     }
 
 }

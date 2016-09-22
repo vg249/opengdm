@@ -30,13 +30,6 @@ public class ContactServiceImpl implements ContactService {
         try {
             switch (payloadEnvelope.getHeader().getProcessType()) {
 
-                case CREATE:
-                    contactDTOToProcess.setCreatedDate(new Date());
-                    contactDTOToProcess.setModifiedDate(new Date());
-                    contactDTOToProcess = dtoMapContact.createContact(contactDTOToProcess);
-                    returnVal.getPayload().getData().add(contactDTOToProcess);
-                    break;
-
                 case UPDATE:
                     contactDTOToProcess.setCreatedDate(new Date());
                     contactDTOToProcess.setModifiedDate(new Date());
@@ -61,6 +54,27 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
+    public PayloadEnvelope<ContactDTO> createContact(PayloadEnvelope<ContactDTO> payloadEnvelope) {
+
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            ContactDTO contactDTOToProcess = payloadEnvelope.getPayload().getData().get(0);
+            contactDTOToProcess = dtoMapContact.createContact(contactDTOToProcess);
+            returnVal.getPayload().getData().add(contactDTOToProcess);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+            LOGGER.error("Gobii service error", e);
+        }
+
+
+        return returnVal;
+    }
+
+    @Override
     public PayloadEnvelope<ContactDTO> getContactById(Integer contactId) {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
@@ -69,7 +83,7 @@ public class ContactServiceImpl implements ContactService {
             ContactDTO contactDTO = dtoMapContact.getContactDetails(contactId);
             returnVal.getPayload().getData().add(contactDTO);
 
-        } catch(Exception e) {
+        } catch (Exception e) {
 
             returnVal.getHeader().getStatus().addException(e);
 
@@ -84,7 +98,7 @@ public class ContactServiceImpl implements ContactService {
             ContactDTO contactDTO = dtoMapContact.getContactByEmail(email);
             returnVal.getPayload().getData().add(contactDTO);
 
-        } catch(Exception e) {
+        } catch (Exception e) {
 
             returnVal.getHeader().getStatus().addException(e);
 

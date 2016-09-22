@@ -4,8 +4,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
@@ -13,6 +18,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiclient.core.restmethods.ResourceParam;
 import org.gobiiproject.gobiiclient.core.restmethods.RestUri;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,12 +45,11 @@ public class HttpCore {
     Logger LOGGER = LoggerFactory.getLogger(HttpCore.class);
 
 
-
     final private static int HTTP_STATUS_CODE_OK = 200;
     final private static int HTTP_STATUS_CODE_UNAUTHORIZED = 401;  //not authenticated
     final private static int HTTP_STATUS_CODE_FORBIDDEN = 403; //not authorized
 
-     URIBuilder getBaseBuilder() throws Exception {
+    URIBuilder getBaseBuilder() throws Exception {
         return (new URIBuilder().setScheme("http")
                 .setHost(host)
                 .setPort(port));
@@ -67,8 +72,8 @@ public class HttpCore {
         URIBuilder baseBuilder = getBaseBuilder()
                 .setPath(restUri.makeUrl());
 
-        for(ResourceParam currentParam : restUri.getRequestParams() ) {
-            baseBuilder.addParameter(currentParam.getName(),currentParam.getValue());
+        for (ResourceParam currentParam : restUri.getRequestParams()) {
+            baseBuilder.addParameter(currentParam.getName(), currentParam.getValue());
         }
 
         returnVal = baseBuilder.build();
@@ -103,7 +108,7 @@ public class HttpCore {
         }
 
 
-        if( ClientContext.isInitialized() ) {
+        if (ClientContext.isInitialized()) {
             httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP,
                     ClientContext.getInstance(null, false).getCurrentClientCropType().toString());
         }
@@ -234,7 +239,7 @@ public class HttpCore {
     } // getTokenForUser()
 
 
-    private JsonObject getJsonFromInputStream( InputStream inputStream ) throws Exception {
+    private JsonObject getJsonFromInputStream(InputStream inputStream) throws Exception {
 
         JsonObject returnVal;
 
@@ -252,7 +257,7 @@ public class HttpCore {
         String jsonAsString = stringBuilder.toString();
         returnVal = parser.parse(jsonAsString).getAsJsonObject();
 
-        return  returnVal;
+        return returnVal;
     }
 
     public JsonObject getResponseBody(String url,
@@ -278,35 +283,84 @@ public class HttpCore {
         returnVal = getJsonFromInputStream(httpResponse.getEntity().getContent());
 
 
-
         return returnVal;
 
-    }//accessResource_test
+    }
+
+
+    private HttpMethodResult submitHttpMethod(HttpRequestBase httpRequestBase,
+                                              RestUri restUri,
+                                              String token) throws Exception {
+
+        HttpMethodResult returnVal = new HttpMethodResult();
+
+        HttpResponse httpResponse;
+
+        URI uri = makeUri(restUri);
+        httpRequestBase.setURI(uri);
+
+
+        httpResponse = submitUriRequest(httpRequestBase, "", "", token);
+
+        int responseCode = httpResponse.getStatusLine().getStatusCode();
+        String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
+        returnVal.setResponse(responseCode, reasonPhrase);
+        returnVal.setPayLoad(getJsonFromInputStream(httpResponse.getEntity().getContent()));
+
+        return returnVal;
+    }
+
+    private void setHttpBoddy(HttpEntityEnclosingRequestBase httpEntityEnclosingRequestBase,
+                              String body) throws Exception {
+
+        if (!LineUtils.isNullOrEmpty(body)) {
+            StringEntity input = new StringEntity(body);
+            httpEntityEnclosingRequestBase.setEntity(input);
+        }
+
+    }
 
     public HttpMethodResult get(RestUri restUri,
                                 String token) throws Exception {
 
+        return this.submitHttpMethod(new HttpGet(), restUri, token);
 
-        HttpMethodResult returnVal = new HttpMethodResult();
+    }
 
-        HttpResponse httpResponse = null;
+    public HttpMethodResult post(RestUri restUri,
+                                 String body,
+                                 String token) throws Exception {
 
-        URI uri = makeUri(restUri);
+        HttpPost httpPost = new HttpPost();
+        this.setHttpBoddy(httpPost, body);
+        return this.submitHttpMethod(httpPost, restUri, token);
 
-        HttpGet httpGet = new HttpGet(uri);
+    }
 
-        httpResponse = submitUriRequest(httpGet, "", "", token);
+    public HttpMethodResult put(RestUri restUri,
+                                String body,
+                                String token) throws Exception {
 
-        int responseCode = httpResponse.getStatusLine().getStatusCode();
-        String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
-        returnVal.setResponse(responseCode,reasonPhrase);
+        HttpPut httpPut = new HttpPut();
+        this.setHttpBoddy(httpPut, body);
+        return this.submitHttpMethod(httpPut, restUri, token);
 
-        if (HTTP_STATUS_CODE_OK == responseCode) {
-            returnVal.setPayLoad(getJsonFromInputStream(httpResponse.getEntity().getContent()));
-        }
+    }
 
-        return returnVal;
+    public HttpMethodResult patch(RestUri restUri,
+                                  String body,
+                                  String token) throws Exception {
 
-    }//accessResource_test
+        HttpPatch httpPatch = new HttpPatch();
+        this.setHttpBoddy(httpPatch, body);
+        return this.submitHttpMethod(httpPatch, restUri, token);
+    }
+
+
+    public HttpMethodResult delete(RestUri restUri,
+                                   String token) throws Exception {
+
+        return this.submitHttpMethod(new HttpDelete(), restUri, token);
+    }
 
 }

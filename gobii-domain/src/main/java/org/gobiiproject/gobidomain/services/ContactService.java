@@ -13,6 +13,7 @@ public interface ContactService {
 
     PayloadEnvelope<ContactDTO> getContactById(Integer contactId);
     PayloadEnvelope<ContactDTO> getContactByEmail(String email);
+    PayloadEnvelope<ContactDTO> createContact(PayloadEnvelope<ContactDTO> payloadEnvelope);
     PayloadEnvelope<ContactDTO> getContactByLastName(String lastName);
     PayloadEnvelope<ContactDTO> getContactByFirstName(String email, String lastName, String firstName);
 

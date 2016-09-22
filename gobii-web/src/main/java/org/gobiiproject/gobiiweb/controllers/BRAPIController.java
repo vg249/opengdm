@@ -29,6 +29,7 @@ import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +37,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 
@@ -142,7 +146,33 @@ public class BRAPIController {
 
     }
 
-    @RequestMapping(value = "/contact/{contactId:[\\d]+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/contacts", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<ContactDTO> createContact(PayloadEnvelope<ContactDTO> payloadEnvelope,
+                                                     HttpServletRequest request,
+                                                     HttpServletResponse response) {
+
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            returnVal = contactService.createContact(payloadEnvelope);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        if (returnVal.getHeader().getStatus().isSucceeded()) {
+            response.setStatus(HttpStatus.CREATED.value());
+        } else {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+
+        return (returnVal);
+
+    }
+
+
+    @RequestMapping(value = "/contacts/{contactId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ContactDTO> getContactsById(@PathVariable Integer contactId) {
 
@@ -164,7 +194,7 @@ public class BRAPIController {
     // capable of generating responses with characteristics not acceptable according to the request "accept" headers."
     // In other words, the email address is telling the server that you're asking for some other format
     // So for email based searches, you'll have to use the request parameter version
-    @RequestMapping(value = "/contact/{email:[a-zA-Z-]+@[a-zA-Z-]+.[a-zA-Z-]+}",
+    @RequestMapping(value = "/contacts/{email:[a-zA-Z-]+@[a-zA-Z-]+.[a-zA-Z-]+}",
             method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ContactDTO> getContactsByEmail(@PathVariable String email) {
@@ -188,17 +218,17 @@ public class BRAPIController {
     // Example: http://localhost:8282/gobii-dev/brapi/v1/contact-search?email=foo&lastName=bar&firstName=snot
     // all parameters must be present, but they don't all neeed a value
     @RequestMapping(value = "/contact-search",
-            params =  {"email", "lastName", "firstName"},
+            params = {"email", "lastName", "firstName"},
             method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ContactDTO> getContactsBySearch(@RequestParam("email") String email,
-                                                          @RequestParam("lastName") String lastName,
-                                                          @RequestParam("firstName") String firstName) {
+                                                           @RequestParam("lastName") String lastName,
+                                                           @RequestParam("firstName") String firstName) {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            if( false == LineUtils.isNullOrEmpty(email)) {
+            if (false == LineUtils.isNullOrEmpty(email)) {
                 returnVal = contactService.getContactByEmail(email);
                 //returnVal = contactService.getContactById(1);
             }
