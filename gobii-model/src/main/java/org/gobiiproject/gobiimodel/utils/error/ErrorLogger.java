@@ -2,11 +2,15 @@ package org.gobiiproject.gobiimodel.utils.error;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.FileAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static ch.qos.logback.classic.Level.ERROR;
@@ -23,7 +27,7 @@ import static ch.qos.logback.classic.Level.WARN;
 
 public class ErrorLogger {
 	private static final Logger log = LoggerFactory.getLogger("Error Log");
-	public static Set<Error> errors = new HashSet();
+	public static List<Error> errors = new ArrayList();
 
 	/**
 	 * Assuming Logback under slf4j, sets the log level to the logback item. Otherwise this will burn.
@@ -36,12 +40,17 @@ public class ErrorLogger {
 
 	/**
 	 * Sets property for logging directory and resets the logger (so the new file is used).
+	 * Currently rewritten very brittlly in that it calls out a FileAppender by name ("FILE").
+	 * Sorry if that one bit you.
 	 * @param filepath
 	 */
 	public static void setLogFilepath(String filepath){
 		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 		context.putProperty("log-dir",filepath);
-		context.reset();
+		FileAppender<ILoggingEvent> appender = (FileAppender<ILoggingEvent>)context.getLoggerList().get(0).getAppender("FILE");
+		appender.stop();
+		appender.setFile(filepath);
+		appender.start();
 	}
 
 	/**
@@ -75,6 +84,16 @@ public static boolean setLogLevel(String level){
 	public static void logError(String name, String message, Throwable e){
 		Error err=new Error(name,message);
 		errors.add(err);
+		log.error(name+":"+message,e);
+	}
+
+	//For Debugging Purposes Only
+	public static void logError(String name, String message, Throwable e,boolean ignore){
+		if(!ignore){
+			logError(name,message,e);return;
+		}
+		//Error err=new Error(name,message);
+		//errors.add(err);
 		log.error(name+":"+message,e);
 	}
 
@@ -160,7 +179,7 @@ public static boolean setLogLevel(String level){
 	/**
 	 * List of Error objects in the system.
 	 */
-	public static Set<Error> getAllErrors(){
+	public static List<Error> getAllErrors(){
 		return errors;
 	}
 
@@ -175,6 +194,15 @@ public static boolean setLogLevel(String level){
 			sb.append("\n");
 		}
 		return sb.toString();
+	}
+
+	public static String getAllErrorStringsHTML(){
+		return getAllErrorStrings().replaceAll("\n","<br/>");
+	}
+
+	public static String getFirstErrorReason(){
+		if(errors.isEmpty()) return null;
+		return errors.iterator().next().reason;
 	}
 
 }
