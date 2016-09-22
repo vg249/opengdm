@@ -13,8 +13,6 @@ import java.util.Map;
  */
 public class SpGetMapSetNames implements Work {
 
-    private Map<String, Object> parameters = null;
-
     public SpGetMapSetNames() {
     }
 
@@ -28,11 +26,14 @@ public class SpGetMapSetNames implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select mapset_id, name from mapset order by lower(name)";
+        String sql = "SELECT\n" +
+                "\tmapset_id,\n" +
+                "\tname\n" +
+                "FROM\n" +
+                "\tmapset\n" +
+                "ORDER BY LOWER(name)";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-
         resultSet = preparedStatement.executeQuery();
-
     } // execute()
 }

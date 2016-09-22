@@ -35,7 +35,7 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public ResultSet getMapNames() throws GobiiDaoException {
+    public ResultSet getAllMapsetNames() throws GobiiDaoException {
         ResultSet returnVal = null;
 
         try {
@@ -49,9 +49,7 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
 
         }
 
-
         return returnVal;
-
     }
 
     @Override

@@ -22,10 +22,12 @@ import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobidomain.services.PlatformService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
+import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
+import org.gobiiproject.gobiimodel.dto.response.Result;
 import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -97,7 +100,7 @@ public class BRAPIController {
     private PlatformService platformService = null;
 
     @Autowired
-    private MapsetService mapsetService;
+    private MapsetService mapsetService = null;
 
     @Autowired
     private ConfigSettingsService configSettingsService;
@@ -212,5 +215,25 @@ public class BRAPIController {
 
     }
 
+    @RequestMapping(value = "/maps",
+            params = {},
+            method = RequestMethod.GET)
+    @ResponseBody
+    public ResultEnvelope<List<MapsetDTO>> getMaps() {
+
+        ResultEnvelope<List<MapsetDTO>> returnVal = new ResultEnvelope<>();
+
+        try {
+
+            returnVal = mapsetService.getAllMapsetNames();
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        return (returnVal);
+    }
 
 }// LoadController
