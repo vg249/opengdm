@@ -54,57 +54,61 @@ public class DtoRequestContactTest {
     } //
 
 
-    @Test
-    public void testCreateContact() throws Exception {
-
-        DtoRequestContact dtoRequestContact = new DtoRequestContact();
-        ContactDTO contactDTORequest = new ContactDTO();
-
-        // set the plain properties
-        contactDTORequest.setFirstName("Angel Manica");
-        contactDTORequest.setLastName("Raquel");
-        contactDTORequest.setEmail("added dummy email");
-        contactDTORequest.setCode("added New Code");
-        contactDTORequest.setCreatedBy(1);
-        contactDTORequest.setCreatedDate(new Date());
-        contactDTORequest.setModifiedBy(1);
-        contactDTORequest.setModifiedDate(new Date());
-        contactDTORequest.setOrganizationId(1);
-        contactDTORequest.getRoles().add(1);
-        contactDTORequest.getRoles().add(2);
-
-        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(new PayloadEnvelope<>(contactDTORequest, Header.ProcessType.CREATE));
-        Assert.assertNotEquals(null, contactDTOResponseEnvelope);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
-
-        ContactDTO contactDTOResponse = contactDTOResponseEnvelope.getPayload().getData().get(0);
-        Assert.assertNotEquals(null, contactDTOResponse);
-        Assert.assertTrue(contactDTOResponse.getContactId() > 0);
-
-    }
+//    @Test
+//    public void testCreateContact() throws Exception {
+//
+//        DtoRequestContact dtoRequestContact = new DtoRequestContact();
+//        ContactDTO contactDTORequest = new ContactDTO();
+//
+//        // set the plain properties
+//        contactDTORequest.setFirstName("Angel Manica");
+//        contactDTORequest.setLastName("Raquel");
+//        contactDTORequest.setEmail("added dummy email");
+//        contactDTORequest.setCode("added New Code");
+//        contactDTORequest.setCreatedBy(1);
+//        contactDTORequest.setCreatedDate(new Date());
+//        contactDTORequest.setModifiedBy(1);
+//        contactDTORequest.setModifiedDate(new Date());
+//        contactDTORequest.setOrganizationId(1);
+//        contactDTORequest.getRoles().add(1);
+//        contactDTORequest.getRoles().add(2);
+//
+//        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = dtoRequestContact.process(new PayloadEnvelope<>(contactDTORequest, Header.ProcessType.CREATE));
+//        Assert.assertNotEquals(null, contactDTOResponseEnvelope);
+//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
+//
+//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelope.getHeader()));
+//
+//        ContactDTO contactDTOResponse = contactDTOResponseEnvelope.getPayload().getData().get(0);
+//        Assert.assertNotEquals(null, contactDTOResponse);
+//        Assert.assertTrue(contactDTOResponse.getContactId() > 0);
+//
+//    }
 
     @Test
     public void testUpdateContact() throws Exception {
 
-        DtoRequestContact dtoRequestContact = new DtoRequestContact();
+
 
         // create a new contact for our test
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         ContactDTO newContactDto = TestDtoFactory
                 .makePopulatedContactDTO(Header.ProcessType.CREATE, 1);
 
+        RestResource<ContactDTO> restResourceContacts = new RestResource<>(UriFactory.contacts());
 
-        PayloadEnvelope<ContactDTO> resultEnvelopeNewContact = dtoRequestContact.process(new PayloadEnvelope<>(newContactDto, Header.ProcessType.CREATE));
+
+        PayloadEnvelope<ContactDTO> resultEnvelopeNewContact = restResourceContacts.post(ContactDTO.class,
+                new PayloadEnvelope<>(newContactDto, Header.ProcessType.CREATE));
+        //PayloadEnvelope<ContactDTO> resultEnvelopeNewContact = dtoRequestContact.process(new PayloadEnvelope<>(newContactDto, Header.ProcessType.CREATE));
 
         ContactDTO newContactDTOResponse = resultEnvelopeNewContact.getPayload().getData().get(0);
 
 
         RestUri restUriContact = UriFactory.contactByContactUriParam();
         restUriContact.setParamValue("contactId", newContactDTOResponse.getContactId().toString());
-        RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = restResource
+        RestResource<ContactDTO> restResourceContactById = new RestResource<>(restUriContact);
+        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = restResourceContactById
                 .get(ContactDTO.class);
 
         Assert.assertNotEquals(null, contactDTOResponseEnvelope);
@@ -119,6 +123,7 @@ public class DtoRequestContactTest {
         String newName = UUID.randomUUID().toString();
         contactDTOReceived.setLastName(newName);
 
+        DtoRequestContact dtoRequestContact = new DtoRequestContact();
         PayloadEnvelope<ContactDTO> contactDTOResponseEnvelopeUpdate = dtoRequestContact.process(new PayloadEnvelope<>(contactDTOReceived, Header.ProcessType.UPDATE));
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelopeUpdate.getHeader()));
 
@@ -191,7 +196,6 @@ public class DtoRequestContactTest {
         newContactDTO.getRoles().add(2);
 
         PayloadEnvelope<ContactDTO> payloadEnvelope =  new PayloadEnvelope<>(newContactDTO, Header.ProcessType.CREATE);
-        payloadEnvelope.getPayload().getData().add(newContactDTO);
         RestResource<ContactDTO> restResource = new RestResource<>(UriFactory.contacts());
         PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = restResource.post(ContactDTO.class,
                 payloadEnvelope);

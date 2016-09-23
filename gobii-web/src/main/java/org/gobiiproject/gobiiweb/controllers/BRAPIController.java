@@ -146,9 +146,10 @@ public class BRAPIController {
 
     }
 
+
     @RequestMapping(value = "/contacts", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<ContactDTO> createContact(PayloadEnvelope<ContactDTO> payloadEnvelope,
+    public PayloadEnvelope<ContactDTO> createContact(@RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope,
                                                      HttpServletRequest request,
                                                      HttpServletResponse response) {
 
@@ -161,11 +162,7 @@ public class BRAPIController {
             returnVal.getHeader().getStatus().addException(e);
         }
 
-        if (returnVal.getHeader().getStatus().isSucceeded()) {
-            response.setStatus(HttpStatus.CREATED.value());
-        } else {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(), response,HttpStatus.CREATED);
 
         return (returnVal);
 
@@ -174,7 +171,9 @@ public class BRAPIController {
 
     @RequestMapping(value = "/contacts/{contactId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ContactDTO> getContactsById(@PathVariable Integer contactId) {
+    public PayloadEnvelope<ContactDTO> getContactsById(@PathVariable Integer contactId,
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -184,6 +183,8 @@ public class BRAPIController {
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(), response, HttpStatus.OK);
 
         return (returnVal);
 
@@ -197,7 +198,9 @@ public class BRAPIController {
     @RequestMapping(value = "/contacts/{email:[a-zA-Z-]+@[a-zA-Z-]+.[a-zA-Z-]+}",
             method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ContactDTO> getContactsByEmail(@PathVariable String email) {
+    public PayloadEnvelope<ContactDTO> getContactsByEmail(@PathVariable String email,
+                                                          HttpServletRequest request,
+                                                          HttpServletResponse response) {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -211,6 +214,9 @@ public class BRAPIController {
             returnVal.getHeader().getStatus().addException(e);
         }
 
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(), response, HttpStatus.OK);
+
         return (returnVal);
 
     }
@@ -223,7 +229,9 @@ public class BRAPIController {
     @ResponseBody
     public PayloadEnvelope<ContactDTO> getContactsBySearch(@RequestParam("email") String email,
                                                            @RequestParam("lastName") String lastName,
-                                                           @RequestParam("firstName") String firstName) {
+                                                           @RequestParam("firstName") String firstName,
+                                                           HttpServletRequest request,
+                                                           HttpServletResponse response) {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -236,6 +244,10 @@ public class BRAPIController {
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK);
 
         return (returnVal);
 

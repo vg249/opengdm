@@ -310,8 +310,8 @@ public class HttpCore {
         return returnVal;
     }
 
-    private void setHttpBoddy(HttpEntityEnclosingRequestBase httpEntityEnclosingRequestBase,
-                              String body) throws Exception {
+    private void setHttpBody(HttpEntityEnclosingRequestBase httpEntityEnclosingRequestBase,
+                             String body) throws Exception {
 
         if (!LineUtils.isNullOrEmpty(body)) {
             StringEntity input = new StringEntity(body);
@@ -331,8 +331,9 @@ public class HttpCore {
                                  String body,
                                  String token) throws Exception {
 
+
         HttpPost httpPost = new HttpPost();
-        this.setHttpBoddy(httpPost, body);
+        this.setHttpBody(httpPost, body);
         return this.submitHttpMethod(httpPost, restUri, token);
 
     }
@@ -342,7 +343,7 @@ public class HttpCore {
                                 String token) throws Exception {
 
         HttpPut httpPut = new HttpPut();
-        this.setHttpBoddy(httpPut, body);
+        this.setHttpBody(httpPut, body);
         return this.submitHttpMethod(httpPut, restUri, token);
 
     }
@@ -352,7 +353,7 @@ public class HttpCore {
                                   String token) throws Exception {
 
         HttpPatch httpPatch = new HttpPatch();
-        this.setHttpBoddy(httpPatch, body);
+        this.setHttpBody(httpPatch, body);
         return this.submitHttpMethod(httpPatch, restUri, token);
     }
 

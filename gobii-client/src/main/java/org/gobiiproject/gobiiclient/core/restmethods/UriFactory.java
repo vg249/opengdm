@@ -43,6 +43,10 @@ public class UriFactory {
 //    } // contactByContactUriParam();
 
 
+    public static RestUri RestUriFromUri(String uri) {
+        return new RestUri(uri,DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+    }
+
 
     public static RestUri contacts() throws Exception {
 

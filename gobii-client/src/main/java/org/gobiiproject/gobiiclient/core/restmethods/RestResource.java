@@ -9,6 +9,7 @@ import org.gobiiproject.gobiiclient.core.HttpCore;
 import org.gobiiproject.gobiiclient.core.HttpMethodResult;
 import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +74,40 @@ public class RestResource<T> {
         return returnVal;
     }
 
+
+    public PayloadEnvelope<T> getPayloadFromResponse(Class<T> dtoType,
+                                                     RestMethodTypes restMethodType,
+                                                     int httpSuccessCode,
+                                                     HttpMethodResult httpMethodResult) throws Exception {
+
+        PayloadEnvelope<T> returnVal = new PayloadEnvelope<>();
+
+        try {
+            returnVal = new PayloadEnvelope<T>()
+                    .fromJson(httpMethodResult.getPayLoad(),
+                            dtoType);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        if (httpMethodResult.getResponseCode() != httpSuccessCode) {
+
+            String message = makeMessageFromHttpResult(restMethodType.toString(), httpMethodResult);
+
+            Status.StatusLevel statusLevel = returnVal.getHeader().getStatus().isSucceeded() ?
+                    Status.StatusLevel.WARNING :
+                    Status.StatusLevel.ERROR;
+
+            returnVal.getHeader()
+                    .getStatus()
+                    .addStatusMessage(statusLevel,
+                            message);
+        }
+
+        return returnVal;
+    }
+
     public PayloadEnvelope<T> get(Class<T> dtoType) throws Exception {
 
         PayloadEnvelope<T> returnVal;
@@ -82,53 +117,31 @@ public class RestResource<T> {
                         .get(this.restUri,
                                 this.getClientContext().getUserToken());
 
-        if (httpMethodResult.getResponseCode() < HttpStatus.SC_BAD_REQUEST) {
-
-            returnVal = new PayloadEnvelope<T>()
-                    .fromJson(httpMethodResult.getPayLoad(),
-                            dtoType);
-        } else {
-
-            String message = makeMessageFromHttpResult("GET", httpMethodResult);
-
-            returnVal = new PayloadEnvelope<>();
-
-            returnVal.getHeader()
-                    .getStatus()
-                    .addStatusMessage(Status.StatusLevel.ERROR,
-                            message);
-        }
+        returnVal = this.getPayloadFromResponse(dtoType,
+                RestMethodTypes.GET,
+                HttpStatus.SC_OK,
+                httpMethodResult);
 
         return returnVal;
     }
+
 
     public PayloadEnvelope<T> post(Class<T> dtoType,
                                    PayloadEnvelope<T> requestPayload) throws Exception {
 
         PayloadEnvelope<T> returnVal;
 
+        String postBody = this.makeHttpBody(requestPayload);
         HttpMethodResult httpMethodResult =
                 getHttp()
                         .post(this.restUri,
-                                this.makeHttpBody(requestPayload),
+                                postBody,
                                 this.getClientContext().getUserToken());
 
-        if (HttpStatus.SC_CREATED == httpMethodResult.getResponseCode() ) {
-
-            returnVal = new PayloadEnvelope<T>()
-                    .fromJson(httpMethodResult.getPayLoad(),
-                            dtoType);
-        } else {
-
-            String message = makeMessageFromHttpResult("POST", httpMethodResult);
-
-            returnVal = new PayloadEnvelope<>();
-
-            returnVal.getHeader()
-                    .getStatus()
-                    .addStatusMessage(Status.StatusLevel.ERROR,
-                            message);
-        }
+        returnVal = this.getPayloadFromResponse(dtoType,
+                RestMethodTypes.POST,
+                HttpStatus.SC_CREATED,
+                httpMethodResult);
 
         return returnVal;
 

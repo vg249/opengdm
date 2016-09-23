@@ -11,6 +11,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.HttpCore;
+import org.gobiiproject.gobiiclient.core.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.restmethods.RestUri;
+import org.gobiiproject.gobiiclient.core.restmethods.UriFactory;
 import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +55,11 @@ public class EnvelopeRestRequest<T> {
 
         ObjectMapper objectMapper = new ObjectMapper();
         String dtoRequestJson = objectMapper.writeValueAsString(payloadEnvelope);
-        JsonObject responseJson = httpCore.getResponseBody(url, dtoRequestJson, token);
+
+
+        HttpMethodResult httpMethodResult = httpCore.post(UriFactory.RestUriFromUri(url), dtoRequestJson, token);
+        //JsonObject responseJson = httpCore.getResponseBody(url, dtoRequestJson, token);
+        JsonObject responseJson = httpMethodResult.getPayLoad();
 
         returnVal = objectMapper.readValue(responseJson.toString(), PayloadEnvelope.class);
 
