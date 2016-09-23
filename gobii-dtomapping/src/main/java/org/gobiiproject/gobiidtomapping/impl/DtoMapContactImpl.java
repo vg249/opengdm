@@ -96,13 +96,14 @@ public class DtoMapContactImpl implements DtoMapContact {
     }
 
     @Override
-    public ContactDTO updateContact(ContactDTO contactDTO) throws Exception {
+    public ContactDTO replaceContact(Integer contactId, ContactDTO contactDTO) throws Exception {
 
         ContactDTO returnVal = contactDTO;
 
         try {
 
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            parameters.put("contactId", contactId);
             rsContactDao.updateContact(parameters);
 
         } catch (Exception e) {

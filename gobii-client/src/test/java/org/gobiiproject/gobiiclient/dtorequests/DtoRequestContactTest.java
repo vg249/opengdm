@@ -89,7 +89,6 @@ public class DtoRequestContactTest {
     public void testUpdateContact() throws Exception {
 
 
-
         // create a new contact for our test
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         ContactDTO newContactDto = TestDtoFactory
@@ -123,8 +122,14 @@ public class DtoRequestContactTest {
         String newName = UUID.randomUUID().toString();
         contactDTOReceived.setLastName(newName);
 
-        DtoRequestContact dtoRequestContact = new DtoRequestContact();
-        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelopeUpdate = dtoRequestContact.process(new PayloadEnvelope<>(contactDTOReceived, Header.ProcessType.UPDATE));
+        contactDTOReceived.setOrganizationId(null);
+
+        //PayloadEnvelope<ContactDTO> contactDTOResponseEnvelopeUpdate = dtoRequestContact.process();
+
+        restResourceContactById.setParamValue("contactId", contactDTOReceived.getContactId().toString());
+        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelopeUpdate = restResourceContactById.put(ContactDTO.class,
+                new PayloadEnvelope<>(contactDTOReceived, Header.ProcessType.UPDATE));
+
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelopeUpdate.getHeader()));
 
 
@@ -140,6 +145,7 @@ public class DtoRequestContactTest {
                 contactDTOResponseEnvelopeReRetrieved.getPayload().getData().get(0);
 
         Assert.assertTrue(dtoRequestContactReRetrieved.getLastName().equals(newName));
+        Assert.assertNull(dtoRequestContactReRetrieved.getOrganizationId());
 
     }
 
@@ -179,7 +185,6 @@ public class DtoRequestContactTest {
     public void testCreateContactWithHttpPost() throws Exception {
 
 
-
         ContactDTO newContactDTO = new ContactDTO();
 
         // set the plain properties
@@ -195,7 +200,7 @@ public class DtoRequestContactTest {
         newContactDTO.getRoles().add(1);
         newContactDTO.getRoles().add(2);
 
-        PayloadEnvelope<ContactDTO> payloadEnvelope =  new PayloadEnvelope<>(newContactDTO, Header.ProcessType.CREATE);
+        PayloadEnvelope<ContactDTO> payloadEnvelope = new PayloadEnvelope<>(newContactDTO, Header.ProcessType.CREATE);
         RestResource<ContactDTO> restResource = new RestResource<>(UriFactory.contacts());
         PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = restResource.post(ContactDTO.class,
                 payloadEnvelope);

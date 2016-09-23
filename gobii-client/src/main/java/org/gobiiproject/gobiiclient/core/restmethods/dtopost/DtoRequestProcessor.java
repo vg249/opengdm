@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.HttpCore;
+import org.gobiiproject.gobiiclient.core.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.ResourceBuilder;
+import org.gobiiproject.gobiiclient.core.restmethods.UriFactory;
 import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
@@ -72,10 +74,13 @@ public class DtoRequestProcessor<T extends Header> {
 
         ObjectMapper objectMapper = new ObjectMapper();
         String dtoRequestJson = objectMapper.writeValueAsString(dtoInstance);
-        JsonObject responseJson = httpCore.getResponseBody(url, dtoRequestJson, token);
 
-        returnVal = objectMapper.readValue(responseJson.toString(), paramType);
+        //        JsonObject responseJson = httpCore.getResponseBody(url, dtoRequestJson, token);
 
+        HttpMethodResult httpMethodResult = httpCore.post(UriFactory.RestUriFromUri(url), dtoRequestJson, token);
+
+
+        returnVal = objectMapper.readValue(httpMethodResult.getPayLoad().toString(), paramType);
 
         return returnVal;
 

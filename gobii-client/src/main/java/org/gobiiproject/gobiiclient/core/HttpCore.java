@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -17,6 +18,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiclient.core.restmethods.ResourceParam;
 import org.gobiiproject.gobiiclient.core.restmethods.RestUri;
+import org.gobiiproject.gobiiclient.core.restmethods.UriFactory;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
@@ -45,25 +47,11 @@ public class HttpCore {
     Logger LOGGER = LoggerFactory.getLogger(HttpCore.class);
 
 
-    final private static int HTTP_STATUS_CODE_OK = 200;
-    final private static int HTTP_STATUS_CODE_UNAUTHORIZED = 401;  //not authenticated
-    final private static int HTTP_STATUS_CODE_FORBIDDEN = 403; //not authorized
-
     URIBuilder getBaseBuilder() throws Exception {
         return (new URIBuilder().setScheme("http")
                 .setHost(host)
                 .setPort(port));
     }
-
-    private URI makeUri(String url) throws Exception {
-
-        URI returnVal = getBaseBuilder()
-                .setPath(url)
-                .build();
-
-        return (returnVal);
-
-    }//byContentTypeUri()
 
     private URI makeUri(RestUri restUri) throws Exception {
 
@@ -78,19 +66,9 @@ public class HttpCore {
 
         returnVal = baseBuilder.build();
 
-
         return (returnVal);
 
-    }//byContentTypeUri()
-
-    private URI logoutURI() throws Exception {
-
-        URI returnVal = getBaseBuilder()
-                .setPath("/logout") //configured in security configuration xml
-                .build();
-
-        return (returnVal);
-    }//byContentTypeUri()
+    }
 
     private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest,
                                           String userName,
@@ -118,18 +96,6 @@ public class HttpCore {
     }// submitUriRequest()
 
 
-    private void logInfo(String logMessage) {
-        LOGGER.info(logMessage);
-    } // logInfo()
-
-    private void logHeaders(Header[] headers) {
-
-        for (Header currentHeader : headers) {
-            logInfo(currentHeader.getName() + ": " + currentHeader.getValue());
-        }
-
-    }//logHeaders()
-
     private Header getHeader(Header[] headers, String headerName) {
         Header returnVal = null;
 
@@ -145,78 +111,20 @@ public class HttpCore {
 
         return (returnVal);
 
-    }//getHeader()
-
-    private void logRequestHeaders(HttpUriRequest httpUriRequest, HttpResponse httpResponse, String testName) throws Exception {
-
-
-        logInfo("============================================ BEGIN TEST " + testName + "==================================");
-        logInfo("");
-        logInfo("");
-        logInfo("");
-        logInfo("****************");
-        logInfo("****************");
-        logInfo("****************** Request URL");
-        logInfo(httpUriRequest.getURI().toString());
-
-
-        logInfo("");
-        logInfo("");
-        logInfo("");
-        logInfo("****************");
-        logInfo("****************");
-        logInfo("****************** Request Headers");
-        logHeaders(httpUriRequest.getAllHeaders());
-
-        logInfo("");
-        logInfo("");
-        logInfo("");
-        logInfo("****************");
-        logInfo("****************");
-        logInfo("****************** Response  Headers");
-        logHeaders(httpResponse.getAllHeaders());
-
-        logInfo("");
-        logInfo("");
-        logInfo("");
-        logInfo("****************");
-        logInfo("****************");
-        logInfo("****************** Response  Status");
-        logInfo(httpResponse.getStatusLine().toString());
-
-        logInfo("");
-        logInfo("");
-        logInfo("");
-        BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader((httpResponse.getEntity().getContent())));
-
-        String output;
-        logInfo("****************");
-        logInfo("****************");
-        logInfo("********** *******Response Body content");
-        while ((output = bufferedReader.readLine()) != null) {
-            logInfo(output);
-        }
-
-        logInfo("============================================ END  TEST " + testName + "==================================");
-
-
-    }//logRequestHeaders()
+    }// getHeader()
 
     private HttpResponse authenticateWithUser(String url, String userName, String password) throws Exception {
 
         HttpResponse returnVal = null;
 
-        URI uri = makeUri(url);
+        URI uri = makeUri(UriFactory.RestUriFromUri(url));
         HttpPost postRequest = new HttpPost(uri);
         returnVal = submitUriRequest(postRequest, userName, password, null);
 
-        if (HTTP_STATUS_CODE_OK != returnVal.getStatusLine().getStatusCode()) {
+        if (HttpStatus.SC_OK != returnVal.getStatusLine().getStatusCode()) {
             throw new Exception("Request did not succeed: " + returnVal.getStatusLine().getStatusCode());
         }
 
-
-        // logRequestHeaders(postRequest, returnVal, " Authenticate with user " + userName);
 
         return (returnVal);
 
@@ -239,55 +147,6 @@ public class HttpCore {
     } // getTokenForUser()
 
 
-    private JsonObject getJsonFromInputStream(InputStream inputStream) throws Exception {
-
-        JsonObject returnVal;
-
-        BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(inputStream));
-
-        StringBuilder stringBuilder = new StringBuilder();
-        String currentLine = null;
-        while ((currentLine = bufferedReader.readLine()) != null) {
-            stringBuilder.append(currentLine);
-        }
-
-
-        JsonParser parser = new JsonParser();
-        String jsonAsString = stringBuilder.toString();
-        returnVal = parser.parse(jsonAsString).getAsJsonObject();
-
-        return returnVal;
-    }
-
-    public JsonObject getResponseBody(String url,
-                                      String jsonString,
-                                      String token) throws Exception {
-
-        JsonObject returnVal = null;
-
-        HttpResponse httpResponse = null;
-
-        URI uri = makeUri(url);
-
-        HttpPost postRequest = new HttpPost(uri);
-        StringEntity input = new StringEntity(jsonString);
-        postRequest.setEntity(input);
-
-        httpResponse = submitUriRequest(postRequest, "", "", token);
-
-        if (HTTP_STATUS_CODE_OK != httpResponse.getStatusLine().getStatusCode()) {
-            throw new Exception("Request did not succeed: " + httpResponse.getStatusLine());
-        }
-
-        returnVal = getJsonFromInputStream(httpResponse.getEntity().getContent());
-
-
-        return returnVal;
-
-    }
-
-
     private HttpMethodResult submitHttpMethod(HttpRequestBase httpRequestBase,
                                               RestUri restUri,
                                               String token) throws Exception {
@@ -305,7 +164,26 @@ public class HttpCore {
         int responseCode = httpResponse.getStatusLine().getStatusCode();
         String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
         returnVal.setResponse(responseCode, reasonPhrase);
-        returnVal.setPayLoad(getJsonFromInputStream(httpResponse.getEntity().getContent()));
+
+        InputStream inputStream = httpResponse.getEntity().getContent();
+        BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(inputStream));
+
+        StringBuilder stringBuilder = new StringBuilder();
+        String currentLine = null;
+        while ((currentLine = bufferedReader.readLine()) != null) {
+            stringBuilder.append(currentLine);
+        }
+
+
+        JsonParser parser = new JsonParser();
+        String jsonAsString = stringBuilder.toString();
+        JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
+
+        returnVal.setPayLoad(jsonObject);
+
+
+        ///returnVal.setPayLoad(getJsonFromInputStream(httpResponse.getEntity().getContent()));
 
         return returnVal;
     }

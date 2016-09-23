@@ -162,7 +162,29 @@ public class BRAPIController {
             returnVal.getHeader().getStatus().addException(e);
         }
 
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(), response,HttpStatus.CREATED);
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(), response, HttpStatus.CREATED);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/contacts/{contactId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<ContactDTO> replaceContact(@RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope,
+                                                      @PathVariable Integer contactId,
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response) {
+
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            returnVal = contactService.replaceContact(contactId, payloadEnvelope);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(), response, HttpStatus.OK);
 
         return (returnVal);
 

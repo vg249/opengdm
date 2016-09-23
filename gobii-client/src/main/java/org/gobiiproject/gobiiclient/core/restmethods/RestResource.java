@@ -29,6 +29,11 @@ public class RestResource<T> {
         this.restUri = restUri;
     }
 
+    public void setParamValue(String paramName, String value) throws Exception {
+        restUri.setParamValue(paramName,value);
+    }
+
+
     private ClientContext getClientContext() throws Exception {
 
         if (!ClientContext.isInitialized()) {
@@ -147,20 +152,30 @@ public class RestResource<T> {
 
     }
 
-    public PayloadEnvelope<T> patch(Class<T> dtoType,
-                                    PayloadEnvelope<T> requestPayload) throws Exception {
+    public PayloadEnvelope<T> put(Class<T> dtoType,
+                                  PayloadEnvelope<T> requestPayload) throws Exception {
 
-        PayloadEnvelope<T> returnVal = new PayloadEnvelope<>();
+        PayloadEnvelope<T> returnVal;
 
-        returnVal.getHeader().getStatus().addStatusMessage(Status.StatusLevel.ERROR, "Method not implemented");
+        String putBody = this.makeHttpBody(requestPayload);
+        HttpMethodResult httpMethodResult =
+                getHttp()
+                        .put(this.restUri,
+                                putBody,
+                                this.getClientContext().getUserToken());
 
+        returnVal = this.getPayloadFromResponse(dtoType,
+                RestMethodTypes.PUT,
+                HttpStatus.SC_OK,
+                httpMethodResult);
 
         return returnVal;
 
     }
 
-    public PayloadEnvelope<T> put(Class<T> dtoType,
-                                  PayloadEnvelope<T> requestPayload) throws Exception {
+
+    public PayloadEnvelope<T> patch(Class<T> dtoType,
+                                    PayloadEnvelope<T> requestPayload) throws Exception {
 
         PayloadEnvelope<T> returnVal = new PayloadEnvelope<>();
 
