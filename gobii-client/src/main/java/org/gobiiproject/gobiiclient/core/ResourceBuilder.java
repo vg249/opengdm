@@ -18,15 +18,13 @@ public class ResourceBuilder {
 
 
 
-//        String contextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-
-
     public static String getRequestUrl(ControllerType controllerType,
+                                       String cropContextRoot,
                                        ServiceRequestId requestId) throws Exception {
 
         return ResourceBuilder.getRequestUrl(controllerType,
                 requestId,
-                ClientContext.getInstance(null, false).getCurrentCropContextRoot());
+                cropContextRoot);
     }
 
     public static String getRequestUrl(ControllerType controllerType,

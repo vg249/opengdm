@@ -29,7 +29,7 @@ public class RestResource<T> {
     }
 
     public void setParamValue(String paramName, String value) throws Exception {
-        restUri.setParamValue(paramName,value);
+        restUri.setParamValue(paramName, value);
     }
 
 
@@ -50,7 +50,8 @@ public class RestResource<T> {
 
         String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
         Integer port = ClientContext.getInstance(null, false).getCurrentCropPort();
-        httpCore = new HttpCore(host, port);
+        String clientContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
+        httpCore = new HttpCore(host, port,clientContextRoot);
 
 
         return httpCore;

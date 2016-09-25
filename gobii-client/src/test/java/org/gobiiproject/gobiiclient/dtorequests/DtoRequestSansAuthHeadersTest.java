@@ -30,8 +30,11 @@ public class DtoRequestSansAuthHeadersTest {
         Assert.assertTrue(Authenticator.authenticate());
         String currentCropDomain = ClientContext.getInstance(null, false).getCurrentCropDomain();
         Integer currentCropPort = ClientContext.getInstance(null, false).getCurrentCropPort();
+        String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
         String currentGobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
-        String url = ResourceBuilder.getRequestUrl(ControllerType.LOADER, ServiceRequestId.URL_AUTH);
+        String url = ResourceBuilder.getRequestUrl(ControllerType.LOADER,
+                currentCropContextRoot,
+                ServiceRequestId.URL_AUTH);
         Assert.assertTrue(Authenticator.deAuthenticate());
 
 

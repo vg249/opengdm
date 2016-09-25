@@ -25,10 +25,14 @@ public class EnvelopeDtoRequest<T> {
         String token = ClientContext.getInstance(null, false).getUserToken();
         String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
         Integer port = ClientContext.getInstance(null, false).getCurrentCropPort();
+        String cropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
 
         PayloadEnvelope<T> returnVal = null;
 
-        EnvelopeRestRequest<T> envelopeRestRequest= new EnvelopeRestRequest<>(host, port, DtoType);
+        EnvelopeRestRequest<T> envelopeRestRequest= new EnvelopeRestRequest<>(host,
+                port,
+                cropContextRoot,
+                DtoType);
 
 
         if (null == token || token.isEmpty()) {
@@ -36,6 +40,7 @@ public class EnvelopeDtoRequest<T> {
         }
 
         String url = ResourceBuilder.getRequestUrl(controllerType,
+                cropContextRoot,
                 requestId);
 
 

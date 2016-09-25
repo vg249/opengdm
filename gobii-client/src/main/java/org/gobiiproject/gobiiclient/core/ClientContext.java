@@ -156,7 +156,7 @@ public final class ClientContext {
         String authPath = ResourceBuilder.getRequestUrl(ControllerType.EXTRACTOR,
                 ServiceRequestId.URL_AUTH,
                 context);
-        HttpCore httpCore = new HttpCore(host, port);
+        HttpCore httpCore = new HttpCore(host, port, null);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
@@ -172,6 +172,7 @@ public final class ClientContext {
         ConfigSettingsDTO configSettingsDTOResponse = dtoDtoRequestProcessor.getTypedHtppResponseForDto(
                 host,
                 port,
+                null,
                 settingsPath,
                 ConfigSettingsDTO.class,
                 configSettingsDTORequest,
@@ -274,10 +275,12 @@ public final class ClientContext {
 
         try {
             String authUrl = ResourceBuilder.getRequestUrl(ControllerType.EXTRACTOR,
+                    this.getCurrentCropContextRoot(),
                     ServiceRequestId.URL_AUTH);
 
             HttpCore httpCore = new HttpCore(this.getCurrentCropDomain(),
-                    this.getCurrentCropPort());
+                    this.getCurrentCropPort(),
+                    this.getCurrentCropContextRoot());
 
             userToken = httpCore.getTokenForUser(authUrl, userName, password);
         } catch (Exception e) {

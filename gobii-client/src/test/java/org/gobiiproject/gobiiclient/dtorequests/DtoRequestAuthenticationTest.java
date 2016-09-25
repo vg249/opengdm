@@ -67,6 +67,7 @@ public class DtoRequestAuthenticationTest {
 
 
         String url = ResourceBuilder.getRequestUrl(ControllerType.LOADER,
+                ClientContext.getInstance(null, false).getCurrentCropContextRoot(),
                 ServiceRequestId.URL_ANALYSIS);
 
         DtoRequestProcessor<AnalysisDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
@@ -74,6 +75,7 @@ public class DtoRequestAuthenticationTest {
         AnalysisDTO analysisDTOResponse = dtoDtoRequestProcessor.getTypedHtppResponseForDto(
                 ClientContext.getInstance(null, false).getCurrentCropDomain(),
                 ClientContext.getInstance(null, false).getCurrentCropPort(),
+                ClientContext.getInstance(null, false).getCurrentCropContextRoot(),
                 url,
                 AnalysisDTO.class,
                 analysisDTORequest,

@@ -35,17 +35,20 @@ public class DtoRequestProcessor<T extends Header> {
 
             String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
             Integer port = ClientContext.getInstance(null, false).getCurrentCropPort();
+            String cropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
 
             String cropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
             dtoToProcess.setCropType(cropType);
 
 
             String url = ResourceBuilder.getRequestUrl(controllerType,
+                    cropContextRoot,
                     requestId);
 
             returnVal = this.getTypedHtppResponseForDto(
                     host,
                     port,
+                    cropContextRoot,
                     url,
                     dtoType,
                     dtoToProcess,
@@ -60,6 +63,7 @@ public class DtoRequestProcessor<T extends Header> {
 
     public T getTypedHtppResponseForDto(String host,
                                         Integer port,
+                                        String cropContextRoot,
                                         String url,
                                         Class<T> paramType,
                                         T dtoInstance,
@@ -67,7 +71,7 @@ public class DtoRequestProcessor<T extends Header> {
 
         T returnVal;
 
-        HttpCore httpCore = new HttpCore(host, port);
+        HttpCore httpCore = new HttpCore(host, port,cropContextRoot);
 
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -75,7 +79,9 @@ public class DtoRequestProcessor<T extends Header> {
 
         //        JsonObject responseJson = httpCore.getResponseBody(url, dtoRequestJson, token);
 
-        HttpMethodResult httpMethodResult = httpCore.post(UriFactory.RestUriFromUri(url), dtoRequestJson, token);
+        HttpMethodResult httpMethodResult = httpCore.post((new UriFactory(cropContextRoot)).RestUriFromUri(url),
+                dtoRequestJson,
+                token);
 
 
         returnVal = objectMapper.readValue(httpMethodResult.getPayLoad().toString(), paramType);

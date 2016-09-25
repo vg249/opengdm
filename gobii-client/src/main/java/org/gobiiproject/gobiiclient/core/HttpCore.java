@@ -36,11 +36,16 @@ public class HttpCore {
 
     private String host = null;
     private Integer port = null;
+    private UriFactory uriFactory;
 
-    public HttpCore(String host, Integer port) {
+
+    public HttpCore(String host,
+                    Integer port,
+                    String cropContextRoot) {
 
         this.host = host;
         this.port = port;
+        this.uriFactory = new UriFactory(cropContextRoot);
     }
 
 
@@ -117,7 +122,7 @@ public class HttpCore {
 
         HttpResponse returnVal = null;
 
-        URI uri = makeUri(UriFactory.RestUriFromUri(url));
+        URI uri = makeUri(this.uriFactory.RestUriFromUri(url));
         HttpPost postRequest = new HttpPost(uri);
         returnVal = submitUriRequest(postRequest, userName, password, null);
 
