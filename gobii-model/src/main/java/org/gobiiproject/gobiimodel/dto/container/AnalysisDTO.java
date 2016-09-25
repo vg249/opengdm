@@ -4,6 +4,7 @@ package org.gobiiproject.gobiimodel.dto.container;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,8 +18,8 @@ public class AnalysisDTO extends Header {
     public AnalysisDTO() {
     }
 
-    public AnalysisDTO(ProcessType processType) {
-        super(processType);
+    public AnalysisDTO(GobiiProcessType gobiiProcessType) {
+        super(gobiiProcessType);
     }
 
     private Integer analysisId;

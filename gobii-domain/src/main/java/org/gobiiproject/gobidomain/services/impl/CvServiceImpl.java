@@ -24,7 +24,7 @@ public class CvServiceImpl implements CvService {
 		CvDTO returnVal = new CvDTO();
 
 		try {
-			switch (cvDTO.getProcessType()) {
+			switch (cvDTO.getGobiiProcessType()) {
 				case READ:
 					returnVal = dtoMapCv.getCvDetails(cvDTO);
 					break;
@@ -44,7 +44,7 @@ public class CvServiceImpl implements CvService {
 				default:
 					returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
 							GobiiValidationStatusType.BAD_REQUEST,
-							"Unsupported proces Cv type " + cvDTO.getProcessType().toString());
+							"Unsupported proces Cv type " + cvDTO.getGobiiProcessType().toString());
 
 			}
 

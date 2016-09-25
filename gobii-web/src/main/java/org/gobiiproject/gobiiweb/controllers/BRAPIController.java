@@ -262,7 +262,7 @@ public class BRAPIController {
 //            ContactDTO contactRequestDTO = new ContactDTO();
 //            contactRequestDTO.setContactId(1);
             //contactRequestDTO.setEmail(email);
-            //returnVal = contactService.processDml(new PayloadEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
+            //returnVal = contactService.processDml(new PayloadEnvelope<>(contactRequestDTO, GobiiProcessType.READ));
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);

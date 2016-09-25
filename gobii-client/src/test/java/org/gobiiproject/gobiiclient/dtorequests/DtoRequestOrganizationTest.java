@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.OrganizationDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -50,7 +51,7 @@ public class DtoRequestOrganizationTest {
         // set the plain properties
 
         OrganizationDTO organizationDTORequest = TestDtoFactory
-                .makePopulatedOrganizationDTO(Header.ProcessType.CREATE, 1);
+                .makePopulatedOrganizationDTO(GobiiProcessType.CREATE, 1);
         OrganizationDTO organizationDTOResponse = dtoRequestOrganization.process(organizationDTORequest);
 
         Assert.assertNotEquals(null, organizationDTOResponse);
@@ -66,7 +67,7 @@ public class DtoRequestOrganizationTest {
 
         // create a new organization for our test
         OrganizationDTO newOrganizationDto = TestDtoFactory
-                .makePopulatedOrganizationDTO(Header.ProcessType.CREATE, 1);
+                .makePopulatedOrganizationDTO(GobiiProcessType.CREATE, 1);
         OrganizationDTO newOrganizationDTOResponse = dtoRequestOrganization.process(newOrganizationDto);
 
 
@@ -78,7 +79,7 @@ public class DtoRequestOrganizationTest {
 
 
         // so this would be the typical workflow for the client app
-        organizationDTOReceived.setProcessType(Header.ProcessType.UPDATE);
+        organizationDTOReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
         String newAddress = UUID.randomUUID().toString();
         organizationDTOReceived.setAddress(newAddress);
         //organizationDTOReceived.setFilePath(newDataFile);

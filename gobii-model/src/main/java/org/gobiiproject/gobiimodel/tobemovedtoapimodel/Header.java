@@ -6,6 +6,8 @@
 package org.gobiiproject.gobiimodel.tobemovedtoapimodel;
 
 
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+
 import java.io.Serializable;
 
 /**
@@ -15,13 +17,11 @@ public class Header implements Serializable {
 
     public Header() {}
 
-    public Header(ProcessType processType) {
-        this.processType = processType;
+    public Header(GobiiProcessType gobiiProcessType) {
+        this.gobiiProcessType = gobiiProcessType;
     }
 
-    public enum ProcessType {CREATE, READ, UPDATE, DELETE}
-
-    private ProcessType processType = ProcessType.READ;
+    private GobiiProcessType gobiiProcessType = GobiiProcessType.READ;
     private HeaderAuth dtoHeaderAuth = new HeaderAuth();
     private Status status = new Status();
     private Pagination pagination = null;
@@ -50,12 +50,12 @@ public class Header implements Serializable {
         return this.status;
     }
 
-    public ProcessType getProcessType() {
-        return processType;
+    public GobiiProcessType getGobiiProcessType() {
+        return gobiiProcessType;
     }
 
-    public void setProcessType(ProcessType processType) {
-        this.processType = processType;
+    public void setGobiiProcessType(GobiiProcessType gobiiProcessType) {
+        this.gobiiProcessType = gobiiProcessType;
     }
 
 

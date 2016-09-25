@@ -30,7 +30,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         ExperimentDTO returnVal = experimentDTO;
 
         try {
-            switch (returnVal.getProcessType()) {
+            switch (returnVal.getGobiiProcessType()) {
                 case READ:
                     returnVal  = dtoMapExperiment.getExperiment(returnVal);
                     break;
@@ -49,7 +49,7 @@ public class ExperimentServiceImpl implements ExperimentService {
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported process type " + experimentDTO.getProcessType().toString());
+                            "Unsupported process type " + experimentDTO.getGobiiProcessType().toString());
 
             } // switch()
 

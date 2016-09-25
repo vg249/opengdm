@@ -6,7 +6,8 @@ import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
@@ -115,7 +116,7 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOretrieve = new ExtractorInstructionFilesDTO();
-        extractorInstructionFilesDTOretrieve.setProcessType(Header.ProcessType.READ);
+        extractorInstructionFilesDTOretrieve.setGobiiProcessType(GobiiProcessType.READ);
         extractorInstructionFilesDTOretrieve
                 .setInstructionFileName(extractorInstructionFilesDTOResponse.getInstructionFileName());
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOretrieveResponse

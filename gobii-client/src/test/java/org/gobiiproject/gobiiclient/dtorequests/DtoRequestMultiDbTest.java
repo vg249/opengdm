@@ -17,6 +17,7 @@ import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -101,7 +102,7 @@ public class DtoRequestMultiDbTest {
             Assert.assertTrue(Authenticator.authenticate(currentCropType));
 
             CvDTO currentCvDtoRequest = TestDtoFactory
-                    .makePopulatedCvDTO(Header.ProcessType.CREATE, 1);
+                    .makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
             currentCvDtoRequest.setDefinition("Destination DB should be: " + currentCropType.toString());
 
             DtoRequestCv dtoRequestCv = new DtoRequestCv();

@@ -27,7 +27,7 @@ public class PlatformServiceImpl implements PlatformService {
 
         try {
 
-            switch (returnVal.getProcessType()) {
+            switch (returnVal.getGobiiProcessType()) {
                 case READ:
                     returnVal = dtoMapPlatform.getPlatformDetails(returnVal);
                     break;
@@ -47,7 +47,7 @@ public class PlatformServiceImpl implements PlatformService {
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported procesCv type " + platformDTO.getProcessType().toString());
+                            "Unsupported procesCv type " + platformDTO.getGobiiProcessType().toString());
 
             } // switch()
 

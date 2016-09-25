@@ -24,7 +24,7 @@ public class ReferenceServiceImpl implements ReferenceService {
         ReferenceDTO returnVal = new ReferenceDTO();
 
         try {
-            switch (referenceDTO.getProcessType()) {
+            switch (referenceDTO.getGobiiProcessType()) {
                 case READ:
                     returnVal = dtoMapReference.getReferenceDetails(referenceDTO);
                     break;
@@ -40,7 +40,7 @@ public class ReferenceServiceImpl implements ReferenceService {
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces Reference type " + referenceDTO.getProcessType().toString());
+                            "Unsupported proces Reference type " + referenceDTO.getGobiiProcessType().toString());
 
             }
 

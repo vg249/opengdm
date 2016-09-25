@@ -5,7 +5,7 @@ import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestDataSet;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;;
+;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiidao.GobiiDaoException;
@@ -412,7 +412,7 @@ public class GobiiFileReader {
 
 
 
-			DataSetDTO dataSetRequest = new DataSetDTO(Header.ProcessType.READ);
+			DataSetDTO dataSetRequest = new DataSetDTO(GobiiProcessType.READ);
 
 			dataSetRequest.setDataSetId(dataSetId);
 			DtoRequestDataSet dtoProcessor = new DtoRequestDataSet();
@@ -429,7 +429,7 @@ public class GobiiFileReader {
 
 			dataSetResponse.setDataTable(monetTableName);
 			dataSetResponse.setDataFile(hdfFileName);
-			dataSetResponse.setProcessType(Header.ProcessType.UPDATE);
+			dataSetResponse.setGobiiProcessType(GobiiProcessType.UPDATE);
 
 
 			dataSetResponse = dtoProcessor.process(dataSetResponse);

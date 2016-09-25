@@ -13,6 +13,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -56,7 +57,7 @@ public class DtoRequestAnalysisTest {
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         AnalysisDTO analysisDTORequest = TestDtoFactory
-                .makePopulatedAnalysisDTO(Header.ProcessType.CREATE, 1, entityParamValues);
+                .makePopulatedAnalysisDTO(GobiiProcessType.CREATE, 1, entityParamValues);
 
         AnalysisDTO analysisDTOResponse = dtoRequestAnalysis.process(analysisDTORequest);
 
@@ -86,7 +87,7 @@ public class DtoRequestAnalysisTest {
         // create a new analysis for our test
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         AnalysisDTO newAnalysisDto = TestDtoFactory
-                .makePopulatedAnalysisDTO(Header.ProcessType.CREATE, 1, entityParamValues);
+                .makePopulatedAnalysisDTO(GobiiProcessType.CREATE, 1, entityParamValues);
         AnalysisDTO newAnalysisDTOResponse = dtoRequestAnalysis.process(newAnalysisDto);
 
 
@@ -98,7 +99,7 @@ public class DtoRequestAnalysisTest {
 
 
         // so this would be the typical workflow for the client app
-        analysisDTOReceived.setProcessType(Header.ProcessType.UPDATE);
+        analysisDTOReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
         String newDataFile = UUID.randomUUID().toString();
         analysisDTOReceived.setSourceName(newDataFile);
 

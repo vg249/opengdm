@@ -26,7 +26,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         OrganizationDTO returnVal = new OrganizationDTO();
 
         try {
-            switch (organizationDTO.getProcessType()) {
+            switch (organizationDTO.getGobiiProcessType()) {
                 case READ:
                     returnVal = dtoMapOrganization.getOrganizationDetails(organizationDTO);
                     break;
@@ -46,7 +46,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces Organization type " + organizationDTO.getProcessType().toString());
+                            "Unsupported proces Organization type " + organizationDTO.getGobiiProcessType().toString());
 
             }
 

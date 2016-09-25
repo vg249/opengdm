@@ -11,6 +11,7 @@ import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
 ;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -57,7 +58,7 @@ public class DtoRequestExperimentTest {
 
         DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 
-        ExperimentDTO experimentDTORequest = new ExperimentDTO(Header.ProcessType.CREATE);
+        ExperimentDTO experimentDTORequest = new ExperimentDTO(GobiiProcessType.CREATE);
         experimentDTORequest.setExperimentId(1);
         experimentDTORequest.setManifestId(1);
         experimentDTORequest.setPlatformId(1);
@@ -86,7 +87,7 @@ public class DtoRequestExperimentTest {
         ExperimentDTO experimentDTORequest = new ExperimentDTO();
         experimentDTORequest.setExperimentId(2);
         ExperimentDTO ExperimentDTOExisting = dtoRequestExperiment.process(experimentDTORequest);
-        ExperimentDTOExisting.setProcessType(Header.ProcessType.CREATE);
+        ExperimentDTOExisting.setGobiiProcessType(GobiiProcessType.CREATE);
 
 
         ExperimentDTO ExperimentDTOResponse = dtoRequestExperiment.process(ExperimentDTOExisting);
@@ -123,7 +124,7 @@ public class DtoRequestExperimentTest {
 
 
 
-        experimentDTOReceived.setProcessType(Header.ProcessType.UPDATE);
+        experimentDTOReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
 
         String newDataFile = UUID.randomUUID().toString();
 

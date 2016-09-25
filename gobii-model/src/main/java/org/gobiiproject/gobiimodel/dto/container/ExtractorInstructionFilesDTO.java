@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.dto.container;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 public class ExtractorInstructionFilesDTO extends Header {
 
     public ExtractorInstructionFilesDTO() {
-        super(ProcessType.CREATE);
+        super(GobiiProcessType.CREATE);
     }
 
     private List<GobiiExtractorInstruction>  gobiiExtractorInstructions = new ArrayList<>();

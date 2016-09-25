@@ -12,7 +12,8 @@ import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 ;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -55,7 +56,7 @@ public class DtoRequestProjectTest {
 
 
         DtoRequestProject dtoRequestProject = new DtoRequestProject();
-        ProjectDTO projectDTORequest = new ProjectDTO(Header.ProcessType.CREATE);
+        ProjectDTO projectDTORequest = new ProjectDTO(GobiiProcessType.CREATE);
         projectDTORequest.setCreatedBy(1);
         projectDTORequest.setProjectName(UUID.randomUUID().toString());
         projectDTORequest.setProjectDescription("foo description");
@@ -97,7 +98,7 @@ public class DtoRequestProjectTest {
         ProjectDTO projectDTORequest = new ProjectDTO();
         projectDTORequest.setProjectId(1);
         ProjectDTO projectDTOExisting = dtoRequestProject.process(projectDTORequest);
-        projectDTOExisting.setProcessType(Header.ProcessType.CREATE);
+        projectDTOExisting.setGobiiProcessType(GobiiProcessType.CREATE);
 
 
         ProjectDTO projectDTOResponse = dtoRequestProject.process(projectDTOExisting);
@@ -131,7 +132,7 @@ public class DtoRequestProjectTest {
         projectDTORequest.setProjectId(1);
         ProjectDTO projectDTORequestReceived = dtoRequestProject.process(projectDTORequest);
 
-        projectDTORequestReceived.setProcessType(Header.ProcessType.UPDATE);
+        projectDTORequestReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
 
         String newDescription = UUID.randomUUID().toString();
 

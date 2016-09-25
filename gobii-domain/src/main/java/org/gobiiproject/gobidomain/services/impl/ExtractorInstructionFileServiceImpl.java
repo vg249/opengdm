@@ -27,7 +27,7 @@ public class ExtractorInstructionFileServiceImpl implements ExtractorInstruction
 
         try {
 
-            switch (returnVal.getProcessType()) {
+            switch (returnVal.getGobiiProcessType()) {
 
                 case CREATE:
                     returnVal = dtoMapExtractorInstructions.writeInstructions(extractorInstructionFilesDTO);
@@ -40,7 +40,7 @@ public class ExtractorInstructionFileServiceImpl implements ExtractorInstruction
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces type " + returnVal.getProcessType().toString());
+                            "Unsupported proces type " + returnVal.getGobiiProcessType().toString());
 
             } // switch
 

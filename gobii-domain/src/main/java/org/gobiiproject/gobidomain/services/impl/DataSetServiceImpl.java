@@ -28,7 +28,7 @@ public class DataSetServiceImpl implements DataSetService {
 
         try {
 
-            switch (datasetDTO.getProcessType()) {
+            switch (datasetDTO.getGobiiProcessType()) {
                 case READ:
                     returnVal = dtoMapDataSet.getDataSetDetails(datasetDTO);
                     break;
@@ -47,7 +47,7 @@ public class DataSetServiceImpl implements DataSetService {
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces type " + datasetDTO.getProcessType().toString());
+                            "Unsupported proces type " + datasetDTO.getGobiiProcessType().toString());
 
             }
 

@@ -26,7 +26,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
 
         try {
 
-            switch (markerGroupDTO.getProcessType()) {
+            switch (markerGroupDTO.getGobiiProcessType()) {
 
                 case READ:
                     returnVal = dtoMapMarkerGroup.getMarkerGroupDetails(markerGroupDTO);
@@ -51,7 +51,7 @@ public class MarkerGroupServiceImpl implements MarkerGroupService {
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces type " + markerGroupDTO.getProcessType().toString());
+                            "Unsupported proces type " + markerGroupDTO.getGobiiProcessType().toString());
 
             }
 

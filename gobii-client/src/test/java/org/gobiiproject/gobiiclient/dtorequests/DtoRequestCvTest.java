@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
 import org.gobiiproject.gobiimodel.entity.CvItem;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
@@ -63,7 +64,7 @@ public class DtoRequestCvTest {
 
         DtoRequestCv dtoRequestCv = new DtoRequestCv();
         CvDTO cvDTORequest = TestDtoFactory
-                .makePopulatedCvDTO(Header.ProcessType.CREATE, 1);
+                .makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
         // set the plain properties
 
         CvDTO cvDTOResponse = dtoRequestCv.process(cvDTORequest);
@@ -80,7 +81,7 @@ public class DtoRequestCvTest {
 
         // create a new cv for our test
         CvDTO newCvDto = TestDtoFactory
-                .makePopulatedCvDTO(Header.ProcessType.CREATE, 1);
+                .makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
         CvDTO newCvDTOResponse = dtoRequestCv.process(newCvDto);
 
         // re-retrieve the cv we just created so we start with a fresh READ mode dto
@@ -91,7 +92,7 @@ public class DtoRequestCvTest {
 
 
         // so this would be the typical workflow for the client app
-        cvDTOReceived.setProcessType(Header.ProcessType.UPDATE);
+        cvDTOReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
         String newName = UUID.randomUUID().toString();
         cvDTOReceived.setGroup(newName);
 
@@ -113,7 +114,7 @@ public class DtoRequestCvTest {
 
         // create a new cv for our test
         CvDTO newCvDto = TestDtoFactory
-                .makePopulatedCvDTO(Header.ProcessType.CREATE, 1);
+                .makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
         CvDTO newCvDTOResponse = dtoRequestCv.process(newCvDto);
 
         // re-retrieve the cv we just created so we start with a fresh READ mode dto
@@ -124,7 +125,7 @@ public class DtoRequestCvTest {
 
 
         // so this would be the typical workflow for the client app
-        cvDTOReceived.setProcessType(Header.ProcessType.DELETE);
+        cvDTOReceived.setGobiiProcessType(GobiiProcessType.DELETE);
 
 
         CvDTO CvDTOResponse = dtoRequestCv.process(cvDTOReceived);

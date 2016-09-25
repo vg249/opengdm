@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.List;
 
@@ -38,8 +39,8 @@ public class PayloadEnvelope<T> {
 
     } // fromJson
 
-    public PayloadEnvelope(T requestData, Header.ProcessType processType) {
-        this.header.setProcessType(processType);
+    public PayloadEnvelope(T requestData, GobiiProcessType gobiiProcessType) {
+        this.header.setGobiiProcessType(gobiiProcessType);
         this.payload.getData().add(requestData);
     }
 

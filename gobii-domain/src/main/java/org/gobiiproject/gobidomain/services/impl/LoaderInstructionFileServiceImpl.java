@@ -27,7 +27,7 @@ public class LoaderInstructionFileServiceImpl implements LoaderInstructionFilesS
 
         try {
 
-            switch (returnVal.getProcessType()) {
+            switch (returnVal.getGobiiProcessType()) {
 
                 case CREATE:
                     returnVal = dtoMapLoaderInstructions.writeInstructions(loaderInstructionFilesDTO);
@@ -40,7 +40,7 @@ public class LoaderInstructionFileServiceImpl implements LoaderInstructionFilesS
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces type " + returnVal.getProcessType().toString());
+                            "Unsupported proces type " + returnVal.getGobiiProcessType().toString());
 
             } // switch
 

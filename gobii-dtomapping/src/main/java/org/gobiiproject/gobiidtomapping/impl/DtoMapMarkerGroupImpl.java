@@ -10,6 +10,7 @@ import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
 import org.slf4j.Logger;
@@ -226,7 +227,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
             List<MarkerGroupMarkerDTO> markerGroupMarkersToCreate =
                     returnVal.getMarkers()
                             .stream()
-                            .filter(m -> m.getProcessType() == Header.ProcessType.CREATE)
+                            .filter(m -> m.getGobiiProcessType() == GobiiProcessType.CREATE)
                             .collect(Collectors.toList());
 
             populateMarkers(markerGroupMarkersToCreate);
@@ -266,7 +267,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
             List<MarkerGroupMarkerDTO> markerGroupMarkersToUpdate =
                     returnVal.getMarkers()
                             .stream()
-                            .filter(m -> m.getProcessType() == Header.ProcessType.UPDATE)
+                            .filter(m -> m.getGobiiProcessType() == GobiiProcessType.UPDATE)
                             .collect(Collectors.toList());
 
             upsertMarkers(markerGroupDTO.getMarkerGroupId(),
@@ -277,7 +278,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
             // DELETE MARKERS TO BE DELETED
             List<MarkerGroupMarkerDTO> markerGroupMarkersToDelete = returnVal.getMarkers()
                     .stream()
-                    .filter(m -> m.getProcessType() == Header.ProcessType.DELETE)
+                    .filter(m -> m.getGobiiProcessType() == GobiiProcessType.DELETE)
                     .collect(Collectors.toList());
 
             for (MarkerGroupMarkerDTO currentMarkerGroupMarkerDTO : markerGroupMarkersToDelete) {

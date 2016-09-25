@@ -24,7 +24,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         try {
 
-            switch (analysisDTO.getProcessType()) {
+            switch (analysisDTO.getGobiiProcessType()) {
 
                 case READ:
                     returnVal = dtoMapAnalysis.getAnalysisDetails(analysisDTO);
@@ -42,7 +42,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces type " + analysisDTO.getProcessType().toString());
+                            "Unsupported proces type " + analysisDTO.getGobiiProcessType().toString());
 
             }
 

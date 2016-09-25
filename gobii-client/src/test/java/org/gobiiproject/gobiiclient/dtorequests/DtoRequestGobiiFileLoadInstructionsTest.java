@@ -12,7 +12,8 @@ import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.DataSetOrientationType;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
@@ -182,7 +183,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE
         LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieve = new LoaderInstructionFilesDTO();
-        loaderInstructionFilesDTOretrieve.setProcessType(Header.ProcessType.READ);
+        loaderInstructionFilesDTOretrieve.setGobiiProcessType(GobiiProcessType.READ);
         loaderInstructionFilesDTOretrieve
                 .setInstructionFileName(loaderInstructionFilesDTOResponse.getInstructionFileName());
         LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieveResponse

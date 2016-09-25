@@ -28,7 +28,7 @@ public class MapsetServiceImpl implements MapsetService {
 
         try {
 
-            switch (returnVal.getProcessType()) {
+            switch (returnVal.getGobiiProcessType()) {
                 case READ:
                     returnVal = dtoMapMapset.getMapsetDetails(returnVal);
                     break;
@@ -48,7 +48,7 @@ public class MapsetServiceImpl implements MapsetService {
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces mapset type " + returnVal.getProcessType().toString());
+                            "Unsupported proces mapset type " + returnVal.getGobiiProcessType().toString());
 
             } // switch()
 

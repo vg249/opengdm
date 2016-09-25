@@ -26,7 +26,7 @@ public class ManifestServiceImpl implements ManifestService {
         ManifestDTO returnVal = new ManifestDTO();
 
         try {
-            switch (manifestDTO.getProcessType()) {
+            switch (manifestDTO.getGobiiProcessType()) {
                 case READ:
                     returnVal = dtoMapManifest.getManifestDetails(manifestDTO);
                     break;
@@ -46,7 +46,7 @@ public class ManifestServiceImpl implements ManifestService {
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces Manifest type " + manifestDTO.getProcessType().toString());
+                            "Unsupported proces Manifest type " + manifestDTO.getGobiiProcessType().toString());
 
             }
 

@@ -26,7 +26,7 @@ public class DisplayServiceImpl implements DisplayService {
         DisplayDTO returnVal = displayDTO;
 
         try {
-            switch (displayDTO.getProcessType()) {
+            switch (displayDTO.getGobiiProcessType()) {
                 case READ:
                     returnVal = dtoMapDisplay.getDisplayDetails(returnVal);
                     break;
@@ -46,7 +46,7 @@ public class DisplayServiceImpl implements DisplayService {
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces type " + returnVal.getProcessType().toString());
+                            "Unsupported proces type " + returnVal.getGobiiProcessType().toString());
                     break;
 
             }

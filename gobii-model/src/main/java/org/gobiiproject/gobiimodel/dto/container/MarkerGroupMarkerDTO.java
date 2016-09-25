@@ -8,6 +8,7 @@ package org.gobiiproject.gobiimodel.dto.container;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 public class MarkerGroupMarkerDTO extends Header {
 
@@ -15,8 +16,8 @@ public class MarkerGroupMarkerDTO extends Header {
     public MarkerGroupMarkerDTO() {
     }
 
-    public MarkerGroupMarkerDTO(ProcessType processType) {
-        super(processType);
+    public MarkerGroupMarkerDTO(GobiiProcessType gobiiProcessType) {
+        super(gobiiProcessType);
     }
 
     boolean markerExists = true;
