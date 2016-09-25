@@ -7,10 +7,11 @@ import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapMarkerGroup;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
-import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +66,8 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
                 } else {
                     currentMarkerGroupMarkerDTO.setMarkerId(currentMarkerId);
                     currentMarkerGroupMarkerDTO.setMarkerExists(false);
-                    returnVal.getStatus().addStatusMessage(Status.StatusLevel.OK,
-                            Status.ValidationStatusType.NONEXISTENT_FK_ENTITY,
+                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.OK,
+                            GobiiValidationStatusType.NONEXISTENT_FK_ENTITY,
                             "A marker id in the marker_group table does not exist " + currentMarkerId);
                 }
 
@@ -146,8 +147,8 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
             if (null == currentMarkerGroupMarkerDTO.getFavorableAllele() ||
                     currentMarkerGroupMarkerDTO.getFavorableAllele().isEmpty()) {
-                throw new GobiiDtoMappingException(Status.StatusLevel.ERROR,
-                        Status.ValidationStatusType.MISSING_REQUIRED_VALUE,
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
                         "The no allele value was specified for marker nane " + currentMarkerGroupMarkerDTO.getMarkerName());
             }
 
@@ -193,8 +194,8 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
                 } else {
 
-                    returnVal.getStatus().addStatusMessage(Status.StatusLevel.ERROR,
-                            Status.ValidationStatusType.NONEXISTENT_FK_ENTITY,
+                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.NONEXISTENT_FK_ENTITY,
                             "None of the specified markers exists");
 
                 } // if else at least one marker is valid
@@ -246,8 +247,8 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
             } else if (nonExistingMarkers.size() > 0) {
 
-                throw new GobiiDtoMappingException(Status.StatusLevel.ERROR,
-                        Status.ValidationStatusType.NONEXISTENT_FK_ENTITY,
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONEXISTENT_FK_ENTITY,
                         "None of the specified markers exists");
 
             } // if else at least one marker is valid
@@ -255,8 +256,8 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
             if (nonExistingMarkers.size() > 0) {
                 markerGroupDTO
                         .getStatus()
-                        .addStatusMessage(Status.StatusLevel.VALIDATION,
-                                Status.ValidationStatusType.NONEXISTENT_FK_ENTITY,
+                        .addStatusMessage(GobiiStatusLevel.VALIDATION,
+                                GobiiValidationStatusType.NONEXISTENT_FK_ENTITY,
                                 "Some or all of the specified markers to be created do not exist");
             }
 

@@ -1,8 +1,9 @@
 package org.gobiiproject.gobiiclient.core.restmethods.dtopost;
 
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.ResourceBuilder;
-import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
+
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 import org.slf4j.Logger;

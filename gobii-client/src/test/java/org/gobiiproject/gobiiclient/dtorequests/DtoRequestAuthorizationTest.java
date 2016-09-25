@@ -11,10 +11,11 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.ResourceBuilder;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiimodel.dto.response.HeaderAuth;
+//import org.gobiiproject.gobiimodel.dto.response.HeaderAuth;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderAuth;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;

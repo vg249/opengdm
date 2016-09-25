@@ -1,6 +1,7 @@
-package org.gobiiproject.gobiiweb.controllers;
+package org.gobiiproject.gobiiweb.automation;
 
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
@@ -12,13 +13,15 @@ public class ControllerUtils {
 
     public static void setHeaderResponse(Header header,
                                          HttpServletResponse response,
-                                         HttpStatus successResponseCode) {
+                                         HttpStatus successResponseCode,
+                                         HttpStatus failureResponseCode) {
 
         if (header.getStatus().isSucceeded()) {
             response.setStatus(successResponseCode.value());
         } else {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setStatus(failureResponseCode.value());
         }
 
     }
+
 }

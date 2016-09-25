@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 
 import java.util.ArrayList;
 import java.util.List;

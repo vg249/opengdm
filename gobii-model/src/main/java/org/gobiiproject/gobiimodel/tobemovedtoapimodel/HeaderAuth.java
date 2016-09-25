@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.response;
+package org.gobiiproject.gobiimodel.tobemovedtoapimodel;
 
 
 

@@ -22,11 +22,14 @@ import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobidomain.services.PlatformService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiiweb.automation.ControllerUtils;
+import org.gobiiproject.gobiiweb.automation.PayloadBroker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -37,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -156,13 +158,21 @@ public class BRAPIController {
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            returnVal = contactService.createContact(payloadEnvelope);
+            PayloadBroker<ContactDTO> payloadBroker = new PayloadBroker<>(ContactDTO.class);
+            ContactDTO contactDTOToCreate = payloadBroker.extractSingleItem(payloadEnvelope);
+
+            ContactDTO contactDTONew = contactService.createContact(contactDTOToCreate);
+
+            returnVal.getPayload().getData().add(contactDTONew);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
 
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(), response, HttpStatus.CREATED);
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
 
@@ -176,15 +186,25 @@ public class BRAPIController {
                                                       HttpServletResponse response) {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
+
         try {
 
-            returnVal = contactService.replaceContact(contactId, payloadEnvelope);
+            PayloadBroker<ContactDTO> payloadBroker = new PayloadBroker<>(ContactDTO.class);
+            ContactDTO contactDTOToReplace = payloadBroker.extractSingleItem(payloadEnvelope);
+
+            ContactDTO contactDTOReplaced = contactService.replaceContact(contactId, contactDTOToReplace);
+
+            returnVal.getPayload().getData().add(contactDTOReplaced);
+
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
 
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(), response, HttpStatus.OK);
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
 
@@ -200,13 +220,23 @@ public class BRAPIController {
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            returnVal = contactService.getContactById(contactId);
+            ContactDTO contactDTO = contactService.getContactById(contactId);
+            if (null != contactDTO) {
+                returnVal.getPayload().getData().add(contactDTO);
+            } else {
+                returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "Unable to retrieve a contact with contactId " + contactId);
+            }
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
 
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(), response, HttpStatus.OK);
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
 
@@ -227,17 +257,22 @@ public class BRAPIController {
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            ContactDTO contactRequestDTO = new ContactDTO();
-            contactRequestDTO.setContactId(1);
+            returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.ERROR, "Method not implemented");
+
+//            ContactDTO contactRequestDTO = new ContactDTO();
+//            contactRequestDTO.setContactId(1);
             //contactRequestDTO.setEmail(email);
-            returnVal = contactService.processDml(new PayloadEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
+            //returnVal = contactService.processDml(new PayloadEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
 
 
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(), response, HttpStatus.OK);
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
 
@@ -257,11 +292,8 @@ public class BRAPIController {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
-
-            if (false == LineUtils.isNullOrEmpty(email)) {
-                returnVal = contactService.getContactByEmail(email);
-                //returnVal = contactService.getContactById(1);
-            }
+            ContactDTO contactDTO = contactService.getContactByEmail(email);
+            returnVal.getPayload().getData().add(contactDTO);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -269,7 +301,8 @@ public class BRAPIController {
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
-                HttpStatus.OK);
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
 

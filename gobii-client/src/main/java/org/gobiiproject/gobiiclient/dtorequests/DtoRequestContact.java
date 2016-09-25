@@ -5,9 +5,10 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiclient.core.restmethods.dtopost.EnvelopeDtoRequest;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
+
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 

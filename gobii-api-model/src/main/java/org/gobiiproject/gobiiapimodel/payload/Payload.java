@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.response;
+package org.gobiiproject.gobiiapimodel.payload;
 
 import java.util.ArrayList;
 import java.util.List;

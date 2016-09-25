@@ -1,14 +1,13 @@
 package org.gobiiproject.gobiiclient.core.restmethods;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonObject;
-import com.sun.scenario.effect.impl.sw.java.JSWBlend_EXCLUSIONPeer;
 import org.apache.http.HttpStatus;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.HttpCore;
 import org.gobiiproject.gobiiclient.core.HttpMethodResult;
-import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,13 +99,13 @@ public class RestResource<T> {
 
             String message = makeMessageFromHttpResult(restMethodType.toString(), httpMethodResult);
 
-            Status.StatusLevel statusLevel = returnVal.getHeader().getStatus().isSucceeded() ?
-                    Status.StatusLevel.WARNING :
-                    Status.StatusLevel.ERROR;
+            GobiiStatusLevel gobiiStatusLevel = returnVal.getHeader().getStatus().isSucceeded() ?
+                    GobiiStatusLevel.WARNING :
+                    GobiiStatusLevel.ERROR;
 
             returnVal.getHeader()
                     .getStatus()
-                    .addStatusMessage(statusLevel,
+                    .addStatusMessage(gobiiStatusLevel,
                             message);
         }
 
@@ -179,7 +178,7 @@ public class RestResource<T> {
 
         PayloadEnvelope<T> returnVal = new PayloadEnvelope<>();
 
-        returnVal.getHeader().getStatus().addStatusMessage(Status.StatusLevel.ERROR, "Method not implemented");
+        returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.ERROR, "Method not implemented");
 
 
         return returnVal;
@@ -191,7 +190,7 @@ public class RestResource<T> {
 
         PayloadEnvelope<T> returnVal = new PayloadEnvelope<>();
 
-        returnVal.getHeader().getStatus().addStatusMessage(Status.StatusLevel.ERROR, "Method not implemented");
+        returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.ERROR, "Method not implemented");
 
 
         return returnVal;
@@ -203,7 +202,7 @@ public class RestResource<T> {
 
         PayloadEnvelope<T> returnVal = new PayloadEnvelope<>();
 
-        returnVal.getHeader().getStatus().addStatusMessage(Status.StatusLevel.ERROR, "Method not implemented");
+        returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.ERROR, "Method not implemented");
 
 
         return returnVal;

@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
-package org.gobiiproject.gobiimodel.dto.response;
+package org.gobiiproject.gobiimodel.tobemovedtoapimodel;
 
 
 import java.io.Serializable;

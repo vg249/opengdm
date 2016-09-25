@@ -1,8 +1,10 @@
-package org.gobiiproject.gobiimodel.dto.response;
+package org.gobiiproject.gobiimodel.tobemovedtoapimodel;
 
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.ExceptionUtils;
 
 import java.io.Serializable;
@@ -15,19 +17,6 @@ import java.util.Map;
  */
 public class Status implements Serializable {
 
-    public enum StatusLevel {ERROR, VALIDATION, WARNING, INFO, OK}
-
-    public enum ValidationStatusType {
-        NONE,
-        UNKNOWN,
-        VALIDATION_COMPOUND_UNIQUE,
-        VALIDATION_NOT_UNIQUE,
-        NONEXISTENT_FK_ENTITY,
-        BAD_REQUEST,
-        MISSING_REQUIRED_VALUE,
-        ENTITY_DOES_NOT_EXIST
-    }
-
     private boolean succeeded = true;
     private ArrayList<HeaderStatusMessage> statusMessages = new ArrayList<>();
 
@@ -37,7 +26,7 @@ public class Status implements Serializable {
     public void addException(Exception e) {
         succeeded = false;
         String message = ExceptionUtils.makeMessageFromException(e);
-        addStatusMessage(StatusLevel.ERROR,
+        addStatusMessage(GobiiStatusLevel.ERROR,
                 message);
     }
 
@@ -47,29 +36,29 @@ public class Status implements Serializable {
         succeeded = false;
 
         String message = ExceptionUtils.makeMessageFromException(gobiiException);
-        addStatusMessage(gobiiException.getStatusLevel(),
-                gobiiException.getValidationStatusType(),
+        addStatusMessage(gobiiException.getGobiiStatusLevel(),
+                gobiiException.getGobiiValidationStatusType(),
                 message);
     }
 
 
     @JsonIgnore
-    public void addStatusMessage(StatusLevel statusLevel, String message) {
-        this.addStatusMessage(statusLevel, ValidationStatusType.NONE, message);
+    public void addStatusMessage(GobiiStatusLevel gobiiStatusLevel, String message) {
+        this.addStatusMessage(gobiiStatusLevel, GobiiValidationStatusType.NONE, message);
     }
 
     @JsonIgnore
-    public void addStatusMessage(StatusLevel statusLevel, ValidationStatusType validationStatusType, String message) {
+    public void addStatusMessage(GobiiStatusLevel gobiiStatusLevel, GobiiValidationStatusType gobiiValidationStatusType, String message) {
 
-        succeeded = (StatusLevel.ERROR != statusLevel);
-        statusMessages.add(new HeaderStatusMessage(statusLevel, validationStatusType, message));
+        succeeded = (GobiiStatusLevel.ERROR != gobiiStatusLevel);
+        statusMessages.add(new HeaderStatusMessage(gobiiStatusLevel, gobiiValidationStatusType, message));
 
         // BRAPI requires messages by "code"
         // Java maps don't have duplicate keys, so we need to make sure our key is unique
         Integer keyIndex = 0;
         boolean addedMessage = false;
         do {
-            String codeKey = keyIndex + "-" + statusLevel.toString() + "-" + validationStatusType.toString();
+            String codeKey = keyIndex + "-" + gobiiStatusLevel.toString() + "-" + gobiiValidationStatusType.toString();
             if(false == statusMessagesByCode.containsKey(codeKey)) {
 
                 statusMessagesByCode.put(codeKey,message);

@@ -9,11 +9,12 @@ package org.gobiiproject.gobiiclient.dtorequests;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
-import org.gobiiproject.gobiimodel.dto.response.Status;
-import org.gobiiproject.gobiimodel.dto.response.HeaderStatusMessage;
+;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -162,7 +163,7 @@ public class DtoRequestMarkerGroupTest {
                 .getStatus()
                 .getStatusMessages()
                 .stream()
-                .filter(m -> m.getValidationStatusType() == Status.ValidationStatusType.NONEXISTENT_FK_ENTITY)
+                .filter(m -> m.getGobiiValidationStatusType() == GobiiValidationStatusType.NONEXISTENT_FK_ENTITY)
                 .collect(Collectors.toList());
 
         Assert.assertTrue(invalidResponses.size() == 1);

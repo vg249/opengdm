@@ -1,7 +1,7 @@
 package org.gobiiproject.gobidomain.services;
 
+import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 
 
 /**
@@ -9,14 +9,12 @@ import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
  */
 public interface ContactService {
 
-    PayloadEnvelope<ContactDTO> processDml(PayloadEnvelope<ContactDTO> payloadEnvelope);
-
-    PayloadEnvelope<ContactDTO> getContactById(Integer contactId);
-    PayloadEnvelope<ContactDTO> getContactByEmail(String email);
-    PayloadEnvelope<ContactDTO> createContact(PayloadEnvelope<ContactDTO> payloadEnvelope);
-    PayloadEnvelope<ContactDTO> replaceContact(Integer contactId, PayloadEnvelope<ContactDTO> payloadEnvelope);
-    PayloadEnvelope<ContactDTO> getContactByLastName(String lastName);
-    PayloadEnvelope<ContactDTO> getContactByFirstName(String email, String lastName, String firstName);
+    ContactDTO createContact(ContactDTO contactDTO) throws GobiiDomainException;
+    ContactDTO replaceContact(Integer contactId, ContactDTO contactDTO) throws GobiiDomainException;
+    ContactDTO getContactById(Integer contactId) throws GobiiDomainException;
+    ContactDTO getContactByEmail(String email) throws GobiiDomainException;
+    ContactDTO getContactByLastName(String lastName) throws GobiiDomainException;
+    ContactDTO getContactByFirstName(String email, String lastName, String firstName) throws GobiiDomainException;
 
 
 }

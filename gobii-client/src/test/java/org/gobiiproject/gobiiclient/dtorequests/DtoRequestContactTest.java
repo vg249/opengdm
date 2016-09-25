@@ -6,6 +6,7 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.core.restmethods.RestUri;
 import org.gobiiproject.gobiiclient.core.restmethods.UriFactory;
@@ -13,13 +14,11 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Date;
@@ -176,6 +175,7 @@ public class DtoRequestContactTest {
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         ContactDTO contactDTO = resultEnvelope.getPayload().getData().get(0);
+        Assert.assertNotNull(contactDTO);
         Assert.assertNotNull(contactDTO.getEmail());
 
         //restUriContact.setParamValue(Param);

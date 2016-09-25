@@ -1,16 +1,14 @@
 package org.gobiiproject.gobiiclient.core.restmethods.dtopost;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.HttpCore;
 import org.gobiiproject.gobiiclient.core.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.ResourceBuilder;
 import org.gobiiproject.gobiiclient.core.restmethods.UriFactory;
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

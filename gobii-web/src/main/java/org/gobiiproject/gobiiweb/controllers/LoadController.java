@@ -8,7 +8,6 @@ package org.gobiiproject.gobiiweb.controllers;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -170,25 +169,6 @@ public class LoadController {
         return (returnVal);
 
     }//getPingResponse()
-
-    @RequestMapping(value = "/contacts", method = RequestMethod.POST)
-    @ResponseBody
-    public PayloadEnvelope<ContactDTO> processContact(@RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope) {
-
-        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
-
-        try {
-
-            returnVal = contactService.processDml(payloadEnvelope);
-        } catch (Exception e) {
-
-            returnVal.getHeader().getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }//processCOntact
 
 
     @RequestMapping(value = "/reference", method = RequestMethod.POST)

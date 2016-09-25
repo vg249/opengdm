@@ -1,8 +1,9 @@
-package org.gobiiproject.gobiimodel.dto.response;
+package org.gobiiproject.gobiiapimodel.payload;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 
 import java.util.List;
 

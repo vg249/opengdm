@@ -9,12 +9,13 @@ package org.gobiiproject.gobiiclient.core.restmethods.dtopost;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.HttpCore;
 import org.gobiiproject.gobiiclient.core.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.restmethods.RestUri;
 import org.gobiiproject.gobiiclient.core.restmethods.UriFactory;
-import org.gobiiproject.gobiimodel.dto.response.PayloadEnvelope;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

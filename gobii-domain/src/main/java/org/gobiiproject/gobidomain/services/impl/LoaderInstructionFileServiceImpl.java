@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
 import org.gobiiproject.gobiidtomapping.DtoMapLoaderInstructions;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +38,8 @@ public class LoaderInstructionFileServiceImpl implements LoaderInstructionFilesS
                     break;
 
                 default:
-                    returnVal.getStatus().addStatusMessage(Status.StatusLevel.ERROR,
-                            Status.ValidationStatusType.BAD_REQUEST,
+                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
                             "Unsupported proces type " + returnVal.getProcessType().toString());
 
             } // switch
