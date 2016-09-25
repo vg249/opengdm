@@ -7,8 +7,8 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiiclient.core.restmethods.dtopost.DtoRequestProcessor;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 
 public class DtoRequestProject {
 

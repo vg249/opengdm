@@ -7,8 +7,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.junit.Assert;

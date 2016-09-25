@@ -8,7 +8,6 @@ package org.gobiiproject.gobiiclient.dtorequests;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -32,7 +31,6 @@ public class DtoRequestPingTest {
     public void testGetPingFromExtractController() throws Exception {
 
         PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
-        pingDTORequest.setControllerType(ControllerType.EXTRACTOR);
 
         DtoRequestPing dtoRequestPing = new DtoRequestPing();
         PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
@@ -50,7 +48,6 @@ public class DtoRequestPingTest {
     public void testGetPingFromLoadController() throws Exception {
 
         PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
-        pingDTORequest.setControllerType(ControllerType.LOADER);
 
         DtoRequestPing dtoRequestPing = new DtoRequestPing();
         PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);

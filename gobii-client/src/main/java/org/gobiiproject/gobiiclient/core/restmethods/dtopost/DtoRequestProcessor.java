@@ -7,8 +7,8 @@ import org.gobiiproject.gobiiclient.core.HttpMethodResult;
 import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

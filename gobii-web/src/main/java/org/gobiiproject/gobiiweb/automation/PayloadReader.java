@@ -6,11 +6,11 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiprojec
 /**
  * Created by Phil on 9/25/2016.
  */
-public class PayloadBroker<T> {
+public class PayloadReader<T> {
 
 
     private final Class<T> dtoType;
-    public PayloadBroker(Class<T> dtoType) {
+    public PayloadReader(Class<T> dtoType) {
         this.dtoType = dtoType;
     }
 

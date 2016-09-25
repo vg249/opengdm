@@ -1,11 +1,8 @@
 package org.gobiiproject.gobiiapimodel.restresources;
 
 
-import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
-import org.gobiiproject.gobiiapimodel.restresources.ResourceParam;
-import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 
 /**
  * Created by Phil on 9/7/2016.
@@ -18,7 +15,13 @@ public class UriFactory {
 
     private String cropContextRoot;
     public UriFactory(String cropContextRoot) {
+
         this.cropContextRoot = cropContextRoot;
+        if( null != this.cropContextRoot ) {
+            if (this.cropContextRoot.lastIndexOf(URL_SEPARATOR) != this.cropContextRoot.length() - 1) {
+                this.cropContextRoot = this.cropContextRoot + URL_SEPARATOR;
+            }
+        }
     }
 
 
@@ -37,7 +40,7 @@ public class UriFactory {
 
     }
 
-//    public  RestUri contactByContactUriParam() throws Exception {
+//    public  RestUri resourceByUriIdParam() throws Exception {
 //
 //        RestUri returnVal;
 //
@@ -49,7 +52,7 @@ public class UriFactory {
 //
 //        return returnVal;
 //
-//    } // contactByContactUriParam();
+//    } // resourceByUriIdParam();
 
 
     public RestUri RestUriFromUri(String uri) {
@@ -64,23 +67,23 @@ public class UriFactory {
                 ServiceRequestId.URL_CONTACTS),
                 DELIM_PARAM_BEGIN, DELIM_PARAM_END);
 
-    } // contactByContactUriParam();
+    } // resourceByUriIdParam();
 
 
-    public  RestUri contactByContactUriParam() throws Exception {
+    public  RestUri resourceByUriIdParam(ServiceRequestId serviceRequestId) throws Exception {
 
         RestUri returnVal;
 
         String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
                 this.cropContextRoot,
-                ServiceRequestId.URL_CONTACTS);
-        String parameterizedUrl = appendPathVariable(baseUrl, "contactId");
+                serviceRequestId);
+        String parameterizedUrl = appendPathVariable(baseUrl, "id");
         returnVal = new RestUri(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-        returnVal.addParam(ResourceParam.ResourceParamType.UriParam, "contactId");
+        returnVal.addParam(ResourceParam.ResourceParamType.UriParam, "id");
 
         return returnVal;
 
-    } // contactByContactUriParam();
+    } // resourceByUriIdParam();
 
     public  RestUri contactsByQueryParams() throws Exception {
 
@@ -96,6 +99,6 @@ public class UriFactory {
 
         return returnVal;
 
-    } // contactByContactUriParam();
+    } // resourceByUriIdParam();
 
 }

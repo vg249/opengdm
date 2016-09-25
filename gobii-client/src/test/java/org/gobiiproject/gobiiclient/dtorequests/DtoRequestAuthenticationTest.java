@@ -12,8 +12,8 @@ import org.gobiiproject.gobiiclient.core.restmethods.dtopost.DtoRequestProcessor
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;

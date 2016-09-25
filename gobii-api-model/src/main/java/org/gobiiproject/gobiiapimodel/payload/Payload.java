@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiiapimodel.payload;
 
+import org.gobiiproject.gobiiapimodel.hateos.Links;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,13 +10,21 @@ import java.util.List;
  */
 public class Payload<T> {
 
+    Links links = new Links();
     private List<T> data = new ArrayList<>();
 
     public List<T> getData() {
         return data;
     }
-
     public void setData(List<T> data) {
         this.data = data;
+    }
+
+    public Links getLinks() {
+        return links;
+    }
+
+    public void setLinks(Links links) {
+        this.links = links;
     }
 }

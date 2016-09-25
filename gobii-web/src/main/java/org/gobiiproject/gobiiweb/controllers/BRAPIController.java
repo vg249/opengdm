@@ -23,13 +23,15 @@ import org.gobiiproject.gobidomain.services.PlatformService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.automation.ControllerUtils;
-import org.gobiiproject.gobiiweb.automation.PayloadBroker;
+import org.gobiiproject.gobiiweb.automation.PayloadReader;
+import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -158,12 +160,17 @@ public class BRAPIController {
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            PayloadBroker<ContactDTO> payloadBroker = new PayloadBroker<>(ContactDTO.class);
-            ContactDTO contactDTOToCreate = payloadBroker.extractSingleItem(payloadEnvelope);
+            PayloadReader<ContactDTO> payloadReader = new PayloadReader<>(ContactDTO.class);
+            ContactDTO contactDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
 
             ContactDTO contactDTONew = contactService.createContact(contactDTOToCreate);
 
-            returnVal.getPayload().getData().add(contactDTONew);
+            PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
+                    ContactDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_CONTACTS,
+                    contactDTONew);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -189,12 +196,17 @@ public class BRAPIController {
 
         try {
 
-            PayloadBroker<ContactDTO> payloadBroker = new PayloadBroker<>(ContactDTO.class);
-            ContactDTO contactDTOToReplace = payloadBroker.extractSingleItem(payloadEnvelope);
+            PayloadReader<ContactDTO> payloadReader = new PayloadReader<>(ContactDTO.class);
+            ContactDTO contactDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
 
             ContactDTO contactDTOReplaced = contactService.replaceContact(contactId, contactDTOToReplace);
 
-            returnVal.getPayload().getData().add(contactDTOReplaced);
+            PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
+                    ContactDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_CONTACTS,
+                    contactDTOReplaced);
 
 
         } catch (Exception e) {
@@ -222,7 +234,14 @@ public class BRAPIController {
 
             ContactDTO contactDTO = contactService.getContactById(contactId);
             if (null != contactDTO) {
-                returnVal.getPayload().getData().add(contactDTO);
+
+                PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
+                        ContactDTO.class);
+
+                payloadWriter.writeSingleItem(returnVal,
+                        ServiceRequestId.URL_CONTACTS,
+                        contactDTO);
+
             } else {
                 returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.NONE,
@@ -293,7 +312,12 @@ public class BRAPIController {
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
             ContactDTO contactDTO = contactService.getContactByEmail(email);
-            returnVal.getPayload().getData().add(contactDTO);
+            PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
+                    ContactDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_CONTACTS,
+                    contactDTO);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);

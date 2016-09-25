@@ -9,7 +9,7 @@ import org.gobiiproject.gobiiclient.core.HttpCore;
 import org.gobiiproject.gobiiclient.core.HttpMethodResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 
-import org.gobiiproject.gobiiapimodel.RestMethodTypes;
+import org.gobiiproject.gobiiapimodel.types.RestMethodTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

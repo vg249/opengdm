@@ -10,8 +10,7 @@ import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
@@ -309,7 +308,6 @@ public class ConfigCheck {
             if (ClientContext.getInstance(null, false).login(userDetail.getUserName(), userDetail.getPassword())) {
 
                 PingDTO pingDTORequest = new PingDTO();
-                pingDTORequest.setControllerType(ControllerType.LOADER);
 
                 DtoRequestPing dtoRequestPing = new DtoRequestPing();
                 PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);

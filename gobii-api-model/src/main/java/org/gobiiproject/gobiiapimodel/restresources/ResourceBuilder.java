@@ -5,8 +5,8 @@
 // ************************************************************************
 package org.gobiiproject.gobiiapimodel.restresources;
 
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 
 public class ResourceBuilder {
 

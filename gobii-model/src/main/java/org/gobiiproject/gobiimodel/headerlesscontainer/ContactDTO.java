@@ -1,6 +1,5 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * Created by Angel on 5/6/2016.
  */
-public class ContactDTO {
+public class ContactDTO extends DTOBase {
 
     public ContactDTO() {
     }
@@ -32,6 +31,15 @@ public class ContactDTO {
     private Integer modifiedBy;
     private Date modifiedDate;
     private Integer organizationId;
+
+    @Override
+    public Integer getId() {
+        return this.contactId;
+    }
+
+    public void setId(Integer id) {
+        this.contactId = id;
+    }
 
     @GobiiEntityParam(paramName = "contactId")
     public Integer getContactId() {

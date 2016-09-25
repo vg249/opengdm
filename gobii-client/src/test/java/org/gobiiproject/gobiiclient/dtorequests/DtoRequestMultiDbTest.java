@@ -11,10 +11,8 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestValues;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -57,7 +55,6 @@ public class DtoRequestMultiDbTest {
             // should cause server to assign the correct datasource
             Assert.assertTrue(Authenticator.authenticate(currentCropType));
 
-            pingDTORequest.setControllerType(ControllerType.LOADER);
             DtoRequestPing currentDtoRequestPing = new DtoRequestPing();
             PingDTO currentPingDTOResponse = currentDtoRequestPing.process(pingDTORequest);
             Assert.assertFalse("Ping failed for crop " + currentCropType.toString(),

@@ -3,7 +3,8 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
-import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,10 @@ public class ContactServiceImpl implements ContactService {
 
             returnVal = dtoMapContact.createContact(contactDTO);
 
+            // When we have roles and permissions, this will be set programmatically
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
         } catch (Exception e) {
 
             LOGGER.error("Gobii service error", e);
@@ -53,6 +58,8 @@ public class ContactServiceImpl implements ContactService {
 
 
                     returnVal = dtoMapContact.replaceContact(contactId, contactDTO);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
                 } else {
 
@@ -94,6 +101,9 @@ public class ContactServiceImpl implements ContactService {
 
         try {
             returnVal = dtoMapContact.getContactDetails(contactId);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
 
             if (null == returnVal) {
                 throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
@@ -118,6 +128,8 @@ public class ContactServiceImpl implements ContactService {
         ContactDTO returnVal;
         try {
             returnVal = dtoMapContact.getContactByEmail(email);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         } catch (Exception e) {
 
