@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiclient.core.HttpCore;
 import org.gobiiproject.gobiiclient.core.HttpMethodResult;
-import org.gobiiproject.gobiiclient.core.restmethods.UriFactory;
+import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

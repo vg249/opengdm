@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.core.restmethods;
+package org.gobiiproject.gobiiapimodel.restresources;
 
 /**
  * Created by Phil on 9/7/2016.

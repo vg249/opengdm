@@ -1,7 +1,9 @@
-package org.gobiiproject.gobiiclient.core.restmethods;
+package org.gobiiproject.gobiiapimodel.restresources;
 
 
-import org.gobiiproject.gobiiclient.core.ResourceBuilder;
+import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
+import org.gobiiproject.gobiiapimodel.restresources.ResourceParam;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
 
@@ -50,7 +52,7 @@ public class UriFactory {
 //    } // contactByContactUriParam();
 
 
-    public  RestUri RestUriFromUri(String uri) {
+    public RestUri RestUriFromUri(String uri) {
         return new RestUri(uri,DELIM_PARAM_BEGIN, DELIM_PARAM_END);
     }
 

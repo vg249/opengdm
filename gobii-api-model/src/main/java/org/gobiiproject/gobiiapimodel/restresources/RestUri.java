@@ -1,5 +1,6 @@
-package org.gobiiproject.gobiiclient.core.restmethods;
+package org.gobiiproject.gobiiapimodel.restresources;
 
+import org.gobiiproject.gobiiapimodel.restresources.ResourceParam;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 
 import java.util.ArrayList;
