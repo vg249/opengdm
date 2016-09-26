@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         ExperimentDTO returnVal = experimentDTO;
 
         try {
-            switch (returnVal.getProcessType()) {
+            switch (returnVal.getGobiiProcessType()) {
                 case READ:
                     returnVal  = dtoMapExperiment.getExperiment(returnVal);
                     break;
@@ -47,9 +47,9 @@ public class ExperimentServiceImpl implements ExperimentService {
                     break;
 
                 default:
-                    returnVal.getStatus().addStatusMessage(Status.StatusLevel.ERROR,
-                            Status.ValidationStatusType.BAD_REQUEST,
-                            "Unsupported process type " + experimentDTO.getProcessType().toString());
+                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
+                            "Unsupported process type " + experimentDTO.getGobiiProcessType().toString());
 
             } // switch()
 

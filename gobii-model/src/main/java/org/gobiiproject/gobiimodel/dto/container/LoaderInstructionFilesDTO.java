@@ -1,7 +1,8 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 public class LoaderInstructionFilesDTO extends Header {
 
     public LoaderInstructionFilesDTO() {
-        super(ProcessType.CREATE);
+        super(GobiiProcessType.CREATE);
     }
 
     private List<GobiiLoaderInstruction> gobiiLoaderInstructions = new ArrayList<>();

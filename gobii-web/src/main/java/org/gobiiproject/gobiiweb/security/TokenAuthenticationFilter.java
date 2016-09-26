@@ -8,8 +8,9 @@ package org.gobiiproject.gobiiweb.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
-import org.gobiiproject.gobiimodel.dto.response.HeaderAuth;
 
+
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderAuth;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

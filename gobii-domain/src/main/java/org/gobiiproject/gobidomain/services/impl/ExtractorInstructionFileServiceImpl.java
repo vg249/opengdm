@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
 import org.gobiiproject.gobiidtomapping.DtoMapExtractorInstructions;
 import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class ExtractorInstructionFileServiceImpl implements ExtractorInstruction
 
         try {
 
-            switch (returnVal.getProcessType()) {
+            switch (returnVal.getGobiiProcessType()) {
 
                 case CREATE:
                     returnVal = dtoMapExtractorInstructions.writeInstructions(extractorInstructionFilesDTO);
@@ -38,9 +38,9 @@ public class ExtractorInstructionFileServiceImpl implements ExtractorInstruction
                     break;
 
                 default:
-                    returnVal.getStatus().addStatusMessage(Status.StatusLevel.ERROR,
-                            Status.ValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces type " + returnVal.getProcessType().toString());
+                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
+                            "Unsupported proces type " + returnVal.getGobiiProcessType().toString());
 
             } // switch
 

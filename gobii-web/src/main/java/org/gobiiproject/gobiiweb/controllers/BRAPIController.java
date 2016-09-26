@@ -22,14 +22,19 @@ import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobidomain.services.PlatformService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
-import org.gobiiproject.gobiimodel.dto.response.Header;
-import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiiweb.automation.ControllerUtils;
+import org.gobiiproject.gobiiweb.automation.PayloadReader;
+import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +43,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 
@@ -143,18 +150,112 @@ public class BRAPIController {
 
     }
 
-    @RequestMapping(value = "/contact/{contactId:[\\d]+}", method = RequestMethod.GET)
-    @ResponseBody
-    public ResultEnvelope<ContactDTO> getContactsById(@PathVariable Integer contactId) {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+    @RequestMapping(value = "/contacts", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<ContactDTO> createContact(@RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope,
+                                                     HttpServletRequest request,
+                                                     HttpServletResponse response) {
+
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            returnVal = contactService.getContactById(contactId);
+            PayloadReader<ContactDTO> payloadReader = new PayloadReader<>(ContactDTO.class);
+            ContactDTO contactDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            ContactDTO contactDTONew = contactService.createContact(contactDTOToCreate);
+
+            PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
+                    ContactDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_CONTACTS,
+                    contactDTONew);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/contacts/{contactId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<ContactDTO> replaceContact(@RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope,
+                                                      @PathVariable Integer contactId,
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response) {
+
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<ContactDTO> payloadReader = new PayloadReader<>(ContactDTO.class);
+            ContactDTO contactDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            ContactDTO contactDTOReplaced = contactService.replaceContact(contactId, contactDTOToReplace);
+
+            PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
+                    ContactDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_CONTACTS,
+                    contactDTOReplaced);
+
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+    @RequestMapping(value = "/contacts/{contactId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ContactDTO> getContactsById(@PathVariable Integer contactId,
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            ContactDTO contactDTO = contactService.getContactById(contactId);
+            if (null != contactDTO) {
+
+                PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
+                        ContactDTO.class);
+
+                payloadWriter.writeSingleItem(returnVal,
+                        ServiceRequestId.URL_CONTACTS,
+                        contactDTO);
+
+            } else {
+                returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "Unable to retrieve a contact with contactId " + contactId);
+            }
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
 
@@ -165,22 +266,32 @@ public class BRAPIController {
     // capable of generating responses with characteristics not acceptable according to the request "accept" headers."
     // In other words, the email address is telling the server that you're asking for some other format
     // So for email based searches, you'll have to use the request parameter version
-    @RequestMapping(value = "/contact/{email:[a-zA-Z-]+@[a-zA-Z-]+.[a-zA-Z-]+}",
+    @RequestMapping(value = "/contacts/{email:[a-zA-Z-]+@[a-zA-Z-]+.[a-zA-Z-]+}",
             method = RequestMethod.GET)
     @ResponseBody
-    public ResultEnvelope<ContactDTO> getContactsByEmail(@PathVariable String email) {
+    public PayloadEnvelope<ContactDTO> getContactsByEmail(@PathVariable String email,
+                                                          HttpServletRequest request,
+                                                          HttpServletResponse response) {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            ContactDTO contactRequestDTO = new ContactDTO();
-            contactRequestDTO.setContactId(1);
+            returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.ERROR, "Method not implemented");
+
+//            ContactDTO contactRequestDTO = new ContactDTO();
+//            contactRequestDTO.setContactId(1);
             //contactRequestDTO.setEmail(email);
-            returnVal = contactService.processDml(new RequestEnvelope<>(contactRequestDTO, Header.ProcessType.READ));
+            //returnVal = contactService.processDml(new PayloadEnvelope<>(contactRequestDTO, GobiiProcessType.READ));
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
 
@@ -189,24 +300,33 @@ public class BRAPIController {
     // Example: http://localhost:8282/gobii-dev/brapi/v1/contact-search?email=foo&lastName=bar&firstName=snot
     // all parameters must be present, but they don't all neeed a value
     @RequestMapping(value = "/contact-search",
-            params =  {"email", "lastName", "firstName"},
+            params = {"email", "lastName", "firstName"},
             method = RequestMethod.GET)
     @ResponseBody
-    public ResultEnvelope<ContactDTO> getContactsBySearch(@RequestParam("email") String email,
-                                                          @RequestParam("lastName") String lastName,
-                                                          @RequestParam("firstName") String firstName) {
+    public PayloadEnvelope<ContactDTO> getContactsBySearch(@RequestParam("email") String email,
+                                                           @RequestParam("lastName") String lastName,
+                                                           @RequestParam("firstName") String firstName,
+                                                           HttpServletRequest request,
+                                                           HttpServletResponse response) {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
+            ContactDTO contactDTO = contactService.getContactByEmail(email);
+            PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
+                    ContactDTO.class);
 
-            if( false == LineUtils.isNullOrEmpty(email)) {
-                returnVal = contactService.getContactByEmail(email);
-                //returnVal = contactService.getContactById(1);
-            }
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_CONTACTS,
+                    contactDTO);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
 

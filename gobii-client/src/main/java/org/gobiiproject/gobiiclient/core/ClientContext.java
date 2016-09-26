@@ -1,12 +1,13 @@
 package org.gobiiproject.gobiiclient.core;
 
-import org.gobiiproject.gobiiclient.core.restmethods.post.TypedRestRequest;
+import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
+import org.gobiiproject.gobiiclient.core.restmethods.dtopost.DtoRequestProcessor;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
@@ -27,7 +28,7 @@ import java.util.Map;
 public final class ClientContext {
 
 
-    private static Logger LOGGER = LoggerFactory.getLogger(TypedRestRequest.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ClientContext.class);
 
     // configure as a singleton
     // this may not be effective if more thn one classloader is used
@@ -153,22 +154,28 @@ public final class ClientContext {
 
         // first authenticate
         // you can't use login() from here -- it assumes that ClientContext has already been constructed
-        String authPath = Urls.getRequestUrl(ControllerType.EXTRACTOR,
+        String authPath = ResourceBuilder.getRequestUrl(ControllerType.EXTRACTOR,
                 ServiceRequestId.URL_AUTH,
                 context);
-        HttpCore httpCore = new HttpCore(host, port);
+        HttpCore httpCore = new HttpCore(host, port, null);
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
         returnVal.userToken = httpCore.getTokenForUser(authPath, userDetail.getUserName(), userDetail.getPassword());
 
         // now get the settings
-        String settingsPath = Urls.getRequestUrl(ControllerType.LOADER,
+        String settingsPath = ResourceBuilder.getRequestUrl(ControllerType.LOADER,
                 ServiceRequestId.URL_CONFIGSETTINGS,
                 context);
         ConfigSettingsDTO configSettingsDTORequest = new ConfigSettingsDTO();
-        TypedRestRequest<ConfigSettingsDTO> typedRestRequest = new TypedRestRequest<>(host, port, ConfigSettingsDTO.class);
-        ConfigSettingsDTO configSettingsDTOResponse = typedRestRequest.getTypedHtppResponseForDto(settingsPath,
+
+        DtoRequestProcessor<ConfigSettingsDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
+        ConfigSettingsDTO configSettingsDTOResponse = dtoDtoRequestProcessor.getTypedHtppResponseForDto(
+                host,
+                port,
+                null,
+                settingsPath,
+                ConfigSettingsDTO.class,
                 configSettingsDTORequest,
                 returnVal.userToken);
 
@@ -268,11 +275,13 @@ public final class ClientContext {
         boolean returnVal = true;
 
         try {
-            String authUrl = Urls.getRequestUrl(ControllerType.EXTRACTOR,
+            String authUrl = ResourceBuilder.getRequestUrl(ControllerType.EXTRACTOR,
+                    this.getCurrentCropContextRoot(),
                     ServiceRequestId.URL_AUTH);
 
             HttpCore httpCore = new HttpCore(this.getCurrentCropDomain(),
-                    this.getCurrentCropPort());
+                    this.getCurrentCropPort(),
+                    this.getCurrentCropContextRoot());
 
             userToken = httpCore.getTokenForUser(authUrl, userName, password);
         } catch (Exception e) {

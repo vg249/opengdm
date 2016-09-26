@@ -5,6 +5,7 @@ gobii-dao/target
 gobii-domain/target
 gobii-dtomapping/target
 gobii-model/target
+gobii-api-model/target
 gobii-process/target
 gobii-web/target
 /bin/

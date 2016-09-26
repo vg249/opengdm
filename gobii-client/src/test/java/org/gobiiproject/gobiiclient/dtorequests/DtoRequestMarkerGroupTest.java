@@ -9,11 +9,13 @@ package org.gobiiproject.gobiiclient.dtorequests;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
-import org.gobiiproject.gobiimodel.dto.response.Status;
-import org.gobiiproject.gobiimodel.dto.response.HeaderStatusMessage;
+;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -60,10 +62,10 @@ public class DtoRequestMarkerGroupTest {
 
 
         List<MarkerGroupMarkerDTO> markerGroupMarkers = TestDtoFactory.makeMarkerGroupMarkers(validMarkerNames,
-                Header.ProcessType.CREATE);
+                GobiiProcessType.CREATE);
 
         MarkerGroupDTO markerGroupDTORequest = TestDtoFactory
-                .makePopulatedMarkerGroupDTO(Header.ProcessType.CREATE, 1, markerGroupMarkers);
+                .makePopulatedMarkerGroupDTO(GobiiProcessType.CREATE, 1, markerGroupMarkers);
 
         MarkerGroupDTO markerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTORequest);
 
@@ -102,10 +104,10 @@ public class DtoRequestMarkerGroupTest {
 
 
         List<MarkerGroupMarkerDTO> markerGroupMarkers = TestDtoFactory.makeMarkerGroupMarkers(someInvalidNames,
-                Header.ProcessType.CREATE);
+                GobiiProcessType.CREATE);
 
         MarkerGroupDTO markerGroupDTORequest = TestDtoFactory
-                .makePopulatedMarkerGroupDTO(Header.ProcessType.CREATE, 1, markerGroupMarkers);
+                .makePopulatedMarkerGroupDTO(GobiiProcessType.CREATE, 1, markerGroupMarkers);
 
         MarkerGroupDTO markerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTORequest);
 
@@ -146,10 +148,10 @@ public class DtoRequestMarkerGroupTest {
 
 
         List<MarkerGroupMarkerDTO> markerGroupMarkers = TestDtoFactory.makeMarkerGroupMarkers(allInvalidNames,
-                Header.ProcessType.CREATE);
+                GobiiProcessType.CREATE);
 
         MarkerGroupDTO markerGroupDTORequest = TestDtoFactory
-                .makePopulatedMarkerGroupDTO(Header.ProcessType.CREATE, 1, markerGroupMarkers);
+                .makePopulatedMarkerGroupDTO(GobiiProcessType.CREATE, 1, markerGroupMarkers);
 
         MarkerGroupDTO markerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTORequest);
 
@@ -162,7 +164,7 @@ public class DtoRequestMarkerGroupTest {
                 .getStatus()
                 .getStatusMessages()
                 .stream()
-                .filter(m -> m.getValidationStatusType() == Status.ValidationStatusType.NONEXISTENT_FK_ENTITY)
+                .filter(m -> m.getGobiiValidationStatusType() == GobiiValidationStatusType.NONEXISTENT_FK_ENTITY)
                 .collect(Collectors.toList());
 
         Assert.assertTrue(invalidResponses.size() == 1);
@@ -176,9 +178,9 @@ public class DtoRequestMarkerGroupTest {
         // CREATE A MARKER GROUP
         DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
         List<MarkerGroupMarkerDTO> markerGroupMarkers = TestDtoFactory.makeMarkerGroupMarkers(validMarkerNames,
-                Header.ProcessType.CREATE);
+                GobiiProcessType.CREATE);
         MarkerGroupDTO markerGroupDTORequest = TestDtoFactory
-                .makePopulatedMarkerGroupDTO(Header.ProcessType.CREATE, 1, markerGroupMarkers);
+                .makePopulatedMarkerGroupDTO(GobiiProcessType.CREATE, 1, markerGroupMarkers);
         MarkerGroupDTO markerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTORequest);
         Integer newMarkerGroupId = markerGroupDTOResponse.getMarkerGroupId();
 
@@ -221,9 +223,9 @@ public class DtoRequestMarkerGroupTest {
         // CREATE A MARKER GROUP
         DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
         List<MarkerGroupMarkerDTO> markerGroupMarkers = TestDtoFactory.makeMarkerGroupMarkers(validMarkerNames,
-                Header.ProcessType.CREATE);
+                GobiiProcessType.CREATE);
         MarkerGroupDTO markerGroupDTORequest = TestDtoFactory
-                .makePopulatedMarkerGroupDTO(Header.ProcessType.CREATE, 1, markerGroupMarkers);
+                .makePopulatedMarkerGroupDTO(GobiiProcessType.CREATE, 1, markerGroupMarkers);
         MarkerGroupDTO markerGroupDTOResponse = dtoRequestMarkerGroup.process(markerGroupDTORequest);
         Integer newMarkerGroupId = markerGroupDTOResponse.getMarkerGroupId();
 
@@ -232,13 +234,13 @@ public class DtoRequestMarkerGroupTest {
         MarkerGroupDTO markerGroupDTORequestRefreshRequest = new MarkerGroupDTO();
         markerGroupDTORequestRefreshRequest.setMarkerGroupId(newMarkerGroupId);
         MarkerGroupDTO markerGroupDTOResponseToUpdate = dtoRequestMarkerGroup.process(markerGroupDTORequestRefreshRequest);
-        markerGroupDTOResponseToUpdate.setProcessType(Header.ProcessType.UPDATE);
+        markerGroupDTOResponseToUpdate.setGobiiProcessType(GobiiProcessType.UPDATE);
 
         String previousName = markerGroupDTOResponseToUpdate.getName();
         String newName = UUID.randomUUID().toString();
         markerGroupDTOResponseToUpdate.setName(newName);
 
-        MarkerGroupMarkerDTO markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(Header.ProcessType.CREATE);
+        MarkerGroupMarkerDTO markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
         markerGroupMarkerDTOToAdd.setMarkerName("40539");
         markerGroupMarkerDTOToAdd.setFavorableAllele("N");
         String newMarkerName = markerGroupMarkerDTOToAdd.getMarkerName();
@@ -248,7 +250,7 @@ public class DtoRequestMarkerGroupTest {
                 .getMarkers()
                 .get(0);
         String removedMarkerName = markerGroupMarkerDTOToRemove.getMarkerName();
-        markerGroupMarkerDTOToRemove.setProcessType(Header.ProcessType.DELETE);
+        markerGroupMarkerDTOToRemove.setGobiiProcessType(GobiiProcessType.DELETE);
 
         MarkerGroupMarkerDTO markerGroupMarkerDTOToModify = markerGroupDTOResponseToUpdate
                 .getMarkers()
@@ -257,7 +259,7 @@ public class DtoRequestMarkerGroupTest {
         String modifiedAlelleOldValue = markerGroupMarkerDTOToModify.getFavorableAllele();
         String modifiedAlleleNewValue = "X"; // not a legit value, but will work for our test
         markerGroupMarkerDTOToModify.setFavorableAllele(modifiedAlleleNewValue);
-        markerGroupMarkerDTOToModify.setProcessType(Header.ProcessType.UPDATE);
+        markerGroupMarkerDTOToModify.setGobiiProcessType(GobiiProcessType.UPDATE);
 
         MarkerGroupDTO markerGroupDTOUpdated = dtoRequestMarkerGroup.process(markerGroupDTOResponseToUpdate);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOUpdated));

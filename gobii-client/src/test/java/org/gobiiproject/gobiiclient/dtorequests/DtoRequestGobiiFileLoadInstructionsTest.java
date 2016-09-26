@@ -8,11 +8,12 @@ package org.gobiiproject.gobiiclient.dtorequests;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.response.Status;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.DataSetOrientationType;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
@@ -182,7 +183,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE
         LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieve = new LoaderInstructionFilesDTO();
-        loaderInstructionFilesDTOretrieve.setProcessType(Header.ProcessType.READ);
+        loaderInstructionFilesDTOretrieve.setGobiiProcessType(GobiiProcessType.READ);
         loaderInstructionFilesDTOretrieve
                 .setInstructionFileName(loaderInstructionFilesDTOResponse.getInstructionFileName());
         LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieveResponse
@@ -244,8 +245,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                                 .getStatusMessages()
                                 .stream()
                                 .filter(r ->
-                                        r.getValidationStatusType()
-                                                .equals(Status.ValidationStatusType.ENTITY_DOES_NOT_EXIST))
+                                        r.getGobiiValidationStatusType()
+                                                .equals(GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST))
                                 .collect(Collectors.toList())
                                 .size()
         );
@@ -305,8 +306,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                                 .getStatusMessages()
                                 .stream()
                                 .filter(r ->
-                                        r.getValidationStatusType()
-                                                .equals(Status.ValidationStatusType.ENTITY_DOES_NOT_EXIST))
+                                        r.getGobiiValidationStatusType()
+                                                .equals(GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST))
                                 .collect(Collectors.toList())
                                 .size()
         );

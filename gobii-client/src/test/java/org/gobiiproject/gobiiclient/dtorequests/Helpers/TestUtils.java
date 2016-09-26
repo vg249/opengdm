@@ -1,8 +1,10 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
-import org.gobiiproject.gobiimodel.dto.response.Header;
+
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.response.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
+//import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;;
 
 import java.text.Collator;
 import java.util.Collections;

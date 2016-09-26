@@ -1,8 +1,9 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,8 +17,8 @@ public class PlatformDTO extends Header {
     public PlatformDTO() {
     }
 
-    public PlatformDTO(ProcessType processType) {
-        super(processType);
+    public PlatformDTO(GobiiProcessType gobiiProcessType) {
+        super(gobiiProcessType);
     }
 
     private Integer platformId;

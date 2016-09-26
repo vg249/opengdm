@@ -4,10 +4,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,13 +96,14 @@ public class DtoMapContactImpl implements DtoMapContact {
     }
 
     @Override
-    public ContactDTO updateContact(ContactDTO contactDTO) throws Exception {
+    public ContactDTO replaceContact(Integer contactId, ContactDTO contactDTO) throws Exception {
 
         ContactDTO returnVal = contactDTO;
 
         try {
 
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            parameters.put("contactId", contactId);
             rsContactDao.updateContact(parameters);
 
         } catch (Exception e) {

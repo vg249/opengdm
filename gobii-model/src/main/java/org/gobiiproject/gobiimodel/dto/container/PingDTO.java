@@ -6,8 +6,7 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
 
-import org.gobiiproject.gobiimodel.dto.response.Header;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 
 import java.util.*;
 
@@ -16,18 +15,8 @@ public class PingDTO extends Header {
     public PingDTO() {
     }
 
-    private ControllerType controllerType = ControllerType.LOADER;
     private List<String> pingRequests = new ArrayList<>();
     private List<String> pingResponses = new ArrayList<>();
-
-    public ControllerType getControllerType() {
-        return controllerType;
-    }
-
-    public void setControllerType(ControllerType controllerType) {
-        this.controllerType = controllerType;
-    }
-
 
     public List<String> getDbMetaData() {
         return pingRequests;

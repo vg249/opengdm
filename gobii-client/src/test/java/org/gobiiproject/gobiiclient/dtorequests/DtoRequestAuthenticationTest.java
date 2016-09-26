@@ -7,12 +7,13 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 
 import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.restmethods.post.DtoRequestProcessor;
+import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
+import org.gobiiproject.gobiiclient.core.restmethods.dtopost.DtoRequestProcessor;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -35,7 +36,6 @@ public class DtoRequestAuthenticationTest {
     public void testSucceedWithOneAuthentication() throws Exception {
 
         Assert.assertTrue(Authenticator.authenticate());
-        String token = ClientContext.getInstance(null, false).getUserToken();
 
         AnalysisDTO analysisDTORequest = new AnalysisDTO();
         analysisDTORequest.setAnalysisId(1);
@@ -43,10 +43,7 @@ public class DtoRequestAuthenticationTest {
         AnalysisDTO analysisDTOResponse =  new DtoRequestProcessor<AnalysisDTO>().process(analysisDTORequest,
                 AnalysisDTO.class,
                 ControllerType.LOADER,
-                ServiceRequestId.URL_ANALYSIS,
-                ClientContext.getInstance(null, false).getCurrentCropDomain(),
-                ClientContext.getInstance(null, false).getCurrentCropPort(),
-                token);
+                ServiceRequestId.URL_ANALYSIS);
 
         Assert.assertNotEquals(null, analysisDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));
@@ -69,13 +66,21 @@ public class DtoRequestAuthenticationTest {
         analysisDTORequest.setAnalysisId(1);
 
 
-        AnalysisDTO analysisDTOResponse = new DtoRequestProcessor<AnalysisDTO>().process(analysisDTORequest,
-                AnalysisDTO.class,
-                ControllerType.LOADER,
-                ServiceRequestId.URL_ANALYSIS,
+        String url = ResourceBuilder.getRequestUrl(ControllerType.LOADER,
+                ClientContext.getInstance(null, false).getCurrentCropContextRoot(),
+                ServiceRequestId.URL_ANALYSIS);
+
+        DtoRequestProcessor<AnalysisDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
+
+        AnalysisDTO analysisDTOResponse = dtoDtoRequestProcessor.getTypedHtppResponseForDto(
                 ClientContext.getInstance(null, false).getCurrentCropDomain(),
                 ClientContext.getInstance(null, false).getCurrentCropPort(),
+                ClientContext.getInstance(null, false).getCurrentCropContextRoot(),
+                url,
+                AnalysisDTO.class,
+                analysisDTORequest,
                 oldToken);
+
 
         Assert.assertNotEquals(null, analysisDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));

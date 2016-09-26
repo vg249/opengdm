@@ -9,12 +9,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.Urls;
+import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiimodel.dto.response.HeaderAuth;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
-import org.gobiiproject.gobiimodel.dto.types.ServiceRequestId;
+//import org.gobiiproject.gobiimodel.dto.response.HeaderAuth;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderAuth;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
@@ -51,8 +52,11 @@ public class DtoRequestAuthorizationTest {
         Assert.assertTrue(Authenticator.authenticate());
         String currentCropDomain = ClientContext.getInstance(null, false).getCurrentCropDomain();
         Integer currentCropPort = ClientContext.getInstance(null, false).getCurrentCropPort();
+        String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
         String currentGobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
-        String url = Urls.getRequestUrl(ControllerType.LOADER, ServiceRequestId.URL_AUTH);
+        String url = ResourceBuilder.getRequestUrl(ControllerType.LOADER,
+                currentCropContextRoot,
+                ServiceRequestId.URL_AUTH);
         Assert.assertTrue(Authenticator.deAuthenticate());
 
         URI uri = new URIBuilder().setScheme("http")
