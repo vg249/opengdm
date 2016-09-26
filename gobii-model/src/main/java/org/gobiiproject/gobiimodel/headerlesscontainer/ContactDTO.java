@@ -37,6 +37,7 @@ public class ContactDTO extends DTOBase {
         return this.contactId;
     }
 
+    @Override
     public void setId(Integer id) {
         this.contactId = id;
     }

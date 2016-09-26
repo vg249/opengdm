@@ -13,6 +13,7 @@ public abstract class DTOBase {
     private Set<GobiiProcessType> allowedProcessTypes = new HashSet<>();
 
     public abstract Integer getId();
+    public abstract void setId(Integer id);
 
     public Set<GobiiProcessType> getAllowedProcessTypes() {
         return allowedProcessTypes;
