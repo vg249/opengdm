@@ -11,11 +11,11 @@ import java.util.Map;
 /**
  * Created by Phil on 4/7/2016.
  */
-public class SpGetPlatformNames implements Work {
+public class SpGetPlatforms implements Work {
 
     private Map<String, Object> parameters = null;
 
-    public SpGetPlatformNames() {
+    public SpGetPlatforms() {
     }
 
 
@@ -29,7 +29,7 @@ public class SpGetPlatformNames implements Work {
 
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select platform_id, name from platform order by lower(name)";
+        String sql = "select * from platform order by lower(name)";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
 

@@ -9,6 +9,14 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiprojec
  */
 public class GobiiDtoMappingException extends GobiiException {
 
+    public GobiiDtoMappingException(Exception e) {
+        super(e);
+    }
+
+
+    public GobiiDtoMappingException(String message) {
+        super(message);
+    }
 
     public GobiiDtoMappingException(GobiiStatusLevel gobiiStatusLevel,
                                     GobiiValidationStatusType gobiiValidationStatusType,

@@ -1,9 +1,16 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
@@ -11,6 +18,7 @@ import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -23,9 +31,14 @@ import java.util.stream.Collectors;
  */
 public class DtoRequestPlatformTest {
 
+    private static UriFactory uriFactory;
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
+        String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
+        DtoRequestPlatformTest.uriFactory = new UriFactory(currentCropContextRoot);
+
     }
 
     @AfterClass
@@ -34,7 +47,7 @@ public class DtoRequestPlatformTest {
     }
 
 
-    @Test
+    @Ignore
     public void testGetPlatformDetails() throws Exception {
         DtoRequestPlatform dtoRequestPlatform = new DtoRequestPlatform();
         PlatformDTO PlatformDTORequest = new PlatformDTO();
@@ -48,7 +61,7 @@ public class DtoRequestPlatformTest {
     }
 
 
-    @Test
+    @Ignore
     public void testCreatePlatform() throws Exception {
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
@@ -104,7 +117,7 @@ public class DtoRequestPlatformTest {
 
     }
 
-    @Test
+    @Ignore
     public void testUpdatePlatform() throws Exception {
         DtoRequestPlatform dtoRequestPlatform = new DtoRequestPlatform();
 
@@ -159,4 +172,56 @@ public class DtoRequestPlatformTest {
 
         Assert.assertTrue(matchedProperty.getPropertyValue().equals(updatedPropertyValue));
     }
+
+
+    @Test
+    public void getPlatformsWithHttpGet() throws Exception {
+
+        RestUri restUriPlatform = DtoRequestPlatformTest.uriFactory.resourceColl(ServiceRequestId.URL_PLATFORM);
+        RestResource<PlatformDTO> restResource = new RestResource<>(restUriPlatform);
+        PayloadEnvelope<PlatformDTO> resultEnvelope = restResource
+                .get(PlatformDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<PlatformDTO> platformDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(platformDTOList);
+        Assert.assertTrue(platformDTOList.size() > 0 );
+        Assert.assertNotNull(platformDTOList.get(0).getPlatformName());
+
+    }
+
+    @Test
+    public void testGetPlatformDetailsWithHttpGet() throws Exception {
+
+
+        // get a list of platforms
+        RestUri restUriPlatform = DtoRequestPlatformTest.uriFactory.resourceColl(ServiceRequestId.URL_PLATFORM);
+        RestResource<PlatformDTO> restResource = new RestResource<>(restUriPlatform);
+        PayloadEnvelope<PlatformDTO> resultEnvelope = restResource
+                .get(PlatformDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<PlatformDTO> platformDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(platformDTOList);
+        Assert.assertTrue(platformDTOList.size() > 0 );
+        Assert.assertNotNull(platformDTOList.get(0).getPlatformName());
+
+
+        // use an artibrary platform id
+        Integer platformId = platformDTOList.get(0).getPlatformId();
+        RestUri restUriPlatformForGetById = DtoRequestPlatformTest
+                .uriFactory
+                .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
+        restUriPlatformForGetById.setParamValue("id", platformId.toString());
+        RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
+        PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = restResourceForGetById
+                .get(PlatformDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        PlatformDTO platformDTO = resultEnvelopeForGetByID.getPayload().getData().get(0);
+        Assert.assertTrue(platformDTO.getPlatformId() > 0);
+        Assert.assertNotNull(platformDTO.getPlatformName());
+    }
+    
+
 }

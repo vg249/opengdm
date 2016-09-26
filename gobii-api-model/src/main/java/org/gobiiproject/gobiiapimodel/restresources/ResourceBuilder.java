@@ -113,7 +113,7 @@ public class ResourceBuilder {
                 break;
 
             case URL_PLATFORM:
-                returnVal += "platform";
+                returnVal += "platforms";
                 break;
 
             case URL_MAPSET:

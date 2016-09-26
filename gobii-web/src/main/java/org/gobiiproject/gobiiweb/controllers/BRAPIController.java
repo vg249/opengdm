@@ -24,6 +24,7 @@ import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -46,6 +47,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -151,6 +153,9 @@ public class BRAPIController {
     }
 
 
+    // *********************************************
+    // *************************** CONTACT METHODS
+    // *********************************************
     @RequestMapping(value = "/contacts", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<ContactDTO> createContact(@RequestBody PayloadEnvelope<ContactDTO> payloadEnvelope,
@@ -332,5 +337,155 @@ public class BRAPIController {
 
     }
 
+    // *********************************************
+    // *************************** PLATFORM METHODS
+    // *********************************************
+
+    @RequestMapping(value = "/platforms", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<PlatformDTO> createPlatform(@RequestBody PayloadEnvelope<PlatformDTO> payloadEnvelope,
+                                                     HttpServletRequest request,
+                                                     HttpServletResponse response) {
+
+        PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            PayloadReader<PlatformDTO> payloadReader = new PayloadReader<>(PlatformDTO.class);
+            PlatformDTO platformDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            PlatformDTO platformDTONew = platformService.createPlatform(platformDTOToCreate);
+
+            returnVal.getPayload().getData().add(platformDTONew);
+
+//            PayloadWriter<PlatformDTO> payloadWriter = new PayloadWriter<>(request,
+//                    PlatformDTO.class);
+//
+//            payloadWriter.writeSingleItem(returnVal,
+//                    ServiceRequestId.URL_PLATFORM,
+//                    platformDTONew);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/platforms/{platformId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<PlatformDTO> replacePlatform(@RequestBody PayloadEnvelope<PlatformDTO> payloadEnvelope,
+                                                      @PathVariable Integer platformId,
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response) {
+
+        PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<PlatformDTO> payloadReader = new PayloadReader<>(PlatformDTO.class);
+            PlatformDTO platformDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            PlatformDTO platformDTOReplaced = platformService.replacePlatform(platformId, platformDTOToReplace);
+
+            returnVal.getPayload().getData().add(platformDTOReplaced);
+
+//            PayloadWriter<PlatformDTO> payloadWriter = new PayloadWriter<>(request,
+//                    PlatformDTO.class);
+
+//            payloadWriter.writeSingleItem(returnVal,
+//                    ServiceRequestId.URL_PLATFORM,
+//                    platformDTOReplaced);
+
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+    
+    
+    @RequestMapping(value = "/platforms", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<PlatformDTO> getPlatforms(HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            //PayloadReader<PlatformDTO> payloadReader = new PayloadReader<>(PlatformDTO.class);
+            List<PlatformDTO> platformDTOs = platformService.getPlatforms();
+            for( PlatformDTO currentPlatformDto : platformDTOs) {
+                returnVal.getPayload().getData().add(currentPlatformDto);
+            }
+
+            //PlatformDTO PlatformDTONew = PlatformService.createPlatform(PlatformDTOToCreate);
+
+            //PayloadWriter<PlatformDTO> payloadWriter = new PayloadWriter<>(request,
+              //      PlatformDTO.class);
+
+//            payloadWriter.writeSingleItem(returnVal,
+//                    ServiceRequestId.URL_PlatformS,
+//                    PlatformDTONew);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/platforms/{platformId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<PlatformDTO> getPlatformsById(@PathVariable Integer platformId,
+                                                         HttpServletRequest request,
+                                                     HttpServletResponse response) {
+
+        PayloadEnvelope<PlatformDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            //PayloadReader<PlatformDTO> payloadReader = new PayloadReader<>(PlatformDTO.class);
+            PlatformDTO platformDTO = platformService.getPlatformById(platformId);
+            returnVal.getPayload().getData().add(platformDTO);
+
+            //PlatformDTO PlatformDTONew = PlatformService.createPlatform(PlatformDTOToCreate);
+
+            //PayloadWriter<PlatformDTO> payloadWriter = new PayloadWriter<>(request,
+            //      PlatformDTO.class);
+
+//            payloadWriter.writeSingleItem(returnVal,
+//                    ServiceRequestId.URL_PlatformS,
+//                    PlatformDTONew);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
 }// LoadController
