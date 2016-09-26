@@ -195,6 +195,7 @@ public class DtoRequestContactTest {
     public void testCreateContactWithHttpPost() throws Exception {
 
 
+        // We are creating a new contact here.
         ContactDTO newContactDTO = new ContactDTO();
 
         // set the plain properties
@@ -210,6 +211,7 @@ public class DtoRequestContactTest {
         newContactDTO.getRoles().add(1);
         newContactDTO.getRoles().add(2);
 
+        //Set up the POST request to create the contact
         PayloadEnvelope<ContactDTO> payloadEnvelope = new PayloadEnvelope<>(newContactDTO, GobiiProcessType.CREATE);
         RestResource<ContactDTO> restResource = new RestResource<>(DtoRequestContactTest.uriFactory.contacts());
         PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = restResource.post(ContactDTO.class,
@@ -228,6 +230,8 @@ public class DtoRequestContactTest {
         Assert.assertNotNull(contactDTOResponseEnvelope.getPayload().getLinks().getLinksPerDataItem());
         Assert.assertNotNull(contactDTOResponseEnvelope.getPayload().getLinks().getLinksPerDataItem().get(0));
 
+        // The name of the game is for the server to be able to create these links
+        // with as little code duplication as possible
         Link linkForCreatedItem = contactDTOResponseEnvelope.getPayload().getLinks().getLinksPerDataItem().get(0);
 
 
