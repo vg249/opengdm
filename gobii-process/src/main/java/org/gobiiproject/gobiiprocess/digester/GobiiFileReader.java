@@ -4,9 +4,22 @@ import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestDataSet;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
+<<<<<<< .mine
+
+
+=======
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
+import org.gobiiproject.gobiimodel.dto.response.Header;
+>>>>>>> .theirs
+import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
+import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
+<<<<<<< .mine
 ;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
+=======
+
+
+>>>>>>> .theirs
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.impl.LoaderInstructionsDAOImpl;
@@ -17,6 +30,8 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.*;
+import org.gobiiproject.gobiimodel.utils.email.DigesterMessage;
+import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
@@ -24,6 +39,7 @@ import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.text.ParseException;
 import java.util.*;
 
@@ -55,7 +71,7 @@ public class GobiiFileReader {
          		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
          		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
          		;
-        
+        DigesterMessage dm = new DigesterMessage();
 		 CommandLineParser parser = new DefaultParser();
          try{
                CommandLine cli = parser.parse( o, args );
@@ -95,8 +111,8 @@ public class GobiiFileReader {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		String logDir=configuration.getFileSystemLog();
-		ErrorLogger.setLogFilepath(logDir);
+
+		MailInterface mailInterface=new MailInterface(configuration);
 
 		String instructionFile=null;
 		if(args.length==0 ||args[0]==""){
@@ -111,7 +127,7 @@ public class GobiiFileReader {
 		}
 		
 		//Error logs go to a file based on crop (for human readability) and 
-
+		dm.addPath("instruction file",new File(instructionFile).getAbsolutePath());
 		ErrorLogger.logInfo("Digester","Beginning read of "+instructionFile);
 		List<GobiiLoaderInstruction> list= parseInstructionFile(instructionFile);
 		if(list==null || list.isEmpty()){
@@ -120,6 +136,19 @@ public class GobiiFileReader {
 		}
 		GobiiLoaderInstruction zero=list.iterator().next();
 		Integer dataSetId=zero.getDataSetId();
+
+
+		dm.addIdentifier("Project",zero.getProject());
+		dm.addIdentifier("Platform",zero.getPlatform());
+		dm.addIdentifier("Experiment",zero.getExperiment());
+		dm.addIdentifier("Dataset",zero.getDataSet());
+		dm.addIdentifier("Mapset",zero.getMapset());
+		dm.addIdentifier("Dataset Type",zero.getDatasetType());
+
+		dm.addPath("destination directory",new File(HelperFunctions.getDestinationFile(zero)).getParentFile().getAbsolutePath());//Convert to directory
+		dm.addPath("input directory",zero.getGobiiFile().getSource());
+
+
 		String crop=zero.getGobiiCropType();
 		if(crop==null) crop=divineCrop(instructionFile);
 		CropConfig cropConfig=configuration.getCropConfig(crop);
@@ -127,13 +156,22 @@ public class GobiiFileReader {
 
 		
 		String errorPath=getLogName(zero,cropConfig,crop);
-		String jobFile=zero.getGobiiFile().getDestination();
-		
-		
+
 		//TODO: HACK - Job's name is 
 		String jobName = getJobName(crop,list);
 		String jobUser=zero.getContactEmail();
-		
+		dm.setUser(jobUser);
+
+		String logDir=configuration.getFileSystemLog();
+		if(logDir!=null) {
+			String logFile=logDir+"/"+jobUser.substring(0,jobUser.indexOf('@'))+"_"+getSourceFileName(zero.getGobiiFile())+".log";
+			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
+			ErrorLogger.setLogFilepath(logFile);
+			dm.addPath("Error Log",logFile);
+			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
+		}
+
+
 		ErrorLogger.logTrace("Digester","Beginning List Processing");
 		success=true;
 		for(GobiiLoaderInstruction inst:list){
@@ -152,7 +190,7 @@ public class GobiiFileReader {
 			}
 			GobiiFileType instructionFileType = file.getGobiiFileType();
 			if(instructionFileType==null){
-				logError("Digester","Instruction " + instructionFile + " Table " + inst.getTable() + " has missing filetype" );
+				logError("Digester","Instruction " + instructionFile + " Table " + inst.getTable() + " has missing file format" );
 				continue;
 			}
 			
@@ -264,16 +302,31 @@ public class GobiiFileReader {
 			String connectionString=" -c "+HelperFunctions.getPostgresConnectionString(cropConfig);
 			
 			//Load PostgreSQL
+			boolean loadedData=false;
 			for(String key:loaderInstructionList){
 				if(!VARIANT_CALL_TABNAME.equals(key)){
-				String inputFile=" -i "+loaderInstructionMap.get(key);
-				String integrityCheck="";//Kevin - what the heck, you removed a parameter on me
-				String outputFile=outputDir;
-				ErrorLogger.logInfo("Digester","Running IFL: "+pathToIFL+connectionString+integrityCheck+inputFile+outputFile);
-				success&=HelperFunctions.tryExec(pathToIFL+connectionString+integrityCheck+inputFile+outputFile,null,errorPath );
+					int totalLines= FileSystemInterface.lineCount(loaderInstructionMap.get(key).getAbsolutePath());
+					String inputFile=" -i "+loaderInstructionMap.get(key);
+					String outputFile=outputDir;
+					ErrorLogger.logInfo("Digester","Running IFL: "+pathToIFL+connectionString+inputFile+outputFile);
+					int fileLines=HelperFunctions.iExec(pathToIFL+connectionString+inputFile+outputFile,errorPath);
+
+					String totalLinesVal="error";
+					String linesLoadedVal="error";
+					String duplicateLinesVal="error";
+					if(totalLines>0 && fileLines >=0){
+						if(fileLines>0){
+							loadedData=true;
+						}
+						totalLinesVal=(totalLines-1)+"";
+						linesLoadedVal=(fileLines)+"";//Header
+						duplicateLinesVal=((totalLines-1)-fileLines)+"";
+					}
+					dm.addEntry(key,totalLinesVal,linesLoadedVal,duplicateLinesVal);
+
 				}
 			}
-			
+			if(!loadedData)ErrorLogger.logError("FileReader","No Data Loaded, may be duplicates?");
 			//Load Monet/HDF5
 			errorPath=getLogName(zero, cropConfig, crop, "Matrix_Upload");
 			String variantFilename="DS"+dataSetId;
@@ -296,6 +349,7 @@ public class GobiiFileReader {
 				//HDF-5
 				//Usage: %s <datasize> <input file> <output HDF5 file
 				String loadHDF5=pathToHDF5+"loadHDF5";
+			dm.addPath("matrix directory",pathToHDF5Files);
 				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
 				int size=0;
 				switch(dst){		
@@ -323,19 +377,30 @@ public class GobiiFileReader {
 		else{
 			ErrorLogger.logWarning("Digester","Unsuccessfully Generated files");
 		}
-		HelperFunctions.sendEmail(jobName, null, success, errorPath, configuration, jobUser,HelperFunctions.getDoneFileAsArray(instructionFile));
+		
+		try{
+			dm.setBody(jobName,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+			mailInterface.send(dm);
+		}catch(Exception e){
+			ErrorLogger.logError("MailInterface","Error Sending Mail",e);
+		}
 	}
 
 	private static String getJobName(String cropName, List<GobiiLoaderInstruction> list) {
 		cropName=cropName.charAt(0)+cropName.substring(1).toLowerCase();// MAIZE -> Maize
 		String jobName=cropName + " digest of ";
-		String source=list.get(0).getGobiiFile().getSource();
-		File sourceFolder=new File(source);
-		File[] f=sourceFolder.listFiles();
-		if(f.length!=0) source=f[0].getName();
+		String source = getSourceFileName(list.get(0).getGobiiFile());
 		jobName+=source;
 		
 		return jobName;
+	}
+
+	private static String getSourceFileName(GobiiFile file) {
+		String source=file.getSource();
+		File sourceFolder=new File(source);
+		File[] f=sourceFolder.listFiles();
+		if(f.length!=0) source=f[0].getName();
+		return source;
 	}
 
 	/**
@@ -378,8 +443,8 @@ public class GobiiFileReader {
 	 * Generates appropriate monetDB files.
 	 * Reason - Raza is weird.
 	 * @param cropConfig Connection String
-	 * @param markerFile No response
-	 * @param dnaRunFile With response
+	 * @param markerFile No header
+	 * @param dnaRunFile With header
 	 * @param dsid Because
 	 * @param errorFile We might blow up
 	 * @return if we blew up
