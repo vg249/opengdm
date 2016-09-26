@@ -66,7 +66,7 @@ public class PayloadWriter<T extends DTOBase> {
                     }
                 }
 
-                payloadEnvelope.getPayload().getLinks().getLinksPerDataItem().add(link);
+                payloadEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().add(link);
 
 
             } else {

@@ -226,13 +226,13 @@ public class DtoRequestContactTest {
         Assert.assertTrue(contactDTOResponse.getContactId() > 0);
 
         //Now re-retrieve with the link we got back
-        Assert.assertNotNull(contactDTOResponseEnvelope.getPayload().getLinks());
-        Assert.assertNotNull(contactDTOResponseEnvelope.getPayload().getLinks().getLinksPerDataItem());
-        Assert.assertNotNull(contactDTOResponseEnvelope.getPayload().getLinks().getLinksPerDataItem().get(0));
+        Assert.assertNotNull(contactDTOResponseEnvelope.getPayload().getLinkCollection());
+        Assert.assertNotNull(contactDTOResponseEnvelope.getPayload().getLinkCollection().getLinksPerDataItem());
+        Assert.assertNotNull(contactDTOResponseEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().get(0));
 
         // The name of the game is for the server to be able to create these links
         // with as little code duplication as possible
-        Link linkForCreatedItem = contactDTOResponseEnvelope.getPayload().getLinks().getLinksPerDataItem().get(0);
+        Link linkForCreatedItem = contactDTOResponseEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().get(0);
 
 
         RestUri restUriContact = DtoRequestContactTest

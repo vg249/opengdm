@@ -4,22 +4,21 @@ import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestDataSet;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
-<<<<<<< .mine
 
 
-=======
+
+
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
-import org.gobiiproject.gobiimodel.dto.response.Header;
->>>>>>> .theirs
-import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
+
+
+
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
-<<<<<<< .mine
-;
+
+
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
-=======
 
 
->>>>>>> .theirs
+
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.impl.LoaderInstructionsDAOImpl;
