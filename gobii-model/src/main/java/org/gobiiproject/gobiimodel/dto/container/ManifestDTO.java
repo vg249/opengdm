@@ -1,8 +1,10 @@
 package org.gobiiproject.gobiimodel.dto.container;
 
-import org.gobiiproject.gobiimodel.dto.response.Header;
+
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.Date;
 
@@ -14,8 +16,8 @@ public class ManifestDTO extends Header {
 
     public ManifestDTO() {}
 
-    public ManifestDTO(ProcessType processType) {
-        super(processType);
+    public ManifestDTO(GobiiProcessType gobiiProcessType) {
+        super(gobiiProcessType);
     }
 
     // we are waiting until we a have a view to retirn

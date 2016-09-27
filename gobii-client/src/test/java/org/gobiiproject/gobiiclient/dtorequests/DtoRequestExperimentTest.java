@@ -7,10 +7,12 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.response.Status;
-import org.gobiiproject.gobiimodel.dto.response.HeaderStatusMessage;
+;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -56,7 +58,7 @@ public class DtoRequestExperimentTest {
 
         DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 
-        ExperimentDTO experimentDTORequest = new ExperimentDTO(Header.ProcessType.CREATE);
+        ExperimentDTO experimentDTORequest = new ExperimentDTO(GobiiProcessType.CREATE);
         experimentDTORequest.setExperimentId(1);
         experimentDTORequest.setManifestId(1);
         experimentDTORequest.setPlatformId(1);
@@ -85,7 +87,7 @@ public class DtoRequestExperimentTest {
         ExperimentDTO experimentDTORequest = new ExperimentDTO();
         experimentDTORequest.setExperimentId(2);
         ExperimentDTO ExperimentDTOExisting = dtoRequestExperiment.process(experimentDTORequest);
-        ExperimentDTOExisting.setProcessType(Header.ProcessType.CREATE);
+        ExperimentDTOExisting.setGobiiProcessType(GobiiProcessType.CREATE);
 
 
         ExperimentDTO ExperimentDTOResponse = dtoRequestExperiment.process(ExperimentDTOExisting);
@@ -98,7 +100,7 @@ public class DtoRequestExperimentTest {
                 .getStatus()
                 .getStatusMessages()
                 .stream()
-                .filter(m -> m.getValidationStatusType().equals(Status.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE))
+                .filter(m -> m.getGobiiValidationStatusType().equals(GobiiValidationStatusType.VALIDATION_COMPOUND_UNIQUE))
                 .collect(Collectors.toList());
 
 
@@ -122,7 +124,7 @@ public class DtoRequestExperimentTest {
 
 
 
-        experimentDTOReceived.setProcessType(Header.ProcessType.UPDATE);
+        experimentDTOReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
 
         String newDataFile = UUID.randomUUID().toString();
 

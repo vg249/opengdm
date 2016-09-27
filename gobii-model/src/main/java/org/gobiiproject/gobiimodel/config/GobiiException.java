@@ -1,6 +1,9 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.gobiiproject.gobiimodel.dto.response.Status;
+
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
 /**
  * Created by Phil on 5/10/2016.
@@ -8,38 +11,43 @@ import org.gobiiproject.gobiimodel.dto.response.Status;
 public class GobiiException extends RuntimeException {
 
 
-    private Status.StatusLevel statusLevel;
-    private Status.ValidationStatusType validationStatusType;
+    private GobiiStatusLevel gobiiStatusLevel;
+    private GobiiValidationStatusType gobiiValidationStatusType;
+
+    public GobiiException(Exception e) {
+        super(e);
+    }
+
 
     public GobiiException(String message) {
         super(message);
     }
 
-    public GobiiException(Status.StatusLevel statusLevel,
-                          Status.ValidationStatusType validationStatusType,
+    public GobiiException(GobiiStatusLevel gobiiStatusLevel,
+                          GobiiValidationStatusType gobiiValidationStatusType,
                           String message) {
 
         super(message);
-        this.statusLevel = statusLevel;
-        this.validationStatusType = validationStatusType;
+        this.gobiiStatusLevel = gobiiStatusLevel;
+        this.gobiiValidationStatusType = gobiiValidationStatusType;
 
     } //
 
 
-    public Status.StatusLevel getStatusLevel() {
-        return statusLevel;
+    public GobiiStatusLevel getGobiiStatusLevel() {
+        return gobiiStatusLevel;
     }
 
-    public void setStatusLevel(Status.StatusLevel statusLevel) {
-        this.statusLevel = statusLevel;
+    public void setGobiiStatusLevel(GobiiStatusLevel gobiiStatusLevel) {
+        this.gobiiStatusLevel = gobiiStatusLevel;
     }
 
-    public Status.ValidationStatusType getValidationStatusType() {
-        return validationStatusType;
+    public GobiiValidationStatusType getGobiiValidationStatusType() {
+        return gobiiValidationStatusType;
     }
 
-    public void setValidationStatusType(Status.ValidationStatusType validationStatusType) {
-        this.validationStatusType = validationStatusType;
+    public void setGobiiValidationStatusType(GobiiValidationStatusType gobiiValidationStatusType) {
+        this.gobiiValidationStatusType = gobiiValidationStatusType;
     }
 
 

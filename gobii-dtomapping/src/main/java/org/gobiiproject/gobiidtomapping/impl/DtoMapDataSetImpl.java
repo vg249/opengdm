@@ -109,7 +109,7 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
 //            for (AnalysisDTO currentAnalysisDTO : returnVal.getAnalyses()) {
 //
-//                if(Header.ProcessType.CREATE == currentAnalysisDTO.getProcessType() ) {
+//                if(GobiiProcessType.CREATE == currentAnalysisDTO.getGobiiProcessType() ) {
 //                    dtoMapAnalysis.createAnalysis(currentAnalysisDTO);
 //                    returnVal.getAnalysesIds().add(currentAnalysisDTO.getAnalysisId());
 //

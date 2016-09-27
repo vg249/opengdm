@@ -1,7 +1,9 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.*;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,11 +40,11 @@ public class TestDtoFactory {
         return returnVal;
     }
 
-    public static AnalysisDTO makePopulatedAnalysisDTO(Header.ProcessType processType,
+    public static AnalysisDTO makePopulatedAnalysisDTO(GobiiProcessType gobiiProcessType,
                                                        Integer uniqueStem,
                                                        EntityParamValues entityParamValues) {
 
-        AnalysisDTO returnVal = new AnalysisDTO(processType);
+        AnalysisDTO returnVal = new AnalysisDTO(gobiiProcessType);
 
         returnVal.setAnalysisName(uniqueStem + ": analysis");
         returnVal.setTimeExecuted(new Date());
@@ -61,11 +63,11 @@ public class TestDtoFactory {
 
     }
 
-    public static PlatformDTO makePopulatedPlatformDTO(Header.ProcessType processType,
+    public static PlatformDTO makePopulatedPlatformDTO(GobiiProcessType gobiiProcessType,
                                                        Integer uniqueStem,
                                                        EntityParamValues entityParamValues) {
 
-        PlatformDTO returnVal = new PlatformDTO(processType);
+        PlatformDTO returnVal = new PlatformDTO();
 
         String uniqueStemString = uniqueStem.toString();
         // set the plain properties
@@ -86,10 +88,10 @@ public class TestDtoFactory {
     }
 
 
-public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
+public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
                                        Integer uniqueStem) {
 
-        CvDTO returnVal = new CvDTO(processType);
+        CvDTO returnVal = new CvDTO(gobiiProcessType);
         returnVal.setGroup(uniqueStem+"dummy cv name");
         returnVal.setTerm(UUID.randomUUID().toString());
         returnVal.setDefinition(uniqueStem+"dummy definition");
@@ -99,10 +101,10 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
 
     }
 
-    public static DisplayDTO makePopulatedDisplayDTO(Header.ProcessType processType,
+    public static DisplayDTO makePopulatedDisplayDTO(GobiiProcessType gobiiProcessType,
                                                      Integer uniqueStem) {
 
-        DisplayDTO returnVal = new DisplayDTO(processType);
+        DisplayDTO returnVal = new DisplayDTO(gobiiProcessType);
         returnVal.setColumnName(uniqueStem+"dummy column");
         returnVal.setCreatedBy(1);
         returnVal.setDisplayName(uniqueStem+"dummyDisplay");
@@ -116,12 +118,12 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
 
         return returnVal;
 }
-    public static DataSetDTO makePopulatedDataSetDTO(Header.ProcessType processType,
+    public static DataSetDTO makePopulatedDataSetDTO(GobiiProcessType gobiiProcessType,
                                                      Integer uniqueStem,
                                                      Integer callingAnalysisId,
                                                      List<Integer> analysisIds) {
 
-        DataSetDTO returnVal = new DataSetDTO(processType);
+        DataSetDTO returnVal = new DataSetDTO(gobiiProcessType);
 
 
         // set the big-ticket items
@@ -150,11 +152,11 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
     }
 
 
-    public static MapsetDTO makePopulatedMapsetDTO(Header.ProcessType processType,
+    public static MapsetDTO makePopulatedMapsetDTO(GobiiProcessType gobiiProcessType,
                                                    Integer uniqueStem,
                                                    EntityParamValues entityParamValues) {
 
-        MapsetDTO returnVal = new MapsetDTO(processType);
+        MapsetDTO returnVal = new MapsetDTO(gobiiProcessType);
 
         String uniqueStemString = uniqueStem.toString();
         // set the plain properties
@@ -175,10 +177,10 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
 
     }
 
-    public static ReferenceDTO makePopulatedReferenceDTO(Header.ProcessType processType,
+    public static ReferenceDTO makePopulatedReferenceDTO(GobiiProcessType gobiiProcessType,
                                                          Integer uniqueStem) {
 
-        ReferenceDTO returnVal = new ReferenceDTO(processType);
+        ReferenceDTO returnVal = new ReferenceDTO(gobiiProcessType);
 
         String uniqueStemString = uniqueStem.toString();
         returnVal.setName(uniqueStem + ": reference");
@@ -191,10 +193,10 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
     }
 
 
-    public static OrganizationDTO makePopulatedOrganizationDTO(Header.ProcessType processType,
+    public static OrganizationDTO makePopulatedOrganizationDTO(GobiiProcessType gobiiProcessType,
                                                        Integer uniqueStem) {
 
-        OrganizationDTO returnVal = new OrganizationDTO(processType);
+        OrganizationDTO returnVal = new OrganizationDTO(gobiiProcessType);
 
         String uniqueStemString = UUID.randomUUID().toString();
         returnVal.setName(uniqueStemString + ": reference");
@@ -210,10 +212,10 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
 
     }
 
-    public static ManifestDTO makePopulatedManifestDTO(Header.ProcessType processType,
+    public static ManifestDTO makePopulatedManifestDTO(GobiiProcessType gobiiProcessType,
                                                        Integer uniqueStem) {
 
-        ManifestDTO returnVal = new ManifestDTO(processType);
+        ManifestDTO returnVal = new ManifestDTO(gobiiProcessType);
 
         String uniqueStemString = uniqueStem.toString();
         returnVal.setName(uniqueStem + ": reference");
@@ -228,7 +230,7 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
 
     }
 
-    public static ContactDTO makePopulatedContactDTO(Header.ProcessType processType,
+    public static ContactDTO makePopulatedContactDTO(GobiiProcessType gobiiProcessType,
                                                      Integer uniqueStem) {
 
         String uniqueStemString = uniqueStem.toString();
@@ -252,14 +254,14 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
     }
 
     public static List<MarkerGroupMarkerDTO> makeMarkerGroupMarkers(List<String> markerNames,
-                                                                    Header.ProcessType processType) {
+                                                                    GobiiProcessType gobiiProcessType) {
 
         List<MarkerGroupMarkerDTO> returnVal = new ArrayList<>();
 
         for(String currentMarkerName : markerNames ) {
 
             MarkerGroupMarkerDTO currentMarkerGroupMarker = new MarkerGroupMarkerDTO();
-            currentMarkerGroupMarker.setProcessType(processType);
+            currentMarkerGroupMarker.setGobiiProcessType(gobiiProcessType);
             currentMarkerGroupMarker.setMarkerName(currentMarkerName);
             currentMarkerGroupMarker.setFavorableAllele("G");
             returnVal.add(currentMarkerGroupMarker);
@@ -270,11 +272,11 @@ public static CvDTO makePopulatedCvDTO(Header.ProcessType processType,
 
     }
 
-    public static MarkerGroupDTO makePopulatedMarkerGroupDTO(Header.ProcessType processType,
+    public static MarkerGroupDTO makePopulatedMarkerGroupDTO(GobiiProcessType gobiiProcessType,
                                                              Integer uniqueStem,
                                                              List<MarkerGroupMarkerDTO> markerGroupMarkers) {
 
-        MarkerGroupDTO returnVal = new MarkerGroupDTO(processType);
+        MarkerGroupDTO returnVal = new MarkerGroupDTO(gobiiProcessType);
 
         returnVal.setMarkers(markerGroupMarkers);
         returnVal.setStatusId(1);

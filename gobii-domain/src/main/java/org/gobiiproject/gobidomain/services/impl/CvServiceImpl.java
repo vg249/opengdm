@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.CvService;
 import org.gobiiproject.gobiidtomapping.*;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
-import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class CvServiceImpl implements CvService {
 		CvDTO returnVal = new CvDTO();
 
 		try {
-			switch (cvDTO.getProcessType()) {
+			switch (cvDTO.getGobiiProcessType()) {
 				case READ:
 					returnVal = dtoMapCv.getCvDetails(cvDTO);
 					break;
@@ -42,9 +42,9 @@ public class CvServiceImpl implements CvService {
 					break;
 
 				default:
-					returnVal.getStatus().addStatusMessage(Status.StatusLevel.ERROR,
-							Status.ValidationStatusType.BAD_REQUEST,
-							"Unsupported proces Cv type " + cvDTO.getProcessType().toString());
+					returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+							GobiiValidationStatusType.BAD_REQUEST,
+							"Unsupported proces Cv type " + cvDTO.getGobiiProcessType().toString());
 
 			}
 

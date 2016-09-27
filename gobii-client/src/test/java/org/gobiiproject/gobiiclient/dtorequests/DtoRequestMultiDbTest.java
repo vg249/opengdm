@@ -11,12 +11,11 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestValues;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
-import org.gobiiproject.gobiimodel.dto.response.Header;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.dto.types.ControllerType;
 
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -56,7 +55,6 @@ public class DtoRequestMultiDbTest {
             // should cause server to assign the correct datasource
             Assert.assertTrue(Authenticator.authenticate(currentCropType));
 
-            pingDTORequest.setControllerType(ControllerType.LOADER);
             DtoRequestPing currentDtoRequestPing = new DtoRequestPing();
             PingDTO currentPingDTOResponse = currentDtoRequestPing.process(pingDTORequest);
             Assert.assertFalse("Ping failed for crop " + currentCropType.toString(),
@@ -101,7 +99,7 @@ public class DtoRequestMultiDbTest {
             Assert.assertTrue(Authenticator.authenticate(currentCropType));
 
             CvDTO currentCvDtoRequest = TestDtoFactory
-                    .makePopulatedCvDTO(Header.ProcessType.CREATE, 1);
+                    .makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
             currentCvDtoRequest.setDefinition("Destination DB should be: " + currentCropType.toString());
 
             DtoRequestCv dtoRequestCv = new DtoRequestCv();

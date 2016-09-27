@@ -11,6 +11,7 @@ import java.util.Map;
 public interface RsPlatformDao {
 
 
+    ResultSet getPlatforms() throws GobiiDaoException;
     ResultSet getPlatformNames() throws GobiiDaoException;
     ResultSet getPlatformNamesByTypeId(Integer platformId) throws GobiiDaoException;
     ResultSet getPlatformDetailsByPlatformId(Integer platformId) throws GobiiDaoException;

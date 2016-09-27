@@ -1,7 +1,7 @@
 package org.gobiiproject.gobidomain.services;
 
-import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ import java.util.List;
  */
 public interface MapsetService {
 
-    MapsetDTO processMapset(MapsetDTO MapsetDTO);
+    //MapsetDTO processMapset(MapsetDTO MapsetDTO);
 
-    ResultEnvelope<List<MapsetDTO>> getAllMapsetNames ();
+    List<MapsetDTO> getAllMapsetNames ()  throws GobiiDomainException;
 
 }

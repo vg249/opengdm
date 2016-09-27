@@ -8,8 +8,9 @@ package org.gobiiproject.gobiiclient.dtorequests;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.response.Header;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.ManifestDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -49,7 +50,7 @@ public class DtoRequestManifesTest {
         // set the plain properties
 
         ManifestDTO manifestDTORequest = TestDtoFactory
-                .makePopulatedManifestDTO(Header.ProcessType.CREATE, 1);
+                .makePopulatedManifestDTO(GobiiProcessType.CREATE, 1);
         ManifestDTO manifestDTOResponse = dtoRequestManifest.process(manifestDTORequest);
 
         Assert.assertNotEquals(null, manifestDTOResponse);
@@ -65,7 +66,7 @@ public class DtoRequestManifesTest {
 
         // create a new manifest for our test
         ManifestDTO newManifestDto = TestDtoFactory
-                .makePopulatedManifestDTO(Header.ProcessType.CREATE, 1);
+                .makePopulatedManifestDTO(GobiiProcessType.CREATE, 1);
         ManifestDTO newManifestDTOResponse = dtoRequestManifest.process(newManifestDto);
 
 
@@ -77,7 +78,7 @@ public class DtoRequestManifesTest {
 
 
         // so this would be the typical workflow for the client app
-        manifestDTOReceived.setProcessType(Header.ProcessType.UPDATE);
+        manifestDTOReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
         String newDataFile = UUID.randomUUID().toString();
         manifestDTOReceived.setFilePath(newDataFile);
 

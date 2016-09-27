@@ -8,8 +8,7 @@ package org.gobiiproject.gobiiweb.controllers;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -172,25 +171,6 @@ public class LoadController {
 
     }//getPingResponse()
 
-    @RequestMapping(value = "/contact", method = RequestMethod.POST)
-    @ResponseBody
-    public ResultEnvelope<ContactDTO> processContact(@RequestBody RequestEnvelope<ContactDTO> requestEnvelope) {
-
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
-
-        try {
-
-            returnVal = contactService.processDml(requestEnvelope);
-        } catch (Exception e) {
-
-            returnVal.getHeader().getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }//processCOntact
-
 
     @RequestMapping(value = "/reference", method = RequestMethod.POST)
     @ResponseBody
@@ -340,24 +320,6 @@ public class LoadController {
 
         try {
             returnVal = markerGroupService.process(markerGroupDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
-
-    @RequestMapping(value = "/platform", method = RequestMethod.POST)
-    @ResponseBody
-    public PlatformDTO processPlatform(@RequestBody PlatformDTO platformDTO) {
-
-        PlatformDTO returnVal = new PlatformDTO();
-
-        try {
-            returnVal = platformService.processPlatform(platformDTO);
         } catch (Exception e) {
 
             returnVal.getStatus().addException(e);

@@ -1,17 +1,14 @@
 package org.gobiiproject.gobidomain.services.impl;
 
-import javassist.bytecode.stackmap.BasicBlock;
+import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
-import org.gobiiproject.gobiimodel.dto.container.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.response.RequestEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
 
 /**
  * Created by Angel on 5/4/2016.
@@ -23,86 +20,134 @@ public class ContactServiceImpl implements ContactService {
     @Autowired
     DtoMapContact dtoMapContact = null;
 
-    @Override
-    public ResultEnvelope<ContactDTO> processDml(RequestEnvelope<ContactDTO> requestEnvelope) {
 
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
-        ContactDTO contactDTOToProcess = requestEnvelope.getRequestData();
+    @Override
+    public ContactDTO createContact(ContactDTO contactDTO) throws GobiiDomainException {
+
+        ContactDTO returnVal;
 
         try {
-            switch (requestEnvelope.getHeader().getProcessType()) {
 
-                case CREATE:
-                    contactDTOToProcess.setCreatedDate(new Date());
-                    contactDTOToProcess.setModifiedDate(new Date());
-                    contactDTOToProcess = dtoMapContact.createContact(contactDTOToProcess);
-                    returnVal.getResult().getData().add(contactDTOToProcess);
-                    break;
+            returnVal = dtoMapContact.createContact(contactDTO);
 
-                case UPDATE:
-                    contactDTOToProcess.setCreatedDate(new Date());
-                    contactDTOToProcess.setModifiedDate(new Date());
-                    contactDTOToProcess = dtoMapContact.updateContact(contactDTOToProcess);
-                    returnVal.getResult().getData().add(contactDTOToProcess);
-                    break;
+            // When we have roles and permissions, this will be set programmatically
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
-                default:
-                    returnVal.getHeader().getStatus().addStatusMessage(Status.StatusLevel.ERROR,
-                            Status.ValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces contact type " + requestEnvelope.getHeader().getProcessType().toString());
+        } catch (Exception e) {
 
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+        return returnVal;
+    }
+
+    @Override
+    public ContactDTO replaceContact(Integer contactId, ContactDTO contactDTO) throws GobiiDomainException {
+
+        ContactDTO returnVal;
+
+        try {
+
+            if (null == contactDTO.getContactId() ||
+                    contactDTO.getContactId().equals(contactId)) {
+
+
+                ContactDTO existingContactDTO = dtoMapContact.getContactDetails(contactId);
+                if (null != existingContactDTO.getContactId() && existingContactDTO.getContactId().equals(contactId)) {
+
+
+                    returnVal = dtoMapContact.replaceContact(contactId, contactDTO);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
+                } else {
+
+                    throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
+                            GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                            "The specified contactId ("
+                                    + contactId
+                                    + ") does not match an existing contact ");
+                }
+
+            } else {
+
+                throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
+                        GobiiValidationStatusType.BAD_REQUEST,
+                        "The contactId specified in the dto ("
+                                + contactDTO.getContactId()
+                                + ") does not match the contactId passed as a parameter "
+                                + "("
+                                + contactId
+                                + ")");
+
+            }
+
+
+        } catch (Exception e) {
+
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+
+
+        return returnVal;
+    }
+
+    @Override
+    public ContactDTO getContactById(Integer contactId) throws GobiiDomainException {
+
+        ContactDTO returnVal;
+
+        try {
+            returnVal = dtoMapContact.getContactDetails(contactId);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
+
+            if (null == returnVal) {
+                throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "The specified contactId ("
+                                + contactId
+                                + ") does not match an existing contact ");
             }
 
         } catch (Exception e) {
 
-            returnVal.getHeader().getStatus().addException(e);
             LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+
         }
 
         return returnVal;
     }
 
     @Override
-    public ResultEnvelope<ContactDTO> getContactById(Integer contactId) {
-
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
-
+    public ContactDTO getContactByEmail(String email) {
+        ContactDTO returnVal;
         try {
-            ContactDTO contactDTO = dtoMapContact.getContactDetails(contactId);
-            returnVal.getResult().getData().add(contactDTO);
+            returnVal = dtoMapContact.getContactByEmail(email);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
-        } catch(Exception e) {
+        } catch (Exception e) {
 
-            returnVal.getHeader().getStatus().addException(e);
-
-        }
-        return returnVal;
-    }
-
-    @Override
-    public ResultEnvelope<ContactDTO> getContactByEmail(String email) {
-        ResultEnvelope<ContactDTO> returnVal = new ResultEnvelope<>();
-        try {
-            ContactDTO contactDTO = dtoMapContact.getContactByEmail(email);
-            returnVal.getResult().getData().add(contactDTO);
-
-        } catch(Exception e) {
-
-            returnVal.getHeader().getStatus().addException(e);
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
 
         }
-
 
         return returnVal;
     }
 
     @Override
-    public ResultEnvelope<ContactDTO> getContactByLastName(String lastName) {
+    public ContactDTO getContactByLastName(String lastName) {
         return null;
     }
 
     @Override
-    public ResultEnvelope<ContactDTO> getContactByFirstName(String email, String lastName, String firstName) {
+    public ContactDTO getContactByFirstName(String email, String lastName, String firstName) {
         return null;
     }
 }

@@ -1,15 +1,17 @@
 package org.gobiiproject.gobidomain.services.impl;
 
+import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.MapsetService;
 import org.gobiiproject.gobiidtomapping.DtoMapMapset;
-import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.response.Result;
-import org.gobiiproject.gobiimodel.dto.response.ResultEnvelope;
-import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,11 +22,10 @@ public class MapsetServiceImpl implements MapsetService {
 
     Logger LOGGER = LoggerFactory.getLogger(MapsetServiceImpl.class);
 
-
     @Autowired
     DtoMapMapset dtoMapMapset;
 
-    @Override
+    /*//@Override
     public MapsetDTO processMapset(MapsetDTO mapsetDTO) {
 
         MapsetDTO returnVal = mapsetDTO;
@@ -62,25 +63,33 @@ public class MapsetServiceImpl implements MapsetService {
         }
 
         return returnVal;
-    }
+    }*/
 
-    public ResultEnvelope<List<MapsetDTO>> getAllMapsetNames() {
+    @Override
+    public List<MapsetDTO> getAllMapsetNames() throws GobiiDomainException {
 
-        ResultEnvelope<List<MapsetDTO>> returnVal = new ResultEnvelope<List<MapsetDTO>>();
-        Result result = new Result();
+        List<MapsetDTO> returnVal;
 
         try {
+            returnVal = dtoMapMapset.getAllMapsetNames();
+            for(MapsetDTO currentMapsetDTO : returnVal ) {
+                currentMapsetDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                currentMapsetDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            }
 
-            List<MapsetDTO> mapsetDTOsList = dtoMapMapset.getAllMapsetNames();
-            result.setData(mapsetDTOsList);
-            returnVal.setResult(result);
 
-        } catch(Exception e) {
+            if (null == returnVal) {
+                returnVal = new ArrayList<>();
+            }
 
-            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+
             LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+
         }
 
         return returnVal;
     }
+
 }

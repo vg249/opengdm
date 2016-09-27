@@ -10,9 +10,7 @@ import java.util.Map;
  */
 public interface RsMapSetDao {
 
-
     ResultSet getAllMapsetNames() throws GobiiDaoException;
-//    ResultSet getContactsForRoleName(String roleName) throws GobiiDaoException;
 
 	ResultSet getMapNamesByTypeId(int typeId) throws GobiiDaoException;
 

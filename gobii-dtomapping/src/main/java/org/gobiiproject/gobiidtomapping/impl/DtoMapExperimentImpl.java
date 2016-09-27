@@ -6,7 +6,7 @@ import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,8 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             while (resultSet.next()) {
 
                 if (true == retrievedOneRecord) {
-                    throw (new GobiiDtoMappingException(Status.StatusLevel.ERROR,
-                            Status.ValidationStatusType.VALIDATION_NOT_UNIQUE,
+                    throw (new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
                             "There are more than one project records for project id: " + experimentDTO.getExperimentId()));
                 }
 
@@ -69,8 +69,8 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             if (resultSetExistingProject.next()) {
 
                 returnVal = false;
-                experimentDTO.getStatus().addStatusMessage(Status.StatusLevel.OK,
-                        Status.ValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
+                experimentDTO.getStatus().addStatusMessage(GobiiStatusLevel.OK,
+                        GobiiValidationStatusType.VALIDATION_COMPOUND_UNIQUE,
                         "An experiment with name "
                                 + experimentName
                                 + " and project id "

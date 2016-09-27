@@ -33,14 +33,17 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
     @Autowired
     private StoredProcExec storedProcExec = null;
 
-    @Override
     @Transactional(propagation = Propagation.REQUIRED)
+    @Override
     public ResultSet getAllMapsetNames() throws GobiiDaoException {
+
         ResultSet returnVal = null;
 
         try {
             SpGetMapSetNames spGetMapSetNames = new SpGetMapSetNames();
+
             storedProcExec.doWithConnection(spGetMapSetNames);
+
             returnVal = spGetMapSetNames.getResultSet();
         } catch (Exception e) {
 
@@ -52,8 +55,8 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
         return returnVal;
     }
 
-    @Override
     @Transactional(propagation = Propagation.REQUIRED)
+    @Override
     public ResultSet getMapNamesByTypeId(int typeId) throws GobiiDaoException {
         // TODO Auto-generated method stub
 

@@ -33,6 +33,32 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
     @Autowired
     private SpRunnerCallable spRunnerCallable;
 
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ResultSet getPlatforms() throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        try {
+
+            SpGetPlatforms spGetPlatforms = new SpGetPlatforms();
+            storedProcExec.doWithConnection(spGetPlatforms);
+            returnVal = spGetPlatforms.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving platforms", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+
+        return returnVal;
+
+    }
+
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public ResultSet getPlatformNames() throws GobiiDaoException {

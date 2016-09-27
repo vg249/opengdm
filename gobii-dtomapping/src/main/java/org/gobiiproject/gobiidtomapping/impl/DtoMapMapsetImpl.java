@@ -32,18 +32,17 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
     public List<MapsetDTO> getAllMapsetNames() throws GobiiDtoMappingException {
 
         List<MapsetDTO> returnVal = new ArrayList<MapsetDTO>();
-        MapsetDTO currentMapsetDTO = null;
 
         try {
             ResultSet resultSet = rsMapsetDao.getAllMapsetNames();
             while (resultSet.next()) {
-                currentMapsetDTO = new MapsetDTO();
+                MapsetDTO currentMapsetDTO = new MapsetDTO();
                 ResultColumnApplicator.applyColumnValues(resultSet, currentMapsetDTO);
                 returnVal.add(currentMapsetDTO);
             }
         } catch (Exception e) {
-            currentMapsetDTO.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;

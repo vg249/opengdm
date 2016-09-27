@@ -3,7 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.services.DataSetService;
 import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
-import org.gobiiproject.gobiimodel.dto.response.Status;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class DataSetServiceImpl implements DataSetService {
 
         try {
 
-            switch (datasetDTO.getProcessType()) {
+            switch (datasetDTO.getGobiiProcessType()) {
                 case READ:
                     returnVal = dtoMapDataSet.getDataSetDetails(datasetDTO);
                     break;
@@ -45,9 +45,9 @@ public class DataSetServiceImpl implements DataSetService {
                     break;
 
                 default:
-                    returnVal.getStatus().addStatusMessage(Status.StatusLevel.ERROR,
-                            Status.ValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces type " + datasetDTO.getProcessType().toString());
+                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
+                            "Unsupported proces type " + datasetDTO.getGobiiProcessType().toString());
 
             }
 

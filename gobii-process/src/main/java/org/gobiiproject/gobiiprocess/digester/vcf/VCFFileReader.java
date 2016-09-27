@@ -85,7 +85,7 @@ public class VCFFileReader {
 				break;
 			case VCF_MARKER:
 				String markerTmp=outFile+".markers.tmp";
-				vfr.saveMarkerFile(markerTmp, null,errorFile);
+				vfr.saveMarkerFile(markerTmp,errorFile);
 				tempFiles.add(markerTmp);
 				iter = getFilteredIterator(markerTmp, c.getFilterFrom(), c.getFilterTo());
 				if(iter==null)isSuccess=false;
@@ -162,7 +162,6 @@ public class VCFFileReader {
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			isSuccess=false;
 		}
 	
 		for(String file:tempFiles){
@@ -200,22 +199,18 @@ public class VCFFileReader {
 
 
 	
-	private boolean setTpedFile(String tpedFileStart, String errorFile){
-		boolean result = true;
-		tryFunc(extern("removePlus","awk/removePlus.awk",fileLocation),tpedFileStart+".noPlus",errorFile);
-		tryFunc(extern("plink","plink","--vcf " +tpedFileStart+".noPlus -out " + tpedFileStart + " --recode --transpose --vcf-half-call m"),errorFile);//Creates outFilename.tped
+	private void setTpedFile(String tpedFileStart, String errorFile){
+		tryExec("awk/removePlus.awk "+fileLocation,tpedFileStart+".noPlus",errorFile);
+		tryExec("plink --vcf " +tpedFileStart+".noPlus -out " + tpedFileStart + " --recode --transpose --vcf-half-call m",null,errorFile);//Creates outFilename.tped
 		rm(tpedFileStart+".noPlus");
 		
 		this.tpedFile=tpedFileStart+".tped";
 		this.tempFiles.add(tpedFile);
-		return result;
 	}
 
-	public void saveMarkerFile(String outFilename, String markerRegex,String errorFile){
-		boolean result=true;
-		if(tpedFile==null)result = result | setTpedFile(outFilename.substring(0,outFilename.lastIndexOf('.')) + ".tped",errorFile);
-		
-		tryFunc(sarg(cut,"-f2 -d \" \" "+tpedFile),errorFile); //List of markers		
+	private void saveMarkerFile(String outFilename,String errorFile){
+		if(tpedFile==null)setTpedFile(outFilename.substring(0,outFilename.lastIndexOf('.')) + ".tped",errorFile);
+		tryExec("cut -f2 -d \" \" "+tpedFile,outFilename,errorFile); //List of markers
 	}
 	
 	private void saveTempVCF(String tempVCF,VcfParameters params,String errorFile){
@@ -249,8 +244,6 @@ public class VCFFileReader {
 	}
 	
 	private String saveMetadataFile(String outFilename, String metadata, VcfParameters params, String errorFile){
-		boolean result=true;
-		boolean success=true;
 		String metadataFile=outFilename+".metadata."+metadata;
 		if(tempVCF==null){
 			saveTempVCF(outFilename+".tmp.vcf",params,errorFile);
@@ -281,7 +274,7 @@ public class VCFFileReader {
 				String[] vcfElements=vcfLine.split("\t");
 				for(String s:vcfElements){
 					String geno=s.split(":")[position+1];//+1 for the 'genotype' in the beginning. 
-					sb.append(s+"\t");
+					sb.append(geno+"\t");
 				}
 				sb.deleteCharAt(sb.length()-1);//Remove final tab
 				writer.println(sb.toString());
@@ -290,14 +283,15 @@ public class VCFFileReader {
 				try{
 					genoLine=genoList.readLine();
 					vcfLine=vcfFile.readLine();
-				}catch(Exception e){}
+				}catch(Exception e){
+					ErrorLogger.logError("VCFFileReader","Error saving metadata file",e);
+				}
 			}
 			writer.close();
 			genoList.close();
 			vcfFile.close();
 		}catch(Exception e){
-			e.printStackTrace();
-			result = false;
+			ErrorLogger.logError("VCFFileReader","Error saving metadata file",e);
 		}
 
 		rm(outFilename+".noHeader");
@@ -370,7 +364,7 @@ public class VCFFileReader {
 	
 	public void saveIUPACFile(String outFilename,String errorFile){
 		boolean result=true;
-		if(tpedFile==null)result = result | setTpedFile(outFilename.substring(0,outFilename.lastIndexOf('.')) + ".tped",errorFile);
+		if(tpedFile==null)setTpedFile(outFilename.substring(0,outFilename.lastIndexOf('.')) + ".tped",errorFile);
 		
 		result = result & tryExec("cut --complement -f1,2,3,4 -d \" \" " + tpedFile,outFilename+".cut",errorFile );
 		result = result & tryExec("awk/tpedToBi.awk",outFilename+".bi", errorFile,outFilename+".cut");
