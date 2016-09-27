@@ -1,5 +1,6 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
+import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
@@ -12,13 +13,9 @@ import java.util.List;
 /**
  * Created by Phil on 4/21/2016.
  */
-public class PlatformDTO extends Header {
+public class PlatformDTO extends DTOBase {
 
     public PlatformDTO() {
-    }
-
-    public PlatformDTO(GobiiProcessType gobiiProcessType) {
-        super(gobiiProcessType);
     }
 
     private Integer platformId;
@@ -34,13 +31,22 @@ public class PlatformDTO extends Header {
     private Integer typeId;
     private List<EntityPropertyDTO> properties = new ArrayList<>();
 
+    @Override
+    public Integer getId() {
+        return this.platformId;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.platformId = id;
+    }
 
     @GobiiEntityParam(paramName = "platformId")
     public Integer getPlatformId() {
         return platformId;
     }
 
-    @GobiiEntityColumn(columnName ="platform_id")
+    @GobiiEntityColumn(columnName = "platform_id")
     public void setPlatformId(Integer platformId) {
         this.platformId = platformId;
     }
@@ -50,7 +56,7 @@ public class PlatformDTO extends Header {
         return platformName;
     }
 
-    @GobiiEntityColumn(columnName ="name")
+    @GobiiEntityColumn(columnName = "name")
     public void setPlatformName(String platformName) {
         this.platformName = platformName;
     }
@@ -60,7 +66,7 @@ public class PlatformDTO extends Header {
         return platformCode;
     }
 
-    @GobiiEntityColumn(columnName ="code")
+    @GobiiEntityColumn(columnName = "code")
     public void setPlatformCode(String platformCode) {
         this.platformCode = platformCode;
     }
@@ -70,7 +76,7 @@ public class PlatformDTO extends Header {
         return platformVendor;
     }
 
-    @GobiiEntityColumn(columnName ="vendor_id")
+    @GobiiEntityColumn(columnName = "vendor_id")
     public void setPlatformVendor(Integer platformVendor) {
         this.platformVendor = platformVendor;
     }
@@ -80,7 +86,7 @@ public class PlatformDTO extends Header {
         return platformDescription;
     }
 
-    @GobiiEntityColumn(columnName ="description")
+    @GobiiEntityColumn(columnName = "description")
     public void setPlatformDescription(String platformDescription) {
         this.platformDescription = platformDescription;
     }
@@ -90,7 +96,7 @@ public class PlatformDTO extends Header {
         return createdBy;
     }
 
-    @GobiiEntityColumn(columnName ="created_by")
+    @GobiiEntityColumn(columnName = "created_by")
     public void setCreatedBy(Integer createdBy) {
         this.createdBy = createdBy;
     }
@@ -100,7 +106,7 @@ public class PlatformDTO extends Header {
         return createdDate;
     }
 
-    @GobiiEntityColumn(columnName ="created_date")
+    @GobiiEntityColumn(columnName = "created_date")
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
@@ -110,7 +116,7 @@ public class PlatformDTO extends Header {
         return modifiedBy;
     }
 
-    @GobiiEntityColumn(columnName ="modified_by")
+    @GobiiEntityColumn(columnName = "modified_by")
     public void setModifiedBy(Integer modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
@@ -120,7 +126,7 @@ public class PlatformDTO extends Header {
         return modifiedDate;
     }
 
-    @GobiiEntityColumn(columnName ="modified_date")
+    @GobiiEntityColumn(columnName = "modified_date")
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
@@ -130,7 +136,7 @@ public class PlatformDTO extends Header {
         return statusId;
     }
 
-    @GobiiEntityColumn(columnName ="status")
+    @GobiiEntityColumn(columnName = "status")
     public void setStatusId(Integer statusId) {
         this.statusId = statusId;
     }
@@ -140,7 +146,7 @@ public class PlatformDTO extends Header {
         return typeId;
     }
 
-    @GobiiEntityColumn(columnName ="type_id")
+    @GobiiEntityColumn(columnName = "type_id")
     public void setTypeId(Integer typeId) {
         this.typeId = typeId;
     }

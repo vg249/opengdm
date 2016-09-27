@@ -8,9 +8,7 @@ import org.gobiiproject.gobiidtomapping.DtoMapPlatform;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
-import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
-import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +41,7 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
 
             while (resultSet.next()) {
                 PlatformDTO currentPlatformDao = new PlatformDTO();
-                ResultColumnApplicator.applyColumnValues(resultSet,currentPlatformDao);
+                ResultColumnApplicator.applyColumnValues(resultSet, currentPlatformDao);
                 returnVal.add(currentPlatformDao);
             }
 
@@ -79,8 +77,8 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
             } // if result set has a row
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
@@ -100,8 +98,9 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
             List<EntityPropertyDTO> platformParameters = platformDTO.getProperties();
             upsertPlatformProperties(platformDTO.getPlatformId(), platformParameters);
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
+
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
@@ -137,7 +136,7 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
         try {
 
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
-            parameters.put("platformId",platformId);
+            parameters.put("platformId", platformId);
             rsPlatformDao.updatePlatform(parameters);
 
             if (null != platformDTO.getProperties()) {
@@ -145,8 +144,9 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
                         platformDTO.getProperties());
             }
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
+
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;

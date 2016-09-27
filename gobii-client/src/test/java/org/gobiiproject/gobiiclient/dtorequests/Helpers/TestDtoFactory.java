@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.*;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class TestDtoFactory {
                                                        Integer uniqueStem,
                                                        EntityParamValues entityParamValues) {
 
-        PlatformDTO returnVal = new PlatformDTO(gobiiProcessType);
+        PlatformDTO returnVal = new PlatformDTO();
 
         String uniqueStemString = uniqueStem.toString();
         // set the plain properties

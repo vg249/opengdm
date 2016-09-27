@@ -8,6 +8,7 @@ package org.gobiiproject.gobiiweb.controllers;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -319,24 +320,6 @@ public class LoadController {
 
         try {
             returnVal = markerGroupService.process(markerGroupDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
-
-    @RequestMapping(value = "/platform", method = RequestMethod.POST)
-    @ResponseBody
-    public PlatformDTO processPlatform(@RequestBody PlatformDTO platformDTO) {
-
-        PlatformDTO returnVal = new PlatformDTO();
-
-        try {
-            returnVal = platformService.processPlatform(platformDTO);
         } catch (Exception e) {
 
             returnVal.getStatus().addException(e);

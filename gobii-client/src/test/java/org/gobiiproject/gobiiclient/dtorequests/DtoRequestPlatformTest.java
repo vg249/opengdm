@@ -1,5 +1,8 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import javafx.application.Platform;
+import org.gobiiproject.gobiiapimodel.hateos.Link;
+import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
@@ -10,10 +13,8 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.*;
-import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -47,133 +48,6 @@ public class DtoRequestPlatformTest {
     }
 
 
-    @Ignore
-    public void testGetPlatformDetails() throws Exception {
-        DtoRequestPlatform dtoRequestPlatform = new DtoRequestPlatform();
-        PlatformDTO PlatformDTORequest = new PlatformDTO();
-        PlatformDTORequest.setPlatformId(1);
-        PlatformDTO PlatformDTOResponse = dtoRequestPlatform.process(PlatformDTORequest);
-
-        Assert.assertNotEquals(null, PlatformDTOResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(PlatformDTOResponse));
-        Assert.assertFalse(PlatformDTOResponse.getPlatformName().isEmpty());
-        Assert.assertTrue(PlatformDTOResponse.getPlatformId() == 1);
-    }
-
-
-    @Ignore
-    public void testCreatePlatform() throws Exception {
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("cvgroupterms");
-        nameIdListDTORequest.setFilter("platform_type");
-
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<NameIdDTO> platformProperTerms = new ArrayList<>(nameIdListDTO
-                .getNamesById());
-        EntityParamValues entityParamValues = TestDtoFactory
-                .makeConstrainedEntityParams(platformProperTerms, 1);
-
-        DtoRequestPlatform dtoRequestPlatform = new DtoRequestPlatform();
-
-        PlatformDTO newPlatformDto = TestDtoFactory
-                .makePopulatedPlatformDTO(GobiiProcessType.CREATE, 1, entityParamValues);
-
-        PlatformDTO platformDTOResponse = dtoRequestPlatform.process(newPlatformDto);
-        Assert.assertNotEquals(null, platformDTOResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOResponse));
-        Assert.assertTrue(platformDTOResponse.getPlatformId() > 0);
-
-
-        PlatformDTO platformDTORequestForParams = new PlatformDTO();
-        platformDTORequestForParams.setPlatformId(platformDTOResponse.getPlatformId());
-        PlatformDTO platformDTOResponseForParams = dtoRequestPlatform.process(platformDTORequestForParams);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOResponseForParams));
-
-        Assert.assertNotEquals("Parameter collection is null", null, platformDTOResponseForParams.getProperties());
-        Assert.assertTrue("No properties were returned",
-                platformDTOResponseForParams.getProperties().size() > 0);
-
-        List<EntityPropertyDTO> missing = entityParamValues
-                .getMissingEntityProperties(platformDTOResponseForParams.getProperties());
-
-        String missingItems = null;
-
-        if (missing.size() > 0) {
-
-            for (EntityPropertyDTO currentEntityPropDTO : missing) {
-                missingItems += "Name: " + currentEntityPropDTO.getPropertyName()
-                        + "Value: " + currentEntityPropDTO.getPropertyValue()
-                        + "\n";
-            }
-        }
-
-        Assert.assertNull("There are missing entity property items",missingItems);
-
-        Assert.assertTrue("Parameter values do not match",
-                entityParamValues.compare(platformDTOResponseForParams.getProperties()));
-
-
-    }
-
-    @Ignore
-    public void testUpdatePlatform() throws Exception {
-        DtoRequestPlatform dtoRequestPlatform = new DtoRequestPlatform();
-
-        //get terms for platform properties:
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("cvgroupterms");
-        nameIdListDTORequest.setFilter("platform_type");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<NameIdDTO> platformProperTerms = new ArrayList<>(nameIdListDTO
-                .getNamesById());
-        EntityParamValues entityParamValues = TestDtoFactory
-                .makeConstrainedEntityParams(platformProperTerms, 1);
-
-        // create a new platform for our test
-        PlatformDTO newPlatformDto = TestDtoFactory
-                .makePopulatedPlatformDTO(GobiiProcessType.CREATE, 1, entityParamValues);
-        PlatformDTO newPlatformDTOResponse = dtoRequestPlatform.process(newPlatformDto);
-
-
-        // re-retrieve the platform we just created so we start with a fresh READ mode dto
-        PlatformDTO PlatformDTORequest = new PlatformDTO();
-        PlatformDTORequest.setPlatformId(newPlatformDTOResponse.getPlatformId());
-        PlatformDTO platformDTOReceived = dtoRequestPlatform.process(PlatformDTORequest);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOReceived));
-
-        // so this would be the typical workflow for the client app
-        platformDTOReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
-        String newName = UUID.randomUUID().toString();
-        platformDTOReceived.setPlatformName(newName);
-
-        EntityPropertyDTO propertyToUpdate = platformDTOReceived.getProperties().get(0);
-        String updatedPropertyName = propertyToUpdate.getPropertyName();
-        String updatedPropertyValue = UUID.randomUUID().toString();
-        propertyToUpdate.setPropertyValue(updatedPropertyValue);
-
-        PlatformDTO PlatformDTOResponse = dtoRequestPlatform.process(platformDTOReceived);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(PlatformDTOResponse));
-
-        PlatformDTO dtoRequestPlatformReRetrieved =
-                dtoRequestPlatform.process(PlatformDTORequest);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestPlatformReRetrieved));
-
-        Assert.assertTrue(dtoRequestPlatformReRetrieved.getPlatformName().equals(newName));
-        EntityPropertyDTO matchedProperty = dtoRequestPlatformReRetrieved
-                .getProperties()
-                .stream()
-                .filter(m -> m.getPropertyName().equals(updatedPropertyName))
-                .collect(Collectors.toList())
-                .get(0);
-
-        Assert.assertTrue(matchedProperty.getPropertyValue().equals(updatedPropertyValue));
-    }
-
-
     @Test
     public void testCreatePlatformWithHttpPost() throws Exception {
 
@@ -204,7 +78,7 @@ public class DtoRequestPlatformTest {
         PlatformDTO platformDTOResponse = platformDTOResponseEnvelope.getPayload().getData().get(0);
 
         Assert.assertNotEquals(null, platformDTOResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOResponse));
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOResponseEnvelope.getHeader()));
         Assert.assertTrue(platformDTOResponse.getPlatformId() > 0);
 
 
@@ -219,11 +93,6 @@ public class DtoRequestPlatformTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
         PlatformDTO platformDTOResponseForParams = resultEnvelopeForGetByID.getPayload().getData().get(0);
 
-
-//        PlatformDTO platformDTORequestForParams = new PlatformDTO();
-//        platformDTORequestForParams.setPlatformId(platformDTOResponse.getPlatformId());
-//        PlatformDTO platformDTOResponseForParams = dtoRequestPlatform.process(platformDTORequestForParams);
-//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOResponseForParams));
 
         Assert.assertNotEquals("Parameter collection is null", null, platformDTOResponseForParams.getProperties());
         Assert.assertTrue("No properties were returned",
@@ -295,13 +164,7 @@ public class DtoRequestPlatformTest {
         
         
         
-//        PlatformDTO PlatformDTORequest = new PlatformDTO();
-//        PlatformDTORequest.setPlatformId(newPlatformDTOResponse.getPlatformId());
-//        PlatformDTO platformDTOReceived = dtoRequestPlatform.process(PlatformDTORequest);
-//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOReceived));
-
         // so this would be the typical workflow for the client app
-        platformDTOReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
         String newName = UUID.randomUUID().toString();
         platformDTOReceived.setPlatformName(newName);
 
@@ -329,7 +192,6 @@ public class DtoRequestPlatformTest {
 
         PlatformDTO dtoRequestPlatformReRetrieved =resultEnvelopeForGetByID.getPayload().getData().get(0);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestPlatformReRetrieved));
 
         Assert.assertTrue(dtoRequestPlatformReRetrieved.getPlatformName().equals(newName));
         EntityPropertyDTO matchedProperty = dtoRequestPlatformReRetrieved
@@ -343,21 +205,6 @@ public class DtoRequestPlatformTest {
     }
     
     
-    @Test
-    public void getPlatformsWithHttpGet() throws Exception {
-
-        RestUri restUriPlatform = DtoRequestPlatformTest.uriFactory.resourceColl(ServiceRequestId.URL_PLATFORM);
-        RestResource<PlatformDTO> restResource = new RestResource<>(restUriPlatform);
-        PayloadEnvelope<PlatformDTO> resultEnvelope = restResource
-                .get(PlatformDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-        List<PlatformDTO> platformDTOList = resultEnvelope.getPayload().getData();
-        Assert.assertNotNull(platformDTOList);
-        Assert.assertTrue(platformDTOList.size() > 0 );
-        Assert.assertNotNull(platformDTOList.get(0).getPlatformName());
-
-    }
 
     @Test
     public void testGetPlatformDetailsWithHttpGet() throws Exception {
@@ -392,5 +239,40 @@ public class DtoRequestPlatformTest {
         Assert.assertNotNull(platformDTO.getPlatformName());
     }
 
+    @Test
+    public void getPlatformsWithHttpGet() throws Exception {
+
+        RestUri restUriPlatform = DtoRequestPlatformTest.uriFactory.resourceColl(ServiceRequestId.URL_PLATFORM);
+        RestResource<PlatformDTO> restResource = new RestResource<>(restUriPlatform);
+        PayloadEnvelope<PlatformDTO> resultEnvelope = restResource
+                .get(PlatformDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<PlatformDTO> platformDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(platformDTOList);
+        Assert.assertTrue(platformDTOList.size() > 0 );
+        Assert.assertNotNull(platformDTOList.get(0).getPlatformName());
+
+
+        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        for(int currentItemIdx = 0; currentItemIdx < platformDTOList.size(); currentItemIdx++  ) {
+            PlatformDTO currentPlatformDto = platformDTOList.get(currentItemIdx);
+
+            Link currentLink = linkCollection.getLinksPerDataItem().get(currentItemIdx);
+
+            RestUri restUriPlatformForGetById = DtoRequestPlatformTest
+                    .uriFactory
+                    .RestUriFromUri(currentLink.getHref());
+            RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
+            PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = restResourceForGetById
+                    .get(PlatformDTO.class);
+            Assert.assertNotNull(resultEnvelopeForGetByID);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
+            PlatformDTO platformDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
+            Assert.assertTrue(currentPlatformDto.getPlatformName().equals(platformDTOFromLink.getPlatformName()));
+            Assert.assertTrue(currentPlatformDto.getPlatformId().equals(platformDTOFromLink.getPlatformId()));
+        }
+
+    }
 
 }

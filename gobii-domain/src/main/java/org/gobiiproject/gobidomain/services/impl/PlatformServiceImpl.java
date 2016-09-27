@@ -3,7 +3,8 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.PlatformService;
 import org.gobiiproject.gobiidtomapping.DtoMapPlatform;
-import org.gobiiproject.gobiimodel.dto.container.PlatformDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,42 +24,7 @@ public class PlatformServiceImpl implements PlatformService {
     @Autowired
     DtoMapPlatform dtoMapPlatform;
 
-    @Override
-    public PlatformDTO processPlatform(PlatformDTO platformDTO) {
 
-        PlatformDTO returnVal = platformDTO;
-
-        try {
-
-            switch (returnVal.getGobiiProcessType()) {
-                case CREATE:
-                    returnVal = dtoMapPlatform.createPlatform(returnVal);
-                    returnVal.setCreatedDate(new Date());
-                    returnVal.setModifiedDate(new Date());
-                    break;
-
-                case UPDATE:
-                    returnVal = dtoMapPlatform.replacePlatform(returnVal.getPlatformId(),returnVal);
-                    returnVal.setCreatedDate(new Date());
-                    returnVal.setModifiedDate(new Date());
-                    break;
-
-                default:
-                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported procesCv type " + platformDTO.getGobiiProcessType().toString());
-
-            } // switch()
-
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii service error", e);
-        }
-
-
-        return returnVal;
-    }
 
     @Override
     public List<PlatformDTO> getPlatforms() throws GobiiDomainException {
@@ -67,8 +33,10 @@ public class PlatformServiceImpl implements PlatformService {
 
         try {
             returnVal = dtoMapPlatform.getPlatforms();
-//            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-//            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            for(PlatformDTO currentPlatformDTO : returnVal ) {
+                currentPlatformDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                currentPlatformDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            }
 
 
             if (null == returnVal) {
@@ -92,8 +60,8 @@ public class PlatformServiceImpl implements PlatformService {
 
         try {
             returnVal = dtoMapPlatform.getPlatformDetails(platformId);
-//            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-//            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
 
             if (null == returnVal) {
@@ -123,8 +91,8 @@ public class PlatformServiceImpl implements PlatformService {
             returnVal = dtoMapPlatform.createPlatform(platformDTO);
 
             // When we have roles and permissions, this will be set programmatically
-//            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-//            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         } catch (Exception e) {
 
@@ -149,8 +117,8 @@ public class PlatformServiceImpl implements PlatformService {
 
 
                     returnVal = dtoMapPlatform.replacePlatform(platformId, platformDTO);
-//                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-//                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
                 } else {
 
