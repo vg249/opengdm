@@ -6,6 +6,7 @@ package org.gobiiproject.gobiimodel.types;
 public enum GobiiStatusLevel {
     ERROR,
     VALIDATION,
-    WARNING, INFO,
+    WARNING,
+    INFO,
     OK
 }

@@ -40,21 +40,6 @@ public class UriFactory {
 
     }
 
-//    public  RestUri resourceByUriIdParam() throws Exception {
-//
-//        RestUri returnVal;
-//
-//        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
-//                ServiceRequestId.URL_CONTACTS);
-//        String parameterizedUrl = appendPathVariable(baseUrl, "contactId");
-//        returnVal = new RestUri(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-//        returnVal.addParam(ResourceParam.ResourceParamType.UriParam, "contactId");
-//
-//        return returnVal;
-//
-//    } // resourceByUriIdParam();
-
-
     public RestUri RestUriFromUri(String uri) {
         return new RestUri(uri,DELIM_PARAM_BEGIN, DELIM_PARAM_END);
     }
@@ -70,7 +55,24 @@ public class UriFactory {
     } // resourceByUriIdParam();
 
 
-    public  RestUri resourceByUriIdParam(ServiceRequestId serviceRequestId) throws Exception {
+
+    public RestUri resourceColl(ServiceRequestId serviceRequestId) throws Exception {
+
+        RestUri returnVal;
+
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+                this.cropContextRoot,
+                serviceRequestId);
+
+        returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+
+        return returnVal;
+
+    } // resourceByUriIdParam();
+
+
+
+    public RestUri resourceByUriIdParam(ServiceRequestId serviceRequestId) throws Exception {
 
         RestUri returnVal;
 
@@ -83,7 +85,7 @@ public class UriFactory {
 
         return returnVal;
 
-    } // resourceByUriIdParam();
+    } //
 
     public  RestUri contactsByQueryParams() throws Exception {
 

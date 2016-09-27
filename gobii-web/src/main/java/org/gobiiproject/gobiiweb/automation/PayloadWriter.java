@@ -12,6 +12,7 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Created by Phil on 9/25/2016.
@@ -85,5 +86,14 @@ public class PayloadWriter<T extends DTOBase> {
 
         }
 
+    }
+
+    public void writeList(PayloadEnvelope<T> payloadEnvelope,
+                                ServiceRequestId serviceRequestId,
+                                List<T> itemsToWrite) throws GobiiWebException , Exception {
+
+        for(T currentItem : itemsToWrite) {
+            this.writeSingleItem(payloadEnvelope,serviceRequestId,currentItem);
+        }
     }
 }
