@@ -1,17 +1,24 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiidao.resultset.access.RsOrganizationDao;
 import org.gobiiproject.gobiidao.resultset.access.RsOrganizationDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapOrganization;
+import org.gobiiproject.gobiidtomapping.DtoMapOrganization;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.container.OrganizationDTO;
+import org.gobiiproject.gobiidtomapping.core.EntityProperties;
+import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,31 +32,56 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
     @Autowired
     private RsOrganizationDao rsOrganizationDao;
 
-    @Transactional
     @Override
-    public OrganizationDTO getOrganizationDetails(OrganizationDTO organizationDTO) throws GobiiDtoMappingException {
+    public List<OrganizationDTO> getOrganizations() throws GobiiDtoMappingException {
 
-        OrganizationDTO returnVal = organizationDTO;
+        List<OrganizationDTO> returnVal = new ArrayList<OrganizationDTO>();
 
         try {
 
-            ResultSet resultSet = rsOrganizationDao.getOrganizationDetailsByOrganizationId(organizationDTO.getOrganizationId());
+            ResultSet resultSet = rsOrganizationDao.getOrganizations();
+
+
+            while (resultSet.next()) {
+                OrganizationDTO currentOrganizationDao = new OrganizationDTO();
+                ResultColumnApplicator.applyColumnValues(resultSet, currentOrganizationDao);
+                returnVal.add(currentOrganizationDao);
+            }
+
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
+
+    @Override
+    public OrganizationDTO getOrganizationDetails(Integer organizationId) throws GobiiDtoMappingException {
+
+        OrganizationDTO returnVal = new OrganizationDTO();
+
+        try {
+
+            ResultSet resultSet = rsOrganizationDao.getOrganizationDetailsByOrganizationId(organizationId);
 
             if (resultSet.next()) {
 
                 // apply organization values
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
 
-            } // iterate resultSet
+
+            } // if result set has a row
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
 
-    }
+    } // getOrganizationDetails()
 
     @Override
     public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) throws GobiiDtoMappingException {
@@ -62,26 +94,30 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
             returnVal.setOrganizationId(organizationId);
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
+
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
     }
 
+
     @Override
-    public OrganizationDTO updateOrganization(OrganizationDTO organizationDTO) throws GobiiDtoMappingException {
+    public OrganizationDTO replaceOrganization(Integer organizationId, OrganizationDTO organizationDTO) throws GobiiDtoMappingException {
 
         OrganizationDTO returnVal = organizationDTO;
 
         try {
 
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            parameters.put("organizationId", organizationId);
             rsOrganizationDao.updateOrganization(parameters);
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
+
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;

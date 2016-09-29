@@ -2,12 +2,13 @@ package org.gobiiproject.gobiidao.resultset.access.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsOrganizationDao;
+import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsOrganization;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdOrganization;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetOrganizationDetailsByOrganizationId;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetOrganizationNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,33 @@ public class RsOrganizationDaoImpl implements RsOrganizationDao {
 
     @Autowired
     private SpRunnerCallable spRunnerCallable;
-    
+
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ResultSet getOrganizations() throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        try {
+
+            SpGetOrganizations spGetOrganizations = new SpGetOrganizations();
+            storedProcExec.doWithConnection(spGetOrganizations);
+            returnVal = spGetOrganizations.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving organizations", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+
+        return returnVal;
+
+    }
+
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public ResultSet getOrganizationNames() throws GobiiDaoException {
@@ -49,6 +76,7 @@ public class RsOrganizationDaoImpl implements RsOrganizationDao {
             throw (new GobiiDaoException(e));
 
         }
+
 
         return returnVal;
 
@@ -79,7 +107,8 @@ public class RsOrganizationDaoImpl implements RsOrganizationDao {
         }
 
         return returnVal;
-    }
+
+    } // getOrganizationDetailsByOrganizationId()
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
@@ -121,8 +150,12 @@ public class RsOrganizationDaoImpl implements RsOrganizationDao {
 
         } catch (Exception e) {
 
-            LOGGER.error("Error creating organization", e);
+            LOGGER.error("Error updating organization", e);
             throw (new GobiiDaoException(e));
         }
     }
+
+
+
+
 }

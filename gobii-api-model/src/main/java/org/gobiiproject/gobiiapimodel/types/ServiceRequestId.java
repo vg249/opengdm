@@ -15,6 +15,7 @@ public enum ServiceRequestId {
     URL_CV,
     URL_CONTACTS,
     URL_CONTACT_SEARCH,
+    URL_ORGANIZATION_SEARCH,
     URL_REFERENCE,
     URL_EXPERIMENT,
     URL_DATASET,

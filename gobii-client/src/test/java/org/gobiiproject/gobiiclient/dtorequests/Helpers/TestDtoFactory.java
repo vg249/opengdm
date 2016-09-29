@@ -1,9 +1,10 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.*;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -196,7 +197,7 @@ public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
     public static OrganizationDTO makePopulatedOrganizationDTO(GobiiProcessType gobiiProcessType,
                                                        Integer uniqueStem) {
 
-        OrganizationDTO returnVal = new OrganizationDTO(gobiiProcessType);
+        OrganizationDTO returnVal = new OrganizationDTO();
 
         String uniqueStemString = UUID.randomUUID().toString();
         returnVal.setName(uniqueStemString + ": reference");

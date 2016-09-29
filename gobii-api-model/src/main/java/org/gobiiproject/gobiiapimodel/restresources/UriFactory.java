@@ -54,7 +54,14 @@ public class UriFactory {
 
     } // resourceByUriIdParam();
 
+    public  RestUri organization() throws Exception {
 
+        return new RestUri(ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+                this.cropContextRoot,
+                ServiceRequestId.URL_ORGANIZATION),
+                DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+
+    } // resourceByUriIdParam();
 
     public RestUri resourceColl(ServiceRequestId serviceRequestId) throws Exception {
 
@@ -103,4 +110,17 @@ public class UriFactory {
 
     } // resourceByUriIdParam();
 
+    public  RestUri organizationsByQueryParams() throws Exception {
+
+        RestUri returnVal;
+
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+                this.cropContextRoot,
+                ServiceRequestId.URL_ORGANIZATION_SEARCH);
+        returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "name");
+
+        return returnVal;
+
+    } // resourceByUriIdParam();
 }

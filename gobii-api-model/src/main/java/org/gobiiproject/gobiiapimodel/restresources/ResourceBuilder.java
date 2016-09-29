@@ -84,6 +84,10 @@ public class ResourceBuilder {
                 returnVal += "contact-search";
                 break;
 
+            case URL_ORGANIZATION_SEARCH:
+                returnVal += "organization-search";
+                break;
+
             case URL_REFERENCE:
                 returnVal += "reference";
                 break;
