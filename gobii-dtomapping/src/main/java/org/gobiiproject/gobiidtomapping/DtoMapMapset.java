@@ -1,8 +1,7 @@
 package org.gobiiproject.gobiidtomapping;
 
-import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
-
 import java.util.List;
+import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 
 /**
  * Created by Phil on 4/28/2016.
