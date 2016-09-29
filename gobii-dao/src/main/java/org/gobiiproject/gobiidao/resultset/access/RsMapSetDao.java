@@ -7,6 +7,7 @@ import java.util.Map;
 
 /**
  * Created by Phil on 4/7/2016.
+ * Modified by AVB on 9/29/2016.
  */
 public interface RsMapSetDao {
 
@@ -22,5 +23,5 @@ public interface RsMapSetDao {
 
     void updateMapset(Map<String, Object> parameters) throws GobiiDaoException;
 
-    ResultSet getProperties(Integer mapsetId ) throws GobiiDaoException;
+    ResultSet getProperties(Integer mapsetId) throws GobiiDaoException;
 }
