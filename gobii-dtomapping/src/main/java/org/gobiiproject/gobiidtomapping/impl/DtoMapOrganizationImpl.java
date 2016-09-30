@@ -43,9 +43,9 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
 
 
             while (resultSet.next()) {
-                OrganizationDTO currentOrganizationDao = new OrganizationDTO();
-                ResultColumnApplicator.applyColumnValues(resultSet, currentOrganizationDao);
-                returnVal.add(currentOrganizationDao);
+                OrganizationDTO organizationDTO = new OrganizationDTO();
+                ResultColumnApplicator.applyColumnValues(resultSet, organizationDTO);
+                returnVal.add(organizationDTO);
             }
 
 
