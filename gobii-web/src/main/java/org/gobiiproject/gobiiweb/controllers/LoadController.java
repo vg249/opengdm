@@ -206,22 +206,6 @@ public class LoadController {
 
     }//processManifest
 
-    @RequestMapping(value = "/organization", method = RequestMethod.POST)
-    @ResponseBody
-    public OrganizationDTO process(@RequestBody OrganizationDTO organizationDTO) {
-
-        OrganizationDTO returnVal = new OrganizationDTO();
-        try {
-            returnVal = organizationService.process(organizationDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-        return (returnVal);
-
-    }//processOrganization
-
     @RequestMapping(value = "/nameidlist", method = RequestMethod.POST)
     @ResponseBody
     public NameIdListDTO getNameIdList(@RequestBody NameIdListDTO nameIdListDTO) {
