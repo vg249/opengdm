@@ -480,7 +480,7 @@ public class BRAPIController {
     // *************************** ORGANIZATION METHODS
     // *********************************************
 
-    @RequestMapping(value = "/organization", method = RequestMethod.POST)
+    @RequestMapping(value = "/organizations", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<OrganizationDTO> createOrganization(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
                                                        HttpServletRequest request,
@@ -514,7 +514,7 @@ public class BRAPIController {
 
     }
 
-    @RequestMapping(value = "/organization/{organizationId:[\\d]+}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/organizations/{organizationId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<OrganizationDTO> replaceOrganization(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
                                                         @PathVariable Integer organizationId,
@@ -552,7 +552,7 @@ public class BRAPIController {
     }
 
 
-    @RequestMapping(value = "/organization", method = RequestMethod.GET)
+    @RequestMapping(value = "/organizations", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<OrganizationDTO> getOrganizations(HttpServletRequest request,
                                                      HttpServletResponse response) {
@@ -583,7 +583,7 @@ public class BRAPIController {
 
     }
 
-    @RequestMapping(value = "/organization/{organizationId:[\\d]+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/organizations/{organizationId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<OrganizationDTO> getOrganizationsById(@PathVariable Integer organizationId,
                                                          HttpServletRequest request,
@@ -593,7 +593,7 @@ public class BRAPIController {
         try {
 
             //PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
-            OrganizationDTO organizationDTO = organizationService.getOrganizationById(organizationId);
+            OrganizationDTO organizationDTO  = organizationService.getOrganizationById(organizationId);
 
             PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
                     OrganizationDTO.class);

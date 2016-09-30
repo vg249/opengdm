@@ -113,7 +113,7 @@ public class ResourceBuilder {
                 break;
 
             case URL_ORGANIZATION:
-                returnVal += "organization";
+                returnVal += "organizations";
                 break;
 
             case URL_PLATFORM:
