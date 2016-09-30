@@ -50,21 +50,6 @@ public class DtoRequestOrganizationTest {
     @Test
     public void testCreateOrganizationWithHttpPost() throws Exception {
 
-        // BEGIN:   ****** THIS PART WILL HAVE TO BE REFACTORED LATER *********
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("cvgroupterms");
-        nameIdListDTORequest.setFilter("organization_type");
-
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<NameIdDTO> organizationProperTerms = new ArrayList<>(nameIdListDTO
-                .getNamesById());
-        EntityParamValues entityParamValues = TestDtoFactory
-                .makeConstrainedEntityParams(organizationProperTerms, 1);
-        // END:   ****** THIS PART WILL HAVE TO BE REFACTORED LATER *********
-
-
-
         OrganizationDTO newOrganizationDto = TestDtoFactory
                 .makePopulatedOrganizationDTO(GobiiProcessType.CREATE, 1);
 
@@ -97,17 +82,6 @@ public class DtoRequestOrganizationTest {
     @Test
     public void testUpdateOrganizationWithHttpPut() throws Exception {
 
-
-        // BEGIN:   ****** THIS PART WILL HAVE TO BE REFACTORED LATER *********
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("cvgroupterms");
-        nameIdListDTORequest.setFilter("organization_type");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<NameIdDTO> organizationProperTerms = new ArrayList<>(nameIdListDTO
-                .getNamesById());
-        // END:   ****** THIS PART WILL HAVE TO BE REFACTORED LATER *********
-
         // create a new organization for our test
         OrganizationDTO newOrganizationDto = TestDtoFactory
                 .makePopulatedOrganizationDTO(GobiiProcessType.CREATE, 1);
@@ -138,8 +112,7 @@ public class DtoRequestOrganizationTest {
         // so this would be the typical workflow for the client app
         String newName = UUID.randomUUID().toString();
         organizationDTOReceived.setName(newName);
-
-        restUriOrganizationForGetById.setParamValue("id", organizationDTOReceived.getOrganizationId().toString());
+        restResourceForGetById.setParamValue("id", organizationDTOReceived.getOrganizationId().toString());
         PayloadEnvelope<OrganizationDTO> organizationDTOResponseEnvelopeUpdate = restResourceForGetById.put(OrganizationDTO.class,
                 new PayloadEnvelope<>(organizationDTOReceived, GobiiProcessType.UPDATE));
 
@@ -160,7 +133,6 @@ public class DtoRequestOrganizationTest {
 
 
         Assert.assertTrue(dtoRequestOrganizationReRetrieved.getName().equals(newName));
-
     }
 
 

@@ -200,7 +200,7 @@ public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
         OrganizationDTO returnVal = new OrganizationDTO();
 
         String uniqueStemString = UUID.randomUUID().toString();
-        returnVal.setName(uniqueStemString + ": reference");
+        returnVal.setName(uniqueStemString + ": organization");
         returnVal.setAddress("address:" + uniqueStem);
         returnVal.setWebsite(uniqueStem + ".com");
         returnVal.setCreatedBy(1);
