@@ -24,9 +24,9 @@ import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -350,13 +350,10 @@ public class BRAPIController {
         try {
 
             List<MapsetDTO> mapsetDTOs = mapsetService.getAllMapsetNames();
+            for (MapsetDTO currentMapsetDTO : mapsetDTOs) {
+                returnVal.getPayload().getData().add(currentMapsetDTO);
+            }
 
-            PayloadWriter<MapsetDTO> payloadWriter = new PayloadWriter<>(request,
-                                                                         MapsetDTO.class);
-
-            payloadWriter.writeList(returnVal,
-                                    ServiceRequestId.URL_MAPSET,
-                                    mapsetDTOs);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
