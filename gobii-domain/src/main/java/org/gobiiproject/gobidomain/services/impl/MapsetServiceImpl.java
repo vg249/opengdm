@@ -3,8 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.MapsetService;
 import org.gobiiproject.gobiidtomapping.DtoMapMapset;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -17,6 +16,7 @@ import java.util.List;
 
 /**
  * Created by Phil on 4/28/2016.
+ * Modified by AVB on 9/30/2016.
  */
 public class MapsetServiceImpl implements MapsetService {
 
@@ -25,16 +25,16 @@ public class MapsetServiceImpl implements MapsetService {
     @Autowired
     DtoMapMapset dtoMapMapset;
 
-    /*//@Override
+    @Override
     public MapsetDTO processMapset(MapsetDTO mapsetDTO) {
 
-        MapsetDTO returnVal = mapsetDTO;
+        MapsetDTO returnVal = new MapsetDTO();
 
         try {
 
-            switch (returnVal.getProcessType()) {
+            switch (mapsetDTO.getGobiiProcessType()) {
                 case READ:
-                    returnVal = dtoMapMapset.getMapsetDetails(returnVal);
+                    returnVal = dtoMapMapset.getMapsetDetails(mapsetDTO);
                     break;
 
                 case CREATE:
@@ -50,11 +50,11 @@ public class MapsetServiceImpl implements MapsetService {
                     break;
 
                 default:
-                    returnVal.getStatus().addStatusMessage(Status.StatusLevel.ERROR,
-                            Status.ValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces mapset type " + returnVal.getProcessType().toString());
+                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.BAD_REQUEST,
+                            "Unsupported proces Mapset type " + mapsetDTO.getGobiiProcessType().toString());
 
-            } // switch()
+            }
 
         } catch (Exception e) {
 
@@ -63,7 +63,7 @@ public class MapsetServiceImpl implements MapsetService {
         }
 
         return returnVal;
-    }*/
+    }
 
     @Override
     public List<MapsetDTO> getAllMapsetNames() throws GobiiDomainException {
@@ -72,12 +72,6 @@ public class MapsetServiceImpl implements MapsetService {
 
         try {
             returnVal = dtoMapMapset.getAllMapsetNames();
-            for(MapsetDTO currentMapsetDTO : returnVal ) {
-                currentMapsetDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
-                currentMapsetDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-            }
-
-
             if (null == returnVal) {
                 returnVal = new ArrayList<>();
             }
