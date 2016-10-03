@@ -33,6 +33,7 @@ public class MapsetDTO extends Header {
 	private Integer modifiedBy;
 	private Date modifiedDate;
 	private Integer statusId;
+    private List<EntityPropertyDTO> properties = new ArrayList<>();
 
 	@GobiiEntityParam(paramName = "mapsetId")
 	public Integer getMapsetId() {
@@ -142,6 +143,14 @@ public class MapsetDTO extends Header {
 	@GobiiEntityColumn(columnName ="status")
 	public void setStatusId(Integer statusId) {
 		this.statusId = statusId;
+	}
+
+	public List<EntityPropertyDTO> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(List<EntityPropertyDTO> properties) {
+		this.properties = properties;
 	}
 
 }
