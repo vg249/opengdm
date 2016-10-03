@@ -39,7 +39,6 @@ public class DtoRequestMapsetTest {
         Assert.assertTrue(Authenticator.authenticate());
         String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
         DtoRequestMapsetTest.uriFactory = new UriFactory(currentCropContextRoot);
-
     }
 
     @AfterClass
@@ -72,13 +71,11 @@ public class DtoRequestMapsetTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponse));
         Assert.assertFalse(mapsetDTOResponse.getName().isEmpty());
         Assert.assertTrue(mapsetDTOResponse.getMapsetId().equals(2));
-
     }
 
     //waiting for properties stored procedure change to test this
-    /*@Test
+    @Test
     public void testCreateMapset() throws Exception {
-
         //get terms for mapset properties:
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
@@ -110,12 +107,11 @@ public class DtoRequestMapsetTest {
                 mapsetDTOResponseForParams.getProperties().size() > 0);
         Assert.assertTrue("Parameter values do not match",
                entityParamValues.compare(mapsetDTOResponseForParams.getProperties()));
-
-    }*/
+    }
 
 
     //waiting for properties stored procedure change to test this
-    /*@Test
+    @Test
     public void testUpdateMapset() throws Exception {
 
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
@@ -175,5 +171,5 @@ public class DtoRequestMapsetTest {
 
         Assert.assertTrue(matchedProperty.getPropertyValue().equals(updatedPropertyValue));
 
-    }*/
+    }
 }
