@@ -52,7 +52,7 @@ public class RestResource<T> {
         String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
         Integer port = ClientContext.getInstance(null, false).getCurrentCropPort();
         String clientContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        httpCore = new HttpCore(host, port,clientContextRoot);
+        httpCore = new HttpCore(host, port, clientContextRoot);
 
 
         return httpCore;
@@ -60,13 +60,23 @@ public class RestResource<T> {
 
     private String makeMessageFromHttpResult(String method,
                                              HttpMethodResult httpMethodResult) throws Exception {
+
+        return (makeMessageFromHttpResult(method, httpMethodResult, null));
+    }
+
+
+    private String makeMessageFromHttpResult(String method,
+                                             HttpMethodResult httpMethodResult,
+                                             String additionalReason) throws Exception {
         return method.toUpperCase()
                 + " method on "
                 + this.restUri.makeUrl()
                 + " failed with status code "
                 + Integer.toString(httpMethodResult.getResponseCode())
                 + ": "
-                + httpMethodResult.getReasonPhrase();
+                + httpMethodResult.getReasonPhrase()
+                + ": "
+                + additionalReason;
     }
 
     private String makeHttpBody(PayloadEnvelope<T> payloadEnvelope) throws Exception {
@@ -88,27 +98,54 @@ public class RestResource<T> {
 
         PayloadEnvelope<T> returnVal = new PayloadEnvelope<>();
 
-        try {
-            returnVal = new PayloadEnvelope<T>()
-                    .fromJson(httpMethodResult.getPayLoad(),
-                            dtoType);
+        if (HttpStatus.SC_NOT_FOUND != httpMethodResult.getResponseCode()) {
 
-        } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
-        }
+            if (HttpStatus.SC_BAD_REQUEST != httpMethodResult.getResponseCode()) {
 
-        if (httpMethodResult.getResponseCode() != httpSuccessCode) {
+                try {
 
-            String message = makeMessageFromHttpResult(restMethodType.toString(), httpMethodResult);
+                    returnVal = new PayloadEnvelope<T>()
+                            .fromJson(httpMethodResult.getPayLoad(),
+                                    dtoType);
 
-            GobiiStatusLevel gobiiStatusLevel = returnVal.getHeader().getStatus().isSucceeded() ?
-                    GobiiStatusLevel.WARNING :
-                    GobiiStatusLevel.ERROR;
+                    // it's possible that you can have codes other than success, and still have valid response
+                    // body
+                    if (httpMethodResult.getResponseCode() != httpSuccessCode) {
 
+                        String message = makeMessageFromHttpResult(restMethodType.toString(), httpMethodResult);
+
+                        GobiiStatusLevel gobiiStatusLevel = returnVal.getHeader().getStatus().isSucceeded() ?
+                                GobiiStatusLevel.WARNING :
+                                GobiiStatusLevel.ERROR;
+
+                        returnVal.getHeader()
+                                .getStatus()
+                                .addStatusMessage(gobiiStatusLevel,
+                                        message);
+                    }
+
+
+                } catch (Exception e) {
+                    returnVal.getHeader().getStatus().addException(e);
+                }
+
+            } else {
+
+                returnVal.getHeader()
+                        .getStatus()
+                        .addStatusMessage(GobiiStatusLevel.ERROR,
+                                makeMessageFromHttpResult(restMethodType.toString(),
+                                        httpMethodResult,
+                                        "One or more client DTOs may be out of date with those of the server"));
+            }
+
+        } else {
             returnVal.getHeader()
                     .getStatus()
-                    .addStatusMessage(gobiiStatusLevel,
-                            message);
+                    .addStatusMessage(GobiiStatusLevel.ERROR,
+                            makeMessageFromHttpResult(restMethodType.toString(),
+                                    httpMethodResult,
+                                    "The specified URI may be unknown to the server"));
         }
 
         return returnVal;
