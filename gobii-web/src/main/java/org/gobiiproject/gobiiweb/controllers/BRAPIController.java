@@ -24,6 +24,7 @@ import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
@@ -338,6 +339,217 @@ public class BRAPIController {
 
     }
 
+
+    // *********************************************
+    // *************************** INSTRUCTION METHODS
+    // *********************************************
+
+    @RequestMapping(value = "/instructions", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<LoaderInstructionFilesDTO> createInstructions(@RequestBody PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope,
+                                                                         HttpServletRequest request,
+                                                                         HttpServletResponse response) {
+
+        PayloadEnvelope<LoaderInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            PayloadReader<LoaderInstructionFilesDTO> payloadReader = new PayloadReader<>(LoaderInstructionFilesDTO.class);
+            LoaderInstructionFilesDTO loaderInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            LoaderInstructionFilesDTO loaderInstructionFilesDTONew = loaderInstructionFilesService.createInstruction(loaderInstructionFilesDTOToCreate);
+
+            PayloadWriter<LoaderInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
+                    LoaderInstructionFilesDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_ORGANIZATION,
+                    loaderInstructionFilesDTONew);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/instructions", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<LoaderInstructionFilesDTO> getInstructions(@RequestBody PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope,
+                                                                      HttpServletRequest request,
+                                                                      HttpServletResponse response) {
+
+        PayloadEnvelope<LoaderInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            PayloadReader<LoaderInstructionFilesDTO> payloadReader = new PayloadReader<>(LoaderInstructionFilesDTO.class);
+            LoaderInstructionFilesDTO loaderInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            List<LoaderInstructionFilesDTO> loaderInstructionFilesDTOs = loaderInstructionFilesService.getInstructions(loaderInstructionFilesDTOToCreate);
+
+            PayloadWriter<LoaderInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
+                    LoaderInstructionFilesDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    ServiceRequestId.URL_ORGANIZATION,
+                    loaderInstructionFilesDTOs);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    // *********************************************
+    // *************************** ORGANIZATION METHODS
+    // *********************************************
+
+    @RequestMapping(value = "/organizations", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<OrganizationDTO> createOrganization(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+                                                               HttpServletRequest request,
+                                                               HttpServletResponse response) {
+
+        PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
+            OrganizationDTO organizationDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            OrganizationDTO OrganizationDTONew = organizationService.createOrganization(organizationDTOToCreate);
+
+            PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
+                    OrganizationDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_ORGANIZATION,
+                    OrganizationDTONew);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/organizations/{organizationId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<OrganizationDTO> replaceOrganization(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+                                                                @PathVariable Integer organizationId,
+                                                                HttpServletRequest request,
+                                                                HttpServletResponse response) {
+
+        PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
+            OrganizationDTO organizationDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            OrganizationDTO organizationDTOReplaced = organizationService.replaceOrganization(organizationId, organizationDTOToReplace);
+
+            PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
+                    OrganizationDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_ORGANIZATION,
+                    organizationDTOReplaced);
+
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+    @RequestMapping(value = "/organizations", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<OrganizationDTO> getOrganizations(HttpServletRequest request,
+                                                             HttpServletResponse response) {
+
+        PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            //PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
+            List<OrganizationDTO> organizationDTOs = organizationService.getOrganizations();
+
+            PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
+                    OrganizationDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    ServiceRequestId.URL_ORGANIZATION,
+                    organizationDTOs);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/organizations/{organizationId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<OrganizationDTO> getOrganizationsById(@PathVariable Integer organizationId,
+                                                                 HttpServletRequest request,
+                                                                 HttpServletResponse response) {
+
+        PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            //PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
+            OrganizationDTO organizationDTO  = organizationService.getOrganizationById(organizationId);
+
+            PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
+                    OrganizationDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_ORGANIZATION,
+                    organizationDTO);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
     // *********************************************
     // *************************** PLATFORM METHODS
     // *********************************************
@@ -463,144 +675,6 @@ public class BRAPIController {
             payloadWriter.writeSingleItem(returnVal,
                     ServiceRequestId.URL_PLATFORM,
                     platformDTO);
-
-        } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
-        }
-
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-                response,
-                HttpStatus.CREATED,
-                HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return (returnVal);
-
-    }
-    // *********************************************
-    // *************************** ORGANIZATION METHODS
-    // *********************************************
-
-    @RequestMapping(value = "/organizations", method = RequestMethod.POST)
-    @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> createOrganization(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
-
-        PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
-        try {
-
-            PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
-            OrganizationDTO organizationDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
-
-            OrganizationDTO OrganizationDTONew = organizationService.createOrganization(organizationDTOToCreate);
-
-            PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
-                    OrganizationDTO.class);
-
-            payloadWriter.writeSingleItem(returnVal,
-                    ServiceRequestId.URL_ORGANIZATION,
-                    OrganizationDTONew);
-
-        } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
-        }
-
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-                response,
-                HttpStatus.CREATED,
-                HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return (returnVal);
-
-    }
-
-    @RequestMapping(value = "/organizations/{organizationId:[\\d]+}", method = RequestMethod.PUT)
-    @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> replaceOrganization(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                        @PathVariable Integer organizationId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
-
-        PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
-
-        try {
-
-            PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
-            OrganizationDTO organizationDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
-
-            OrganizationDTO organizationDTOReplaced = organizationService.replaceOrganization(organizationId, organizationDTOToReplace);
-
-            PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
-                    OrganizationDTO.class);
-
-            payloadWriter.writeSingleItem(returnVal,
-                    ServiceRequestId.URL_ORGANIZATION,
-                    organizationDTOReplaced);
-
-
-        } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
-        }
-
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-                response,
-                HttpStatus.OK,
-                HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return (returnVal);
-
-    }
-
-
-    @RequestMapping(value = "/organizations", method = RequestMethod.GET)
-    @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> getOrganizations(HttpServletRequest request,
-                                                     HttpServletResponse response) {
-
-        PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
-        try {
-
-            //PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
-            List<OrganizationDTO> organizationDTOs = organizationService.getOrganizations();
-
-            PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
-                    OrganizationDTO.class);
-
-            payloadWriter.writeList(returnVal,
-                    ServiceRequestId.URL_ORGANIZATION,
-                    organizationDTOs);
-
-        } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
-        }
-
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-                response,
-                HttpStatus.CREATED,
-                HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return (returnVal);
-
-    }
-
-    @RequestMapping(value = "/organizations/{organizationId:[\\d]+}", method = RequestMethod.GET)
-    @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> getOrganizationsById(@PathVariable Integer organizationId,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
-
-        PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
-        try {
-
-            //PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
-            OrganizationDTO organizationDTO  = organizationService.getOrganizationById(organizationId);
-
-            PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
-                    OrganizationDTO.class);
-
-            payloadWriter.writeSingleItem(returnVal,
-                    ServiceRequestId.URL_ORGANIZATION,
-                    organizationDTO);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);

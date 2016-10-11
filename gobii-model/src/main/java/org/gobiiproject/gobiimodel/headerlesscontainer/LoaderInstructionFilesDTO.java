@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
@@ -10,14 +10,22 @@ import java.util.List;
 /**
  * Created by Phil on 4/8/2016.
  */
-public class LoaderInstructionFilesDTO extends Header {
+public class LoaderInstructionFilesDTO extends DTOBase {
 
-    public LoaderInstructionFilesDTO() {
-        super(GobiiProcessType.CREATE);
-    }
-
+    private Integer id;
     private List<GobiiLoaderInstruction> gobiiLoaderInstructions = new ArrayList<>();
     private String instructionFileName = null;
+
+
+    @Override
+    public Integer getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public List<GobiiLoaderInstruction> getGobiiLoaderInstructions() {
         return gobiiLoaderInstructions;

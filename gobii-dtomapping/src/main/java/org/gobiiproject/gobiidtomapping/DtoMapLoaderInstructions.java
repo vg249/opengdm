@@ -1,7 +1,9 @@
 package org.gobiiproject.gobiidtomapping;
 
 
-import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
+
+import java.util.List;
 
 /**
  * Created by Phil on 4/12/2016.
@@ -10,6 +12,6 @@ import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
 
 public interface DtoMapLoaderInstructions {
 
-    LoaderInstructionFilesDTO writeInstructions(LoaderInstructionFilesDTO loaderInstructionFilesDTO);
-    LoaderInstructionFilesDTO readInstructions(LoaderInstructionFilesDTO loaderInstructionFilesDTO);
+    LoaderInstructionFilesDTO createInstruction(LoaderInstructionFilesDTO loaderInstructionFilesDTO);
+    List<LoaderInstructionFilesDTO> getInstructions(LoaderInstructionFilesDTO loaderInstructionFilesDTO);
 }

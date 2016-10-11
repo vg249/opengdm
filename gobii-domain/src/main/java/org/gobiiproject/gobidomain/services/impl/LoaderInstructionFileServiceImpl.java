@@ -1,12 +1,16 @@
 package org.gobiiproject.gobidomain.services.impl;
 
+import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
 import org.gobiiproject.gobiidtomapping.DtoMapLoaderInstructions;
-import org.gobiiproject.gobiimodel.dto.container.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -21,37 +25,48 @@ public class LoaderInstructionFileServiceImpl implements LoaderInstructionFilesS
 
 
     @Override
-    public LoaderInstructionFilesDTO processLoaderFileInstructions(LoaderInstructionFilesDTO loaderInstructionFilesDTO) {
+    public List<LoaderInstructionFilesDTO> getInstructions(LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws GobiiDomainException {
 
-        LoaderInstructionFilesDTO returnVal = loaderInstructionFilesDTO;
+        List<LoaderInstructionFilesDTO> returnVal;
 
         try {
+            returnVal = dtoMapLoaderInstructions.getInstructions(loaderInstructionFilesDTO);
+            for(LoaderInstructionFilesDTO currentLoaderInstructionFilesDTO : returnVal ) {
+                currentLoaderInstructionFilesDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            }
 
-            switch (returnVal.getGobiiProcessType()) {
 
-                case CREATE:
-                    returnVal = dtoMapLoaderInstructions.writeInstructions(loaderInstructionFilesDTO);
-                    break;
-
-                case READ:
-                    returnVal = dtoMapLoaderInstructions.readInstructions(loaderInstructionFilesDTO);
-                    break;
-
-                default:
-                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported proces type " + returnVal.getGobiiProcessType().toString());
-
-            } // switch
+            if (null == returnVal) {
+                returnVal = new ArrayList<>();
+            }
 
         } catch (Exception e) {
 
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+
         }
 
         return returnVal;
+    }
 
-    } // processLoaderFileInstructions
+    @Override
+    public LoaderInstructionFilesDTO createInstruction(LoaderInstructionFilesDTO LoaderInstructionFilesDTO) throws GobiiDomainException {
+        LoaderInstructionFilesDTO returnVal;
 
+        try {
+
+            returnVal = dtoMapLoaderInstructions.createInstruction(LoaderInstructionFilesDTO);
+
+            // When we have roles and permissions, this will be set programmatically
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
+        } catch (Exception e) {
+
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+        }
+        return returnVal;
+    }
 } // LoaderInstructionFileServiceImpl
