@@ -1,5 +1,11 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
@@ -22,12 +28,17 @@ import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 4/27/2016.
+ * Modified by AVB on 10/01/2016.
  */
 public class DtoRequestMapsetTest {
+
+    private static UriFactory uriFactory;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
+        String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
+        DtoRequestMapsetTest.uriFactory = new UriFactory(currentCropContextRoot);
     }
 
     @AfterClass
@@ -35,6 +46,19 @@ public class DtoRequestMapsetTest {
         Assert.assertTrue(Authenticator.deAuthenticate());
     }
 
+    @Test
+    public void testMapsWithHttpGet() throws Exception {
+        RestUri restUriMapset = DtoRequestMapsetTest.uriFactory.resourceColl(ServiceRequestId.URL_MAPSET);
+        RestResource<MapsetDTO> restResource = new RestResource<>(restUriMapset);
+        PayloadEnvelope<MapsetDTO> resultEnvelope = restResource.get(MapsetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<MapsetDTO> mapsetDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(mapsetDTOList);
+        Assert.assertTrue(mapsetDTOList.size() > 0);
+        for (int mapsetDTOIndex = 0; mapsetDTOIndex < mapsetDTOList.size(); mapsetDTOIndex++) {
+            Assert.assertNotNull(mapsetDTOList.get(mapsetDTOIndex).getName()); }
+    }
 
     @Test
     public void testGetMapsetDetails() throws Exception {
@@ -47,13 +71,11 @@ public class DtoRequestMapsetTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponse));
         Assert.assertFalse(mapsetDTOResponse.getName().isEmpty());
         Assert.assertTrue(mapsetDTOResponse.getMapsetId().equals(2));
-
     }
 
     //waiting for properties stored procedure change to test this
     @Test
     public void testCreateMapset() throws Exception {
-
         //get terms for mapset properties:
         DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
         NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
@@ -84,8 +106,7 @@ public class DtoRequestMapsetTest {
         Assert.assertTrue("No properties were returned",
                 mapsetDTOResponseForParams.getProperties().size() > 0);
         Assert.assertTrue("Parameter values do not match",
-                entityParamValues.compare(mapsetDTOResponseForParams.getProperties()));
-
+               entityParamValues.compare(mapsetDTOResponseForParams.getProperties()));
     }
 
 

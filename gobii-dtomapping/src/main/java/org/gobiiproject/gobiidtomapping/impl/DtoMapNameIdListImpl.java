@@ -440,7 +440,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         try {
 
-            ResultSet resultSet = rsMapSetDao.getMapNames();
+            ResultSet resultSet = rsMapSetDao.getAllMapsetNames();
             List<NameIdDTO> listDTO = new ArrayList<>();
 
             NameIdDTO nameIdDTO;

@@ -141,7 +141,8 @@
     <!-- **** Map Beans *************************************** -->
     <bean id="rsMapDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsMapSetDaoImpl"/>
-    <bean id="dtoMapMapset" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapsetImpl"/>
+    <bean id="dtoMapMapset"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapsetImpl"/>
     <bean id="MapsetService"
           class="org.gobiiproject.gobidomain.services.impl.MapsetServiceImpl"/>
 

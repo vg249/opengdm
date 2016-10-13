@@ -28,6 +28,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -108,7 +109,7 @@ public class BRAPIController {
     private PlatformService platformService = null;
 
     @Autowired
-    private MapsetService mapsetService;
+    private MapsetService mapsetService = null;
 
     @Autowired
     private ConfigSettingsService configSettingsService;
@@ -545,6 +546,35 @@ public class BRAPIController {
                 response,
                 HttpStatus.CREATED,
                 HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    // *********************************************
+    // *************************** MAPSET METHODS
+    // *********************************************
+    @RequestMapping(value = "/maps", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<MapsetDTO> getMaps(HttpServletRequest request,
+                                              HttpServletResponse response) {
+
+        PayloadEnvelope<MapsetDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            List<MapsetDTO> mapsetDTOs = mapsetService.getAllMapsetNames();
+            for (MapsetDTO currentMapsetDTO : mapsetDTOs) {
+                returnVal.getPayload().getData().add(currentMapsetDTO);
+            }
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                                          response,
+                                          HttpStatus.CREATED,
+                                          HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
 
