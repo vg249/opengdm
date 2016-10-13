@@ -362,7 +362,7 @@ public class BRAPIController {
                     LoaderInstructionFilesDTO.class);
 
             payloadWriter.writeSingleItem(returnVal,
-                    ServiceRequestId.URL_ORGANIZATION,
+                    ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
                     loaderInstructionFilesDTONew);
 
         } catch (Exception e) {
@@ -395,7 +395,7 @@ public class BRAPIController {
                     LoaderInstructionFilesDTO.class);
 
             payloadWriter.writeList(returnVal,
-                    ServiceRequestId.URL_ORGANIZATION,
+                    ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
                     loaderInstructionFilesDTOs);
 
         } catch (Exception e) {

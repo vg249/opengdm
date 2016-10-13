@@ -187,25 +187,25 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
 
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
-//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
         LoaderInstructionFilesDTO loaderInstructionFileDTOResponse = loaderInstructionFileDTOResponseEnvelope.getPayload().getData().get(0);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponse);
 
         //Now re-retrieve with the link we got back
         Assert.assertNotNull(loaderInstructionFileDTOResponseEnvelope.getPayload().getLinkCollection());
         Assert.assertNotNull(loaderInstructionFileDTOResponseEnvelope.getPayload().getLinkCollection().getLinksPerDataItem());
-        Assert.assertNotNull(loaderInstructionFileDTOResponseEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().get(0));
+//        Assert.assertNotNull(loaderInstructionFileDTOResponseEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().get(0));
 
         // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE
         LoaderInstructionFilesDTO loaderInstructionFilesDTOretrieve = new LoaderInstructionFilesDTO();
         loaderInstructionFilesDTOretrieve
                 .setInstructionFileName(loaderInstructionFileDTOResponseEnvelope.getPayload().getData().get(0).getInstructionFileName());
 
-        RestUri restUriContact = DtoRequestGobiiFileLoadInstructionsTest
+        RestUri restUriLoader = DtoRequestGobiiFileLoadInstructionsTest
                 .uriFactory
-                .resourceByUriIdParam(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS);
-        restResource = new RestResource<>(restUriContact);
+                .resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS);
+        restResource = new RestResource<>(restUriLoader);
         PayloadEnvelope<LoaderInstructionFilesDTO> resultEnvelope = restResource
                 .get(LoaderInstructionFilesDTO.class);
 
