@@ -170,22 +170,28 @@ public class HttpCore {
         String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
         returnVal.setResponse(responseCode, reasonPhrase);
 
-        InputStream inputStream = httpResponse.getEntity().getContent();
-        BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(inputStream));
 
-        StringBuilder stringBuilder = new StringBuilder();
-        String currentLine = null;
-        while ((currentLine = bufferedReader.readLine()) != null) {
-            stringBuilder.append(currentLine);
+        if (HttpStatus.SC_NOT_FOUND != responseCode &&
+                HttpStatus.SC_BAD_REQUEST != responseCode) {
+
+            InputStream inputStream = httpResponse.getEntity().getContent();
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(inputStream));
+
+
+            StringBuilder stringBuilder = new StringBuilder();
+            String currentLine = null;
+            while ((currentLine = bufferedReader.readLine()) != null) {
+                stringBuilder.append(currentLine);
+            }
+
+
+            JsonParser parser = new JsonParser();
+            String jsonAsString = stringBuilder.toString();
+            JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
+
+            returnVal.setPayLoad(jsonObject);
         }
-
-
-        JsonParser parser = new JsonParser();
-        String jsonAsString = stringBuilder.toString();
-        JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
-
-        returnVal.setPayLoad(jsonObject);
 
 
         ///returnVal.setPayLoad(getJsonFromInputStream(httpResponse.getEntity().getContent()));
