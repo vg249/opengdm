@@ -181,6 +181,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                 loaderInstructionsDAO.writeInstructions(instructionFileFqpn,
                         returnVal.getGobiiLoaderInstructions());
+                returnVal.setId(0); //this is arbitrary for now
             }
 
 
