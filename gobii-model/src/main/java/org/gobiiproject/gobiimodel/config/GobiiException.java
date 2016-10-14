@@ -11,8 +11,8 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 public class GobiiException extends RuntimeException {
 
 
-    private GobiiStatusLevel gobiiStatusLevel;
-    private GobiiValidationStatusType gobiiValidationStatusType;
+    private GobiiStatusLevel gobiiStatusLevel = GobiiStatusLevel.ERROR;
+    private GobiiValidationStatusType gobiiValidationStatusType = GobiiValidationStatusType.NONE;
 
     public GobiiException(Exception e) {
         super(e);

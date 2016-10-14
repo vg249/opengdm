@@ -39,7 +39,7 @@ class ConfigValuesFactory {
                 JndiTemplate jndi = new JndiTemplate();
                 fqpn = (String) jndi.lookup("java:comp/env/gobiipropsloc");
                 if (LineUtils.isNullOrEmpty(fqpn)) {
-                    throw new Exception("JNDI configuration does specify configuration file; see user manual for configuration instructions");
+                    throw new Exception("JNDI configuration does not specify configuration file; see user manual for configuration instructions");
                 }
             }
 

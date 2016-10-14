@@ -14,19 +14,40 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Phil on 4/21/2016.
+ * Modified by AVB on 9/29/2016.
  */
 public class DtoMapMapsetImpl implements DtoMapMapset {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapMapsetImpl.class);
 
-
     @Autowired
     private RsMapSetDao rsMapsetDao;
+
+    @Override
+    public List<MapsetDTO> getAllMapsetNames() throws GobiiDtoMappingException {
+
+        List<MapsetDTO> returnVal = new ArrayList<MapsetDTO>();
+
+        try {
+            ResultSet resultSet = rsMapsetDao.getAllMapsetNames();
+            while (resultSet.next()) {
+                MapsetDTO currentMapsetDTO = new MapsetDTO();
+                ResultColumnApplicator.applyColumnValues(resultSet, currentMapsetDTO);
+                returnVal.add(currentMapsetDTO);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
 
     @Override
     public MapsetDTO getMapsetDetails(MapsetDTO mapsetDTO) throws GobiiDtoMappingException {

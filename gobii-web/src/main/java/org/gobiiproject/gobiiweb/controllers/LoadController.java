@@ -6,19 +6,29 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.*;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.dto.container.*;
+import org.gobiiproject.gobiimodel.dto.container.OrganizationDTO;
 import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiiweb.automation.ControllerUtils;
+import org.gobiiproject.gobiiweb.automation.PayloadReader;
+import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -36,9 +46,6 @@ public class LoadController {
 
     @Autowired
     private ProjectService projectService = null;
-
-    @Autowired
-    private ContactService contactService = null;
 
     @Autowired
     private ReferenceService referenceService = null;
@@ -62,9 +69,6 @@ public class LoadController {
     private NameIdListService nameIdListService = null;
 
     @Autowired
-    private LoaderInstructionFilesService loaderInstructionFilesService = null;
-
-    @Autowired
     private DisplayService displayService = null;
     
     @Autowired
@@ -72,9 +76,6 @@ public class LoadController {
 
     @Autowired
     private DataSetService dataSetService = null;
-
-    @Autowired
-    private PlatformService platformService = null;
 
     @Autowired
     private MapsetService mapsetService;
@@ -112,7 +113,7 @@ public class LoadController {
         } catch (Exception e) {
             String msg = e.getMessage();
             String tmp = msg;
-            throw (e);
+//            throw (e);
         }
 
         return (returnVal);
@@ -214,24 +215,6 @@ public class LoadController {
 
         try {
             returnVal = nameIdListService.getNameIdList(nameIdListDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
-
-    @RequestMapping(value = "/instructions", method = RequestMethod.POST)
-    @ResponseBody
-    public LoaderInstructionFilesDTO processInstructions(@RequestBody LoaderInstructionFilesDTO loaderInstructionFilesDTO) {
-
-        LoaderInstructionFilesDTO returnVal = new LoaderInstructionFilesDTO();
-
-        try {
-            returnVal = loaderInstructionFilesService.processLoaderFileInstructions(loaderInstructionFilesDTO);
         } catch (Exception e) {
 
             returnVal.getStatus().addException(e);

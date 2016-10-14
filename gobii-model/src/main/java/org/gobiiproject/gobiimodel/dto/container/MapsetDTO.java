@@ -1,4 +1,3 @@
-
 package org.gobiiproject.gobiimodel.dto.container;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
@@ -12,10 +11,12 @@ import java.util.List;
 
 /**
  * Created by Angel on 4/13/2016.
+ * Modified by AVB on 9/30/2016.
  */
 public class MapsetDTO extends Header {
 
-	public MapsetDTO() {}
+	public MapsetDTO() {
+	}
 
 	public MapsetDTO(GobiiProcessType gobiiProcessType) {
 		super(gobiiProcessType);
@@ -32,7 +33,7 @@ public class MapsetDTO extends Header {
 	private Integer modifiedBy;
 	private Date modifiedDate;
 	private Integer statusId;
-	private List<EntityPropertyDTO> properties = new ArrayList<>();
+    private List<EntityPropertyDTO> properties = new ArrayList<>();
 
 	@GobiiEntityParam(paramName = "mapsetId")
 	public Integer getMapsetId() {
@@ -43,7 +44,6 @@ public class MapsetDTO extends Header {
 	public void setMapsetId(Integer mapsetId) {
 		this.mapsetId = mapsetId;
 	}
-
 
 	@GobiiEntityParam(paramName = "name")
 	public String getName() {
@@ -145,7 +145,6 @@ public class MapsetDTO extends Header {
 		this.statusId = statusId;
 	}
 
-
 	public List<EntityPropertyDTO> getProperties() {
 		return properties;
 	}
@@ -153,4 +152,5 @@ public class MapsetDTO extends Header {
 	public void setProperties(List<EntityPropertyDTO> properties) {
 		this.properties = properties;
 	}
+
 }
