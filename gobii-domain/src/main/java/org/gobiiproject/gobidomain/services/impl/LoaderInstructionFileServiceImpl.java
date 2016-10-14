@@ -25,12 +25,12 @@ public class LoaderInstructionFileServiceImpl implements LoaderInstructionFilesS
 
 
     @Override
-    public List<LoaderInstructionFilesDTO> getInstructions(LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws GobiiDomainException {
+    public List<LoaderInstructionFilesDTO> getInstructions(String getInstructions) throws GobiiDomainException {
 
         List<LoaderInstructionFilesDTO> returnVal;
 
         try {
-            returnVal = dtoMapLoaderInstructions.getInstructions(loaderInstructionFilesDTO);
+            returnVal = dtoMapLoaderInstructions.getInstructions(getInstructions);
             for(LoaderInstructionFilesDTO currentLoaderInstructionFilesDTO : returnVal ) {
                 currentLoaderInstructionFilesDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
             }

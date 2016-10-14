@@ -132,4 +132,19 @@ public class UriFactory {
         return returnVal;
 
     } // resourceByUriIdParam();
+
+    public RestUri instructionsByInstructionFileName() throws Exception {
+
+        RestUri returnVal;
+
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+                this.cropContextRoot,
+                ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS);
+        String parameterizedUrl = appendPathVariable(baseUrl, "instructionFileName");
+        returnVal = new RestUri(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        returnVal.addParam(ResourceParam.ResourceParamType.UriParam, "instructionFileName");
+
+        return returnVal;
+
+    } //
 }

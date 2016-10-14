@@ -13,5 +13,5 @@ import java.util.List;
 public interface DtoMapLoaderInstructions {
 
     LoaderInstructionFilesDTO createInstruction(LoaderInstructionFilesDTO loaderInstructionFilesDTO);
-    List<LoaderInstructionFilesDTO> getInstructions(LoaderInstructionFilesDTO loaderInstructionFilesDTO);
+    List<LoaderInstructionFilesDTO> getInstructions(String getInstructions);
 }

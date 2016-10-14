@@ -379,9 +379,9 @@ public class BRAPIController {
 
     }
 
-    @RequestMapping(value = "/instructions", method = RequestMethod.GET)
+    @RequestMapping(value = "/instructions/{instructionFileName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<LoaderInstructionFilesDTO> getInstructions(@RequestBody PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope,
+    public PayloadEnvelope<LoaderInstructionFilesDTO> getInstructions(@PathVariable("instructionFileName") String instructionFileName,
                                                                       HttpServletRequest request,
                                                                       HttpServletResponse response) {
 
@@ -389,8 +389,8 @@ public class BRAPIController {
         try {
 
             PayloadReader<LoaderInstructionFilesDTO> payloadReader = new PayloadReader<>(LoaderInstructionFilesDTO.class);
-            LoaderInstructionFilesDTO loaderInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
-            List<LoaderInstructionFilesDTO> loaderInstructionFilesDTOs = loaderInstructionFilesService.getInstructions(loaderInstructionFilesDTOToCreate);
+//            LoaderInstructionFilesDTO loaderInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            List<LoaderInstructionFilesDTO> loaderInstructionFilesDTOs = loaderInstructionFilesService.getInstructions(instructionFileName);
 
             PayloadWriter<LoaderInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
                     LoaderInstructionFilesDTO.class);

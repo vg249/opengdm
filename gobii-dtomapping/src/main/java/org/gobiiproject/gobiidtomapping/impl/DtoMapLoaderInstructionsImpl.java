@@ -196,16 +196,16 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
     } // writeInstructions
 
     @Override
-    public List<LoaderInstructionFilesDTO> getInstructions(LoaderInstructionFilesDTO loaderInstructionFilesDTO) {
+    public List<LoaderInstructionFilesDTO> getInstructions(String instructionFileName) {
         List<LoaderInstructionFilesDTO> returnVal = new ArrayList<LoaderInstructionFilesDTO>();
-
+        LoaderInstructionFilesDTO loaderInstructionFilesDTO = new LoaderInstructionFilesDTO();
         try {
             ConfigSettings configSettings = new ConfigSettings();
 
             String instructionFile = configSettings
                     .getCropConfig(GobiiCropType.TEST.toString())
                     .getLoaderInstructionFilesDirectory()
-                    + loaderInstructionFilesDTO.getInstructionFileName()
+                    + instructionFileName
                     + INSTRUCTION_FILE_EXT;
 
 
@@ -218,6 +218,8 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                 if (null != instructions) {
                     loaderInstructionFilesDTO.setGobiiLoaderInstructions(instructions);
+                    loaderInstructionFilesDTO.setId(0);//this is arbitrary for now
+                    returnVal.add(loaderInstructionFilesDTO);
                 } else {
 
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,

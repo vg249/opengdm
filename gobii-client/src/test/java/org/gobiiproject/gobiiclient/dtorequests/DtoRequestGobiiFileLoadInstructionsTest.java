@@ -49,7 +49,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertTrue(Authenticator.deAuthenticate());
     }
 
-
     @Test
     public void testSendInstructionFile() throws Exception {
 
@@ -203,8 +202,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setInstructionFileName(loaderInstructionFileDTOResponseEnvelope.getPayload().getData().get(0).getInstructionFileName());
 
         RestUri restUriLoader = DtoRequestGobiiFileLoadInstructionsTest
-                .uriFactory
-                .resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS);
+                .uriFactory.instructionsByInstructionFileName();
+        restUriLoader.setParamValue("instructionFileName",loaderInstructionFilesDTOretrieve.getInstructionFileName());
         restResource = new RestResource<>(restUriLoader);
         PayloadEnvelope<LoaderInstructionFilesDTO> resultEnvelope = restResource
                 .get(LoaderInstructionFilesDTO.class);
@@ -261,9 +260,10 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
 
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-       restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.loaderInstructionFiles());
+        restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.loaderInstructionFiles());
         loaderInstructionFileDTOResponseEnvelope = restResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
+
 
         Assert.assertTrue(
                 2 ==
