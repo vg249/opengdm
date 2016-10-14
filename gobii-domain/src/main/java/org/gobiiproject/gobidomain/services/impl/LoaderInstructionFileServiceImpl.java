@@ -3,6 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
 import org.gobiiproject.gobiidtomapping.DtoMapLoaderInstructions;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.slf4j.Logger;
@@ -51,10 +52,9 @@ public class LoaderInstructionFileServiceImpl implements LoaderInstructionFilesS
     }
 
     @Override
-    public LoaderInstructionFilesDTO createInstruction(LoaderInstructionFilesDTO LoaderInstructionFilesDTO) throws GobiiDomainException {
+    public LoaderInstructionFilesDTO createInstruction(LoaderInstructionFilesDTO LoaderInstructionFilesDTO)
+            throws GobiiException {
         LoaderInstructionFilesDTO returnVal;
-
-        try {
 
             returnVal = dtoMapLoaderInstructions.createInstruction(LoaderInstructionFilesDTO);
 
@@ -62,11 +62,6 @@ public class LoaderInstructionFileServiceImpl implements LoaderInstructionFilesS
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
-        } catch (Exception e) {
-
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-        }
         return returnVal;
     }
 } // LoaderInstructionFileServiceImpl

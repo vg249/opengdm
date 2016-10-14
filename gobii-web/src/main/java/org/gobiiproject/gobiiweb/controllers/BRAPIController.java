@@ -24,6 +24,8 @@ import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
@@ -366,6 +368,8 @@ public class BRAPIController {
                     ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
                     loaderInstructionFilesDTONew);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -554,6 +558,13 @@ public class BRAPIController {
     // *********************************************
     // *************************** MAPSET METHODS
     // *********************************************
+    /*
+    * NOTE: this implementation is incorrect: it is using getAllmapsetNames;
+    * There needs to be a getAllMapset() method added. For now, the funcitonality
+    * Provided by the LoadControlle remains in place and the client side tets have
+    * not been modified. This funcitonality will have to be built out later.
+    * Also note that the resource name /maps is correct but does not match
+    * what is being used in ResourceBuilder on the client side*/
     @RequestMapping(value = "/maps", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MapsetDTO> getMaps(HttpServletRequest request,

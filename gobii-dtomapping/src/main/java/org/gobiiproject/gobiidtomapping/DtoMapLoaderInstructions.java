@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidtomapping;
 
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
 
 import java.util.List;
@@ -12,6 +13,6 @@ import java.util.List;
 
 public interface DtoMapLoaderInstructions {
 
-    LoaderInstructionFilesDTO createInstruction(LoaderInstructionFilesDTO loaderInstructionFilesDTO);
+    LoaderInstructionFilesDTO createInstruction(LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws GobiiDtoMappingException, GobiiDaoException;
     List<LoaderInstructionFilesDTO> getInstructions(String getInstructions);
 }

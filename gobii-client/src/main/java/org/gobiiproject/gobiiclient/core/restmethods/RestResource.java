@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.core.HttpMethodResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 
 import org.gobiiproject.gobiiapimodel.types.RestMethodTypes;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,8 +76,7 @@ public class RestResource<T> {
                 + Integer.toString(httpMethodResult.getResponseCode())
                 + ": "
                 + httpMethodResult.getReasonPhrase()
-                + ": "
-                + additionalReason;
+                + (!LineUtils.isNullOrEmpty(additionalReason) ? (": " + additionalReason) : "");
     }
 
     private String makeHttpBody(PayloadEnvelope<T> payloadEnvelope) throws Exception {
@@ -101,6 +101,7 @@ public class RestResource<T> {
         if (HttpStatus.SC_NOT_FOUND != httpMethodResult.getResponseCode()) {
 
             if (HttpStatus.SC_BAD_REQUEST != httpMethodResult.getResponseCode()) {
+
 
                 try {
 

@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class DtoRequestMapsetTest {
         Assert.assertTrue(Authenticator.deAuthenticate());
     }
 
-    @Test
+    @Ignore
     public void testMapsWithHttpGet() throws Exception {
         RestUri restUriMapset = DtoRequestMapsetTest.uriFactory.resourceColl(ServiceRequestId.URL_MAPSET);
         RestResource<MapsetDTO> restResource = new RestResource<>(restUriMapset);

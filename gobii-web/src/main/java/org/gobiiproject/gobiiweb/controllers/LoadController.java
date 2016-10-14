@@ -48,9 +48,6 @@ public class LoadController {
     private ProjectService projectService = null;
 
     @Autowired
-    private ContactService contactService = null;
-
-    @Autowired
     private ReferenceService referenceService = null;
 
     @Autowired
@@ -72,9 +69,6 @@ public class LoadController {
     private NameIdListService nameIdListService = null;
 
     @Autowired
-    private LoaderInstructionFilesService loaderInstructionFilesService = null;
-
-    @Autowired
     private DisplayService displayService = null;
     
     @Autowired
@@ -82,9 +76,6 @@ public class LoadController {
 
     @Autowired
     private DataSetService dataSetService = null;
-
-    @Autowired
-    private PlatformService platformService = null;
 
     @Autowired
     private MapsetService mapsetService;
@@ -234,24 +225,6 @@ public class LoadController {
 
     }
 
-/*    @RequestMapping(value = "/instructions", method = RequestMethod.POST)
-    @ResponseBody
-    public LoaderInstructionFilesDTO processInstructions(@RequestBody LoaderInstructionFilesDTO loaderInstructionFilesDTO) {
-
-        LoaderInstructionFilesDTO returnVal = new LoaderInstructionFilesDTO();
-
-        try {
-            returnVal = loaderInstructionFilesService.processLoaderFileInstructions(loaderInstructionFilesDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
-*/
     @RequestMapping(value = "/display", method = RequestMethod.POST)
     @ResponseBody
     public DisplayDTO processDisplay(@RequestBody DisplayDTO displayDTO) {

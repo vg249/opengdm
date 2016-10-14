@@ -186,9 +186,10 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
 
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
+
 
         LoaderInstructionFilesDTO loaderInstructionFileDTOResponse = loaderInstructionFileDTOResponseEnvelope.getPayload().getData().get(0);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponse);
 
         //Now re-retrieve with the link we got back
@@ -203,7 +204,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         RestUri restUriLoader = DtoRequestGobiiFileLoadInstructionsTest
                 .uriFactory.instructionsByInstructionFileName();
-        restUriLoader.setParamValue("instructionFileName",loaderInstructionFilesDTOretrieve.getInstructionFileName());
+        restUriLoader.setParamValue("instructionFileName", loaderInstructionFilesDTOretrieve.getInstructionFileName());
         restResource = new RestResource<>(restUriLoader);
         PayloadEnvelope<LoaderInstructionFilesDTO> resultEnvelope = restResource
                 .get(LoaderInstructionFilesDTO.class);
@@ -264,18 +265,17 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         loaderInstructionFileDTOResponseEnvelope = restResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
-
-/*        Assert.assertTrue( //will not work at the moment because dtoMapLoader do not have access to the PayloadResponseEnvelope headers where it's supposed to add error messages
-                2 ==
+        Assert.assertTrue("Non-existent files are not being reported properly: there are not two ENTITY_DOES_NOT_EXIST errors",
+                1 ==
                         loaderInstructionFileDTOResponseEnvelope.getHeader().getStatus()
                                 .getStatusMessages()
                                 .stream()
                                 .filter(r ->
                                         r.getGobiiValidationStatusType()
                                                 .equals(GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST))
-                                .collect(Collectors.toList())
-                                .size()
-        );*/
+                                .count()
+
+        );
 
 
         // ************** VERIFY THAT THE DIRECTORIES WE SHOULD HAVE CREATED DO EXIST
@@ -296,7 +296,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
-
         // ************** VERIFY THAT WE GET AN ERROR WHEN A FILE ALREADY EXISTS
         loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileNameNoError);
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
@@ -304,16 +303,16 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         loaderInstructionFileDTOResponseEnvelope = restResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
-       /* Assert.assertTrue(1 == loaderInstructionFileDTOResponseEnvelope.getHeader() //will not work at the moment because dtoMapLoader do not have access to the PayloadResponseEnvelope headers where it's supposed to add error messages
-                .getStatus()
-                .getStatusMessages().size());
 
-        Assert.assertTrue(loaderInstructionFileDTOResponseEnvelope.getHeader()
-                .getStatus()
-                .getStatusMessages()
-                .get(0)
-                .getMessage().toLowerCase().contains("already exists"));
-*/
+        Assert.assertTrue("At least one error message should contain 'already exists'",
+                loaderInstructionFileDTOResponseEnvelope.getHeader()
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(m -> m.getMessage().toLowerCase().contains("already exists"))
+                        .count()
+                        > 0);
+
 
         // ************** VERIFY THAT WE ERROR ON USER INPUT FILE THAT SHOULD EXISTS BUT DOESN'T EXIST
 
@@ -333,8 +332,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         PayloadEnvelope<LoaderInstructionFilesDTO> testForuserInputFileExistsCausesErrorEnvelopse = restResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
-/*        Assert.assertTrue( //will not work at the moment because dtoMapLoader do not have access to the PayloadResponseEnvelope headers where it's supposed to add error messages
-                2 ==
+        Assert.assertTrue(
+                1 ==
                         testForuserInputFileExistsCausesErrorEnvelopse.getHeader()
                                 .getStatus()
                                 .getStatusMessages()
@@ -342,9 +341,8 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                                 .filter(r ->
                                         r.getGobiiValidationStatusType()
                                                 .equals(GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST))
-                                .collect(Collectors.toList())
-                                .size()
-        );*/
+                                .count()
+        );
 
         // ************** VERIFY THAT WE HANDLE USER INPUT FILE ALREADY EXISTS
         // we're going to test for the existence of the previous instruction file we created;
@@ -371,5 +369,5 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(testForuserInputFileExistsNoErrorEnvelope.getHeader()));
 
-    } // testGetMarkers()
+    }
 }
