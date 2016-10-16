@@ -3,7 +3,8 @@ package org.gobiiproject.gobiimodel.types;
 /**
  * Created by Phil on 10/16/2016.
  */
-public enum GobiiFilterTypes {
-    BYTYPEID,
-    BYTYPENAME
+public enum GobiiEntityNameType {
+
+    ANALYSES,
+    CONTACTS
 }
