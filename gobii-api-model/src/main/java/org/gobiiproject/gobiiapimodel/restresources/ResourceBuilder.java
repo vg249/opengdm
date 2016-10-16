@@ -56,8 +56,12 @@ public class ResourceBuilder {
                 returnVal += "project";
                 break;
 
-            case URL_NAME_ID_LIST:
+            case URL_NAME_ID_LIST_DEPRECATED:
                 returnVal += "nameidlist";
+                break;
+
+            case URL_NAMES:
+                returnVal += "names";
                 break;
 
             case URL_FILE_LOAD_INSTRUCTIONS:

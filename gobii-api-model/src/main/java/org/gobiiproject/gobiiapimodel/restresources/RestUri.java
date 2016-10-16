@@ -58,13 +58,13 @@ public class RestUri {
 
         String returnVal = this.requestTemplate; // in case there are no path variables
 
-        List<ResourceParam> pathParams = resourceParams
+        List<ResourceParam> uriParams = resourceParams
                 .stream()
                 .filter(getRequestParam -> getRequestParam.getResourceParamType()
                         .equals(ResourceParam.ResourceParamType.UriParam))
                 .collect(Collectors.toList());
 
-        for (ResourceParam currentParam : pathParams) {
+        for (ResourceParam currentParam : uriParams) {
             String paramToReplace = pathVarDelimBegin
                     + currentParam.getName()
                     + pathVarDelimEnd;
@@ -94,7 +94,7 @@ public class RestUri {
                             returnVal.indexOf(this.pathVarDelimEnd)
                     );
 
-            throw new Exception("There is no parameter for path variable " + missingParameter);
+            throw new Exception("There is no parameter for uri parameter " + missingParameter);
         }
 
         return returnVal;

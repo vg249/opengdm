@@ -26,6 +26,7 @@ import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
@@ -417,6 +418,50 @@ public class BRAPIController {
     }
 
     // *********************************************
+    // *************************** NameIDList
+    // *********************************************
+    @RequestMapping(value = "/names/{entity}",
+            method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<NameIdDTO> getNames(@PathVariable("entity") String entity,
+                                               @RequestParam(value = "filterType", required = false) String filterType,
+                                               @RequestParam(value = "filterValue", required = false) String filterValue,
+                                               HttpServletRequest request,
+                                               HttpServletResponse response) {
+
+        PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            PayloadReader<NameIdDTO> payloadReader = new PayloadReader<>(NameIdDTO.class);
+//            LoaderInstructionFilesDTO loaderInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            List<NameIdDTO> nameIdList = nameIdListService.getNameIdList(entity, filterType, filterValue);
+
+            for (NameIdDTO currentNameIdDto : nameIdList) {
+                returnVal.getPayload().getData().add(currentNameIdDto);
+            }
+
+//            PayloadWriter<LoaderInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
+//                    LoaderInstructionFilesDTO.class);
+//
+//            payloadWriter.writeList(returnVal,
+//                    ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
+//                    loaderInstructionFilesDTOs);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+    // *********************************************
     // *************************** ORGANIZATION METHODS
     // *********************************************
 
@@ -533,7 +578,7 @@ public class BRAPIController {
         try {
 
             //PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
-            OrganizationDTO organizationDTO  = organizationService.getOrganizationById(organizationId);
+            OrganizationDTO organizationDTO = organizationService.getOrganizationById(organizationId);
 
             PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
                     OrganizationDTO.class);
@@ -583,9 +628,9 @@ public class BRAPIController {
         }
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-                                          response,
-                                          HttpStatus.CREATED,
-                                          HttpStatus.INTERNAL_SERVER_ERROR);
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
 
@@ -679,7 +724,7 @@ public class BRAPIController {
             List<PlatformDTO> platformDTOs = platformService.getPlatforms();
 
             PayloadWriter<PlatformDTO> payloadWriter = new PayloadWriter<>(request,
-                  PlatformDTO.class);
+                    PlatformDTO.class);
 
             payloadWriter.writeList(returnVal,
                     ServiceRequestId.URL_PLATFORM,
@@ -711,7 +756,7 @@ public class BRAPIController {
             PlatformDTO platformDTO = platformService.getPlatformById(platformId);
 
             PayloadWriter<PlatformDTO> payloadWriter = new PayloadWriter<>(request,
-                  PlatformDTO.class);
+                    PlatformDTO.class);
 
             payloadWriter.writeSingleItem(returnVal,
                     ServiceRequestId.URL_PLATFORM,

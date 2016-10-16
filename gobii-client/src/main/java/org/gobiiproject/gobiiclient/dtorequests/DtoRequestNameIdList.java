@@ -18,7 +18,7 @@ public class DtoRequestNameIdList {
         return new DtoRequestProcessor<NameIdListDTO>().process(nameIdListDTORequest,
                 NameIdListDTO.class,
                 ControllerType.LOADER,
-                ServiceRequestId.URL_NAME_ID_LIST);
+                ServiceRequestId.URL_NAME_ID_LIST_DEPRECATED);
 
     } // getContactsById()
 

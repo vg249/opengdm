@@ -20,6 +20,7 @@ public class ResourceParam {
     private ResourceParamType resourceParamType = ResourceParamType.Unknown;
     private String name;
     private String value;
+    boolean required = true;
 
 
     public ResourceParamType getResourceParamType() {

@@ -147,4 +147,26 @@ public class UriFactory {
         return returnVal;
 
     } //
+
+    public RestUri nameIdList() throws Exception {
+
+        RestUri returnVal;
+
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+                this.cropContextRoot,
+                ServiceRequestId.URL_NAMES);
+
+        String parameterizedUrl = appendPathVariable(baseUrl, "entity");
+
+        returnVal = new RestUri(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+
+        returnVal.addParam(ResourceParam.ResourceParamType.UriParam, "entity");
+
+        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "filterType");
+        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "filterValue");
+
+        return returnVal;
+
+    } //
+
 }

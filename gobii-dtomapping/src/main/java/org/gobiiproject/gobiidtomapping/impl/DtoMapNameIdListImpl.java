@@ -3,6 +3,8 @@ package org.gobiiproject.gobiidtomapping.impl;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobiidao.resultset.access.*;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
+import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -61,30 +63,27 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     @Autowired
     private RsRoleDao rsRoleDao = null;
 
-    private NameIdListDTO getNameIdListForAnalysis(NameIdListDTO nameIdListDTO) {
+    private List<NameIdDTO> getAllNameIdsForAnalysis() {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+        List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
 
             ResultSet resultSet = rsAnalysisDao.getAnalysisNames();
             List<NameIdDTO> listDTO = new ArrayList<>();
 
-            NameIdDTO nameIdDTO;
+
             while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
+                NameIdDTO nameIdDTO = new NameIdDTO();
                 nameIdDTO.setId(resultSet.getInt("analysis_id"));
                 nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
+                returnVal.add(nameIdDTO);
             }
 
 
-            returnVal.setNamesById(listDTO);
-
-
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
@@ -722,10 +721,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
 
-                case "analysis":
-                    returnVal = getNameIdListForAnalysis(nameIdListDTO);
-                    break;
-
                 case "analysisnamebytypeid":
                     returnVal = getNameIdListForAnalysisNameByTypeId(nameIdListDTO);
                     break;
@@ -808,6 +803,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                 case "role":
                     returnVal = getNameIdListForRole(nameIdListDTO);
                     break;
+
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                             "Unsupported entity for list request: " + nameIdListDTO.getEntityName());
@@ -818,5 +814,27 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
 
     } // getNameIdList()
+
+    @Override
+    public List<NameIdDTO> getNameIdList(String entity, String filterType, String filterValue) throws GobiiException {
+
+        List<NameIdDTO> returnVal;
+
+        switch(entity) {
+
+            case "analysis":
+                returnVal = this.getAllNameIdsForAnalysis();
+                break;
+
+
+            default:
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "Unsupported entity for list request: " + entity);
+        }
+
+        return returnVal;
+    }
+
 
 } // DtoMapNameIdListImpl
