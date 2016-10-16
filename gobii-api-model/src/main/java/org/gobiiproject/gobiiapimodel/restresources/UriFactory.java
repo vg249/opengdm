@@ -4,20 +4,25 @@ package org.gobiiproject.gobiiapimodel.restresources;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by Phil on 9/7/2016.
  */
 public class UriFactory {
 
-    private  final String DELIM_PARAM_BEGIN = "{";
-    private  final String DELIM_PARAM_END = "}";
-    private  final char URL_SEPARATOR = '/';
+    private final String DELIM_PARAM_BEGIN = "{";
+    private final String DELIM_PARAM_END = "}";
+    private final char URL_SEPARATOR = '/';
 
     private String cropContextRoot;
+
     public UriFactory(String cropContextRoot) {
 
         this.cropContextRoot = cropContextRoot;
-        if( null != this.cropContextRoot ) {
+        if (null != this.cropContextRoot) {
             if (this.cropContextRoot.lastIndexOf(URL_SEPARATOR) != this.cropContextRoot.length() - 1) {
                 this.cropContextRoot = this.cropContextRoot + URL_SEPARATOR;
             }
@@ -25,12 +30,13 @@ public class UriFactory {
     }
 
 
-
-    private  String appendPathVariable(String requestUrl, String paramName) {
+    private String appendPathVariable(String requestUrl, String paramName) {
 
         String returnVal = requestUrl;
 
-        if (returnVal.charAt(returnVal.length() - 1) != URL_SEPARATOR) {
+        if ((0 == returnVal.length()) ||
+                (returnVal.charAt(returnVal.length() - 1) != URL_SEPARATOR)) {
+
             returnVal += URL_SEPARATOR;
         }
 
@@ -40,12 +46,30 @@ public class UriFactory {
 
     }
 
+    private RestUri makeUriWithUriParams(String baseUri, List<String> uriParms) {
+
+        String uriParamSuffix = "";
+        for (String currentParam : uriParms) {
+            uriParamSuffix = this.appendPathVariable(uriParamSuffix, currentParam);
+        }
+
+        String uri = baseUri + uriParamSuffix;
+
+        RestUri returnVal = new RestUri(uri, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        for (String currentParam : uriParms) {
+            returnVal.addParam(ResourceParam.ResourceParamType.UriParam, currentParam);
+        }
+
+        return returnVal;
+
+    }
+
     public RestUri RestUriFromUri(String uri) {
-        return new RestUri(uri,DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        return new RestUri(uri, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
     }
 
 
-    public  RestUri contacts() throws Exception {
+    public RestUri contacts() throws Exception {
 
         return new RestUri(ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
                 this.cropContextRoot,
@@ -54,7 +78,7 @@ public class UriFactory {
 
     } // resourceByUriIdParam();
 
-    public  RestUri loaderInstructionFiles() throws Exception {
+    public RestUri loaderInstructionFiles() throws Exception {
 
         return new RestUri(ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
                 this.cropContextRoot,
@@ -63,7 +87,7 @@ public class UriFactory {
 
     } // resourceByUriIdParam();
 
-    public  RestUri organization() throws Exception {
+    public RestUri organization() throws Exception {
 
         return new RestUri(ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
                 this.cropContextRoot,
@@ -87,7 +111,6 @@ public class UriFactory {
     } // resourceByUriIdParam();
 
 
-
     public RestUri resourceByUriIdParam(ServiceRequestId serviceRequestId) throws Exception {
 
         RestUri returnVal;
@@ -95,15 +118,13 @@ public class UriFactory {
         String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
                 this.cropContextRoot,
                 serviceRequestId);
-        String parameterizedUrl = appendPathVariable(baseUrl, "id");
-        returnVal = new RestUri(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-        returnVal.addParam(ResourceParam.ResourceParamType.UriParam, "id");
+        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("id"));
 
         return returnVal;
 
     } //
 
-    public  RestUri contactsByQueryParams() throws Exception {
+    public RestUri contactsByQueryParams() throws Exception {
 
         RestUri returnVal;
 
@@ -119,7 +140,7 @@ public class UriFactory {
 
     } // resourceByUriIdParam();
 
-    public  RestUri organizationsByQueryParams() throws Exception {
+    public RestUri organizationsByQueryParams() throws Exception {
 
         RestUri returnVal;
 
@@ -140,9 +161,8 @@ public class UriFactory {
         String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
                 this.cropContextRoot,
                 ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS);
-        String parameterizedUrl = appendPathVariable(baseUrl, "instructionFileName");
-        returnVal = new RestUri(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-        returnVal.addParam(ResourceParam.ResourceParamType.UriParam, "instructionFileName");
+
+        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("instructionFileName"));
 
         return returnVal;
 
@@ -156,11 +176,8 @@ public class UriFactory {
                 this.cropContextRoot,
                 ServiceRequestId.URL_NAMES);
 
-        String parameterizedUrl = appendPathVariable(baseUrl, "entity");
 
-        returnVal = new RestUri(parameterizedUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-
-        returnVal.addParam(ResourceParam.ResourceParamType.UriParam, "entity");
+        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("entity"));
 
         returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "filterType");
         returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "filterValue");

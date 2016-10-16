@@ -47,11 +47,6 @@ public class DtoRequestNameIdListTest {
     public void testGetAnalysisNames() throws Exception {
 
         // Assumes rice data with seed script is loaded
-//        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-//        nameIdListDTORequest.setEntityName("analysis");
-//        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-//        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
-
         RestUri namesUri = uriFactory.nameIdList();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
         namesUri.setParamValue("entity", "analysis");
@@ -63,6 +58,8 @@ public class DtoRequestNameIdListTest {
         Assert.assertNotNull(NameIdDTOList);
         Assert.assertTrue(NameIdDTOList.size() > 0);
         Assert.assertNotNull(NameIdDTOList.get(0).getName());
+        Assert.assertNotNull(NameIdDTOList.get(0).getId());
+        Assert.assertTrue(NameIdDTOList.get(0).getId() > 0);
 
 
 //        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
