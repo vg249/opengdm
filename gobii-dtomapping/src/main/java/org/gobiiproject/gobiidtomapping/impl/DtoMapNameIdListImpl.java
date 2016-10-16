@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import org.apache.commons.lang.enums.EnumUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobiidao.resultset.access.*;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
@@ -7,12 +8,16 @@ import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.GobiiFilterTypes;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,15 +68,14 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     @Autowired
     private RsRoleDao rsRoleDao = null;
 
-    private List<NameIdDTO> getAllNameIdsForAnalysis() {
+    private List<NameIdDTO> getAllNameIdsForAnalysis() throws GobiiException {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
+        ResultSet resultSet = rsAnalysisDao.getAnalysisNames();
+        List<NameIdDTO> listDTO = new ArrayList<>();
+
         try {
-
-            ResultSet resultSet = rsAnalysisDao.getAnalysisNames();
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
 
             while (resultSet.next()) {
                 NameIdDTO nameIdDTO = new NameIdDTO();
@@ -80,39 +84,34 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                 returnVal.add(nameIdDTO);
             }
 
-
-        } catch (Exception e) {
-            LOGGER.error("Gobii Maping Error", e);
+        } catch (SQLException e) {
+            LOGGER.error("error retrieving analysis names", e);
             throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
     }
 
-    private NameIdListDTO getNameIdListForAnalysisNameByTypeId(NameIdListDTO nameIdListDTO) {
+    private List<NameIdDTO> getNameIdListForAnalysisNameByTypeId(Integer typeId) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
+        List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsAnalysisDao.getAnalysisNamesByTypeId(Integer.parseInt(nameIdListDTO.getFilter()));
-            List<NameIdDTO> listDTO = new ArrayList<>();
+            ResultSet resultSet = rsAnalysisDao.getAnalysisNamesByTypeId(typeId);
 
             NameIdDTO nameIdDTO;
             while (resultSet.next()) {
                 nameIdDTO = new NameIdDTO();
                 nameIdDTO.setId(resultSet.getInt("analysis_id"));
                 nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
+                returnVal.add(nameIdDTO);
             }
 
 
-            returnVal.setNamesById(listDTO);
-
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
+        }  catch (SQLException e) {
+            LOGGER.error("error retrieving analysis names", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
@@ -542,7 +541,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
             } else {
                 nameIdListDTO.getStatus()
                         .addStatusMessage(GobiiStatusLevel.ERROR,
-                        "Filter value is not numeric: " + filter);
+                                "Filter value is not numeric: " + filter);
             }
         } catch (Exception e) {
             returnVal.getStatus().addException(e);
@@ -699,9 +698,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         try {
 
             ResultSet resultSet = rsDataSetDao.getDatasetNamesByExperimentId(Integer.parseInt(nameIdListDTO.getFilter()));
-            List<NameIdDTO> listDTO   = makeMapOfDataSetNames(resultSet);
+            List<NameIdDTO> listDTO = makeMapOfDataSetNames(resultSet);
 
-            returnVal.setNamesById(listDTO );
+            returnVal.setNamesById(listDTO);
 
         } catch (Exception e) {
             returnVal.getStatus().addException(e);
@@ -720,10 +719,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
-
-                case "analysisnamebytypeid":
-                    returnVal = getNameIdListForAnalysisNameByTypeId(nameIdListDTO);
-                    break;
 
                 case "contact":
                     returnVal = getNameIdListForContacts(nameIdListDTO);
@@ -820,10 +815,37 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         List<NameIdDTO> returnVal;
 
-        switch(entity) {
+        switch (entity) {
 
+            // ********************************** ANALYSIS
             case "analysis":
-                returnVal = this.getAllNameIdsForAnalysis();
+                if (LineUtils.isNullOrEmpty(filterType)) {
+                    returnVal = this.getAllNameIdsForAnalysis();
+                } else {
+
+                    if (filterType
+                            .toLowerCase()
+                            .equals(GobiiFilterTypes.BYTYPEID.toString()
+                                    .toLowerCase())) {
+
+                        if (!LineUtils.isNullOrEmpty(filterValue)) {
+
+                            returnVal = this.getNameIdListForAnalysisNameByTypeId(Integer.parseInt(filterValue));
+
+                        } else {
+                            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                                    GobiiValidationStatusType.NONE,
+                                    "A filter value was not supplied for the "
+                                            + filterType
+                                            + " filter on "
+                                            + entity);
+                        }
+                    } else {
+                        throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                                GobiiValidationStatusType.NONE,
+                                "Unsupported filter type for " + entity + ": " + filterType);
+                    }
+                }
                 break;
 
 

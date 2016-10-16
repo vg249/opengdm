@@ -5,9 +5,11 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.ResourceParam;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
@@ -18,6 +20,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
+import org.gobiiproject.gobiimodel.types.GobiiFilterTypes;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -88,18 +91,71 @@ public class DtoRequestNameIdListTest {
     public void testGetAnalysisNamesByTypeId() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("analysisNameByTypeId");
-        nameIdListDTORequest.setFilter("33");
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+        RestUri namesUri = uriFactory.nameIdList();
+        RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
+        namesUri.setParamValue("entity", "analysis");
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterTypes.BYTYPEID.toString().toUpperCase()));
+        namesUri.setParamValue("filterValue", "33");
+        PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
+                .get(NameIdDTO.class);
 
-
-        Assert.assertNotEquals(null, nameIdListDtoResponse);
-        Assert.assertEquals(true, nameIdListDtoResponse.getStatus().isSucceeded());
-        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<NameIdDTO> NameIdDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(NameIdDTOList);
+        Assert.assertTrue(NameIdDTOList.size() > 0);
+        Assert.assertNotNull(NameIdDTOList.get(0).getName());
+        Assert.assertNotNull(NameIdDTOList.get(0).getId());
+        Assert.assertTrue(NameIdDTOList.get(0).getId() > 0);
     }
+
+
+    @Test
+    public void testGetAnalysisNamesByTypeIdErrorBadFilterType() throws Exception {
+
+        // Assumes rice data with seed script is loaded
+        RestUri namesUri = uriFactory.nameIdList();
+        RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
+        namesUri.setParamValue("entity", "analysis");
+        namesUri.setParamValue("filterType", "foo");
+        namesUri.setParamValue("filterValue", "33");
+        PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
+                .get(NameIdDTO.class);
+
+        Assert.assertTrue("There should be exactly one error for the unsupported filter type",
+                1 == resultEnvelope
+                        .getHeader()
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(m -> m.getMessage().toLowerCase().contains("unsupported filter type"))
+                        .count());
+
+    }
+
+    @Test
+    public void testGetAnalysisNamesByTypeIdErrorEmptyFilterValue() throws Exception {
+
+        // Assumes rice data with seed script is loaded
+        RestUri namesUri = uriFactory.nameIdList();
+        RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
+        namesUri.setParamValue("entity", "analysis");
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterTypes.BYTYPEID.toString().toUpperCase()));
+        // normally would also specify "filterValue" here
+
+        PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
+                .get(NameIdDTO.class);
+
+        Assert.assertTrue("There should be exactly one error for the unsupported filter type",
+                1 == resultEnvelope
+                        .getHeader()
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(m -> m.getMessage().toLowerCase().contains("a filter value was not supplied"))
+                        .count());
+
+    }
+
 
 
     @Test
