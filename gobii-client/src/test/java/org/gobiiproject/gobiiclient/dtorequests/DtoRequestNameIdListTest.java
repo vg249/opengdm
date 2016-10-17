@@ -6,23 +6,17 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
-import org.gobiiproject.gobiiapimodel.hateos.Link;
-import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.ResourceParam;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.GobiiFilterTypes;
+import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -96,7 +90,7 @@ public class DtoRequestNameIdListTest {
         RestUri namesUri = uriFactory.nameIdList();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
         namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSES.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterTypes.BYTYPEID.toString().toUpperCase()));
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPEID.toString().toUpperCase()));
         namesUri.setParamValue("filterValue", "33");
         PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
                 .get(NameIdDTO.class);
@@ -130,7 +124,7 @@ public class DtoRequestNameIdListTest {
                         .getStatus()
                         .getStatusMessages()
                         .stream()
-                        .filter(m -> m.getMessage().toLowerCase().contains("unsupported filter type"))
+                        .filter(m -> m.getMessage().toLowerCase().contains("unsupported filter"))
                         .count());
 
     }
@@ -143,7 +137,7 @@ public class DtoRequestNameIdListTest {
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
 
         namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSES.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterTypes.BYTYPEID.toString().toUpperCase()));
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPEID.toString().toUpperCase()));
         // normally would also specify "filterValue" here
 
         PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
@@ -168,7 +162,7 @@ public class DtoRequestNameIdListTest {
         RestUri namesUri = uriFactory.nameIdList();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
         namesUri.setParamValue("entity", GobiiEntityNameType.CONTACTS.toString().toLowerCase());
-        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterTypes.BYTYPENAME.toString().toUpperCase()));
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString().toUpperCase()));
         namesUri.setParamValue("filterValue", "Curator");
         PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
                 .get(NameIdDTO.class);

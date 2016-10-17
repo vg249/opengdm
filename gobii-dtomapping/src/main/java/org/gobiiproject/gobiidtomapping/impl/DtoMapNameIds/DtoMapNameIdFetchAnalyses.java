@@ -6,7 +6,7 @@ import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.GobiiFilterTypes;
+import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -90,14 +90,11 @@ public class DtoMapNameIdFetchAnalyses implements DtoMapNameIdFetch {
 
         List<NameIdDTO> returnVal;
 
-        if (LineUtils.isNullOrEmpty(dtoMapNameIdParams.getFilterType())) {
+        if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
             returnVal = this.getAllNameIdsForAnalysis();
         } else {
 
-            if (dtoMapNameIdParams.getFilterType()
-                    .toLowerCase()
-                    .equals(GobiiFilterTypes.BYTYPEID.toString()
-                            .toLowerCase())) {
+            if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
 
                 if (!LineUtils.isNullOrEmpty(dtoMapNameIdParams.getFilterValue())) {
 
@@ -107,7 +104,7 @@ public class DtoMapNameIdFetchAnalyses implements DtoMapNameIdFetch {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.NONE,
                             "A filter value was not supplied for the "
-                                    + dtoMapNameIdParams.getFilterType()
+                                    + dtoMapNameIdParams.getGobiiFilterType()
                                     + " filter on "
                                     + this.getEntityTypeName().toString().toLowerCase());
                 }
@@ -116,7 +113,7 @@ public class DtoMapNameIdFetchAnalyses implements DtoMapNameIdFetch {
                         GobiiValidationStatusType.NONE,
                         "Unsupported filter type for "
                                 + this.getEntityTypeName().toString().toLowerCase()
-                                + ": " + dtoMapNameIdParams.getFilterType());
+                                + ": " + dtoMapNameIdParams.getGobiiFilterType());
             }
         }
 

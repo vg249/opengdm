@@ -2,6 +2,7 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.services.NameIdListService;
 import org.gobiiproject.gobiidtomapping.DtoMapNameIdList;
+import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
@@ -39,8 +40,8 @@ public class NameIdListServiceImpl implements NameIdListService {
     }
 
     @Override
-    public List<NameIdDTO> getNameIdList(String entity, String filterType, String filterValue)  throws GobiiException {
+    public List<NameIdDTO> getNameIdList(DtoMapNameIdParams dtoMapNameIdParams)  throws GobiiException {
 
-            return dtoMapNameIdList.getNameIdList(entity, filterType, filterValue);
+            return dtoMapNameIdList.getNameIdList(dtoMapNameIdParams);
     }
 }

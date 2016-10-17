@@ -24,7 +24,8 @@ import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
@@ -33,6 +34,8 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -432,9 +435,39 @@ public class BRAPIController {
         PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            PayloadReader<NameIdDTO> payloadReader = new PayloadReader<>(NameIdDTO.class);
-//            LoaderInstructionFilesDTO loaderInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
-            List<NameIdDTO> nameIdList = nameIdListService.getNameIdList(entity, filterType, filterValue);
+            // We are getting raw string parameters from the uri and query parameters;
+            // here is the place to validate the types before sending the parameters on the service layer,
+            // which should only be dealing with GOBII native natives.
+            //
+            // **************** Get entity type
+            GobiiEntityNameType gobiiEntityNameType;
+            try {
+                gobiiEntityNameType = GobiiEntityNameType.valueOf(entity.toUpperCase());
+            } catch (IllegalArgumentException e) {
+
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "Unsupported entity for list request: " + entity);
+            }
+
+
+            // **************** If a filter was specified, convert it as well
+            GobiiFilterType gobiiFilterType = GobiiFilterType.NONE;
+            if( ! LineUtils.isNullOrEmpty(filterType)) {
+                try {
+                    gobiiFilterType = GobiiFilterType.valueOf(filterType.toUpperCase());
+                } catch (IllegalArgumentException e) {
+
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.NONE,
+                            "Unsupported filter for list request: " + filterType);
+                }
+            }
+
+
+            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, filterValue);
+
+            List<NameIdDTO> nameIdList = nameIdListService.getNameIdList(dtoMapNameIdParams);
 
             for (NameIdDTO currentNameIdDto : nameIdList) {
                 returnVal.getPayload().getData().add(currentNameIdDto);

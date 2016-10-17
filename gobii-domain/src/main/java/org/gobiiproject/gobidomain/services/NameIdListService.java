@@ -5,6 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobidomain.services;
 
+import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
@@ -18,5 +19,5 @@ public interface NameIdListService {
 
     NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO);
 
-    List<NameIdDTO> getNameIdList(String entity, String filterType, String filterValue) throws GobiiException;
+    List<NameIdDTO> getNameIdList(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException;
 }

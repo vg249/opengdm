@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -696,22 +695,9 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     } // getNameIdList()
 
     @Override
-    public List<NameIdDTO> getNameIdList(String entity, String filterType, String filterValue) throws GobiiException {
+    public List<NameIdDTO> getNameIdList(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException {
 
-        List<NameIdDTO> returnVal = new ArrayList<>();
-
-        GobiiEntityNameType gobiiEntityNameType;
-
-        try {
-            gobiiEntityNameType = GobiiEntityNameType.valueOf(entity.toUpperCase());
-        } catch (IllegalArgumentException e) {
-
-            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.NONE,
-                    "Unsupported entity for list request: " + entity);
-        }
-
-        DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, filterType, filterValue);
+        List<NameIdDTO> returnVal;
 
         if (this.dtoMapNameIdFetchMap.containsKey(dtoMapNameIdParams.getEntityType())) {
 
@@ -722,7 +708,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
                     GobiiValidationStatusType.NONE,
                     "There is no NameIDFetch instance to handle this entity type: " + dtoMapNameIdParams.getEntityType().toString());
         }
-
 
         return returnVal;
     }

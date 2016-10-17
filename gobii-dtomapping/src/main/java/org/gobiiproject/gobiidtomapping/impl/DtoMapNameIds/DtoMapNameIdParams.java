@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
 
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 
 /**
  * Created by Phil on 10/16/2016.
@@ -8,12 +9,12 @@ import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 public class DtoMapNameIdParams {
 
     private GobiiEntityNameType gobiiEntityNameType;
-    private String filterType;
+    private GobiiFilterType gobiiFilterType;
     private String filterValue;
 
-    public DtoMapNameIdParams(GobiiEntityNameType gobiiEntityNameType, String filterType, String filterValue) {
+    public DtoMapNameIdParams(GobiiEntityNameType gobiiEntityNameType, GobiiFilterType gobiiFilterType, String filterValue) {
         this.gobiiEntityNameType = gobiiEntityNameType;
-        this.filterType = filterType;
+        this.gobiiFilterType = gobiiFilterType;
         this.filterValue = filterValue;
     }
 
@@ -25,12 +26,12 @@ public class DtoMapNameIdParams {
         this.gobiiEntityNameType = entity;
     }
 
-    public String getFilterType() {
-        return filterType;
+    public GobiiFilterType getGobiiFilterType() {
+        return gobiiFilterType;
     }
 
-    public void setFilterType(String filterType) {
-        this.filterType = filterType;
+    public void setGobiiFilterType(GobiiFilterType gobiiFilterType) {
+        this.gobiiFilterType = gobiiFilterType;
     }
 
     public String getFilterValue() {

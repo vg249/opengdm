@@ -1,14 +1,12 @@
 package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
 
-import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
 import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.GobiiFilterTypes;
+import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -102,14 +100,11 @@ public class DtoMapNameIdFetchContacts implements DtoMapNameIdFetch {
 
         List<NameIdDTO> returnVal;
 
-        if (LineUtils.isNullOrEmpty(dtoMapNameIdParams.getFilterType())) {
+        if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
             returnVal = this.getNameIdListForAllContacts();
         } else {
 
-            if (dtoMapNameIdParams.getFilterType()
-                    .toLowerCase()
-                    .equals(GobiiFilterTypes.BYTYPENAME.toString()
-                            .toLowerCase())) {
+            if (GobiiFilterType.BYTYPENAME == dtoMapNameIdParams.getGobiiFilterType()) {
 
                 if (!LineUtils.isNullOrEmpty(dtoMapNameIdParams.getFilterValue())) {
 
@@ -119,17 +114,18 @@ public class DtoMapNameIdFetchContacts implements DtoMapNameIdFetch {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.NONE,
                             "A filter value was not supplied for the "
-                                    + dtoMapNameIdParams.getFilterType()
+                                    + dtoMapNameIdParams.getGobiiFilterType()
                                     + " filter on "
                                     + this.getEntityTypeName().toString().toLowerCase());
                 }
+
             } else {
 
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.NONE,
                         "Unsupported filter type for "
                                 + this.getEntityTypeName().toString().toLowerCase()
-                                + ": " + dtoMapNameIdParams.getFilterType());
+                                + ": " + dtoMapNameIdParams.getGobiiFilterType());
             }
         }
 
