@@ -143,13 +143,13 @@ public class DtoRequestNameIdListTest {
         PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
                 .get(NameIdDTO.class);
 
-        Assert.assertTrue("There should be exactly one error for the unsupported filter type",
+        Assert.assertTrue("There should be exactly one error for filter value not supplied",
                 1 == resultEnvelope
                         .getHeader()
                         .getStatus()
                         .getStatusMessages()
                         .stream()
-                        .filter(m -> m.getMessage().toLowerCase().contains("a filter value was not supplied"))
+                        .filter(m -> m.getMessage().toLowerCase().contains("a value was not supplied for filter"))
                         .count());
 
     }

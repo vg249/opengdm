@@ -96,18 +96,8 @@ public class DtoMapNameIdFetchAnalyses implements DtoMapNameIdFetch {
 
             if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
 
-                if (!LineUtils.isNullOrEmpty(dtoMapNameIdParams.getFilterValue())) {
+                returnVal = this.getNameIdListForAnalysisNameByTypeId(dtoMapNameIdParams.getFilterValueAsInteger());
 
-                    returnVal = this.getNameIdListForAnalysisNameByTypeId(Integer.parseInt(dtoMapNameIdParams.getFilterValue()));
-
-                } else {
-                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.NONE,
-                            "A filter value was not supplied for the "
-                                    + dtoMapNameIdParams.getGobiiFilterType()
-                                    + " filter on "
-                                    + this.getEntityTypeName().toString().toLowerCase());
-                }
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.NONE,

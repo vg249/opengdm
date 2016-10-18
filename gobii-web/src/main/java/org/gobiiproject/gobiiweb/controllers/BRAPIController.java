@@ -5,6 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.controllers;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.services.AnalysisService;
 import org.gobiiproject.gobidomain.services.ConfigSettingsService;
 import org.gobiiproject.gobidomain.services.ContactService;
@@ -453,7 +454,8 @@ public class BRAPIController {
 
             // **************** If a filter was specified, convert it as well
             GobiiFilterType gobiiFilterType = GobiiFilterType.NONE;
-            if( ! LineUtils.isNullOrEmpty(filterType)) {
+            Object typedFilterValue = filterValue;
+            if (!LineUtils.isNullOrEmpty(filterType)) {
                 try {
                     gobiiFilterType = GobiiFilterType.valueOf(filterType.toUpperCase());
                 } catch (IllegalArgumentException e) {
@@ -462,10 +464,43 @@ public class BRAPIController {
                             GobiiValidationStatusType.NONE,
                             "Unsupported filter for list request: " + filterType);
                 }
+
+                if (!LineUtils.isNullOrEmpty(filterValue)) {
+
+                    if (GobiiFilterType.BYTYPEID == gobiiFilterType) {
+                        if( NumberUtils.isNumber(filterValue) ) {
+                            typedFilterValue = Integer.valueOf(filterValue);
+                        } else{
+                            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                                    GobiiValidationStatusType.NONE,
+                                    "Value for "
+                                            + filterType
+                                            + " value is not a number: "
+                                            + filterValue);
+                        }
+
+                    } else if (GobiiFilterType.BYTYPENAME == gobiiFilterType) {
+                        // there is nothing to test here -- the string could be anything
+                        // add additional validation tests for other filter types
+
+                    } else {
+                        throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                                GobiiValidationStatusType.NONE,
+                                "Unable to do type checking on filter value for filter type "
+                                        + filterType
+                                        + " with value "
+                                        + filterValue);
+                    }
+
+                } else {
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                            GobiiValidationStatusType.NONE,
+                            "A value was not supplied for filter: " + filterType);
+                }
             }
 
 
-            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, filterValue);
+            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, typedFilterValue);
 
             List<NameIdDTO> nameIdList = nameIdListService.getNameIdList(dtoMapNameIdParams);
 

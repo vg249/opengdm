@@ -10,9 +10,9 @@ public class DtoMapNameIdParams {
 
     private GobiiEntityNameType gobiiEntityNameType;
     private GobiiFilterType gobiiFilterType;
-    private String filterValue;
+    private Object filterValue;
 
-    public DtoMapNameIdParams(GobiiEntityNameType gobiiEntityNameType, GobiiFilterType gobiiFilterType, String filterValue) {
+    public DtoMapNameIdParams(GobiiEntityNameType gobiiEntityNameType, GobiiFilterType gobiiFilterType, Object filterValue) {
         this.gobiiEntityNameType = gobiiEntityNameType;
         this.gobiiFilterType = gobiiFilterType;
         this.filterValue = filterValue;
@@ -34,11 +34,19 @@ public class DtoMapNameIdParams {
         this.gobiiFilterType = gobiiFilterType;
     }
 
-    public String getFilterValue() {
+    public Object getFilterValue() {
         return filterValue;
     }
 
-    public void setFilterValue(String filterValue) {
+    public Integer getFilterValueAsInteger() {
+        return ((Integer) filterValue);
+    }
+
+    public String getFilterValueAsString() {
+        return (filterValue.toString());
+    }
+
+    public void setFilterValue(Object filterValue) {
         this.filterValue = filterValue;
     }
 }

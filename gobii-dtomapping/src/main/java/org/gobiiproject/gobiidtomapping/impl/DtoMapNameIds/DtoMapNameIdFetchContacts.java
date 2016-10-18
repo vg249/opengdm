@@ -106,18 +106,7 @@ public class DtoMapNameIdFetchContacts implements DtoMapNameIdFetch {
 
             if (GobiiFilterType.BYTYPENAME == dtoMapNameIdParams.getGobiiFilterType()) {
 
-                if (!LineUtils.isNullOrEmpty(dtoMapNameIdParams.getFilterValue())) {
-
-                    returnVal = this.getNameIdListForContactsByRoleName(dtoMapNameIdParams.getFilterValue());
-
-                } else {
-                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.NONE,
-                            "A filter value was not supplied for the "
-                                    + dtoMapNameIdParams.getGobiiFilterType()
-                                    + " filter on "
-                                    + this.getEntityTypeName().toString().toLowerCase());
-                }
+                returnVal = this.getNameIdListForContactsByRoleName(dtoMapNameIdParams.getFilterValueAsString());
 
             } else {
 
