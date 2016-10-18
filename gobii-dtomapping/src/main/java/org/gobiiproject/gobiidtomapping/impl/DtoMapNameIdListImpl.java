@@ -36,9 +36,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     }
 
     @Autowired
-    private RsPlatformDao rsPlatformDao = null;
-
-    @Autowired
     private RsReferenceDao rsReferenceDao = null;
 
     @Autowired
@@ -121,61 +118,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     }
 
 
-    private NameIdListDTO getNameIdListForPlatforms(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsPlatformDao.getPlatformNames();
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("platform_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-    }
-
-    private NameIdListDTO getNameIdListForPlatformsByTypeId(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsPlatformDao.getPlatformNamesByTypeId(Integer.parseInt(nameIdListDTO.getFilter()));
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("platform_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-    }
 
 
     private NameIdListDTO getNameIdListForReference(NameIdListDTO nameIdListDTO) {
@@ -363,14 +305,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
-
-                case "platform":
-                    returnVal = getNameIdListForPlatforms(nameIdListDTO);
-                    break;
-
-                case "platformbytypeid":
-                    returnVal = getNameIdListForPlatformsByTypeId(nameIdListDTO);
-                    break;
 
                 case "manifest":
                     returnVal = getNameIdListForManifest(nameIdListDTO);
