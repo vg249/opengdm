@@ -110,7 +110,10 @@
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchExperiments"/>
 
     <bean id="dtoMapNameIdFetchReferences"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchCvReferences"/>
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchReferences"/>
+
+    <bean id="dtoMapNameIdFetchRoles"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchRoles"/>
 
     <bean id="dtoMapNameIdList"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl">
@@ -166,7 +169,11 @@
                 </entry>
                 <!-- REFERENCES -->
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).REFERENCES}">
-                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchCvReferences"/>
+                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchReferences"/>
+                </entry>
+                <!-- ROLES -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ROLES}">
+                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchRoles"/>
                 </entry>
             </map>
         </property>

@@ -35,56 +35,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         this.dtoMapNameIdFetchMap = dtoMapNameIdFetchMap;
     }
 
-
-
-
-    @Autowired
-    private RsRoleDao rsRoleDao = null;
-
-
-
-
-
-
-
-
-    private NameIdListDTO getNameIdListForRole(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsRoleDao.getContactRoleNames();
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("role_id"));
-                nameIdDTO.setName(resultSet.getString("role_name"));
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-    }
-
-
-
-
-
-
-
-
-
     @Override
     public NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO) {
 
@@ -93,10 +43,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
-
-                case "role":
-                    returnVal = getNameIdListForRole(nameIdListDTO);
-                    break;
 
                 default:
                     returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
