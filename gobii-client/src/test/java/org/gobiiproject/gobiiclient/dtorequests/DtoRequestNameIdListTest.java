@@ -104,6 +104,27 @@ public class DtoRequestNameIdListTest {
         Assert.assertTrue(NameIdDTOList.get(0).getId() > 0);
     }
 
+    @Test
+    public void testGetNamesWithBadEntityValue() throws Exception {
+
+        // Assumes rice data with seed script is loaded
+        RestUri namesUri = uriFactory.nameIdList();
+        RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
+
+        namesUri.setParamValue("entity", "foo");
+        PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
+                .get(NameIdDTO.class);
+
+        Assert.assertTrue("There should be exactly one error for bad entity type",
+                1 == resultEnvelope
+                        .getHeader()
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(m -> m.getMessage().toLowerCase().contains("unsupported entity for list request"))
+                        .count());
+
+    }
 
     @Test
     public void testGetAnalysisNamesByTypeIdErrorBadFilterType() throws Exception {
