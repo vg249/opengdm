@@ -8,7 +8,6 @@ package org.gobiiproject.gobidomain.services;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 
 import java.util.List;
 
