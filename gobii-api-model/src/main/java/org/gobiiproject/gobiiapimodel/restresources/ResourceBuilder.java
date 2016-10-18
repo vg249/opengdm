@@ -132,6 +132,10 @@ public class ResourceBuilder {
                 returnVal += "configsettings";
                 break;
 
+            case URL_ROLES:
+                returnVal += "roles";
+                break;
+
             default:
                 throw new Exception("Unknown request id : " + requestId.toString());
         }

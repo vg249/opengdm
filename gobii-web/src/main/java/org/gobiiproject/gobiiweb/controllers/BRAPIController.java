@@ -24,6 +24,7 @@ import org.gobiiproject.gobidomain.services.PlatformService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.EntityNameConverter;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
@@ -504,16 +505,10 @@ public class BRAPIController {
 
             List<NameIdDTO> nameIdList = nameIdListService.getNameIdList(dtoMapNameIdParams);
 
-            for (NameIdDTO currentNameIdDto : nameIdList) {
-                returnVal.getPayload().getData().add(currentNameIdDto);
-            }
-
-//            PayloadWriter<LoaderInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
-//                    LoaderInstructionFilesDTO.class);
-//
-//            payloadWriter.writeList(returnVal,
-//                    ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
-//                    loaderInstructionFilesDTOs);
+            PayloadWriter<NameIdDTO> payloadWriter = new PayloadWriter<>(request,NameIdDTO.class);
+            payloadWriter.writeList(returnVal,
+                    EntityNameConverter.toServiceRequestId(gobiiEntityNameType),
+                    nameIdList);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);

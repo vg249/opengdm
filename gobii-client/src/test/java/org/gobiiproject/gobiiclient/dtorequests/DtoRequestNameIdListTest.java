@@ -6,6 +6,8 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 import org.apache.commons.lang.StringUtils;
+import org.gobiiproject.gobiiapimodel.hateos.Link;
+import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
@@ -14,6 +16,7 @@ import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.junit.AfterClass;
@@ -247,7 +250,64 @@ public class DtoRequestNameIdListTest {
     public void testGetPlatformNames() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        testNameRetrieval(GobiiEntityNameType.PLATFORMS, GobiiFilterType.NONE, null);
+        //testNameRetrieval(GobiiEntityNameType.PLATFORMS, GobiiFilterType.NONE, null);
+        RestUri namesUri = uriFactory.nameIdList();
+        RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
+        namesUri.setParamValue("entity", GobiiEntityNameType.PLATFORMS.toString().toLowerCase());
+
+        PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
+                .get(NameIdDTO.class);
+
+        List<NameIdDTO> nameIdDTOList = resultEnvelope.getPayload().getData();
+
+        String assertionErrorStem = "Error retrieving Platform Names: ";
+
+        Assert.assertFalse(assertionErrorStem,
+                TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+        Assert.assertNotNull(assertionErrorStem
+                        + "null name id list",
+                nameIdDTOList);
+
+        Assert.assertTrue(assertionErrorStem
+                        + "empty name id list",
+                nameIdDTOList.size() > 0);
+
+        Assert.assertNotNull(assertionErrorStem
+                        + "null name",
+                nameIdDTOList.get(0).getName());
+
+        Assert.assertNotNull(assertionErrorStem
+                        + "null ",
+                nameIdDTOList.get(0).getId());
+
+        Assert.assertTrue(assertionErrorStem
+                        + "id <= 0",
+                nameIdDTOList.get(0).getId() > 0);
+
+
+        // verify that we can retrieve platofrmDtos from the links we got for the platform name IDs
+        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, nameIdDTOList.size());
+        for (Integer currentIdx : itemsToTest) {
+
+            NameIdDTO currentPlatformNameDto = nameIdDTOList.get(currentIdx);
+
+            Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
+            RestUri restUriPlatformForGetById = DtoRequestNameIdListTest
+                    .uriFactory
+                    .RestUriFromUri(currentLink.getHref());
+            RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
+            PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = restResourceForGetById
+                    .get(PlatformDTO.class);
+            Assert.assertNotNull(resultEnvelopeForGetByID);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
+            PlatformDTO platformDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
+
+            Assert.assertTrue(currentPlatformNameDto.getName().equals(platformDTOFromLink.getPlatformName()));
+            Assert.assertTrue(currentPlatformNameDto.getId().equals(platformDTOFromLink.getPlatformId()));
+        }
+
 
     } // testGetMarkers()
 

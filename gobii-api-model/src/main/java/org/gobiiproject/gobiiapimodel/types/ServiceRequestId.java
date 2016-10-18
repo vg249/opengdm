@@ -4,6 +4,7 @@ package org.gobiiproject.gobiiapimodel.types;
  * Created by Phil on 5/13/2016.
  */
 public enum ServiceRequestId {
+    UNKNOWN,
     URL_AUTH,
     URL_PING_EXTRACT,
     URL_PING,
@@ -26,5 +27,6 @@ public enum ServiceRequestId {
     URL_ORGANIZATION,
     URL_PLATFORM,
     URL_MAPSET,
-    URL_CONFIGSETTINGS
+    URL_CONFIGSETTINGS,
+    URL_ROLES
 }
