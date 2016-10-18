@@ -97,6 +97,9 @@
     <bean id="dtoMapNameIdFetchPlatforms"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchPlatforms"/>
 
+    <bean id="dtoMapNameIdFetchManifests"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchManifests"/>
+
     <bean id="dtoMapNameIdList"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl">
         <property name="dtoMapNameIdFetchMap">
@@ -132,6 +135,10 @@
                 <!-- PLATFORMS -->
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PLATFORMS}">
                     <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchPlatforms"/>
+                </entry>
+                <!-- MANIFESTS -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MANIFESTS}">
+                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchManifests"/>
                 </entry>
             </map>
         </property>

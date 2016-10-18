@@ -50,9 +50,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     private RsExperimentDao rsExperimentDao = null;
 
     @Autowired
-    private RsManifestDao rsManifestDao = null;
-
-    @Autowired
     private RsRoleDao rsRoleDao = null;
 
 
@@ -237,34 +234,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
 
 
-    private NameIdListDTO getNameIdListForManifest(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsManifestDao.getManifestNames();
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("manifest_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-    }//getNameIdListForManifest
-
 
 
     private NameIdListDTO getNameIdListForExperimentByProjectId(NameIdListDTO nameIdListDTO) {
@@ -305,10 +274,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
-
-                case "manifest":
-                    returnVal = getNameIdListForManifest(nameIdListDTO);
-                    break;
 
                 case "mapset":
                     returnVal = getNameIdListForMap(nameIdListDTO);

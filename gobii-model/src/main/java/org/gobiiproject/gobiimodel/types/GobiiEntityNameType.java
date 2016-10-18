@@ -12,5 +12,6 @@ public enum GobiiEntityNameType {
     CVGROUPS,
     PROJECTS,
     ORGANIZATIONS,
-    PLATFORMS
+    PLATFORMS,
+    MANIFESTS
 }

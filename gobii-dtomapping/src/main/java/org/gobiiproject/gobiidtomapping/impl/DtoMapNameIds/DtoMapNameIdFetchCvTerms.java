@@ -87,9 +87,6 @@ public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
 
     }
 
-    // "cvgroupterms",
-    // "cvgroups"
-    // "cvnames"
     @Override
     public List<NameIdDTO> getNameIds(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException {
 

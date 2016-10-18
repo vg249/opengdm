@@ -1,11 +1,10 @@
 package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
 
-import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
+import org.gobiiproject.gobiidao.resultset.access.RsManifestDao;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -15,19 +14,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Phil on 10/16/2016.
  */
-public class DtoMapNameIdFetchCvGroups implements DtoMapNameIdFetch {
+public class DtoMapNameIdFetchManifests implements DtoMapNameIdFetch {
 
     @Autowired
-    private RsCvDao rsCvDao = null;
+    private RsManifestDao rsManifestDao = null;
 
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchCvGroups.class);
+
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchManifests.class);
 
 
     @Override
@@ -35,33 +34,28 @@ public class DtoMapNameIdFetchCvGroups implements DtoMapNameIdFetch {
         return GobiiEntityNameType.CVGROUPS;
     }
 
+    private List<NameIdDTO> getManifestNames() throws GobiiException {
 
-    private List<NameIdDTO> getCvGroups() throws GobiiException {
-
-        List<NameIdDTO> returnVal = new ArrayList<>();
+        List<NameIdDTO>  returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsCvDao.getCvGroups();
+            ResultSet resultSet = rsManifestDao.getManifestNames();
 
-            NameIdDTO nameIdDTO;
             while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("cv_id"));
-                nameIdDTO.setName(resultSet.getString("lower").toString());
+                NameIdDTO nameIdDTO = new NameIdDTO();
+                nameIdDTO.setId(resultSet.getInt("manifest_id"));
+                nameIdDTO.setName(resultSet.getString("name"));
                 returnVal.add(nameIdDTO);
             }
 
-
         } catch (Exception e) {
-
             LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
-
-    } // getNameIdListForCvTypes
+    }//getManifestNames
 
 
     @Override
@@ -70,7 +64,7 @@ public class DtoMapNameIdFetchCvGroups implements DtoMapNameIdFetch {
         List<NameIdDTO> returnVal;
 
         if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
-            returnVal = this.getCvGroups();
+            returnVal = this.getManifestNames();
         } else {
 
             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
