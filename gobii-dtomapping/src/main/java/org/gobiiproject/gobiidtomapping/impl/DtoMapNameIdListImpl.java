@@ -16,7 +16,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Phil on 4/6/2016.
+ * This class is responsible for returning lists of NameIdDTO instances for
+ * entities that are specified from a DtoMapNameIdParams instance, which may also
+ * include a filter. The client of this class will have done any enum and other type conversions
+ * so that this class can work with the native Java types in DtoMapNameIdParams. This class employs a
+ * map of classes that implement the DtoMapNameIdFetch interface. This approach was taken to make it
+ * easy to add support for a new entity type: all you have
+ * to do is implement DtoMapNameIdFetch (see the org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds for
+ * all the existing classes) and inform the Spring configuration about the new class so that the map in
+ * this class gets populated accordingly. (It is necessary to use the injection container so that the
+ * classes that implement DtoMapNameIdFetch can inject the Dao classes they need.) At the moment, the
+ * Spring configuration is in application-config.xml (in the web application): there the map property is
+ * configured for the DtoMapNameIdListImpl.
  */
 public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
