@@ -63,9 +63,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     private RsManifestDao rsManifestDao = null;
 
     @Autowired
-    private RsDataSetDao rsDataSetDao = null;
-
-    @Autowired
     private RsRoleDao rsRoleDao = null;
 
 
@@ -130,26 +127,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
     }
 
-    private NameIdListDTO getNameIdListForDataSet(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = nameIdListDTO;
-
-        try {
-
-            ResultSet resultSet = rsDataSetDao.getDatasetNames();
-
-            List<NameIdDTO> listDTO = makeMapOfDataSetNames(resultSet);
-
-            returnVal.setNamesById(listDTO);
-
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return returnVal;
-    }
 
     private NameIdListDTO getNameIdListForPlatforms(NameIdListDTO nameIdListDTO) {
 
@@ -562,44 +539,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     } // getNameIdListForCvGroupTerms()
 
-    private List makeMapOfDataSetNames(ResultSet resultSet) throws Exception {
-
-        List<NameIdDTO> returnVal = new ArrayList<>();
-
-        NameIdDTO nameIdDTO;
-        while (resultSet.next()) {
-            nameIdDTO = new NameIdDTO();
-            nameIdDTO.setId(resultSet.getInt("dataset_id"));
-            nameIdDTO.setName(resultSet.getString("name"));
-
-            if (resultSet.wasNull()) {
-                nameIdDTO.setName("<no name>");
-            }
-            returnVal.add(nameIdDTO);
-        }
-
-        return returnVal;
-    }
-
-    private NameIdListDTO getNameIdListForDataSetByExperimentId(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsDataSetDao.getDatasetNamesByExperimentId(Integer.parseInt(nameIdListDTO.getFilter()));
-            List<NameIdDTO> listDTO = makeMapOfDataSetNames(resultSet);
-
-            returnVal.setNamesById(listDTO);
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-
-    } // getNameIdListForDataSet()
 
     @Override
     public NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO) {
@@ -610,14 +549,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
 
-
-                case "datasetnames":
-                    returnVal = getNameIdListForDataSet(nameIdListDTO);
-                    break;
-
-                case "datasetnamesbyexperimentid":
-                    returnVal = getNameIdListForDataSetByExperimentId(nameIdListDTO);
-                    break;
 
                 case "cvnames":
                     returnVal = getNameIdListForCv(nameIdListDTO);

@@ -519,19 +519,34 @@ public class DtoRequestNameIdListTest {
     }
 
     @Test
-    public void testGetDataSetFileNames() throws Exception {
+    public void testGetDataSetNamesByExperimentId() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("datasetnamesbyexperimentid");
-        nameIdListDTORequest.setFilter("2");
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+        RestUri namesUri = uriFactory.nameIdList();
+        RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
+        namesUri.setParamValue("entity", GobiiEntityNameType.DATASETS.toString().toLowerCase());
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPEID.toString().toUpperCase()));
+        namesUri.setParamValue("filterValue", "2");
+        PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
+                .get(NameIdDTO.class);
 
-        Assert.assertNotEquals(null, nameIdListDtoResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
-        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<NameIdDTO> NameIdDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(NameIdDTOList);
+        Assert.assertTrue(NameIdDTOList.size() > 0);
+        Assert.assertNotNull(NameIdDTOList.get(0).getName());
+        Assert.assertNotNull(NameIdDTOList.get(0).getId());
+        Assert.assertTrue(NameIdDTOList.get(0).getId() > 0);
+//        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+//        nameIdListDTORequest.setEntityName("datasetnamesbyexperimentid");
+//        nameIdListDTORequest.setFilter("2");
+//        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+//        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+//
+//        Assert.assertNotEquals(null, nameIdListDtoResponse);
+//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
+//        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+//        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
 
     }
 
@@ -539,16 +554,32 @@ public class DtoRequestNameIdListTest {
     public void testGetDataSetNames() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("datasetnames");
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+
+        RestUri namesUri = uriFactory.nameIdList();
+        RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
+        namesUri.setParamValue("entity", GobiiEntityNameType.DATASETS.toString().toLowerCase());
+        PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
+                .get(NameIdDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<NameIdDTO> NameIdDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(NameIdDTOList);
+        Assert.assertTrue(NameIdDTOList.size() > 0);
+        Assert.assertNotNull(NameIdDTOList.get(0).getName());
+        Assert.assertNotNull(NameIdDTOList.get(0).getId());
+        Assert.assertTrue(NameIdDTOList.get(0).getId() > 0);
 
 
-        Assert.assertNotEquals(null, nameIdListDtoResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
-        Assert.assertEquals(true, nameIdListDtoResponse.getStatus().isSucceeded());
-        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
+//        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+//        nameIdListDTORequest.setEntityName("datasetnames");
+//        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+//        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+//
+//
+//        Assert.assertNotEquals(null, nameIdListDtoResponse);
+//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
+//        Assert.assertEquals(true, nameIdListDtoResponse.getStatus().isSucceeded());
+//        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+//        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
     }
 }

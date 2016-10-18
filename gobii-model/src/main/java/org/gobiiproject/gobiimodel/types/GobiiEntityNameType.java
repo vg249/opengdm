@@ -6,5 +6,6 @@ package org.gobiiproject.gobiimodel.types;
 public enum GobiiEntityNameType {
 
     ANALYSES,
-    CONTACTS
+    CONTACTS,
+    DATASETS
 }

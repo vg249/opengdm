@@ -79,6 +79,9 @@
     <bean id="dtoMapNameIdFetchContacts"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchContacts"/>
 
+    <bean id="dtoMapNameIdFetchDataSets"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchDataSets"/>
+
     <bean id="dtoMapNameIdList"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl">
         <property name="dtoMapNameIdFetchMap">
@@ -90,6 +93,10 @@
                 <!-- CONTACTS -->
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CONTACTS}">
                     <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchContacts"/>
+                </entry>
+                <!-- DATASETS -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).DATASETS}">
+                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchDataSets"/>
                 </entry>
             </map>
         </property>
