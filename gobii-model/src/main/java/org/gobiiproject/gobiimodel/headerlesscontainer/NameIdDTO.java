@@ -1,11 +1,11 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 
 /**
  * Created by Phil on 4/8/2016.
  */
-public class NameIdDTO extends Header {
+public class NameIdDTO extends DTOBase {
 
     private Integer id;
     private String name = null;
