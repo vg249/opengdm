@@ -36,9 +36,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     }
 
     @Autowired
-    private RsProjectDao rsProjectDao = null;
-
-    @Autowired
     private RsPlatformDao rsPlatformDao = null;
 
     @Autowired
@@ -182,33 +179,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
     }
 
-    private NameIdListDTO getNameIdListForProjects(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsProjectDao.getProjectNames();
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("project_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-    }
 
     private NameIdListDTO getNameIdListForReference(NameIdListDTO nameIdListDTO) {
 
@@ -382,40 +352,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
     }//getNameIdListForManifest
 
-    private NameIdListDTO getNameIdListForProjectNameByContact(NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = nameIdListDTO;
-
-        try {
-
-            String filter = nameIdListDTO.getFilter();
-            if (NumberUtils.isNumber(filter)) {
-                ResultSet resultSet = rsProjectDao.getProjectNamesForContactId(Integer.parseInt(filter));
-
-                List<NameIdDTO> listDTO = new ArrayList<>();
-                NameIdDTO nameIdDTO;
-
-                while (resultSet.next()) {
-                    nameIdDTO = new NameIdDTO();
-                    nameIdDTO.setId(resultSet.getInt("project_id"));
-                    nameIdDTO.setName(resultSet.getString("name"));
-                    listDTO.add(nameIdDTO);
-                }
-
-                returnVal.setNamesById(listDTO);
-            } else {
-                nameIdListDTO.getStatus()
-                        .addStatusMessage(GobiiStatusLevel.ERROR,
-                                "Filter value is not numeric: " + filter);
-            }
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-
-    } // getNameIdListForContactsByRoleName()
 
     private NameIdListDTO getNameIdListForExperimentByProjectId(NameIdListDTO nameIdListDTO) {
 
@@ -456,17 +393,8 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
 
-
-                case "project":
-                    returnVal = getNameIdListForProjectNameByContact(nameIdListDTO);
-                    break;
-
                 case "organization":
                     returnVal = getNameIdListForOrganizationById(nameIdListDTO);
-                    break;
-
-                case "projectnames":
-                    returnVal = getNameIdListForProjects(nameIdListDTO);
                     break;
 
                 case "platform":

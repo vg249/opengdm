@@ -296,21 +296,45 @@ public class DtoRequestNameIdListTest {
     } // testGetMarkers()
 
     @Test
-    public void testGetProjectNamesByContactId() throws Exception {
+    public void testGetProjectNames() throws Exception {
 
 
         // Assumes rice data with seed script is loaded
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("project");
-        nameIdListDTORequest.setFilter("2");
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+        testNameRetrieval(GobiiEntityNameType.PROJECTS, GobiiFilterType.NONE, null);
 
 
-        Assert.assertNotEquals(null, nameIdListDtoResponse);
-        Assert.assertEquals(true, nameIdListDtoResponse.getStatus().isSucceeded());
-        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
+
+//        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+//        nameIdListDTORequest.setEntityName("projectnames");
+//        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+//        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+//
+//
+//        Assert.assertNotEquals(null, nameIdListDtoResponse);
+//        Assert.assertEquals(true, nameIdListDtoResponse.getStatus().isSucceeded());
+//        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+//        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
+
+    } // testGetMarkers()
+
+
+    @Test
+    public void testGetProjectNamesByContactId() throws Exception {
+
+        // Assumes rice data with seed script is loaded
+        testNameRetrieval(GobiiEntityNameType.PROJECTS, GobiiFilterType.BYTYPEID, "2");
+
+//        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+//        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+//        nameIdListDTORequest.setEntityName("project");
+//        nameIdListDTORequest.setFilter("2");
+//        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+//
+//
+//        Assert.assertNotEquals(null, nameIdListDtoResponse);
+//        Assert.assertEquals(true, nameIdListDtoResponse.getStatus().isSucceeded());
+//        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+//        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
 
     }
 
@@ -401,23 +425,6 @@ public class DtoRequestNameIdListTest {
 
     } // testGetMarkers()
 
-    @Test
-    public void testGetProjectNames() throws Exception {
-
-
-        // Assumes rice data with seed script is loaded
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("projectnames");
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
-
-
-        Assert.assertNotEquals(null, nameIdListDtoResponse);
-        Assert.assertEquals(true, nameIdListDtoResponse.getStatus().isSucceeded());
-        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
-
-    } // testGetMarkers()
 
     @Test
     public void testGetMarkerGroupNames() throws Exception {

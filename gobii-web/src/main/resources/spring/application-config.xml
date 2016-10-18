@@ -88,6 +88,9 @@
     <bean id="dtoMapNameIdFetchCvGroups"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchCvGroups"/>
 
+    <bean id="dtoMapNameIdFetchProjects"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchProjects"/>
+
     <bean id="dtoMapNameIdList"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl">
         <property name="dtoMapNameIdFetchMap">
@@ -111,6 +114,10 @@
                 <!-- CVGROUPS -->
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).CVGROUPS}">
                     <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchCvGroups"/>
+                </entry>
+                <!-- CVPROJECTS -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PROJECTS}">
+                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchProjects"/>
                 </entry>
             </map>
         </property>
