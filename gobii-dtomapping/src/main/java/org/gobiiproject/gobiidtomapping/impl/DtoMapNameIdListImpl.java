@@ -36,33 +36,14 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     }
 
     @Override
-    public NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = nameIdListDTO;
-
-        if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
-
-            switch (nameIdListDTO.getEntityName().toLowerCase()) {
-
-                default:
-                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
-                            "Unsupported entity for list request: " + nameIdListDTO.getEntityName());
-            }
-
-        }
-
-        return returnVal;
-
-    } // getNameIdList()
-
-    @Override
     public List<NameIdDTO> getNameIdList(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException {
 
         List<NameIdDTO> returnVal;
 
         if (this.dtoMapNameIdFetchMap.containsKey(dtoMapNameIdParams.getEntityType())) {
 
-            returnVal = this.dtoMapNameIdFetchMap.get(dtoMapNameIdParams.getEntityType()).getNameIds(dtoMapNameIdParams);
+            DtoMapNameIdFetch dtoMapNameIdFetch = this.dtoMapNameIdFetchMap.get(dtoMapNameIdParams.getEntityType());
+            returnVal = dtoMapNameIdFetch.getNameIds(dtoMapNameIdParams);
 
         } else {
             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
@@ -72,6 +53,5 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
         return returnVal;
     }
-
 
 } // DtoMapNameIdListImpl

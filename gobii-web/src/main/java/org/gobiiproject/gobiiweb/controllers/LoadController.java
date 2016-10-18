@@ -66,9 +66,6 @@ public class LoadController {
     private ExperimentService experimentService = null;
 
     @Autowired
-    private NameIdListService nameIdListService = null;
-
-    @Autowired
     private DisplayService displayService = null;
     
     @Autowired
@@ -206,24 +203,6 @@ public class LoadController {
         return (returnVal);
 
     }//processManifest
-
-    @RequestMapping(value = "/nameidlist", method = RequestMethod.POST)
-    @ResponseBody
-    public NameIdListDTO getNameIdList(@RequestBody NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = nameIdListDTO;
-
-        try {
-            returnVal = nameIdListService.getNameIdList(nameIdListDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
 
     @RequestMapping(value = "/display", method = RequestMethod.POST)
     @ResponseBody

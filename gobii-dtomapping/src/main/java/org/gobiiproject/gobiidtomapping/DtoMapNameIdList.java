@@ -11,7 +11,5 @@ import java.util.List;
  * Created by Phil on 4/6/2016.
  */
 public interface DtoMapNameIdList {
-    NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO);
-
     List<NameIdDTO> getNameIdList(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException;
 }

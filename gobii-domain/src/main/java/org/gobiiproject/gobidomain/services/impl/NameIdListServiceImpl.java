@@ -24,22 +24,6 @@ public class NameIdListServiceImpl implements NameIdListService {
     DtoMapNameIdList dtoMapNameIdList;
 
     @Override
-    public NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = nameIdListDTO;
-        try {
-            return dtoMapNameIdList.getNameIdList(nameIdListDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii service error", e);
-        }
-
-        return returnVal;
-
-    }
-
-    @Override
     public List<NameIdDTO> getNameIdList(DtoMapNameIdParams dtoMapNameIdParams)  throws GobiiException {
 
             return dtoMapNameIdList.getNameIdList(dtoMapNameIdParams);
