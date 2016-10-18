@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
 
-import org.gobiiproject.gobiidao.resultset.access.RsDataSetDao;
+import org.gobiiproject.gobiidao.resultset.access.RsCvDao;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdFetch;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -14,99 +14,94 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Phil on 10/16/2016.
  */
-public class DtoMapNameIdFetchDataSets implements DtoMapNameIdFetch {
+public class DtoMapNameIdFetchCvTerms implements DtoMapNameIdFetch {
 
     @Autowired
-    private RsDataSetDao rsDataSetDao = null;
+    private RsCvDao rsCvDao = null;
 
-    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchDataSets.class);
+    Logger LOGGER = LoggerFactory.getLogger(DtoMapNameIdFetchCvTerms.class);
 
 
     @Override
-    public GobiiEntityNameType getEntityTypeName() throws GobiiException {
-        return GobiiEntityNameType.DATASETS;
+    public GobiiEntityNameType getEntityTypeName() {
+        return GobiiEntityNameType.CVTERMS;
     }
 
-
-    private List makeMapOfDataSetNames(ResultSet resultSet) throws Exception {
-
-        List<NameIdDTO> returnVal = new ArrayList<>();
-
-        NameIdDTO nameIdDTO;
-        while (resultSet.next()) {
-            nameIdDTO = new NameIdDTO();
-            nameIdDTO.setId(resultSet.getInt("dataset_id"));
-            nameIdDTO.setName(resultSet.getString("name"));
-
-            if (resultSet.wasNull()) {
-                nameIdDTO.setName("<no name>");
-            }
-            returnVal.add(nameIdDTO);
-        }
-
+    private NameIdDTO makeCvNameId(ResultSet resultSet) throws SQLException   {
+        NameIdDTO returnVal = new NameIdDTO();
+        returnVal.setId(resultSet.getInt("cv_id"));
+        returnVal.setName(resultSet.getString("term").toString());
         return returnVal;
+
     }
 
-
-    private List<NameIdDTO> getDatasetNames() throws GobiiException {
+    private List<NameIdDTO> getCvTermsForGroup(String cvGroupName) throws GobiiException {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsDataSetDao.getDatasetNames();
+            ResultSet resultSet = rsCvDao.getCvTermsByGroup(cvGroupName);
 
-            returnVal = makeMapOfDataSetNames(resultSet);
-
+            while (resultSet.next()) {
+                returnVal.add(makeCvNameId(resultSet));
+            }
 
         } catch (Exception e) {
-            LOGGER.error("Error retrieving dataset", e);
+            LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
-    }
 
-    private List<NameIdDTO> getNameIdListForDataSetByExperimentId(Integer experimentId) throws GobiiException {
+    } // getCvTermsForGroup()
 
-        List<NameIdDTO> returnVal;
+    private List<NameIdDTO> getCvTerms() throws GobiiException {
+
+        List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
 
-            ResultSet resultSet = rsDataSetDao.getDatasetNamesByExperimentId(experimentId);
-            returnVal = makeMapOfDataSetNames(resultSet);
+            ResultSet resultSet = rsCvDao.getCvNames();
+
+
+            while (resultSet.next()) {
+                returnVal.add(makeCvNameId(resultSet));
+            }
 
 
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);
-
         }
 
         return returnVal;
 
     }
 
-
+    // "cvgroupterms",
+    // "cvgroups"
+    // "cvnames"
     @Override
     public List<NameIdDTO> getNameIds(DtoMapNameIdParams dtoMapNameIdParams) throws GobiiException {
 
         List<NameIdDTO> returnVal;
 
         if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
-            returnVal = this.getDatasetNames();
+            returnVal = this.getCvTerms();
         } else {
 
-            if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
+            if (GobiiFilterType.BYTYPENAME == dtoMapNameIdParams.getGobiiFilterType()) {
 
-                returnVal = this.getNameIdListForDataSetByExperimentId(dtoMapNameIdParams.getFilterValueAsInteger());
+                returnVal = this.getCvTermsForGroup(dtoMapNameIdParams.getFilterValueAsString());
 
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,

@@ -57,13 +57,42 @@ public class DtoRequestNameIdListTest {
         PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
                 .get(NameIdDTO.class);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        String assertionErrorStem = "Error testing name-id retrieval of entity "
+                + gobiiEntityNameType.toString();
+
+        if( GobiiFilterType.NONE != gobiiFilterType) {
+
+            assertionErrorStem += " with filter type "
+                    + gobiiFilterType.toString()
+                    + " and filter value "
+                    + filterValue;
+        }
+
+        assertionErrorStem += ": ";
+
+        Assert.assertFalse(assertionErrorStem,
+                TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
         List<NameIdDTO> NameIdDTOList = resultEnvelope.getPayload().getData();
-        Assert.assertNotNull(NameIdDTOList);
-        Assert.assertTrue(NameIdDTOList.size() > 0);
-        Assert.assertNotNull(NameIdDTOList.get(0).getName());
-        Assert.assertNotNull(NameIdDTOList.get(0).getId());
-        Assert.assertTrue(NameIdDTOList.get(0).getId() > 0);
+        Assert.assertNotNull(assertionErrorStem
+                + "null name id list",
+                NameIdDTOList);
+
+        Assert.assertTrue(assertionErrorStem
+                + "empty name id list",
+                NameIdDTOList.size() > 0);
+
+        Assert.assertNotNull(assertionErrorStem
+                + "null name",
+                NameIdDTOList.get(0).getName());
+
+        Assert.assertNotNull(assertionErrorStem
+                + "null ",
+                NameIdDTOList.get(0).getId());
+
+        Assert.assertTrue(assertionErrorStem
+                + "id <= 0",
+                NameIdDTOList.get(0).getId() > 0);
 
     }
 
@@ -321,16 +350,20 @@ public class DtoRequestNameIdListTest {
     public void testGetCvTermsByGroup() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("cvgroupterms");
-        nameIdListDTORequest.setFilter("map_type");
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
 
-        Assert.assertNotEquals(null, nameIdListDtoResponse);
-        Assert.assertEquals(true, nameIdListDtoResponse.getStatus().isSucceeded());
-        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
+        testNameRetrieval(GobiiEntityNameType.CVTERMS, GobiiFilterType.BYTYPENAME, "strand");
+
+
+//        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+//        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+//        nameIdListDTORequest.setEntityName("cvgroupterms");
+//        nameIdListDTORequest.setFilter("map_type");
+//        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+//
+//        Assert.assertNotEquals(null, nameIdListDtoResponse);
+//        Assert.assertEquals(true, nameIdListDtoResponse.getStatus().isSucceeded());
+//        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+//        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
 
     }
 
@@ -442,32 +475,36 @@ public class DtoRequestNameIdListTest {
     public void testGetCvTypes() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("cvgroups");
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+        testNameRetrieval(GobiiEntityNameType.CVGROUPS, GobiiFilterType.NONE, null);
 
-
-        Assert.assertNotEquals(null, nameIdListDtoResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
-        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
+//        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+//        nameIdListDTORequest.setEntityName("cvgroups");
+//        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+//        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+//
+//
+//        Assert.assertNotEquals(null, nameIdListDtoResponse);
+//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
+//        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+//        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
     } // testGetMarkers()
 
     @Test
     public void testGetCvNames() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("cvnames");
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+        testNameRetrieval(GobiiEntityNameType.CVTERMS, GobiiFilterType.NONE, null);
 
-
-        Assert.assertNotEquals(null, nameIdListDtoResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
-        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
+//        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+//        nameIdListDTORequest.setEntityName("cvnames");
+//        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+//        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+//
+//
+//        Assert.assertNotEquals(null, nameIdListDtoResponse);
+//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
+//        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+//        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
     } // testGetMarkers()
 
     @Test

@@ -7,5 +7,7 @@ public enum GobiiEntityNameType {
 
     ANALYSES,
     CONTACTS,
-    DATASETS
+    DATASETS,
+    CVTERMS,
+    CVGROUPS
 }

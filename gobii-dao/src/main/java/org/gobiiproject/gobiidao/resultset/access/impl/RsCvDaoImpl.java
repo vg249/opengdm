@@ -49,7 +49,7 @@ public class RsCvDaoImpl implements RsCvDao {
             returnVal = spGetCvTermsByGroup.getResultSet();
         } catch (Exception e) {
 
-            LOGGER.error("Error retrieving CV terms by group", e);
+            LOGGER.error("Error retrieving CVTERMS terms by group", e);
             throw (new GobiiDaoException(e));
 
         }
@@ -73,7 +73,7 @@ public class RsCvDaoImpl implements RsCvDao {
 	            returnVal = spGetCvGroups.getResultSet();
 	        } catch (Exception e) {
 
-	            LOGGER.error("Error retrieving CV groups", e);
+	            LOGGER.error("Error retrieving CVTERMS groups", e);
 	            throw (new GobiiDaoException(e));
 
 	        }
@@ -97,7 +97,7 @@ public class RsCvDaoImpl implements RsCvDao {
 	            returnVal = spGetCvTerms.getResultSet();
 	        } catch (Exception e) {
 
-	            LOGGER.error("Error retrieving CV groups", e);
+	            LOGGER.error("Error retrieving CVTERMS groups", e);
 	            throw (new GobiiDaoException(e));
 
 	        }
@@ -122,7 +122,7 @@ public class RsCvDaoImpl implements RsCvDao {
             returnVal = spGetCvItems.getResultSet();
         } catch (Exception e) {
 
-            LOGGER.error("Error retrieving CV groups", e);
+            LOGGER.error("Error retrieving CVTERMS groups", e);
             throw (new GobiiDaoException(e));
 
         }

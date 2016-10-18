@@ -109,7 +109,7 @@ public class DtoRequestMultiDbTest {
             CvDTO cvDTOResponse = dtoRequestCv.process(currentCvDtoRequest);
 
             Assert.assertNotEquals(null, cvDTOResponse);
-            Assert.assertFalse("CV Create failed for crop " + currentCropType.toString(),
+            Assert.assertFalse("CVTERMS Create failed for crop " + currentCropType.toString(),
                     TestUtils.checkAndPrintHeaderMessages(cvDTOResponse));
             Assert.assertTrue(cvDTOResponse.getCvId() > 0);
 

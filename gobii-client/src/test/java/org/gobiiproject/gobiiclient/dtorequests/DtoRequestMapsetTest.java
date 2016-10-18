@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
@@ -15,6 +16,8 @@ import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdDTO;
 import org.gobiiproject.gobiimodel.dto.container.NameIdListDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -78,16 +81,30 @@ public class DtoRequestMapsetTest {
     @Test
     public void testCreateMapset() throws Exception {
         //get terms for mapset properties:
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("cvgroupterms");
-        nameIdListDTORequest.setFilter("mapset_type");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<NameIdDTO> mapsetProperTerms = new ArrayList<>(nameIdListDTO
-                .getNamesById());
+//        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+//        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+//        nameIdListDTORequest.setEntityName("cvgroupterms");
+//        nameIdListDTORequest.setFilter("mapset_type");
+//        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
+//        List<NameIdDTO> mapsetProperTerms = new ArrayList<>(nameIdListDTO
+//                .getNamesById());
+
+        RestUri namesUri = uriFactory.nameIdList();
+        namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
+        namesUri.setParamValue("filterValue", "mapset_type");
+
+        RestResource<NameIdDTO> restResourceForPlatformTerms = new RestResource<>(namesUri);
+        PayloadEnvelope<NameIdDTO> resultEnvelope = restResourceForPlatformTerms
+                .get(NameIdDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<NameIdDTO> mapsetTypes = resultEnvelope.getPayload().getData();
+
+
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
         EntityParamValues entityParamValues = TestDtoFactory
-                .makeConstrainedEntityParams(mapsetProperTerms, 1);
+                .makeConstrainedEntityParams(mapsetTypes, 1);
 
         MapsetDTO mapsetDTORequest = TestDtoFactory
                 .makePopulatedMapsetDTO(GobiiProcessType.CREATE, 1, entityParamValues);
@@ -118,15 +135,27 @@ public class DtoRequestMapsetTest {
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
 
         //get terms for mapset properties:
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("cvgroupterms");
-        nameIdListDTORequest.setFilter("mapset_type");
-        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        List<NameIdDTO> mapsetProperTerms = new ArrayList<>(nameIdListDTO
-                .getNamesById());
+//        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+//        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+//        nameIdListDTORequest.setEntityName("cvgroupterms");
+//        nameIdListDTORequest.setFilter("mapset_type");
+//        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
+//        List<NameIdDTO> mapsetProperTerms = new ArrayList<>(nameIdListDTO
+//                .getNamesById());
+
+        RestUri namesUri = uriFactory.nameIdList();
+        namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
+        namesUri.setParamValue("filterValue", "mapset_type");
+
+        RestResource<NameIdDTO> restResourceForPlatformTerms = new RestResource<>(namesUri);
+        PayloadEnvelope<NameIdDTO> resultEnvelope = restResourceForPlatformTerms
+                .get(NameIdDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<NameIdDTO> mapsetTypes = resultEnvelope.getPayload().getData();
         EntityParamValues entityParamValues = TestDtoFactory
-                .makeConstrainedEntityParams(mapsetProperTerms, 1);
+                .makeConstrainedEntityParams(mapsetTypes, 1);
 
 
         // create a new mapset for our test

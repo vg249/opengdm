@@ -53,8 +53,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     @Autowired
     private RsMarkerGroupDao rsMarkerGroupDao = null;
 
-    @Autowired
-    private RsCvDao rsCvDao = null;
 
     @Autowired
     private RsExperimentDao rsExperimentDao = null;
@@ -448,97 +446,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
     } // getNameIdListForContactsByRoleName()
 
-    private NameIdListDTO getNameIdListForCvGroups(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsCvDao.getCvGroups();
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("cv_id"));
-                nameIdDTO.setName(resultSet.getString("lower").toString());
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-
-    } // getNameIdListForCvTypes
-
-
-    private NameIdListDTO getNameIdListForCv(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsCvDao.getCvNames();
-
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("cv_id"));
-                nameIdDTO.setName(resultSet.getString("term").toString());
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-
-    }
-
-    private NameIdListDTO getNameIdListForCvGroupTerms(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsCvDao.getCvTermsByGroup(nameIdListDTO.getFilter());
-
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("cv_id"));
-                nameIdDTO.setName(resultSet.getString("term").toString());
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-
-    } // getNameIdListForCvGroupTerms()
-
 
     @Override
     public NameIdListDTO getNameIdList(NameIdListDTO nameIdListDTO) {
@@ -549,10 +456,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
 
-
-                case "cvnames":
-                    returnVal = getNameIdListForCv(nameIdListDTO);
-                    break;
 
                 case "project":
                     returnVal = getNameIdListForProjectNameByContact(nameIdListDTO);
@@ -596,14 +499,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
                 case "experimentnames":
                     returnVal = getNameIdListForExperiment(nameIdListDTO);
-                    break;
-
-                case "cvgroupterms":
-                    returnVal = getNameIdListForCvGroupTerms(nameIdListDTO);
-                    break;
-
-                case "cvgroups":
-                    returnVal = getNameIdListForCvGroups(nameIdListDTO);
                     break;
 
                 case "reference":

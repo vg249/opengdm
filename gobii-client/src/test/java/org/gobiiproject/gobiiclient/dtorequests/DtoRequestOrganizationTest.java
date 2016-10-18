@@ -108,7 +108,6 @@ public class DtoRequestOrganizationTest {
         OrganizationDTO organizationDTOReceived = resultEnvelopeForGetByID.getPayload().getData().get(0);
 
 
-
         // so this would be the typical workflow for the client app
         String newName = UUID.randomUUID().toString();
         organizationDTOReceived.setName(newName);
@@ -123,18 +122,17 @@ public class DtoRequestOrganizationTest {
 //        OrganizationDTO OrganizationDTOResponse = dtoRequestOrganization.process(organizationDTOReceived);
 //        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(OrganizationDTOResponse));
 
-        restUriOrganizationForGetById.setParamValue("id",OrganizationDTORequest.getOrganizationId().toString());
+        restUriOrganizationForGetById.setParamValue("id", OrganizationDTORequest.getOrganizationId().toString());
         resultEnvelopeForGetByID = restResourceForGetById
                 .get(OrganizationDTO.class);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
 
 
-        OrganizationDTO dtoRequestOrganizationReRetrieved =resultEnvelopeForGetByID.getPayload().getData().get(0);
+        OrganizationDTO dtoRequestOrganizationReRetrieved = resultEnvelopeForGetByID.getPayload().getData().get(0);
 
 
         Assert.assertTrue(dtoRequestOrganizationReRetrieved.getName().equals(newName));
     }
-
 
 
     @Test
@@ -150,7 +148,7 @@ public class DtoRequestOrganizationTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         List<OrganizationDTO> organizationDTOList = resultEnvelope.getPayload().getData();
         Assert.assertNotNull(organizationDTOList);
-        Assert.assertTrue(organizationDTOList.size() > 0 );
+        Assert.assertTrue(organizationDTOList.size() > 0);
         Assert.assertNotNull(organizationDTOList.get(0).getName());
 
 
@@ -181,12 +179,13 @@ public class DtoRequestOrganizationTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         List<OrganizationDTO> organizationDTOList = resultEnvelope.getPayload().getData();
         Assert.assertNotNull(organizationDTOList);
-        Assert.assertTrue(organizationDTOList.size() > 0 );
+        Assert.assertTrue(organizationDTOList.size() > 0);
         Assert.assertNotNull(organizationDTOList.get(0).getName());
 
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
-        for(int currentItemIdx = 0; currentItemIdx < organizationDTOList.size(); currentItemIdx++  ) {
+        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, organizationDTOList.size());
+        for (Integer currentItemIdx : itemsToTest) {
             OrganizationDTO currentOrganizationDto = organizationDTOList.get(currentItemIdx);
 
             Link currentLink = linkCollection.getLinksPerDataItem().get(currentItemIdx);
