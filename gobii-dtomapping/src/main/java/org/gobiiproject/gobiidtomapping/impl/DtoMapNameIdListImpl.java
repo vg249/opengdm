@@ -44,8 +44,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     @Autowired
     private RsMapSetDao rsMapSetDao = null;
 
-    @Autowired
-    private RsOrganizationDao rsOrganizationDao = null;
 
     @Autowired
     private RsMarkerGroupDao rsMarkerGroupDao = null;
@@ -295,34 +293,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
     }
 
-    private NameIdListDTO getNameIdListForOrganizationById(NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsOrganizationDao.getOrganizationNames();
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("organization_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-    }
 
     private NameIdListDTO getNameIdListForManifest(NameIdListDTO nameIdListDTO) {
 
@@ -392,10 +363,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
-
-                case "organization":
-                    returnVal = getNameIdListForOrganizationById(nameIdListDTO);
-                    break;
 
                 case "platform":
                     returnVal = getNameIdListForPlatforms(nameIdListDTO);

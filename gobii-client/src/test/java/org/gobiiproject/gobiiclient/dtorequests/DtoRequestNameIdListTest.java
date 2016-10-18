@@ -568,16 +568,7 @@ public class DtoRequestNameIdListTest {
     public void testGetOrganizationNames() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("organization");
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
-
-        Assert.assertNotEquals(null, nameIdListDtoResponse);
-        //Assert.assertEquals(true, nameIdListDtoResponse.getStatus().isSucceeded());
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(nameIdListDtoResponse));
-        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
+        testNameRetrieval(GobiiEntityNameType.ORGANIZATIONS,GobiiFilterType.NONE,null);
 
     }
 
