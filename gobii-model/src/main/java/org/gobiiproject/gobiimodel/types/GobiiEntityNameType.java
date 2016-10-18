@@ -13,5 +13,6 @@ public enum GobiiEntityNameType {
     PROJECTS,
     ORGANIZATIONS,
     PLATFORMS,
-    MANIFESTS
+    MANIFESTS,
+    MAPSETS
 }

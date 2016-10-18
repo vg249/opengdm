@@ -100,6 +100,9 @@
     <bean id="dtoMapNameIdFetchManifests"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchManifests"/>
 
+    <bean id="dtoMapNameIdFetchMapsets"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchMapsets"/>
+
     <bean id="dtoMapNameIdList"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl">
         <property name="dtoMapNameIdFetchMap">
@@ -139,6 +142,10 @@
                 <!-- MANIFESTS -->
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MANIFESTS}">
                     <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchManifests"/>
+                </entry>
+                <!-- MAPSETS -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MAPSETS}">
+                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchMapsets"/>
                 </entry>
             </map>
         </property>

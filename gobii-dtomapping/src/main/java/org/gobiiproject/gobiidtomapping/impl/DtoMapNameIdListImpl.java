@@ -38,8 +38,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
     @Autowired
     private RsReferenceDao rsReferenceDao = null;
 
-    @Autowired
-    private RsMapSetDao rsMapSetDao = null;
 
 
     @Autowired
@@ -175,62 +173,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         return returnVal;
     }
 
-    private NameIdListDTO getNameIdListForMapByTypeId(NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsMapSetDao.getMapNamesByTypeId(Integer.parseInt(nameIdListDTO.getFilter()));
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("mapset_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-    }
-
-    private NameIdListDTO getNameIdListForMap(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsMapSetDao.getAllMapsetNames();
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("mapset_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-    }
 
 
 
@@ -274,14 +217,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
-
-                case "mapset":
-                    returnVal = getNameIdListForMap(nameIdListDTO);
-                    break;
-
-                case "mapnamebytypeid":
-                    returnVal = getNameIdListForMapByTypeId(nameIdListDTO);
-                    break;
 
                 case "markergroup":
                     returnVal = getNameIdListForMarkerGroups(nameIdListDTO);
