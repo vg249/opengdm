@@ -42,44 +42,10 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
 
     @Autowired
-    private RsExperimentDao rsExperimentDao = null;
-
-    @Autowired
     private RsRoleDao rsRoleDao = null;
 
 
 
-
-
-
-    private NameIdListDTO getNameIdListForExperiment(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsExperimentDao.getExperimentNames();
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("experiment_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-    }
 
 
 
@@ -148,34 +114,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
 
 
-    private NameIdListDTO getNameIdListForExperimentByProjectId(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsExperimentDao.getExperimentNamesByProjectId(Integer.parseInt(nameIdListDTO.getFilter()));
-
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-
-                nameIdDTO.setId(resultSet.getInt("experiment_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
-            }
-
-            returnVal.setNamesById(listDTO);
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-
-    } // getNameIdListForContactsByRoleName()
 
 
     @Override
@@ -186,14 +124,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
-
-                   case "experiment":
-                    returnVal = getNameIdListForExperimentByProjectId(nameIdListDTO);
-                    break;
-
-                case "experimentnames":
-                    returnVal = getNameIdListForExperiment(nameIdListDTO);
-                    break;
 
                 case "reference":
                     returnVal = getNameIdListForReference(nameIdListDTO);

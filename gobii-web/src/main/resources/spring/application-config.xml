@@ -106,6 +106,9 @@
     <bean id="dtoMapNameIdFetchMarkerGroups"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchMarkerGroups"/>
 
+    <bean id="dtoMapNameIdFetchExperiments"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchExperiments"/>
+
     <bean id="dtoMapNameIdList"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl">
         <property name="dtoMapNameIdFetchMap">
@@ -153,6 +156,10 @@
                 <!-- MARKERGROUPS -->
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MARKERGROUPS}">
                     <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchMarkerGroups"/>
+                </entry>
+                <!-- EXPERIMENTS -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).EXPERIMENTS}">
+                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchExperiments"/>
                 </entry>
             </map>
         </property>
