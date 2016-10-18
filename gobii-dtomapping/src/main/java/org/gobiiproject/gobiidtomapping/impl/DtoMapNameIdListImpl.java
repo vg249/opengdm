@@ -40,9 +40,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
 
 
-    @Autowired
-    private RsMarkerGroupDao rsMarkerGroupDao = null;
-
 
     @Autowired
     private RsExperimentDao rsExperimentDao = null;
@@ -53,35 +50,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
 
 
-    private NameIdListDTO getNameIdListForMarkerGroups(NameIdListDTO nameIdListDTO) {
 
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsMarkerGroupDao.getMarkerGroupNames();
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("marker_group_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-
-    }//getNameIdListForMarkerGroups
 
     private NameIdListDTO getNameIdListForExperiment(NameIdListDTO nameIdListDTO) {
 
@@ -218,11 +187,7 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
 
-                case "markergroup":
-                    returnVal = getNameIdListForMarkerGroups(nameIdListDTO);
-                    break;
-
-                case "experiment":
+                   case "experiment":
                     returnVal = getNameIdListForExperimentByProjectId(nameIdListDTO);
                     break;
 

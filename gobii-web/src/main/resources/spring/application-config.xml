@@ -103,6 +103,9 @@
     <bean id="dtoMapNameIdFetchMapsets"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchMapsets"/>
 
+    <bean id="dtoMapNameIdFetchMarkerGroups"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchMarkerGroups"/>
+
     <bean id="dtoMapNameIdList"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl">
         <property name="dtoMapNameIdFetchMap">
@@ -146,6 +149,10 @@
                 <!-- MAPSETS -->
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MAPSETS}">
                     <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchMapsets"/>
+                </entry>
+                <!-- MARKERGROUPS -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).MARKERGROUPS}">
+                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchMarkerGroups"/>
                 </entry>
             </map>
         </property>

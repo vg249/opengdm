@@ -60,7 +60,7 @@ public class DtoRequestNameIdListTest {
         String assertionErrorStem = "Error testing name-id retrieval of entity "
                 + gobiiEntityNameType.toString();
 
-        if( GobiiFilterType.NONE != gobiiFilterType) {
+        if (GobiiFilterType.NONE != gobiiFilterType) {
 
             assertionErrorStem += " with filter type "
                     + gobiiFilterType.toString()
@@ -75,23 +75,23 @@ public class DtoRequestNameIdListTest {
 
         List<NameIdDTO> NameIdDTOList = resultEnvelope.getPayload().getData();
         Assert.assertNotNull(assertionErrorStem
-                + "null name id list",
+                        + "null name id list",
                 NameIdDTOList);
 
         Assert.assertTrue(assertionErrorStem
-                + "empty name id list",
+                        + "empty name id list",
                 NameIdDTOList.size() > 0);
 
         Assert.assertNotNull(assertionErrorStem
-                + "null name",
+                        + "null name",
                 NameIdDTOList.get(0).getName());
 
         Assert.assertNotNull(assertionErrorStem
-                + "null ",
+                        + "null ",
                 NameIdDTOList.get(0).getId());
 
         Assert.assertTrue(assertionErrorStem
-                + "id <= 0",
+                        + "id <= 0",
                 NameIdDTOList.get(0).getId() > 0);
 
     }
@@ -303,7 +303,6 @@ public class DtoRequestNameIdListTest {
         testNameRetrieval(GobiiEntityNameType.PROJECTS, GobiiFilterType.NONE, null);
 
 
-
 //        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
 //        nameIdListDTORequest.setEntityName("projectnames");
 //        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
@@ -395,7 +394,7 @@ public class DtoRequestNameIdListTest {
     public void testGetPlatformNames() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        testNameRetrieval(GobiiEntityNameType.PLATFORMS,GobiiFilterType.NONE,null);
+        testNameRetrieval(GobiiEntityNameType.PLATFORMS, GobiiFilterType.NONE, null);
 //        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
 //        nameIdListDTORequest.setEntityName("platform");
 //        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
@@ -412,7 +411,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetPlatformNamesByTypeId() throws Exception {
         // Assumes rice data with seed script is loaded
-        testNameRetrieval(GobiiEntityNameType.PLATFORMS,GobiiFilterType.BYTYPEID,"1");
+        testNameRetrieval(GobiiEntityNameType.PLATFORMS, GobiiFilterType.BYTYPEID, "1");
 
 //        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
 //        nameIdListDTORequest.setEntityName("platformByTypeId");
@@ -432,18 +431,19 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetMarkerGroupNames() throws Exception {
 
+        testNameRetrieval(GobiiEntityNameType.MARKERGROUPS, GobiiFilterType.NONE, null);
 
         // Assumes rice data with seed script is loaded
-        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
-        nameIdListDTORequest.setEntityName("markergroup");
-        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
-        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
-
-
-        Assert.assertNotEquals(null, nameIdListDtoResponse);
-        Assert.assertEquals(true, nameIdListDtoResponse.getStatus().isSucceeded());
-        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
-        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
+//        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
+//        nameIdListDTORequest.setEntityName("markergroup");
+//        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
+//        NameIdListDTO nameIdListDtoResponse = dtoRequestNameIdList.process(nameIdListDTORequest);
+//
+//
+//        Assert.assertNotEquals(null, nameIdListDtoResponse);
+//        Assert.assertEquals(true, nameIdListDtoResponse.getStatus().isSucceeded());
+//        Assert.assertTrue(nameIdListDtoResponse.getNamesById().size() >= 0);
+//        Assert.assertEquals(true, TestUtils.isNameIdListSorted(nameIdListDtoResponse.getNamesById()));
 
     } // testGetMarkerGroupNames()
 
@@ -502,7 +502,6 @@ public class DtoRequestNameIdListTest {
     } // testGetMarkers()
 
 
-
     @Test
     public void testGetCvTypes() throws Exception {
 
@@ -559,7 +558,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetManifestNames() throws Exception {
 
-        testNameRetrieval(GobiiEntityNameType.MANIFESTS,GobiiFilterType.NONE,null);
+        testNameRetrieval(GobiiEntityNameType.MANIFESTS, GobiiFilterType.NONE, null);
 
 
         // Assumes rice data with seed script is loaded
@@ -579,7 +578,7 @@ public class DtoRequestNameIdListTest {
     public void testGetOrganizationNames() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        testNameRetrieval(GobiiEntityNameType.ORGANIZATIONS,GobiiFilterType.NONE,null);
+        testNameRetrieval(GobiiEntityNameType.ORGANIZATIONS, GobiiFilterType.NONE, null);
 
     }
 
