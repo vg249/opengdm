@@ -109,6 +109,9 @@
     <bean id="dtoMapNameIdFetchExperiments"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchExperiments"/>
 
+    <bean id="dtoMapNameIdFetchReferences"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchCvReferences"/>
+
     <bean id="dtoMapNameIdList"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl">
         <property name="dtoMapNameIdFetchMap">
@@ -160,6 +163,10 @@
                 <!-- EXPERIMENTS -->
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).EXPERIMENTS}">
                     <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchExperiments"/>
+                </entry>
+                <!-- REFERENCES -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).REFERENCES}">
+                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchCvReferences"/>
                 </entry>
             </map>
         </property>

@@ -35,9 +35,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         this.dtoMapNameIdFetchMap = dtoMapNameIdFetchMap;
     }
 
-    @Autowired
-    private RsReferenceDao rsReferenceDao = null;
-
 
 
 
@@ -50,34 +47,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
 
 
 
-    private NameIdListDTO getNameIdListForReference(NameIdListDTO nameIdListDTO) {
-
-        NameIdListDTO returnVal = new NameIdListDTO();
-
-        try {
-
-            ResultSet resultSet = rsReferenceDao.getReferenceNames();
-            List<NameIdDTO> listDTO = new ArrayList<>();
-
-            NameIdDTO nameIdDTO;
-            while (resultSet.next()) {
-                nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("reference_id"));
-                nameIdDTO.setName(resultSet.getString("name"));
-                listDTO.add(nameIdDTO);
-            }
-
-
-            returnVal.setNamesById(listDTO);
-
-
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
-        }
-
-        return returnVal;
-    }
 
     private NameIdListDTO getNameIdListForRole(NameIdListDTO nameIdListDTO) {
 
@@ -124,10 +93,6 @@ public class DtoMapNameIdListImpl implements DtoMapNameIdList {
         if (nameIdListDTO.getEntityType() == NameIdListDTO.EntityType.DBTABLE) {
 
             switch (nameIdListDTO.getEntityName().toLowerCase()) {
-
-                case "reference":
-                    returnVal = getNameIdListForReference(nameIdListDTO);
-                    break;
 
                 case "role":
                     returnVal = getNameIdListForRole(nameIdListDTO);

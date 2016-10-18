@@ -16,5 +16,6 @@ public enum GobiiEntityNameType {
     MANIFESTS,
     MAPSETS,
     MARKERGROUPS,
-    EXPERIMENTS
+    EXPERIMENTS,
+    REFERENCES
 }
