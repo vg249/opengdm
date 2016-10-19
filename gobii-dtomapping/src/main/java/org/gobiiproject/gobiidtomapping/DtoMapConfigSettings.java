@@ -10,5 +10,5 @@ import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
 
 public interface DtoMapConfigSettings {
 
-   ConfigSettingsDTO readSettings(ConfigSettingsDTO configSettingsDTO);
+   ConfigSettingsDTO readSettings();
 }

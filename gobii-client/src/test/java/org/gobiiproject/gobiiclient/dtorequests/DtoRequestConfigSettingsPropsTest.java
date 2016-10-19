@@ -6,7 +6,12 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
 
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
@@ -16,6 +21,8 @@ import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
@@ -31,9 +38,13 @@ import java.util.stream.Collectors;
 
 public class DtoRequestConfigSettingsPropsTest {
 
+    private static UriFactory uriFactory;
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
+        String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
+        DtoRequestConfigSettingsPropsTest.uriFactory = new UriFactory(currentCropContextRoot);
     }
 
     @AfterClass
@@ -43,13 +54,19 @@ public class DtoRequestConfigSettingsPropsTest {
 
     @Test
     public void testGetConfigSettings() throws Exception {
-        DtoRequestConfigSettings dtoRequestConfigSettings = new DtoRequestConfigSettings();
-        ConfigSettingsDTO configSettingsDTORequest = new ConfigSettingsDTO();
-        ConfigSettingsDTO configSettingsDTOResponse = dtoRequestConfigSettings.process(configSettingsDTORequest);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(configSettingsDTOResponse));
-        Assert.assertTrue(configSettingsDTOResponse.getServerConfigs().size() > 0);
 
+//        DtoRequestConfigSettings dtoRequestConfigSettings = new DtoRequestConfigSettings();
+//        ConfigSettingsDTO configSettingsDTORequest = new ConfigSettingsDTO();
+//        ConfigSettingsDTO configSettingsDTOResponse = dtoRequestConfigSettings.process(configSettingsDTORequest);
+
+        RestUri confgSettingsUri = uriFactory.resourceColl(ServiceRequestId.URL_CONFIGSETTINGS);
+        RestResource<ConfigSettingsDTO> restResource = new RestResource<>(confgSettingsUri);
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = restResource
+                .get(ConfigSettingsDTO.class);
+
+        TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader());
+        ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
 
         // this works because in our test environment we know that our gobii.config
         // here on the client is the same as on the server

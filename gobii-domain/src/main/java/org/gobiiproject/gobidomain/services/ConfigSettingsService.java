@@ -7,4 +7,5 @@ import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
  */
 public interface ConfigSettingsService {
     ConfigSettingsDTO process(ConfigSettingsDTO configSettingsDTO);
+    ConfigSettingsDTO getConfigSettings();
 }

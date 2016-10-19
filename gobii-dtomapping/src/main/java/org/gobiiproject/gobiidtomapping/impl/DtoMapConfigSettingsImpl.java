@@ -17,8 +17,9 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
 
 
     @Override
-    public ConfigSettingsDTO readSettings(ConfigSettingsDTO configSettingsDTO) {
-        ConfigSettingsDTO returnVal = configSettingsDTO;
+    public ConfigSettingsDTO readSettings() {
+
+        ConfigSettingsDTO returnVal = new ConfigSettingsDTO();
 
         try {
             ConfigSettings configSettings = new ConfigSettings();

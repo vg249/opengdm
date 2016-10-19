@@ -27,7 +27,25 @@ public class ConfigSettingsServiceImpl implements ConfigSettingsService {
 
         try {
 
-            returnVal = dtoMapConfigSettings.readSettings(returnVal);
+            returnVal = dtoMapConfigSettings.readSettings();
+
+        } catch (Exception e) {
+
+            returnVal.getStatus().addException(e);
+            LOGGER.error("Gobii service error", e);
+        }
+
+        return returnVal;
+    }
+
+    @Override
+    public ConfigSettingsDTO getConfigSettings() {
+
+        ConfigSettingsDTO returnVal = new ConfigSettingsDTO();
+
+        try {
+
+            returnVal = dtoMapConfigSettings.readSettings();
 
         } catch (Exception e) {
 

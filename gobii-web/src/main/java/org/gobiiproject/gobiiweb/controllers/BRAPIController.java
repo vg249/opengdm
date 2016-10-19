@@ -29,6 +29,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
@@ -158,6 +159,46 @@ public class BRAPIController {
                 e1.printStackTrace();
             }
         }
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/configsettings", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ConfigSettingsDTO> getContactsById(
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        PayloadEnvelope<ConfigSettingsDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            ConfigSettingsDTO configSettingsDTO = configSettingsService.getConfigSettings();
+            if (null != configSettingsDTO) {
+
+//                PayloadWriter<ConfigSettingsDTO> payloadWriter = new PayloadWriter<>(request,
+//                        ConfigSettingsDTO.class);
+//
+//                payloadWriter.writeSingleItem(returnVal,
+//                        ServiceRequestId.URL_CONTACTS,
+//                        configSettingsDTO);
+
+                returnVal.getPayload().getData().add(configSettingsDTO);
+
+            } else {
+                returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "Unable to retrieve config settings");
+            }
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
 
@@ -469,9 +510,9 @@ public class BRAPIController {
                 if (!LineUtils.isNullOrEmpty(filterValue)) {
 
                     if (GobiiFilterType.BYTYPEID == gobiiFilterType) {
-                        if( NumberUtils.isNumber(filterValue) ) {
+                        if (NumberUtils.isNumber(filterValue)) {
                             typedFilterValue = Integer.valueOf(filterValue);
-                        } else{
+                        } else {
                             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                     GobiiValidationStatusType.NONE,
                                     "Value for "
@@ -505,7 +546,7 @@ public class BRAPIController {
 
             List<NameIdDTO> nameIdList = nameIdListService.getNameIdList(dtoMapNameIdParams);
 
-            PayloadWriter<NameIdDTO> payloadWriter = new PayloadWriter<>(request,NameIdDTO.class);
+            PayloadWriter<NameIdDTO> payloadWriter = new PayloadWriter<>(request, NameIdDTO.class);
             payloadWriter.writeList(returnVal,
                     EntityNameConverter.toServiceRequestId(gobiiEntityNameType),
                     nameIdList);
