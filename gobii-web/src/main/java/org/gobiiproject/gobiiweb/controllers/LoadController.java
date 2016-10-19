@@ -295,23 +295,4 @@ public class LoadController {
     }
 
 
-    @RequestMapping(value = "/configsettings", method = RequestMethod.POST)
-    @ResponseBody
-    public ConfigSettingsDTO process(@RequestBody ConfigSettingsDTO configSettingsDTO) {
-
-        ConfigSettingsDTO returnVal = new ConfigSettingsDTO();
-
-        try {
-            returnVal = configSettingsService.process(configSettingsDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
-
-
 }// LoadController

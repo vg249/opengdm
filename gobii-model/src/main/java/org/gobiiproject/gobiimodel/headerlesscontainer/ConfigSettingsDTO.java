@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
@@ -10,8 +10,18 @@ import java.util.Map;
 /**
  * Created by Phil on 4/8/2016.
  */
-public class ConfigSettingsDTO extends Header {
+public class ConfigSettingsDTO extends DTOBase {
 
+    @Override
+    public Integer getId() {
+        return 0;
+    }
+
+    @Override
+    public void setId(Integer id) {
+
+
+    }
 
     private Map<String, ServerConfig> serverConfigs = new LinkedHashMap<>();
 

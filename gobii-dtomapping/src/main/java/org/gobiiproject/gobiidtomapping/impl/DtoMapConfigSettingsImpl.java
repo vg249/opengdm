@@ -1,10 +1,12 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidtomapping.DtoMapConfigSettings;
+import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
-import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +19,7 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
 
 
     @Override
-    public ConfigSettingsDTO readSettings() {
+    public ConfigSettingsDTO readSettings() throws GobiiException{
 
         ConfigSettingsDTO returnVal = new ConfigSettingsDTO();
 
@@ -33,8 +35,8 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
             }
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
 

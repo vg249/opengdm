@@ -1,11 +1,17 @@
 package org.gobiiproject.gobiiclient.core;
 
+import org.apache.http.HttpStatus;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
-import org.gobiiproject.gobiiclient.core.restmethods.dtopost.DtoRequestProcessor;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.RestMethodTypes;
+import org.gobiiproject.gobiiclient.core.restmethods.PayloadResponse;
+import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
-import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
@@ -36,13 +42,13 @@ public final class ClientContext {
     private static String sshOverrideHost = null;
     private static Integer sshOverridePort = null;
 
-    public static void setSshOverride(String sshOverrideHost, Integer sshOverridePort) throws  Exception {
+    public static void setSshOverride(String sshOverrideHost, Integer sshOverridePort) throws Exception {
 
-        if( null == sshOverrideHost) {
+        if (null == sshOverrideHost) {
             throw new Exception("SSH port and host must be specified");
         }
 
-        if( null == sshOverridePort) {
+        if (null == sshOverridePort) {
             throw new Exception("SSH host and port must be specified");
         }
 
@@ -67,7 +73,7 @@ public final class ClientContext {
 
         if (null == clientContext) {
 
-            if( null == configSettings) {
+            if (null == configSettings) {
                 throw new Exception("Client context cannot be null!");
             }
 
@@ -85,10 +91,10 @@ public final class ClientContext {
             }
         }
 
-        return  clientContext;
+        return clientContext;
 
     }// getInstance
-    
+
 
     public synchronized static ClientContext getInstance(String gobiiURL, boolean initConfigFromServer) throws Exception {
 
@@ -120,7 +126,7 @@ public final class ClientContext {
 
             } else {
 
-                    throw new Exception("Client configuration must be initialized from a web server url or fqpn to gobii properties file");
+                throw new Exception("Client configuration must be initialized from a web server url or fqpn to gobii properties file");
             }
 
             clientContext.gobiiCropTypes.addAll(clientContext
@@ -164,35 +170,33 @@ public final class ClientContext {
         returnVal.userToken = httpCore.getTokenForUser(authPath, userDetail.getUserName(), userDetail.getPassword());
 
         // now get the settings
-        String settingsPath = ResourceBuilder.getRequestUrl(ControllerType.LOADER,
+        String settingsPath = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
                 ServiceRequestId.URL_CONFIGSETTINGS,
                 context);
-        ConfigSettingsDTO configSettingsDTORequest = new ConfigSettingsDTO();
 
-        DtoRequestProcessor<ConfigSettingsDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
-        ConfigSettingsDTO configSettingsDTOResponse = dtoDtoRequestProcessor.getTypedHtppResponseForDto(
-                host,
-                port,
-                null,
-                settingsPath,
-                ConfigSettingsDTO.class,
-                configSettingsDTORequest,
-                returnVal.userToken);
+        RestUri configSettingsUri = new UriFactory(null).RestUriFromUri(settingsPath);
+        HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri,returnVal.userToken);
+        PayloadResponse<ConfigSettingsDTO> payloadResponse = new PayloadResponse<>(configSettingsUri);
 
-        if (configSettingsDTOResponse.getStatus().isSucceeded()) {
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = payloadResponse.getPayloadFromResponse(ConfigSettingsDTO.class,
+                RestMethodTypes.GET,
+                HttpStatus.SC_OK,
+                httpMethodResult);
 
+        if (resultEnvelope.getHeader().getStatus().isSucceeded()) {
+
+            ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
             returnVal.defaultGobiiCropType = configSettingsDTOResponse.getDefaultCrop();
             returnVal.serverConfigs = configSettingsDTOResponse.getServerConfigs();
 
         } else {
             throw new Exception("Unable to get server configuration from "
                     + url.toString()
-                    + configSettingsDTOResponse.getStatus().getStatusMessages().get(0).getMessage());
+                    + resultEnvelope.getHeader().getStatus().getStatusMessages().get(0).getMessage());
         }
 
         return returnVal;
     }
-
 
 
     private ClientContext() throws Exception {
@@ -239,7 +243,7 @@ public final class ClientContext {
 
         Integer returnVal;
 
-        if( null == sshOverridePort ) {
+        if (null == sshOverridePort) {
 
             returnVal = serverConfigs.get(this.currentGobiiCropType).getPort();
         } else {

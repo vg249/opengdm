@@ -29,7 +29,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.container.ConfigSettingsDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
@@ -176,12 +176,12 @@ public class BRAPIController {
             ConfigSettingsDTO configSettingsDTO = configSettingsService.getConfigSettings();
             if (null != configSettingsDTO) {
 
-//                PayloadWriter<ConfigSettingsDTO> payloadWriter = new PayloadWriter<>(request,
-//                        ConfigSettingsDTO.class);
-//
-//                payloadWriter.writeSingleItem(returnVal,
-//                        ServiceRequestId.URL_CONTACTS,
-//                        configSettingsDTO);
+                PayloadWriter<ConfigSettingsDTO> payloadWriter = new PayloadWriter<>(request,
+                        ConfigSettingsDTO.class);
+
+                payloadWriter.writeSingleItem(returnVal,
+                        ServiceRequestId.URL_CONTACTS,
+                        configSettingsDTO);
 
                 returnVal.getPayload().getData().add(configSettingsDTO);
 
