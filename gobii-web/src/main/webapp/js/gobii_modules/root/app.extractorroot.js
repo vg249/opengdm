@@ -116,7 +116,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 ExtractorRoot.prototype.initializeServerConfigs = function () {
                     var _this = this;
                     var scope$ = this;
-                    this._dtoRequestServiceServerConfigs.getResult(new dto_request_item_serverconfigs_1.DtoRequestItemServerConfigs()).subscribe(function (serverConfigs) {
+                    this._dtoRequestServiceServerConfigs.get(new dto_request_item_serverconfigs_1.DtoRequestItemServerConfigs()).subscribe(function (serverConfigs) {
                         if (serverConfigs && (serverConfigs.length > 0)) {
                             scope$.serverConfigList = serverConfigs;
                             var serverCrop_1 = _this._dtoRequestServiceServerConfigs.getGobiiCropType();

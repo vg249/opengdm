@@ -176,7 +176,7 @@ export class ExtractorRoot {
 
     private initializeServerConfigs() {
         let scope$ = this;
-        this._dtoRequestServiceServerConfigs.getResult(new DtoRequestItemServerConfigs()).subscribe(serverConfigs => {
+        this._dtoRequestServiceServerConfigs.get(new DtoRequestItemServerConfigs()).subscribe(serverConfigs => {
 
                 if (serverConfigs && ( serverConfigs.length > 0 )) {
                     scope$.serverConfigList = serverConfigs;

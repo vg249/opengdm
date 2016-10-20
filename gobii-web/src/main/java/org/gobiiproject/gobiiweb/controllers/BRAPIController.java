@@ -180,7 +180,7 @@ public class BRAPIController {
                         ConfigSettingsDTO.class);
 
                 payloadWriter.writeSingleItem(returnVal,
-                        ServiceRequestId.URL_CONTACTS,
+                        ServiceRequestId.URL_CONFIGSETTINGS,
                         configSettingsDTO);
 
                 returnVal.getPayload().getData().add(configSettingsDTO);

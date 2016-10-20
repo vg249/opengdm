@@ -33,12 +33,5 @@ export class DtoHeaderAuth {
 
     }
 
-    //
-    // public toJSON(): JSON {
-    //     return {
-    //         userName : this.userName,
-    //         password: this.password,
-    //         token: this.token
-    //     };
-    // }
+
 }
