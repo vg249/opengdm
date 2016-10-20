@@ -26,6 +26,7 @@ import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-ite
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
 import * as EntityFilters from "../model/type-entity-filter";
+import {EntityFilter} from "../model/type-entity-filter";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -235,8 +236,8 @@ export class ExtractorRoot {
 
     private initializeContactsForSumission() {
         let scope$ = this;
-        this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
-            EntityType.AllContacts)).subscribe(nameIds => {
+        this._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+            EntityType.Contacts)).subscribe(nameIds => {
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.contactNameIdListForSubmitter = nameIds
                     scope$.selectedContactIdForSubmitter = nameIds[0].id;
@@ -265,9 +266,9 @@ export class ExtractorRoot {
 
     private initializeContactsForPi() {
         let scope$ = this;
-        scope$._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
-            EntityType.Contact,
-            EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(nameIds => {
+        scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+            EntityType.Contacts,
+            EntityFilter.NONE)).subscribe(nameIds => {
 
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.contactNameIdListForPi = nameIds;
@@ -308,8 +309,9 @@ export class ExtractorRoot {
 
     private initializeProjectNameIds() {
         let scope$ = this;
-        scope$._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
-            EntityType.Project,
+        scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+            EntityType.Projects,
+            EntityFilter.BYTYPEID,
             this.selectedContactIdForPi)).subscribe(nameIds => {
 
                 if (nameIds && ( nameIds.length > 0 )) {
@@ -348,8 +350,9 @@ export class ExtractorRoot {
 
         let scope$ = this;
         if (this.selectedProjectId) {
-            this._dtoRequestServiceNameIds.getResult(new DtoRequestItemNameIds(ProcessType.READ,
-                EntityType.Experiment,
+            this._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+                EntityType.Experiments,
+                EntityFilter.BYTYPEID,
                 this.selectedProjectId)).subscribe(nameIds => {
                     if (nameIds && ( nameIds.length > 0 )) {
                         scope$.experimentNameIdList = nameIds;

@@ -218,7 +218,7 @@
     <bean id="DataSetService"
           class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl"/>
 
-    <!-- **** Experiment Beans *************************************** -->
+    <!-- **** Experiments Beans *************************************** -->
     <bean id="rsExperimentDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsExperimentDaoImpl"/>
     <bean id="dtoMapExperiment"
@@ -281,7 +281,7 @@
     <bean id="rsRoleDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsRoleDaoImpl"/>
 
-    <!-- **** Project Beans *************************************** -->
+    <!-- **** Projects Beans *************************************** -->
     <bean id="rsProjectDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>
 
