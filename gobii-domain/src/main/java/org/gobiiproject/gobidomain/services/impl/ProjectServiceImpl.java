@@ -29,8 +29,6 @@ public class ProjectServiceImpl implements ProjectService {
     private DtoMapProject dtoMapProject = null;
 
 
-
-
     @Override
     public List<ProjectDTO> getProjects() throws GobiiDomainException {
 
@@ -39,7 +37,7 @@ public class ProjectServiceImpl implements ProjectService {
         try {
             returnVal = dtoMapProject.getProjects();
 
-            for(ProjectDTO currentProjectDTO : returnVal ) {
+            for (ProjectDTO currentProjectDTO : returnVal) {
                 currentProjectDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
                 currentProjectDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
             }
@@ -91,15 +89,16 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDTO createProject(ProjectDTO projectDTO) throws GobiiDomainException {
+
         ProjectDTO returnVal;
 
-            projectDTO.setCreatedDate(new Date());
-            projectDTO.setModifiedDate(new Date());
-            returnVal = dtoMapProject.createProject(projectDTO);
+        projectDTO.setCreatedDate(new Date());
+        projectDTO.setModifiedDate(new Date());
+        returnVal = dtoMapProject.createProject(projectDTO);
 
-            // When we have roles and permissions, this will be set programmatically
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+        // When we have roles and permissions, this will be set programmatically
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         return returnVal;
     }

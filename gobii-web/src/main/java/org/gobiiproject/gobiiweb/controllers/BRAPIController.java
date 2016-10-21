@@ -29,7 +29,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
@@ -1041,14 +1041,12 @@ public class BRAPIController {
 
             ExperimentDTO exprimentDTONew = experimentService.createExperiment(exprimentDTOToCreate);
 
-            returnVal.getPayload().getData().add(exprimentDTONew);
+            PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
+                    ExperimentDTO.class);
 
-//            PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
-//                    ExperimentDTO.class);
-//
-//            payloadWriter.writeSingleItem(returnVal,
-//                    ServiceRequestId.URL_PROJECTS,
-//                    exprimentDTONew);
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_EXPERIMENTS,
+                    exprimentDTONew);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1081,15 +1079,15 @@ public class BRAPIController {
 
             ExperimentDTO exprimentDTOReplaced = experimentService.replaceExperiment(experimentId, exprimentDTOToReplace);
 
-            returnVal.getPayload().getData().add(exprimentDTOReplaced);
 
-//            PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
-//                    ExperimentDTO.class);
-//
-//            payloadWriter.writeSingleItem(returnVal,
-//                    ServiceRequestId.URL_PROJECTS,
-//                    exprimentDTOReplaced);
-//
+
+            PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
+                    ExperimentDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_EXPERIMENTS,
+                    exprimentDTOReplaced);
+
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1113,19 +1111,15 @@ public class BRAPIController {
         PayloadEnvelope<ExperimentDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            //PayloadReader<ExperimentDTO> payloadReader = new PayloadReader<>(ExperimentDTO.class);
             List<ExperimentDTO> experimentDTOs = experimentService.getExperiments();
 
-            for( ExperimentDTO currentExperimentDTO : experimentDTOs) {
-                returnVal.getPayload().getData().add(currentExperimentDTO);
-            }
 
-//            PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
-//                    ExperimentDTO.class);
-//
-//            payloadWriter.writeList(returnVal,
-//                    ServiceRequestId.URL_PROJECTS,
-//                    experimentDTOs);
+            PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
+                    ExperimentDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    ServiceRequestId.URL_EXPERIMENTS,
+                    experimentDTOs);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1153,13 +1147,12 @@ public class BRAPIController {
 
             returnVal.getPayload().getData().add(experimentDTO);
 
+            PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
+                    ExperimentDTO.class);
 
-//            PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
-//                    ExperimentDTO.class);
-//
-//            payloadWriter.writeSingleItem(returnVal,
-//                    ServiceRequestId.URL_PROJECTS,
-//                    experimentDTO);
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_EXPERIMENTS,
+                    experimentDTO);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);

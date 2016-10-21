@@ -185,6 +185,7 @@ public class DtoRequestOrganizationTest {
 
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == organizationDTOList.size() );
         List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, organizationDTOList.size());
         for(Integer currentItemIdx : itemsToTest  ) {
             OrganizationDTO currentOrganizationDto = organizationDTOList.get(currentItemIdx);

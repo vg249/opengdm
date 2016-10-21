@@ -3,8 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
-import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -28,45 +27,6 @@ public class ExperimentServiceImpl implements ExperimentService {
 
 
 
-	@Override
-	public ExperimentDTO processExperiment(ExperimentDTO experimentDTO) {
-		// TODO Auto-generated method stub
-
-        ExperimentDTO returnVal = experimentDTO;
-
-        try {
-            switch (returnVal.getGobiiProcessType()) {
-                case READ:
-                    returnVal  = dtoMapExperiment.getExperimentDetails(returnVal.getExperimentId());
-                    break;
-
-                case CREATE:
-                    returnVal.setCreatedDate(new Date());
-                    returnVal.setModifiedDate(new Date());
-                    returnVal = dtoMapExperiment.createExperiment(returnVal);
-                    break;
-
-                case UPDATE:
-                    returnVal.setModifiedDate(new Date());
-                    returnVal = dtoMapExperiment.replaceExperiment(returnVal.getExperimentId(),returnVal);
-                    break;
-
-                default:
-                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
-                            GobiiValidationStatusType.BAD_REQUEST,
-                            "Unsupported process type " + experimentDTO.getGobiiProcessType().toString());
-
-            } // switch()
-
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii service error", e);
-        }
-
-        return  returnVal;
-	}
-
     @Override
     public List<ExperimentDTO> getExperiments() throws GobiiDomainException {
 
@@ -75,10 +35,10 @@ public class ExperimentServiceImpl implements ExperimentService {
         try {
             returnVal = dtoMapExperiment.getExperiments();
 
-//            for(ExperimentDTO currentExperimentDTO : returnVal ) {
-//                currentExperimentDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
-//                currentExperimentDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-//            }
+            for(ExperimentDTO currentExperimentDTO : returnVal ) {
+                currentExperimentDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                currentExperimentDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            }
 
 
             if (null == returnVal) {
@@ -103,8 +63,8 @@ public class ExperimentServiceImpl implements ExperimentService {
         try {
             returnVal = dtoMapExperiment.getExperimentDetails(experimentId);
 
-//            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-//            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
 
             if (null == returnVal) {
@@ -134,8 +94,8 @@ public class ExperimentServiceImpl implements ExperimentService {
         returnVal = dtoMapExperiment.createExperiment(experimentDTO);
 
         // When we have roles and permissions, this will be set programmatically
-//        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-//        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         return returnVal;
     }
@@ -157,8 +117,8 @@ public class ExperimentServiceImpl implements ExperimentService {
 
                     experimentDTO.setModifiedDate(new Date());
                     returnVal = dtoMapExperiment.replaceExperiment(experimentId, experimentDTO);
-//                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-//                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
                 } else {
 

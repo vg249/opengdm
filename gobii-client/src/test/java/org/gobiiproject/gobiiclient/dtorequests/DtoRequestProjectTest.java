@@ -295,6 +295,7 @@ public class DtoRequestProjectTest {
 
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == projectDTOList.size() );
         List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, projectDTOList.size());
         for (Integer currentIdx : itemsToTest) {
             ProjectDTO currentProjectDto = projectDTOList.get(currentIdx);

@@ -15,8 +15,7 @@ import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
-import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 ;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -80,7 +79,7 @@ public class DtoRequestExperimentTest {
 
         //DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 
-        ExperimentDTO experimentDTORequest = new ExperimentDTO(GobiiProcessType.CREATE);
+        ExperimentDTO experimentDTORequest = new ExperimentDTO();
         experimentDTORequest.setExperimentId(1);
         experimentDTORequest.setManifestId(1);
         experimentDTORequest.setPlatformId(1);
@@ -130,10 +129,6 @@ public class DtoRequestExperimentTest {
         ExperimentDTO experimentDTOExisting = resultEnvelope.getPayload().getData().get(0);
 
 
-
-
-        experimentDTOExisting.setGobiiProcessType(GobiiProcessType.CREATE);
-
         RestUri experimentCollUri = uriFactory.resourceColl(ServiceRequestId.URL_EXPERIMENTS);
         RestResource<ExperimentDTO> restResourceForProjectPost =
                 new RestResource<>(experimentCollUri);
@@ -143,12 +138,8 @@ public class DtoRequestExperimentTest {
                 .post(ExperimentDTO.class, payloadEnvelope);
 
         //ExperimentDTO ExperimentDTOResponse = dtoRequestExperiment.process(ExperimentDTOExisting);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-
-
-        ExperimentDTO ExperimentDTOResponse = resultEnvelope.getPayload().getData().get(0);
-
-        List<HeaderStatusMessage> headerStatusMessages = ExperimentDTOResponse
+        List<HeaderStatusMessage> headerStatusMessages = resultEnvelope
+                .getHeader()
                 .getStatus()
                 .getStatusMessages()
                 .stream()
@@ -184,9 +175,6 @@ public class DtoRequestExperimentTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         ExperimentDTO experimentDTOReceived = resultEnvelope.getPayload().getData().get(0);
 
-
-        experimentDTOReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
-
         String newDataFile = UUID.randomUUID().toString();
 
         experimentDTOReceived.setExperimentDataFile(newDataFile);
@@ -203,7 +191,7 @@ public class DtoRequestExperimentTest {
 
         ExperimentDTO dtoRequestExperimentExperimentReRetrieved = resultEnvelope.getPayload().getData().get(0);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestExperimentExperimentReRetrieved));
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
         Assert.assertTrue(dtoRequestExperimentExperimentReRetrieved.getExperimentDataFile().equals(newDataFile));
 
@@ -224,25 +212,26 @@ public class DtoRequestExperimentTest {
         Assert.assertNotNull(experimentDTOList.get(0).getExperimentName());
 
 
-//        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
-//        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, experimentDTOList.size());
-//        for (Integer currentIdx : itemsToTest) {
-//            ExperimentDTO currentExperimentDto = experimentDTOList.get(currentIdx);
-//
-//            Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
-//
-//            RestUri restUriExperimentForGetById = DtoRequestExperimentTest
-//                    .uriFactory
-//                    .RestUriFromUri(currentLink.getHref());
-//            RestResource<ExperimentDTO> restResourceForGetById = new RestResource<>(restUriExperimentForGetById);
-//            PayloadEnvelope<ExperimentDTO> resultEnvelopeForGetByID = restResourceForGetById
-//                    .get(ExperimentDTO.class);
-//            Assert.assertNotNull(resultEnvelopeForGetByID);
-//            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
-//            ExperimentDTO experimentDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
-//            Assert.assertTrue(currentExperimentDto.getExperimentName().equals(experimentDTOFromLink.getExperimentName()));
-//            Assert.assertTrue(currentExperimentDto.getExperimentId().equals(experimentDTOFromLink.getExperimentId()));
-//        }
+        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == experimentDTOList.size() );
+        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, experimentDTOList.size());
+        for (Integer currentIdx : itemsToTest) {
+            ExperimentDTO currentExperimentDto = experimentDTOList.get(currentIdx);
+
+            Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
+
+            RestUri restUriExperimentForGetById = DtoRequestExperimentTest
+                    .uriFactory
+                    .RestUriFromUri(currentLink.getHref());
+            RestResource<ExperimentDTO> restResourceForGetById = new RestResource<>(restUriExperimentForGetById);
+            PayloadEnvelope<ExperimentDTO> resultEnvelopeForGetByID = restResourceForGetById
+                    .get(ExperimentDTO.class);
+            Assert.assertNotNull(resultEnvelopeForGetByID);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
+            ExperimentDTO experimentDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
+            Assert.assertTrue(currentExperimentDto.getExperimentName().equals(experimentDTOFromLink.getExperimentName()));
+            Assert.assertTrue(currentExperimentDto.getExperimentId().equals(experimentDTOFromLink.getExperimentId()));
+        }
 
     }
 

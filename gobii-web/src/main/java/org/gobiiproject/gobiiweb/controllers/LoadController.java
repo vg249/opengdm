@@ -46,12 +46,6 @@ public class LoadController {
     private MarkerGroupService markerGroupService = null;
 
     @Autowired
-    private OrganizationService organizationService = null;
-
-    @Autowired
-    private ExperimentService experimentService = null;
-
-    @Autowired
     private DisplayService displayService = null;
     
     @Autowired
@@ -121,23 +115,7 @@ public class LoadController {
 
     }
 
-    @RequestMapping(value = "/experiment", method = RequestMethod.POST)
-    @ResponseBody
-    public ExperimentDTO getPingResponse(@RequestBody ExperimentDTO experimentDTO) {
 
-        ExperimentDTO returnVal = null;
-
-        try {
-            returnVal = experimentService.processExperiment(experimentDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-        return (returnVal);
-
-    }
-    
     @RequestMapping(value = "/reference", method = RequestMethod.POST)
     @ResponseBody
     public ReferenceDTO processReference(@RequestBody ReferenceDTO referenceDTO) {
