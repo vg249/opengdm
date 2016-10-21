@@ -6,29 +6,17 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.*;
-import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.dto.container.*;
-import org.gobiiproject.gobiimodel.dto.container.OrganizationDTO;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.gobiiproject.gobiiweb.automation.ControllerUtils;
-import org.gobiiproject.gobiiweb.automation.PayloadReader;
-import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -44,8 +32,6 @@ public class LoadController {
     @Autowired
     private PingService pingService = null;
 
-    @Autowired
-    private ProjectService projectService = null;
 
     @Autowired
     private ReferenceService referenceService = null;
@@ -98,7 +84,7 @@ public class LoadController {
 
         return (returnVal);
 
-    }//getPingResponse()
+    }
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
@@ -133,7 +119,7 @@ public class LoadController {
         }
         return (returnVal);
 
-    }//getPingResponse()
+    }
 
     @RequestMapping(value = "/experiment", method = RequestMethod.POST)
     @ResponseBody
@@ -150,26 +136,8 @@ public class LoadController {
         }
         return (returnVal);
 
-    }//getPingResponse()
+    }
     
-    @RequestMapping(value = "/project", method = RequestMethod.POST)
-    @ResponseBody
-    public ProjectDTO processProject(@RequestBody ProjectDTO projectDTO) {
-
-        ProjectDTO returnVal = null;
-
-        try {
-            returnVal = projectService.processProject(projectDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-        return (returnVal);
-
-    }//getPingResponse()
-
-
     @RequestMapping(value = "/reference", method = RequestMethod.POST)
     @ResponseBody
     public ReferenceDTO processReference(@RequestBody ReferenceDTO referenceDTO) {

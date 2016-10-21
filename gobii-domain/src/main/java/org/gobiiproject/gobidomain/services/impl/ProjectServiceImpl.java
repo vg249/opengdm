@@ -4,8 +4,8 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 
-import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -28,47 +28,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private DtoMapProject dtoMapProject = null;
 
-    @Override
-    public ProjectDTO processProject(ProjectDTO projectDTO) {
 
-        ProjectDTO returnVal = projectDTO;
-        try {
-
-            switch (projectDTO.getGobiiProcessType()) {
-
-                case READ:
-                    returnVal = dtoMapProject.getProjectDetails(projectDTO.getProjectId());
-                    break;
-
-                case CREATE:
-                    projectDTO.setCreatedDate(new Date());
-                    projectDTO.setModifiedDate(new Date());
-                    returnVal = dtoMapProject.createProject(projectDTO);
-                    break;
-
-                case UPDATE:
-                    projectDTO.setModifiedDate(new Date());
-                    returnVal = dtoMapProject.replaceProject(projectDTO.getProjectId(), projectDTO);
-                    break;
-
-                default:
-                    GobiiDomainException gobiiDomainException = new GobiiDomainException("Unsupported process type: " + projectDTO.getGobiiProcessType().toString());
-                    returnVal.getStatus().addException(gobiiDomainException);
-                    LOGGER.error(gobiiDomainException.getMessage());
-                    break;
-
-            } // switch
-
-
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii service error", e);
-        }
-
-        return returnVal;
-
-    } // getProjectDetail
 
 
     @Override
@@ -79,10 +39,10 @@ public class ProjectServiceImpl implements ProjectService {
         try {
             returnVal = dtoMapProject.getProjects();
 
-//            for(ProjectDTO currentProjectDTO : returnVal ) {
-//                currentProjectDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
-//                currentProjectDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-//            }
+            for(ProjectDTO currentProjectDTO : returnVal ) {
+                currentProjectDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                currentProjectDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            }
 
 
             if (null == returnVal) {
@@ -107,8 +67,8 @@ public class ProjectServiceImpl implements ProjectService {
         try {
             returnVal = dtoMapProject.getProjectDetails(projectId);
 
-//            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-//            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
 
             if (null == returnVal) {
@@ -138,8 +98,8 @@ public class ProjectServiceImpl implements ProjectService {
             returnVal = dtoMapProject.createProject(projectDTO);
 
             // When we have roles and permissions, this will be set programmatically
-//            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-//            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         return returnVal;
     }
@@ -161,8 +121,8 @@ public class ProjectServiceImpl implements ProjectService {
 
                     projectDTO.setModifiedDate(new Date());
                     returnVal = dtoMapProject.replaceProject(projectId, projectDTO);
-//                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-//                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
                 } else {
 

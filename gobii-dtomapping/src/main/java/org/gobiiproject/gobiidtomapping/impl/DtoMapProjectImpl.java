@@ -7,9 +7,8 @@ import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -106,21 +105,25 @@ public class DtoMapProjectImpl implements DtoMapProject {
             addPropertiesToProject(returnVal);
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
 
         return returnVal;
     }
 
-    private void addPropertiesToProject(ProjectDTO projectDTO) throws GobiiDaoException, SQLException {
+    private void addPropertiesToProject(ProjectDTO projectDTO) throws GobiiDaoException {
 
-        ResultSet propertyResultSet = rsProjectDao.getPropertiesForProject(projectDTO.getProjectId());
-        List<EntityPropertyDTO> projectProperties =
-                EntityProperties.resultSetToProperties(projectDTO.getProjectId(), propertyResultSet);
+        try {
+            ResultSet propertyResultSet = rsProjectDao.getPropertiesForProject(projectDTO.getProjectId());
+            List<EntityPropertyDTO> projectProperties =
+                    EntityProperties.resultSetToProperties(projectDTO.getProjectId(), propertyResultSet);
 
-        projectDTO.setProperties(projectProperties);
+            projectDTO.setProperties(projectProperties);
+        } catch( SQLException e) {
+            throw new GobiiDtoMappingException(e);
+        }
 
     }
 
@@ -209,8 +212,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;

@@ -6,8 +6,7 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 
 import java.util.List;
 
@@ -15,8 +14,6 @@ import java.util.List;
  * Created by Phil on 3/24/2016.
  */
 public interface ProjectService {
-
-    ProjectDTO processProject(ProjectDTO projectDTO);
 
     ProjectDTO createProject(ProjectDTO projectDTO) throws GobiiDomainException;
     ProjectDTO replaceProject(Integer projectId, ProjectDTO projectDTO) throws GobiiDomainException;

@@ -5,8 +5,9 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiapimodel.hateos.Link;
+import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.ResourceParam;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
@@ -14,11 +15,10 @@ import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 ;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -52,7 +52,7 @@ public class DtoRequestProjectTest {
     public void testCreateProject() throws Exception {
 
 
-        ProjectDTO newProjectDTO = new ProjectDTO(GobiiProcessType.CREATE);
+        ProjectDTO newProjectDTO = new ProjectDTO();
         newProjectDTO.setCreatedBy(1);
         newProjectDTO.setProjectName(UUID.randomUUID().toString());
         newProjectDTO.setProjectDescription("foo description");
@@ -78,10 +78,10 @@ public class DtoRequestProjectTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
         ProjectDTO projectDTOResponse = resultEnvelope.getPayload().getData().get(0);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
 
         Assert.assertNotEquals(null, projectDTOResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(projectDTOResponse));
         Assert.assertNotEquals(null, projectDTOResponse.getProjectId());
         Assert.assertTrue(projectDTOResponse.getProjectId() > 0);
 
@@ -140,7 +140,6 @@ public class DtoRequestProjectTest {
 
         ProjectDTO projectDTOExisting = resultEnvelope.getPayload().getData().get(0);
 
-        projectDTOExisting.setGobiiProcessType(GobiiProcessType.CREATE);
         PayloadEnvelope<ProjectDTO> payloadEnvelope = new PayloadEnvelope<>(projectDTOExisting,
                 GobiiProcessType.CREATE);
 
@@ -182,7 +181,6 @@ public class DtoRequestProjectTest {
 
         ProjectDTO projectDTOExisting = resultEnvelope.getPayload().getData().get(0);
 
-        projectDTOExisting.setGobiiProcessType(GobiiProcessType.CREATE);
         projectDTOExisting.setProjectId(0);
         PayloadEnvelope<ProjectDTO> payloadEnvelope = new PayloadEnvelope<>(projectDTOExisting,
                 GobiiProcessType.CREATE);
@@ -232,8 +230,6 @@ public class DtoRequestProjectTest {
 
         //ProjectDTO projectDTORequestReceived = dtoRequestProject.process(projectDTORequest);
 
-        projectDTORequestReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
-
         String newDescription = UUID.randomUUID().toString();
 
         projectDTORequestReceived.setProjectDescription(newDescription);
@@ -282,5 +278,42 @@ public class DtoRequestProjectTest {
 
     }
 
+
+    @Test
+    public void getProjects() throws Exception {
+
+        RestUri restUriProject = DtoRequestProjectTest.uriFactory.resourceColl(ServiceRequestId.URL_PROJECTS);
+        RestResource<ProjectDTO> restResource = new RestResource<>(restUriProject);
+        PayloadEnvelope<ProjectDTO> resultEnvelope = restResource
+                .get(ProjectDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<ProjectDTO> projectDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(projectDTOList);
+        Assert.assertTrue(projectDTOList.size() > 0);
+        Assert.assertNotNull(projectDTOList.get(0).getProjectName());
+
+
+        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, projectDTOList.size());
+        for (Integer currentIdx : itemsToTest) {
+            ProjectDTO currentProjectDto = projectDTOList.get(currentIdx);
+
+            Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
+
+            RestUri restUriProjectForGetById = DtoRequestProjectTest
+                    .uriFactory
+                    .RestUriFromUri(currentLink.getHref());
+            RestResource<ProjectDTO> restResourceForGetById = new RestResource<>(restUriProjectForGetById);
+            PayloadEnvelope<ProjectDTO> resultEnvelopeForGetByID = restResourceForGetById
+                    .get(ProjectDTO.class);
+            Assert.assertNotNull(resultEnvelopeForGetByID);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
+            ProjectDTO projectDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
+            Assert.assertTrue(currentProjectDto.getProjectName().equals(projectDTOFromLink.getProjectName()));
+            Assert.assertTrue(currentProjectDto.getProjectId().equals(projectDTOFromLink.getProjectId()));
+        }
+
+    }    
 
 }

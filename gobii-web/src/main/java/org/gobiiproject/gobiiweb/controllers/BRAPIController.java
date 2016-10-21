@@ -29,7 +29,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
@@ -898,19 +898,17 @@ public class BRAPIController {
 
             ProjectDTO platformDTONew = projectService.createProject(platformDTOToCreate);
 
-            returnVal.getPayload().getData().add(platformDTONew);
 
-//            PayloadWriter<ProjectDTO> payloadWriter = new PayloadWriter<>(request,
-//                    ProjectDTO.class);
-//
-//            payloadWriter.writeSingleItem(returnVal,
-//                    ServiceRequestId.URL_PROJECTS,
-//                    platformDTONew);
+            PayloadWriter<ProjectDTO> payloadWriter = new PayloadWriter<>(request,
+                    ProjectDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_PROJECTS,
+                    platformDTONew);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
 
@@ -926,9 +924,9 @@ public class BRAPIController {
     @RequestMapping(value = "/projects/{projectId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<ProjectDTO> replaceProject(@RequestBody PayloadEnvelope<ProjectDTO> payloadEnvelope,
-                                                        @PathVariable Integer projectId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+                                                      @PathVariable Integer projectId,
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response) {
 
         PayloadEnvelope<ProjectDTO> returnVal = new PayloadEnvelope<>();
 
@@ -939,14 +937,13 @@ public class BRAPIController {
 
             ProjectDTO platformDTOReplaced = projectService.replaceProject(projectId, platformDTOToReplace);
 
-            returnVal.getPayload().getData().add(platformDTOReplaced);
 
-//            PayloadWriter<ProjectDTO> payloadWriter = new PayloadWriter<>(request,
-//                    ProjectDTO.class);
-//
-//            payloadWriter.writeSingleItem(returnVal,
-//                    ServiceRequestId.URL_PROJECTS,
-//                    platformDTOReplaced);
+            PayloadWriter<ProjectDTO> payloadWriter = new PayloadWriter<>(request,
+                    ProjectDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_PROJECTS,
+                    platformDTOReplaced);
 //
 
         } catch (Exception e) {
@@ -966,7 +963,7 @@ public class BRAPIController {
     @RequestMapping(value = "/projects", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ProjectDTO> getProjects(HttpServletRequest request,
-                                                     HttpServletResponse response) {
+                                                   HttpServletResponse response) {
 
         PayloadEnvelope<ProjectDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -974,16 +971,12 @@ public class BRAPIController {
             //PayloadReader<ProjectDTO> payloadReader = new PayloadReader<>(ProjectDTO.class);
             List<ProjectDTO> projectDTOs = projectService.getProjects();
 
-            for( ProjectDTO currentProject : projectDTOs ) {
-                returnVal.getPayload().getData().add(currentProject);
-            }
+            PayloadWriter<ProjectDTO> payloadWriter = new PayloadWriter<>(request,
+                    ProjectDTO.class);
 
-//                PayloadWriter<ProjectDTO> payloadWriter = new PayloadWriter<>(request,
-//                        ProjectDTO.class);
-//
-//                payloadWriter.writeList(returnVal,
-//                        ServiceRequestId.URL_PROJECTS,
-//                        projectDTOs);
+            payloadWriter.writeList(returnVal,
+                    ServiceRequestId.URL_PROJECTS,
+                    projectDTOs);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1001,24 +994,23 @@ public class BRAPIController {
     @RequestMapping(value = "/projects/{projectId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ProjectDTO> getProjectsById(@PathVariable Integer projectId,
-                                                         HttpServletRequest request,
-                                                         HttpServletResponse response) {
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
 
         PayloadEnvelope<ProjectDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            //PayloadReader<ProjectDTO> payloadReader = new PayloadReader<>(ProjectDTO.class);
             ProjectDTO projectDTO = projectService.getProjectById(projectId);
 
             returnVal.getPayload().getData().add(projectDTO);
 
-//
-//            PayloadWriter<ProjectDTO> payloadWriter = new PayloadWriter<>(request,
-//                    ProjectDTO.class);
-//
-//            payloadWriter.writeSingleItem(returnVal,
-//                    ServiceRequestId.URL_PROJECTS,
-//                    platformDTO);
+
+            PayloadWriter<ProjectDTO> payloadWriter = new PayloadWriter<>(request,
+                    ProjectDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_PROJECTS,
+                    projectDTO);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1032,7 +1024,6 @@ public class BRAPIController {
         return (returnVal);
 
     }
-
 
 
 }// BRAPIController

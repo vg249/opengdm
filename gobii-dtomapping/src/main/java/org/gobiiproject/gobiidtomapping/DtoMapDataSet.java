@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiidtomapping;
 
 import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
 
 /**
  * Created by Phil on 4/21/2016.
