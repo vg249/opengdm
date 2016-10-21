@@ -12,6 +12,8 @@ import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentByName
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentDetailsByExperimentId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNamesByProjectId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperiments;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,27 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
     @Autowired
     private SpRunnerCallable spRunnerCallable;
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ResultSet getExperiments() throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        try {
+
+            SpGetExperiments spGetExperiments = new SpGetExperiments();
+            storedProcExec.doWithConnection(spGetExperiments);
+            returnVal = spGetExperiments.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving platforms", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override

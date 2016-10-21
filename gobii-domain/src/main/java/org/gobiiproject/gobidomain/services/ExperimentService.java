@@ -5,7 +5,11 @@
 // ************************************************************************
 package org.gobiiproject.gobidomain.services;
 
+import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
+
+import java.util.List;
 
 /**
  * Created by Angel on 4/19/2016.
@@ -13,5 +17,11 @@ import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
 public interface ExperimentService {
 
     ExperimentDTO processExperiment(ExperimentDTO experimentDTO);
+
+    ExperimentDTO createExperiment(ExperimentDTO experimentDTO) throws GobiiDomainException;
+    ExperimentDTO replaceExperiment(Integer experimentId, ExperimentDTO experimentDTO) throws GobiiDomainException;
+    List<ExperimentDTO> getExperiments() throws GobiiDomainException;
+    ExperimentDTO getExperimentById(Integer experimentId) throws GobiiDomainException;
+
 
 }

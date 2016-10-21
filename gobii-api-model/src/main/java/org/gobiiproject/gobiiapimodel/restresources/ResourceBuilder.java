@@ -96,8 +96,8 @@ public class ResourceBuilder {
                 returnVal += "reference";
                 break;
 
-            case URL_EXPERIMENT:
-                returnVal += "experiment";
+            case URL_EXPERIMENTS:
+                returnVal += "experiments";
                 break;
 
             case URL_DATASET:

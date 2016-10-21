@@ -6,12 +6,15 @@ import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.ExperimentDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,14 +27,41 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
     @Autowired
     private RsExperimentDao rsExperimentDao;
 
-    public ExperimentDTO getExperiment(ExperimentDTO experimentDTO) throws GobiiDtoMappingException {
+    @Override
+    public List<ExperimentDTO> getExperiments() throws GobiiDtoMappingException {
+
+        List<ExperimentDTO> returnVal = new ArrayList<>();
+
+        try {
+
+            ResultSet resultSet = rsExperimentDao.getExperiments();
+
+
+            while (resultSet.next()) {
+                ExperimentDTO currentExperimentDao = new ExperimentDTO();
+                ResultColumnApplicator.applyColumnValues(resultSet, currentExperimentDao);
+                returnVal.add(currentExperimentDao);
+            }
+
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
+    
+
+    @Override
+    public ExperimentDTO getExperimentDetails(Integer experimentId) throws GobiiDtoMappingException {
 
 
         ExperimentDTO returnVal = new ExperimentDTO();
 
         try {
 
-            ResultSet resultSet = rsExperimentDao.getExperimentDetailsForExperimentId(experimentDTO.getExperimentId());
+            ResultSet resultSet = rsExperimentDao.getExperimentDetailsForExperimentId(experimentId);
 
             boolean retrievedOneRecord = false;
             while (resultSet.next()) {
@@ -39,7 +69,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
                 if (true == retrievedOneRecord) {
                     throw (new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
-                            "There are more than one project records for project id: " + experimentDTO.getExperimentId()));
+                            "There are more than one project records for project id: " +experimentId));
                 }
 
                 retrievedOneRecord = true;
@@ -48,8 +78,8 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             }
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
@@ -98,26 +128,27 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
             }
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
     }
 
     @Override
-    public ExperimentDTO updateExperiment(ExperimentDTO experimentDTO) throws GobiiDtoMappingException {
+    public ExperimentDTO replaceExperiment(Integer experimentId, ExperimentDTO experimentDTO) throws GobiiDtoMappingException {
 
         ExperimentDTO returnVal = experimentDTO;
 
         try {
 
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            parameters.put("experimentId", experimentId);
             rsExperimentDao.updateExperiment(parameters);
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;

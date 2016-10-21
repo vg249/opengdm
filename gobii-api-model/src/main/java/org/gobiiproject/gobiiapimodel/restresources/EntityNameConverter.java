@@ -61,7 +61,7 @@ public class EntityNameConverter {
                 break;
 
             case EXPERIMENTS:
-                returnVal = ServiceRequestId.URL_EXPERIMENT ;
+                returnVal = ServiceRequestId.URL_EXPERIMENTS;
                 break;
 
             case REFERENCES:

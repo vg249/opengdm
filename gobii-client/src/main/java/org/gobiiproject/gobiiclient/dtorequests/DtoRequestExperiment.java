@@ -17,7 +17,7 @@ public class DtoRequestExperiment {
         return new DtoRequestProcessor<ExperimentDTO>().process(experimentDTO,
                 ExperimentDTO.class,
                 ControllerType.LOADER,
-                ServiceRequestId.URL_EXPERIMENT);
+                ServiceRequestId.URL_EXPERIMENTS);
 
     } // getPing()
 
