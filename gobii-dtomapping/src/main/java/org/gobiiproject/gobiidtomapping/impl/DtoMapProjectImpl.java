@@ -78,27 +78,8 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
                 retrievedOneRecord = true;
 
-                Integer projectIdOfRecord = resultSet.getInt("project_id");
-                String projectName = resultSet.getString("name");
-                String projectCode = resultSet.getString("code");
-                String projectDescription = resultSet.getString("description");
-                int piContact = resultSet.getInt("pi_contact");
-                int modifiedBy = resultSet.getInt("modified_by");
-                Date modifiedDate = resultSet.getDate("modified_date");
-                int createdBy = resultSet.getInt("created_by");
-                int projectStatus = resultSet.getInt("status");
-                Date createdDate = resultSet.getDate("created_date");
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
 
-                returnVal.setProjectId(projectIdOfRecord);
-                returnVal.setProjectName(projectName);
-                returnVal.setProjectCode(projectCode);
-                returnVal.setProjectDescription(projectDescription);
-                returnVal.setPiContact(piContact);
-                returnVal.setModifiedDate(modifiedDate);
-                returnVal.setModifiedBy(modifiedBy);
-                returnVal.setCreatedDate(createdDate);
-                returnVal.setCreatedBy(createdBy);
-                returnVal.setProjectStatus(projectStatus);
             }
 
 
