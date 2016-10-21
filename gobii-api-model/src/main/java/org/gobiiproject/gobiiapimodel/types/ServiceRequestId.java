@@ -8,7 +8,7 @@ public enum ServiceRequestId {
     URL_AUTH,
     URL_PING_EXTRACT,
     URL_PING,
-    URL_PROJECT,
+    URL_PROJECTS,
     URL_NAME_ID_LIST_DEPRECATED,
     URL_NAMES,
     URL_FILE_LOAD_INSTRUCTIONS,

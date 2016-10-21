@@ -18,6 +18,6 @@ public class DtoRequestProject {
         return new DtoRequestProcessor<ProjectDTO>().process(projectDTO,
                 ProjectDTO.class,
                 ControllerType.LOADER,
-                ServiceRequestId.URL_PROJECT);
+                ServiceRequestId.URL_PROJECTS);
     }
 }

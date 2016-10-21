@@ -37,7 +37,7 @@ public class EntityNameConverter {
                 break;
 
             case PROJECTS:
-                returnVal = ServiceRequestId.URL_PROJECT;
+                returnVal = ServiceRequestId.URL_PROJECTS;
                 break;
 
             case ORGANIZATIONS:

@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiidao.resultset.access;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 
 import java.sql.ResultSet;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
 public interface RsProjectDao {
 
 
+    ResultSet getProjects() throws GobiiDaoException;
     ResultSet getProjectNamesForContactId(Integer contactId) throws GobiiDaoException;
     ResultSet getProjectDetailsForProjectId(Integer projectId ) throws GobiiDaoException;
     ResultSet getPropertiesForProject(Integer projectId ) throws GobiiDaoException;

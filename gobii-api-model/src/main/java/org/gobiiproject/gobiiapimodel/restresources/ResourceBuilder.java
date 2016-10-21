@@ -52,8 +52,8 @@ public class ResourceBuilder {
                 returnVal += "ping";
                 break;
 
-            case URL_PROJECT:
-                returnVal += "project";
+            case URL_PROJECTS:
+                returnVal += "projects";
                 break;
 
             case URL_NAME_ID_LIST_DEPRECATED:

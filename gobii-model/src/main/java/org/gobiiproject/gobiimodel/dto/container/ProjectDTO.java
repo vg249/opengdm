@@ -23,7 +23,8 @@ public class ProjectDTO extends Header {
 
     // we are waiting until we a have a view to retirn
     // properties for that property: we don't know how to represent them yet
-    private int projectId;
+
+    private Integer projectId;
 
     private String projectName;
     private String projectCode;
@@ -77,10 +78,10 @@ public class ProjectDTO extends Header {
     }
 
     @GobiiEntityParam(paramName = "projectId")
-    public int getProjectId() {
+    public Integer getProjectId() {
         return projectId;
     }
-    public void setProjectId(int projectId) {
+    public void setProjectId(Integer projectId) {
         this.projectId = projectId;
     }
 

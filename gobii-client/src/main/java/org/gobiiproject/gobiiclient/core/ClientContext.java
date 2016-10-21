@@ -191,7 +191,8 @@ public final class ClientContext {
 
         } else {
             throw new Exception("Unable to get server configuration from "
-                    + url.toString()
+                    + settingsPath
+                    + "; the following error occurred: "
                     + resultEnvelope.getHeader().getStatus().getStatusMessages().get(0).getMessage());
         }
 

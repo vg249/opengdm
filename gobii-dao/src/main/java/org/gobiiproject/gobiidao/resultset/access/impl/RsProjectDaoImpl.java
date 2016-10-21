@@ -7,7 +7,9 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProject;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatforms;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectByNameAndPIContact;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjects;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjecttNamesByContactId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPropertiesForProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectDetailsByProjectId;
@@ -35,6 +37,29 @@ public class RsProjectDaoImpl implements RsProjectDao {
     @Autowired
     private SpRunnerCallable spRunnerCallable;
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ResultSet getProjects() throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        try {
+
+            SpGetProjects spGetProjects = new SpGetProjects();
+            storedProcExec.doWithConnection(spGetProjects);
+            returnVal = spGetProjects.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving platforms", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+
+        return returnVal;
+
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
