@@ -36,7 +36,17 @@ export class DtoRequestItemProject implements DtoRequestItem<Project> {
         let returnVal:Project = undefined;
 
         if( json.payload.data[0]) {
-            returnVal = json.payload.data[0];
+            returnVal = new Project(json.payload.data[0].projectId,
+                    json.payload.data[0].projectName,
+                    json.payload.data[0].projectCode,
+                    json.payload.data[0].projectDescription,
+                    json.payload.data[0].piContact,
+                    json.payload.data[0].createdBy,
+                    json.payload.data[0].createdstring,
+                    json.payload.data[0].modifiedBy,
+                    json.payload.data[0].modifiedstring,
+                    json.payload.data[0].projectStatus
+                )
         }
 
         // json.payload.data.forEach(item => {

@@ -107,7 +107,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 DataSetCheckListBoxComponent.prototype.setDatasetDetails = function (dataSetId) {
                     if (dataSetId) {
                         var scope$_1 = this;
-                        scope$_1._dtoRequestServiceDataSetDetail.getResult(new dto_request_item_dataset_1.DtoRequestItemDataSet(dataSetId))
+                        scope$_1._dtoRequestServiceDataSetDetail.get(new dto_request_item_dataset_1.DtoRequestItemDataSet(dataSetId))
                             .subscribe(function (dataSet) {
                             if (dataSet) {
                                 scope$_1.dataSet = dataSet;

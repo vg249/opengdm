@@ -153,7 +153,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
         if( dataSetId ) {
             let scope$ = this;
-            scope$._dtoRequestServiceDataSetDetail.getResult(new DtoRequestItemDataSet(dataSetId))
+            scope$._dtoRequestServiceDataSetDetail.get(new DtoRequestItemDataSet(dataSetId))
                 .subscribe(dataSet => {
 
                         if (dataSet) {

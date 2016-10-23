@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-process"], function(exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-process", "../../model/project"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-process"], function(exports_
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, type_process_1;
+    var core_1, type_process_1, project_1;
     var DtoRequestItemProject;
     return {
         setters:[
@@ -19,6 +19,9 @@ System.register(["@angular/core", "../../model/type-process"], function(exports_
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
+            },
+            function (project_1_1) {
+                project_1 = project_1_1;
             }],
         execute: function() {
             DtoRequestItemProject = (function () {
@@ -44,7 +47,7 @@ System.register(["@angular/core", "../../model/type-process"], function(exports_
                 DtoRequestItemProject.prototype.resultFromJson = function (json) {
                     var returnVal = undefined;
                     if (json.payload.data[0]) {
-                        returnVal = json.payload.data[0];
+                        returnVal = new project_1.Project(json.payload.data[0].projectId, json.payload.data[0].projectName, json.payload.data[0].projectCode, json.payload.data[0].projectDescription, json.payload.data[0].piContact, json.payload.data[0].createdBy, json.payload.data[0].createdstring, json.payload.data[0].modifiedBy, json.payload.data[0].modifiedstring, json.payload.data[0].projectStatus);
                     }
                     // json.payload.data.forEach(item => {
                     //
