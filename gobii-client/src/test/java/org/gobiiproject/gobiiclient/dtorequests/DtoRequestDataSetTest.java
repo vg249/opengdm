@@ -302,7 +302,8 @@ public class DtoRequestDataSetTest {
 
     }
 
-    @Test
+    //This doesn't work yet -- the server doesn't handle updates without the required values in the DTO
+    @Ignore
     public void testRawUpdate() throws Exception {
 
         // set up authentication and so forth
@@ -320,17 +321,14 @@ public class DtoRequestDataSetTest {
         dataSetRequest.setDataTable("your table name");
         dataSetRequest.setDataFile("your file name");
 
+        //these are required values:
+
+
         DtoRequestDataSet dtoRequestDataSet = new DtoRequestDataSet();
         DataSetDTO dataSetResponse = dtoRequestDataSet.process(dataSetRequest);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dataSetResponse));
 
-        // if you didn't succeed, do not pass go, but do log errors to your log file
-        if (!dataSetResponse.getStatus().isSucceeded()) {
-            System.out.println();
-            System.out.println("*** Header errors: ");
-            for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getStatus().getStatusMessages()) {
-                System.out.println(currentStatusMesage.getMessage());
-            }
-        }
+
     }
 
     //This doesn't work yet -- the server doesn't handle updates without the required values in the DTO
