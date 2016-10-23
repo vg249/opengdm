@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/type-process", "../../model/project"], function(exports_1, context_1) {
+System.register(["@angular/core", "../../model/type-process"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/proje
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, type_process_1, project_1;
+    var core_1, type_process_1;
     var DtoRequestItemProject;
     return {
         setters:[
@@ -19,9 +19,6 @@ System.register(["@angular/core", "../../model/type-process", "../../model/proje
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
-            },
-            function (project_1_1) {
-                project_1 = project_1_1;
             }],
         execute: function() {
             DtoRequestItemProject = (function () {
@@ -31,7 +28,12 @@ System.register(["@angular/core", "../../model/type-process", "../../model/proje
                     this.projectId = projectId;
                 }
                 DtoRequestItemProject.prototype.getUrl = function () {
-                    return "load/project";
+                    var baseUrl = "brapi/v1/projects";
+                    var returnVal = baseUrl;
+                    if (this.projectId) {
+                        returnVal = baseUrl + "/" + this.projectId;
+                    }
+                    return returnVal;
                 }; // getUrl()
                 DtoRequestItemProject.prototype.getRequestBody = function () {
                     return JSON.stringify({
@@ -40,13 +42,26 @@ System.register(["@angular/core", "../../model/type-process", "../../model/proje
                     });
                 };
                 DtoRequestItemProject.prototype.resultFromJson = function (json) {
-                    var returnVal;
-                    console.log("*************ENTITY NAME: " + json.entityName);
-                    console.log(json.dtoHeaderResponse.succeeded ? "succeeded" : "error: " + json.dtoHeaderResponse.statusMessages);
-                    console.log(json.namesById);
-                    returnVal = new project_1.Project(json.projectId, json.projectName, json.projectCode, json.projectDescription, json.piContact, json.createdBy, json.createdstring, json.modifiedBy, json.modifiedstring, json.projectStatus);
+                    var returnVal = undefined;
+                    if (json.payload.data[0]) {
+                        returnVal = json.payload.data[0];
+                    }
+                    // json.payload.data.forEach(item => {
+                    //
+                    //
+                    //     returnVal.push(new Project(item.projectId,
+                    //         item.projectName,
+                    //         item.projectCode,
+                    //         item.projectDescription,
+                    //         item.piContact,
+                    //         item.createdBy,
+                    //         item.createdstring,
+                    //         item.modifiedBy,
+                    //         item.modifiedstring,
+                    //         item.projectStatus
+                    //     ));
+                    // });
                     return returnVal;
-                    //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
                 };
                 DtoRequestItemProject = __decorate([
                     core_1.Injectable(), 
