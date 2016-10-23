@@ -2,6 +2,9 @@ package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+
+import java.util.List;
 
 
 /**
@@ -9,6 +12,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
  */
 public interface ContactService {
 
+    List<ContactDTO> getContacts() throws GobiiDomainException;
     ContactDTO createContact(ContactDTO contactDTO) throws GobiiDomainException;
     ContactDTO replaceContact(Integer contactId, ContactDTO contactDTO) throws GobiiDomainException;
     ContactDTO getContactById(Integer contactId) throws GobiiDomainException;

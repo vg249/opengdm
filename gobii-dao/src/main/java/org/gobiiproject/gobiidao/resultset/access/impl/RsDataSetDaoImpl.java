@@ -31,6 +31,28 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
     @Autowired
     private SpRunnerCallable spRunnerCallable;
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public ResultSet getDataSets() throws GobiiDaoException {
+
+        ResultSet returnVal;
+
+        try {
+
+            SpGetDataSets spGetDataSets = new SpGetDataSets();
+            storedProcExec.doWithConnection(spGetDataSets);
+            returnVal = spGetDataSets.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving platforms", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
@@ -127,12 +149,6 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
             throw (new GobiiDaoException(e));
         }
         
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    @Override
-    public Integer createUpdateParameter(Map<String, Object> parameters) throws GobiiDaoException {
-        return null;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

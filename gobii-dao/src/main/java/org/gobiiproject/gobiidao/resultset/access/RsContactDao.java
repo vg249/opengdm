@@ -11,6 +11,7 @@ import java.util.Map;
  */
 public interface RsContactDao {
 
+    ResultSet getContacts() throws GobiiDaoException;
     ResultSet getAllContactNames() throws GobiiDaoException;
     ResultSet getContactNamesForRoleName(String roleName) throws GobiiDaoException;
     ResultSet getContactDetailsByContactId(Integer contact) throws GobiiDaoException;

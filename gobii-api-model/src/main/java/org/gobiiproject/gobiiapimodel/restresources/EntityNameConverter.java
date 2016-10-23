@@ -25,7 +25,7 @@ public class EntityNameConverter {
                 break;
 
             case DATASETS:
-                returnVal = ServiceRequestId.URL_DATASET;
+                returnVal = ServiceRequestId.URL_DATASETS;
                 break;
 
             case CVTERMS:

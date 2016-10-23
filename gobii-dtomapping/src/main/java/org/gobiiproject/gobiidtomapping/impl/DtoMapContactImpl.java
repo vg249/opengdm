@@ -4,13 +4,17 @@ import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
+import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +28,31 @@ public class DtoMapContactImpl implements DtoMapContact {
     @Autowired
     private RsContactDao rsContactDao;
 
+    @Override
+    public List<ContactDTO> getContacts() throws GobiiDtoMappingException {
+
+        List<ContactDTO> returnVal = new ArrayList<ContactDTO>();
+
+        try {
+
+            ResultSet resultSet = rsContactDao.getContacts();
+
+
+            while (resultSet.next()) {
+                ContactDTO currentContactDao = new ContactDTO();
+                ResultColumnApplicator.applyColumnValues(resultSet, currentContactDao);
+                returnVal.add(currentContactDao);
+            }
+
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }    
+    
     @Transactional
     @Override
     public ContactDTO getContactDetails(Integer contactId) throws Exception {

@@ -168,23 +168,23 @@ public class LoadController {
 
     }
 
-    @RequestMapping(value = "/dataset", method = RequestMethod.POST)
-    @ResponseBody
-    public DataSetDTO processDataset(@RequestBody DataSetDTO dataSetDTO) {
-
-        DataSetDTO returnVal = new DataSetDTO();
-
-        try {
-            returnVal = dataSetService.processDataSet(dataSetDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
+//    @RequestMapping(value = "/dataset", method = RequestMethod.POST)
+//    @ResponseBody
+//    public DataSetDTO processDataset(@RequestBody DataSetDTO dataSetDTO) {
+//
+//        DataSetDTO returnVal = new DataSetDTO();
+//
+//        try {
+//            returnVal = dataSetService.processDataSet(dataSetDTO);
+//        } catch (Exception e) {
+//
+//            returnVal.getStatus().addException(e);
+//            LOGGER.error(e.getMessage());
+//        }
+//
+//        return (returnVal);
+//
+//    }
 
     @RequestMapping(value = "/analysis", method = RequestMethod.POST)
     @ResponseBody

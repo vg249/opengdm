@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -78,9 +79,9 @@ public class TestDtoFactory {
         returnVal.setModifiedDate(new Date());
         returnVal.setCreatedBy(1);
         returnVal.setCreatedDate(new Date());
-        returnVal.setPlatformCode(uniqueStem +"dummy code");
-        returnVal.setPlatformDescription(uniqueStem +"dummy description");
-        returnVal.setPlatformName(uniqueStem +"New Platform");
+        returnVal.setPlatformCode(uniqueStem + "dummy code");
+        returnVal.setPlatformDescription(uniqueStem + "dummy description");
+        returnVal.setPlatformName(uniqueStem + "New Platform");
         returnVal.setPlatformVendor(1);
         returnVal.setTypeId(1);
 
@@ -90,13 +91,13 @@ public class TestDtoFactory {
     }
 
 
-public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
-                                       Integer uniqueStem) {
+    public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
+                                           Integer uniqueStem) {
 
         CvDTO returnVal = new CvDTO(gobiiProcessType);
-        returnVal.setGroup(uniqueStem+"dummy cv name");
+        returnVal.setGroup(uniqueStem + "dummy cv name");
         returnVal.setTerm(UUID.randomUUID().toString());
-        returnVal.setDefinition(uniqueStem+"dummy definition");
+        returnVal.setDefinition(uniqueStem + "dummy definition");
         returnVal.setRank(1);
 
         return returnVal;
@@ -107,25 +108,25 @@ public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
                                                      Integer uniqueStem) {
 
         DisplayDTO returnVal = new DisplayDTO(gobiiProcessType);
-        returnVal.setColumnName(uniqueStem+"dummy column");
+        returnVal.setColumnName(uniqueStem + "dummy column");
         returnVal.setCreatedBy(1);
-        returnVal.setDisplayName(uniqueStem+"dummyDisplay");
+        returnVal.setDisplayName(uniqueStem + "dummyDisplay");
         returnVal.setCreatedDate(new Date());
         returnVal.setDisplayId(1);
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
-        returnVal.setTableName(uniqueStem+"dummy table");
+        returnVal.setTableName(uniqueStem + "dummy table");
         returnVal.setDisplayRank(uniqueStem);
 
 
         return returnVal;
-}
-    public static DataSetDTO makePopulatedDataSetDTO(GobiiProcessType gobiiProcessType,
-                                                     Integer uniqueStem,
+    }
+
+    public static DataSetDTO makePopulatedDataSetDTO(Integer uniqueStem,
                                                      Integer callingAnalysisId,
                                                      List<Integer> analysisIds) {
 
-        DataSetDTO returnVal = new DataSetDTO(gobiiProcessType);
+        DataSetDTO returnVal = new DataSetDTO();
 
 
         // set the big-ticket items
@@ -146,7 +147,9 @@ public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
         returnVal.setCallingAnalysisId(callingAnalysisId);
-        returnVal.setAnalysesIds(analysisIds);
+        for (Integer currentAnalysisId : analysisIds ) {
+            returnVal.getAnalysesIds().add(currentAnalysisId);
+        }
         returnVal.setTypeId(93);
 
         return returnVal;
@@ -196,7 +199,7 @@ public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
 
 
     public static OrganizationDTO makePopulatedOrganizationDTO(GobiiProcessType gobiiProcessType,
-                                                       Integer uniqueStem) {
+                                                               Integer uniqueStem) {
 
         OrganizationDTO returnVal = new OrganizationDTO();
 
@@ -260,7 +263,7 @@ public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
 
         List<MarkerGroupMarkerDTO> returnVal = new ArrayList<>();
 
-        for(String currentMarkerName : markerNames ) {
+        for (String currentMarkerName : markerNames) {
 
             MarkerGroupMarkerDTO currentMarkerGroupMarker = new MarkerGroupMarkerDTO();
             currentMarkerGroupMarker.setGobiiProcessType(gobiiProcessType);
@@ -270,7 +273,7 @@ public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
 
         }
 
-        return  returnVal;
+        return returnVal;
 
     }
 
@@ -282,11 +285,11 @@ public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
 
         returnVal.setMarkers(markerGroupMarkers);
         returnVal.setStatusId(1);
-        returnVal.setCode( uniqueStem + "_code");
+        returnVal.setCode(uniqueStem + "_code");
         returnVal.setGermplasmGroup(uniqueStem + "_germplasmGroup");
         returnVal.setName(uniqueStem + "_name");
 
-        return  returnVal;
+        return returnVal;
 
     }
 

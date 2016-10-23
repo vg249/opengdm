@@ -29,6 +29,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
@@ -320,6 +321,37 @@ public class BRAPIController {
 
     }
 
+    @RequestMapping(value = "/contacts", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ContactDTO> getContacts(HttpServletRequest request,
+                                                     HttpServletResponse response) {
+
+        PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            //PayloadReader<ContactDTO> payloadReader = new PayloadReader<>(ContactDTO.class);
+            List<ContactDTO> platformDTOs = contactService.getContacts();
+
+            PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
+                    ContactDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    ServiceRequestId.URL_CONTACTS,
+                    platformDTOs);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }    
+
     //Technically, this regex specifies an email address format, and it actually works.
     //However, when you execute this, you get back an error "The resource identified by this request is only
     // capable of generating responses with characteristics not acceptable according to the request "accept" headers."
@@ -391,6 +423,148 @@ public class BRAPIController {
 
     }
 
+
+    // *********************************************
+    // *************************** DATASET METHODS
+    // *********************************************
+    @RequestMapping(value = "/datasets", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<DataSetDTO> createDataSet(@RequestBody PayloadEnvelope<DataSetDTO> payloadEnvelope,
+                                                     HttpServletRequest request,
+                                                     HttpServletResponse response) {
+
+        PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            PayloadReader<DataSetDTO> payloadReader = new PayloadReader<>(DataSetDTO.class);
+            DataSetDTO dataSetDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            DataSetDTO dataSetDTONew = dataSetService.createDataSet(dataSetDTOToCreate);
+
+
+            PayloadWriter<DataSetDTO> payloadWriter = new PayloadWriter<>(request,
+                    DataSetDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_DATASETS,
+                    dataSetDTONew);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<DataSetDTO> replaceDataSet(@RequestBody PayloadEnvelope<DataSetDTO> payloadEnvelope,
+                                                      @PathVariable Integer dataSetId,
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response) {
+
+        PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<DataSetDTO> payloadReader = new PayloadReader<>(DataSetDTO.class);
+            DataSetDTO dataSetDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            DataSetDTO dataSetDTOReplaced = dataSetService.replaceDataSet(dataSetId, dataSetDTOToReplace);
+
+
+            PayloadWriter<DataSetDTO> payloadWriter = new PayloadWriter<>(request,
+                    DataSetDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_DATASETS,
+                    dataSetDTOReplaced);
+//
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+    @RequestMapping(value = "/datasets", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<DataSetDTO> getDataSets(HttpServletRequest request,
+                                                   HttpServletResponse response) {
+
+        PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            //PayloadReader<DataSetDTO> payloadReader = new PayloadReader<>(DataSetDTO.class);
+            List<DataSetDTO> dataSetDTOs = dataSetService.getDataSets();
+
+            PayloadWriter<DataSetDTO> payloadWriter = new PayloadWriter<>(request,
+                    DataSetDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    ServiceRequestId.URL_DATASETS,
+                    dataSetDTOs);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<DataSetDTO> getDataSetsById(@PathVariable Integer dataSetId,
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            DataSetDTO dataSetDTO = dataSetService.getDataSetById(dataSetId);
+
+            PayloadWriter<DataSetDTO> payloadWriter = new PayloadWriter<>(request,
+                    DataSetDTO.class);
+
+            payloadWriter.writeSingleItem(returnVal,
+                    ServiceRequestId.URL_DATASETS,
+                    dataSetDTO);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+    
 
     // *********************************************
     // *************************** INSTRUCTION METHODS

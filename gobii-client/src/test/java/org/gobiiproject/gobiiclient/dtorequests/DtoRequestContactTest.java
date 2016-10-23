@@ -7,6 +7,7 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 
 import org.gobiiproject.gobiiapimodel.hateos.Link;
+import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
@@ -18,13 +19,16 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class DtoRequestContactTest {
@@ -249,5 +253,55 @@ public class DtoRequestContactTest {
         Assert.assertTrue(contactDTOReRetrieveResponse.getContactId().equals(contactDTOResponse.getContactId()));
 
     }
+
+
+
+    // This test is marked ignore for now because of the fact that when an entity has an array
+    //column (roles in this case), the array array values are not store in the JDBC result set
+    //the way that they are with other values. Rather, it seems that jdbc wants to retrieve the
+    //values only when you ask for them. This kind of makes sense because who the hell knows how
+    //capacious and cajunga huge the array could be? The problem is that in our contact, because of
+    //the frameworkization that we've wrappeda round the application of column values to DTOs, by the
+    //time we ask for the array value, the conenection is closed, and we get an exception to that
+    //effect. We need to figure out a solution to this issue. Note that this is oddly not an issue
+    //when retrieving a single row by ID. Only when there are multiple such rows.
+    @Ignore
+    public void getContactsWithHttpGet() throws Exception {
+
+        RestUri restUriContact = DtoRequestContactTest.uriFactory.resourceColl(ServiceRequestId.URL_CONTACTS);
+        RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
+        PayloadEnvelope<ContactDTO> resultEnvelope = restResource
+                .get(ContactDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<ContactDTO> contactDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(contactDTOList);
+        Assert.assertTrue(contactDTOList.size() > 0);
+        Assert.assertNotNull(contactDTOList.get(0).getLastName());
+
+
+        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == contactDTOList.size() );
+        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, contactDTOList.size());
+        for (Integer currentIdx : itemsToTest) {
+            ContactDTO currentContactDto = contactDTOList.get(currentIdx);
+
+            Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
+
+            RestUri restUriContactForGetById = DtoRequestContactTest
+                    .uriFactory
+                    .RestUriFromUri(currentLink.getHref());
+            RestResource<ContactDTO> restResourceForGetById = new RestResource<>(restUriContactForGetById);
+            PayloadEnvelope<ContactDTO> resultEnvelopeForGetByID = restResourceForGetById
+                    .get(ContactDTO.class);
+            Assert.assertNotNull(resultEnvelopeForGetByID);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
+            ContactDTO contactDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
+            Assert.assertTrue(currentContactDto.getLastName().equals(contactDTOFromLink.getLastName()));
+            Assert.assertTrue(currentContactDto.getContactId().equals(contactDTOFromLink.getContactId()));
+        }
+
+    }
+    
 
 }
