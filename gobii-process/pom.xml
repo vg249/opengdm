@@ -194,6 +194,26 @@
 
                     </execution>
 
+
+                    <!--VCFTest Execution-->
+                    <execution>
+                        <configuration>
+                            <finalName>VCFTest</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-vcf-test</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
                 </executions>
             </plugin>
         </plugins>

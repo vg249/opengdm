@@ -106,8 +106,6 @@ public class GobiiFileReader {
 			Scanner s=new Scanner(System.in);
 			System.out.println("Enter Loader Instruction File Location:");
 			instructionFile=s.nextLine();
-		    if(instructionFile.equals("")) instructionFile="../loaders/etc/jdl232_01_pretty.json";
-		    s.close();
 		}
 		else{
 			instructionFile=args[0];
@@ -181,10 +179,10 @@ public class GobiiFileReader {
 				continue;
 			}
 			
-			
+			VCFFileReader vcfReader=new VCFFileReader(loaderScriptPath);
 			switch(inst.getGobiiFile().getGobiiFileType()){
 			case VCF:
-				success&=VCFFileReader.parseInstruction(inst);
+				success&=vcfReader.parseInstruction(inst);
 				break;
 			case GENERIC:
 				String dstDir=destinationFile;
@@ -382,7 +380,7 @@ public class GobiiFileReader {
 		return jobName;
 	}
 
-	private static String getSourceFileName(GobiiFile file) {
+	public static String getSourceFileName(GobiiFile file) {
 		String source=file.getSource();
 		File sourceFolder=new File(source);
 		File[] f=sourceFolder.listFiles();
