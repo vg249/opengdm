@@ -23,7 +23,7 @@ import static org.gobiiproject.gobiimodel.utils.HelperIterators.getConstantItera
 import static org.gobiiproject.gobiimodel.utils.HelperIterators.getFilteredIterator;
 
 /**
- * Digester component for the reading of VCF Files.
+ * Digester component for the reading of VCF Files. Used by {@link org.gobiiproject.gobiiprocess.digester.GobiiFileReader} in creating digest files from VCF sources.
  * Main method : parseInstruction
  * @author Josh L.S.
  *

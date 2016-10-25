@@ -13,10 +13,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
-//import org.gobiiproject.gobiimodel.ConfigurationSettings;
-/*
- * Class containing the methods for loading data from CSV
- * 
+/**
+ * CSV-Specific File Loader class, used by {@link org.gobiiproject.gobiiprocess.digester.GobiiFileReader}
+ * Contains methods specific to the reading of single-character separated text files, such as .csv, tab-delimited, and pipe-separated values.
  * @author v.calaminos
  * @date 4/14/2016
  * 
@@ -32,20 +31,42 @@ public class CSVFileReader {
 	Map<String, String> file_column_autoincrement;
 	int countMax;
 	int startNo = 0; // starting number for auto increment; can be 1; waiting for confirmation
-	
+
+	/**
+	 * Creates a new CSVFileReader, specifying a location to store 'temporary files', and a folder separator used to delineate a level in the FS.
+	 * For example, a temporary folder of ~/tmpFiles on a unix system would have a location of "~/tmpFiles" and a separator of "/"
+	 * @param tmpFileLocation
+	 * @param tmpFileSeparator
+	 */
 	public CSVFileReader(String tmpFileLocation, String tmpFileSeparator){
 		this.tmpFileLocation=tmpFileLocation;
 		this.tmpFileSeparator=tmpFileSeparator;
 	}
+
+	/**
+	 * Same as {@link CSVFileReader#CSVFileReader(String, String)}, but with default parameters of "E:\\GOBII\\temp_files" and "\\".
+	 * Primarily for ease of use.
+	 */
 	public CSVFileReader(){//Kept for backwards compatibility
 	}
-	
+
+	/**
+	 * Debugging test method.
+	 * Runs a specific instruction sample.
+	 * @param args Ignored
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws InterruptedException
+	 */
 	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, InterruptedException{
 		parseInstructionFile("E:\\GOBII\\instruction_files\\sample1.json");
 	}
 	
-	/*
-	 * Parses a given instruction file. Assign needed attributes to LoaderInstruction object.
+	/**
+	 * Parses a given instruction file, and executes the loader on every instruction found within, by passing the objects to {@link CSVFileReader#processCSV(GobiiLoaderInstruction)}.
+	 * This method can be called directly to simulate an instruction file being parsed by the reader.
+	 * @param filePath location in the file system of the instruction file (can be absolute or relative.
 	 */
 	public static void parseInstructionFile(String filePath) throws FileNotFoundException, IOException, ParseException, InterruptedException{
 			CSVFileReader reader = new CSVFileReader();
@@ -54,11 +75,13 @@ public class CSVFileReader {
 			}
 			//'Done' file is an anacronism now
 		}
-	
-	/*
-	 *	Reads the CSV input file for each instruction in the instruction file
-	 *	Returns a List of records.
-	 * 
+
+	/**
+	 * Reads the input file specified by the loader instruction and creates a digest file based on the instruction. For more detailed discussions on the resulting digest file's format
+	 * see either the documentation of the IFLs or {@link org.gobiiproject.gobiiprocess.digester.GobiiFileReader} documentation.
+	 * @param loaderInstruction Singular instruction, specifying input and output directories
+	 * @throws IOException If an unexpected filesystem error occurs
+	 * @throws InterruptedException If interrupted (Signals, etc)
 	 */
 	public void processCSV(GobiiLoaderInstruction loaderInstruction) throws IOException, InterruptedException{
 	List<String> tempFiles = new ArrayList<>();
@@ -82,7 +105,7 @@ public class CSVFileReader {
 	        	//add row for headers
 	        	column_keys.add(column.getName());
 	        	String columnName=column.getName();
-	        	if(column.isSubcolumn())columnName="";//jdl232 - Lets give column/subcolumn groups 1 name.
+	        	if(column.isSubcolumn())columnName="";//remove column name from subcolumns
 	        	tmpFileWriter.write(columnName);
 	        	tmpFileWriter.write(NEWLINE);
 
@@ -97,10 +120,9 @@ public class CSVFileReader {
 	    		tmpFileWriter.close();
 	        }
 	        
-			/*
-			 *	Build temp file for columns with CONSTANT and AUTOINCREMENT type
-			 *	@vcc 
-			 */
+
+			 //Build temp file for columns with CONSTANT and AUTOINCREMENT type
+
 	        FileWriter fw;
 	        for (String fileName : tempFiles){
 	        	
@@ -111,7 +133,7 @@ public class CSVFileReader {
 	        		for(GobiiFileColumn c:columns){
 	        			if(c.getName().equals(column_key)){
 	        				if(c.isSubcolumn())columnName="";
-	        				break;//jdl232 - Lets not put names in subcolumns
+	        				break;
 	        			}
 	        		}
 	        		fw.write(columnName);
@@ -128,7 +150,7 @@ public class CSVFileReader {
 	        		for(GobiiFileColumn c:columns){
 	        			if(c.getName().equals(column_key)){
 	        				if(c.isSubcolumn())columnName="";
-	        				break;//jdl232 - Lets not put names in subcolumns
+	        				break;//jdl232 - Remove column names from subcolumns
 	        			}
 	        		}
 	        		fw.write(columnName);
@@ -161,6 +183,18 @@ public class CSVFileReader {
 	 *	This method also writes the files into the temporary files;
 	 *	@vcc 
 	 */
+
+	/**
+	 * Recursively finds all files in {@code folder} and all subfolders, reading each file for the data needed for {@code column}, and writing to {@code tmpFileWriter}.
+	 * Called one for each output column, creating a separate output file each time.
+	 * Input files from {@code folder} are read sequentially.
+	 * @param folder Folder in the filesystem to start from (input folder)
+	 * @param tmpFileWriter Writer to write temporary columns to
+	 * @param column Column looked for
+	 * @param loaderInstruction Instruction column is from
+	 * @param first If this is the first file to be returned (can be set to false by calling method. Passed to callee. *Dragons*
+	 * @param tmpFileName Name of the folder where temporary files can be stored
+	 */
 	public void listFilesFromFolder(File folder, FileWriter tmpFileWriter, GobiiFileColumn column, GobiiLoaderInstruction loaderInstruction, boolean first, String tmpFileName){
 		if(folder==null){
 			ErrorLogger.logWarning("CSVFileReader","Read from null folder");
@@ -188,7 +222,19 @@ public class CSVFileReader {
 	 *	Values are determined based on the column_type
 	 *	@vcc
 	 */
-	public void writeToTempFiles(File file, FileWriter tmpFileWriter, GobiiFileColumn column, GobiiLoaderInstruction loaderInstruction, boolean first, String tmpFileName) throws IOException{
+
+	/**
+	 * Gets a single column's data from a single input file, to be written to a single temporary file (referenced by {@code }tmpFileWriter}.
+	 * This method is primarily called by {@link CSVFileReader#listFilesFromFolder(File, FileWriter, GobiiFileColumn, GobiiLoaderInstruction, boolean, String)}
+	 * @param file File to read from
+	 * @param tmpFileWriter Writer to write temporary columns to
+	 * @param column Column looked for
+	 * @param loaderInstruction Instruction column is from
+	 * @param first If this is the first file to be returned (can be set to false by calling method. Passed to callee. *Dragons*
+	 * @param tmpFileName Name of the folder where temporary files can be stored
+	 * @throws IOException when the requisite file is missing or cannot be read
+	 */
+	private void writeToTempFiles(File file, FileWriter tmpFileWriter, GobiiFileColumn column, GobiiLoaderInstruction loaderInstruction, boolean first, String tmpFileName) throws IOException{
 		Scanner lr = null;
 		String line = "";
 		int counter;

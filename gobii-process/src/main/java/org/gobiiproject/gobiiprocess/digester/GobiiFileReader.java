@@ -50,6 +50,10 @@ import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
 
 /**
  * Base class for processing instruction files. Start of chain of control for Digester. Takes first argument as instruction file, or promts user.
+ * The File Reader runs off the Instruction Files, which tell it where the input files are, and how to process them.
+ * {@link CSVFileReader} and {@link VCFFileReader} deal with specific file formats. Overall logic and program flow come from this class.
+ *
+ * This class deals with external commands and scripts, and coordinates uploads to the IFL and directly talks to HDF5 and MonetDB.
  * @author jdl232 Josh L.S.
  */
 public class GobiiFileReader {
@@ -62,6 +66,15 @@ public class GobiiFileReader {
 	private static boolean verbose;
 	private static String errorLogOverride;
 	private static String propertiesFile;
+
+	/**
+	 * Main class of Digester Jar file. Uses command line parameters to determine instruction file, and runs whole program.
+	 * @param args See Digester.jar -? to get a list of arguments
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ParseException
+	 * @throws InterruptedException
+	 */
 	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, InterruptedException{
 		Options o = new Options()
          		.addOption("v", "verbose", false, "Verbose output")
@@ -383,6 +396,12 @@ public class GobiiFileReader {
 		}
 	}
 
+	/**
+	 * Returns a human readable name for the job.
+	 * @param cropName Name of the crop being run
+	 * @param list List of instructions to read from
+	 * @return a human readable name for the job
+	 */
 	private static String getJobName(String cropName, List<GobiiLoaderInstruction> list) {
 		cropName=cropName.charAt(0)+cropName.substring(1).toLowerCase();// MAIZE -> Maize
 		String jobName=cropName + " digest of ";
@@ -392,6 +411,11 @@ public class GobiiFileReader {
 		return jobName;
 	}
 
+	/**
+	 * Converts the File input into the FIRST of the source files.
+	 * @param file Reference to Instruction's File object.
+	 * @return String representation of first of source files
+	 */
 	public static String getSourceFileName(GobiiFile file) {
 		String source=file.getSource();
 		File sourceFolder=new File(source);
@@ -458,6 +482,14 @@ public class GobiiFileReader {
 		rm(dnaRunFile+".tmp");
 	}
 
+	/**
+	 * Updates Postgresql through the webservices to update the DataSet's monetDB and HDF5File references.
+	 * @param config Configuration settings, used to determine connections
+	 * @param cropName Name of the crop
+	 * @param dataSetId Data set to update
+	 * @param monetTableName Name of the table in the monetDB database for this dataset.
+	 * @param hdfFileName Name of the HDF5 file for this dataset (Note, these should be obvious)
+	 */
 	public static void updateValues(ConfigSettings config,String cropName, Integer dataSetId,String monetTableName,String hdfFileName) {
 		try{
 			// set up authentication and so forth
