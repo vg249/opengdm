@@ -362,6 +362,18 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <!--EXPERIMENT -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_EXPERIMENT}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg>
+                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO</value>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <value>QUERY_ID_EXPERIMENT</value>
+                        </constructor-arg>
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>

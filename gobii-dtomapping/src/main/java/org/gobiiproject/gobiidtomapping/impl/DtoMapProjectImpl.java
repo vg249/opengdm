@@ -40,6 +40,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
     private DtoListQueryColl dtoListQueryColl;
 
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<ProjectDTO> getProjects() throws GobiiDtoMappingException {
 

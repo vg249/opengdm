@@ -12,8 +12,6 @@ import java.util.Map;
 public interface RsExperimentDao {
 
 
-    ResultSet getExperiments() throws GobiiDaoException;
-
     ResultSet getExperimentNamesByProjectId(Integer experimentId) throws GobiiDaoException;
 
     ResultSet getExperimentDetailsForExperimentId(int experimentId) throws GobiiDaoException;

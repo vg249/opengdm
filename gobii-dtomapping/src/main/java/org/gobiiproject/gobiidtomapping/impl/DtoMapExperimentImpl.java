@@ -3,10 +3,13 @@ package org.gobiiproject.gobiidtomapping.impl;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -29,6 +32,10 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
     @Autowired
     private RsExperimentDao rsExperimentDao;
 
+    @Autowired
+    private DtoListQueryColl dtoListQueryColl;
+
+
     @Override
     public List<ExperimentDTO> getExperiments() throws GobiiDtoMappingException {
 
@@ -36,17 +43,9 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
 
         try {
 
-            ResultSet resultSet = rsExperimentDao.getExperiments();
+            returnVal = (List<ExperimentDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_EXPERIMENT,null);
 
-
-            while (resultSet.next()) {
-                ExperimentDTO currentExperimentDao = new ExperimentDTO();
-                ResultColumnApplicator.applyColumnValues(resultSet, currentExperimentDao);
-                returnVal.add(currentExperimentDao);
-            }
-
-
-        } catch (SQLException e) {
+        } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);
         }
