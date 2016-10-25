@@ -144,7 +144,7 @@ public class GobiiExtractor {
 						HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 					}
 					else{
-					FlapjackTransformer.generateMapFile(markerFile, sampleFile, dataSetId, tempFolder, mapOutFile,errorFile);
+					FlapjackTransformer.generateMapFile(markerFile,tempFolder, mapOutFile,errorFile);
 					HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 					FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
 					HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());

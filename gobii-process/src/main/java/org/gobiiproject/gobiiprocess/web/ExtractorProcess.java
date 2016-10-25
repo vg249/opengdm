@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Dummy class representing a basic process call from inside the process project.
  * Created by Phil on 3/24/2016.
  */
 public class ExtractorProcess {

@@ -4,6 +4,7 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 
 /**
+ * Simple process class for example of reading configuration files.
  * Created by Phil on 6/24/2016.
  */
 public class PlainLoaderEmulator {

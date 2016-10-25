@@ -2,9 +2,22 @@ package org.gobiiproject.gobiiprocess.extractor.flapjack;
 
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
+
+/**
+ * Generates the output files for Flapjack import.
+ * This class is split into generating the .map and .genotype files.
+ */
 public class FlapjackTransformer {
 
-	public static boolean generateMapFile(String markerFile, String sampleFile, int datasetId, String tempDir,String outFile,String errorFile){
+	/**
+	 * Given a marker MDE file, generates a map file to {@code outFile}
+	 * @param markerFile MDE output of marker file
+	 * @param tempDir Place to store temporary files
+	 * @param outFile The resulting map file
+	 * @param errorFile The temporary file to write errors to
+	 * @return true if success
+	 */
+	public static boolean generateMapFile(String markerFile, String tempDir,String outFile,String errorFile){
 /*		
 	2) cut marker, chromosome, position
 	3) remove headers
@@ -23,6 +36,18 @@ public class FlapjackTransformer {
 		rm(tempDir+"map.body");
 		return true;
 	}
+
+	/**
+	 * Generates a genotype file from the MDE outputs
+	 * @param markerFile MDE output of markers
+	 * @param sampleFile Sample MDE output file
+	 * @param genotypeFile Genotype MDE output file
+	 * @param datasetId Unused
+	 * @param tempDir Directory to write temporary files
+	 * @param outFile Output genotype file
+	 * @param errorFile Temporary file to write error logs to
+	 * @return true on success
+	 */
 	public static boolean generateGenotypeFile(String markerFile, String sampleFile, String genotypeFile, int datasetId, String tempDir, String outFile,String errorFile){
 		/**
 		 * Genotype file - 

@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Checks configurations of a Gobii instance for sanity.
  * Created by Phil on 6/24/2016.
  */
 public class ConfigCheck {
@@ -68,6 +69,11 @@ public class ConfigCheck {
         System.out.println("******\t" + fieldName + ": " + value);
     }
 
+    /**
+     * Main method of the configuration checking utility.
+     * Use jar -? to find arguments
+     * @param args
+     */
     public static void main(String[] args) {
 
         int exitCode = -1;

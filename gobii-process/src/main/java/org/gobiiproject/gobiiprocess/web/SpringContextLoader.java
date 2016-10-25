@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
+ * Keeps an {@link ApplicationContext}. See {@link ExtractorProcess} for usage.
  * Created by Phil on 3/24/2016.
  */
 public class SpringContextLoader implements ApplicationContextAware {
