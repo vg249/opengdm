@@ -31,29 +31,6 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
     @Autowired
     private SpRunnerCallable spRunnerCallable;
 
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public ResultSet getDataSets() throws GobiiDaoException {
-
-        ResultSet returnVal;
-
-        try {
-
-            SpGetDataSets spGetDataSets = new SpGetDataSets();
-            storedProcExec.doWithConnection(spGetDataSets);
-            returnVal = spGetDataSets.getResultSet();
-
-        } catch (Exception e) {
-
-            LOGGER.error("Error retrieving platforms", e);
-            throw (new GobiiDaoException(e));
-
-        }
-
-        return returnVal;
-
-    }
-
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ResultSet getDatasetNamesByExperimentId(Integer experimentId) throws GobiiDaoException {

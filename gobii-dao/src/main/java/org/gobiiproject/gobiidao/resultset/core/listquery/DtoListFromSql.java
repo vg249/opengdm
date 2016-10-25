@@ -13,7 +13,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Phil on 4/7/2016.
+ * This class is for the purpose of creating a list of DTO instances from a result set using
+ * an open connection. The legacy retrieval mechanism (e.g., SpGetContacts) executed a query
+ * and then returned the reesult set. However, as soon as the exevute() method returns, the
+ * connection is closed by the framework. In many cases this doesn't matter. However, when retrieving
+ * a list of items (but not when retrieving a single item), the connection must be open in order to
+ * retrieve postgres list column types. There are probably other such cases out there, so this
+ * class should be used for all retrievals.
+ * @param <T> The dto type
  */
 public class DtoListFromSql<T> implements Work {
 

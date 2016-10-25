@@ -31,31 +31,6 @@ public class RsContactDaoImpl implements RsContactDao {
     private SpRunnerCallable spRunnerCallable;
 
 
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public ResultSet getContacts() throws GobiiDaoException {
-
-        ResultSet returnVal = null;
-
-        try {
-
-            SpGetContacts spGetContacts = new SpGetContacts();
-            storedProcExec.doWithConnection(spGetContacts);
-            returnVal = spGetContacts.getResultSet();
-
-        } catch (Exception e) {
-
-            LOGGER.error("Error retrieving platforms", e);
-            throw (new GobiiDaoException(e));
-
-        }
-
-
-        return returnVal;
-
-    }
-    
-
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ResultSet getAllContactNames() throws GobiiDaoException {

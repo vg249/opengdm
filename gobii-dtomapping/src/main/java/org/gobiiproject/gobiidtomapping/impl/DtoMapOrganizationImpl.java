@@ -5,11 +5,14 @@ import org.gobiiproject.gobiidao.resultset.access.RsOrganizationDao;
 import org.gobiiproject.gobiidao.resultset.access.RsOrganizationDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.DtoMapOrganization;
 import org.gobiiproject.gobiidtomapping.DtoMapOrganization;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +31,8 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapOrganizationImpl.class);
 
+    @Autowired
+    private DtoListQueryColl dtoListQueryColl;
 
     @Autowired
     private RsOrganizationDao rsOrganizationDao;
@@ -39,15 +44,7 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
 
         try {
 
-            ResultSet resultSet = rsOrganizationDao.getOrganizations();
-
-
-            while (resultSet.next()) {
-                OrganizationDTO organizationDTO = new OrganizationDTO();
-                ResultColumnApplicator.applyColumnValues(resultSet, organizationDTO);
-                returnVal.add(organizationDTO);
-            }
-
+            returnVal = (List<OrganizationDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_ORGANIZATION_ALL,null);
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);

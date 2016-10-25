@@ -64,6 +64,7 @@ public class DtoRequestContactTest {
         ContactDTO contactDTO = resultEnvelope.getPayload().getData().get(0);
         Assert.assertTrue(contactDTO.getContactId() > 0);
         Assert.assertNotNull(contactDTO.getEmail());
+        Assert.assertTrue(contactDTO.getRoles().size() > 0 );
     } //
 
 
@@ -182,7 +183,7 @@ public class DtoRequestContactTest {
     public void getContactsBySearchWithHttpGet() throws Exception {
 
         RestUri restUriContact = DtoRequestContactTest.uriFactory.contactsByQueryParams();
-        restUriContact.setParamValue("email", "loader.user@temp.com");
+        restUriContact.setParamValue("email", "dummy@email.address");
         RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<ContactDTO> resultEnvelope = restResource
                 .get(ContactDTO.class);
@@ -191,6 +192,7 @@ public class DtoRequestContactTest {
         ContactDTO contactDTO = resultEnvelope.getPayload().getData().get(0);
         Assert.assertNotNull(contactDTO);
         Assert.assertNotNull(contactDTO.getEmail());
+        Assert.assertTrue(contactDTO.getRoles().size() > 0);
 
         //restUriContact.setParamValue(Param);
     }

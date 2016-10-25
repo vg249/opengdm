@@ -10,7 +10,6 @@ import java.util.Map;
  */
 public interface RsDataSetDao {
 
-    ResultSet getDataSets() throws GobiiDaoException;
     ResultSet getDatasetNamesByExperimentId(Integer experimentId) throws GobiiDaoException;
     ResultSet getDataSetDetailsByDataSetId(Integer projectId) throws GobiiDaoException;
     Integer createDataset(Map<String,Object> parameters) throws GobiiDaoException;
