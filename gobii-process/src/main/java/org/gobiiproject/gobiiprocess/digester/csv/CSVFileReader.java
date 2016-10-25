@@ -62,13 +62,11 @@ public class CSVFileReader {
 	 */
 	public void processCSV(GobiiLoaderInstruction loaderInstruction) throws IOException, InterruptedException{
 	List<String> tempFiles = new ArrayList<>();
-		file_column_constant = new HashMap<String, String>();
-		file_column_autoincrement= new HashMap<String, String>();
+		file_column_constant = new HashMap<>();
+		file_column_autoincrement= new HashMap<>();
 		try {
-
-			List<GobiiFileColumn> columns = new ArrayList<>();
 			column_keys = new ArrayList<>();
-			columns = loaderInstruction.getGobiiFileColumns();
+			List<GobiiFileColumn> columns = loaderInstruction.getGobiiFileColumns();
 	        // Print the name from the list....
 			String fileListString="",delimiterString="";
 			

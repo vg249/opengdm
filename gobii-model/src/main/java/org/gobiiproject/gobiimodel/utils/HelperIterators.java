@@ -90,9 +90,11 @@ class SingleLineFilteredIterator implements Iterator<String>{
 	}
 	private void getNext(){
 		next=null;
-		try{HelperFunctions.filter(reader.readLine(),from,to,null,null);
+		try{
+			next=HelperFunctions.filter(reader.readLine(),from,to,null,null);
 		}catch(Exception e){//on exception, next is null, close reader to be polite
 			try{
+				next=null;
 				reader.close();
 				}catch(Exception f){/*meh*/}
 			}

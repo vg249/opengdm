@@ -34,6 +34,7 @@ public class HelperFunctions {
 	 * @return filtered string, from the character after the end of from to the character before the beginning of to
 	 */
 	public static String filter(String in,String from, String to, String find, String replace){
+		if(in==null)return null;
 		String result = "";
 		if(from==null)from="";
 		if(to==null)to="";
@@ -157,7 +158,8 @@ public class HelperFunctions {
 	
 	//Null outputFIle to get output to standard out.
 	public static boolean tryExec(String execString,String outputFile, String errorFile, String inputFile){
-        ProcessBuilder builder = new ProcessBuilder(execString.split(" "));
+		String[] exec=execString.split(" ");
+        ProcessBuilder builder = new ProcessBuilder(exec);
         if(outputFile!=null)builder.redirectOutput(new File(outputFile));
         if(errorFile!=null)builder.redirectError(new File(errorFile));
         if(inputFile!=null)builder.redirectInput(new File(inputFile));
@@ -169,7 +171,7 @@ public class HelperFunctions {
 			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exception in process",e);
 			return false;
 		}
-		if(p.exitValue()<0){
+		if(p.exitValue()!=0){
 			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exit code " + p.exitValue(),errorFile);
 			return false;
 		}
@@ -315,7 +317,12 @@ public class HelperFunctions {
 		transport.close();
 	}
 
-private static boolean checkFileExistance(String fileLocation) {
+	/**
+	 * Checks if a file exists AND is non-empty.
+	 * @param fileLocation String representation of the file's location (absolute or relative).
+	 * @return true if non-empty file exists
+	 */
+	private static boolean checkFileExistance(String fileLocation) {
 	if(fileLocation==null)return false;
 	File f = new File(fileLocation);
 	return f.exists() && f.getTotalSpace()!=0;
