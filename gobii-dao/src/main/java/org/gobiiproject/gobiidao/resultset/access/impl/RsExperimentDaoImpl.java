@@ -13,7 +13,6 @@ import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentDetail
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNamesByProjectId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperiments;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -350,6 +350,18 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <!--PROJECT -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PROJECT_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg>
+                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO</value>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <value>QUERY_ID_PROJECT_ALL</value>
+                        </constructor-arg>
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>

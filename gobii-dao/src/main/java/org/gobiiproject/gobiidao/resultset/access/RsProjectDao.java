@@ -12,7 +12,6 @@ import java.util.Map;
 public interface RsProjectDao {
 
 
-    ResultSet getProjects() throws GobiiDaoException;
     ResultSet getProjectNamesForContactId(Integer contactId) throws GobiiDaoException;
     ResultSet getProjectDetailsForProjectId(Integer projectId ) throws GobiiDaoException;
     ResultSet getPropertiesForProject(Integer projectId ) throws GobiiDaoException;

@@ -1,12 +1,16 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.access.RsProjectDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.DtoMapProject;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -32,6 +36,10 @@ public class DtoMapProjectImpl implements DtoMapProject {
     @Autowired
     private RsProjectDao rsProjectDao;
 
+    @Autowired
+    private DtoListQueryColl dtoListQueryColl;
+
+
     @Override
     public List<ProjectDTO> getProjects() throws GobiiDtoMappingException {
 
@@ -39,14 +47,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
 
         try {
 
-            ResultSet resultSet = rsProjectDao.getProjects();
-
-
-            while (resultSet.next()) {
-                ProjectDTO currentProjectDao = new ProjectDTO();
-                ResultColumnApplicator.applyColumnValues(resultSet, currentProjectDao);
-                returnVal.add(currentProjectDao);
-            }
+            returnVal = (List<ProjectDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_PROJECT_ALL,null);
 
 
         } catch (Exception e) {
