@@ -37,6 +37,7 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
     @Autowired
     private RsOrganizationDao rsOrganizationDao;
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<OrganizationDTO> getOrganizations() throws GobiiDtoMappingException {
 

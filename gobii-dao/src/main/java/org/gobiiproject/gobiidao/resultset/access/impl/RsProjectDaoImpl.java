@@ -7,7 +7,6 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProjectProperties;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProject;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetPlatforms;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectByNameAndPIContact;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjects;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjecttNamesByContactId;
