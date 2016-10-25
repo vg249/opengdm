@@ -21,6 +21,7 @@ public class DtoListFromSql<T> implements Work {
     private Class<T> dtoType;
     private String sql;
     private Map<String, Object> parameters = null;
+
     public DtoListFromSql(Class<T> dtoType,
                           String sql,
                           Map<String, Object> parameters) {
@@ -41,9 +42,9 @@ public class DtoListFromSql<T> implements Work {
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
 
-       ResultSet resultSet = preparedStatement.executeQuery();
+        ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<T> dtoList = new ArrayList<>();
+        this.dtoList = new ArrayList<>();
         while (resultSet.next()) {
             try {
                 T dto = dtoType.newInstance();
@@ -51,13 +52,10 @@ public class DtoListFromSql<T> implements Work {
                 dtoList.add(dto);
             } catch (IllegalAccessException e) {
                 throw new SQLException(e);
-            } catch(InstantiationException e) {
+            } catch (InstantiationException e) {
                 throw new SQLException(e);
             }
         }
-
-
-        //DataSetDTO.class.newInstance()  <== here's how you'll instance form type
 
     } // execute()
 }

@@ -2,8 +2,9 @@ package org.gobiiproject.gobiidao.resultset.core.listquery;
 
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,30 +13,25 @@ import java.util.Map;
  */
 public class DtoListQuery<T> {
 
-    public enum QueryId {
-        QUERY_ID_DATASET_ALL,
-        QUERY_ID_CONTACT_ALL
-    }
 
-     private StoredProcExec storedProcExec = null;
+    private ListSqlId listSqlId;
+    private Class<T> dtoType;
+    private StoredProcExec storedProcExec;
 
-    private Map<QueryId, String> queriesById = new HashMap<>();
-
-    public DtoListQuery(StoredProcExec storedProcExec) {
+    public DtoListQuery(StoredProcExec storedProcExec,
+                        Class<T> dtoType,
+                        ListSqlId listSqlId) {
 
         this.storedProcExec = storedProcExec;
+        this.dtoType = dtoType;
+        this.listSqlId = listSqlId;
 
-        this.queriesById.put(QueryId.QUERY_ID_CONTACT_ALL,
-                "select * from contact order by lower(lastname),lower(firstname)");
-        this.queriesById.put(QueryId.QUERY_ID_DATASET_ALL,
-                "select * from dataset order by lower(name)");
     }
 
-    public List<T> getDtoList(QueryId queryId,
-                              Class<T> dtoType,
-                              Map<String, Object> parameters) throws GobiiException {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<T> getDtoList(Map<String, Object> parameters) throws GobiiException {
 
-        String sql = this.queriesById.get(queryId);
+        String sql = listSqlId.getSql();
 
         DtoListFromSql<T> dtoListFromSql = new DtoListFromSql<>(dtoType, sql, parameters);
 

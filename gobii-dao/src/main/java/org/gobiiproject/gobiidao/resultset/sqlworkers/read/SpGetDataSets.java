@@ -1,11 +1,15 @@
 package org.gobiiproject.gobiidao.resultset.sqlworkers.read;
 
+import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.hibernate.jdbc.Work;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +30,6 @@ public class SpGetDataSets implements Work {
     }
 
     @Override
-
     public void execute(Connection dbConnection) throws SQLException {
 
         String sql = "select\n" +
@@ -52,6 +55,24 @@ public class SpGetDataSets implements Work {
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
 
         resultSet = preparedStatement.executeQuery();
+
+        List<DataSetDTO> contacts = new ArrayList<>();
+        while (resultSet.next()) {
+            try {
+                DataSetDTO dataSetDTO = DataSetDTO.class.newInstance();
+                ResultColumnApplicator.applyColumnValues(resultSet, dataSetDTO);
+                contacts.add(dataSetDTO);
+            } catch (IllegalAccessException e) {
+                throw new SQLException(e);
+            } catch(InstantiationException e) {
+                throw new SQLException(e);
+            }
+        }
+
+
+        String temp = "foo";
+
+        //DataSetDTO.class.newInstance()  <== here's how you'll instance form type
 
     } // execute()
 }

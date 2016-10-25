@@ -1,11 +1,15 @@
 package org.gobiiproject.gobiidao.resultset.sqlworkers.read;
 
+import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.hibernate.jdbc.Work;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +39,15 @@ public class SpGetContacts implements Work {
 
         resultSet = preparedStatement.executeQuery();
 
+        List<ContactDTO> contacts = new ArrayList<>();
+        while (resultSet.next()) {
+            ContactDTO currentContactDao = new ContactDTO();
+            ResultColumnApplicator.applyColumnValues(resultSet, currentContactDao);
+            contacts.add(currentContactDao);
+        }
+
+
+        String temp = "foo";
 
     } // execute()
 }

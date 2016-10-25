@@ -256,16 +256,7 @@ public class DtoRequestContactTest {
 
 
 
-    // This test is marked ignore for now because of the fact that when an entity has an array
-    //column (roles in this case), the array array values are not store in the JDBC result set
-    //the way that they are with other values. Rather, it seems that jdbc wants to retrieve the
-    //values only when you ask for them. This kind of makes sense because who the hell knows how
-    //capacious and cajunga huge the array could be? The problem is that in our contact, because of
-    //the frameworkization that we've wrappeda round the application of column values to DTOs, by the
-    //time we ask for the array value, the conenection is closed, and we get an exception to that
-    //effect. We need to figure out a solution to this issue. Note that this is oddly not an issue
-    //when retrieving a single row by ID. Only when there are multiple such rows.
-    @Ignore
+    @Test
     public void getContactsWithHttpGet() throws Exception {
 
         RestUri restUriContact = DtoRequestContactTest.uriFactory.resourceColl(ServiceRequestId.URL_CONTACTS);
@@ -299,6 +290,7 @@ public class DtoRequestContactTest {
             ContactDTO contactDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
             Assert.assertTrue(currentContactDto.getLastName().equals(contactDTOFromLink.getLastName()));
             Assert.assertTrue(currentContactDto.getContactId().equals(contactDTOFromLink.getContactId()));
+            Assert.assertTrue(currentContactDto.getRoles().size() > 0);
         }
 
     }

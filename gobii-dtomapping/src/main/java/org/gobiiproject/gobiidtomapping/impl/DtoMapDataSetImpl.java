@@ -4,6 +4,8 @@ import org.gobiiproject.gobiidao.resultset.access.RsAnalysisDao;
 import org.gobiiproject.gobiidao.resultset.access.RsDataSetDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.DtoMapAnalysis;
 import org.gobiiproject.gobiidtomapping.DtoMapDataSet;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
@@ -31,6 +33,10 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
     @Autowired
     private RsDataSetDao rsDataSetDao;
 
+    @Autowired
+    private DtoListQueryColl dtoListQueryColl;
+
+    @SuppressWarnings("unchecked")
     @Override
     public List<DataSetDTO> getDataSets() throws GobiiDtoMappingException {
 
@@ -38,14 +44,17 @@ public class DtoMapDataSetImpl implements DtoMapDataSet {
 
         try {
 
-            ResultSet resultSet = rsDataSetDao.getDataSets();
+            returnVal = (List<DataSetDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_DATASET_ALL,null);
 
 
-            while (resultSet.next()) {
-                DataSetDTO currentDataSetDao = new DataSetDTO();
-                ResultColumnApplicator.applyColumnValues(resultSet, currentDataSetDao);
-                returnVal.add(currentDataSetDao);
-            }
+//            ResultSet resultSet = rsDataSetDao.getDataSets();
+//
+//
+//            while (resultSet.next()) {
+//                DataSetDTO currentDataSetDao = new DataSetDTO();
+//                ResultColumnApplicator.applyColumnValues(resultSet, currentDataSetDao);
+//                returnVal.add(currentDataSetDao);
+//            }
 
 
         } catch (Exception e) {

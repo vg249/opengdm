@@ -297,6 +297,39 @@
     <bean id="dtoMapOrganization" class="org.gobiiproject.gobiidtomapping.impl.DtoMapOrganizationImpl"/>
     <bean id="OrganizationService" class="org.gobiiproject.gobidomain.services.impl.OrganizationServiceImpl"/>
 
+
+    <bean id="dtoListQueryColl"
+          class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
+        <property name="listQueriesBySqlId">
+            <map>
+                <!--DATASET -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DATASET_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg>
+                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO</value>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <value>QUERY_ID_DATASET_ALL</value>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <!--CONTACT -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_CONTACT_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg>
+                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO</value>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <value>QUERY_ID_CONTACT_ALL</value>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
     <!--&lt;!&ndash;************************** SET UP CONFIGURAITON FOR JDBC settings&ndash;&gt;-->
