@@ -59,7 +59,44 @@ export class DtoRequestService<T> {
 
         }); // observable
 
-    } // getResult() 
+    }
+
+
+    public post(dtoRequestItem:DtoRequestItem<T>):Observable < T > {
+
+        return Observable.create(observer => {
+
+            this._authenticationService
+                .getToken()
+                .subscribe(token => {
+
+                    let headers = HttpValues.makeTokenHeaders(token);
+
+                    this._http
+                        .post(dtoRequestItem.getUrl(),
+                            dtoRequestItem.getRequestBody(),
+                            {headers: headers})
+                        .map(response => response.json())
+                        .subscribe(json => {
+
+                            let payloadResponse:PayloadEnvelope = PayloadEnvelope.fromJSON(json);
+
+                            if (payloadResponse.header.status.succeeded) {
+                                let result = dtoRequestItem.resultFromJson(json);
+                                observer.next(result);
+                                observer.complete();
+                            } else {
+                                observer.error(payloadResponse);
+                            }
+
+                        }) // subscribe http
+
+                }); // subscribe get authentication token
+
+        }); // observable
+
+    }
+
 
     public get(dtoRequestItem:DtoRequestItem<T>):Observable < T > {
 
@@ -93,7 +130,7 @@ export class DtoRequestService<T> {
 
         }); // observable
 
-    } // getResult() 
+    }
     
 
 }

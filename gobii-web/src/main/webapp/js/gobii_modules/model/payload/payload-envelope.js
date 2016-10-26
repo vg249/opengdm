@@ -22,6 +22,20 @@ System.register(["./header", "./payload"], function(exports_1, context_1) {
                     var payload = payload_1.Payload.fromJSON(json.payload);
                     return new PayloadEnvelope(header, payload);
                 }; // fromJson()
+                PayloadEnvelope.wrapSingleDTOInJSON = function (payLoad) {
+                    var returnVal = {};
+                    returnVal.payload = { "data": [] };
+                    returnVal.payload.data.push(payLoad);
+                    // returnVal.processType = this.processType;
+                    // returnVal.instructionFileName = this.instructionFileName;
+                    // returnVal.gobiiCropType = this.gobiiCropType;
+                    // returnVal.gobiiExtractorInstructions = [];
+                    //
+                    // this.gobiiExtractorInstructions.forEach(i => {
+                    //     returnVal.gobiiExtractorInstructions.push(i.getJson());
+                    // });
+                    return returnVal;
+                };
                 return PayloadEnvelope;
             }());
             exports_1("PayloadEnvelope", PayloadEnvelope);

@@ -296,10 +296,11 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                         + date.getMinutes()
                         + "_"
                         + date.getSeconds();
-                    var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName, type_process_1.ProcessType.CREATE, this.selectedServerConfig.crop);
+                    var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName);
+                    //this.selectedServerConfig.crop
                     var extractorInstructionFilesDTOResponse = null;
                     var scope$ = this;
-                    this._dtoRequestServiceExtractorFile.getResult(new dto_request_item_extractor_submission_1.DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
+                    this._dtoRequestServiceExtractorFile.post(new dto_request_item_extractor_submission_1.DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
                         .subscribe(function (extractorInstructionFilesDTO) {
                         extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
                         scope$.messages.push("Extractor instruction file created on server: "

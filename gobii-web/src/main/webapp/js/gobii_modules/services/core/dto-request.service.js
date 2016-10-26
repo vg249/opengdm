@@ -71,7 +71,31 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                             }); // subscribe http
                         }); // subscribe get authentication token
                     }); // observable
-                }; // getResult() 
+                };
+                DtoRequestService.prototype.post = function (dtoRequestItem) {
+                    var _this = this;
+                    return Observable_1.Observable.create(function (observer) {
+                        _this._authenticationService
+                            .getToken()
+                            .subscribe(function (token) {
+                            var headers = http_values_1.HttpValues.makeTokenHeaders(token);
+                            _this._http
+                                .post(dtoRequestItem.getUrl(), dtoRequestItem.getRequestBody(), { headers: headers })
+                                .map(function (response) { return response.json(); })
+                                .subscribe(function (json) {
+                                var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(json);
+                                if (payloadResponse.header.status.succeeded) {
+                                    var result = dtoRequestItem.resultFromJson(json);
+                                    observer.next(result);
+                                    observer.complete();
+                                }
+                                else {
+                                    observer.error(payloadResponse);
+                                }
+                            }); // subscribe http
+                        }); // subscribe get authentication token
+                    }); // observable
+                };
                 DtoRequestService.prototype.get = function (dtoRequestItem) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
@@ -95,7 +119,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                             }); // subscribe http
                         }); // subscribe get authentication token
                     }); // observable
-                }; // getResult() 
+                };
                 DtoRequestService = __decorate([
                     core_1.Injectable(), 
                     __metadata('design:paramtypes', [http_1.Http, authentication_service_1.AuthenticationService])

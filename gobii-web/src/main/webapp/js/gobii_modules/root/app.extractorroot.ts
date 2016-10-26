@@ -460,14 +460,12 @@ export class ExtractorRoot {
             + date.getSeconds();
         let extractorInstructionFilesDTORequest:ExtractorInstructionFilesDTO =
             new ExtractorInstructionFilesDTO(gobiiExtractorInstructions,
-                fileName,
-                ProcessType.CREATE,
-                this.selectedServerConfig.crop);
-
+                fileName);
+//this.selectedServerConfig.crop
 
         let extractorInstructionFilesDTOResponse:ExtractorInstructionFilesDTO = null;
         let scope$ = this;
-        this._dtoRequestServiceExtractorFile.getResult(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
+        this._dtoRequestServiceExtractorFile.post(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
             .subscribe(extractorInstructionFilesDTO => {
                     extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
                     scope$.messages.push("Extractor instruction file created on server: "
