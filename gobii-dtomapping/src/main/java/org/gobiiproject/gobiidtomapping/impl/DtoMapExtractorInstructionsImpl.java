@@ -197,22 +197,23 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 List<GobiiExtractorInstruction> instructions =
                         extractorInstructionsDAO
                                 .getInstructions(instructionFileFqpn);
+                returnVal.setInstructionFileName(instructionFileName);
 
                 if (null != instructions) {
                     returnVal.setGobiiExtractorInstructions(instructions);
                 } else {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                                    GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                                    "The instruction file exists, but could not be read: " +
-                                            instructionFileFqpn);
+                            GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                            "The instruction file exists, but could not be read: " +
+                                    instructionFileFqpn);
                 }
 
             } else {
 
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                                "The specified instruction file does not exist: " +
-                                        instructionFileFqpn);
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "The specified instruction file does not exist: " +
+                                instructionFileFqpn);
 
             } // if-else instruction file exists
 

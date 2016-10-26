@@ -188,7 +188,7 @@ public class BRAPIController {
                 PayloadWriter<ConfigSettingsDTO> payloadWriter = new PayloadWriter<>(request,
                         ConfigSettingsDTO.class);
 
-                payloadWriter.writeSingleItem(returnVal,
+                payloadWriter.writeSingleItemForDefaultId(returnVal,
                         ServiceRequestId.URL_CONFIGSETTINGS,
                         configSettingsDTO);
 
@@ -234,7 +234,7 @@ public class BRAPIController {
             PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
                     ContactDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_CONTACTS,
                     contactDTONew);
 
@@ -270,7 +270,7 @@ public class BRAPIController {
             PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
                     ContactDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_CONTACTS,
                     contactDTOReplaced);
 
@@ -304,7 +304,7 @@ public class BRAPIController {
                 PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
                         ContactDTO.class);
 
-                payloadWriter.writeSingleItem(returnVal,
+                payloadWriter.writeSingleItemForDefaultId(returnVal,
                         ServiceRequestId.URL_CONTACTS,
                         contactDTO);
 
@@ -412,7 +412,7 @@ public class BRAPIController {
             PayloadWriter<ContactDTO> payloadWriter = new PayloadWriter<>(request,
                     ContactDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_CONTACTS,
                     contactDTO);
 
@@ -451,7 +451,7 @@ public class BRAPIController {
             PayloadWriter<DataSetDTO> payloadWriter = new PayloadWriter<>(request,
                     DataSetDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_DATASETS,
                     dataSetDTONew);
 
@@ -490,7 +490,7 @@ public class BRAPIController {
             PayloadWriter<DataSetDTO> payloadWriter = new PayloadWriter<>(request,
                     DataSetDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_DATASETS,
                     dataSetDTOReplaced);
 //
@@ -554,7 +554,7 @@ public class BRAPIController {
             PayloadWriter<DataSetDTO> payloadWriter = new PayloadWriter<>(request,
                     DataSetDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_DATASETS,
                     dataSetDTO);
 
@@ -593,7 +593,7 @@ public class BRAPIController {
             PayloadWriter<LoaderInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
                     LoaderInstructionFilesDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
                     loaderInstructionFilesDTONew);
 
@@ -664,13 +664,14 @@ public class BRAPIController {
 
             ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService.createInstruction(cropType, extractorInstructionFilesDTOToCreate);
 
-            returnVal.getPayload().getData().add(extractorInstructionFilesDTONew);
-//            PayloadWriter<ExtractorInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
-//                    ExtractorInstructionFilesDTO.class);
-//
-//            payloadWriter.writeSingleItem(returnVal,
-//                    ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
-//                    extractorInstructionFilesDTONew);
+
+            PayloadWriter<ExtractorInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
+                    ExtractorInstructionFilesDTO.class);
+
+            payloadWriter.writeSingleItemForId(returnVal,
+                    ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS,
+                    extractorInstructionFilesDTONew,
+                    extractorInstructionFilesDTONew.getInstructionFileName());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -701,14 +702,14 @@ public class BRAPIController {
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
             ExtractorInstructionFilesDTO extractorInstructionFilesDTO = extractorInstructionFilesService.getInstruction(cropType, instructionFileName);
 
-            returnVal.getPayload().getData().add(extractorInstructionFilesDTO);
 
-//            PayloadWriter<ExtractorInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
-//                    ExtractorInstructionFilesDTO.class);
-//
-//            payloadWriter.writeList(returnVal,
-//                    ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
-//                    extractorInstructionFilesDTOs);
+            PayloadWriter<ExtractorInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
+                    ExtractorInstructionFilesDTO.class);
+
+            payloadWriter.writeSingleItemForId(returnVal,
+                    ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS,
+                    extractorInstructionFilesDTO,
+                    extractorInstructionFilesDTO.getInstructionFileName());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -849,7 +850,7 @@ public class BRAPIController {
             PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
                     OrganizationDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_ORGANIZATION,
                     OrganizationDTONew);
 
@@ -885,7 +886,7 @@ public class BRAPIController {
             PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
                     OrganizationDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_ORGANIZATION,
                     organizationDTOReplaced);
 
@@ -950,7 +951,7 @@ public class BRAPIController {
             PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
                     OrganizationDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_ORGANIZATION,
                     organizationDTO);
 
@@ -1024,7 +1025,7 @@ public class BRAPIController {
             PayloadWriter<PlatformDTO> payloadWriter = new PayloadWriter<>(request,
                     PlatformDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_PLATFORM,
                     platformDTONew);
 
@@ -1060,7 +1061,7 @@ public class BRAPIController {
             PayloadWriter<PlatformDTO> payloadWriter = new PayloadWriter<>(request,
                     PlatformDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_PLATFORM,
                     platformDTOReplaced);
 
@@ -1125,7 +1126,7 @@ public class BRAPIController {
             PayloadWriter<PlatformDTO> payloadWriter = new PayloadWriter<>(request,
                     PlatformDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_PLATFORM,
                     platformDTO);
 
@@ -1164,7 +1165,7 @@ public class BRAPIController {
             PayloadWriter<ProjectDTO> payloadWriter = new PayloadWriter<>(request,
                     ProjectDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_PROJECTS,
                     projectDTONew);
 
@@ -1203,7 +1204,7 @@ public class BRAPIController {
             PayloadWriter<ProjectDTO> payloadWriter = new PayloadWriter<>(request,
                     ProjectDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_PROJECTS,
                     projectDTOReplaced);
 //
@@ -1267,7 +1268,7 @@ public class BRAPIController {
             PayloadWriter<ProjectDTO> payloadWriter = new PayloadWriter<>(request,
                     ProjectDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_PROJECTS,
                     projectDTO);
 
@@ -1305,7 +1306,7 @@ public class BRAPIController {
             PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
                     ExperimentDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_EXPERIMENTS,
                     exprimentDTONew);
 
@@ -1344,7 +1345,7 @@ public class BRAPIController {
             PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
                     ExperimentDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_EXPERIMENTS,
                     exprimentDTOReplaced);
 
@@ -1410,7 +1411,7 @@ public class BRAPIController {
             PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
                     ExperimentDTO.class);
 
-            payloadWriter.writeSingleItem(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_EXPERIMENTS,
                     experimentDTO);
 

@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests;
 
+import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
@@ -19,6 +20,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -114,24 +116,28 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         RestResource<ExtractorInstructionFilesDTO> restResourceForPost = new RestResource<>(uriFactory.extractorInstructionFile());
-        PayloadEnvelope<ExtractorInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = restResourceForPost.post(ExtractorInstructionFilesDTO.class,
+        PayloadEnvelope<ExtractorInstructionFilesDTO> extractorInstructionFileDTOResponseEnvelope = restResourceForPost.post(ExtractorInstructionFilesDTO.class,
                 payloadEnvelope);
 
         //DtoRequestFileExtractorInstructions dtoRequestFileExtractorInstructions = new DtoRequestFileExtractorInstructions();
         //ExtractorInstructionFilesDTO extractorInstructionFilesDTOResponse = dtoRequestFileExtractorInstructions.process(extractorInstructionFilesDTOToSend);
 
 
-        Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
+        Assert.assertNotEquals(null, extractorInstructionFileDTOResponseEnvelope);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
-        ExtractorInstructionFilesDTO extractorInstructionFilesDTOResponse = loaderInstructionFileDTOResponseEnvelope.getPayload().getData().get(0);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(extractorInstructionFileDTOResponseEnvelope.getHeader()));
+        ExtractorInstructionFilesDTO extractorInstructionFilesDTOResponse = extractorInstructionFileDTOResponseEnvelope.getPayload().getData().get(0);
 
 
-        // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE
+        // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE, IMPLICITLY TESTING LINK
 
-        RestUri restUriLoader = uriFactory.extractorInstructionsByInstructionFileName();
-        restUriLoader.setParamValue("instructionFileName", extractorInstructionFilesDTOResponse.getInstructionFileName());
-        RestResource<ExtractorInstructionFilesDTO> restResourceForGet = new RestResource<>(restUriLoader);
+        LinkCollection linkCollection = extractorInstructionFileDTOResponseEnvelope.getPayload().getLinkCollection();
+        Assert.assertNotNull(linkCollection);
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == 1);
+
+
+        RestUri restUriFromLink = uriFactory.RestUriFromUri(linkCollection.getLinksPerDataItem().get(0).getHref());
+        RestResource<ExtractorInstructionFilesDTO> restResourceForGet = new RestResource<>(restUriFromLink);
         PayloadEnvelope<ExtractorInstructionFilesDTO> resultEnvelope = restResourceForGet
                 .get(ExtractorInstructionFilesDTO.class);
 
@@ -163,6 +169,33 @@ public class DtoRequestFileExtractorInstructionsTest {
         );
 
 
+        // Test link we got from GET
+        linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        Assert.assertNotNull(linkCollection);
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == 1);
+        RestUri newRestUriFromLink = uriFactory.RestUriFromUri(linkCollection.getLinksPerDataItem().get(0).getHref());
+        restResourceForGet = new RestResource<>(newRestUriFromLink);
+        resultEnvelope = restResourceForGet
+                .get(ExtractorInstructionFilesDTO.class);
+
+        ExtractorInstructionFilesDTO extractorInstructionFilesDTOFromSecondRetrieval = resultEnvelope.getPayload().getData().get(0);
+
+        Assert.assertTrue(
+                2 == extractorInstructionFilesDTOFromSecondRetrieval
+                        .getGobiiExtractorInstructions()
+                        .size()
+        );
+
+        Assert.assertTrue(
+                extractorInstructionFilesDTOFromSecondRetrieval
+                        .getGobiiExtractorInstructions()
+                        .get(0)
+                        .getDataSetExtracts()
+                        .get(0)
+                        .getDataSetName()
+                        .equals(DataSetExtractOneName)
+        );
+
         // ************** VERIFY THAT WE HANDLE USER INPUT FILE ALREADY EXISTS
         // we're going to test for the existence of the previous instruction file we created;
         // that would not be the real use case; however, it is a file we created on the server
@@ -172,12 +205,12 @@ public class DtoRequestFileExtractorInstructionsTest {
 //                dtoRequestFileExtractorInstructions.process(extractorInstructionFilesDTOToSend);
 
         payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        loaderInstructionFileDTOResponseEnvelope = restResourceForPost.post(ExtractorInstructionFilesDTO.class,
+        extractorInstructionFileDTOResponseEnvelope = restResourceForPost.post(ExtractorInstructionFilesDTO.class,
                 payloadEnvelope);
 
 
         Assert.assertTrue(1 ==
-                loaderInstructionFileDTOResponseEnvelope
+                extractorInstructionFileDTOResponseEnvelope
                         .getHeader()
                         .getStatus()
                         .getStatusMessages()
