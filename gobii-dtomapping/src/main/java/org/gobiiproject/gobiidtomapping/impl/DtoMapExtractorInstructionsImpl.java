@@ -8,7 +8,7 @@ import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -75,13 +75,11 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     + INSTRUCTION_FILE_EXT;
 
 
-            boolean allValuesSpecified = true;
             for (GobiiExtractorInstruction currentExtractorInstruction :
                     extractorInstructionFilesDTO.getGobiiExtractorInstructions()) {
 
                 if (LineUtils.isNullOrEmpty(returnVal.getInstructionFileName())) {
-                    allValuesSpecified = false;
-                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
                             "instruction file name is missing");
                 }
@@ -94,8 +92,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     if (!LineUtils.isNullOrEmpty(contactDTO.getEmail())) {
                         currentExtractorInstruction.setContactEmail(contactDTO.getEmail());
                     } else {
-                        allValuesSpecified = false;
-                        returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                        throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                 GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
                                 "The contact record for contactId "
                                         + currentExtractorInstruction.getContactId()
@@ -103,8 +100,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     }
 
                 } else {
-                    allValuesSpecified = false;
-                    returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
                             "contactId is missing");
                 }
@@ -119,15 +115,13 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                     // check that we have all required values
                     if (LineUtils.isNullOrEmpty(currentGobiiDataSetExtract.getDataSetName())) {
-                        allValuesSpecified = false;
-                        returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                        throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                 GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
                                 "DataSet name is missing");
                     }
 
                     if (LineUtils.isNullOrEmpty(Integer.toString(currentGobiiDataSetExtract.getDataSetId()))) {
-                        allValuesSpecified = false;
-                        returnVal.getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
+                        throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                 GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
                                 "Dataset ID is missing");
                     }
@@ -156,31 +150,17 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
             } // iterate instructions/files
 
-            if (allValuesSpecified) {
 
-                if (0 ==
-                        returnVal
-                                .getStatus()
-                                .getStatusMessages()
-                                .stream()
-                                .filter(m -> m.getGobiiStatusLevel().equals(GobiiStatusLevel.ERROR))
-                                .collect(Collectors.toList())
-                                .size()
-                        ) {
+            if (!extractorInstructionsDAO.doesPathExist(instructionFileFqpn)) {
 
+                extractorInstructionsDAO.writeInstructions(instructionFileFqpn,
+                        returnVal.getGobiiExtractorInstructions());
+            } else {
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
+                        "The specified instruction file already exists: " + instructionFileFqpn);
+            }
 
-                    if (!extractorInstructionsDAO.doesPathExist(instructionFileFqpn)) {
-
-                        extractorInstructionsDAO.writeInstructions(instructionFileFqpn,
-                                returnVal.getGobiiExtractorInstructions());
-                    } else {
-                        throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                                GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
-                                "The specified instruction file already exists: " + instructionFileFqpn);
-                    }
-                }
-
-            } // if all values were specified
 
         } catch (GobiiException e) {
             LOGGER.error("Gobii Maping Error", e);
@@ -221,8 +201,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 if (null != instructions) {
                     returnVal.setGobiiExtractorInstructions(instructions);
                 } else {
-                    returnVal.getStatus()
-                            .addStatusMessage(GobiiStatusLevel.ERROR,
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                                     "The instruction file exists, but could not be read: " +
                                             instructionFileFqpn);
@@ -230,17 +209,19 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
             } else {
 
-                returnVal.getStatus()
-                        .addStatusMessage(GobiiStatusLevel.ERROR,
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                 GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                                 "The specified instruction file does not exist: " +
                                         instructionFileFqpn);
 
             } // if-else instruction file exists
 
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
+        } catch (GobiiException e) {
             LOGGER.error("Gobii Maping Error", e);
+            throw e;
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiException(e);
         }
 
         return returnVal;

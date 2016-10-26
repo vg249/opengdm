@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
@@ -10,10 +10,18 @@ import java.util.List;
 /**
  * Created by Phil on 4/8/2016.
  */
-public class ExtractorInstructionFilesDTO extends Header {
+public class ExtractorInstructionFilesDTO extends DTOBase {
 
-    public ExtractorInstructionFilesDTO() {
-        super(GobiiProcessType.CREATE);
+    private Integer id;
+
+    @Override
+    public Integer getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     private List<GobiiExtractorInstruction>  gobiiExtractorInstructions = new ArrayList<>();
