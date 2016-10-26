@@ -588,14 +588,16 @@ public class BRAPIController {
             PayloadReader<LoaderInstructionFilesDTO> payloadReader = new PayloadReader<>(LoaderInstructionFilesDTO.class);
             LoaderInstructionFilesDTO loaderInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
 
-            LoaderInstructionFilesDTO loaderInstructionFilesDTONew = loaderInstructionFilesService.createInstruction(loaderInstructionFilesDTOToCreate);
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            LoaderInstructionFilesDTO loaderInstructionFilesDTONew = loaderInstructionFilesService.createInstruction(cropType, loaderInstructionFilesDTOToCreate);
 
             PayloadWriter<LoaderInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
                     LoaderInstructionFilesDTO.class);
 
-            payloadWriter.writeSingleItemForDefaultId(returnVal,
+            payloadWriter.writeSingleItemForId(returnVal,
                     ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
-                    loaderInstructionFilesDTONew);
+                    loaderInstructionFilesDTONew,
+                    loaderInstructionFilesDTONew.getInstructionFileName());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -621,16 +623,16 @@ public class BRAPIController {
         PayloadEnvelope<LoaderInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            PayloadReader<LoaderInstructionFilesDTO> payloadReader = new PayloadReader<>(LoaderInstructionFilesDTO.class);
-//            LoaderInstructionFilesDTO loaderInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
-            List<LoaderInstructionFilesDTO> loaderInstructionFilesDTOs = loaderInstructionFilesService.getInstruction(instructionFileName);
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            LoaderInstructionFilesDTO loaderInstructionFilesDTO = loaderInstructionFilesService.getInstruction(cropType, instructionFileName);
 
             PayloadWriter<LoaderInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
                     LoaderInstructionFilesDTO.class);
 
-            payloadWriter.writeList(returnVal,
+            payloadWriter.writeSingleItemForId(returnVal,
                     ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
-                    loaderInstructionFilesDTOs);
+                    loaderInstructionFilesDTO,
+                    loaderInstructionFilesDTO.getInstructionFileName());
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);

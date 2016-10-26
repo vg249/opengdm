@@ -141,13 +141,6 @@ public class DtoRequestFileExtractorInstructionsTest {
         PayloadEnvelope<ExtractorInstructionFilesDTO> resultEnvelope = restResourceForGet
                 .get(ExtractorInstructionFilesDTO.class);
 
-//        ExtractorInstructionFilesDTO extractorInstructionFilesDTOretrieve = new ExtractorInstructionFilesDTO();
-//        extractorInstructionFilesDTOretrieve.setGobiiProcessType(GobiiProcessType.READ);
-//        extractorInstructionFilesDTOretrieve
-//                .setInstructionFileName(extractorInstructionFilesDTOResponse.getInstructionFileName());
-//        ExtractorInstructionFilesDTO extractorInstructionFilesDTOretrieveResponse
-//                = dtoRequestFileExtractorInstructions.process(extractorInstructionFilesDTOretrieve);
-
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOretrieveResponse = resultEnvelope.getPayload().getData().get(0);

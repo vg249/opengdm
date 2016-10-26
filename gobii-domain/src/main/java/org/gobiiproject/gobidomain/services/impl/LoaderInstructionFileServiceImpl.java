@@ -26,20 +26,14 @@ public class LoaderInstructionFileServiceImpl implements LoaderInstructionFilesS
 
 
     @Override
-    public List<LoaderInstructionFilesDTO> getInstruction(String getInstructions) throws GobiiDomainException {
+    public LoaderInstructionFilesDTO getInstruction(String cropType, String getInstructions) throws GobiiDomainException {
 
-        List<LoaderInstructionFilesDTO> returnVal;
+        LoaderInstructionFilesDTO returnVal;
 
         try {
-            returnVal = dtoMapLoaderInstructions.getInstruction(getInstructions);
-            for(LoaderInstructionFilesDTO currentLoaderInstructionFilesDTO : returnVal ) {
-                currentLoaderInstructionFilesDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            }
+            returnVal = dtoMapLoaderInstructions.getInstruction(cropType, getInstructions);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
 
-
-            if (null == returnVal) {
-                returnVal = new ArrayList<>();
-            }
 
         } catch (Exception e) {
 
@@ -52,15 +46,15 @@ public class LoaderInstructionFileServiceImpl implements LoaderInstructionFilesS
     }
 
     @Override
-    public LoaderInstructionFilesDTO createInstruction(LoaderInstructionFilesDTO LoaderInstructionFilesDTO)
+    public LoaderInstructionFilesDTO createInstruction(String cropType, LoaderInstructionFilesDTO LoaderInstructionFilesDTO)
             throws GobiiException {
         LoaderInstructionFilesDTO returnVal;
 
-            returnVal = dtoMapLoaderInstructions.createInstruction(LoaderInstructionFilesDTO);
+        returnVal = dtoMapLoaderInstructions.createInstruction(cropType, LoaderInstructionFilesDTO);
 
-            // When we have roles and permissions, this will be set programmatically
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+        // When we have roles and permissions, this will be set programmatically
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
         return returnVal;
     }
