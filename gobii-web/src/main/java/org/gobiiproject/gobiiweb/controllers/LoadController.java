@@ -52,9 +52,6 @@ public class LoadController {
     private CvService cvService = null;
 
     @Autowired
-    private DataSetService dataSetService = null;
-
-    @Autowired
     private MapsetService mapsetService;
 
     @Autowired

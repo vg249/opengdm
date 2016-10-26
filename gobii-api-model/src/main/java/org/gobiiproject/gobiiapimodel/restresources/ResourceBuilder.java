@@ -65,11 +65,11 @@ public class ResourceBuilder {
                 break;
 
             case URL_FILE_LOAD_INSTRUCTIONS:
-                returnVal += "instructions";
+                returnVal += "instructions/loader";
                 break;
 
             case URL_FILE_EXTRACTOR_INSTRUCTIONS:
-                returnVal += "extractorInstructions";
+                returnVal += "instructions/extractor";
                 break;
 
             case URL_DISPLAY:

@@ -13,6 +13,7 @@ import org.gobiiproject.gobidomain.services.CvService;
 import org.gobiiproject.gobidomain.services.DataSetService;
 import org.gobiiproject.gobidomain.services.DisplayService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
+import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
 import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
 import org.gobiiproject.gobidomain.services.ManifestService;
 import org.gobiiproject.gobidomain.services.MapsetService;
@@ -29,6 +30,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
@@ -45,6 +47,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ControllerUtils;
 import org.gobiiproject.gobiiweb.automation.PayloadReader;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
@@ -107,6 +110,9 @@ public class BRAPIController {
 
     @Autowired
     private LoaderInstructionFilesService loaderInstructionFilesService = null;
+
+    @Autowired
+    private ExtractorInstructionFilesService extractorInstructionFilesService = null;
 
     @Autowired
     private DisplayService displayService = null;
@@ -324,7 +330,7 @@ public class BRAPIController {
     @RequestMapping(value = "/contacts", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ContactDTO> getContacts(HttpServletRequest request,
-                                                     HttpServletResponse response) {
+                                                   HttpServletResponse response) {
 
         PayloadEnvelope<ContactDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -350,7 +356,7 @@ public class BRAPIController {
 
         return (returnVal);
 
-    }    
+    }
 
     //Technically, this regex specifies an email address format, and it actually works.
     //However, when you execute this, you get back an error "The resource identified by this request is only
@@ -564,17 +570,17 @@ public class BRAPIController {
         return (returnVal);
 
     }
-    
+
 
     // *********************************************
-    // *************************** INSTRUCTION METHODS
+    // *************************** LOADER INSTRUCTION METHODS
     // *********************************************
 
-    @RequestMapping(value = "/instructions", method = RequestMethod.POST)
+    @RequestMapping(value = "/instructions/loader", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<LoaderInstructionFilesDTO> createInstructions(@RequestBody PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope,
-                                                                         HttpServletRequest request,
-                                                                         HttpServletResponse response) {
+    public PayloadEnvelope<LoaderInstructionFilesDTO> createLoaderInstruction(@RequestBody PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope,
+                                                                              HttpServletRequest request,
+                                                                              HttpServletResponse response) {
 
         PayloadEnvelope<LoaderInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -606,18 +612,18 @@ public class BRAPIController {
 
     }
 
-    @RequestMapping(value = "/instructions/{instructionFileName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/instructions/loader/{instructionFileName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<LoaderInstructionFilesDTO> getInstructions(@PathVariable("instructionFileName") String instructionFileName,
-                                                                      HttpServletRequest request,
-                                                                      HttpServletResponse response) {
+    public PayloadEnvelope<LoaderInstructionFilesDTO> getLoaderInstruction(@PathVariable("instructionFileName") String instructionFileName,
+                                                                           HttpServletRequest request,
+                                                                           HttpServletResponse response) {
 
         PayloadEnvelope<LoaderInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
 
             PayloadReader<LoaderInstructionFilesDTO> payloadReader = new PayloadReader<>(LoaderInstructionFilesDTO.class);
 //            LoaderInstructionFilesDTO loaderInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
-            List<LoaderInstructionFilesDTO> loaderInstructionFilesDTOs = loaderInstructionFilesService.getInstructions(instructionFileName);
+            List<LoaderInstructionFilesDTO> loaderInstructionFilesDTOs = loaderInstructionFilesService.getInstruction(instructionFileName);
 
             PayloadWriter<LoaderInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
                     LoaderInstructionFilesDTO.class);
@@ -638,6 +644,87 @@ public class BRAPIController {
         return (returnVal);
 
     }
+
+    // *********************************************
+    // *************************** EXTRACTOR INSTRUCTION METHODS
+    // *********************************************
+
+    @RequestMapping(value = "/instructions/extractor", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<ExtractorInstructionFilesDTO> createExtractorInstruction(@RequestBody PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope,
+                                                                                    HttpServletRequest request,
+                                                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<ExtractorInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            PayloadReader<ExtractorInstructionFilesDTO> payloadReader = new PayloadReader<>(ExtractorInstructionFilesDTO.class);
+            ExtractorInstructionFilesDTO extractorInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService.createInstruction(cropType, extractorInstructionFilesDTOToCreate);
+
+            returnVal.getPayload().getData().add(extractorInstructionFilesDTONew);
+//            PayloadWriter<ExtractorInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
+//                    ExtractorInstructionFilesDTO.class);
+//
+//            payloadWriter.writeSingleItem(returnVal,
+//                    ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
+//                    extractorInstructionFilesDTONew);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/instructions/extractor/{instructionFileName}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ExtractorInstructionFilesDTO> getExtractorInstruction(@PathVariable("instructionFileName") String instructionFileName,
+                                                                                 HttpServletRequest request,
+                                                                                 HttpServletResponse response) {
+
+        PayloadEnvelope<ExtractorInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+//            PayloadReader<ExtractorInstructionFilesDTO> payloadReader = new PayloadReader<>(ExtractorInstructionFilesDTO.class);
+//            ExtractorInstructionFilesDTO extractorInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            ExtractorInstructionFilesDTO extractorInstructionFilesDTO = extractorInstructionFilesService.getInstruction(cropType, instructionFileName);
+
+            returnVal.getPayload().getData().add(extractorInstructionFilesDTO);
+
+//            PayloadWriter<ExtractorInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
+//                    ExtractorInstructionFilesDTO.class);
+//
+//            payloadWriter.writeList(returnVal,
+//                    ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
+//                    extractorInstructionFilesDTOs);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
 
     // *********************************************
     // *************************** NameIDList
@@ -1240,9 +1327,9 @@ public class BRAPIController {
     @RequestMapping(value = "/experiments/{experimentId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<ExperimentDTO> replaceExperiment(@RequestBody PayloadEnvelope<ExperimentDTO> payloadEnvelope,
-                                                      @PathVariable Integer experimentId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+                                                            @PathVariable Integer experimentId,
+                                                            HttpServletRequest request,
+                                                            HttpServletResponse response) {
 
         PayloadEnvelope<ExperimentDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1252,7 +1339,6 @@ public class BRAPIController {
             ExperimentDTO exprimentDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
 
             ExperimentDTO exprimentDTOReplaced = experimentService.replaceExperiment(experimentId, exprimentDTOToReplace);
-
 
 
             PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
@@ -1280,7 +1366,7 @@ public class BRAPIController {
     @RequestMapping(value = "/experiments", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ExperimentDTO> getExperiments(HttpServletRequest request,
-                                                   HttpServletResponse response) {
+                                                         HttpServletResponse response) {
 
         PayloadEnvelope<ExperimentDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1311,8 +1397,8 @@ public class BRAPIController {
     @RequestMapping(value = "/experiments/{experimentId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ExperimentDTO> getExperimentsById(@PathVariable Integer experimentId,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+                                                             HttpServletRequest request,
+                                                             HttpServletResponse response) {
 
         PayloadEnvelope<ExperimentDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1340,7 +1426,6 @@ public class BRAPIController {
         return (returnVal);
 
     }
-
 
 
 }// BRAPIController

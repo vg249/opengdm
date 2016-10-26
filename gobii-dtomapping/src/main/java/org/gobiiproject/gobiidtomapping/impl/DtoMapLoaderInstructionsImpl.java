@@ -172,7 +172,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
     } // writeInstructions
 
     @Override
-    public List<LoaderInstructionFilesDTO> getInstructions(String instructionFileName) {
+    public List<LoaderInstructionFilesDTO> getInstruction(String instructionFileName) {
         List<LoaderInstructionFilesDTO> returnVal = new ArrayList<LoaderInstructionFilesDTO>();
         LoaderInstructionFilesDTO loaderInstructionFilesDTO = new LoaderInstructionFilesDTO();
         try {

@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface LoaderInstructionFilesService {
     LoaderInstructionFilesDTO createInstruction(LoaderInstructionFilesDTO loaderInstructionFilesDTO);
-    List<LoaderInstructionFilesDTO> getInstructions(String instructionFileName) throws GobiiDomainException;
+    List<LoaderInstructionFilesDTO> getInstruction(String instructionFileName) throws GobiiDomainException;
 }

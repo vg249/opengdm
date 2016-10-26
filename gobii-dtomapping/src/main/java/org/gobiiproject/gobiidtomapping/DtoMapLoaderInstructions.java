@@ -14,5 +14,5 @@ import java.util.List;
 public interface DtoMapLoaderInstructions {
 
     LoaderInstructionFilesDTO createInstruction(LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws GobiiDtoMappingException, GobiiDaoException;
-    List<LoaderInstructionFilesDTO> getInstructions(String getInstructions);
+    List<LoaderInstructionFilesDTO> getInstruction(String getInstructions);
 }
