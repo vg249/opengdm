@@ -177,16 +177,10 @@ public class CSVFileReader {
 			ErrorLogger.logError("CSVReader","Unexpected IO Error",e);
 		}
 	}
-	
-	/*
-	 *	Recursive for reading all files from a directory;
-	 *	This method also writes the files into the temporary files;
-	 *	@vcc 
-	 */
 
 	/**
 	 * Recursively finds all files in {@code folder} and all subfolders, reading each file for the data needed for {@code column}, and writing to {@code tmpFileWriter}.
-	 * Called one for each output column, creating a separate output file each time.
+	 * Called once for each output column, creating a separate output file each time.
 	 * Input files from {@code folder} are read sequentially.
 	 * @param folder Folder in the filesystem to start from (input folder)
 	 * @param tmpFileWriter Writer to write temporary columns to
@@ -214,14 +208,7 @@ public class CSVFileReader {
 		}
 		return;
 	}
-	
-	
-	
-	/*
-	 *	Method for writing the values into temporary files.
-	 *	Values are determined based on the column_type
-	 *	@vcc
-	 */
+
 
 	/**
 	 * Gets a single column's data from a single input file, to be written to a single temporary file (referenced by {@code }tmpFileWriter}.
