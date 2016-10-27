@@ -142,7 +142,7 @@
                             <!-- MainClass in mainfest make a executable jar -->
                             <archive>
                                 <manifest>
-                                    <mainClass>org.gobiiproject.gobiiprocess.web.ConfigCheck</mainClass>
+                                    <mainClass>org.gobiiproject.gobiiprocess.GobiiConfig</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
