@@ -52,8 +52,8 @@ public class ResourceBuilder {
                 returnVal += "ping";
                 break;
 
-            case URL_PROJECT:
-                returnVal += "project";
+            case URL_PROJECTS:
+                returnVal += "projects";
                 break;
 
             case URL_NAME_ID_LIST_DEPRECATED:
@@ -65,11 +65,11 @@ public class ResourceBuilder {
                 break;
 
             case URL_FILE_LOAD_INSTRUCTIONS:
-                returnVal += "instructions";
+                returnVal += "instructions/loader";
                 break;
 
             case URL_FILE_EXTRACTOR_INSTRUCTIONS:
-                returnVal += "extractorInstructions";
+                returnVal += "instructions/extractor";
                 break;
 
             case URL_DISPLAY:
@@ -96,12 +96,12 @@ public class ResourceBuilder {
                 returnVal += "reference";
                 break;
 
-            case URL_EXPERIMENT:
-                returnVal += "experiment";
+            case URL_EXPERIMENTS:
+                returnVal += "experiments";
                 break;
 
-            case URL_DATASET:
-                returnVal += "dataset";
+            case URL_DATASETS:
+                returnVal += "datasets";
                 break;
 
             case URL_ANALYSIS:

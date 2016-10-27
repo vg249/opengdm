@@ -1,5 +1,7 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -13,22 +15,30 @@ import java.util.Map;
 /**
  * Created by Phil on 4/6/2016.
  */
-public class ProjectDTO extends Header {
+public class ProjectDTO extends DTOBase {
 
     public ProjectDTO() {}
 
-    public ProjectDTO(GobiiProcessType gobiiProcessType) {
-        super(gobiiProcessType);
+    @Override
+    public Integer getId() {
+        return this.projectId;
     }
+
+    @Override
+    public void setId(Integer id) {
+        this.projectId = id;
+    }
+
 
     // we are waiting until we a have a view to retirn
     // properties for that property: we don't know how to represent them yet
-    private int projectId;
+
+    private Integer projectId;
 
     private String projectName;
     private String projectCode;
     private String projectDescription;
-    private int piContact;
+    private Integer piContact;
     private Integer createdBy;
     private Date createdDate;
     private Integer modifiedBy;
@@ -39,6 +49,8 @@ public class ProjectDTO extends Header {
     public Integer getCreatedBy() {
         return createdBy;
     }
+
+    @GobiiEntityColumn(columnName = "created_by")
     public void setCreatedBy(Integer createdBy) {
         this.createdBy = createdBy;
     }
@@ -47,6 +59,8 @@ public class ProjectDTO extends Header {
     public Date getCreatedDate() {
         return createdDate;
     }
+
+    @GobiiEntityColumn(columnName = "created_date")
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
@@ -56,6 +70,8 @@ public class ProjectDTO extends Header {
     public Integer getModifiedBy() {
         return modifiedBy;
     }
+
+    @GobiiEntityColumn(columnName = "modified_by")
     public void setModifiedBy(Integer modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
@@ -64,6 +80,8 @@ public class ProjectDTO extends Header {
     public Date getModifiedDate() {
         return modifiedDate;
     }
+
+    @GobiiEntityColumn(columnName = "modified_date")
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
@@ -72,15 +90,19 @@ public class ProjectDTO extends Header {
     public Integer getProjectStatus() {
         return projectStatus;
     }
+
+    @GobiiEntityColumn(columnName = "status")
     public void setProjectStatus(Integer projectStatus) {
         this.projectStatus = projectStatus;
     }
 
     @GobiiEntityParam(paramName = "projectId")
-    public int getProjectId() {
+    public Integer getProjectId() {
         return projectId;
     }
-    public void setProjectId(int projectId) {
+
+    @GobiiEntityColumn(columnName = "project_id")
+    public void setProjectId(Integer projectId) {
         this.projectId = projectId;
     }
 
@@ -88,6 +110,9 @@ public class ProjectDTO extends Header {
     public String getProjectName() {
         return projectName;
     }
+
+
+    @GobiiEntityColumn(columnName = "name")
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
@@ -96,6 +121,9 @@ public class ProjectDTO extends Header {
     public String getProjectCode() {
         return projectCode;
     }
+
+
+    @GobiiEntityColumn(columnName = "code")
     public void setProjectCode(String projectCode) {
         this.projectCode = projectCode;
     }
@@ -104,15 +132,19 @@ public class ProjectDTO extends Header {
     public String getProjectDescription() {
         return projectDescription;
     }
+
+    @GobiiEntityColumn(columnName = "description")
     public void setProjectDescription(String projectDescription) {
         this.projectDescription = projectDescription;
     }
 
     @GobiiEntityParam(paramName = "piContact")
-    public int getPiContact() {
+    public Integer getPiContact() {
         return piContact;
     }
-    public void setPiContact(int piContact) {
+
+    @GobiiEntityColumn(columnName = "pi_contact")
+    public void setPiContact(Integer piContact) {
         this.piContact = piContact;
     }
 

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class DtoMapNameIdFetchDataSets implements DtoMapNameIdFetch {
     }
 
 
-    private List makeMapOfDataSetNames(ResultSet resultSet) throws Exception {
+    private List makeMapOfDataSetNames(ResultSet resultSet) throws SQLException {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
@@ -56,7 +57,7 @@ public class DtoMapNameIdFetchDataSets implements DtoMapNameIdFetch {
 
     private List<NameIdDTO> getDatasetNames() throws GobiiException {
 
-        List<NameIdDTO> returnVal = new ArrayList<>();
+        List<NameIdDTO> returnVal;
 
         try {
 
@@ -65,7 +66,7 @@ public class DtoMapNameIdFetchDataSets implements DtoMapNameIdFetch {
             returnVal = makeMapOfDataSetNames(resultSet);
 
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             LOGGER.error("Error retrieving dataset", e);
             throw new GobiiDtoMappingException(e);
         }

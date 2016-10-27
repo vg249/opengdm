@@ -4,11 +4,15 @@ import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Angel on 5/4/2016.
@@ -20,6 +24,33 @@ public class ContactServiceImpl implements ContactService {
     @Autowired
     DtoMapContact dtoMapContact = null;
 
+    @Override
+    public List<ContactDTO> getContacts() throws GobiiDomainException {
+
+        List<ContactDTO> returnVal;
+
+        try {
+            returnVal = dtoMapContact.getContacts();
+            for(ContactDTO currentContactDTO : returnVal ) {
+                currentContactDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                currentContactDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            }
+
+
+            if (null == returnVal) {
+                returnVal = new ArrayList<>();
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+
+        }
+
+        return returnVal;
+    }
+    
 
     @Override
     public ContactDTO createContact(ContactDTO contactDTO) throws GobiiDomainException {

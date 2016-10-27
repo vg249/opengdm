@@ -218,7 +218,7 @@
     <bean id="DataSetService"
           class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl"/>
 
-    <!-- **** Experiment Beans *************************************** -->
+    <!-- **** Experiments Beans *************************************** -->
     <bean id="rsExperimentDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsExperimentDaoImpl"/>
     <bean id="dtoMapExperiment"
@@ -281,7 +281,7 @@
     <bean id="rsRoleDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsRoleDaoImpl"/>
 
-    <!-- **** Project Beans *************************************** -->
+    <!-- **** Projects Beans *************************************** -->
     <bean id="rsProjectDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsProjectDaoImpl"/>
 
@@ -296,6 +296,87 @@
     <bean id="rsOrganizationDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsOrganizationDaoImpl"/>
     <bean id="dtoMapOrganization" class="org.gobiiproject.gobiidtomapping.impl.DtoMapOrganizationImpl"/>
     <bean id="OrganizationService" class="org.gobiiproject.gobidomain.services.impl.OrganizationServiceImpl"/>
+
+
+    <bean id="dtoListQueryColl"
+          class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
+        <property name="listQueriesBySqlId">
+            <map>
+                <!--DATASET -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_DATASET_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg>
+                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO</value>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <value>QUERY_ID_DATASET_ALL</value>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <!--CONTACT -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_CONTACT_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg>
+                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO</value>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <value>QUERY_ID_CONTACT_ALL</value>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <!--ORGANIZATION -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_ORGANIZATION_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg>
+                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO</value>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <value>QUERY_ID_ORGANIZATION_ALL</value>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <!--PLATFORM -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PLATFORM_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg>
+                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO</value>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <value>QUERY_ID_PLATFORM_ALL</value>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <!--PROJECT -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_PROJECT_ALL}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg>
+                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO</value>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <value>QUERY_ID_PROJECT_ALL</value>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <!--EXPERIMENT -->
+                <entry key="#{T(org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId).QUERY_ID_EXPERIMENT}">
+                    <bean class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQuery">
+                        <constructor-arg ref="storedProcExec"/>
+                        <constructor-arg>
+                            <value>org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO</value>
+                        </constructor-arg>
+                        <constructor-arg>
+                            <value>QUERY_ID_EXPERIMENT</value>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
 
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 

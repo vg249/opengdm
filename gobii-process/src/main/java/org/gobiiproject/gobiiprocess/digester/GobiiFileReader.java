@@ -1,14 +1,15 @@
 package org.gobiiproject.gobiiprocess.digester;
 
 import org.apache.commons.cli.*;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.dtorequests.DtoRequestDataSet;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 
 
-
-
-import org.gobiiproject.gobiimodel.dto.container.DataSetDTO;
+import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 
 
 
@@ -38,7 +39,6 @@ import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.text.ParseException;
 import java.util.*;
 
@@ -472,33 +472,46 @@ public class GobiiFileReader {
 				return;
 			}
 
+			String currentCropContextRoot = context.getInstance(null, false).getCurrentCropContextRoot();
+			UriFactory uriFactory = new UriFactory(currentCropContextRoot);
 
+//			DataSetDTO dataSetRequest = new DataSetDTO();
+//
+//			dataSetRequest.setDataSetId(dataSetId);
+//			DtoRequestDataSet dtoProcessor = new DtoRequestDataSet();
+//			DataSetDTO dataSetResponse = dtoProcessor.process(dataSetRequest);
 
-			DataSetDTO dataSetRequest = new DataSetDTO(GobiiProcessType.READ);
+			RestUri projectsUri = uriFactory
+					.resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
+			projectsUri.setParamValue("id", dataSetId.toString());
+			RestResource<DataSetDTO> restResourceForDatasets = new RestResource<>(projectsUri);
+			PayloadEnvelope<DataSetDTO> resultEnvelope = restResourceForDatasets
+					.get(DataSetDTO.class);
 
-			dataSetRequest.setDataSetId(dataSetId);
-			DtoRequestDataSet dtoProcessor = new DtoRequestDataSet();
-			DataSetDTO dataSetResponse = dtoProcessor.process(dataSetRequest);
-
-			if (!dataSetResponse.getStatus().isSucceeded()) {
+			DataSetDTO dataSetResponse;
+			if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
 				System.out.println();
 				logError("Digester","Data set response response errors");
-				for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getStatus().getStatusMessages()) {
+				for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
 					logError("HeaderError",currentStatusMesage.getMessage());
 				}
 				return;
+			} else {
+				dataSetResponse = resultEnvelope.getPayload().getData().get(0);
 			}
 
 			dataSetResponse.setDataTable(monetTableName);
 			dataSetResponse.setDataFile(hdfFileName);
-			dataSetResponse.setGobiiProcessType(GobiiProcessType.UPDATE);
+
+			resultEnvelope = restResourceForDatasets
+					.put(DataSetDTO.class,new PayloadEnvelope<>(dataSetResponse,GobiiProcessType.UPDATE));
 
 
-			dataSetResponse = dtoProcessor.process(dataSetResponse);
+			//dataSetResponse = dtoProcessor.process(dataSetResponse);
 			// if you didn't succeed, do not pass go, but do log errors to your log file
-			if (!dataSetResponse.getStatus().isSucceeded()) {
+			if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
 				logError("Digester","Data set response response errors");
-				for (HeaderStatusMessage currentStatusMesage : dataSetResponse.getStatus().getStatusMessages()) {
+				for (HeaderStatusMessage currentStatusMesage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
 					logError("HeaderError",currentStatusMesage.getMessage());
 				}
 				return;

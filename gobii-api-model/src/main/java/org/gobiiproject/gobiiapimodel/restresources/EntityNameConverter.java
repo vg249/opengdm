@@ -25,7 +25,7 @@ public class EntityNameConverter {
                 break;
 
             case DATASETS:
-                returnVal = ServiceRequestId.URL_DATASET;
+                returnVal = ServiceRequestId.URL_DATASETS;
                 break;
 
             case CVTERMS:
@@ -37,7 +37,7 @@ public class EntityNameConverter {
                 break;
 
             case PROJECTS:
-                returnVal = ServiceRequestId.URL_PROJECT;
+                returnVal = ServiceRequestId.URL_PROJECTS;
                 break;
 
             case ORGANIZATIONS:
@@ -61,7 +61,7 @@ public class EntityNameConverter {
                 break;
 
             case EXPERIMENTS:
-                returnVal = ServiceRequestId.URL_EXPERIMENT ;
+                returnVal = ServiceRequestId.URL_EXPERIMENTS;
                 break;
 
             case REFERENCES:

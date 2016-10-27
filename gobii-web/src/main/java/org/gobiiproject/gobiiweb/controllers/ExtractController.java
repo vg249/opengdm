@@ -1,5 +1,5 @@
 // ************************************************************************
-// (c) 2016 GOBii Project
+// (c) 2016 GOBii Projects
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
@@ -7,7 +7,7 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
 import org.gobiiproject.gobidomain.services.PingService;
-import org.gobiiproject.gobiimodel.dto.container.ExtractorInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,26 +56,6 @@ public class ExtractController {
 
     }//getByContentType()
 
-
-
-
-    @RequestMapping(value = "/extractorInstructions", method = RequestMethod.POST)
-    @ResponseBody
-    public ExtractorInstructionFilesDTO processInstructions(@RequestBody ExtractorInstructionFilesDTO extractorInstructionFilesDTO) {
-
-        ExtractorInstructionFilesDTO returnVal = new ExtractorInstructionFilesDTO();
-
-        try {
-            returnVal = extractorInstructionFilesService.processExtractorFileInstructions(extractorInstructionFilesDTO);
-        } catch (AccessDeniedException e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
 
 
 

@@ -78,7 +78,7 @@ public class UriFactory {
 
     } // resourceByUriIdParam();
 
-    public RestUri loaderInstructionFiles() throws Exception {
+    public RestUri loaderInstructionFile() throws Exception {
 
         return new RestUri(ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
                 this.cropContextRoot,
@@ -86,6 +86,44 @@ public class UriFactory {
                 DELIM_PARAM_BEGIN, DELIM_PARAM_END);
 
     } // resourceByUriIdParam();
+
+    public RestUri loaderInstructionsByInstructionFileName() throws Exception {
+
+        RestUri returnVal;
+
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+                this.cropContextRoot,
+                ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS);
+
+        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("instructionFileName"));
+
+        return returnVal;
+
+    } //
+
+    public RestUri extractorInstructionFile() throws Exception {
+
+        return new RestUri(ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+                this.cropContextRoot,
+                ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS),
+                DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+
+    } // resourceByUriIdParam();
+
+    public RestUri extractorInstructionsByInstructionFileName() throws Exception {
+
+        RestUri returnVal;
+
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+                this.cropContextRoot,
+                ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS);
+
+        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("instructionFileName"));
+
+        return returnVal;
+
+    } //
+
 
     public RestUri organization() throws Exception {
 
@@ -153,20 +191,6 @@ public class UriFactory {
         return returnVal;
 
     } // resourceByUriIdParam();
-
-    public RestUri instructionsByInstructionFileName() throws Exception {
-
-        RestUri returnVal;
-
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
-                this.cropContextRoot,
-                ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS);
-
-        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("instructionFileName"));
-
-        return returnVal;
-
-    } //
 
     public RestUri nameIdList() throws Exception {
 

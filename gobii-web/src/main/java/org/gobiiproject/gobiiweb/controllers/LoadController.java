@@ -1,34 +1,22 @@
 // ************************************************************************
-// (c) 2016 GOBii Project
+// (c) 2016 GOBii Projects
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.*;
-import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.dto.container.*;
-import org.gobiiproject.gobiimodel.dto.container.OrganizationDTO;
-import org.gobiiproject.gobiimodel.dto.container.ProjectDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.gobiiproject.gobiiweb.automation.ControllerUtils;
-import org.gobiiproject.gobiiweb.automation.PayloadReader;
-import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -44,8 +32,6 @@ public class LoadController {
     @Autowired
     private PingService pingService = null;
 
-    @Autowired
-    private ProjectService projectService = null;
 
     @Autowired
     private ReferenceService referenceService = null;
@@ -60,19 +46,10 @@ public class LoadController {
     private MarkerGroupService markerGroupService = null;
 
     @Autowired
-    private OrganizationService organizationService = null;
-
-    @Autowired
-    private ExperimentService experimentService = null;
-
-    @Autowired
     private DisplayService displayService = null;
     
     @Autowired
     private CvService cvService = null;
-
-    @Autowired
-    private DataSetService dataSetService = null;
 
     @Autowired
     private MapsetService mapsetService;
@@ -98,7 +75,7 @@ public class LoadController {
 
         return (returnVal);
 
-    }//getPingResponse()
+    }
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody
@@ -133,41 +110,7 @@ public class LoadController {
         }
         return (returnVal);
 
-    }//getPingResponse()
-
-    @RequestMapping(value = "/experiment", method = RequestMethod.POST)
-    @ResponseBody
-    public ExperimentDTO getPingResponse(@RequestBody ExperimentDTO experimentDTO) {
-
-        ExperimentDTO returnVal = null;
-
-        try {
-            returnVal = experimentService.processExperiment(experimentDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-        return (returnVal);
-
-    }//getPingResponse()
-    
-    @RequestMapping(value = "/project", method = RequestMethod.POST)
-    @ResponseBody
-    public ProjectDTO processProject(@RequestBody ProjectDTO projectDTO) {
-
-        ProjectDTO returnVal = null;
-
-        try {
-            returnVal = projectService.processProject(projectDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-        return (returnVal);
-
-    }//getPingResponse()
+    }
 
 
     @RequestMapping(value = "/reference", method = RequestMethod.POST)
@@ -222,23 +165,23 @@ public class LoadController {
 
     }
 
-    @RequestMapping(value = "/dataset", method = RequestMethod.POST)
-    @ResponseBody
-    public DataSetDTO processDataset(@RequestBody DataSetDTO dataSetDTO) {
-
-        DataSetDTO returnVal = new DataSetDTO();
-
-        try {
-            returnVal = dataSetService.processDataSet(dataSetDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
+//    @RequestMapping(value = "/dataset", method = RequestMethod.POST)
+//    @ResponseBody
+//    public DataSetDTO processDataset(@RequestBody DataSetDTO dataSetDTO) {
+//
+//        DataSetDTO returnVal = new DataSetDTO();
+//
+//        try {
+//            returnVal = dataSetService.processDataSet(dataSetDTO);
+//        } catch (Exception e) {
+//
+//            returnVal.getStatus().addException(e);
+//            LOGGER.error(e.getMessage());
+//        }
+//
+//        return (returnVal);
+//
+//    }
 
     @RequestMapping(value = "/analysis", method = RequestMethod.POST)
     @ResponseBody
@@ -284,23 +227,6 @@ public class LoadController {
 
         try {
             returnVal = mapsetService.processMapset(MapsetDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
-    @RequestMapping(value = "/configsettings", method = RequestMethod.POST)
-    @ResponseBody
-    public ConfigSettingsDTO process(@RequestBody ConfigSettingsDTO configSettingsDTO) {
-
-        ConfigSettingsDTO returnVal = new ConfigSettingsDTO();
-
-        try {
-            returnVal = configSettingsService.process(configSettingsDTO);
         } catch (Exception e) {
 
             returnVal.getStatus().addException(e);

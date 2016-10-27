@@ -22,12 +22,14 @@ public class RestResource<T> {
     Logger LOGGER = LoggerFactory.getLogger(RestResource.class);
 
     private RestUri restUri;
-    private HttpCore httpCore;
+    private HttpCore httpCore = null;
     private ClientContext clientContext;
     private ObjectMapper objectMapper = new ObjectMapper();
+    private PayloadResponse<T> payloadResponse = null;
 
     public RestResource(RestUri restUri) {
         this.restUri = restUri;
+        this.payloadResponse = new PayloadResponse<>(this.restUri);
     }
 
     public void setParamValue(String paramName, String value) throws Exception {
@@ -50,34 +52,18 @@ public class RestResource<T> {
     private HttpCore getHttp() throws Exception {
 
 
-        String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
-        Integer port = ClientContext.getInstance(null, false).getCurrentCropPort();
-        String clientContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        httpCore = new HttpCore(host, port, clientContextRoot);
+        if (null == this.httpCore) {
+            String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
+            Integer port = ClientContext.getInstance(null, false).getCurrentCropPort();
+            String clientContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
+            this.httpCore = new HttpCore(host, port, clientContextRoot);
+        }
 
 
         return httpCore;
     }
 
-    private String makeMessageFromHttpResult(String method,
-                                             HttpMethodResult httpMethodResult) throws Exception {
 
-        return (makeMessageFromHttpResult(method, httpMethodResult, null));
-    }
-
-
-    private String makeMessageFromHttpResult(String method,
-                                             HttpMethodResult httpMethodResult,
-                                             String additionalReason) throws Exception {
-        return method.toUpperCase()
-                + " method on "
-                + this.restUri.makeUrl()
-                + " failed with status code "
-                + Integer.toString(httpMethodResult.getResponseCode())
-                + ": "
-                + httpMethodResult.getReasonPhrase()
-                + (!LineUtils.isNullOrEmpty(additionalReason) ? (": " + additionalReason) : "");
-    }
 
     private String makeHttpBody(PayloadEnvelope<T> payloadEnvelope) throws Exception {
 
@@ -91,65 +77,6 @@ public class RestResource<T> {
     }
 
 
-    public PayloadEnvelope<T> getPayloadFromResponse(Class<T> dtoType,
-                                                     RestMethodTypes restMethodType,
-                                                     int httpSuccessCode,
-                                                     HttpMethodResult httpMethodResult) throws Exception {
-
-        PayloadEnvelope<T> returnVal = new PayloadEnvelope<>();
-
-        if (HttpStatus.SC_NOT_FOUND != httpMethodResult.getResponseCode()) {
-
-            if (HttpStatus.SC_BAD_REQUEST != httpMethodResult.getResponseCode()) {
-
-                try {
-
-                    returnVal = new PayloadEnvelope<T>()
-                            .fromJson(httpMethodResult.getPayLoad(),
-                                    dtoType);
-
-                    // it's possible that you can have codes other than success, and still have valid response
-                    // body
-                    if (httpMethodResult.getResponseCode() != httpSuccessCode) {
-
-                        String message = makeMessageFromHttpResult(restMethodType.toString(), httpMethodResult);
-
-                        GobiiStatusLevel gobiiStatusLevel = returnVal.getHeader().getStatus().isSucceeded() ?
-                                GobiiStatusLevel.WARNING :
-                                GobiiStatusLevel.ERROR;
-
-                        returnVal.getHeader()
-                                .getStatus()
-                                .addStatusMessage(gobiiStatusLevel,
-                                        message);
-                    }
-
-
-                } catch (Exception e) {
-                    returnVal.getHeader().getStatus().addException(e);
-                }
-
-            } else {
-
-                returnVal.getHeader()
-                        .getStatus()
-                        .addStatusMessage(GobiiStatusLevel.ERROR,
-                                makeMessageFromHttpResult(restMethodType.toString(),
-                                        httpMethodResult,
-                                        "One or more client DTOs may be out of date with those of the server"));
-            }
-
-        } else {
-            returnVal.getHeader()
-                    .getStatus()
-                    .addStatusMessage(GobiiStatusLevel.ERROR,
-                            makeMessageFromHttpResult(restMethodType.toString(),
-                                    httpMethodResult,
-                                    "The specified URI may be unknown to the server"));
-        }
-
-        return returnVal;
-    }
 
     public PayloadEnvelope<T> get(Class<T> dtoType) throws Exception {
 
@@ -160,7 +87,7 @@ public class RestResource<T> {
                         .get(this.restUri,
                                 this.getClientContext().getUserToken());
 
-        returnVal = this.getPayloadFromResponse(dtoType,
+        returnVal = this.payloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.GET,
                 HttpStatus.SC_OK,
                 httpMethodResult);
@@ -181,7 +108,7 @@ public class RestResource<T> {
                                 postBody,
                                 this.getClientContext().getUserToken());
 
-        returnVal = this.getPayloadFromResponse(dtoType,
+        returnVal = this.payloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.POST,
                 HttpStatus.SC_CREATED,
                 httpMethodResult);
@@ -202,7 +129,7 @@ public class RestResource<T> {
                                 putBody,
                                 this.getClientContext().getUserToken());
 
-        returnVal = this.getPayloadFromResponse(dtoType,
+        returnVal = this.payloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.PUT,
                 HttpStatus.SC_OK,
                 httpMethodResult);

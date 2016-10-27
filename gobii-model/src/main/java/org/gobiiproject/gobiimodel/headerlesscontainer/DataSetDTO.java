@@ -1,6 +1,6 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
+
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -12,13 +12,19 @@ import java.util.List;
 /**
  * Created by Phil on 4/21/2016.
  */
-public class DataSetDTO extends Header {
+public class DataSetDTO extends  DTOBase{
 
     public DataSetDTO() {
     }
 
-    public DataSetDTO(GobiiProcessType gobiiProcessType) {
-        super(gobiiProcessType);
+    @Override
+    public Integer getId() {
+        return this.dataSetId;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.dataSetId = id;
     }
 
     private Integer dataSetId;

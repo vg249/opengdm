@@ -288,6 +288,7 @@ public class DtoRequestNameIdListTest {
 
         // verify that we can retrieve platofrmDtos from the links we got for the platform name IDs
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == nameIdDTOList.size() );
         List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, nameIdDTOList.size());
         for (Integer currentIdx : itemsToTest) {
 

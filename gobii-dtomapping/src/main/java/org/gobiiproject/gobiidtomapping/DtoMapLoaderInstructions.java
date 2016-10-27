@@ -13,6 +13,6 @@ import java.util.List;
 
 public interface DtoMapLoaderInstructions {
 
-    LoaderInstructionFilesDTO createInstruction(LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws GobiiDtoMappingException, GobiiDaoException;
-    List<LoaderInstructionFilesDTO> getInstructions(String getInstructions);
+    LoaderInstructionFilesDTO createInstruction(String cropType, LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws GobiiDtoMappingException, GobiiDaoException;
+    LoaderInstructionFilesDTO getInstruction(String cropType, String getInstructions);
 }

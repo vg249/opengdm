@@ -7,6 +7,7 @@ package org.gobiiproject.gobiiclient.dtorequests;
 
 
 import org.gobiiproject.gobiiapimodel.hateos.Link;
+import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
@@ -18,13 +19,16 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class DtoRequestContactTest {
@@ -60,6 +64,7 @@ public class DtoRequestContactTest {
         ContactDTO contactDTO = resultEnvelope.getPayload().getData().get(0);
         Assert.assertTrue(contactDTO.getContactId() > 0);
         Assert.assertNotNull(contactDTO.getEmail());
+        Assert.assertTrue(contactDTO.getRoles().size() > 0 );
     } //
 
 
@@ -178,7 +183,7 @@ public class DtoRequestContactTest {
     public void getContactsBySearchWithHttpGet() throws Exception {
 
         RestUri restUriContact = DtoRequestContactTest.uriFactory.contactsByQueryParams();
-        restUriContact.setParamValue("email", "loader.user@temp.com");
+        restUriContact.setParamValue("email", "dummy@email.address");
         RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<ContactDTO> resultEnvelope = restResource
                 .get(ContactDTO.class);
@@ -187,6 +192,7 @@ public class DtoRequestContactTest {
         ContactDTO contactDTO = resultEnvelope.getPayload().getData().get(0);
         Assert.assertNotNull(contactDTO);
         Assert.assertNotNull(contactDTO.getEmail());
+        Assert.assertTrue(contactDTO.getRoles().size() > 0);
 
         //restUriContact.setParamValue(Param);
     }
@@ -249,5 +255,47 @@ public class DtoRequestContactTest {
         Assert.assertTrue(contactDTOReRetrieveResponse.getContactId().equals(contactDTOResponse.getContactId()));
 
     }
+
+
+
+    @Test
+    public void getContactsWithHttpGet() throws Exception {
+
+        RestUri restUriContact = DtoRequestContactTest.uriFactory.resourceColl(ServiceRequestId.URL_CONTACTS);
+        RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
+        PayloadEnvelope<ContactDTO> resultEnvelope = restResource
+                .get(ContactDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<ContactDTO> contactDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(contactDTOList);
+        Assert.assertTrue(contactDTOList.size() > 0);
+        Assert.assertNotNull(contactDTOList.get(0).getLastName());
+
+
+        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == contactDTOList.size() );
+        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, contactDTOList.size());
+        for (Integer currentIdx : itemsToTest) {
+            ContactDTO currentContactDto = contactDTOList.get(currentIdx);
+
+            Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
+
+            RestUri restUriContactForGetById = DtoRequestContactTest
+                    .uriFactory
+                    .RestUriFromUri(currentLink.getHref());
+            RestResource<ContactDTO> restResourceForGetById = new RestResource<>(restUriContactForGetById);
+            PayloadEnvelope<ContactDTO> resultEnvelopeForGetByID = restResourceForGetById
+                    .get(ContactDTO.class);
+            Assert.assertNotNull(resultEnvelopeForGetByID);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
+            ContactDTO contactDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
+            Assert.assertTrue(currentContactDto.getLastName().equals(contactDTOFromLink.getLastName()));
+            Assert.assertTrue(currentContactDto.getContactId().equals(contactDTOFromLink.getContactId()));
+            Assert.assertTrue(currentContactDto.getRoles().size() > 0);
+        }
+
+    }
+    
 
 }
