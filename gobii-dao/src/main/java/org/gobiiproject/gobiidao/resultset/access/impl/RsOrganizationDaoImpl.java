@@ -35,31 +35,6 @@ public class RsOrganizationDaoImpl implements RsOrganizationDao {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public ResultSet getOrganizations() throws GobiiDaoException {
-
-        ResultSet returnVal = null;
-
-        try {
-
-            SpGetOrganizations spGetOrganizations = new SpGetOrganizations();
-            storedProcExec.doWithConnection(spGetOrganizations);
-            returnVal = spGetOrganizations.getResultSet();
-
-        } catch (Exception e) {
-
-            LOGGER.error("Error retrieving organizations", e);
-            throw (new GobiiDaoException(e));
-
-        }
-
-
-        return returnVal;
-
-    }
-
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public ResultSet getOrganizationNames() throws GobiiDaoException {
 
         ResultSet returnVal = null;

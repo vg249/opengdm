@@ -31,7 +31,6 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
     @Autowired
     private SpRunnerCallable spRunnerCallable;
 
-
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ResultSet getDatasetNamesByExperimentId(Integer experimentId) throws GobiiDaoException {
@@ -127,12 +126,6 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
             throw (new GobiiDaoException(e));
         }
         
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    @Override
-    public Integer createUpdateParameter(Map<String, Object> parameters) throws GobiiDaoException {
-        return null;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

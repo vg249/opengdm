@@ -4,10 +4,8 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsExperimentDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsDataSet;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsExperiment;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdExperiment;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProject;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentByNameProjectIdPlatformId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentDetailsByExperimentId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNames;
@@ -35,7 +33,6 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
     @Autowired
     private SpRunnerCallable spRunnerCallable;
-
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override

@@ -11,7 +11,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1, export_format_component_1, dto_request_service_1, authentication_service_1, contacts_list_box_component_1, project_list_box_component_1, experiment_list_box_component_1, dataset_checklist_box_component_1, data_set_extract_1, criteria_display_component_1, status_display_box_component_1, type_process_1, server_config_1, type_entity_1, crops_list_box_component_1, users_list_box_component_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_nameids_1, dto_request_item_serverconfigs_1, EntityFilters;
+    var core_1, http_1, export_format_component_1, dto_request_service_1, authentication_service_1, contacts_list_box_component_1, project_list_box_component_1, experiment_list_box_component_1, dataset_checklist_box_component_1, data_set_extract_1, criteria_display_component_1, status_display_box_component_1, type_process_1, server_config_1, type_entity_1, crops_list_box_component_1, users_list_box_component_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_nameids_1, dto_request_item_serverconfigs_1, type_entity_filter_1;
     var ExtractorRoot;
     return {
         setters:[
@@ -87,8 +87,8 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
             function (dto_request_item_serverconfigs_1_1) {
                 dto_request_item_serverconfigs_1 = dto_request_item_serverconfigs_1_1;
             },
-            function (EntityFilters_1) {
-                EntityFilters = EntityFilters_1;
+            function (type_entity_filter_1_1) {
+                type_entity_filter_1 = type_entity_filter_1_1;
             }],
         execute: function() {
             // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
@@ -116,7 +116,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 ExtractorRoot.prototype.initializeServerConfigs = function () {
                     var _this = this;
                     var scope$ = this;
-                    this._dtoRequestServiceServerConfigs.getResult(new dto_request_item_serverconfigs_1.DtoRequestItemServerConfigs()).subscribe(function (serverConfigs) {
+                    this._dtoRequestServiceServerConfigs.get(new dto_request_item_serverconfigs_1.DtoRequestItemServerConfigs()).subscribe(function (serverConfigs) {
                         if (serverConfigs && (serverConfigs.length > 0)) {
                             scope$.serverConfigList = serverConfigs;
                             var serverCrop_1 = _this._dtoRequestServiceServerConfigs.getGobiiCropType();
@@ -157,7 +157,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 };
                 ExtractorRoot.prototype.initializeContactsForSumission = function () {
                     var scope$ = this;
-                    this._dtoRequestServiceNameIds.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.AllContacts)).subscribe(function (nameIds) {
+                    this._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.Contacts)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.contactNameIdListForSubmitter = nameIds;
                             scope$.selectedContactIdForSubmitter = nameIds[0].id;
@@ -177,7 +177,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 };
                 ExtractorRoot.prototype.initializeContactsForPi = function () {
                     var scope$ = this;
-                    scope$._dtoRequestServiceNameIds.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Contact, EntityFilters.ENTITY_FILTER_CONTACT_PRINICPLE_INVESTIGATOR)).subscribe(function (nameIds) {
+                    scope$._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.Contacts, type_entity_filter_1.EntityFilter.NONE)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.contactNameIdListForPi = nameIds;
                             scope$.selectedContactIdForPi = scope$.contactNameIdListForPi[0].id;
@@ -204,7 +204,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 ExtractorRoot.prototype.initializeProjectNameIds = function () {
                     var _this = this;
                     var scope$ = this;
-                    scope$._dtoRequestServiceNameIds.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Project, this.selectedContactIdForPi)).subscribe(function (nameIds) {
+                    scope$._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.Projects, type_entity_filter_1.EntityFilter.BYTYPEID, this.selectedContactIdForPi)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.projectNameIdList = nameIds;
                             scope$.selectedProjectId = nameIds[0].id;
@@ -228,7 +228,7 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                 ExtractorRoot.prototype.initializeExperimentNameIds = function () {
                     var scope$ = this;
                     if (this.selectedProjectId) {
-                        this._dtoRequestServiceNameIds.getResult(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_process_1.ProcessType.READ, type_entity_1.EntityType.Experiment, this.selectedProjectId)).subscribe(function (nameIds) {
+                        this._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.Experiments, type_entity_filter_1.EntityFilter.BYTYPEID, this.selectedProjectId)).subscribe(function (nameIds) {
                             if (nameIds && (nameIds.length > 0)) {
                                 scope$.experimentNameIdList = nameIds;
                                 scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
@@ -296,10 +296,11 @@ System.register(["@angular/core", "@angular/http", "../views/export-format.compo
                         + date.getMinutes()
                         + "_"
                         + date.getSeconds();
-                    var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName, type_process_1.ProcessType.CREATE, this.selectedServerConfig.crop);
+                    var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName);
+                    //this.selectedServerConfig.crop
                     var extractorInstructionFilesDTOResponse = null;
                     var scope$ = this;
-                    this._dtoRequestServiceExtractorFile.getResult(new dto_request_item_extractor_submission_1.DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
+                    this._dtoRequestServiceExtractorFile.post(new dto_request_item_extractor_submission_1.DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
                         .subscribe(function (extractorInstructionFilesDTO) {
                         extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
                         scope$.messages.push("Extractor instruction file created on server: "

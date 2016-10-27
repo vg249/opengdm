@@ -18,7 +18,7 @@ import java.util.List;
  * Created by Phil on 9/25/2016.
  */
 //There fore, the generic type for this class extends DTOBase, so we are
-    //guaranteed it must have the getId() methd and the set of allowable actions
+//guaranteed it must have the getId() methd and the set of allowable actions
 public class PayloadWriter<T extends DTOBase> {
 
     private final Class<T> dtoType;
@@ -30,13 +30,12 @@ public class PayloadWriter<T extends DTOBase> {
         this.httpServletRequest = httpServletRequest;
     }
 
-    public void writeSingleItem(PayloadEnvelope<T> payloadEnvelope,
-                                ServiceRequestId serviceRequestId,
-                                T itemToWrite) throws GobiiWebException , Exception{
+    public void writeSingleItemForId(PayloadEnvelope<T> payloadEnvelope,
+                                     ServiceRequestId serviceRequestId,
+                                     T itemToWrite,
+                                     String id) throws Exception {
 
-
-
-        if( null != itemToWrite) {
+        if (null != itemToWrite) {
 
             if (itemToWrite.getClass() == this.dtoType) {
 
@@ -45,15 +44,15 @@ public class PayloadWriter<T extends DTOBase> {
                 String contextPath = this.httpServletRequest.getContextPath();
                 UriFactory uriFactory = new UriFactory(contextPath);
                 RestUri restUri = uriFactory.resourceByUriIdParam(serviceRequestId);
-                restUri.setParamValue("id",itemToWrite.getId().toString());
+                restUri.setParamValue("id", id);
                 //And hence we can create the link ehre
 
                 String uri = restUri.makeUrl();
-                Link link = new Link(uri,"Link to " + dtoType + ", id # " + itemToWrite.getId().toString());
+                Link link = new Link(uri, "Link to " + dtoType + ", id " + id);
 
-                for(GobiiProcessType currentProcessType : itemToWrite.getAllowedProcessTypes()) {
+                for (GobiiProcessType currentProcessType : itemToWrite.getAllowedProcessTypes()) {
 
-                    switch( currentProcessType) {
+                    switch (currentProcessType) {
 
                         case CREATE:
                             link.getMethods().add(RestMethodTypes.POST);
@@ -85,15 +84,27 @@ public class PayloadWriter<T extends DTOBase> {
                     "Null dto item");
 
         }
+    }
+
+    public void writeSingleItemForDefaultId(PayloadEnvelope<T> payloadEnvelope,
+                                            ServiceRequestId serviceRequestId,
+                                            T itemToWrite) throws GobiiWebException, Exception {
+
+        String id = itemToWrite.getId().toString();
+
+        this.writeSingleItemForId(payloadEnvelope,
+                serviceRequestId,
+                itemToWrite,
+                id);
 
     }
 
     public void writeList(PayloadEnvelope<T> payloadEnvelope,
-                                ServiceRequestId serviceRequestId,
-                                List<T> itemsToWrite) throws GobiiWebException , Exception {
+                          ServiceRequestId serviceRequestId,
+                          List<T> itemsToWrite) throws GobiiWebException, Exception {
 
-        for(T currentItem : itemsToWrite) {
-            this.writeSingleItem(payloadEnvelope,serviceRequestId,currentItem);
+        for (T currentItem : itemsToWrite) {
+            this.writeSingleItemForDefaultId(payloadEnvelope, serviceRequestId, currentItem);
         }
     }
 }

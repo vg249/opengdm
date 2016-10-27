@@ -35,7 +35,6 @@ public class RsProjectDaoImpl implements RsProjectDao {
     @Autowired
     private SpRunnerCallable spRunnerCallable;
 
-
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ResultSet getProjectNamesForContactId(Integer contactId) throws GobiiDaoException {

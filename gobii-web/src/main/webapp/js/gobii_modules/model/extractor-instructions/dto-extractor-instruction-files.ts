@@ -4,28 +4,12 @@ import {GobiiExtractorInstruction} from "./gobii-extractor-instruction";
 export class ExtractorInstructionFilesDTO {
 
     constructor(private gobiiExtractorInstructions:GobiiExtractorInstruction[],
-                private instructionFileName:string,
-                private processType:ProcessType,
-                private gobiiCropType:string) {
+                private instructionFileName:string) {
 
         this.gobiiExtractorInstructions = gobiiExtractorInstructions;
         this.instructionFileName = instructionFileName;
-        this.processType = processType;
-        this.gobiiCropType = gobiiCropType;
 
     } // ctor
-
-    public getProcessType():ProcessType {
-        return this.processType;
-    }
-
-    public getGobiiCropType():string {
-        return this.gobiiCropType;
-    }
-
-    public setProcessType(value:ProcessType) {
-        this.processType = value;
-    }
 
     public getGobiiExtractorInstructions():any {
         return this.gobiiExtractorInstructions;
@@ -48,9 +32,7 @@ export class ExtractorInstructionFilesDTO {
 
         let returnVal:any = {};
 
-        returnVal.processType = this.processType;
         returnVal.instructionFileName = this.instructionFileName;
-        returnVal.gobiiCropType = this.gobiiCropType;
         returnVal.gobiiExtractorInstructions = [];
 
         this.gobiiExtractorInstructions.forEach(i => {
@@ -70,9 +52,7 @@ export class ExtractorInstructionFilesDTO {
 
         let returnVal:ExtractorInstructionFilesDTO = new ExtractorInstructionFilesDTO(
             gobiiExtractorInstructions,
-            json.instructionFileName,
-            json.processType,
-            json.gobiiCropType
+            json.instructionFileName
         );
 
         return returnVal;

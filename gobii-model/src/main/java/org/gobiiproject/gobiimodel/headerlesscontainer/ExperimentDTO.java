@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
@@ -10,14 +10,11 @@ import java.util.Date;
 /**
  * Created by Angel on 4/13/2016.
  */
-public class ExperimentDTO extends Header {
+public class ExperimentDTO extends DTOBase {
 
     public ExperimentDTO() {
     }
 
-    public ExperimentDTO(GobiiProcessType gobiiProcessType) {
-        super(gobiiProcessType);
-    }
 
     private Integer experimentId;
     private String experimentName = null;
@@ -33,6 +30,16 @@ public class ExperimentDTO extends Header {
     private Date modifiedDate;
     private Integer statusId;
 
+
+    @Override
+    public Integer getId() {
+        return this.experimentId;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.experimentId = id;
+    }
 
     @GobiiEntityParam(paramName = "experimentId")
     public Integer getExperimentId() {

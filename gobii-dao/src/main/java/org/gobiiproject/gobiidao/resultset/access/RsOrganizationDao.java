@@ -11,7 +11,6 @@ import java.util.Map;
 public interface RsOrganizationDao {
 
 
-    ResultSet getOrganizations() throws GobiiDaoException;
     ResultSet getOrganizationNames() throws GobiiDaoException;
     ResultSet getOrganizationDetailsByOrganizationId(Integer organizationId) throws GobiiDaoException;
     Integer createOrganization(Map<String,Object> parameters) throws GobiiDaoException;

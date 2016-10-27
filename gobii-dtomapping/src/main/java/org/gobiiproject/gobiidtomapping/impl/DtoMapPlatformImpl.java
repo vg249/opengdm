@@ -4,10 +4,13 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.DtoMapPlatform;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +30,12 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
 
 
     @Autowired
+    private DtoListQueryColl dtoListQueryColl;
+
+    @Autowired
     private RsPlatformDao rsPlatformDao;
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<PlatformDTO> getPlatforms() throws GobiiDtoMappingException {
 
@@ -36,14 +43,7 @@ public class DtoMapPlatformImpl implements DtoMapPlatform {
 
         try {
 
-            ResultSet resultSet = rsPlatformDao.getPlatforms();
-
-
-            while (resultSet.next()) {
-                PlatformDTO currentPlatformDao = new PlatformDTO();
-                ResultColumnApplicator.applyColumnValues(resultSet, currentPlatformDao);
-                returnVal.add(currentPlatformDao);
-            }
+            returnVal = (List<PlatformDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_PLATFORM_ALL,null);
 
 
         } catch (Exception e) {

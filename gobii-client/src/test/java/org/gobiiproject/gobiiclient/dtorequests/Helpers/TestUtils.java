@@ -77,7 +77,7 @@ public class TestUtils {
 
         while (returnVal.size() < size) {
 
-            Integer currentVal = random.nextInt(maxOfRange + 1);
+            Integer currentVal = random.nextInt(maxOfRange);
 
             if( ! returnVal.contains(currentVal)) {
                 returnVal.add(currentVal);

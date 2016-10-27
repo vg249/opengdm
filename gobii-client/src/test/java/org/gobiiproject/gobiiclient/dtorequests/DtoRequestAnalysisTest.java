@@ -36,7 +36,7 @@ public class DtoRequestAnalysisTest {
 
 
     @Test
-    public void testAnalysisSet() throws Exception {
+    public void testAnalysisGet() throws Exception {
 
 
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();

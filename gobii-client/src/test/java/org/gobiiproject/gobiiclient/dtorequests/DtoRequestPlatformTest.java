@@ -280,6 +280,7 @@ public class DtoRequestPlatformTest {
 
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == platformDTOList.size() );
         List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, platformDTOList.size());
         for (Integer currentIdx : itemsToTest) {
             PlatformDTO currentPlatformDto = platformDTOList.get(currentIdx);
