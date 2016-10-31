@@ -12,6 +12,8 @@ public class GobiiExtractorInstruction {
 
     Integer contactId;
     String contactEmail;
+    private String gobiiCropType = null;
+
 
     public Integer getContactId() {
         return contactId;
@@ -36,5 +38,13 @@ public class GobiiExtractorInstruction {
 
     public void setDataSetExtracts(List<GobiiDataSetExtract> dataSetExtracts) {
         this.dataSetExtracts = dataSetExtracts;
+    }
+
+    public String getGobiiCropType() {
+        return gobiiCropType;
+    }
+
+    public void setGobiiCropType(String gobiiCropType) {
+        this.gobiiCropType = gobiiCropType;
     }
 }

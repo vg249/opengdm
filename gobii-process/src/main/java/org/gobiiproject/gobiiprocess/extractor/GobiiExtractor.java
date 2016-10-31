@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +34,7 @@ public class GobiiExtractor {
 	private static String errorLogOverride;
 	private static boolean verbose;
 	private static String rootDir="../";
-	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, InterruptedException{
+	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, InterruptedException {
 		Options o = new Options()
          		.addOption("v", "verbose", false, "Verbose output")
          		.addOption("e", "errlog", true, "Error log override location")
@@ -107,11 +109,21 @@ public class GobiiExtractor {
 				String markerFile=extractDir+"marker.file";
 				String sampleFile=extractDir+"sample.file";
 				String projectFile=extractDir+"project.file";
-				String gobiiMDE=extractorScriptPath+"postgres/gobii_mde/gobii_mde.py -c "+HelperFunctions.getPostgresConnectionString(cropConfig)+
-					" -m "+markerFile+
-					" -s "+sampleFile+
-					" -p "+projectFile+
-					" -d "+extract.getDataSetId();
+				String chrLengthFile = new StringBuilder(extractDir).append("marker.file.chr").toString();
+				Path mdePath = FileSystems.getDefault().getPath(new StringBuilder(extractorScriptPath).append("mde/gobii_mde.py").toString());
+				if (!(mdePath.toFile().exists() &&
+					  mdePath.toFile().isFile())) {
+					ErrorLogger.logDebug("Extractor", new StringBuilder(mdePath.toString()).append(" does not exist!").toString());
+					return;
+				}
+				String gobiiMDE = new StringBuilder("python ").
+						          append(mdePath).
+						          append(" -c ").append(HelperFunctions.getPostgresConnectionString(cropConfig)).
+					              append(" -m ").append(markerFile).
+						          append(" -s ").append(sampleFile).
+						          append(" -p ").append(projectFile).
+					              append(" -d ").append(extract.getDataSetId()).
+						          append(" -l -v ").toString();
 				String errorFile=getLogName(extract,cropConfig,extract.getDataSetId());
 				ErrorLogger.logInfo("Extractor","Executing MDEs");
 				tryExec(gobiiMDE, null, errorFile);
@@ -143,11 +155,11 @@ public class GobiiExtractor {
 						HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 						HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 					}
-					else{
-					FlapjackTransformer.generateMapFile(markerFile,tempFolder, mapOutFile,errorFile);
-					HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
-					FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
-					HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+					else {
+						FlapjackTransformer.generateMapFile(markerFile, sampleFile, chrLengthFile, dataSetId, tempFolder, mapOutFile, errorFile);
+						HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+						FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
+						HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 					}
 					break;
 				
@@ -174,13 +186,13 @@ public class GobiiExtractor {
 						HelperFunctions.sendEmail(extract.getDataSetName()+" "+extract.getGobiiFileType()+" Extract",null,false,errorFile,configuration,inst.getContactEmail());
 				}
 				System.out.println("DataSet "+dataSetId+" Created");	
-				}			
 			}
 		}
+	}
 
 	public static List<GobiiExtractorInstruction> parseExtractorInstructionFile(String filename){
-		 ObjectMapper objectMapper = new ObjectMapper();
-		 GobiiExtractorInstruction[] file = null;
+		ObjectMapper objectMapper = new ObjectMapper();
+		GobiiExtractorInstruction[] file = null;
 		 
 		try {
 			file = objectMapper.readValue(new FileInputStream(filename), GobiiExtractorInstruction[].class);
@@ -188,7 +200,7 @@ public class GobiiExtractor {
 			ErrorLogger.logError("Extractor","ObjectMapper could not read instructions",e);
 		}
 		if(file==null)return null;
-		 return Arrays.asList(file);
+		return Arrays.asList(file);
 	}
 	
 	private static String divineCrop(String instructionFile) {
@@ -203,13 +215,13 @@ public class GobiiExtractor {
 		return crop;
 	}
 	
-	private static String getLogName(GobiiExtractorInstruction gli,CropConfig config, Integer dsid){
+	private static String getLogName(GobiiExtractorInstruction gli, CropConfig config, Integer dsid) {
 		return getLogName(gli.getDataSetExtracts().get(0),config,dsid);
-	}
-	private static String getLogName(GobiiDataSetExtract gli,CropConfig config,Integer dsid){
+	 }
+
+	private static String getLogName(GobiiDataSetExtract gli, CropConfig config, Integer dsid) {
 		String cropName=config.getGobiiCropType();
 		String destination=gli.getExtractDestinationDirectory();
 		return destination +"/"+cropName+"_DS-"+dsid+".log";
 	}
-
 }

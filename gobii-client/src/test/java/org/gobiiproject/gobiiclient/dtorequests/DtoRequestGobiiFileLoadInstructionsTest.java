@@ -70,12 +70,12 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         String instructionOneTableName = "foo_table";
         Integer instructionOneDataSetId = 112;
-        String gobiiCropTypeTargetOne = ClientContext.getInstance(null, false).getCurrentClientCropType();
+        String gobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
 
         GobiiLoaderInstruction gobiiLoaderInstructionOne = new GobiiLoaderInstruction();
         gobiiLoaderInstructionOne.setTable(instructionOneTableName);
         gobiiLoaderInstructionOne.setDataSetId(instructionOneDataSetId);
-        gobiiLoaderInstructionOne.setGobiiCropType(gobiiCropTypeTargetOne);
+        gobiiLoaderInstructionOne.setGobiiCropType(gobiiCropType);
 
 
         // column one
@@ -241,11 +241,13 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         );
 
 
-        Assert.assertTrue(
+        // we only set it on one, but the server should have set it for the second one
+        Assert.assertTrue(2 ==
                 loaderInstructionFilesDTOretrieveResponse
                         .getGobiiLoaderInstructions()
-                        .get(0)
-                        .getGobiiCropType().equals(gobiiCropTypeTargetOne)
+                        .stream()
+                        .filter(i -> i.getGobiiCropType().equals(gobiiCropType))
+                        .count()
         );
 
 

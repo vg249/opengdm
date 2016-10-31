@@ -9,31 +9,41 @@ import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
  */
 public class FlapjackTransformer {
 
-	/**
-	 * Given a marker MDE file, generates a map file to {@code outFile}
-	 * @param markerFile MDE output of marker file
-	 * @param tempDir Place to store temporary files
-	 * @param outFile The resulting map file
-	 * @param errorFile The temporary file to write errors to
-	 * @return true if success
-	 */
-	public static boolean generateMapFile(String markerFile, String tempDir,String outFile,String errorFile){
-/*		
-	2) cut marker, chromosome, position
-	3) remove headers
-	4) cat with response file
-	cut -f1,2,4 derp.txt | tail -n +2 > derp2.txt
+	public static boolean generateMapFile(String markerFile, String sampleFile, String chrLengthFile, int datasetId, String tempDir, String outFile, String errorFile) {
+   /*
+   		1) create the output header
+   		2) remove the headers from chrLengthFile
+		3) cut the columns related to the marker, the chromosome, and the position from markerFile
+		4) remove the headers from such columns
+		5) cat all the three files into the new output file
+		Example for the marker file process: cut -f1,2,4 derp.txt | tail -n +2 > derp2.txt
+	*/
+		HelperFunctions.tryExec(new StringBuilder("echo # fjFile = MAP").toString(),
+				                new StringBuilder(tempDir).append("map.header").toString(),
+				                errorFile);
+
+		HelperFunctions.tryExec(new StringBuilder("tail -n +2 ").append(chrLengthFile).toString(),
+				                new StringBuilder(tempDir).append("map.chrLengths").toString(),
+				                errorFile);
+
+		HelperFunctions.tryExec(new StringBuilder("cut -f1,3,4 ").append(markerFile).toString(),
+				                new StringBuilder(tempDir).append("tmp").toString(),
+				                errorFile);
+		HelperFunctions.tryExec(new StringBuilder("tail -n +2 ").append(tempDir).append("tmp").toString(),
+				                new StringBuilder(tempDir).append("map.body").toString(),
+				                errorFile);
+		rm(new StringBuilder(tempDir).append("tmp").toString());
 		
-*/		
-		HelperFunctions.tryExec("echo # fjFile = MAP",tempDir+"map.response",errorFile);
-		
-		HelperFunctions.tryExec("cut -f1,3,4 "+markerFile,tempDir+"tmp",errorFile);
-		HelperFunctions.tryExec("tail -n +2 "+tempDir+"tmp",tempDir+"map.body",errorFile);
-		rm(tempDir+"tmp");
-		
-		HelperFunctions.tryExec("cat "+tempDir+"map.response "+tempDir+"map.body",outFile,errorFile);
-		rm(tempDir+"map.response");
-		rm(tempDir+"map.body");
+		HelperFunctions.tryExec(new StringBuilder("cat ").append(tempDir).append("map.header ").
+				                                          append(tempDir).append("map.chrLengths ").
+				                                          append(tempDir).append("map.body").toString(),
+				                outFile,
+				                errorFile);
+
+		rm(new StringBuilder(tempDir).append("map.header").toString());
+		rm(new StringBuilder(tempDir).append("map.chrLengths").toString());
+		rm(new StringBuilder(tempDir).append("map.body").toString());
+
 		return true;
 	}
 
@@ -86,8 +96,6 @@ transpose marker names
 		HelperFunctions.tryExec("tail -n +2 "+tempFile,tempDir+"genotype.sampleList",errorFile);
 		rm(tempFile);
 		
-		
-		
 		HelperFunctions.tryExec("paste "+ tempDir+"genotype.sampleList "+genotypeFile,tempDir+"sample.matrix",errorFile);//And now we have a matrix with the samples attached
 		HelperFunctions.tryExec("cat "+tempDir+"map.response "+ inverseMarkerList+" " + tempDir+"blank.file "+ tempDir+"sample.matrix",outFile,errorFile);
 
@@ -97,7 +105,6 @@ transpose marker names
 		rm(tempDir+"genotype.sampleList");
 		rm(tempDir+"sample.matrix");
 		rm(tempDir+"blank.file");
-		
 		
 		return true;
 	}
