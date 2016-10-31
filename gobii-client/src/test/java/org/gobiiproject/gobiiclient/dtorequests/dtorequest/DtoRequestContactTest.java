@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests;
+package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
 
 
 import org.gobiiproject.gobiiapimodel.hateos.Link;
@@ -19,12 +19,10 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Date;

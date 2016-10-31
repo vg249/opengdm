@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests;
+package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
 
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -13,7 +13,6 @@ import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;

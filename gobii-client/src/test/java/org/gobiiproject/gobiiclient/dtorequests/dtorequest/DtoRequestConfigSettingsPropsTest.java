@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests;
+package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
 
 
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -12,6 +12,7 @@ import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
+import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
@@ -30,8 +31,10 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class DtoRequestConfigSettingsPropsTest {
@@ -76,7 +79,6 @@ public class DtoRequestConfigSettingsPropsTest {
         CropConfig cropConfigArbitrary = configSettings.getActiveCropConfigs().get(0);
 
 
-
         List<ServerConfig> matches = configSettingsDTOResponse
                 .getServerConfigs()
                 .entrySet()
@@ -95,7 +97,7 @@ public class DtoRequestConfigSettingsPropsTest {
     }
 
     @Test
-    public void testInitContextFromConfigSettings() throws  Exception {
+    public void testInitContextFromConfigSettings() throws Exception {
 
         ClientContext.resetConfiguration();
         ConfigSettings configSettings = new ConfigSettings(TestValues.PROP_FILE_FQPN);
@@ -103,8 +105,8 @@ public class DtoRequestConfigSettingsPropsTest {
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
 
-       Assert.assertTrue("Unable to log in with locally instantiated config settings",
-               ClientContext.getInstance(configSettings).login(userDetail.getUserName(), userDetail.getPassword()));
+        Assert.assertTrue("Unable to log in with locally instantiated config settings",
+                ClientContext.getInstance(configSettings).login(userDetail.getUserName(), userDetail.getPassword()));
 
         PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
 

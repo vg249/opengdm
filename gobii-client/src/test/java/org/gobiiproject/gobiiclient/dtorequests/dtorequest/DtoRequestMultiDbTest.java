@@ -3,8 +3,10 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests;
+package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
 
+import org.gobiiproject.gobiiclient.dtorequests.DtoRequestCv;
+import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;

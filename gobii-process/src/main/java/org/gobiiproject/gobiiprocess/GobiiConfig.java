@@ -5,6 +5,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -92,6 +93,7 @@ public class GobiiConfig {
     /**
      * Main method of the configuration checking utility.
      * Use jar -? to find arguments
+     *
      * @param args
      */
     public static void main(String[] args) {
@@ -113,8 +115,8 @@ public class GobiiConfig {
                     + CONFIG_SVR_GLOBAL_EMAIL + ", " + CONFIG_CROP_ID + ")");
 
             options.addOption(CONFIG_REMOVE_CROP, true, "Removes the specified crop and related server specifications");
-            options.addOption(CONFIG_GLOBAL_DEFAULT_CROP, false, "The default crop (global)");
-            options.addOption(CONFIG_GLOBAL_FILESYS_ROOT, false, "Absolute path to the gobii file system root (global)");
+            options.addOption(CONFIG_GLOBAL_DEFAULT_CROP, true, "The default crop (global)");
+            options.addOption(CONFIG_GLOBAL_FILESYS_ROOT, true, "Absolute path to the gobii file system root (global)");
 
             options.addOption(CONFIG_CROP_ID, true, "Identifier of crop to add or modify; must be accompanied by a server specifier and its options");
 
@@ -280,7 +282,8 @@ public class GobiiConfig {
                     exitCode = 0;
                 }
 
-            } else if (commandLine.hasOption(PROP_FILE_PROPS_TO_XML) && commandLine.hasOption(PROP_FILE_FQPN)) {
+            } else if (commandLine.hasOption(PROP_FILE_PROPS_TO_XML)
+                    && commandLine.hasOption(PROP_FILE_FQPN)) {
 
                 String propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
 
@@ -296,6 +299,22 @@ public class GobiiConfig {
 
                 ConfigSettings configSettings = new ConfigSettings(propFileFqpn);
 
+            } else if (commandLine.hasOption(CONFIG_ADD_ITEM)) {
+
+
+                String propFileFqpn = null;
+                if (commandLine.hasOption(PROP_FILE_FQPN)
+                        && (null != (propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN)))) {
+
+
+                    if (setGobiiConfiguration(propFileFqpn, options, commandLine)) {
+                        exitCode = 0;
+                    }
+
+                } else {
+                    System.err.println("Value is required: " + options.getOption(PROP_FILE_FQPN).getDescription());
+                }
+
             } else {
                 helpFormatter.printHelp(NAME_COMMAND, options);
             }
@@ -308,6 +327,48 @@ public class GobiiConfig {
         System.exit(exitCode);
 
     }// main()
+
+
+    private static boolean setGobiiConfiguration(String propFileFqpn, Options options, CommandLine commandLine) {
+
+        boolean returnVal = true;
+
+        try {
+
+
+            ConfigSettings configSettings;
+            File file = new File(propFileFqpn);
+            if (file.exists()) {
+
+                configSettings = ConfigSettings.read(propFileFqpn);
+            } else {
+                configSettings = ConfigSettings.makeNew(propFileFqpn);
+            }
+
+
+            if (commandLine.hasOption(CONFIG_GLOBAL_DEFAULT_CROP)) {
+
+                String defaultCrop = commandLine.getOptionValue(CONFIG_GLOBAL_DEFAULT_CROP);
+
+                if (null != configSettings.getCropConfig(defaultCrop)) {
+                    configSettings.setDefaultGobiiCropType(defaultCrop);
+                } else {
+                    System.err.print("The specified default crop is not defined as a crop in the configuration:" + defaultCrop);
+                }
+
+
+            } else {
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return returnVal;
+
+    }
 
     private static ClientContext configClientContext(String configServerUrl) throws Exception {
         System.out.println();

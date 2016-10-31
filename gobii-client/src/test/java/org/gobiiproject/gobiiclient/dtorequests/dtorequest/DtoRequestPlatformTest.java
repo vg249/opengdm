@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.dtorequests;
+package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.hateos.Link;

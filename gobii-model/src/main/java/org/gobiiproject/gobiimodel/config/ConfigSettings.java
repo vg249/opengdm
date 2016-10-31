@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,23 +16,53 @@ public class ConfigSettings {
 
     public ConfigSettings() {
         try {
-            configValues = ConfigValuesFactory.make(null);
-        } catch( Exception e ) {
-            LOGGER.error("Error instancing ConfigValues with null fqpn",e);
+            configValues = ConfigValuesFactory.read(null);
+        } catch (Exception e) {
+            LOGGER.error("Error instancing ConfigValues with null fqpn", e);
         }
     }
 
     ConfigValues configValues = null;
 
-    public ConfigSettings(String configFileWebPath){
+    public ConfigSettings(String configFileWebPath) {
 
         try {
-            configValues = ConfigValuesFactory.make(configFileWebPath);
-        } catch(Exception e ) {
-            LOGGER.error("Error instancing ConfigValues with fqpn: " + configFileWebPath,e);
+            configValues = ConfigValuesFactory.read(configFileWebPath);
+        } catch (Exception e) {
+            LOGGER.error("Error instancing ConfigValues with fqpn: " + configFileWebPath, e);
 
         }
     } // ctor
+
+    private ConfigSettings(ConfigValues configValues) {
+        this.configValues = configValues;
+    }
+
+    public static ConfigSettings makeNew(String userFqpn) throws Exception {
+
+        ConfigSettings returnVal = null;
+
+        ConfigValues configValues = ConfigValuesFactory.makeNew(userFqpn);
+        if (configValues != null) {
+            returnVal = new ConfigSettings(configValues);
+        }
+
+        return returnVal;
+
+    } //
+
+    public static ConfigSettings read(String userFqpn) throws Exception {
+
+        ConfigSettings returnVal = null;
+
+        ConfigValues configValues = ConfigValuesFactory.read(userFqpn);
+        if (configValues != null) {
+            returnVal = new ConfigSettings(configValues);
+        }
+
+        return returnVal;
+
+    } //
 
 
     public CropConfig getCropConfig(String gobiiCropType) {
@@ -52,7 +81,7 @@ public class ConfigSettings {
                 .configValues
                 .getActiveCropConfigs()
                 .stream()
-                .filter(c -> c.isActive() == true )
+                .filter(c -> c.isActive() == true)
                 .map(CropConfig::getGobiiCropType)
                 .collect(Collectors.toList());
     }
@@ -125,6 +154,11 @@ public class ConfigSettings {
     public String getFileSystemRoot() {
 
         return this.configValues.getFileSystemRoot();
+    }
+
+    public void setFileSystemRoot(String fileSystemRoot) {
+
+        this.configValues.setFileSystemRoot(fileSystemRoot);
     }
 
     public String getFileSystemLog() {

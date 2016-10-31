@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests;
+package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.hateos.Link;
