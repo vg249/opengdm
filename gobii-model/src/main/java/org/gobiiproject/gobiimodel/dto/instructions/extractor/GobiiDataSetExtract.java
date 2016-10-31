@@ -53,5 +53,4 @@ public class GobiiDataSetExtract {
         this.extractDestinationDirectory = extractDestinationDirectory;
     }
 
-
 }

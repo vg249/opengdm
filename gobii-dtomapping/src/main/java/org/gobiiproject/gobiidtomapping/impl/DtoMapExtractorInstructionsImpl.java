@@ -64,6 +64,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 //                throw new Exception("Extractor instruction request does not specify a crop");
 //            }
 
+
             String instructionFileDirectory = configSettings
                     .getCropConfig(cropType)
                     .getExtractorInstructionFilesDirectory();
@@ -82,6 +83,10 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
                             "instruction file name is missing");
+                }
+
+                if( LineUtils.isNullOrEmpty(currentExtractorInstruction.getGobiiCropType())) {
+                    currentExtractorInstruction.setGobiiCropType(cropType);
                 }
 
                 if (null != currentExtractorInstruction.getContactId() && currentExtractorInstruction.getContactId() > 0) {

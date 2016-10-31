@@ -48,6 +48,8 @@ public class DtoRequestFileExtractorInstructionsTest {
     public void testSendExtractorInstructionFile() throws Exception {
 
 
+        String cropTypeFromContext = ClientContext.getInstance(null,false).getCurrentClientCropType();
+
         // ************** DEFINE DTO
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
 
@@ -59,6 +61,7 @@ public class DtoRequestFileExtractorInstructionsTest {
         // ************** INSTRUCTION ONE
         GobiiExtractorInstruction gobiiExtractorInstructionOne = new GobiiExtractorInstruction();
         gobiiExtractorInstructionOne.setContactId(1);
+        gobiiExtractorInstructionOne.setGobiiCropType(cropTypeFromContext);
 
         // ************** DATA SET EXTRACT ONE
         GobiiDataSetExtract gobiiDataSetExtractOne = new GobiiDataSetExtract();
@@ -68,6 +71,7 @@ public class DtoRequestFileExtractorInstructionsTest {
         gobiiDataSetExtractOne.setDataSetName(DataSetExtractOneName);
         gobiiDataSetExtractOne.setAccolate(true);
         gobiiDataSetExtractOne.setDataSetId(1);
+
 
 
         // ************** DATA SET EXTRACT two
@@ -94,6 +98,7 @@ public class DtoRequestFileExtractorInstructionsTest {
         // INSTRUCTION TWO BEGIN
         GobiiExtractorInstruction gobiiExtractorInstructionTwo = new GobiiExtractorInstruction();
         gobiiExtractorInstructionTwo.setContactId(1);
+        // gobiiExtractorInstructionTwo.setGobiiCropType(cropTypeFromContext); // DON'T SET IT # 2
 
         // column one
         gobiiDataSetExtractOne = new GobiiDataSetExtract();
@@ -144,6 +149,11 @@ public class DtoRequestFileExtractorInstructionsTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOretrieveResponse = resultEnvelope.getPayload().getData().get(0);
+
+        for( GobiiExtractorInstruction currentExtractorInstruction : extractorInstructionFilesDTOretrieveResponse.getGobiiExtractorInstructions()) {
+            Assert.assertTrue("The sent crop type of the retrieved crop types does not match",
+                    currentExtractorInstruction.getGobiiCropType().equals(cropTypeFromContext));
+        }
 
         Assert.assertTrue(
                 2 == extractorInstructionFilesDTOretrieveResponse
