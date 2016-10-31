@@ -37,6 +37,7 @@ public class HttpCore {
     private String host = null;
     private Integer port = null;
     private UriFactory uriFactory;
+    private boolean logJson = false;
 
 
     public HttpCore(String host,
@@ -188,7 +189,14 @@ public class HttpCore {
 
 
             JsonParser parser = new JsonParser();
+
             String jsonAsString = stringBuilder.toString();
+
+            if (logJson) {
+                System.out.println("=====================: " + restUri.makeUrl());
+                System.out.println(jsonAsString);
+            }
+
             JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
 
             returnVal.setPayLoad(jsonObject);
