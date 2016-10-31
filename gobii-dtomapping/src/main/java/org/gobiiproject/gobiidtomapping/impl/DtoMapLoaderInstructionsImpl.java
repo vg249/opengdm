@@ -85,6 +85,10 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
         for (GobiiLoaderInstruction currentLoaderInstruction :
                 loaderInstructionFilesDTO.getGobiiLoaderInstructions()) {
 
+            if( LineUtils.isNullOrEmpty(currentLoaderInstruction.getGobiiCropType())) {
+                currentLoaderInstruction.setGobiiCropType(cropType);
+            }
+
 
             GobiiFile currentGobiiFile = currentLoaderInstruction.getGobiiFile();
 
