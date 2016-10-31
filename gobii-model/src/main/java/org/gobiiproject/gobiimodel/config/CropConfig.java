@@ -20,31 +20,31 @@ public class CropConfig {
 
 
 
-    @Element
+    @Element(required = false)
     private String gobiiCropType;
 
-    @Element
+    @Element(required = false)
     private String serviceDomain;
 
-    @Element
+    @Element(required = false)
     private String serviceAppRoot;
 
-    @Element
+    @Element(required = false)
     private Integer servicePort;
 
-    @Element
+    @Element(required = false)
     private String rawUserFilesDirectory;
 
-    @Element
+    @Element(required = false)
     private String loaderInstructionFilesDirectory;
 
-    @Element
+    @Element(required = false)
     private String extractorInstructionFilesDirectory;
 
-    @Element
+    @Element(required = false)
     private String extractorInstructionFilesOutputDirectory;
 
-    @Element
+    @Element(required = false)
     private String intermediateFilesDirectory;
 
     @Element

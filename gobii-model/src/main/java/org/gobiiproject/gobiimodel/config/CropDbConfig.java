@@ -28,22 +28,22 @@ public class CropDbConfig {
     }
 
 
-    @Element
+    @Element(required = false)
     private GobiiDbType gobiiDbType = null;
 
-    @Element
+    @Element(required = false)
     private String host = null;
 
-    @Element
+    @Element(required = false)
     private String dbName = null;
 
-    @Element
+    @Element(required = false)
     private Integer port = null;
 
-    @Element
+    @Element(required = false)
     private String userName = null;
 
-    @Element
+    @Element(required = false)
     private String password = null;
 
     public GobiiDbType getGobiiDbType() {

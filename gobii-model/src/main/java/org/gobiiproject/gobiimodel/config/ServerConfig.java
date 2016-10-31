@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.config;
 
 
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
+import org.simpleframework.xml.Element;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +36,19 @@ public class ServerConfig {
 
     }
 
+    @Element(required = false)
     private Integer port;
+
+    @Element(required = false)
     private String domain;
+
+    @Element(required = false)
     private String contextRoot;
+
+    @Element(required = false)
     private String gobiiCropType;
+
+    @Element
     private Map<GobiiFileLocationType, String> fileLocations = new HashMap<>();
 
     public Integer getPort() {

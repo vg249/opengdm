@@ -175,7 +175,6 @@ class ConfigValuesFactory {
 
             } else {
 
-                renamePropsFile(fqpn);
                 returnVal = configFileReaderXml.read(fqpn);
 
             } // if else the file we got has ".properties" as extension
@@ -189,5 +188,12 @@ class ConfigValuesFactory {
         return returnVal;
 
     } // make()
+
+    public static void commitConfigValues(ConfigValues configValues, String fqpn) throws Exception {
+
+        ConfigFileReaderXml configFileReaderXml = new ConfigFileReaderXml();
+        configFileReaderXml.write(configValues, fqpn);
+
+    }
 
 }

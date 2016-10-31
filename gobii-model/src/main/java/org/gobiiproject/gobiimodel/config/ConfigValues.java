@@ -27,34 +27,34 @@ class ConfigValues {
 
     private String currentGobiiCropType;
 
-    @Element
+    @Element(required = false)
     private String defaultGobiiCropType;
 
-    @Element
+    @Element(required = false)
     private String emailSvrType;
 
-    @Element
+    @Element(required = false)
     private String emailSvrDomain;
 
-    @Element
+    @Element(required = false)
     private String emailSvrUser;
 
-    @Element
+    @Element(required = false)
     private String emailSvrHashType;
 
-    @Element
+    @Element(required = false)
     private String emailSvrPassword;
 
-    @Element
+    @Element(required = false)
     private Integer emailServerPort = 0;
 
-    @Element
+    @Element(required = false)
     private boolean iflIntegrityCheck = false;
 
-    @Element
+    @Element(required = false)
     private String fileSystemRoot;
 
-    @Element
+    @Element(required = false)
     private String fileSystemLog;
 
 

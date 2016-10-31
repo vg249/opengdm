@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.dtorequests.standalone;
+package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.junit.Assert;
@@ -10,12 +10,20 @@ import java.util.UUID;
 /**
  * Created by Phil on 10/31/2016.
  */
-public class TestConfigSettings {
+public class TestConfigurationSettings {
+
+
+    private String testDirectory = "/tmp_gobii_test/";
 
     @Test
     public void configSettingsReadWrite() throws Exception {
 
-        String newConfigFileNameFqpn = "test_config_" + UUID.randomUUID().toString() + ".xml";
+        File testDir = new File(testDirectory);
+
+        Assert.assertTrue("The configurationt est directory does not exist",
+                testDir.exists());
+
+        String newConfigFileNameFqpn = testDirectory + "test_config_" + UUID.randomUUID().toString() + ".xml";
 
         ConfigSettings.makeNew(newConfigFileNameFqpn);
 
@@ -27,6 +35,7 @@ public class TestConfigSettings {
         String fileSysRootVal = "some-arbitrary-value";
         ConfigSettings configSettings = ConfigSettings.read(newConfigFileNameFqpn);
         configSettings.setFileSystemRoot(fileSysRootVal);
+        configSettings.commit();
 
 
         ConfigSettings configSettingsSecondReference = ConfigSettings.read(newConfigFileNameFqpn);

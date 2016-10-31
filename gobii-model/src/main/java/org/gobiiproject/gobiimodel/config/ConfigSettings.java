@@ -14,6 +14,9 @@ public class ConfigSettings {
 
     private static Logger LOGGER = LoggerFactory.getLogger(ConfigSettings.class);
 
+
+    private String configFileFqpn;
+
     public ConfigSettings() {
         try {
             configValues = ConfigValuesFactory.read(null);
@@ -28,6 +31,7 @@ public class ConfigSettings {
 
         try {
             configValues = ConfigValuesFactory.read(configFileWebPath);
+            this.configFileFqpn = configFileWebPath;
         } catch (Exception e) {
             LOGGER.error("Error instancing ConfigValues with fqpn: " + configFileWebPath, e);
 
@@ -45,6 +49,7 @@ public class ConfigSettings {
         ConfigValues configValues = ConfigValuesFactory.makeNew(userFqpn);
         if (configValues != null) {
             returnVal = new ConfigSettings(configValues);
+            returnVal.configFileFqpn = userFqpn;
         }
 
         return returnVal;
@@ -58,11 +63,16 @@ public class ConfigSettings {
         ConfigValues configValues = ConfigValuesFactory.read(userFqpn);
         if (configValues != null) {
             returnVal = new ConfigSettings(configValues);
+            returnVal.configFileFqpn = userFqpn;
         }
 
         return returnVal;
 
     } //
+
+    public void commit() throws Exception {
+        ConfigValuesFactory.commitConfigValues(this.configValues,this.configFileFqpn);
+    }
 
 
     public CropConfig getCropConfig(String gobiiCropType) {

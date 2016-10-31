@@ -19,9 +19,15 @@ public class ConfigFileReaderXml {
     public void write(ConfigValues configValues, String fileName) throws Exception {
 
         Serializer serializer = new Persister();
+
         File file = new File(fileName);
+        if( ! file.exists()) {
+            file.createNewFile();
+        }
 
         serializer.write(configValues, file);
+
+
 
     } // ConfigFileReaderProps
 
