@@ -119,40 +119,40 @@ public class GobiiConfig {
 
             // define commandline options
             Options options = new Options();
-            options.addOption(TOMCAT_BASE_DIR, true, "Tomcat base directory (e.g., /usr/local/tomcat7)");
-            options.addOption(CONFIG_BASE_URL, true, "url of GOBII web server for configuration verification");
-            options.addOption(CONFIG_MKDIRS, false, "make gobii directories from root in the specified properties file (requires " + PROP_FILE_FQPN + ")");
-            options.addOption(COPY_WARS, true, "create war files for active crops from the specified war file (requires " + PROP_FILE_FQPN + ")");
-            options.addOption(PROP_FILE_FQPN, true, "fqpn of gobii properties file");
-            options.addOption(PROP_FILE_PROPS_TO_XML, false, "Convert existing gobii-properties file to xml (requires " + PROP_FILE_FQPN + ")");
-            options.addOption(CONFIG_ADD_ITEM, false, "Adds or updates the configuration value specified by one of the standalone parameters ("
+            setOption(options,TOMCAT_BASE_DIR, true, "Tomcat base directory (e.g., /usr/local/tomcat7)","tomcat base");
+            setOption(options,CONFIG_BASE_URL, true, "url of GOBII web server for configuration verification","base url");
+            setOption(options,CONFIG_MKDIRS, false, "make gobii directories from root in the specified properties file (requires " + PROP_FILE_FQPN + ")","make directories");
+            setOption(options,COPY_WARS, true, "create war files for active crops from the specified war file (requires " + PROP_FILE_FQPN + ")","copy wars");
+            setOption(options,PROP_FILE_FQPN, true, "fqpn of gobii configuration file","config fqpn");
+            setOption(options,PROP_FILE_PROPS_TO_XML, false, "Convert existing gobii-properties file to xml (requires " + PROP_FILE_FQPN + ")","convert to xml");
+            setOption(options,CONFIG_ADD_ITEM, false, "Adds or updates the configuration value specified by one of the standalone parameters ("
                     + CONFIG_GLOBAL_FILESYS_ROOT + ", " + CONFIG_GLOBAL_DEFAULT_CROP + ") or parameters that require server option parameters ("
-                    + CONFIG_SVR_GLOBAL_EMAIL + ", " + CONFIG_CROP_ID + ")");
+                    + CONFIG_SVR_GLOBAL_EMAIL + ", " + CONFIG_CROP_ID + ")","add config item");
 
-            options.addOption(CONFIG_REMOVE_CROP, true, "Removes the specified crop and related server specifications");
+            setOption(options,CONFIG_REMOVE_CROP, true, "Removes the specified crop and related server specifications","remove config item");
 
             setOption(options,CONFIG_GLOBAL_DEFAULT_CROP,true,"Default crop (global)", "default crop");
 
-            options.addOption(CONFIG_GLOBAL_FILESYS_ROOT, true, "Absolute path to the gobii file system root (global)");
+            setOption(options,CONFIG_GLOBAL_FILESYS_ROOT, true, "Absolute path to the gobii file system root (global)","gobii root");
 
-            options.addOption(CONFIG_CROP_ID, true, "Identifier of crop to add or modify; must be accompanied by a server specifier and its options");
+            setOption(options,CONFIG_CROP_ID, true, "Identifier of crop to add or modify; must be accompanied by a server specifier and its options","crop ID");
 
 
-            options.addOption(CONFIG_SVR_GLOBAL_EMAIL, false, "Server type: Email (not crop specific)"); // does not require -c
-            options.addOption(CONFIG_SVR_CROP_WEB, false, "Server type: Web (requires )");
-            options.addOption(CONFIG_SVR_CROP_POSTGRES, false, "Server type: postgres");
-            options.addOption(CONFIG_SVR_CROP_MONET, false, "Server type: Monet DB");
+            setOption(options,CONFIG_SVR_GLOBAL_EMAIL, false, "Server type: Email (not crop specific)","server: email"); // does not require -c
+            setOption(options,CONFIG_SVR_CROP_WEB, false, "Server type: Web (requires )","server: web");
+            setOption(options,CONFIG_SVR_CROP_POSTGRES, false, "Server type: postgres","server: pgsql");
+            setOption(options,CONFIG_SVR_CROP_MONET, false, "Server type: Monet DB", "server: monet");
 
-            options.addOption(CONFIG_SVR_OPTIONS_HOST, true, "Server option: hostname");
-            options.addOption(CONFIG_SVR_OPTIONS_PORT, true, "Server option: port");
-            options.addOption(CONFIG_SVR_OPTIONS_CONTEXT_ROOT, true, "Server option: context root ("
+            setOption(options,CONFIG_SVR_OPTIONS_HOST, true, "Server option: hostname","hostname");
+            setOption(options,CONFIG_SVR_OPTIONS_PORT, true, "Server option: port","port");
+            setOption(options,CONFIG_SVR_OPTIONS_CONTEXT_ROOT, true, "Server option: context root ("
                     + CONFIG_SVR_CROP_WEB
                     + ") or database name ("
                     + CONFIG_SVR_CROP_POSTGRES + " and " + "("
                     + CONFIG_SVR_CROP_MONET
-                    + ")");
-            options.addOption(CONFIG_SVR_OPTIONS_USER_NAME, true, "Server option: Username");
-            options.addOption(CONFIG_SVR_OPTIONS_PASSWORD, true, "Server option: Password");
+                    + ")","context path");
+            setOption(options,CONFIG_SVR_OPTIONS_USER_NAME, true, "Server option: Username","user name");
+            setOption(options,CONFIG_SVR_OPTIONS_PASSWORD, true, "Server option: Password","password");
 
 
             // parse our commandline

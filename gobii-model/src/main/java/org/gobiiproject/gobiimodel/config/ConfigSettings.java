@@ -87,13 +87,13 @@ public class ConfigSettings {
         return (this.configValues.getCropConfig(gobiiCropType));
     }
 
-    public List<CropConfig> getActiveCropConfigs() {
+    public List<CropConfig> getActiveCropConfigs() throws Exception {
 
         return (this.configValues.getActiveCropConfigs());
 
     }
 
-    public List<String> getActiveCropTypes() {
+    public List<String> getActiveCropTypes() throws Exception {
         return this
                 .configValues
                 .getActiveCropConfigs()
