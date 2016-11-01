@@ -4,6 +4,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiiclient.core.ClientContext;
@@ -31,6 +32,7 @@ import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Checks configurations of a Gobii instance for sanity.
@@ -90,6 +92,19 @@ public class GobiiConfig {
         System.out.println("******\t" + fieldName + ": " + value);
     }
 
+    private static void setOption(Options options,
+                                  String argument,
+                                  boolean requiresValue,
+                                  String helpText,
+                                  String shortName) {
+
+        //There does not appear to be a way to set argument name with the variants on addOption()
+        options
+                .addOption(argument, requiresValue, helpText)
+                .getOption(argument)
+                .setArgName(shortName);
+    }
+
     /**
      * Main method of the configuration checking utility.
      * Use jar -? to find arguments
@@ -115,7 +130,9 @@ public class GobiiConfig {
                     + CONFIG_SVR_GLOBAL_EMAIL + ", " + CONFIG_CROP_ID + ")");
 
             options.addOption(CONFIG_REMOVE_CROP, true, "Removes the specified crop and related server specifications");
-            options.addOption(CONFIG_GLOBAL_DEFAULT_CROP, true, "The default crop (global)");
+
+            setOption(options,CONFIG_GLOBAL_DEFAULT_CROP,true,"Default crop (global)", "default crop");
+
             options.addOption(CONFIG_GLOBAL_FILESYS_ROOT, true, "Absolute path to the gobii file system root (global)");
 
             options.addOption(CONFIG_CROP_ID, true, "Identifier of crop to add or modify; must be accompanied by a server specifier and its options");
@@ -290,7 +307,6 @@ public class GobiiConfig {
                 File propsFile = new File(propFileFqpn);
                 if (propsFile.exists() && !propsFile.isDirectory()) {
 
-
                     exitCode = 0;
 
                 } else {
@@ -329,6 +345,22 @@ public class GobiiConfig {
     }// main()
 
 
+    private static void writeConfigSettingsMessage(List<String> configOptions,
+                                                   List<String> configVals,
+                                                   String configFileFqpn) throws Exception {
+
+        if (configOptions.size() != configVals.size()) {
+            throw new Exception("The size of the options and values arrays do not match");
+        }
+
+        System.out.println("These options were written to the the config file " + configFileFqpn);
+        for (int idx = 0; idx < configOptions.size(); idx++) {
+            String currentOption = configOptions.get(idx);
+            String currentValue = configVals.get(idx);
+            System.out.println(currentOption + ": " + currentValue);
+        }
+    }
+
     private static boolean setGobiiConfiguration(String propFileFqpn, Options options, CommandLine commandLine) {
 
         boolean returnVal = true;
@@ -350,11 +382,17 @@ public class GobiiConfig {
 
                 String defaultCrop = commandLine.getOptionValue(CONFIG_GLOBAL_DEFAULT_CROP);
 
-                if (null != configSettings.getCropConfig(defaultCrop)) {
-                    configSettings.setDefaultGobiiCropType(defaultCrop);
-                } else {
-                    System.err.print("The specified default crop is not defined as a crop in the configuration:" + defaultCrop);
+                if (configSettings.getCropConfig(defaultCrop) == null) {
+                    configSettings.setCrop(defaultCrop, null, null, null);
                 }
+
+                configSettings.setDefaultGobiiCropType(defaultCrop);
+
+                configSettings.commit();
+
+                writeConfigSettingsMessage(Arrays.asList(options.getOption(CONFIG_GLOBAL_DEFAULT_CROP).getArgName()),
+                        Arrays.asList(defaultCrop),
+                        propFileFqpn);
 
 
             } else {

@@ -74,6 +74,13 @@ public class ConfigSettings {
         ConfigValuesFactory.commitConfigValues(this.configValues,this.configFileFqpn);
     }
 
+    public void setCrop(String gobiiCropType,
+                        String serviceDomain,
+                        String serviceAppRoot,
+                        Integer servicePort ) {
+
+        this.configValues.setCrop(gobiiCropType,serviceDomain,serviceAppRoot,servicePort);
+    }
 
     public CropConfig getCropConfig(String gobiiCropType) {
 
@@ -116,7 +123,7 @@ public class ConfigSettings {
     }
 
 
-    public void setDefaultGobiiCropType(String defaultGobiiCropType) {
+    public void setDefaultGobiiCropType(String defaultGobiiCropType) throws Exception {
         this.configValues.setDefaultGobiiCropType(defaultGobiiCropType);
     }
 

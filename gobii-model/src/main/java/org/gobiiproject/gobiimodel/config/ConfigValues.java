@@ -5,6 +5,7 @@ import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.ElementMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,9 +21,10 @@ import java.util.stream.Collectors;
  */
 class ConfigValues {
 
-    @ElementList
+    @ElementList(required = false)
     List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
 
+    @ElementMap(required = false)
     private Map<String, CropConfig> cropConfigs = new LinkedHashMap<>();
 
     private String currentGobiiCropType;
@@ -93,7 +95,12 @@ class ConfigValues {
     }
 
 
-    public void setDefaultGobiiCropType(String defaultGobiiCropType) {
+    public void setDefaultGobiiCropType(String defaultGobiiCropType) throws Exception {
+
+        if (this.getCropConfig(defaultGobiiCropType) == null) {
+            throw new Exception("Error setting default crop type to " + defaultGobiiCropType + ": no crop of that name has been defined");
+        }
+
         this.defaultGobiiCropType = defaultGobiiCropType;
     }
 
@@ -107,7 +114,7 @@ class ConfigValues {
 
     public Map<String, CropConfig> getCropConfigs() {
 
-        if (0 == cropConfigs.size()){
+        if (0 == cropConfigs.size()) {
             for (CropConfig currentCropConfig : cropConfigsToSerialize) {
                 cropConfigs.put(currentCropConfig.getGobiiCropType(), currentCropConfig);
             }
@@ -119,6 +126,26 @@ class ConfigValues {
     public void setCropConfigs(Map<String, CropConfig> cropConfigs) {
         this.cropConfigs = cropConfigs;
     }
+
+    public void setCrop(String gobiiCropType,
+                        String serviceDomain,
+                        String serviceAppRoot,
+                        Integer servicePort) {
+
+        CropConfig cropConfig = this.getCropConfig(gobiiCropType);
+
+        if (null == cropConfig) {
+            cropConfig = new CropConfig();
+            this.cropConfigs.put(gobiiCropType, cropConfig);
+        }
+
+        cropConfig
+                .setGobiiCropType(gobiiCropType)
+                .setServiceDomain(serviceDomain)
+                .setServiceAppRoot(serviceAppRoot)
+                .setServicePort(servicePort);
+    }
+
 
     public String getEmailSvrType() {
         return emailSvrType;

@@ -79,6 +79,51 @@ public class CropConfig {
         this.isActive = isActive;
     }
 
+    public CropConfig setServiceDomain(String serviceDomain) {
+        this.serviceDomain = serviceDomain;
+        return this;
+    }
+
+    public CropConfig setServicePort(Integer servicePort) {
+        this.servicePort = servicePort;
+        return this;
+    }
+
+    public CropConfig setRawUserFilesDirectory(String rawUserFilesDirectory) {
+        this.rawUserFilesDirectory = rawUserFilesDirectory;
+        return this;
+    }
+
+    public CropConfig setLoaderInstructionFilesDirectory(String loaderInstructionFilesDirectory) {
+        this.loaderInstructionFilesDirectory = loaderInstructionFilesDirectory;
+        return this;
+    }
+
+    public CropConfig setExtractorInstructionFilesDirectory(String extractorInstructionFilesDirectory) {
+        this.extractorInstructionFilesDirectory = extractorInstructionFilesDirectory;
+        return this;
+    }
+
+    public CropConfig setExtractorInstructionFilesOutputDirectory(String extractorInstructionFilesOutputDirectory) {
+        this.extractorInstructionFilesOutputDirectory = extractorInstructionFilesOutputDirectory;
+        return this;
+    }
+
+    public CropConfig setIntermediateFilesDirectory(String intermediateFilesDirectory) {
+        this.intermediateFilesDirectory = intermediateFilesDirectory;
+        return this;
+    }
+
+    public CropConfig setDbConfigByDbType(Map<GobiiDbType, CropDbConfig> dbConfigByDbType) {
+        this.dbConfigByDbType = dbConfigByDbType;
+        return this;
+    }
+
+    public CropConfig setCropDbConfigForSerialization(List<CropDbConfig> cropDbConfigForSerialization) {
+        this.cropDbConfigForSerialization = cropDbConfigForSerialization;
+        return this;
+    }
+
     public Integer getServicePort() {
         return servicePort;
     }
@@ -119,16 +164,18 @@ public class CropConfig {
         return serviceAppRoot;
     }
 
-    public void setServiceAppRoot(String serviceAppRoot) {
+    public CropConfig setServiceAppRoot(String serviceAppRoot) {
         this.serviceAppRoot = serviceAppRoot;
+        return this;
     }
 
     public String getGobiiCropType() {
         return gobiiCropType;
     }
 
-    public void setGobiiCropType(String gobiiCropType) {
+    public CropConfig setGobiiCropType(String gobiiCropType) {
         this.gobiiCropType = gobiiCropType;
+        return this;
     }
 
     public void addCropDbConfig(GobiiDbType gobiiDbTypee, CropDbConfig cropDbConfig) {
