@@ -1,14 +1,11 @@
 package org.gobiiproject.gobiimodel.config;
 
-import com.sun.media.jfxmedia.logging.Logger;
 import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.jndi.JndiTemplate;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.util.List;
 
 
 /**
