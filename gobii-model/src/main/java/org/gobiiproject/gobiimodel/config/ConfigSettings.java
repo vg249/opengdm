@@ -156,8 +156,28 @@ public class ConfigSettings {
         return this.configValues.getEmailServerPort();
     }
 
-    public void setEmailServerPort(Integer emailServerPort) {
-        this.configValues.setEmailSvrPort(emailServerPort);
+    public void setEmailSvrType(String emailSvrType) {
+        this.configValues.setEmailSvrType (emailSvrType);
+    }
+
+    public void setEmailSvrDomain(String emailSvrDomain) {
+        this.configValues.setEmailSvrDomain (emailSvrDomain);
+    }
+
+    public void setEmailSvrUser(String emailSvrUser) {
+        this.configValues.setEmailSvrUser (emailSvrUser);
+    }
+
+    public void setEmailSvrHashType(String emailSvrHashType) {
+        this.configValues.setEmailSvrHashType (emailSvrHashType);
+    }
+
+    public void setEmailSvrPassword(String emailSvrPassword) {
+        this.configValues.setEmailSvrPassword (emailSvrPassword);
+    }
+
+    public void setEmailSvrPort(Integer emailServerPort) {
+        this.configValues.setEmailSvrPort (emailServerPort);
     }
 
     public boolean isIflIntegrityCheck() {

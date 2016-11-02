@@ -30,6 +30,7 @@ import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,8 @@ public class GobiiConfig {
 
 
     private static String CONFIG_SVR_GLOBAL_EMAIL = "stE"; // does not require -c
+    private static String CONFIG_SVR_GLOBAL_EMAIL_TYPE = "stT"; // does not require -c
+    private static String CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE = "stH"; // does not require -c
     private static String CONFIG_SVR_CROP_WEB = "stW";
     private static String CONFIG_SVR_CROP_POSTGRES = "stP";
     private static String CONFIG_SVR_CROP_MONET = "stM";
@@ -62,7 +65,7 @@ public class GobiiConfig {
     private static String CONFIG_CROP_ID = "c";
 
     private static String CONFIG_SVR_OPTIONS_HOST = "soH";
-    private static String CONFIG_SVR_OPTIONS_PORT = "soP";
+    private static String CONFIG_SVR_OPTIONS_PORT = "soN";
     private static String CONFIG_SVR_OPTIONS_CONTEXT_ROOT = "soR";
     private static String CONFIG_SVR_OPTIONS_USER_NAME = "soU";
     private static String CONFIG_SVR_OPTIONS_PASSWORD = "soP";
@@ -96,7 +99,11 @@ public class GobiiConfig {
                                   String argument,
                                   boolean requiresValue,
                                   String helpText,
-                                  String shortName) {
+                                  String shortName) throws Exception{
+
+        if( options.getOption(argument) != null ) {
+            throw new Exception("Option is already defined: " + argument);
+        }
 
         //There does not appear to be a way to set argument name with the variants on addOption()
         options
@@ -109,6 +116,11 @@ public class GobiiConfig {
      * Main method of the configuration checking utility.
      * Use jar -? to find arguments
      *
+     * Examples:
+     * Set file system root:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -gR "/mnt/lustre"
+     * Set email options:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -stE -soH "foohost" -soN 25 -soU "foo userr" -soP "foo password"  -stT "fooetype" -stH "foohashtype"
+     * Set crop web options:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -c "barcrop" -stW -soH "foohost" -soN 25 -soU "foo userr" -soP "foo password"
+     *
      * @param args
      */
     public static void main(String[] args) {
@@ -119,40 +131,42 @@ public class GobiiConfig {
 
             // define commandline options
             Options options = new Options();
-            setOption(options,TOMCAT_BASE_DIR, true, "Tomcat base directory (e.g., /usr/local/tomcat7)","tomcat base");
-            setOption(options,CONFIG_BASE_URL, true, "url of GOBII web server for configuration verification","base url");
-            setOption(options,CONFIG_MKDIRS, false, "make gobii directories from root in the specified properties file (requires " + PROP_FILE_FQPN + ")","make directories");
-            setOption(options,COPY_WARS, true, "create war files for active crops from the specified war file (requires " + PROP_FILE_FQPN + ")","copy wars");
-            setOption(options,PROP_FILE_FQPN, true, "fqpn of gobii configuration file","config fqpn");
-            setOption(options,PROP_FILE_PROPS_TO_XML, false, "Convert existing gobii-properties file to xml (requires " + PROP_FILE_FQPN + ")","convert to xml");
-            setOption(options,CONFIG_ADD_ITEM, false, "Adds or updates the configuration value specified by one of the standalone parameters ("
+            setOption(options, TOMCAT_BASE_DIR, true, "Tomcat base directory (e.g., /usr/local/tomcat7)", "tomcat base");
+            setOption(options, CONFIG_BASE_URL, true, "url of GOBII web server for configuration verification", "base url");
+            setOption(options, CONFIG_MKDIRS, false, "make gobii directories from root in the specified properties file (requires " + PROP_FILE_FQPN + ")", "make directories");
+            setOption(options, COPY_WARS, false, "create war files for active crops from the specified war file (requires " + PROP_FILE_FQPN + ")", "copy wars");
+            setOption(options, PROP_FILE_FQPN, true, "fqpn of gobii configuration file", "config fqpn");
+            setOption(options, PROP_FILE_PROPS_TO_XML, false, "Convert existing gobii-properties file to xml (requires " + PROP_FILE_FQPN + ")", "convert to xml");
+            setOption(options, CONFIG_ADD_ITEM, false, "Adds or updates the configuration value specified by one of the standalone parameters ("
                     + CONFIG_GLOBAL_FILESYS_ROOT + ", " + CONFIG_GLOBAL_DEFAULT_CROP + ") or parameters that require server option parameters ("
-                    + CONFIG_SVR_GLOBAL_EMAIL + ", " + CONFIG_CROP_ID + ")","add config item");
+                    + CONFIG_SVR_GLOBAL_EMAIL + ", " + CONFIG_CROP_ID + ")", "add config item");
 
-            setOption(options,CONFIG_REMOVE_CROP, true, "Removes the specified crop and related server specifications","remove config item");
+            setOption(options, CONFIG_REMOVE_CROP, true, "Removes the specified crop and related server specifications", "crop ID");
 
-            setOption(options,CONFIG_GLOBAL_DEFAULT_CROP,true,"Default crop (global)", "default crop");
+            setOption(options, CONFIG_GLOBAL_DEFAULT_CROP, true, "Default crop (global)", "crop id");
 
-            setOption(options,CONFIG_GLOBAL_FILESYS_ROOT, true, "Absolute path to the gobii file system root (global)","gobii root");
+            setOption(options, CONFIG_GLOBAL_FILESYS_ROOT, true, "Absolute path to the gobii file system root (global)", "gobii root fqpn");
 
-            setOption(options,CONFIG_CROP_ID, true, "Identifier of crop to add or modify; must be accompanied by a server specifier and its options","crop ID");
+            setOption(options, CONFIG_CROP_ID, true, "Identifier of crop to add or modify; must be accompanied by a server specifier and its options", "crop ID");
 
 
-            setOption(options,CONFIG_SVR_GLOBAL_EMAIL, false, "Server type: Email (not crop specific)","server: email"); // does not require -c
-            setOption(options,CONFIG_SVR_CROP_WEB, false, "Server type: Web (requires )","server: web");
-            setOption(options,CONFIG_SVR_CROP_POSTGRES, false, "Server type: postgres","server: pgsql");
-            setOption(options,CONFIG_SVR_CROP_MONET, false, "Server type: Monet DB", "server: monet");
+            setOption(options, CONFIG_SVR_GLOBAL_EMAIL, false, "Server type: Email (not crop specific)", "server: email"); // does not require -c
+            setOption(options, CONFIG_SVR_GLOBAL_EMAIL_TYPE, true, "Email server type", "server type"); // does not require -c
+            setOption(options, CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE, true, "Email server hash type", "hash type"); // does not require -c
+            setOption(options, CONFIG_SVR_CROP_WEB, false, "Server type: Web (requires )", "server: web");
+            setOption(options, CONFIG_SVR_CROP_POSTGRES, false, "Server type: postgres", "server: pgsql");
+            setOption(options, CONFIG_SVR_CROP_MONET, false, "Server type: Monet DB", "server: monet");
 
-            setOption(options,CONFIG_SVR_OPTIONS_HOST, true, "Server option: hostname","hostname");
-            setOption(options,CONFIG_SVR_OPTIONS_PORT, true, "Server option: port","port");
-            setOption(options,CONFIG_SVR_OPTIONS_CONTEXT_ROOT, true, "Server option: context root ("
+            setOption(options, CONFIG_SVR_OPTIONS_HOST, true, "Server option: hostname", "hostname");
+            setOption(options, CONFIG_SVR_OPTIONS_PORT, true, "Server option: port number", "port number");
+            setOption(options, CONFIG_SVR_OPTIONS_CONTEXT_ROOT, true, "Server option: context root ("
                     + CONFIG_SVR_CROP_WEB
                     + ") or database name ("
                     + CONFIG_SVR_CROP_POSTGRES + " and " + "("
                     + CONFIG_SVR_CROP_MONET
-                    + ")","context path");
-            setOption(options,CONFIG_SVR_OPTIONS_USER_NAME, true, "Server option: Username","user name");
-            setOption(options,CONFIG_SVR_OPTIONS_PASSWORD, true, "Server option: Password","password");
+                    + ")", "context path");
+            setOption(options, CONFIG_SVR_OPTIONS_USER_NAME, true, "Server option: Username", "user name");
+            setOption(options, CONFIG_SVR_OPTIONS_PASSWORD, true, "Server option: Password", "password");
 
 
             // parse our commandline
@@ -345,19 +359,23 @@ public class GobiiConfig {
     }// main()
 
 
-    private static void writeConfigSettingsMessage(List<String> configOptions,
-                                                   List<String> configVals,
-                                                   String configFileFqpn) throws Exception {
+    private static void writeConfigSettingsMessage(Options options,
+                                                   String configFileFqpn,
+                                                   List<String> configArgs,
+                                                   List<String> configVals) throws Exception {
 
-        if (configOptions.size() != configVals.size()) {
+        if (configArgs.size() != configArgs.size()) {
             throw new Exception("The size of the options and values arrays do not match");
         }
 
         System.out.println("These options were written to the the config file " + configFileFqpn);
-        for (int idx = 0; idx < configOptions.size(); idx++) {
-            String currentOption = configOptions.get(idx);
+        for (int idx = 0; idx < configArgs.size(); idx++) {
+            String currentArg = configArgs.get(idx);
+            String currentOption = options.getOption(currentArg).getArgName();
+            String curentDescription = options.getOption(currentArg).getDescription();
             String currentValue = configVals.get(idx);
-            System.out.println(currentOption + ": " + currentValue);
+            System.out.println("-" + currentArg + " <" + currentOption + ">:\t\t" + currentValue + " (" + curentDescription + ")");
+
         }
     }
 
@@ -390,9 +408,78 @@ public class GobiiConfig {
 
                 configSettings.commit();
 
-                writeConfigSettingsMessage(Arrays.asList(options.getOption(CONFIG_GLOBAL_DEFAULT_CROP).getArgName()),
-                        Arrays.asList(defaultCrop),
-                        propFileFqpn);
+                writeConfigSettingsMessage(options,
+                        propFileFqpn,
+                        Arrays.asList(CONFIG_GLOBAL_DEFAULT_CROP),
+                        Arrays.asList(defaultCrop));
+
+
+            } else if (commandLine.hasOption(CONFIG_GLOBAL_FILESYS_ROOT)) {
+
+                String fileSysRoot = commandLine.getOptionValue(CONFIG_GLOBAL_FILESYS_ROOT);
+
+                configSettings.setFileSystemRoot(fileSysRoot);
+                configSettings.commit();
+
+                writeConfigSettingsMessage(options,
+                        propFileFqpn,
+                        Arrays.asList(CONFIG_GLOBAL_FILESYS_ROOT),
+                        Arrays.asList(fileSysRoot));
+
+
+            } else if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL)) {
+
+                List<String> argsSet = new ArrayList<>();
+                List<String> valsSet = new ArrayList<>();
+
+                if (commandLine.hasOption(CONFIG_SVR_OPTIONS_HOST)) {
+                    String emailSvrDomain = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_HOST);
+                    configSettings.setEmailSvrDomain(emailSvrDomain);
+                    argsSet.add(CONFIG_SVR_OPTIONS_HOST);
+                    valsSet.add(emailSvrDomain);
+                }
+
+                if (commandLine.hasOption(CONFIG_SVR_OPTIONS_USER_NAME)) {
+                    String userName = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_USER_NAME);
+                    configSettings.setEmailSvrUser(userName);
+                    argsSet.add(CONFIG_SVR_OPTIONS_USER_NAME);
+                    valsSet.add(userName);
+                }
+
+                if (commandLine.hasOption(CONFIG_SVR_OPTIONS_PASSWORD)) {
+                    String password = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_PASSWORD);
+                    configSettings.setEmailSvrPassword(password);
+                    argsSet.add(CONFIG_SVR_OPTIONS_PASSWORD);
+                    valsSet.add(password);
+                }
+
+                if (commandLine.hasOption(CONFIG_SVR_OPTIONS_PORT)) {
+                    String port = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_PORT);
+                    configSettings.setEmailSvrPort(Integer.parseInt(port));
+                    argsSet.add(CONFIG_SVR_OPTIONS_PORT);
+                    valsSet.add(port);
+                }
+
+                if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL_TYPE)) {
+                    String emailSvrType = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_EMAIL_TYPE);
+                    configSettings.setEmailSvrType(emailSvrType);
+                    argsSet.add(CONFIG_SVR_GLOBAL_EMAIL_TYPE);
+                    valsSet.add(emailSvrType);
+                }
+
+                if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE)) {
+                    String hashhType = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE);
+                    configSettings.setEmailSvrHashType(hashhType);
+                    argsSet.add(CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE);
+                    valsSet.add(hashhType);
+                }
+
+                configSettings.commit();
+
+                writeConfigSettingsMessage(options,
+                        propFileFqpn,
+                        argsSet,
+                        valsSet);
 
 
             } else {

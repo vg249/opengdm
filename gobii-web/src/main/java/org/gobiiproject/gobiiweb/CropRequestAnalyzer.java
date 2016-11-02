@@ -75,7 +75,7 @@ public class CropRequestAnalyzer {
     }
 
 
-    public static String getCropTypeFromUri(HttpServletRequest httpRequest) {
+    public static String getCropTypeFromUri(HttpServletRequest httpRequest) throws Exception {
 
         String returnVal = null;
 
@@ -113,7 +113,7 @@ public class CropRequestAnalyzer {
         return returnVal;
     }
 
-    public static String getGobiiCropType() {
+    public static String getGobiiCropType() throws Exception {
 
         HttpServletRequest httpRequest = null;
 
@@ -129,7 +129,7 @@ public class CropRequestAnalyzer {
     }
 
 
-    public static String getGobiiCropType(HttpServletRequest httpRequest) {
+    public static String getGobiiCropType(HttpServletRequest httpRequest) throws Exception{
 
         String returnVal = CropRequestAnalyzer.getCropTypeFromHeaders(httpRequest);
 
