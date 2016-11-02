@@ -7,6 +7,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -14,6 +15,8 @@ import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 ;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.types.GobiiCropType;
+import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
@@ -99,9 +102,9 @@ public class GobiiConfig {
                                   String argument,
                                   boolean requiresValue,
                                   String helpText,
-                                  String shortName) throws Exception{
+                                  String shortName) throws Exception {
 
-        if( options.getOption(argument) != null ) {
+        if (options.getOption(argument) != null) {
             throw new Exception("Option is already defined: " + argument);
         }
 
@@ -115,11 +118,12 @@ public class GobiiConfig {
     /**
      * Main method of the configuration checking utility.
      * Use jar -? to find arguments
-     *
+     * <p>
      * Examples:
      * Set file system root:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -gR "/mnt/lustre"
      * Set email options:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -stE -soH "foohost" -soN 25 -soU "foo userr" -soP "foo password"  -stT "fooetype" -stH "foohashtype"
-     * Set crop web options:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -c "barcrop" -stW -soH "foohost" -soN 25 -soU "foo userr" -soP "foo password"
+     * Set crop web options:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -c "barcrop" -stW -soH "foohost" -soN 8080 -soU "foo userr" -soP "foo password" -soR "foo-web"
+     * Set crop postgres options:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -c "barcrop" -stP -soH "foohost" -soN 5433 -soU "foo userr" -soP "foo password" -soR "foodb"
      *
      * @param args
      */
@@ -427,51 +431,117 @@ public class GobiiConfig {
                         Arrays.asList(fileSysRoot));
 
 
-            } else if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL)) {
+            } else if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL) ||
+                    commandLine.hasOption(CONFIG_CROP_ID)) {
 
                 List<String> argsSet = new ArrayList<>();
                 List<String> valsSet = new ArrayList<>();
 
+
+                String svrHost = null;
+                String svrUserName = null;
+                String svrPassword = null;
+                Integer svrPort = null;
+
                 if (commandLine.hasOption(CONFIG_SVR_OPTIONS_HOST)) {
-                    String emailSvrDomain = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_HOST);
-                    configSettings.setEmailSvrDomain(emailSvrDomain);
+                    svrHost = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_HOST);
                     argsSet.add(CONFIG_SVR_OPTIONS_HOST);
-                    valsSet.add(emailSvrDomain);
+                    valsSet.add(svrHost);
                 }
 
                 if (commandLine.hasOption(CONFIG_SVR_OPTIONS_USER_NAME)) {
-                    String userName = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_USER_NAME);
-                    configSettings.setEmailSvrUser(userName);
+                    svrUserName = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_USER_NAME);
                     argsSet.add(CONFIG_SVR_OPTIONS_USER_NAME);
-                    valsSet.add(userName);
+                    valsSet.add(svrUserName);
                 }
 
                 if (commandLine.hasOption(CONFIG_SVR_OPTIONS_PASSWORD)) {
-                    String password = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_PASSWORD);
-                    configSettings.setEmailSvrPassword(password);
+                    svrPassword = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_PASSWORD);
                     argsSet.add(CONFIG_SVR_OPTIONS_PASSWORD);
-                    valsSet.add(password);
+                    valsSet.add(svrPassword);
                 }
 
                 if (commandLine.hasOption(CONFIG_SVR_OPTIONS_PORT)) {
-                    String port = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_PORT);
-                    configSettings.setEmailSvrPort(Integer.parseInt(port));
+
+                    String svrPortStr = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_PORT);
+
+                    if (NumberUtils.isNumber(svrPortStr)) {
+                        svrPort = Integer.parseInt(svrPortStr);
+                    } else {
+                        throw new Exception("Option for port value (" + CONFIG_SVR_OPTIONS_PORT + ") is not an integer: " + svrPortStr);
+                    }
+
                     argsSet.add(CONFIG_SVR_OPTIONS_PORT);
-                    valsSet.add(port);
+                    valsSet.add(svrPortStr);
                 }
 
-                if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL_TYPE)) {
-                    String emailSvrType = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_EMAIL_TYPE);
-                    configSettings.setEmailSvrType(emailSvrType);
-                    argsSet.add(CONFIG_SVR_GLOBAL_EMAIL_TYPE);
-                    valsSet.add(emailSvrType);
-                }
 
-                if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE)) {
-                    String hashhType = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE);
-                    configSettings.setEmailSvrHashType(hashhType);
-                    argsSet.add(CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE);
-                    valsSet.add(hashhType);
+                if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL)) {
+
+                    configSettings.setEmailSvrDomain(svrHost);
+                    configSettings.setEmailSvrUser(svrUserName);
+                    configSettings.setEmailSvrPassword(svrPassword);
+                    configSettings.setEmailSvrPort(svrPort);
+
+                    if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL_TYPE)) {
+                        String emailSvrType = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_EMAIL_TYPE);
+                        configSettings.setEmailSvrType(emailSvrType);
+                        argsSet.add(CONFIG_SVR_GLOBAL_EMAIL_TYPE);
+                        valsSet.add(emailSvrType);
+                    }
+
+                    if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE)) {
+                        String hashhType = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE);
+                        configSettings.setEmailSvrHashType(hashhType);
+                        argsSet.add(CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE);
+                        valsSet.add(hashhType);
+                    }
+
+
+                } else if (commandLine.hasOption(CONFIG_CROP_ID)) {
+
+                    String cropId = commandLine.getOptionValue(CONFIG_CROP_ID);
+
+                    CropConfig cropConfig = configSettings.getCropConfig(cropId);
+                    if (cropConfig == null) {
+                        configSettings.setCrop(cropId, null, null, null);
+                        cropConfig = configSettings.getCropConfig(cropId);
+                    }
+
+                    String contextRoot = null;
+                    if (commandLine.hasOption(CONFIG_SVR_OPTIONS_CONTEXT_ROOT)) {
+                        contextRoot = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_CONTEXT_ROOT);
+                        argsSet.add(CONFIG_SVR_OPTIONS_CONTEXT_ROOT);
+                        valsSet.add(contextRoot);
+                    }
+
+                    if (commandLine.hasOption(CONFIG_SVR_CROP_WEB)) {
+
+                        cropConfig.setServiceDomain(svrHost);
+                        cropConfig.setServicePort(svrPort);
+                        cropConfig.setServiceAppRoot(contextRoot);
+
+                    } else if (commandLine.hasOption(CONFIG_SVR_CROP_POSTGRES) ||
+                            (commandLine.hasOption(CONFIG_SVR_CROP_MONET))) {
+
+                        GobiiDbType gobiiDbType = GobiiDbType.UNKNOWN ;
+                        if (commandLine.hasOption(CONFIG_SVR_CROP_POSTGRES)) {
+                            gobiiDbType = GobiiDbType.POSTGRESQL;
+                        } else if (commandLine.hasOption(CONFIG_SVR_CROP_MONET)) {
+                            gobiiDbType = GobiiDbType.MONETDB;
+                        }
+
+                        cropConfig.getCropDbConfig(gobiiDbType).setHost(svrHost);
+                        cropConfig.getCropDbConfig(gobiiDbType).setPort(svrPort);
+                        cropConfig.getCropDbConfig(gobiiDbType).setUserName(svrUserName);
+                        cropConfig.getCropDbConfig(gobiiDbType).setPassword(svrPassword);
+                        cropConfig.getCropDbConfig(gobiiDbType).setDbName(contextRoot);
+
+                    } else {
+
+                    }
+
+
                 }
 
                 configSettings.commit();

@@ -4,6 +4,7 @@ package org.gobiiproject.gobiimodel.config;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.Root;
 
 import java.util.ArrayList;
@@ -49,12 +50,21 @@ public class CropConfig {
 
     @Element
     private boolean isActive = false;
+
+    @ElementMap(required = false)
     private Map<GobiiDbType, CropDbConfig> dbConfigByDbType = new HashMap<>();
 
-    @ElementList
+    @ElementList(required = false)
     private List<CropDbConfig> cropDbConfigForSerialization = new ArrayList<>();
 
-    public CropConfig() {}
+    public CropConfig() {
+        this.dbConfigByDbType.put(GobiiDbType.POSTGRESQL,new CropDbConfig(GobiiDbType.POSTGRESQL,null,null,null,null,null));
+        this.dbConfigByDbType.put(GobiiDbType.MONETDB,new CropDbConfig(GobiiDbType.MONETDB,null,null,null,null,null));
+
+        this.cropDbConfigForSerialization.add(this.dbConfigByDbType.get(GobiiDbType.POSTGRESQL));
+        this.cropDbConfigForSerialization.add(this.dbConfigByDbType.get(GobiiDbType.MONETDB));
+
+    }
 
     public CropConfig(String gobiiCropType,
                       String serviceDomain,
@@ -77,6 +87,13 @@ public class CropConfig {
         this.extractorInstructionFilesOutputDirectory = extractorInstructionFilesOutputDirectory;
         this.intermediateFilesDirectory = intermediateFilesDirectory;
         this.isActive = isActive;
+
+        this.dbConfigByDbType.put(GobiiDbType.POSTGRESQL,new CropDbConfig());
+        this.dbConfigByDbType.put(GobiiDbType.MONETDB,new CropDbConfig());
+
+        this.cropDbConfigForSerialization.add(this.dbConfigByDbType.get(GobiiDbType.POSTGRESQL));
+        this.cropDbConfigForSerialization.add(this.dbConfigByDbType.get(GobiiDbType.MONETDB));
+
     }
 
     public CropConfig setServiceDomain(String serviceDomain) {
@@ -190,6 +207,5 @@ public class CropConfig {
                 .collect(Collectors.toList())
                 .get(0);
     } // getCropDbConfig()
-
 
 }
