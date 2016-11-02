@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
  */
 class ConfigValues {
 
-    @ElementList(required = false)
-    List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
+//    @ElementList(required = false)
+//    List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
 
     @ElementMap(required = false)
     private Map<String, CropConfig> cropConfigs = new LinkedHashMap<>();
@@ -102,23 +102,26 @@ class ConfigValues {
         this.defaultGobiiCropType = defaultGobiiCropType;
     }
 
-    public List<CropConfig> getCropConfigsToSerialize() {
-        return cropConfigsToSerialize;
-    }
+//    public List<CropConfig> getCropConfigsToSerialize() {
+//        return cropConfigsToSerialize;
+//    }
 
-    public void setCropConfigsToSerialize(List<CropConfig> cropConfigsToSerialize) {
-        this.cropConfigsToSerialize = cropConfigsToSerialize;
-    }
+//    public void setCropConfigsToSerialize(List<CropConfig> cropConfigsToSerialize) {
+//        this.cropConfigsToSerialize = cropConfigsToSerialize;
+//    }
 
     public Map<String, CropConfig> getCropConfigs() {
 
-        if (0 == cropConfigs.size()) {
-            for (CropConfig currentCropConfig : cropConfigsToSerialize) {
-                cropConfigs.put(currentCropConfig.getGobiiCropType(), currentCropConfig);
-            }
-        }
 
-        return cropConfigs;
+        return this.cropConfigs;
+
+//        if (0 == cropConfigs.size()) {
+//            for (CropConfig currentCropConfig : cropConfigsToSerialize) {
+//                cropConfigs.put(currentCropConfig.getGobiiCropType(), currentCropConfig);
+//            }
+//        }
+
+        //return cropConfigs;
     }
 
     public void setCropConfigs(Map<String, CropConfig> cropConfigs) {

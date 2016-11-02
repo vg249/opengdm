@@ -53,9 +53,6 @@ public class CropConfig {
     @ElementMap(required = false)
     private Map<GobiiDbType, CropDbConfig> cropDbConfigsByDbType = new HashMap<>();
 
-//    @ElementList(required = false)
-//    private List<CropDbConfig> cropDbConfigForSerialization = new ArrayList<>();
-
     public CropConfig() {
     }
 
@@ -95,7 +92,6 @@ public class CropConfig {
 
             cropDbConfig = new CropDbConfig();
             this.cropDbConfigsByDbType.put(gobiiDbType,cropDbConfig);
-//            this.cropDbConfigForSerialization.add(cropDbConfig);
 
         }
 
@@ -147,11 +143,6 @@ public class CropConfig {
         this.cropDbConfigsByDbType = cropDbConfigsByDbType;
         return this;
     }
-
-//    public CropConfig setCropDbConfigForSerialization(List<CropDbConfig> cropDbConfigForSerialization) {
-//        this.cropDbConfigForSerialization = cropDbConfigForSerialization;
-//        return this;
-//    }
 
     public Integer getServicePort() {
         return servicePort;
@@ -209,17 +200,12 @@ public class CropConfig {
 
     public void addCropDbConfig(GobiiDbType gobiiDbTypee, CropDbConfig cropDbConfig) {
         cropDbConfigsByDbType.put(gobiiDbTypee, cropDbConfig);
-        // cropDbConfigForSerialization.add(cropDbConfig);
+
     } // addCropDbConfig()
 
     public CropDbConfig getCropDbConfig(GobiiDbType gobiiDbType) {
         CropDbConfig returnVal = this.cropDbConfigsByDbType.get(gobiiDbType);
         return returnVal;
-//        return cropDbConfigForSerialization
-//                .stream()
-//                .filter(d -> d.getGobiiDbType().equals(gobiiDbType))
-//                .collect(Collectors.toList())
-//                .get(0);
     } // getCropDbConfig()
 
 }

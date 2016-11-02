@@ -160,7 +160,7 @@ public class ConfigFileReaderProps {
         returnVal.setFileSystemLog(this.getPropValue(PROP_NAME_FILE_SYSTEM_LOG));
 
 
-        List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
+        //List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
         Map<String, CropConfig> cropConfigs = new HashMap<>();
         for (int idx = 0; idx < cropPrefixes.length; idx++) {
 
@@ -224,14 +224,14 @@ public class ConfigFileReaderProps {
 
 
                 cropConfigs.put(currentGobiiCropType, currentCropConfig);
-                cropConfigsToSerialize.add(currentCropConfig);
+                //cropConfigsToSerialize.add(currentCropConfig);
 
             }
 
         } // iterate crop configs
 
         returnVal.setCropConfigs(cropConfigs);
-        returnVal.setCropConfigsToSerialize(cropConfigsToSerialize);
+        //returnVal.setCropConfigsToSerialize(cropConfigsToSerialize);
 
 
         if (0 == returnVal.getActiveCropConfigs()
