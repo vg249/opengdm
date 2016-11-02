@@ -10,14 +10,15 @@ import org.simpleframework.xml.Root;
 @Root
 public class CropDbConfig {
 
-    public CropDbConfig() {}
+    public CropDbConfig() {
+    }
 
     public CropDbConfig(GobiiDbType gobiiDbType,
-                 String host,
-                 String dbName,
-                 Integer port,
-                 String userName,
-                 String password) {
+                        String host,
+                        String dbName,
+                        Integer port,
+                        String userName,
+                        String password) {
 
         this.gobiiDbType = gobiiDbType;
         this.host = host;
@@ -50,44 +51,54 @@ public class CropDbConfig {
         return gobiiDbType;
     }
 
+    public CropDbConfig setGobiiDbType(GobiiDbType gobiiDbType) {
+        this.gobiiDbType = gobiiDbType;
+        return this;
+    }
+
     public String getHost() {
         return host;
     }
 
-    public void setHost(String host) {
+    public CropDbConfig setHost(String host) {
         this.host = host;
+        return this;
     }
 
     public String getDbName() {
         return dbName;
     }
 
-    public void setDbName(String dbName) {
+    public CropDbConfig setDbName(String dbName) {
         this.dbName = dbName;
+        return this;
     }
 
     public Integer getPort() {
         return port;
     }
 
-    public void setPort(Integer port) {
+    public CropDbConfig setPort(Integer port) {
         this.port = port;
+        return this;
     }
 
     public String getUserName() {
         return userName;
     }
 
-    public void setUserName(String userName) {
+    public CropDbConfig setUserName(String userName) {
         this.userName = userName;
+        return this;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public CropDbConfig setPassword(String password) {
         this.password = password;
+        return this;
     }
 
     public String getConnectionString() {

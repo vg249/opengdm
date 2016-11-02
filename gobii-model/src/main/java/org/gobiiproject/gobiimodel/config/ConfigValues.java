@@ -71,16 +71,6 @@ class ConfigValues {
     public List<CropConfig> getActiveCropConfigs() throws Exception {
 
 
-        if ((this.cropConfigs.size() == 0)
-                || (getCropConfigs()
-                .values()
-                .stream()
-                .filter(c -> c.isActive())
-                .count() == 0)) {
-            throw new Exception("There are no active crops defined");
-
-        }
-
         return getCropConfigs()
                 .values()
                 .stream()

@@ -17,7 +17,7 @@ public class DataSourceSelector extends AbstractRoutingDataSource {
         Object returnVal = null;
 
         try {
-            CropRequestAnalyzer.getGobiiCropType().toString();
+            returnVal = CropRequestAnalyzer.getGobiiCropType().toString();
         } catch( Exception e) {
 
             LOGGER.error("Eorr looking up lookup key",e);

@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 public class CropConfig {
 
 
-
     @Element(required = false)
     private String gobiiCropType;
 
@@ -52,17 +51,17 @@ public class CropConfig {
     private boolean isActive = false;
 
     @ElementMap(required = false)
-    private Map<GobiiDbType, CropDbConfig> dbConfigByDbType = new HashMap<>();
+    private Map<GobiiDbType, CropDbConfig> cropDbConfigsByDbType = new HashMap<>();
 
     @ElementList(required = false)
     private List<CropDbConfig> cropDbConfigForSerialization = new ArrayList<>();
 
     public CropConfig() {
-        this.dbConfigByDbType.put(GobiiDbType.POSTGRESQL,new CropDbConfig(GobiiDbType.POSTGRESQL,null,null,null,null,null));
-        this.dbConfigByDbType.put(GobiiDbType.MONETDB,new CropDbConfig(GobiiDbType.MONETDB,null,null,null,null,null));
-
-        this.cropDbConfigForSerialization.add(this.dbConfigByDbType.get(GobiiDbType.POSTGRESQL));
-        this.cropDbConfigForSerialization.add(this.dbConfigByDbType.get(GobiiDbType.MONETDB));
+//        this.cropDbConfigsByDbType.put(GobiiDbType.POSTGRESQL,new CropDbConfig(GobiiDbType.POSTGRESQL,null,null,null,null,null));
+//        this.cropDbConfigsByDbType.put(GobiiDbType.MONETDB,new CropDbConfig(GobiiDbType.MONETDB,null,null,null,null,null));
+//
+//        this.cropDbConfigForSerialization.add(this.cropDbConfigsByDbType.get(GobiiDbType.POSTGRESQL));
+//        this.cropDbConfigForSerialization.add(this.cropDbConfigsByDbType.get(GobiiDbType.MONETDB));
 
     }
 
@@ -88,12 +87,37 @@ public class CropConfig {
         this.intermediateFilesDirectory = intermediateFilesDirectory;
         this.isActive = isActive;
 
-        this.dbConfigByDbType.put(GobiiDbType.POSTGRESQL,new CropDbConfig());
-        this.dbConfigByDbType.put(GobiiDbType.MONETDB,new CropDbConfig());
+//        this.cropDbConfigsByDbType.put(GobiiDbType.POSTGRESQL,new CropDbConfig());
+//        this.cropDbConfigsByDbType.put(GobiiDbType.MONETDB,new CropDbConfig());
+//
+//        this.cropDbConfigForSerialization.add(this.cropDbConfigsByDbType.get(GobiiDbType.POSTGRESQL));
+//        this.cropDbConfigForSerialization.add(this.cropDbConfigsByDbType.get(GobiiDbType.MONETDB));
 
-        this.cropDbConfigForSerialization.add(this.dbConfigByDbType.get(GobiiDbType.POSTGRESQL));
-        this.cropDbConfigForSerialization.add(this.dbConfigByDbType.get(GobiiDbType.MONETDB));
+    }
 
+    public void setCropDbConfig(GobiiDbType gobiiDbType,
+                                String host,
+                                String dbName,
+                                Integer port,
+                                String userName,
+                                String password) {
+
+        CropDbConfig cropDbConfig = this.cropDbConfigsByDbType.get(gobiiDbType);
+        if (cropDbConfig == null) {
+
+            cropDbConfig = new CropDbConfig();
+            this.cropDbConfigsByDbType.put(gobiiDbType,cropDbConfig);
+            this.cropDbConfigForSerialization.add(cropDbConfig);
+
+        }
+
+        cropDbConfig
+                .setGobiiDbType(gobiiDbType)
+                .setHost(host)
+                .setDbName(dbName)
+                .setPort(port)
+                .setUserName(userName)
+                .setPassword(password);
     }
 
     public CropConfig setServiceDomain(String serviceDomain) {
@@ -131,8 +155,8 @@ public class CropConfig {
         return this;
     }
 
-    public CropConfig setDbConfigByDbType(Map<GobiiDbType, CropDbConfig> dbConfigByDbType) {
-        this.dbConfigByDbType = dbConfigByDbType;
+    public CropConfig setCropDbConfigsByDbType(Map<GobiiDbType, CropDbConfig> cropDbConfigsByDbType) {
+        this.cropDbConfigsByDbType = cropDbConfigsByDbType;
         return this;
     }
 
@@ -196,7 +220,7 @@ public class CropConfig {
     }
 
     public void addCropDbConfig(GobiiDbType gobiiDbTypee, CropDbConfig cropDbConfig) {
-        dbConfigByDbType.put(gobiiDbTypee, cropDbConfig);
+        cropDbConfigsByDbType.put(gobiiDbTypee, cropDbConfig);
         cropDbConfigForSerialization.add(cropDbConfig);
     } // addCropDbConfig()
 

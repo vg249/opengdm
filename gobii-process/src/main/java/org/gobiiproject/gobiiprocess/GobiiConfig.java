@@ -531,11 +531,12 @@ public class GobiiConfig {
                             gobiiDbType = GobiiDbType.MONETDB;
                         }
 
-                        cropConfig.getCropDbConfig(gobiiDbType).setHost(svrHost);
-                        cropConfig.getCropDbConfig(gobiiDbType).setPort(svrPort);
-                        cropConfig.getCropDbConfig(gobiiDbType).setUserName(svrUserName);
-                        cropConfig.getCropDbConfig(gobiiDbType).setPassword(svrPassword);
-                        cropConfig.getCropDbConfig(gobiiDbType).setDbName(contextRoot);
+                        cropConfig.setCropDbConfig(gobiiDbType,
+                                svrHost,
+                                contextRoot,
+                                svrPort,
+                                svrUserName,
+                                svrPassword);
 
                     } else {
 
