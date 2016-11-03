@@ -341,8 +341,8 @@ public class GobiiFileReader {
 			String variantFilename="DS"+dataSetId;
 			File variantFile=loaderInstructionMap.get(VARIANT_CALL_TABNAME);
 			String markerFileLoc=pathToHDF5Files+"DS"+dataSetId+".marker_id";
-			String sampleFileLoc=pathToHDF5Files+"DS"+dataSetId+".dnarun_id";		
-			
+			String sampleFileLoc=pathToHDF5Files+"DS"+dataSetId+".dnarun_id";
+
 		if(variantFile!=null && dataSetId==null){
 				logError("Digester","Data Set ID is null for variant call");
 		}
@@ -468,9 +468,10 @@ public class GobiiFileReader {
 	 * @param errorFile temporary file to store error information in
 	 */
 	private static void generateIdLists(CropConfig cropConfig,String markerFile,String dnaRunFile,int dsid,String errorFile){
+		//Create files and get paths because gobii_mde must run on absolute paths, not relative ones
 		String gobiiIFL="python " + extractorScriptPath+"postgres/gobii_mde/gobii_mde.py"+" -c "+HelperFunctions.getPostgresConnectionString(cropConfig)+
-			" -m "+markerFile+".tmp"+
-			" -s "+dnaRunFile+".tmp"+
+			" -m "+new File(markerFile).getAbsolutePath()+".tmp"+
+			" -s "+new File(dnaRunFile).getAbsolutePath()+".tmp"+
 			" -d "+dsid;
 		tryExec(gobiiIFL, null, errorFile);
         tryExec("cut -f1 "+markerFile,markerFile+".tmp2",errorFile);
