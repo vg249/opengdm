@@ -47,8 +47,8 @@ public class CropConfig {
     @Element(required = false)
     private String intermediateFilesDirectory;
 
-    @Element
-    private boolean isActive = false;
+    @Element(required = false)
+    private boolean isActive;
 
     @ElementMap(required = false)
     private Map<GobiiDbType, CropDbConfig> cropDbConfigsByDbType = new HashMap<>();
@@ -176,8 +176,9 @@ public class CropConfig {
         return isActive;
     }
 
-    public void setActive(boolean active) {
+    public CropConfig setActive(boolean active) {
         isActive = active;
+        return this;
     }
 
     public String getServiceAppRoot() {

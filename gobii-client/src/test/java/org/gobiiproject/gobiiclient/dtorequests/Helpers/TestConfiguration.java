@@ -36,14 +36,16 @@ public class TestConfiguration {
 
     private static String CONFIG_FILE_LOCATION_PROP = "cfgFqpn";
 
-    public TestConfiguration() {
+    public TestConfiguration() throws Exception {
 
         String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
 
         if (configFileLocation != null) {
             LOGGER.error("FQPN of configuration file read from environment variable " + CONFIG_FILE_LOCATION_PROP + ": " + configFileLocation);
         } else {
-            LOGGER.error("The the environment does not define the FQPN of configuration in environment variable: " + CONFIG_FILE_LOCATION_PROP);
+            String message = "The the environment does not define the FQPN of configuration in environment variable: " + CONFIG_FILE_LOCATION_PROP;
+            LOGGER.error(message);
+            throw new Exception(message);
         }
 
         ConfigSettings configSettings = new ConfigSettings(configFileLocation);

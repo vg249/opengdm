@@ -31,6 +31,9 @@ public class TestExecConfig {
     @Element(required = false)
     private String configFileTestDirectory = "/gobii-config-test";
 
+    @Element(required = false)
+    private String configUtilCommandlineStem = "java -jar C:\\phil-source\\IntelliJ\\gobiiproject\\gobii-process\\target\\gobiiconfig.jar";
+
     public String getTestCrop() {
         return testCrop;
     }
@@ -99,6 +102,15 @@ public class TestExecConfig {
 
     public TestExecConfig setConfigFileTestDirectory(String configFileTestDirectory) {
         this.configFileTestDirectory = configFileTestDirectory;
+        return this;
+    }
+
+    public String getConfigUtilCommandlineStem() {
+        return configUtilCommandlineStem;
+    }
+
+    public TestExecConfig setConfigUtilCommandlineStem(String configUtilCommandlineStem) {
+        this.configUtilCommandlineStem = configUtilCommandlineStem;
         return this;
     }
 }

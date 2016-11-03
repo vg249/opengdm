@@ -131,6 +131,9 @@ public class GobiiConfig {
 
         int exitCode = -1;
 
+        // active?
+        // file locations?
+
         try {
 
             // define commandline options
@@ -379,7 +382,6 @@ public class GobiiConfig {
             String curentDescription = options.getOption(currentArg).getDescription();
             String currentValue = configVals.get(idx);
             System.out.println("-" + currentArg + " <" + currentOption + ">:\t\t" + currentValue + " (" + curentDescription + ")");
-
         }
     }
 
@@ -405,7 +407,7 @@ public class GobiiConfig {
                 String defaultCrop = commandLine.getOptionValue(CONFIG_GLOBAL_DEFAULT_CROP);
 
                 if (configSettings.getCropConfig(defaultCrop) == null) {
-                    configSettings.setCrop(defaultCrop, null, null, null);
+                    configSettings.setCrop(defaultCrop, true, null, null, null);
                 }
 
                 configSettings.setDefaultGobiiCropType(defaultCrop);
@@ -504,7 +506,7 @@ public class GobiiConfig {
 
                     CropConfig cropConfig = configSettings.getCropConfig(cropId);
                     if (cropConfig == null) {
-                        configSettings.setCrop(cropId, null, null, null);
+                        configSettings.setCrop(cropId, true, null, null, null);
                         cropConfig = configSettings.getCropConfig(cropId);
                     }
 

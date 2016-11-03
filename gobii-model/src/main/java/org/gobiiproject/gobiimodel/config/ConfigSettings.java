@@ -75,11 +75,12 @@ public class ConfigSettings {
     }
 
     public void setCrop(String gobiiCropType,
+                        boolean isActive,
                         String serviceDomain,
                         String serviceAppRoot,
                         Integer servicePort) {
 
-        this.configValues.setCrop(gobiiCropType, serviceDomain, serviceAppRoot, servicePort);
+        this.configValues.setCrop(gobiiCropType, isActive, serviceDomain, serviceAppRoot, servicePort);
     }
 
     public CropConfig getCropConfig(String gobiiCropType) {

@@ -140,6 +140,7 @@ class ConfigValues {
     }
 
     public void setCrop(String gobiiCropType,
+                        boolean isActive,
                         String serviceDomain,
                         String serviceAppRoot,
                         Integer servicePort) {
@@ -153,6 +154,7 @@ class ConfigValues {
 
         cropConfig
                 .setGobiiCropType(gobiiCropType)
+                .setActive(isActive)
                 .setServiceDomain(serviceDomain)
                 .setServiceAppRoot(serviceAppRoot)
                 .setServicePort(servicePort);

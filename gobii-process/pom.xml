@@ -138,7 +138,7 @@
                     <!--gobii config check Execution-->
                     <execution>
                         <configuration>
-                            <finalName>gobii-config-check</finalName>
+                            <finalName>gobiiconfig</finalName>
                             <!-- MainClass in mainfest make a executable jar -->
                             <archive>
                                 <manifest>

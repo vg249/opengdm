@@ -14,7 +14,7 @@ public class Authenticator {
 
     private static TestExecConfig testExecConfig = null;
 
-    private static TestExecConfig getTestExecConfig() {
+    private static TestExecConfig getTestExecConfig() throws Exception{
         if (testExecConfig == null) {
             testExecConfig = (new TestConfiguration()).getConfigSettings().getTestExecConfig();
         }
