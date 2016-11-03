@@ -25,6 +25,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -273,7 +274,17 @@ public class DtoRequestContactTest {
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
         Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == contactDTOList.size() );
-        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, contactDTOList.size());
+
+        List<Integer> itemsToTest = new ArrayList<>();
+        if (contactDTOList.size() > 50) {
+            itemsToTest = TestUtils.makeListOfIntegersInRange(10, contactDTOList.size());
+
+        } else {
+            for (int idx = 0; idx < contactDTOList.size(); idx++) {
+                itemsToTest.add(idx);
+            }
+        }
+
         for (Integer currentIdx : itemsToTest) {
             ContactDTO currentContactDto = contactDTOList.get(currentIdx);
 

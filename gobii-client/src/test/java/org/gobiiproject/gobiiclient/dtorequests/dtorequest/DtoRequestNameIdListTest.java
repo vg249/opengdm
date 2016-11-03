@@ -24,6 +24,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DtoRequestNameIdListTest {
@@ -289,7 +290,17 @@ public class DtoRequestNameIdListTest {
         // verify that we can retrieve platofrmDtos from the links we got for the platform name IDs
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
         Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == nameIdDTOList.size() );
-        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, nameIdDTOList.size());
+
+        List<Integer> itemsToTest = new ArrayList<>();
+        if (nameIdDTOList.size() > 50) {
+            itemsToTest = TestUtils.makeListOfIntegersInRange(10, nameIdDTOList.size());
+
+        } else {
+            for (int idx = 0; idx < nameIdDTOList.size(); idx++) {
+                itemsToTest.add(idx);
+            }
+        }
+
         for (Integer currentIdx : itemsToTest) {
 
             NameIdDTO currentPlatformNameDto = nameIdDTOList.get(currentIdx);

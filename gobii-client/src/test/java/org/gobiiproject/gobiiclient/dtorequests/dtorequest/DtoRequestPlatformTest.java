@@ -281,7 +281,17 @@ public class DtoRequestPlatformTest {
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
         Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == platformDTOList.size() );
-        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, platformDTOList.size());
+
+        List<Integer> itemsToTest = new ArrayList<>();
+        if (platformDTOList.size() > 50) {
+            itemsToTest = TestUtils.makeListOfIntegersInRange(10, platformDTOList.size());
+
+        } else {
+            for (int idx = 0; idx < platformDTOList.size(); idx++) {
+                itemsToTest.add(idx);
+            }
+        }
+
         for (Integer currentIdx : itemsToTest) {
             PlatformDTO currentPlatformDto = platformDTOList.get(currentIdx);
 

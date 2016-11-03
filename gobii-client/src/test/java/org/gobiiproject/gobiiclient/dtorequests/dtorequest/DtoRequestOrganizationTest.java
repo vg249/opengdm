@@ -18,6 +18,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -181,7 +182,17 @@ public class DtoRequestOrganizationTest {
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
         Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == organizationDTOList.size() );
-        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, organizationDTOList.size());
+
+        List<Integer> itemsToTest = new ArrayList<>();
+        if (organizationDTOList.size() > 50) {
+            itemsToTest = TestUtils.makeListOfIntegersInRange(10, organizationDTOList.size());
+
+        } else {
+            for (int idx = 0; idx < organizationDTOList.size(); idx++) {
+                itemsToTest.add(idx);
+            }
+        }
+
         for(Integer currentItemIdx : itemsToTest  ) {
             OrganizationDTO currentOrganizationDto = organizationDTOList.get(currentItemIdx);
 

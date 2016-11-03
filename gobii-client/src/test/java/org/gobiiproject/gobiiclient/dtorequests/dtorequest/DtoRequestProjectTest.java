@@ -26,6 +26,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -295,7 +296,17 @@ public class DtoRequestProjectTest {
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
         Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == projectDTOList.size() );
-        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, projectDTOList.size());
+
+        List<Integer> itemsToTest = new ArrayList<>();
+        if (projectDTOList.size() > 50) {
+            itemsToTest = TestUtils.makeListOfIntegersInRange(10, projectDTOList.size());
+
+        } else {
+            for (int idx = 0; idx < projectDTOList.size(); idx++) {
+                itemsToTest.add(idx);
+            }
+        }
+
         for (Integer currentIdx : itemsToTest) {
             ProjectDTO currentProjectDto = projectDTOList.get(currentIdx);
 

@@ -71,15 +71,15 @@ public class ConfigSettings {
     } //
 
     public void commit() throws Exception {
-        ConfigValuesFactory.commitConfigValues(this.configValues,this.configFileFqpn);
+        ConfigValuesFactory.commitConfigValues(this.configValues, this.configFileFqpn);
     }
 
     public void setCrop(String gobiiCropType,
                         String serviceDomain,
                         String serviceAppRoot,
-                        Integer servicePort ) {
+                        Integer servicePort) {
 
-        this.configValues.setCrop(gobiiCropType,serviceDomain,serviceAppRoot,servicePort);
+        this.configValues.setCrop(gobiiCropType, serviceDomain, serviceAppRoot, servicePort);
     }
 
     public CropConfig getCropConfig(String gobiiCropType) {
@@ -90,7 +90,15 @@ public class ConfigSettings {
     public List<CropConfig> getActiveCropConfigs() throws Exception {
 
         return (this.configValues.getActiveCropConfigs());
+    }
 
+    public TestExecConfig getTestExecConfig() {
+
+        return this.configValues.getTestExecConfig();
+    }
+
+    public void setTestExecConfig(TestExecConfig testExecConfig) {
+        this.configValues.setTestExecConfig(testExecConfig);
     }
 
     public List<String> getActiveCropTypes() throws Exception {
@@ -162,27 +170,27 @@ public class ConfigSettings {
     }
 
     public void setEmailSvrType(String emailSvrType) {
-        this.configValues.setEmailSvrType (emailSvrType);
+        this.configValues.setEmailSvrType(emailSvrType);
     }
 
     public void setEmailSvrDomain(String emailSvrDomain) {
-        this.configValues.setEmailSvrDomain (emailSvrDomain);
+        this.configValues.setEmailSvrDomain(emailSvrDomain);
     }
 
     public void setEmailSvrUser(String emailSvrUser) {
-        this.configValues.setEmailSvrUser (emailSvrUser);
+        this.configValues.setEmailSvrUser(emailSvrUser);
     }
 
     public void setEmailSvrHashType(String emailSvrHashType) {
-        this.configValues.setEmailSvrHashType (emailSvrHashType);
+        this.configValues.setEmailSvrHashType(emailSvrHashType);
     }
 
     public void setEmailSvrPassword(String emailSvrPassword) {
-        this.configValues.setEmailSvrPassword (emailSvrPassword);
+        this.configValues.setEmailSvrPassword(emailSvrPassword);
     }
 
     public void setEmailSvrPort(Integer emailServerPort) {
-        this.configValues.setEmailSvrPort (emailServerPort);
+        this.configValues.setEmailSvrPort(emailServerPort);
     }
 
     public boolean isIflIntegrityCheck() {

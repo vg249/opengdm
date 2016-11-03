@@ -14,6 +14,7 @@ import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestConfiguration;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestValues;
@@ -105,8 +106,12 @@ public class DtoRequestConfigSettingsPropsTest {
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
 
+        TestConfiguration testConfiguration = new TestConfiguration();
+
+
         Assert.assertTrue("Unable to log in with locally instantiated config settings",
-                ClientContext.getInstance(configSettings).login(userDetail.getUserName(), userDetail.getPassword()));
+                ClientContext.getInstance(configSettings,
+                        testConfiguration.getTestExecConfig().getTestCrop()).login(userDetail.getUserName(), userDetail.getPassword()));
 
         PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
 

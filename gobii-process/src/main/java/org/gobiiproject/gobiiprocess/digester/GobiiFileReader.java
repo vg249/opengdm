@@ -494,8 +494,8 @@ public class GobiiFileReader {
 		try{
 			// set up authentication and so forth
 			// you'll need to get the current from the instruction file
-			ClientContext context=ClientContext.getInstance(config);
-			context.setCurrentClientCrop(cropName);
+			ClientContext context=ClientContext.getInstance(config,cropName);
+			//context.setCurrentClientCrop(cropName);
 			SystemUsers systemUsers = new SystemUsers();
 			SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
 

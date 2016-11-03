@@ -316,6 +316,7 @@ public class DtoRequestDataSetTest {
                 itemsToTest.add(idx);
             }
         }
+
         for (Integer currentIdx : itemsToTest) {
             DataSetDTO currentDataSetDto = dataSetDTOList.get(currentIdx);
 

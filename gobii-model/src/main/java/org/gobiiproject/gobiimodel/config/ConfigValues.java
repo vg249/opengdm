@@ -24,6 +24,9 @@ class ConfigValues {
 //    @ElementList(required = false)
 //    List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
 
+    @Element
+    private TestExecConfig testExecConfig = new TestExecConfig();
+
     @ElementMap(required = false)
     private Map<String, CropConfig> cropConfigs = new LinkedHashMap<>();
 
@@ -58,6 +61,14 @@ class ConfigValues {
 
     @Element(required = false)
     private String fileSystemLog;
+
+    public TestExecConfig getTestExecConfig() {
+        return testExecConfig;
+    }
+
+    public void setTestExecConfig(TestExecConfig testExecConfig) {
+        this.testExecConfig = testExecConfig;
+    }
 
 
     public CropConfig getCropConfig(String gobiiCropType) {

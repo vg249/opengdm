@@ -69,7 +69,8 @@ public final class ClientContext {
     }
 
 
-    public synchronized static ClientContext getInstance(ConfigSettings configSettings) throws Exception {
+    public synchronized static ClientContext getInstance(ConfigSettings configSettings,
+                                                         String cropType) throws Exception {
 
         if (null == clientContext) {
 
@@ -79,8 +80,16 @@ public final class ClientContext {
 
             clientContext = new ClientContext();
             clientContext.fileSystemRoot = configSettings.getFileSystemRoot();
-            clientContext.defaultGobiiCropType = configSettings.getDefaultGobiiCropType();
-            clientContext.currentGobiiCropType = clientContext.defaultGobiiCropType;
+//            clientContext.defaultGobiiCropType = configSettings.getDefaultGobiiCropType();
+//            clientContext.currentGobiiCropType = clientContext.defaultGobiiCropType;
+
+            if( null == cropType ) {
+                clientContext.defaultGobiiCropType = configSettings.getDefaultGobiiCropType();
+                clientContext.currentGobiiCropType = clientContext.defaultGobiiCropType;
+            } else {
+                clientContext.defaultGobiiCropType = cropType;
+                clientContext.currentGobiiCropType = cropType;
+            }
 
             for (CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
 

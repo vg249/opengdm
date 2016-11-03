@@ -6,14 +6,25 @@ import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
 
 
-
 /**
  * Created by Phil on 5/13/2016.
  */
 public class Authenticator {
 
+    private static TestConfiguration testConfiguration = null;
+
+    private static TestConfiguration getTestConfiguration() {
+        if (testConfiguration == null) {
+            testConfiguration = new TestConfiguration();
+        }
+
+        return testConfiguration;
+    }
+
 
     public static boolean authenticate(String gobiiCropType) throws Exception {
+
+        getTestConfiguration();
 
         // this method assumes we've already initialized the context with the server URL
         ClientContext.getInstance(null, false).setCurrentClientCrop(gobiiCropType);
@@ -29,16 +40,18 @@ public class Authenticator {
 
         String initialConfigUrl = null;
         // clear the current context so that we start from scratch populating server configs
-        if (!TestValues.TEST_SSH) {
+        if (!getTestConfiguration().getTestExecConfig().isTestSsh()) {
 
-            initialConfigUrl = TestValues.INTITIAL_CONFIG_URL;
+            initialConfigUrl = getTestConfiguration().getTestExecConfig().getInitialConfigUrl();
         } else {
-            if (null == TestValues.SSH_OVERRIDE_HOST || null == TestValues.SSH_OVERRIDE_PORT) {
+            if (null == getTestConfiguration().getTestExecConfig().getSshOverrideHost()
+                    || null == getTestConfiguration().getTestExecConfig().getSshOverridePort()) {
                 throw new Exception("Cannot test SSH override without host and port");
             }
 
-            initialConfigUrl = TestValues.SSH_OVERRKDE_INTITIAL_CONFIG_URL;
-            ClientContext.setSshOverride(TestValues.SSH_OVERRIDE_HOST, TestValues.SSH_OVERRIDE_PORT);
+            initialConfigUrl = getTestConfiguration().getTestExecConfig().getInitialConfigUrlForSshOverride();
+            ClientContext.setSshOverride(getTestConfiguration().getTestExecConfig().getSshOverrideHost(),
+                    getTestConfiguration().getTestExecConfig().getSshOverridePort());
         }
 
 
@@ -49,8 +62,10 @@ public class Authenticator {
         // as if you were navigating to that path in a web browser
 
 
-        String gobiiCropTypeDefault = ClientContext.getInstance(initialConfigUrl, true).getDefaultCropType();
-        return Authenticator.authenticate(gobiiCropTypeDefault);
+        //String gobiiCropTypeDefault = ClientContext.getInstance(initialConfigUrl, true).getDefaultCropType();
+        ClientContext.getInstance(initialConfigUrl, true);
+        String gobiiTestCrop = getTestConfiguration().getTestExecConfig().getTestCrop();
+        return Authenticator.authenticate(gobiiTestCrop);
     }
 
     // not implemented yet
