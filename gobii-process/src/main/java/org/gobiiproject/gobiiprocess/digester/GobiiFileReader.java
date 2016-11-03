@@ -306,7 +306,6 @@ public class GobiiFileReader {
 		if(success){
 
 			errorPath=getLogName(zero, cropConfig, crop, "IFLs");
-			HelperFunctions.printDoneFile(instructionFile);
 			String pathToIFL=loaderScriptPath+"postgres/gobii_ifl/gobii_ifl.py";
 			String outputDir=" -o " + cropConfig.getIntermediateFilesDirectory();
 			String connectionString=" -c "+HelperFunctions.getPostgresConnectionString(cropConfig);
@@ -352,7 +351,6 @@ public class GobiiFileReader {
 				//python loadVariantMatrix.py <Dataset_Identifier.variant> <Dataset_Identifier.marker_id> <Dataset_Identifier.dnarun_id> <hostname> <port> <dbuser> <dbpass> <dbname>
 				CropDbConfig monetConf=cropConfig.getCropDbConfig(GobiiDbType.MONETDB); 
 				String loadVariantUserPort=monetConf.getHost()+" "+monetConf.getPort() + " " +monetConf.getUserName()+ " " + monetConf.getPassword() + " " + monetConf.getDbName();
-				System.out.println("Not Running MonetDB (Testing Shutoff)");//TODO: Fix Monet DB
 				generateIdLists(cropConfig, markerFileLoc, sampleFileLoc, dataSetId, errorPath);
 				HelperFunctions.tryExec("python "+loadVariantMatrix+" "+variantFile.getPath()+" "+markerFileLoc+" "+sampleFileLoc+" "+loadVariantUserPort,null,errorPath);
 			
@@ -461,14 +459,13 @@ public class GobiiFileReader {
 	}
 
 	/**
-	 * Generates appropriate monetDB files.
-	 * Reason - Raza is weird.
+	 * Generates appropriate monetDB files from the MDE by reverse-digesting the data we just loaded.
+     * Reason - Ensures Postgres and MonetDB are in sync
 	 * @param cropConfig Connection String
 	 * @param markerFile No header
 	 * @param dnaRunFile With header
 	 * @param dsid Because
-	 * @param errorFile We might blow up
-	 * @return if we blew up
+	 * @param errorFile temporary file to store error information in
 	 */
 	private static void generateIdLists(CropConfig cropConfig,String markerFile,String dnaRunFile,int dsid,String errorFile){
 		String gobiiIFL="python " + extractorScriptPath+"postgres/gobii_mde/gobii_mde.py"+" -c "+HelperFunctions.getPostgresConnectionString(cropConfig)+
@@ -476,9 +473,12 @@ public class GobiiFileReader {
 			" -s "+dnaRunFile+".tmp"+
 			" -d "+dsid;
 		tryExec(gobiiIFL, null, errorFile);
-		tryExec("cut -f1 "+markerFile	+".tmp | tail -n +2 > "+markerFile, null, errorFile);
-		rm(markerFile+".tmp");
-		tryExec("cut -f1 "+dnaRunFile+".tmp > "+dnaRunFile, null, errorFile);
+        tryExec("cut -f1 "+markerFile,markerFile+".tmp2",errorFile);
+		tryExec("tail -n +2", markerFile, errorFile,markerFile+".tmp2");
+        tryExec("cut -f1 "+dnaRunFile+".tmp", dnaRunFile, errorFile);
+
+        rm(markerFile+".tmp");
+        rm(markerFile+".tmp2");
 		rm(dnaRunFile+".tmp");
 	}
 
@@ -506,12 +506,6 @@ public class GobiiFileReader {
 
 			String currentCropContextRoot = context.getInstance(null, false).getCurrentCropContextRoot();
 			UriFactory uriFactory = new UriFactory(currentCropContextRoot);
-
-//			DataSetDTO dataSetRequest = new DataSetDTO();
-//
-//			dataSetRequest.setDataSetId(dataSetId);
-//			DtoRequestDataSet dtoProcessor = new DtoRequestDataSet();
-//			DataSetDTO dataSetResponse = dtoProcessor.process(dataSetRequest);
 
 			RestUri projectsUri = uriFactory
 					.resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
