@@ -347,12 +347,13 @@ public class GobiiFileReader {
 				logError("Digester","Data Set ID is null for variant call");
 		}
 		if((variantFile!=null)&&dataSetId!=null){	
-				String loadVariantMatrix=loaderScriptPath+"monet/loadVariantMatrix.py";
-				//python loadVariantMatrix.py <Dataset_Identifier.variant> <Dataset_Identifier.marker_id> <Dataset_Identifier.dnarun_id> <hostname> <port> <dbuser> <dbpass> <dbname>
-				CropDbConfig monetConf=cropConfig.getCropDbConfig(GobiiDbType.MONETDB); 
-				String loadVariantUserPort=monetConf.getHost()+" "+monetConf.getPort() + " " +monetConf.getUserName()+ " " + monetConf.getPassword() + " " + monetConf.getDbName();
-				generateIdLists(cropConfig, markerFileLoc, sampleFileLoc, dataSetId, errorPath);
-				HelperFunctions.tryExec("python "+loadVariantMatrix+" "+variantFile.getPath()+" "+markerFileLoc+" "+sampleFileLoc+" "+loadVariantUserPort,null,errorPath);
+			String loadVariantMatrix=loaderScriptPath+"monet/loadVariantMatrix.py";
+			//python loadVariantMatrix.py <Dataset_Identifier.variant> <Dataset_Identifier.marker_id> <Dataset_Identifier.dnarun_id> <hostname> <port> <dbuser> <dbpass> <dbname>
+			CropDbConfig monetConf=cropConfig.getCropDbConfig(GobiiDbType.MONETDB);
+			String loadVariantUserPort=monetConf.getHost()+" "+monetConf.getPort() + " " +monetConf.getUserName()+ " " + monetConf.getPassword() + " " + monetConf.getDbName();
+			generateIdLists(cropConfig, markerFileLoc, sampleFileLoc, dataSetId, errorPath);
+			ErrorLogger.logError("MonetDB","python "+loadVariantMatrix+" "+variantFile.getPath()+" "+new File(markerFileLoc).getAbsolutePath()+" "+new File(sampleFileLoc).getAbsolutePath()+" "+loadVariantUserPort);
+			HelperFunctions.tryExec("python "+loadVariantMatrix+" "+variantFile.getPath()+" "+new File(markerFileLoc).getAbsolutePath()+" "+new File(sampleFileLoc).getAbsolutePath()+" "+loadVariantUserPort,null,errorPath);
 			
 				//HDF-5
 				//Usage: %s <datasize> <input file> <output HDF5 file
