@@ -13,6 +13,13 @@ import org.slf4j.LoggerFactory;
  * the test environment, we never ever want to create a direct dependency of
  * a client on a configuration file because we need configuration to remain
  * dynamic through central control in the server.
+ *
+ * Do use this mechanism, the fqpn of the configuraiton file must be defined as an environment
+ * variable. In the JUnit configuration in the IDE, the "VM Options" would have:
+ *                  -DcfgFqpn=C:\gobii-config\gobii-web.xml
+ *
+ * Something similar will be required on the mavn command line, like:
+ *                  mvn test -DcfgFqpn=C:\gobii-config\gobii-web.xml
  */
 public class TestConfiguration {
 
