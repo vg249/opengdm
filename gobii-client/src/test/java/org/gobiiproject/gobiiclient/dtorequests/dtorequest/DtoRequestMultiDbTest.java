@@ -8,9 +8,9 @@ package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestCv;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestConfiguration;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestValues;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
@@ -42,7 +42,7 @@ public class DtoRequestMultiDbTest {
     @Test
     public void testGetPingDatabaseConfig() throws Exception {
 
-        ConfigSettings configSettings = new ConfigSettings(TestValues.PROP_FILE_FQPN); // we're deliberately going to the source instead of using ClientContext
+        ConfigSettings configSettings = new TestConfiguration().getConfigSettings(); // we're deliberately going to the source instead of using ClientContext
 
 
         List<String> activeCropTypes = configSettings
@@ -85,7 +85,7 @@ public class DtoRequestMultiDbTest {
     @Test
     public void testCreateCvOnMultipleDb() throws Exception {
 
-        ConfigSettings configSettings = new ConfigSettings(TestValues.PROP_FILE_FQPN); // we're deliberately going to the source instead of using ClientContext
+        ConfigSettings configSettings = new TestConfiguration().getConfigSettings(); // we're deliberately going to the source instead of using ClientContext
 
 
         List<String> activeCropTypes = configSettings

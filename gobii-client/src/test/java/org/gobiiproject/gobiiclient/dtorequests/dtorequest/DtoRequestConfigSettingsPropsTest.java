@@ -17,7 +17,6 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestConfiguration;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestValues;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
@@ -32,10 +31,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class DtoRequestConfigSettingsPropsTest {
@@ -72,7 +69,7 @@ public class DtoRequestConfigSettingsPropsTest {
 
         // this works because in our test environment we know that our gobii.config
         // here on the client is the same as on the server
-        ConfigSettings configSettings = new ConfigSettings(TestValues.PROP_FILE_FQPN);
+        ConfigSettings configSettings = new TestConfiguration().getConfigSettings();
         Assert.assertTrue(configSettings
                 .getActiveCropConfigs()
                 .size() == configSettingsDTOResponse.getServerConfigs().size());
@@ -101,7 +98,7 @@ public class DtoRequestConfigSettingsPropsTest {
     public void testInitContextFromConfigSettings() throws Exception {
 
         ClientContext.resetConfiguration();
-        ConfigSettings configSettings = new ConfigSettings(TestValues.PROP_FILE_FQPN);
+        ConfigSettings configSettings = new TestConfiguration().getConfigSettings();
 
         SystemUsers systemUsers = new SystemUsers();
         SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
@@ -111,7 +108,7 @@ public class DtoRequestConfigSettingsPropsTest {
 
         Assert.assertTrue("Unable to log in with locally instantiated config settings",
                 ClientContext.getInstance(configSettings,
-                        testConfiguration.getTestExecConfig().getTestCrop()).login(userDetail.getUserName(), userDetail.getPassword()));
+                        testConfiguration.getConfigSettings().getTestExecConfig().getTestCrop()).login(userDetail.getUserName(), userDetail.getPassword()));
 
         PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
 
