@@ -314,4 +314,41 @@ public class TestGobiiConfig {
                 cropDbConfig.getPassword().equals(password));
     }
 
+    @Test
+    public void testCreateDirectories() throws Exception {
+
+        String testFileFqpn = makeTestFileFqpn("croppgsql");
+
+        String cropId = "FOOCROP";
+        String user = "user_" + UUID.randomUUID().toString();
+        String password = "password_" + UUID.randomUUID().toString();
+        String host = "host_" + UUID.randomUUID().toString();
+        String contextPath = "foodbname-" + UUID.randomUUID().toString();
+        Integer port = 5063;
+
+        String commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -c "
+                + cropId
+                + " -stP "
+                + " -soH "
+                + host
+                + " -soN "
+                + port.toString()
+                + " -soU "
+                + user
+                + " -soP "
+                + password
+                + " -soR "
+                + contextPath);
+
+        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+
+    }
+
 }

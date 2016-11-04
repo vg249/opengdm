@@ -76,20 +76,6 @@ public class GobiiConfig {
 
     private static String WAR_FILES_DIR = "wars/";
 
-    private static List<String> directoriesRelativeToEachCrop = Arrays.asList(
-            WAR_FILES_DIR,
-            "extractor/inprogress/",
-            "extractor/instructions/",
-            "extractor/output/flapjack/",
-            "extractor/output/hapmap/",
-            "files/",
-            "hdf5/",
-            "loader/digest/",
-            "loader/inprogress/",
-            "loader/instructions/"
-    );
-
-
     private static void printSeparator() {
         System.out.println("\n\n*******************************************************************");
     }
@@ -652,19 +638,17 @@ public class GobiiConfig {
 
             ConfigSettings configSettings = new ConfigSettings(propFileFqpn);
             String gobiiRoot = configSettings.getFileSystemRoot();
-            for (CropConfig currentCrop : configSettings.getActiveCropConfigs()) {
+            for (String currentCrop : configSettings.getActiveCropTypes()) {
 
                 printSeparator();
                 printField("Checking directories for crop", currentCrop.getGobiiCropType().toString());
 
-                for (String currentDirectory : directoriesRelativeToEachCrop) {
+
+                for (GobiiFileLocationType currentRelativeDirectory :GobiiFileLocationType.values()) {
+
+                    String directoryToMake = configSettings.getProcessingPath(currentCrop,currentRelativeDirectory);
 
 
-                    String directoryToMake = gobiiRoot + currentCrop
-                            .getGobiiCropType()
-                            .toString()
-                            .toLowerCase()
-                            + "/" + currentDirectory;
                     File currentFile = new File(directoryToMake);
                     if (!currentFile.exists()) {
 

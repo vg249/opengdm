@@ -4,6 +4,7 @@ package org.gobiiproject.gobiimodel.config;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +73,10 @@ public class ConfigSettings {
 
     public void commit() throws Exception {
         ConfigValuesFactory.commitConfigValues(this.configValues, this.configFileFqpn);
+    }
+
+    public String getProcessingPath(String cropType, GobiiFileLocationType gobiiFileLocationType) throws Exception {
+        return this.configValues.getProcessingPath(cropType, gobiiFileLocationType);
     }
 
     public void setCrop(String gobiiCropType,

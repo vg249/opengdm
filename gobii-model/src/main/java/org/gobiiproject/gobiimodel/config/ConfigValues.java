@@ -1,14 +1,11 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.apache.commons.lang.math.NumberUtils;
-import org.gobiiproject.gobiimodel.types.GobiiDbType;
+import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.ElementMap;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,11 +21,24 @@ class ConfigValues {
 //    @ElementList(required = false)
 //    List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
 
+    private final char PATH_TERMINATOR = '/';
+
     @Element
     private TestExecConfig testExecConfig = new TestExecConfig();
 
     @ElementMap(required = false)
     private Map<String, CropConfig> cropConfigs = new LinkedHashMap<>();
+
+    @ElementMap(required = false)
+    private Map<GobiiFileProcessDir,String> relativePaths = new HashMap() {{
+        put(GobiiFileProcessDir.RAW_USER_FILES,"files/");
+        put(GobiiFileProcessDir.LOADER_INSTRUCTIONS,"loader/instructions/");
+        put(GobiiFileProcessDir.INTERMEDIATE_FILES,"loader/digest//");
+        put(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS,"extractor/instructions/");
+        put(GobiiFileProcessDir.EXTRACTOR_OUTPUT,"extractor/output/");
+        put(GobiiFileProcessDir.QC_NOTIFICATIONS,"qcnotifications/");
+
+    }};
 
     private String currentGobiiCropType;
 
@@ -60,6 +70,9 @@ class ConfigValues {
     private String fileSystemRoot;
 
     @Element(required = false)
+    private String fileSysCropsParent = "crops/";
+
+    @Element(required = false)
     private String fileSystemLog;
 
     public TestExecConfig getTestExecConfig() {
@@ -78,6 +91,24 @@ class ConfigValues {
 
         return returnVal;
     }
+
+
+    public String getProcessingPath(String cropType, GobiiFileLocationType gobiiFileLocationType) throws Exception {
+
+        String returnVal;
+
+        if(! cropConfigs.containsKey(cropType)) {
+            throw new Exception("Unknown crop type: " + cropType);
+        }
+
+        String root = LineUtils.terminateDirectoryPath(this.fileSystemRoot,PATH_TERMINATOR);
+        String parent = LineUtils.terminateDirectoryPath(this.fileSysCropsParent,PATH_TERMINATOR);
+        String relativePath = LineUtils.terminateDirectoryPath(relativePaths.get(gobiiFileLocationType),PATH_TERMINATOR);
+
+        returnVal = root + parent + relativePath;
+
+        return returnVal;
+    } //
 
     public List<CropConfig> getActiveCropConfigs() throws Exception {
 
@@ -231,5 +262,13 @@ class ConfigValues {
 
     public void setFileSystemLog(String fileSystemLog) {
         this.fileSystemLog = fileSystemLog;
+    }
+
+    public String getFileSysCropsParent() {
+        return fileSysCropsParent;
+    }
+
+    public void setFileSysCropsParent(String fileSysCropsParent) {
+        this.fileSysCropsParent = fileSysCropsParent;
     }
 }
