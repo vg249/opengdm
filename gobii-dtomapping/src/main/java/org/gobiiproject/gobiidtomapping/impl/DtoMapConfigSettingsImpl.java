@@ -7,6 +7,7 @@ import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,16 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
             returnVal.setDefaultCrop(configSettings.getDefaultGobiiCropType());
             for (CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
 
-                ServerConfig currentServerConfig = new ServerConfig(currentCropConfig);
+                ServerConfig currentServerConfig = new ServerConfig(currentCropConfig,
+                        configSettings.getProcessingPath(currentCropConfig.getGobiiCropType(),
+                                GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS),
+                        configSettings.getProcessingPath(currentCropConfig.getGobiiCropType(),
+                                GobiiFileProcessDir.LOADER_INSTRUCTIONS),
+                        configSettings.getProcessingPath(currentCropConfig.getGobiiCropType(),
+                                GobiiFileProcessDir.INTERMEDIATE_FILES),
+                        configSettings.getProcessingPath(currentCropConfig.getGobiiCropType(),
+                                GobiiFileProcessDir.RAW_USER_FILES)
+                        );
 
                 returnVal.getServerConfigs().put(currentCropConfig.getGobiiCropType(),
                         currentServerConfig);

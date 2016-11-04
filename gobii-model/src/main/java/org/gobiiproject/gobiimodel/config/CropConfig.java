@@ -32,20 +32,20 @@ public class CropConfig {
     @Element(required = false)
     private Integer servicePort;
 
-    @Element(required = false)
-    private String rawUserFilesDirectory;
-
-    @Element(required = false)
-    private String loaderInstructionFilesDirectory;
-
-    @Element(required = false)
-    private String extractorInstructionFilesDirectory;
-
-    @Element(required = false)
-    private String extractorInstructionFilesOutputDirectory;
-
-    @Element(required = false)
-    private String intermediateFilesDirectory;
+//    @Element(required = false)
+//    private String rawUserFilesDirectory;
+//
+//    @Element(required = false)
+//    private String loaderInstructionFilesDirectory;
+//
+//    @Element(required = false)
+//    private String extractorInstructionFilesDirectory;
+//
+//    @Element(required = false)
+//    private String extractorInstructionFilesOutputDirectory;
+//
+//    @Element(required = false)
+//    private String intermediateFilesDirectory;
 
     @Element(required = false)
     private boolean isActive;
@@ -60,22 +60,22 @@ public class CropConfig {
                       String serviceDomain,
                       String serviceAppRoot,
                       Integer servicePort,
-                      String loaderInstructionFilesDirectory,
-                      String extractorInstructionFilesDirectory,
-                      String extractorInstructionFilesOutputDirectory,
-                      String rawUserFilesDirectory,
-                      String intermediateFilesDirectory,
+//                      String loaderInstructionFilesDirectory,
+//                      String extractorInstructionFilesDirectory,
+//                      String extractorInstructionFilesOutputDirectory,
+//                      String rawUserFilesDirectory,
+//                      String intermediateFilesDirectory,
                       boolean isActive) {
 
         this.gobiiCropType = gobiiCropType;
         this.serviceDomain = serviceDomain;
         this.serviceAppRoot = serviceAppRoot;
         this.servicePort = servicePort;
-        this.rawUserFilesDirectory = rawUserFilesDirectory;
-        this.loaderInstructionFilesDirectory = loaderInstructionFilesDirectory;
-        this.extractorInstructionFilesDirectory = extractorInstructionFilesDirectory;
-        this.extractorInstructionFilesOutputDirectory = extractorInstructionFilesOutputDirectory;
-        this.intermediateFilesDirectory = intermediateFilesDirectory;
+//        this.rawUserFilesDirectory = rawUserFilesDirectory;
+//        this.loaderInstructionFilesDirectory = loaderInstructionFilesDirectory;
+//        this.extractorInstructionFilesDirectory = extractorInstructionFilesDirectory;
+//        this.extractorInstructionFilesOutputDirectory = extractorInstructionFilesOutputDirectory;
+//        this.intermediateFilesDirectory = intermediateFilesDirectory;
         this.isActive = isActive;
 
     }
@@ -114,30 +114,30 @@ public class CropConfig {
         return this;
     }
 
-    public CropConfig setRawUserFilesDirectory(String rawUserFilesDirectory) {
-        this.rawUserFilesDirectory = rawUserFilesDirectory;
-        return this;
-    }
-
-    public CropConfig setLoaderInstructionFilesDirectory(String loaderInstructionFilesDirectory) {
-        this.loaderInstructionFilesDirectory = loaderInstructionFilesDirectory;
-        return this;
-    }
-
-    public CropConfig setExtractorInstructionFilesDirectory(String extractorInstructionFilesDirectory) {
-        this.extractorInstructionFilesDirectory = extractorInstructionFilesDirectory;
-        return this;
-    }
-
-    public CropConfig setExtractorInstructionFilesOutputDirectory(String extractorInstructionFilesOutputDirectory) {
-        this.extractorInstructionFilesOutputDirectory = extractorInstructionFilesOutputDirectory;
-        return this;
-    }
-
-    public CropConfig setIntermediateFilesDirectory(String intermediateFilesDirectory) {
-        this.intermediateFilesDirectory = intermediateFilesDirectory;
-        return this;
-    }
+//    public CropConfig setRawUserFilesDirectory(String rawUserFilesDirectory) {
+//        this.rawUserFilesDirectory = rawUserFilesDirectory;
+//        return this;
+//    }
+//
+//    public CropConfig setLoaderInstructionFilesDirectory(String loaderInstructionFilesDirectory) {
+//        this.loaderInstructionFilesDirectory = loaderInstructionFilesDirectory;
+//        return this;
+//    }
+//
+//    public CropConfig setExtractorInstructionFilesDirectory(String extractorInstructionFilesDirectory) {
+//        this.extractorInstructionFilesDirectory = extractorInstructionFilesDirectory;
+//        return this;
+//    }
+//
+//    public CropConfig setExtractorInstructionFilesOutputDirectory(String extractorInstructionFilesOutputDirectory) {
+//        this.extractorInstructionFilesOutputDirectory = extractorInstructionFilesOutputDirectory;
+//        return this;
+//    }
+//
+//    public CropConfig setIntermediateFilesDirectory(String intermediateFilesDirectory) {
+//        this.intermediateFilesDirectory = intermediateFilesDirectory;
+//        return this;
+//    }
 
     public CropConfig setCropDbConfigsByDbType(Map<GobiiDbType, CropDbConfig> cropDbConfigsByDbType) {
         this.cropDbConfigsByDbType = cropDbConfigsByDbType;
@@ -148,25 +148,25 @@ public class CropConfig {
         return servicePort;
     }
 
-    public String getRawUserFilesDirectory() {
-        return rawUserFilesDirectory;
-    }
-
-    public String getLoaderInstructionFilesDirectory() {
-        return loaderInstructionFilesDirectory;
-    }
-
-    public String getExtractorInstructionFilesDirectory() {
-        return extractorInstructionFilesDirectory;
-    }
-
-    public String getExtractorInstructionFilesOutputDirectory() {
-        return extractorInstructionFilesOutputDirectory;
-    }
-
-    public String getIntermediateFilesDirectory() {
-        return intermediateFilesDirectory;
-    }
+//    public String getRawUserFilesDirectory() {
+//        return rawUserFilesDirectory;
+//    }
+//
+//    public String getLoaderInstructionFilesDirectory() {
+//        return loaderInstructionFilesDirectory;
+//    }
+//
+//    public String getExtractorInstructionFilesDirectory() {
+//        return extractorInstructionFilesDirectory;
+//    }
+//
+//    public String getExtractorInstructionFilesOutputDirectory() {
+//        return extractorInstructionFilesOutputDirectory;
+//    }
+//
+//    public String getIntermediateFilesDirectory() {
+//        return intermediateFilesDirectory;
+//    }
 
     public String getServiceDomain() {
         return serviceDomain;

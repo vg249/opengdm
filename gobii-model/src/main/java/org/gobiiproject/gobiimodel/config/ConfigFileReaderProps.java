@@ -190,11 +190,11 @@ public class ConfigFileReaderProps {
                     serviceDomain,
                     serviceAppRoot,
                     servicePort,
-                    loaderFilesLocation,
-                    extractorFilesLocation,
-                    extractorFilesOutputLocation,
-                    userFilesLocation,
-                    intermediateFilesLocation,
+//                    loaderFilesLocation,
+//                    extractorFilesLocation,
+//                    extractorFilesOutputLocation,
+//                    userFilesLocation,
+//                    intermediateFilesLocation,
                     isActive);
 
             //crops.rice.db.monetdb.password=appuser

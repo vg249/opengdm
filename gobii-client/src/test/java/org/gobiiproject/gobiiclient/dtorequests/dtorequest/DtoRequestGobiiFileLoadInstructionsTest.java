@@ -22,7 +22,7 @@ import org.gobiiproject.gobiimodel.types.DataSetOrientationType;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 
-import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
@@ -58,12 +58,12 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         String digesterInputDirectory = ClientContext
                 .getInstance(null, false)
-                .getFileLocationOfCurrenCrop(GobiiFileLocationType.LOADERINSTRUCTION_FILES);
+                .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS);
 
 
         String digesterOutputDirectory =
                 ClientContext.getInstance(null, false)
-                        .getFileLocationOfCurrenCrop(GobiiFileLocationType.INTERMEDIATE_FILES);
+                        .getFileLocationOfCurrenCrop(GobiiFileProcessDir.INTERMEDIATE_FILES);
 
         loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
 
@@ -360,7 +360,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         // so it's handy way to test this functionality
         String instructionFileDirectory = ClientContext
                 .getInstance(null, false)
-                .getFileLocationOfCurrenCrop(GobiiFileLocationType.LOADERINSTRUCTION_FILES);
+                .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS);
         String bogusUserInputFile = instructionFileDirectory + newInstructionFileNameNoError + ".json";
 
         loaderInstructionFilesDTOToSend.setInstructionFileName("testapp_" + DateUtils.makeDateIdString());

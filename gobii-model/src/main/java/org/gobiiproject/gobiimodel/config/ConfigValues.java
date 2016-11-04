@@ -1,11 +1,11 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,13 +30,13 @@ class ConfigValues {
     private Map<String, CropConfig> cropConfigs = new LinkedHashMap<>();
 
     @ElementMap(required = false)
-    private Map<GobiiFileProcessDir,String> relativePaths = new HashMap() {{
-        put(GobiiFileProcessDir.RAW_USER_FILES,"files/");
-        put(GobiiFileProcessDir.LOADER_INSTRUCTIONS,"loader/instructions/");
-        put(GobiiFileProcessDir.INTERMEDIATE_FILES,"loader/digest//");
-        put(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS,"extractor/instructions/");
-        put(GobiiFileProcessDir.EXTRACTOR_OUTPUT,"extractor/output/");
-        put(GobiiFileProcessDir.QC_NOTIFICATIONS,"qcnotifications/");
+    private Map<GobiiFileProcessDir,String> relativePaths = new EnumMap<GobiiFileProcessDir,String>(GobiiFileProcessDir.class) {{
+        put(GobiiFileProcessDir.RAW_USER_FILES, "files/");
+        put(GobiiFileProcessDir.LOADER_INSTRUCTIONS, "loader/instructions/");
+        put(GobiiFileProcessDir.INTERMEDIATE_FILES, "loader/digest//");
+        put(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, "extractor/instructions/");
+        put(GobiiFileProcessDir.EXTRACTOR_OUTPUT, "extractor/output/");
+        put(GobiiFileProcessDir.QC_NOTIFICATIONS, "qcnotifications/");
 
     }};
 
@@ -93,19 +93,20 @@ class ConfigValues {
     }
 
 
-    public String getProcessingPath(String cropType, GobiiFileLocationType gobiiFileLocationType) throws Exception {
+    public String getProcessingPath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
 
         String returnVal;
 
-        if(! cropConfigs.containsKey(cropType)) {
+        if (!cropConfigs.containsKey(cropType)) {
             throw new Exception("Unknown crop type: " + cropType);
         }
 
-        String root = LineUtils.terminateDirectoryPath(this.fileSystemRoot,PATH_TERMINATOR);
-        String parent = LineUtils.terminateDirectoryPath(this.fileSysCropsParent,PATH_TERMINATOR);
-        String relativePath = LineUtils.terminateDirectoryPath(relativePaths.get(gobiiFileLocationType),PATH_TERMINATOR);
+        String root = LineUtils.terminateDirectoryPath(this.fileSystemRoot, PATH_TERMINATOR);
+        String parent = LineUtils.terminateDirectoryPath(this.fileSysCropsParent, PATH_TERMINATOR);
+        String crop = LineUtils.terminateDirectoryPath(cropType, PATH_TERMINATOR);
+        String relativePath = LineUtils.terminateDirectoryPath(relativePaths.get(gobiiFileProcessDir), PATH_TERMINATOR);
 
-        returnVal = root + parent + relativePath;
+        returnVal = root + parent + crop + relativePath;
 
         return returnVal;
     } //

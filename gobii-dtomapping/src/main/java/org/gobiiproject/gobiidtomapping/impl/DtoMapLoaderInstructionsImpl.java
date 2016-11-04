@@ -7,6 +7,7 @@ import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
@@ -64,106 +65,114 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
     @Override
     public LoaderInstructionFilesDTO createInstruction(String cropType, LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws GobiiException {
+
         LoaderInstructionFilesDTO returnVal = loaderInstructionFilesDTO;
 
-        ConfigSettings configSettings = new ConfigSettings();
+        try {
+            ConfigSettings configSettings = new ConfigSettings();
 
 
-        if (null == cropType ) {
-            throw new GobiiDtoMappingException("Loader instruction request does not specify a crop");
-        }
-
-        String instructionFileDirectory = configSettings
-                .getCropConfig(cropType)
-                .getLoaderInstructionFilesDirectory();
-
-        String instructionFileFqpn = instructionFileDirectory
-                + loaderInstructionFilesDTO.getInstructionFileName()
-                + INSTRUCTION_FILE_EXT;
-
-
-        for (GobiiLoaderInstruction currentLoaderInstruction :
-                loaderInstructionFilesDTO.getGobiiLoaderInstructions()) {
-
-
-            GobiiFile currentGobiiFile = currentLoaderInstruction.getGobiiFile();
-
-            // check that we have all required values
-            if (LineUtils.isNullOrEmpty(returnVal.getInstructionFileName())) {
-                throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                        "User file destination is missing"
-                );
+            if (null == cropType) {
+                throw new GobiiDtoMappingException("Loader instruction request does not specify a crop");
             }
 
-            if (LineUtils.isNullOrEmpty(currentGobiiFile.getSource())) {
-                throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                        "User file destination is missing"
-                );
-            }
+            String instructionFileDirectory = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.LOADER_INSTRUCTIONS);
+//                .getCropConfig(cropType)
+//                .getLoaderInstructionFilesDirectory();
 
-            if (LineUtils.isNullOrEmpty(currentGobiiFile.getDestination())) {
-                throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                        "User file destination is missing"
-                );
-            }
+            String instructionFileFqpn = instructionFileDirectory
+                    + loaderInstructionFilesDTO.getInstructionFileName()
+                    + INSTRUCTION_FILE_EXT;
 
-            if (currentGobiiFile.isRequireDirectoriesToExist()) {
 
-                if (!loaderInstructionsDAO.doesPathExist(currentGobiiFile.getSource())) {
+            for (GobiiLoaderInstruction currentLoaderInstruction :
+                    loaderInstructionFilesDTO.getGobiiLoaderInstructions()) {
+
+
+                GobiiFile currentGobiiFile = currentLoaderInstruction.getGobiiFile();
+
+                // check that we have all required values
+                if (LineUtils.isNullOrEmpty(returnVal.getInstructionFileName())) {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                            GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                            "require-to-exist was set to true, but the source file path does not exist: "
-                                    + currentGobiiFile.getSource());
+                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                            "User file destination is missing"
+                    );
+                }
+
+                if (LineUtils.isNullOrEmpty(currentGobiiFile.getSource())) {
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                            "User file destination is missing"
+                    );
+                }
+
+                if (LineUtils.isNullOrEmpty(currentGobiiFile.getDestination())) {
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                            "User file destination is missing"
+                    );
+                }
+
+                if (currentGobiiFile.isRequireDirectoriesToExist()) {
+
+                    if (!loaderInstructionsDAO.doesPathExist(currentGobiiFile.getSource())) {
+                        throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                                "require-to-exist was set to true, but the source file path does not exist: "
+                                        + currentGobiiFile.getSource());
+
+                    }
+
+                    if (!loaderInstructionsDAO.doesPathExist(currentGobiiFile.getDestination())) {
+                        throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                                "require-to-exist was set to true, but the source file path does not exist: "
+                                        + currentGobiiFile.getSource());
+                    }
 
                 }
 
-                if (!loaderInstructionsDAO.doesPathExist(currentGobiiFile.getDestination())) {
-                    throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                            GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                            "require-to-exist was set to true, but the source file path does not exist: "
-                                    + currentGobiiFile.getSource());
-                }
 
-            }
+                // if so, proceed with processing
 
 
-            // if so, proceed with processing
-
-
-            // "source file" is the data file the user may have already uploaded
-            if (currentGobiiFile.isCreateSource()) {
-
-                createDirectories(instructionFileDirectory,
-                        currentGobiiFile);
-
-
-            } else {
-
-                // it's supposed to exist, so we check
-                if (loaderInstructionsDAO.doesPathExist(currentGobiiFile.getSource())) {
+                // "source file" is the data file the user may have already uploaded
+                if (currentGobiiFile.isCreateSource()) {
 
                     createDirectories(instructionFileDirectory,
                             currentGobiiFile);
+
+
                 } else {
-                    throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                            GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                            "The load file was specified to exist, but does not exist: "
-                                    + currentGobiiFile.getSource());
 
-                } // if-else the source file exists
+                    // it's supposed to exist, so we check
+                    if (loaderInstructionsDAO.doesPathExist(currentGobiiFile.getSource())) {
 
-            } // if-else we're creating a source file
+                        createDirectories(instructionFileDirectory,
+                                currentGobiiFile);
+                    } else {
+                        throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                                GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                                "The load file was specified to exist, but does not exist: "
+                                        + currentGobiiFile.getSource());
+
+                    } // if-else the source file exists
+
+                } // if-else we're creating a source file
 
 
-        } // iterate instructions/files
+            } // iterate instructions/files
 
 
-        loaderInstructionsDAO.writeInstructions(instructionFileFqpn,
-                returnVal.getGobiiLoaderInstructions());
-        returnVal.setId(0); //this is arbitrary for now
+            loaderInstructionsDAO.writeInstructions(instructionFileFqpn,
+                    returnVal.getGobiiLoaderInstructions());
+            returnVal.setId(0); //this is arbitrary for now
+
+        } catch(GobiiException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new GobiiException(e);
+        }
 
         return returnVal;
 
@@ -176,12 +185,10 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
         try {
             ConfigSettings configSettings = new ConfigSettings();
-
-            String instructionFile = configSettings
-                    .getCropConfig(cropType)
-                    .getLoaderInstructionFilesDirectory()
+            String instructionFile = configSettings.getProcessingPath(cropType,GobiiFileProcessDir.LOADER_INSTRUCTIONS)
                     + instructionFileName
                     + INSTRUCTION_FILE_EXT;
+
 
 
             if (loaderInstructionsDAO.doesPathExist(instructionFile)) {

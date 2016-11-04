@@ -20,13 +20,14 @@ public class LineUtils {
         return (null == value || value.isEmpty());
     }
 
-    public static String terminateDirectoryPath(String path, char terminationCharacter ) {
+    public static String terminateDirectoryPath(String path, char terminationCharacter) {
 
         String returnVal = path;
 
-        if( path.charAt(path.length()-1) != terminationCharacter) {
-
-            returnVal += terminationCharacter;
+        if (path != null) {
+            if (path.charAt(path.length() - 1) != terminationCharacter) {
+                returnVal += terminationCharacter;
+            }
         }
 
         return returnVal;

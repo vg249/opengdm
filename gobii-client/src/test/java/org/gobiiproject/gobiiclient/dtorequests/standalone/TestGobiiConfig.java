@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests.standalone;
 
+import org.codehaus.jackson.map.DeserializerFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestConfiguration;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -7,6 +8,7 @@ import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.CropDbConfig;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -16,6 +18,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -29,6 +34,7 @@ public class TestGobiiConfig {
     private static String FILE_PATH_DELIMETER = "/";
     private static TestExecConfig testExecConfig = null;
 
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         testExecConfig = new TestConfiguration().getConfigSettings().getTestExecConfig();
@@ -41,6 +47,10 @@ public class TestGobiiConfig {
         returnVal = testExecConfig.getConfigUtilCommandlineStem() + " " + arguments;
 
         return returnVal;
+    }
+
+    private String getTestFileDirectoryOfRecord() {
+        return testExecConfig.getConfigFileTestDirectory();
     }
 
     private String makeTestFileFqpn(String testPurpose) {
@@ -359,52 +369,79 @@ public class TestGobiiConfig {
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
 
-        
-        Assert.assertTrue("Config test value does not match: configFileFqpn" ,configSettings.getTestExecConfig().getConfigFileFqpn().equals(configFileFqpn ));
-        Assert.assertTrue("Config test value does not match: test directory",configSettings.getTestExecConfig().getConfigFileTestDirectory().equals(configFileTestDirectory ));
-        Assert.assertTrue("Config test value does not match: commandline stem",configSettings.getTestExecConfig().getConfigUtilCommandlineStem().equals(configUtilCommandlineStem ));
-        Assert.assertTrue("Config test value does not match: config URL",configSettings.getTestExecConfig().getInitialConfigUrl().equals(initialConfigUrl ));
-        Assert.assertTrue("Config test value does not match: ssh override URL",configSettings.getTestExecConfig().getInitialConfigUrlForSshOverride().equals(initialConfigUrlForSshOverride ));
-        Assert.assertTrue("Config test value does not match: ssh override host",configSettings.getTestExecConfig().getSshOverrideHost().equals(sshOverrideHost ));
-        Assert.assertTrue("Config test value does not match: ssh override port",configSettings.getTestExecConfig().getSshOverridePort().equals(sshOverridePort ));
-        Assert.assertTrue("Config test value does not match: test crop",configSettings.getTestExecConfig().getTestCrop().equals(testCrop));
-        Assert.assertTrue("Config test value does not match: test flag",configSettings.getTestExecConfig().isTestSsh() == isTestSsh);
+
+        Assert.assertTrue("Config test value does not match: configFileFqpn", configSettings.getTestExecConfig().getConfigFileFqpn().equals(configFileFqpn));
+        Assert.assertTrue("Config test value does not match: test directory", configSettings.getTestExecConfig().getConfigFileTestDirectory().equals(configFileTestDirectory));
+        Assert.assertTrue("Config test value does not match: commandline stem", configSettings.getTestExecConfig().getConfigUtilCommandlineStem().equals(configUtilCommandlineStem));
+        Assert.assertTrue("Config test value does not match: config URL", configSettings.getTestExecConfig().getInitialConfigUrl().equals(initialConfigUrl));
+        Assert.assertTrue("Config test value does not match: ssh override URL", configSettings.getTestExecConfig().getInitialConfigUrlForSshOverride().equals(initialConfigUrlForSshOverride));
+        Assert.assertTrue("Config test value does not match: ssh override host", configSettings.getTestExecConfig().getSshOverrideHost().equals(sshOverrideHost));
+        Assert.assertTrue("Config test value does not match: ssh override port", configSettings.getTestExecConfig().getSshOverridePort().equals(sshOverridePort));
+        Assert.assertTrue("Config test value does not match: test crop", configSettings.getTestExecConfig().getTestCrop().equals(testCrop));
+        Assert.assertTrue("Config test value does not match: test flag", configSettings.getTestExecConfig().isTestSsh() == isTestSsh);
     }
 
-    @Ignore
+    @Test
     public void testCreateDirectories() throws Exception {
 
-        String testFileFqpn = makeTestFileFqpn("croppgsql");
+        String testFileFqpn = makeTestFileFqpn("createdirs");
 
-        String cropId = "FOOCROP";
-        String user = "user_" + UUID.randomUUID().toString();
-        String password = "password_" + UUID.randomUUID().toString();
-        String host = "host_" + UUID.randomUUID().toString();
-        String contextPath = "foodbname-" + UUID.randomUUID().toString();
-        Integer port = 5063;
+        String testRootDirectory = getTestFileDirectoryOfRecord() + FILE_PATH_DELIMETER + UUID.randomUUID().toString();
 
-        String commandLine = makeCommandline("-a -wfqpn "
+        String createConfigCommand = makeCommandline("-a -wfqpn "
                 + testFileFqpn
-                + " -c "
-                + cropId
-                + " -stP "
-                + " -soH "
-                + host
-                + " -soN "
-                + port.toString()
-                + " -soU "
-                + user
-                + " -soP "
-                + password
-                + " -soR "
-                + contextPath);
+                + " -gR "
+                + testRootDirectory);
 
-        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
-        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+        boolean succeeded = HelperFunctions.tryExec(createConfigCommand, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + createConfigCommand, succeeded);
 
+        List<String> testCrops = Arrays.asList("DEV","TEST","EXTRA");
+        for (String currentCropId : testCrops) {
+
+
+            String host = "host_" + UUID.randomUUID().toString();
+            String contextPath = "context-" + UUID.randomUUID().toString();
+            Integer port = 8080;
+
+            String commandLineForCurrentCrop = makeCommandline("-a -wfqpn "
+                    + testFileFqpn
+                    + " -c "
+                    + currentCropId
+                    + " -stW "
+                    + " -soH "
+                    + host
+                    + " -soN "
+                    + port.toString()
+                    + " -soR "
+                    + contextPath);
+
+            succeeded = HelperFunctions.tryExec(commandLineForCurrentCrop, testFileFqpn + ".out", testFileFqpn + ".err");
+            Assert.assertTrue("Command failed: " + commandLineForCurrentCrop, succeeded);
+
+
+        } // iterate crops to create
+
+
+       String createDirectoriesCommand = makeCommandline(" -wfqpn "
+                + testFileFqpn
+                + " -wdirs ");
+
+
+        succeeded = HelperFunctions.tryExec(createDirectoriesCommand, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + createDirectoriesCommand, succeeded);
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+        for( CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
 
+            for(GobiiFileProcessDir currentRelativeDirectory : EnumSet.allOf(GobiiFileProcessDir.class)){
+
+                String currentCropDir = configSettings.getProcessingPath(currentCropConfig.getGobiiCropType(), currentRelativeDirectory);
+                File file = new File(currentCropDir);
+                Assert.assertTrue("Crop directory was not created: " + currentCropDir,file.exists());
+                Assert.assertTrue("Crop fqpn was not created as a directory: " + currentCropDir,file.isDirectory());
+            }
+        }
 
     }
 

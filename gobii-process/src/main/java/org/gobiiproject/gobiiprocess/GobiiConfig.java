@@ -14,7 +14,7 @@ import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 ;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
-import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
@@ -32,6 +32,7 @@ import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -704,13 +705,13 @@ public class GobiiConfig {
             GobiiConfig.printField("Context root", ClientContext.getInstance(null, false).getCurrentCropContextRoot());
 
             GobiiConfig.printField("Loader instructions directory", ClientContext.getInstance(null, false)
-                    .getFileLocationOfCurrenCrop(GobiiFileLocationType.LOADERINSTRUCTION_FILES));
+                    .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS));
             GobiiConfig.printField("User file upload directory", ClientContext.getInstance(null, false)
-                    .getFileLocationOfCurrenCrop(GobiiFileLocationType.RAWUSER_FILES));
+                    .getFileLocationOfCurrenCrop(GobiiFileProcessDir.RAW_USER_FILES));
             GobiiConfig.printField("Digester output directory ", ClientContext.getInstance(null, false)
-                    .getFileLocationOfCurrenCrop(GobiiFileLocationType.INTERMEDIATE_FILES));
+                    .getFileLocationOfCurrenCrop(GobiiFileProcessDir.INTERMEDIATE_FILES));
             GobiiConfig.printField("Extractor instructions directory", ClientContext.getInstance(null, false)
-                    .getFileLocationOfCurrenCrop(GobiiFileLocationType.EXTRACTORINSTRUCTION_FILES));
+                    .getFileLocationOfCurrenCrop(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS));
 
             //if(!LineUtils.isNullOrEmpty())
 
@@ -751,44 +752,48 @@ public class GobiiConfig {
         try {
 
             ConfigSettings configSettings = new ConfigSettings(propFileFqpn);
-            String gobiiRoot = configSettings.getFileSystemRoot();
-            for (String currentCrop : configSettings.getActiveCropTypes()) {
+            if( configSettings.getActiveCropTypes().size() > 0) {
+                for (String currentCrop : configSettings.getActiveCropTypes()) {
 
-                printSeparator();
-                printField("Checking directories for crop", currentCrop);
-
-
-                for (GobiiFileLocationType currentRelativeDirectory : GobiiFileLocationType.values()) {
-
-                    String directoryToMake = configSettings.getProcessingPath(currentCrop, currentRelativeDirectory);
+                    printSeparator();
+                    printField("Checking directories for crop", currentCrop);
 
 
-                    File currentFile = new File(directoryToMake);
-                    if (!currentFile.exists()) {
+                    for (GobiiFileProcessDir currentRelativeDirectory : EnumSet.allOf(GobiiFileProcessDir.class)) {
 
-                        printField("Creating new directory", directoryToMake);
-                        if (!currentFile.mkdirs()) {
-                            System.err.println("Unable to create directory " + directoryToMake);
+                        String directoryToMake = configSettings.getProcessingPath(currentCrop, currentRelativeDirectory);
+
+
+                        File currentFile = new File(directoryToMake);
+                        if (!currentFile.exists()) {
+
+                            printField("Creating new directory", directoryToMake);
+                            if (!currentFile.mkdirs()) {
+                                System.err.println("Unable to create directory " + directoryToMake);
+                                returnVal = false;
+                            }
+
+                        } else {
+                            printField("Checking permissions on existing directory", directoryToMake);
+
+                        }
+
+                        if (!currentFile.canRead() && !currentFile.setReadable(true, false)) {
+                            System.err.println("Unable to set read permissions on directory " + directoryToMake);
                             returnVal = false;
                         }
 
-                    } else {
-                        printField("Checking permissions on existing directory", directoryToMake);
+                        if (!currentFile.canWrite() && !currentFile.setWritable(true, false)) {
+                            System.err.println("Unable to set write permissions on directory " + directoryToMake);
+                            returnVal = false;
 
-                    }
-
-                    if (!currentFile.canRead() && !currentFile.setReadable(true, false)) {
-                        System.err.println("Unable to set read permissions on directory " + directoryToMake);
-                        returnVal = false;
-                    }
-
-                    if (!currentFile.canWrite() && !currentFile.setWritable(true, false)) {
-                        System.err.println("Unable to set write permissions on directory " + directoryToMake);
-                        returnVal = false;
-
-                    }
-                } // iterate directories
-            } // iterate crops
+                        }
+                    } // iterate directories
+                } // iterate crops
+            } else {
+                System.err.println("No directories were created because there are no active crops defined");
+                returnVal = false;
+            }
 
 
         } catch (Exception e) {
