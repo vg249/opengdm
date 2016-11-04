@@ -4,9 +4,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
@@ -15,7 +13,6 @@ import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 ;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
@@ -36,7 +33,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Checks configurations of a Gobii instance for sanity.
@@ -64,6 +60,18 @@ public class GobiiConfig {
     private static String CONFIG_SVR_CROP_WEB = "stW";
     private static String CONFIG_SVR_CROP_POSTGRES = "stP";
     private static String CONFIG_SVR_CROP_MONET = "stM";
+
+    private static String CONFIG_TST_GLOBAL = "gt";
+    private static String CONFIG_TST_GLOBAL_INTIAL_URL = "gtiu";
+    private static String CONFIG_TST_GLOBAL_SSH_INTIAL_URL = "gtsu";
+    private static String CONFIG_TST_GLOBAL_SSH_HOST = "gtsh";
+    private static String CONFIG_TST_GLOBAL_SSH_PORT = "gtsp";
+    private static String CONFIG_TST_GLOBAL_SSH_FLAG = "gtsf";
+    private static String CONFIG_TST_GLOBAL_CONFIG_FQPN = "gtcq";
+    private static String CONFIG_TST_GLOBAL_CONFIG_DIR_TEST = "gtcd";
+    private static String CONFIG_TST_GLOBAL_CONFIG_UTIL_CMD_STEM = "gtcs";
+    private static String CONFIG_TST_GLOBAL_CONFIG_CROP_ID = "gtcr";
+
 
     private static String CONFIG_CROP_ID = "c";
 
@@ -160,6 +168,18 @@ public class GobiiConfig {
                     + ")", "context path");
             setOption(options, CONFIG_SVR_OPTIONS_USER_NAME, true, "Server option: Username", "user name");
             setOption(options, CONFIG_SVR_OPTIONS_PASSWORD, true, "Server option: Password", "password");
+
+
+            setOption(options, CONFIG_TST_GLOBAL, false, "Configure test options", "test options");
+            setOption(options, CONFIG_TST_GLOBAL_INTIAL_URL, true, "test option: intial server URL", "test url");
+            setOption(options, CONFIG_TST_GLOBAL_SSH_INTIAL_URL, true, "test option: intial server URL for ssh", "ssh url");
+            setOption(options, CONFIG_TST_GLOBAL_SSH_HOST, true, "test option: host for ssh", "ssh host");
+            setOption(options, CONFIG_TST_GLOBAL_SSH_PORT, true, "test option: port for ssh", "ssh port");
+            setOption(options, CONFIG_TST_GLOBAL_SSH_FLAG, true, "test option: flag to test SSH", "ssh flag");
+            setOption(options, CONFIG_TST_GLOBAL_CONFIG_FQPN, true, "fqpn of configuration file of reocrd for automated testing", "config fqpn");
+            setOption(options, CONFIG_TST_GLOBAL_CONFIG_DIR_TEST, true, "directory for creating test configuration files", "test directory");
+            setOption(options, CONFIG_TST_GLOBAL_CONFIG_UTIL_CMD_STEM, true, "configuration utility command to which command args are appended", "config cmd");
+            setOption(options, CONFIG_TST_GLOBAL_CONFIG_CROP_ID, true, "Crop to use for automated testing", "crop id");
 
 
             // parse our commandline
@@ -419,6 +439,100 @@ public class GobiiConfig {
                         Arrays.asList(fileSysRoot));
 
 
+            } else if (commandLine.hasOption(CONFIG_TST_GLOBAL)) {
+
+                List<String> argsSet = new ArrayList<>();
+                List<String> valsSet = new ArrayList<>();
+
+                String configFileFqpn = null;
+                String configFileTestDirectory = null;
+                String configUtilCommandlineStem = null;
+                String initialConfigUrl = null;
+                String initialConfigUrlForSshOverride = null;
+                String sshOverrideHost = null;
+                Integer sshOverridePort = null;
+                String testCrop = null;
+                boolean isTestSsh = false;
+
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_INTIAL_URL)) {
+                    initialConfigUrl = commandLine.getOptionValue(CONFIG_TST_GLOBAL_INTIAL_URL);
+                    argsSet.add(CONFIG_TST_GLOBAL_INTIAL_URL);
+                    valsSet.add(initialConfigUrl);
+                    configSettings.getTestExecConfig().setInitialConfigUrl(initialConfigUrl);
+                }
+
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_SSH_INTIAL_URL)) {
+                    initialConfigUrlForSshOverride = commandLine.getOptionValue(CONFIG_TST_GLOBAL_SSH_INTIAL_URL);
+                    argsSet.add(CONFIG_TST_GLOBAL_SSH_INTIAL_URL);
+                    valsSet.add(initialConfigUrlForSshOverride);
+                    configSettings.getTestExecConfig().setInitialConfigUrlForSshOverride(initialConfigUrlForSshOverride);
+                }
+
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_SSH_HOST)) {
+                    sshOverrideHost = commandLine.getOptionValue(CONFIG_TST_GLOBAL_SSH_HOST);
+                    argsSet.add(CONFIG_TST_GLOBAL_SSH_HOST);
+                    valsSet.add(sshOverrideHost);
+                    configSettings.getTestExecConfig().setSshOverrideHost(sshOverrideHost);
+                }
+
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_SSH_PORT)) {
+                    String portString = commandLine.getOptionValue(CONFIG_TST_GLOBAL_SSH_PORT);
+                    if (!NumberUtils.isNumber(portString)) {
+                        throw new Exception("Specified value for "
+                                + CONFIG_TST_GLOBAL_SSH_PORT
+                                + "("
+                                + options.getOption(CONFIG_TST_GLOBAL_SSH_PORT).getDescription()
+                                + ") is not a valid integer: "
+                                + portString);
+                    }
+                    sshOverridePort = Integer.parseInt(portString);
+                    argsSet.add(CONFIG_TST_GLOBAL_SSH_PORT);
+                    valsSet.add(sshOverridePort.toString());
+                    configSettings.getTestExecConfig().setSshOverridePort(sshOverridePort);
+                }
+
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_SSH_FLAG)) {
+                    isTestSsh = commandLine.getOptionValue(CONFIG_TST_GLOBAL_SSH_FLAG).toLowerCase().equals("true") ? true : false;
+                    argsSet.add(CONFIG_TST_GLOBAL_SSH_FLAG);
+                    valsSet.add(isTestSsh ? "true" : "false");
+                    configSettings.getTestExecConfig().setTestSsh(isTestSsh);
+                }
+
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_CONFIG_FQPN)) {
+                    configFileFqpn = commandLine.getOptionValue(CONFIG_TST_GLOBAL_CONFIG_FQPN);
+                    argsSet.add(CONFIG_TST_GLOBAL_CONFIG_FQPN);
+                    valsSet.add(configFileFqpn);
+                    configSettings.getTestExecConfig().setConfigFileFqpn(configFileFqpn);
+                }
+
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_CONFIG_DIR_TEST)) {
+                    configFileTestDirectory = commandLine.getOptionValue(CONFIG_TST_GLOBAL_CONFIG_DIR_TEST);
+                    argsSet.add(CONFIG_TST_GLOBAL_CONFIG_DIR_TEST);
+                    valsSet.add(configFileTestDirectory);
+                    configSettings.getTestExecConfig().setConfigFileTestDirectory(configFileTestDirectory);
+                }
+
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_CONFIG_UTIL_CMD_STEM)) {
+                    configUtilCommandlineStem = commandLine.getOptionValue(CONFIG_TST_GLOBAL_CONFIG_UTIL_CMD_STEM);
+                    argsSet.add(CONFIG_TST_GLOBAL_CONFIG_UTIL_CMD_STEM);
+                    valsSet.add(configUtilCommandlineStem);
+                    configSettings.getTestExecConfig().setConfigUtilCommandlineStem(configUtilCommandlineStem);
+                }
+
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_CONFIG_CROP_ID)) {
+                    testCrop = commandLine.getOptionValue(CONFIG_TST_GLOBAL_CONFIG_CROP_ID);
+                    argsSet.add(CONFIG_TST_GLOBAL_CONFIG_CROP_ID);
+                    valsSet.add(testCrop);
+                    configSettings.getTestExecConfig().setTestCrop(testCrop);
+                }
+
+                configSettings.commit();
+
+                writeConfigSettingsMessage(options,
+                        propFileFqpn,
+                        argsSet,
+                        valsSet);
+
             } else if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL) ||
                     commandLine.hasOption(CONFIG_CROP_ID)) {
 
@@ -512,7 +626,7 @@ public class GobiiConfig {
                     } else if (commandLine.hasOption(CONFIG_SVR_CROP_POSTGRES) ||
                             (commandLine.hasOption(CONFIG_SVR_CROP_MONET))) {
 
-                        GobiiDbType gobiiDbType = GobiiDbType.UNKNOWN ;
+                        GobiiDbType gobiiDbType = GobiiDbType.UNKNOWN;
                         if (commandLine.hasOption(CONFIG_SVR_CROP_POSTGRES)) {
                             gobiiDbType = GobiiDbType.POSTGRESQL;
                         } else if (commandLine.hasOption(CONFIG_SVR_CROP_MONET)) {
@@ -641,12 +755,12 @@ public class GobiiConfig {
             for (String currentCrop : configSettings.getActiveCropTypes()) {
 
                 printSeparator();
-                printField("Checking directories for crop", currentCrop.getGobiiCropType().toString());
+                printField("Checking directories for crop", currentCrop);
 
 
-                for (GobiiFileLocationType currentRelativeDirectory :GobiiFileLocationType.values()) {
+                for (GobiiFileLocationType currentRelativeDirectory : GobiiFileLocationType.values()) {
 
-                    String directoryToMake = configSettings.getProcessingPath(currentCrop,currentRelativeDirectory);
+                    String directoryToMake = configSettings.getProcessingPath(currentCrop, currentRelativeDirectory);
 
 
                     File currentFile = new File(directoryToMake);

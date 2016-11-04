@@ -12,6 +12,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -315,6 +316,62 @@ public class TestGobiiConfig {
     }
 
     @Test
+    public void testSetTestOptions() {
+
+        String testFileFqpn = makeTestFileFqpn("testvals");
+
+        String configFileFqpn = "fqpn_" + UUID.randomUUID().toString();
+        String configFileTestDirectory = "test_dir_" + UUID.randomUUID().toString();
+        String configUtilCommandlineStem = "comandstem_" + UUID.randomUUID().toString();
+        String initialConfigUrl = "configurl_" + UUID.randomUUID().toString();
+        String initialConfigUrlForSshOverride = "urlssh" + UUID.randomUUID().toString();
+        String sshOverrideHost = "hostssh_" + UUID.randomUUID().toString();
+        Integer sshOverridePort = 5;
+        String testCrop = "testcrop_" + UUID.randomUUID().toString();
+        boolean isTestSsh = false;
+
+        String commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -gt "
+                + " -gtcd "
+                + configFileTestDirectory
+                + " -gtcq "
+                + configFileFqpn
+                + " -gtcr "
+                + testCrop
+                + " -gtcs "
+                + configUtilCommandlineStem
+                + " -gtiu "
+                + initialConfigUrl
+                + " -gtsf "
+                + (isTestSsh ? "true" : "false")
+                + " -gtsh "
+                + sshOverrideHost
+                + " -gtsp "
+                + sshOverridePort
+                + " -gtsu "
+                + initialConfigUrlForSshOverride);
+
+
+        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+        
+        Assert.assertTrue("Config test value does not match: configFileFqpn" ,configSettings.getTestExecConfig().getConfigFileFqpn().equals(configFileFqpn ));
+        Assert.assertTrue("Config test value does not match: test directory",configSettings.getTestExecConfig().getConfigFileTestDirectory().equals(configFileTestDirectory ));
+        Assert.assertTrue("Config test value does not match: commandline stem",configSettings.getTestExecConfig().getConfigUtilCommandlineStem().equals(configUtilCommandlineStem ));
+        Assert.assertTrue("Config test value does not match: config URL",configSettings.getTestExecConfig().getInitialConfigUrl().equals(initialConfigUrl ));
+        Assert.assertTrue("Config test value does not match: ssh override URL",configSettings.getTestExecConfig().getInitialConfigUrlForSshOverride().equals(initialConfigUrlForSshOverride ));
+        Assert.assertTrue("Config test value does not match: ssh override host",configSettings.getTestExecConfig().getSshOverrideHost().equals(sshOverrideHost ));
+        Assert.assertTrue("Config test value does not match: ssh override port",configSettings.getTestExecConfig().getSshOverridePort().equals(sshOverridePort ));
+        Assert.assertTrue("Config test value does not match: test crop",configSettings.getTestExecConfig().getTestCrop().equals(testCrop));
+        Assert.assertTrue("Config test value does not match: test flag",configSettings.getTestExecConfig().isTestSsh() == isTestSsh);
+    }
+
+    @Ignore
     public void testCreateDirectories() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("croppgsql");
