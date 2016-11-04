@@ -396,7 +396,7 @@ public class TestGobiiConfig {
         boolean succeeded = HelperFunctions.tryExec(createConfigCommand, testFileFqpn + ".out", testFileFqpn + ".err");
         Assert.assertTrue("Command failed: " + createConfigCommand, succeeded);
 
-        List<String> testCrops = Arrays.asList("DEV","TEST","EXTRA");
+        List<String> testCrops = Arrays.asList("DEV", "TEST", "EXTRA");
         for (String currentCropId : testCrops) {
 
 
@@ -423,7 +423,7 @@ public class TestGobiiConfig {
         } // iterate crops to create
 
 
-       String createDirectoriesCommand = makeCommandline(" -wfqpn "
+        String createDirectoriesCommand = makeCommandline(" -wfqpn "
                 + testFileFqpn
                 + " -wdirs ");
 
@@ -432,16 +432,74 @@ public class TestGobiiConfig {
         Assert.assertTrue("Command failed: " + createDirectoriesCommand, succeeded);
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
-        for( CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
+        for (CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
 
-            for(GobiiFileProcessDir currentRelativeDirectory : EnumSet.allOf(GobiiFileProcessDir.class)){
+            for (GobiiFileProcessDir currentRelativeDirectory : EnumSet.allOf(GobiiFileProcessDir.class)) {
 
                 String currentCropDir = configSettings.getProcessingPath(currentCropConfig.getGobiiCropType(), currentRelativeDirectory);
                 File file = new File(currentCropDir);
-                Assert.assertTrue("Crop directory was not created: " + currentCropDir,file.exists());
-                Assert.assertTrue("Crop fqpn was not created as a directory: " + currentCropDir,file.isDirectory());
+                Assert.assertTrue("Crop directory was not created: " + currentCropDir, file.exists());
+                Assert.assertTrue("Crop fqpn was not created as a directory: " + currentCropDir, file.isDirectory());
             }
         }
+
+    }
+
+    @Test
+    public void testSetCropActive() {
+
+        String testFileFqpn = makeTestFileFqpn("setcropactive");
+
+        List<String> testCrops = Arrays.asList("DEV", "TEST", "EXTRA");
+        for (String currentCropId : testCrops) {
+
+
+            String host = "host_" + UUID.randomUUID().toString();
+            String contextPath = "context-" + UUID.randomUUID().toString();
+            Integer port = 8080;
+
+            String commandLineForCurrentCrop = makeCommandline("-a -wfqpn "
+                    + testFileFqpn
+                    + " -c "
+                    + currentCropId
+                    + " -stW "
+                    + " -soH "
+                    + host
+                    + " -soN "
+                    + port.toString()
+                    + " -soR "
+                    + contextPath);
+
+            boolean addCropSucceeded = HelperFunctions.tryExec(commandLineForCurrentCrop, testFileFqpn + ".out", testFileFqpn + ".err");
+            Assert.assertTrue("Command failed: " + commandLineForCurrentCrop, addCropSucceeded);
+
+
+        } // iterate crops to create
+
+        String commandSetTestActive = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -c "
+                + " TEST "
+                + " -cA ");
+
+        boolean succeded = HelperFunctions.tryExec(commandSetTestActive, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandSetTestActive, succeded);
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+        Assert.assertTrue("The TEST Crop was not marked active", configSettings.getCropConfig("TEST").isActive());
+
+
+        String commandSetTestNotActive = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -c "
+                +  "TEST "
+                + " -cD ");
+
+        succeded = HelperFunctions.tryExec(commandSetTestNotActive, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandSetTestNotActive, succeded);
+
+        configSettings = new ConfigSettings(testFileFqpn);
+        Assert.assertFalse("The TEST Crop was not marked inactive", configSettings.getCropConfig("TEST").isActive());
 
     }
 

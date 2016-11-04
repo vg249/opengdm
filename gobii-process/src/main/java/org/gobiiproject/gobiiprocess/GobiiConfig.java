@@ -50,6 +50,8 @@ public class GobiiConfig {
     private static String PROP_FILE_PROPS_TO_XML = "wxml";
 
     private static String CONFIG_ADD_ITEM = "a";
+    private static String CONFIG_MARK_CROP_ACTIVE = "cA";
+    private static String CONFIG_MARK_CROP_NOTACTIVE = "cD";
     private static String CONFIG_REMOVE_CROP = "cR";
     private static String CONFIG_GLOBAL_DEFAULT_CROP = "gD";
     private static String CONFIG_GLOBAL_FILESYS_ROOT = "gR";
@@ -127,7 +129,7 @@ public class GobiiConfig {
         int exitCode = -1;
 
         // active?
-        // file locations?
+        // remove?
 
         try {
 
@@ -144,6 +146,8 @@ public class GobiiConfig {
                     + CONFIG_SVR_GLOBAL_EMAIL + ", " + CONFIG_CROP_ID + ")", "add config item");
 
             setOption(options, CONFIG_REMOVE_CROP, true, "Removes the specified crop and related server specifications", "crop ID");
+            setOption(options, CONFIG_MARK_CROP_ACTIVE, false, "Marks the specified crop active", "crop ID");
+            setOption(options, CONFIG_MARK_CROP_NOTACTIVE, false, "Marks the specified crop inactive", "crop ID");
 
             setOption(options, CONFIG_GLOBAL_DEFAULT_CROP, true, "Default crop (global)", "crop id");
 
@@ -439,6 +443,30 @@ public class GobiiConfig {
                         Arrays.asList(CONFIG_GLOBAL_FILESYS_ROOT),
                         Arrays.asList(fileSysRoot));
 
+
+            } else if (commandLine.hasOption(CONFIG_MARK_CROP_ACTIVE) &&
+                    commandLine.hasOption(CONFIG_CROP_ID)) {
+
+                String cropId = commandLine.getOptionValue(CONFIG_CROP_ID);
+                CropConfig cropConfig = configSettings.getCropConfig(cropId);
+                if (cropConfig == null) {
+                    returnVal = false;
+                    System.err.println("The specified crop does not exist: " + cropId);
+                }
+                cropConfig.setActive(true);
+                configSettings.commit();
+
+            } else if (commandLine.hasOption(CONFIG_MARK_CROP_NOTACTIVE) &&
+                    commandLine.hasOption(CONFIG_CROP_ID)) {
+
+                String cropId = commandLine.getOptionValue(CONFIG_CROP_ID);
+                CropConfig cropConfig = configSettings.getCropConfig(cropId);
+                if (cropConfig == null) {
+                    returnVal = false;
+                    System.err.println("The specified crop does not exist: " + cropId);
+                }
+                cropConfig.setActive(false);
+                configSettings.commit();
 
             } else if (commandLine.hasOption(CONFIG_TST_GLOBAL)) {
 
@@ -752,7 +780,7 @@ public class GobiiConfig {
         try {
 
             ConfigSettings configSettings = new ConfigSettings(propFileFqpn);
-            if( configSettings.getActiveCropTypes().size() > 0) {
+            if (configSettings.getActiveCropTypes().size() > 0) {
                 for (String currentCrop : configSettings.getActiveCropTypes()) {
 
                     printSeparator();
