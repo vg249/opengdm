@@ -30,7 +30,7 @@ class ConfigValues {
     private Map<String, CropConfig> cropConfigs = new LinkedHashMap<>();
 
     @ElementMap(required = false)
-    private Map<GobiiFileProcessDir,String> relativePaths = new EnumMap<GobiiFileProcessDir,String>(GobiiFileProcessDir.class) {{
+    private Map<GobiiFileProcessDir, String> relativePaths = new EnumMap<GobiiFileProcessDir, String>(GobiiFileProcessDir.class) {{
         put(GobiiFileProcessDir.RAW_USER_FILES, "files/");
         put(GobiiFileProcessDir.LOADER_INSTRUCTIONS, "loader/instructions/");
         put(GobiiFileProcessDir.INTERMEDIATE_FILES, "loader/digest//");
@@ -190,6 +190,28 @@ class ConfigValues {
                 .setServiceDomain(serviceDomain)
                 .setServiceAppRoot(serviceAppRoot)
                 .setServicePort(servicePort);
+    }
+
+    public void removeCrop(String cropId) throws Exception {
+
+        if (!cropConfigs.containsKey(cropId)) {
+            throw new Exception("The specified crop cannot be removed because it does not exist: " + cropId);
+        }
+
+        if ((!LineUtils.isNullOrEmpty(getDefaultGobiiCropType()))
+                && getDefaultGobiiCropType().equals(cropId)) {
+
+            throw new Exception("Unable to remove crop " + cropId + " because it is the default crop in this configuration");
+        }
+
+        if ((!LineUtils.isNullOrEmpty(getTestExecConfig().getTestCrop())) &&
+                getTestExecConfig().getTestCrop().equals(cropId)) {
+
+            throw new Exception("Unable to remove crop " + cropId + " because it is the crop used for testing");
+        }
+
+        cropConfigs.remove(cropId);
+
     }
 
 

@@ -670,7 +670,7 @@ public class GobiiConfig {
                                 svrPassword);
 
                     } else {
-
+                        // do nothing: allow control to fall through to print help
                     }
 
 
@@ -684,13 +684,28 @@ public class GobiiConfig {
                         valsSet);
 
 
+            } else if (commandLine.hasOption(CONFIG_REMOVE_CROP)) {
+
+                String cropId = commandLine.getOptionValue(CONFIG_REMOVE_CROP);
+
+                CropConfig cropConfig = configSettings.getCropConfig(cropId);
+                if( null != cropConfig) {
+
+                    configSettings.removeCrop(cropId);
+                    configSettings.commit();
+                } else {
+                    System.err.println("The following crop does not exist: " + cropId);
+                    returnVal = false;
+                }
+
             } else {
+                // do nothing: allow control to fall through to print help
 
             }
 
-
         } catch (Exception e) {
             e.printStackTrace();
+            returnVal = false;
         }
 
         return returnVal;

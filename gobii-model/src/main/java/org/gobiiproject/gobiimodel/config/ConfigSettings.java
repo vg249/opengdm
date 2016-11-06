@@ -88,6 +88,10 @@ public class ConfigSettings {
         this.configValues.setCrop(gobiiCropType, isActive, serviceDomain, serviceAppRoot, servicePort);
     }
 
+    public void removeCrop(String cropId ) throws Exception {
+        this.configValues.removeCrop(cropId);
+    }
+
     public CropConfig getCropConfig(String gobiiCropType) {
 
         return (this.configValues.getCropConfig(gobiiCropType));
