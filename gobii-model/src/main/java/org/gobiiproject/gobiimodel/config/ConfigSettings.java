@@ -229,5 +229,14 @@ public class ConfigSettings {
         this.configValues.setFileSystemLog(fileSystemLog);
     }
 
+    public String getFileSysCropsParent() {
+        return this.configValues.getFileSysCropsParent();
+    }
+
+    public void setFileSysCropsParent(String fileSysCropsParent) {
+        this.configValues.setFileSysCropsParent(fileSysCropsParent);
+    }
+
+
 
 }

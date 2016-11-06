@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
+import org.gobiiproject.gobiimodel.config.CropDbConfig;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 ;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
@@ -18,6 +19,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -48,6 +50,7 @@ public class GobiiConfig {
     private static String COPY_WARS = "wcopy";
     private static String PROP_FILE_FQPN = "wfqpn";
     private static String PROP_FILE_PROPS_TO_XML = "wxml";
+    private static String VALIDATE_CONFIGURATION = "validate";
 
     private static String CONFIG_ADD_ITEM = "a";
     private static String CONFIG_MARK_CROP_ACTIVE = "cA";
@@ -185,6 +188,8 @@ public class GobiiConfig {
             setOption(options, CONFIG_TST_GLOBAL_CONFIG_DIR_TEST, true, "directory for creating test configuration files", "test directory");
             setOption(options, CONFIG_TST_GLOBAL_CONFIG_UTIL_CMD_STEM, true, "configuration utility command to which command args are appended", "config cmd");
             setOption(options, CONFIG_TST_GLOBAL_CONFIG_CROP_ID, true, "Crop to use for automated testing", "crop id");
+
+            setOption(options, VALIDATE_CONFIGURATION, false, "Verify that the specified configuration has all the values necessary for the system to function (does not test that the servers exist); requires " + PROP_FILE_FQPN, "validate");
 
 
             // parse our commandline
@@ -345,7 +350,9 @@ public class GobiiConfig {
                     System.err.println("Cannot find config file: : " + propFileFqpn);
                 }
 
+                // this should do the conversion automatically
                 ConfigSettings configSettings = new ConfigSettings(propFileFqpn);
+                configSettings.commit();
 
             } else if (commandLine.hasOption(CONFIG_ADD_ITEM)) {
 
@@ -359,6 +366,19 @@ public class GobiiConfig {
                         exitCode = 0;
                     }
 
+                } else {
+                    System.err.println("Value is required: " + options.getOption(PROP_FILE_FQPN).getDescription());
+                }
+
+            } else if (commandLine.hasOption(VALIDATE_CONFIGURATION)) {
+
+
+                String propFileFqpn = null;
+                if (commandLine.hasOption(PROP_FILE_FQPN) &&
+                        (null != (propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN)))) {
+                    if (validateGobiiConfiguration(propFileFqpn, options, commandLine)) {
+                        exitCode = 0;
+                    }
                 } else {
                     System.err.println("Value is required: " + options.getOption(PROP_FILE_FQPN).getDescription());
                 }
@@ -689,7 +709,7 @@ public class GobiiConfig {
                 String cropId = commandLine.getOptionValue(CONFIG_REMOVE_CROP);
 
                 CropConfig cropConfig = configSettings.getCropConfig(cropId);
-                if( null != cropConfig) {
+                if (null != cropConfig) {
 
                     configSettings.removeCrop(cropId);
                     configSettings.commit();
@@ -710,6 +730,237 @@ public class GobiiConfig {
 
         return returnVal;
 
+    }
+
+    private static boolean validateGobiiConfiguration(String propFileFqpn, Options options, CommandLine commandLine) {
+
+        boolean returnVal = true;
+
+        try {
+
+            if (commandLine.hasOption(VALIDATE_CONFIGURATION) && commandLine.hasOption(PROP_FILE_FQPN)) {
+
+                String configFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
+                ConfigSettings configSettings = new ConfigSettings(configFileFqpn);
+
+                if (LineUtils.isNullOrEmpty(configSettings.getEmailSvrDomain())) {
+                    System.err.println("An email server host is not defined");
+                    returnVal = false;
+                }
+
+                if (configSettings.getEmailServerPort() == null) {
+                    System.err.println("An email port is not defined");
+                    returnVal = false;
+                }
+
+                if (LineUtils.isNullOrEmpty(configSettings.getEmailSvrUser())) {
+                    System.err.println("An email server user id is not defined");
+                    returnVal = false;
+                }
+
+                if (LineUtils.isNullOrEmpty(configSettings.getEmailSvrUser())) {
+                    System.err.println("An email server password is not defined");
+                    returnVal = false;
+                }
+
+                if (LineUtils.isNullOrEmpty(configSettings.getDefaultGobiiCropType())) {
+                    System.err.println("A default crop type is not defined");
+                    returnVal = false;
+                }
+
+                if (LineUtils.isNullOrEmpty(configSettings.getFileSystemRoot())) {
+                    System.err.println("A file system root is not defined");
+                    returnVal = false;
+                } else {
+                    File directoryToTest = new File(configSettings.getFileSystemRoot());
+                    if (!directoryToTest.exists() || !directoryToTest.isDirectory()) {
+                        System.err.println("The specified file system root does not exist or is not a directory: " + configSettings.getFileSystemRoot());
+                        returnVal = false;
+                    }
+                }
+
+                if (LineUtils.isNullOrEmpty(configSettings.getFileSystemLog())) {
+                    System.err.println("A file system log directory is not defined");
+                    returnVal = false;
+                } else {
+                    File directoryToTest = new File(configSettings.getFileSystemLog());
+                    if (!directoryToTest.exists() || !directoryToTest.isDirectory()) {
+                        System.err.println("The specified file system log does not exist or is not a directory: " + configSettings.getFileSystemLog());
+                        returnVal = false;
+                    }
+                }
+
+
+                if (LineUtils.isNullOrEmpty(configSettings.getFileSysCropsParent())) {
+                    System.err.println("A file system crop parent directory is not defined");
+                    returnVal = false;
+                } else {
+                    File directoryToTest = new File(configSettings.getFileSysCropsParent());
+                    if (!directoryToTest.exists() || !directoryToTest.isDirectory()) {
+                        System.err.println("The specified file crop parent directory does not exist or is not a directory: " + configSettings.getFileSysCropsParent());
+                        returnVal = false;
+                    }
+                }
+
+
+                if (configSettings.getTestExecConfig() == null) {
+                    System.err.println("No test exec configuration is defined");
+                    returnVal = false;
+                }
+
+                if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getTestCrop())) {
+                    System.err.println("A test crop id is not defined");
+                    returnVal = false;
+                } else {
+                    String cropId = configSettings.getTestExecConfig().getTestCrop();
+
+                    if (configSettings.getCropConfig(cropId) == null) {
+                        System.err.println("The test crop is not defined in the crop configurations: " + cropId);
+                        returnVal = false;
+                    }
+
+                    if (configSettings
+                            .getActiveCropConfigs()
+                            .stream()
+                            .filter(cropConfig -> cropConfig.getGobiiCropType().equals(cropId))
+                            .count() != 1) {
+                        System.err.println("The specified test crop config is not an active crop: " + cropId);
+                    }
+                }
+
+
+                if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getInitialConfigUrl())) {
+                    System.err.println("An initial configuration url for testing is not defined");
+                    returnVal = false;
+                }
+
+
+                if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getConfigFileFqpn())) {
+                    System.err.println("A configuration file for testing is not defined");
+                    returnVal = false;
+                } else {
+                    File fqpnFile = new File(configSettings.getTestExecConfig().getConfigFileFqpn());
+                    if (!fqpnFile.exists()) {
+                        System.err.println("The specified configuration file for testing does not exist: " +
+                                configSettings.getTestExecConfig().getConfigFileFqpn());
+                    }
+                }
+
+
+                if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getConfigFileTestDirectory())) {
+                    System.err.println("A a directory for test files is not defined");
+                    returnVal = false;
+                } else {
+                    String testDirectoryPath = configSettings.getTestExecConfig().getConfigFileTestDirectory();
+                    File testFilePath = new File(configSettings.getTestExecConfig().getConfigFileTestDirectory());
+                    if (!testFilePath.exists()) {
+                        System.err.println("The specified test file path does not exist: "
+                                + testDirectoryPath);
+                    }
+                }
+
+
+                if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getConfigUtilCommandlineStem())) {
+                    System.err.println("The commandline stem of this utility for testing purposes is not defined");
+                    returnVal = false;
+                }
+
+
+                if (configSettings.getActiveCropConfigs().size() < 1) {
+                    System.err.println("No active crops are defined");
+                    returnVal = false;
+                }
+
+                for (CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
+
+
+                    if (LineUtils.isNullOrEmpty(currentCropConfig.getGobiiCropType())) {
+                        System.err.println("The crop type for the active crop  is not defined");
+                        returnVal = false;
+                    }
+
+
+                    if (LineUtils.isNullOrEmpty(currentCropConfig.getServiceDomain())) {
+                        System.err.println("The web server host for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
+                        returnVal = false;
+
+                    }
+
+
+                    if (LineUtils.isNullOrEmpty(currentCropConfig.getServiceAppRoot())) {
+                        System.err.println("The web server context path for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
+                        returnVal = false;
+
+                    }
+
+
+                    if (currentCropConfig.getServicePort() == null) {
+                        System.err.println("The web server port for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
+                        returnVal = false;
+
+                    }
+
+                    CropDbConfig cropDbConfigPostGres = currentCropConfig.getCropDbConfig(GobiiDbType.POSTGRESQL);
+                    if (cropDbConfigPostGres == null) {
+                        System.err.println("The postgresdb for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
+                        returnVal = false;
+                    } else {
+                        returnVal = verifyDbConfig(GobiiDbType.POSTGRESQL, cropDbConfigPostGres);
+                    }
+
+                    CropDbConfig cropDbConfigMonetDB = currentCropConfig.getCropDbConfig(GobiiDbType.MONETDB);
+                    if (cropDbConfigMonetDB == null) {
+                        System.err.println("The monetdb for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
+                        returnVal = false;
+                    } else {
+                        returnVal = verifyDbConfig(GobiiDbType.POSTGRESQL, cropDbConfigMonetDB);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnVal = false;
+        }
+
+        return returnVal;
+
+    } //
+
+
+    private static boolean verifyDbConfig(GobiiDbType gobiiDbType, CropDbConfig cropDbConfig) {
+
+        boolean returnVal = true;
+
+        if (LineUtils.isNullOrEmpty(cropDbConfig.getHost())) {
+            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a host");
+            returnVal = false;
+        }
+
+
+        if (cropDbConfig.getPort() == null) {
+            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a port");
+            returnVal = false;
+        }
+
+
+        if (LineUtils.isNullOrEmpty(cropDbConfig.getUserName())) {
+            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a user name");
+            returnVal = false;
+        }
+
+
+        if (LineUtils.isNullOrEmpty(cropDbConfig.getPassword())) {
+            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a password");
+            returnVal = false;
+        }
+
+        if (LineUtils.isNullOrEmpty(cropDbConfig.getDbName())) {
+            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a database name");
+            returnVal = false;
+        }
+
+        return returnVal;
     }
 
     private static ClientContext configClientContext(String configServerUrl) throws Exception {

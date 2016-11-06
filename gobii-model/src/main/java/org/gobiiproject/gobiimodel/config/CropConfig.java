@@ -32,21 +32,6 @@ public class CropConfig {
     @Element(required = false)
     private Integer servicePort;
 
-//    @Element(required = false)
-//    private String rawUserFilesDirectory;
-//
-//    @Element(required = false)
-//    private String loaderInstructionFilesDirectory;
-//
-//    @Element(required = false)
-//    private String extractorInstructionFilesDirectory;
-//
-//    @Element(required = false)
-//    private String extractorInstructionFilesOutputDirectory;
-//
-//    @Element(required = false)
-//    private String intermediateFilesDirectory;
-
     @Element(required = false)
     private boolean isActive;
 
@@ -148,25 +133,6 @@ public class CropConfig {
         return servicePort;
     }
 
-//    public String getRawUserFilesDirectory() {
-//        return rawUserFilesDirectory;
-//    }
-//
-//    public String getLoaderInstructionFilesDirectory() {
-//        return loaderInstructionFilesDirectory;
-//    }
-//
-//    public String getExtractorInstructionFilesDirectory() {
-//        return extractorInstructionFilesDirectory;
-//    }
-//
-//    public String getExtractorInstructionFilesOutputDirectory() {
-//        return extractorInstructionFilesOutputDirectory;
-//    }
-//
-//    public String getIntermediateFilesDirectory() {
-//        return intermediateFilesDirectory;
-//    }
 
     public String getServiceDomain() {
         return serviceDomain;
