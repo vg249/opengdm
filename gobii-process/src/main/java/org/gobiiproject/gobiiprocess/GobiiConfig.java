@@ -868,6 +868,7 @@ public class GobiiConfig {
                             .filter(cropConfig -> cropConfig.getGobiiCropType().equals(cropId))
                             .count() != 1) {
                         System.err.println("The specified test crop config is not an active crop: " + cropId);
+                        returnVal = false;
                     }
                 }
 
@@ -886,6 +887,7 @@ public class GobiiConfig {
                     if (!fqpnFile.exists()) {
                         System.err.println("The specified configuration file for testing does not exist: " +
                                 configSettings.getTestExecConfig().getConfigFileFqpn());
+                        returnVal = false;
                     }
                 }
 
@@ -899,6 +901,7 @@ public class GobiiConfig {
                     if (!testFilePath.exists()) {
                         System.err.println("The specified test file path does not exist: "
                                 + testDirectoryPath);
+                        returnVal = false; 
                     }
                 }
 
