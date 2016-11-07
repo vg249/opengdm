@@ -348,12 +348,12 @@ public class GobiiFileReader {
 		}
 		if((variantFile!=null)&&dataSetId!=null){	
 			String loadVariantMatrix=loaderScriptPath+"monet/loadVariantMatrix.py";
-			//python loadVariantMatrix.py <Dataset_Identifier.variant> <Dataset_Identifier.marker_id> <Dataset_Identifier.dnarun_id> <hostname> <port> <dbuser> <dbpass> <dbname>
+			//python loadVariantMatrix.py <Dataset Name> <Dataset_Identifier.variant> <Dataset_Identifier.marker_id> <Dataset_Identifier.dnarun_id> <hostname> <port> <dbuser> <dbpass> <dbname>
 			CropDbConfig monetConf=cropConfig.getCropDbConfig(GobiiDbType.MONETDB);
 			String loadVariantUserPort=monetConf.getHost()+" "+monetConf.getPort() + " " +monetConf.getUserName()+ " " + monetConf.getPassword() + " " + monetConf.getDbName();
 			generateIdLists(cropConfig, markerFileLoc, sampleFileLoc, dataSetId, errorPath);
-			ErrorLogger.logError("MonetDB","python "+loadVariantMatrix+" "+variantFile.getPath()+" "+new File(markerFileLoc).getAbsolutePath()+" "+new File(sampleFileLoc).getAbsolutePath()+" "+loadVariantUserPort);
-			HelperFunctions.tryExec("python "+loadVariantMatrix+" "+variantFile.getPath()+" "+new File(markerFileLoc).getAbsolutePath()+" "+new File(sampleFileLoc).getAbsolutePath()+" "+loadVariantUserPort,null,errorPath);
+			ErrorLogger.logDebug("MonetDB","python "+loadVariantMatrix+" DS"+dataSetId+" "+variantFile.getPath()+" "+new File(markerFileLoc).getAbsolutePath()+" "+new File(sampleFileLoc).getAbsolutePath()+" "+loadVariantUserPort);
+			HelperFunctions.tryExec("python "+loadVariantMatrix+" DS"+dataSetId+" "+variantFile.getPath()+" "+new File(markerFileLoc).getAbsolutePath()+" "+new File(sampleFileLoc).getAbsolutePath()+" "+loadVariantUserPort,null,errorPath);
 			
 				//HDF-5
 				//Usage: %s <datasize> <input file> <output HDF5 file
@@ -470,12 +470,15 @@ public class GobiiFileReader {
 	 */
 	private static void generateIdLists(CropConfig cropConfig,String markerFile,String dnaRunFile,int dsid,String errorFile){
 		//Create files and get paths because gobii_mde must run on absolute paths, not relative ones
+		markerFile=new File(markerFile).getAbsolutePath();
+		dnaRunFile=new File(dnaRunFile).getAbsolutePath();
 		String gobiiIFL="python " + extractorScriptPath+"postgres/gobii_mde/gobii_mde.py"+" -c "+HelperFunctions.getPostgresConnectionString(cropConfig)+
-			" -m "+new File(markerFile).getAbsolutePath()+".tmp"+
-			" -s "+new File(dnaRunFile).getAbsolutePath()+".tmp"+
+			" -m "+markerFile+".tmp"+
+			" -s "+dnaRunFile+".tmp"+
 			" -d "+dsid;
+		ErrorLogger.logDebug("MonetDB",gobiiIFL);
 		tryExec(gobiiIFL, null, errorFile);
-        tryExec("cut -f1 "+markerFile,markerFile+".tmp2",errorFile);
+        tryExec("cut -f1 "+markerFile+".tmp",markerFile+".tmp2",errorFile);
 		tryExec("tail -n +2", markerFile, errorFile,markerFile+".tmp2");
         tryExec("cut -f1 "+dnaRunFile+".tmp", dnaRunFile, errorFile);
 
