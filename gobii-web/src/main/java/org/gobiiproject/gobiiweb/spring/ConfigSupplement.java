@@ -19,7 +19,7 @@ import java.util.Map;
 public class ConfigSupplement {
 
     @Bean(name="dataSourceMulti")
-    public DataSourceSelector dataSourceMulti() {
+    public DataSourceSelector dataSourceMulti() throws Exception {
 
         DataSourceSelector returnVal = new DataSourceSelector();
 

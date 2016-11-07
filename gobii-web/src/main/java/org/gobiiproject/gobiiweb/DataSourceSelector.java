@@ -14,6 +14,15 @@ public class DataSourceSelector extends AbstractRoutingDataSource {
     @Override
     protected Object determineCurrentLookupKey() {
 
-        return CropRequestAnalyzer.getGobiiCropType().toString();
+        Object returnVal = null;
+
+        try {
+            returnVal = CropRequestAnalyzer.getGobiiCropType().toString();
+        } catch( Exception e) {
+
+            LOGGER.error("Eorr looking up lookup key",e);
+        }
+
+        return returnVal;
     }
 }

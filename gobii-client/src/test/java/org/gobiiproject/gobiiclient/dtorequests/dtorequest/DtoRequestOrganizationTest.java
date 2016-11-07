@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.dtorequests;
+package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
 
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
@@ -9,22 +9,18 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Created by Angel on 5/9/2016.
@@ -186,7 +182,17 @@ public class DtoRequestOrganizationTest {
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
         Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == organizationDTOList.size() );
-        List<Integer> itemsToTest = TestUtils.makeListOfIntegersInRange(10, organizationDTOList.size());
+
+        List<Integer> itemsToTest = new ArrayList<>();
+        if (organizationDTOList.size() > 50) {
+            itemsToTest = TestUtils.makeListOfIntegersInRange(10, organizationDTOList.size());
+
+        } else {
+            for (int idx = 0; idx < organizationDTOList.size(); idx++) {
+                itemsToTest.add(idx);
+            }
+        }
+
         for(Integer currentItemIdx : itemsToTest  ) {
             OrganizationDTO currentOrganizationDto = organizationDTOList.get(currentItemIdx);
 

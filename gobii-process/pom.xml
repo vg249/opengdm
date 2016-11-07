@@ -138,11 +138,11 @@
                     <!--gobii config check Execution-->
                     <execution>
                         <configuration>
-                            <finalName>gobii-config-check</finalName>
+                            <finalName>gobiiconfig</finalName>
                             <!-- MainClass in mainfest make a executable jar -->
                             <archive>
                                 <manifest>
-                                    <mainClass>org.gobiiproject.gobiiprocess.web.ConfigCheck</mainClass>
+                                    <mainClass>org.gobiiproject.gobiiprocess.GobiiConfig</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>

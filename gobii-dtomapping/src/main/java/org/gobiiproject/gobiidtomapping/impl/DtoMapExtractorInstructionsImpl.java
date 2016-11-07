@@ -11,6 +11,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -64,10 +65,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 //                throw new Exception("Extractor instruction request does not specify a crop");
 //            }
 
-
-            String instructionFileDirectory = configSettings
-                    .getCropConfig(cropType)
-                    .getExtractorInstructionFilesDirectory();
+            String instructionFileDirectory = configSettings.getProcessingPath(cropType,
+                    GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS);
 
             createDirectories(instructionFileDirectory);
 
@@ -110,9 +109,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             "contactId is missing");
                 }
 
-                String extractionFileDestinationPath = configSettings
-                        .getCropConfig(cropType)
-                        .getExtractorInstructionFilesOutputDirectory();
+                String extractionFileDestinationPath = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_OUTPUT);
 
 
                 for (GobiiDataSetExtract currentGobiiDataSetExtract :
@@ -189,9 +186,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
             ConfigSettings configSettings = new ConfigSettings();
 
-            String instructionFileFqpn = configSettings
-                    .getCropConfig(cropType)
-                    .getExtractorInstructionFilesDirectory()
+            String instructionFileFqpn = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS)
                     + instructionFileName
                     + INSTRUCTION_FILE_EXT;
 

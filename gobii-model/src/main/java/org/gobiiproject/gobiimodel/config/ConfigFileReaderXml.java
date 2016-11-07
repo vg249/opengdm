@@ -12,16 +12,23 @@ import java.io.FileWriter;
 import java.io.StringWriter;
 
 /**
- * Created by Phil on 4/12/2016.
+ * This class handles serialization of the modern configuration file format,
+ * which is XML.
  */
 public class ConfigFileReaderXml {
 
     public void write(ConfigValues configValues, String fileName) throws Exception {
 
         Serializer serializer = new Persister();
+
         File file = new File(fileName);
+        if( ! file.exists()) {
+            file.createNewFile();
+        }
 
         serializer.write(configValues, file);
+
+
 
     } // ConfigFileReaderProps
 

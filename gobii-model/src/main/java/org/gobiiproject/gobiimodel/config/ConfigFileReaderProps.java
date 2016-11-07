@@ -16,7 +16,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
- * Created by Phil on 4/12/2016.
+ * This class creates a ConfigValues instance from a legacy .properties file
  */
 public class ConfigFileReaderProps {
 
@@ -160,7 +160,7 @@ public class ConfigFileReaderProps {
         returnVal.setFileSystemLog(this.getPropValue(PROP_NAME_FILE_SYSTEM_LOG));
 
 
-        List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
+        //List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
         Map<String, CropConfig> cropConfigs = new HashMap<>();
         for (int idx = 0; idx < cropPrefixes.length; idx++) {
 
@@ -190,44 +190,48 @@ public class ConfigFileReaderProps {
                     serviceDomain,
                     serviceAppRoot,
                     servicePort,
-                    loaderFilesLocation,
-                    extractorFilesLocation,
-                    extractorFilesOutputLocation,
-                    userFilesLocation,
-                    intermediateFilesLocation,
+//                    loaderFilesLocation,
+//                    extractorFilesLocation,
+//                    extractorFilesOutputLocation,
+//                    userFilesLocation,
+//                    intermediateFilesLocation,
                     isActive);
 
             //crops.rice.db.monetdb.password=appuser
             for (GobiiDbType currentDbType : GobiiDbType.values()) {
 
-                String currentDbTypeSegment = currentDbType.toString().toLowerCase() + ".";
-                String currentDbPrefix = currentPrefix + DB_PREFX + currentDbTypeSegment;
-                String currentHost = this.getPropValue(currentDbPrefix + DB_SUFFIX_HOST);
-                String currentDbName = this.getPropValue(currentDbPrefix + DB_SUFFIX_DBNAME);
-                Integer currentPort = Integer.parseInt(this.getPropValue(currentDbPrefix + DB_SUFFIX_PORT));
-                String currentUserName = this.getPropValue(currentDbPrefix + DB_SUFFIX_USER);
-                String currentPassword = this.getPropValue(currentDbPrefix + DB_SUFFIX_PASSWORD);
+                if (currentDbType != GobiiDbType.UNKNOWN) {
 
-                CropDbConfig currentCropDbConfig = new CropDbConfig(
-                        currentDbType,
-                        currentHost,
-                        currentDbName,
-                        currentPort,
-                        currentUserName,
-                        currentPassword
-                );
+                    String currentDbTypeSegment = currentDbType.toString().toLowerCase() + ".";
+                    String currentDbPrefix = currentPrefix + DB_PREFX + currentDbTypeSegment;
+                    String currentHost = this.getPropValue(currentDbPrefix + DB_SUFFIX_HOST);
+                    String currentDbName = this.getPropValue(currentDbPrefix + DB_SUFFIX_DBNAME);
+                    Integer currentPort = Integer.parseInt(this.getPropValue(currentDbPrefix + DB_SUFFIX_PORT));
+                    String currentUserName = this.getPropValue(currentDbPrefix + DB_SUFFIX_USER);
+                    String currentPassword = this.getPropValue(currentDbPrefix + DB_SUFFIX_PASSWORD);
 
-                currentCropConfig.addCropDbConfig(currentDbType, currentCropDbConfig);
+                    CropDbConfig currentCropDbConfig = new CropDbConfig(
+                            currentDbType,
+                            currentHost,
+                            currentDbName,
+                            currentPort,
+                            currentUserName,
+                            currentPassword
+                    );
+
+                    currentCropConfig.addCropDbConfig(currentDbType, currentCropDbConfig);
+                }
+
+
+                cropConfigs.put(currentGobiiCropType, currentCropConfig);
+                //cropConfigsToSerialize.add(currentCropConfig);
+
             }
-
-
-            cropConfigs.put(currentGobiiCropType, currentCropConfig);
-            cropConfigsToSerialize.add(currentCropConfig);
 
         } // iterate crop configs
 
         returnVal.setCropConfigs(cropConfigs);
-        returnVal.setCropConfigsToSerialize(cropConfigsToSerialize);
+        //returnVal.setCropConfigsToSerialize(cropConfigsToSerialize);
 
 
         if (0 == returnVal.getActiveCropConfigs()

@@ -1,13 +1,11 @@
 package org.gobiiproject.gobiimodel.config;
 
-import org.apache.commons.lang.math.NumberUtils;
-import org.gobiiproject.gobiimodel.types.GobiiDbType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.ElementMap;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,46 +14,80 @@ import java.util.stream.Collectors;
 
 
 /**
- * Created by Phil on 5/5/2016.
+ * This class is essentially a POJO for the configuration data. It has a small
+ * amount of logic for retrieval of directories. IN particuarl, given a GobiiFileProcessDir
+ * value, it will provide the appropriate path for specific file processing locations. The properties
+ * of this class are annotated with the simpleframework XML annotations for the purpose of
+ * serialization. Aside from the collection of CropConfig instances, the proeprties of this class
+ * are global to the configuration. There will be one CropConfig instance for every crop supported
+ * by a given deployment.
  */
 class ConfigValues {
 
-    @ElementList
-    List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
+    private final char PATH_TERMINATOR = '/';
 
+    @Element
+    private TestExecConfig testExecConfig = new TestExecConfig();
+
+    @ElementMap(required = false)
     private Map<String, CropConfig> cropConfigs = new LinkedHashMap<>();
+
+    @ElementMap(required = false)
+    private Map<GobiiFileProcessDir, String> relativePaths = new EnumMap<GobiiFileProcessDir, String>(GobiiFileProcessDir.class) {{
+
+        // these defaults should generally not be changed
+        // note that they will be appended to the crops root directory
+        put(GobiiFileProcessDir.RAW_USER_FILES, "files/");
+        put(GobiiFileProcessDir.LOADER_INSTRUCTIONS, "loader/instructions/");
+        put(GobiiFileProcessDir.INTERMEDIATE_FILES, "loader/digest//");
+        put(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, "extractor/instructions/");
+        put(GobiiFileProcessDir.EXTRACTOR_OUTPUT, "extractor/output/");
+        put(GobiiFileProcessDir.QC_NOTIFICATIONS, "qcnotifications/");
+
+    }};
 
     private String currentGobiiCropType;
 
-    @Element
+    @Element(required = false)
     private String defaultGobiiCropType;
 
-    @Element
+    @Element(required = false)
     private String emailSvrType;
 
-    @Element
+    @Element(required = false)
     private String emailSvrDomain;
 
-    @Element
+    @Element(required = false)
     private String emailSvrUser;
 
-    @Element
+    @Element(required = false)
     private String emailSvrHashType;
 
-    @Element
+    @Element(required = false)
     private String emailSvrPassword;
 
-    @Element
+    @Element(required = false)
     private Integer emailServerPort = 0;
 
-    @Element
+    @Element(required = false)
     private boolean iflIntegrityCheck = false;
 
-    @Element
+    @Element(required = false)
     private String fileSystemRoot;
 
-    @Element
+    @Element(required = false)
+    private String fileSysCropsParent = "crops/";
+
+    @Element(required = false)
     private String fileSystemLog;
+
+    public TestExecConfig getTestExecConfig() {
+        return testExecConfig;
+    }
+
+    public void setTestExecConfig(TestExecConfig testExecConfig) {
+        this.testExecConfig = testExecConfig;
+    }
 
 
     public CropConfig getCropConfig(String gobiiCropType) {
@@ -66,7 +98,27 @@ class ConfigValues {
         return returnVal;
     }
 
-    public List<CropConfig> getActiveCropConfigs() {
+
+    public String getProcessingPath(String cropType, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+
+        String returnVal;
+
+        if (!cropConfigs.containsKey(cropType)) {
+            throw new Exception("Unknown crop type: " + cropType);
+        }
+
+        String cropRoot = this.getFileSysCropsParent();
+        String crop = LineUtils.terminateDirectoryPath(cropType, PATH_TERMINATOR);
+        String relativePath = LineUtils.terminateDirectoryPath(relativePaths.get(gobiiFileProcessDir), PATH_TERMINATOR);
+
+        returnVal = cropRoot + crop + relativePath;
+
+        return returnVal;
+    } //
+
+    public List<CropConfig> getActiveCropConfigs() throws Exception {
+
+
         return getCropConfigs()
                 .values()
                 .stream()
@@ -93,32 +145,79 @@ class ConfigValues {
     }
 
 
-    public void setDefaultGobiiCropType(String defaultGobiiCropType) {
+    public void setDefaultGobiiCropType(String defaultGobiiCropType) throws Exception {
+
+
+        if (!cropConfigs.containsKey(defaultGobiiCropType)) {
+            throw new Exception("The specified crop cannot be the default crop because it does not exist: " + defaultGobiiCropType);
+        }
+
+
+        if (this.getActiveCropConfigs()
+                .stream()
+                .filter(c -> c.getGobiiCropType().equals(defaultGobiiCropType))
+                .count() != 1) {
+            throw new Exception("The specified crop cannot be the default crop because it is not marked active: " + defaultGobiiCropType);
+
+        }
+
+
         this.defaultGobiiCropType = defaultGobiiCropType;
-    }
-
-    public List<CropConfig> getCropConfigsToSerialize() {
-        return cropConfigsToSerialize;
-    }
-
-    public void setCropConfigsToSerialize(List<CropConfig> cropConfigsToSerialize) {
-        this.cropConfigsToSerialize = cropConfigsToSerialize;
     }
 
     public Map<String, CropConfig> getCropConfigs() {
 
-        if (0 == cropConfigs.size()){
-            for (CropConfig currentCropConfig : cropConfigsToSerialize) {
-                cropConfigs.put(currentCropConfig.getGobiiCropType(), currentCropConfig);
-            }
-        }
+        return this.cropConfigs;
 
-        return cropConfigs;
     }
 
     public void setCropConfigs(Map<String, CropConfig> cropConfigs) {
         this.cropConfigs = cropConfigs;
     }
+
+    public void setCrop(String gobiiCropType,
+                        boolean isActive,
+                        String serviceDomain,
+                        String serviceAppRoot,
+                        Integer servicePort) {
+
+        CropConfig cropConfig = this.getCropConfig(gobiiCropType);
+
+        if (null == cropConfig) {
+            cropConfig = new CropConfig();
+            this.cropConfigs.put(gobiiCropType, cropConfig);
+        }
+
+        cropConfig
+                .setGobiiCropType(gobiiCropType)
+                .setActive(isActive)
+                .setServiceDomain(serviceDomain)
+                .setServiceAppRoot(serviceAppRoot)
+                .setServicePort(servicePort);
+    }
+
+    public void removeCrop(String cropId) throws Exception {
+
+        if (!cropConfigs.containsKey(cropId)) {
+            throw new Exception("The specified crop cannot be removed because it does not exist: " + cropId);
+        }
+
+        if ((!LineUtils.isNullOrEmpty(getDefaultGobiiCropType()))
+                && getDefaultGobiiCropType().equals(cropId)) {
+
+            throw new Exception("Unable to remove crop " + cropId + " because it is the default crop in this configuration");
+        }
+
+        if ((!LineUtils.isNullOrEmpty(getTestExecConfig().getTestCrop())) &&
+                getTestExecConfig().getTestCrop().equals(cropId)) {
+
+            throw new Exception("Unable to remove crop " + cropId + " because it is the crop used for testing");
+        }
+
+        cropConfigs.remove(cropId);
+
+    }
+
 
     public String getEmailSvrType() {
         return emailSvrType;
@@ -190,5 +289,16 @@ class ConfigValues {
 
     public void setFileSystemLog(String fileSystemLog) {
         this.fileSystemLog = fileSystemLog;
+    }
+
+    public String getFileSysCropsParent() {
+
+        String returnVal = LineUtils.terminateDirectoryPath(this.fileSystemRoot, PATH_TERMINATOR);
+        returnVal += LineUtils.terminateDirectoryPath(this.fileSysCropsParent, PATH_TERMINATOR);
+        return returnVal;
+    }
+
+    public void setFileSysCropsParent(String fileSysCropsParent) {
+        this.fileSysCropsParent = fileSysCropsParent;
     }
 }

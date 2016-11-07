@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests;
+package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
 
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -13,7 +13,6 @@ import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
@@ -23,7 +22,7 @@ import org.gobiiproject.gobiimodel.types.DataSetOrientationType;
 import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 
-import org.gobiiproject.gobiimodel.types.GobiiFileLocationType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
@@ -59,12 +58,12 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         String digesterInputDirectory = ClientContext
                 .getInstance(null, false)
-                .getFileLocationOfCurrenCrop(GobiiFileLocationType.LOADERINSTRUCTION_FILES);
+                .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS);
 
 
         String digesterOutputDirectory =
                 ClientContext.getInstance(null, false)
-                        .getFileLocationOfCurrenCrop(GobiiFileLocationType.INTERMEDIATE_FILES);
+                        .getFileLocationOfCurrenCrop(GobiiFileProcessDir.INTERMEDIATE_FILES);
 
         loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
 
@@ -363,7 +362,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         // so it's handy way to test this functionality
         String instructionFileDirectory = ClientContext
                 .getInstance(null, false)
-                .getFileLocationOfCurrenCrop(GobiiFileLocationType.LOADERINSTRUCTION_FILES);
+                .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS);
         String bogusUserInputFile = instructionFileDirectory + newInstructionFileNameNoError + ".json";
 
         loaderInstructionFilesDTOToSend.setInstructionFileName("testapp_" + DateUtils.makeDateIdString());
