@@ -8,7 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Phil on 6/10/2016.
+ This class encapsualtes the configuration properties that are returned to web clients via
+ web services. For most intents and purposes, it is superfluous. However, for security purposes
+ we use it to prevent sensitive configuration data from being sent through web services: it forces
+ careful decisions to be made by the author of the web service that returns this data to the web
+ client.
  */
 public class ServerConfig {
 

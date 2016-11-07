@@ -5,7 +5,7 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 /**
- * Created by Phil on 5/18/2016.
+ * This class contains the properties necessary to configure a database.
  */
 @Root
 public class CropDbConfig {

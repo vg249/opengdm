@@ -14,12 +14,15 @@ import java.util.stream.Collectors;
 
 
 /**
- * Created by Phil on 5/5/2016.
+ * This class is essentially a POJO for the configuration data. It has a small
+ * amount of logic for retrieval of directories. IN particuarl, given a GobiiFileProcessDir
+ * value, it will provide the appropriate path for specific file processing locations. The properties
+ * of this class are annotated with the simpleframework XML annotations for the purpose of
+ * serialization. Aside from the collection of CropConfig instances, the proeprties of this class
+ * are global to the configuration. There will be one CropConfig instance for every crop supported
+ * by a given deployment.
  */
 class ConfigValues {
-
-//    @ElementList(required = false)
-//    List<CropConfig> cropConfigsToSerialize = new ArrayList<>();
 
     private final char PATH_TERMINATOR = '/';
 
@@ -31,6 +34,9 @@ class ConfigValues {
 
     @ElementMap(required = false)
     private Map<GobiiFileProcessDir, String> relativePaths = new EnumMap<GobiiFileProcessDir, String>(GobiiFileProcessDir.class) {{
+
+        // these defaults should generally not be changed
+        // note that they will be appended to the crops root directory
         put(GobiiFileProcessDir.RAW_USER_FILES, "files/");
         put(GobiiFileProcessDir.LOADER_INSTRUCTIONS, "loader/instructions/");
         put(GobiiFileProcessDir.INTERMEDIATE_FILES, "loader/digest//");
@@ -101,9 +107,6 @@ class ConfigValues {
             throw new Exception("Unknown crop type: " + cropType);
         }
 
-//        String root = LineUtils.terminateDirectoryPath(this.fileSystemRoot, PATH_TERMINATOR);
-//        String parent = LineUtils.terminateDirectoryPath(this.fileSysCropsParent, PATH_TERMINATOR);
-
         String cropRoot = this.getFileSysCropsParent();
         String crop = LineUtils.terminateDirectoryPath(cropType, PATH_TERMINATOR);
         String relativePath = LineUtils.terminateDirectoryPath(relativePaths.get(gobiiFileProcessDir), PATH_TERMINATOR);
@@ -147,26 +150,10 @@ class ConfigValues {
         this.defaultGobiiCropType = defaultGobiiCropType;
     }
 
-//    public List<CropConfig> getCropConfigsToSerialize() {
-//        return cropConfigsToSerialize;
-//    }
-
-//    public void setCropConfigsToSerialize(List<CropConfig> cropConfigsToSerialize) {
-//        this.cropConfigsToSerialize = cropConfigsToSerialize;
-//    }
-
     public Map<String, CropConfig> getCropConfigs() {
-
 
         return this.cropConfigs;
 
-//        if (0 == cropConfigs.size()) {
-//            for (CropConfig currentCropConfig : cropConfigsToSerialize) {
-//                cropConfigs.put(currentCropConfig.getGobiiCropType(), currentCropConfig);
-//            }
-//        }
-
-        //return cropConfigs;
     }
 
     public void setCropConfigs(Map<String, CropConfig> cropConfigs) {

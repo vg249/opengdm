@@ -16,7 +16,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
- * Created by Phil on 4/12/2016.
+ * This class creates a ConfigValues instance from a legacy .properties file
  */
 public class ConfigFileReaderProps {
 

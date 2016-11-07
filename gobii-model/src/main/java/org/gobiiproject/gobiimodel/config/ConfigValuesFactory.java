@@ -9,7 +9,9 @@ import java.io.File;
 
 
 /**
- * This class is responsible for reading and writing the GOBII configuration file.
+ * This class is responsible for reading and writing the GOBII configuration file. It knows
+ * how to retrieve the name of the configuraiton file from the web context. It also knows
+ * how to convert a legacy .properties file to a new XML format file.
  */
 class ConfigValuesFactory {
 

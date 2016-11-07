@@ -10,7 +10,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by Phil on 5/5/2016.
+ * This class encapsulates all the configuration data with which the rest of the system interacts.
+ * It is intended to eliminate the need for other system components to interact directly with (or
+ * even know the format of the) underlying configuration mechanism. At this time, that maechanism
+ * happens to be a configuration file. In the future, it could be a database. As a general container
+ * for this functionality, it delegates most of its functionality to component classes. In particular,
+ * it consumes:
+ * * A ConfigValues instance, which contains the actual configuration data;
+ * * A ConfigValuesFactory, which knows how to create a ConfigValues instance.
+ * This form of organization enables this class to function as a dependency firewall between the actual
+ * format of the data and the rest of the system.
+ *
+ *
  */
 public class ConfigSettings {
 

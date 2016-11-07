@@ -117,14 +117,46 @@ public class GobiiConfig {
     }
 
     /**
-     * Main method of the configuration checking utility.
-     * Use jar -? to find arguments
-     * <p>
-     * Examples:
-     * Set file system root:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -gR "/mnt/lustre"
-     * Set email options:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -stE -soH "foohost" -soN 25 -soU "foo userr" -soP "foo password"  -stT "fooetype" -stH "foohashtype"
-     * Set crop web options:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -c "barcrop" -stW -soH "foohost" -soN 8080 -soU "foo userr" -soP "foo password" -soR "foo-web"
-     * Set crop postgres options:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -c "barcrop" -stP -soH "foohost" -soN 5433 -soU "foo userr" -soP "foo password" -soR "foodb"
+     * Main method of the configuration utility. This utility has a number of functions, all of which can be
+     * seen in the help listing -- run the utility without options to get a help listing.
+     * This utility and this utility alone should be used for creating configuration files for deployment 
+     * purposes. The -validate option should be used on files before attempting a deployment: it will 
+     * point out missing and, to some extent, invalid values in the file (it does _not_ test whether server
+     * configurations are valid). The gobii-client project contains a unit test that demonstrates many (but
+     * not all) of the configuration options. Note that some of the commandline items are global to a deployment
+     * whilst others are specific to a crop.
+     * Example uses:
+     *
+        Configure web server for a crop:
+                    java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c FOOCROP -stW  -soH host_39374a5e-cf6f-4a3c-94fc-78ef52a5f9c7 -soN 8080 -soR context-ea38d003-f2ac-4ed2-a2ac-2833bce361ba
+
+        Configure email options (global):
+                    java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -stE  -soH host_65e403ce-d1f8-4b78-871a-bb527bb5a466 -soN 25 -soU user_66cd9e3b-f60c-4019-acf9-c71f9e066160 -soP password_eccce114-82ff-4ffe-afc8-a214cdbe80f8 -stT type_6fc3320e-ce85-46b2-be22-3e82967ed243 -stH hash_3688b30a-27a3-4eb8-bd45-e0ff05a57fec
+
+        Configure root directory (global):
+                 java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gR /nowhere/subnowhere
+
+        Mark a crop configuration active:
+                 java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  TEST  -cA
+
+        Mark a crop configuratioin inactive;
+                 java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c TEST  -cD
+
+        Set the log file directory (global):
+                 java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gL  /gobii/logs
+
+        Configure integration test options (global):
+                 java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gt  -gtcd test_dir_1ed85d50-3409-4191-8548-482e9deabd09 -gtcq fqpn_a3ba9eea-045d-4db1-bb75-8084c9633159 -gtcr testcrop_f392c6c4-1125-4f1c-8526-094d8a95b69e -gtcs comandstem_81ae46c8-48b4-457d-803c-a3f5ee28155f -gtiu configurl_b668e536-792b-42b1-bdb3-c388b45722e2 -gtsf false -gtsh hostssh_10e29ff4-1beb-4b09-ae3d-0b9bbbf1dfa1 -gtsp 5 -gtsu urlssh10a9b8db-0c27-4db9-ac3b-79ab20d166f1
+
+        Configure MonetDB options for a crop:
+                 java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c BARCROP -stM  -soH host_aa26a4c2-1615-4db1-b5c5-55fb82a70a19 -soN 5063 -soU user_94cb948b-16e9-424c-84df-36e6d22dbfe8 -soP password_6d6c6cf7-5c94-4bf5-acfd-2c592841d112 -soR foodbname-efa0d34c-c6ed-4a66-b8b6-dfbe34acb612
+
+        Configure PostGres  options for a crop:
+                 java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c FOOCROP -stP  -soH host_3307b557-bcf0-445d-9d28-4a3effaa6208 -soN 5063 -soU user_25e007e3-3fd0-4bcb-b5b9-96fc9836ae9d -soP password_dbd702a4-53e0-40b4-aa1c-03bfbf1aedb3 -soR foodbname-7127c9ca-ed26-4641-a5be-d185180c6237
+
+        Valdiate a configuration file:
+                java -jar gobiiconfig.jar -validate -wfqpn /gobii-config-test/gobii-web.xml
+
      *
      * @param args
      */

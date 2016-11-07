@@ -14,7 +14,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Created by Phil on 5/5/2016.
+ * This class contains the web server configuration properties necessary for a given
+ * crop. In addition, it contains CropDbConfig instances for the databae configurations
+ * for the specific crop.
  */
 @Root
 public class CropConfig {
@@ -45,22 +47,12 @@ public class CropConfig {
                       String serviceDomain,
                       String serviceAppRoot,
                       Integer servicePort,
-//                      String loaderInstructionFilesDirectory,
-//                      String extractorInstructionFilesDirectory,
-//                      String extractorInstructionFilesOutputDirectory,
-//                      String rawUserFilesDirectory,
-//                      String intermediateFilesDirectory,
                       boolean isActive) {
 
         this.gobiiCropType = gobiiCropType;
         this.serviceDomain = serviceDomain;
         this.serviceAppRoot = serviceAppRoot;
         this.servicePort = servicePort;
-//        this.rawUserFilesDirectory = rawUserFilesDirectory;
-//        this.loaderInstructionFilesDirectory = loaderInstructionFilesDirectory;
-//        this.extractorInstructionFilesDirectory = extractorInstructionFilesDirectory;
-//        this.extractorInstructionFilesOutputDirectory = extractorInstructionFilesOutputDirectory;
-//        this.intermediateFilesDirectory = intermediateFilesDirectory;
         this.isActive = isActive;
 
     }
@@ -98,31 +90,6 @@ public class CropConfig {
         this.servicePort = servicePort;
         return this;
     }
-
-//    public CropConfig setRawUserFilesDirectory(String rawUserFilesDirectory) {
-//        this.rawUserFilesDirectory = rawUserFilesDirectory;
-//        return this;
-//    }
-//
-//    public CropConfig setLoaderInstructionFilesDirectory(String loaderInstructionFilesDirectory) {
-//        this.loaderInstructionFilesDirectory = loaderInstructionFilesDirectory;
-//        return this;
-//    }
-//
-//    public CropConfig setExtractorInstructionFilesDirectory(String extractorInstructionFilesDirectory) {
-//        this.extractorInstructionFilesDirectory = extractorInstructionFilesDirectory;
-//        return this;
-//    }
-//
-//    public CropConfig setExtractorInstructionFilesOutputDirectory(String extractorInstructionFilesOutputDirectory) {
-//        this.extractorInstructionFilesOutputDirectory = extractorInstructionFilesOutputDirectory;
-//        return this;
-//    }
-//
-//    public CropConfig setIntermediateFilesDirectory(String intermediateFilesDirectory) {
-//        this.intermediateFilesDirectory = intermediateFilesDirectory;
-//        return this;
-//    }
 
     public CropConfig setCropDbConfigsByDbType(Map<GobiiDbType, CropDbConfig> cropDbConfigsByDbType) {
         this.cropDbConfigsByDbType = cropDbConfigsByDbType;

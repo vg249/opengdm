@@ -3,7 +3,7 @@ package org.gobiiproject.gobiimodel.config;
 import org.simpleframework.xml.Element;
 
 /**
- * Created by Phil on 11/2/2016.
+ * This class encapsualtes values that are necessry for the integration test framework.
  */
 public class TestExecConfig {
 
