@@ -147,6 +147,21 @@ class ConfigValues {
 
     public void setDefaultGobiiCropType(String defaultGobiiCropType) throws Exception {
 
+
+        if (!cropConfigs.containsKey(defaultGobiiCropType)) {
+            throw new Exception("The specified crop cannot be the default crop because it does not exist: " + defaultGobiiCropType);
+        }
+
+
+        if (this.getActiveCropConfigs()
+                .stream()
+                .filter(c -> c.getGobiiCropType().equals(defaultGobiiCropType))
+                .count() != 1) {
+            throw new Exception("The specified crop cannot be the default crop because it is not marked active: " + defaultGobiiCropType);
+
+        }
+
+
         this.defaultGobiiCropType = defaultGobiiCropType;
     }
 
@@ -279,8 +294,8 @@ class ConfigValues {
     public String getFileSysCropsParent() {
 
         String returnVal = LineUtils.terminateDirectoryPath(this.fileSystemRoot, PATH_TERMINATOR);
-        returnVal  += LineUtils.terminateDirectoryPath(this.fileSysCropsParent, PATH_TERMINATOR);
-        return  returnVal;
+        returnVal += LineUtils.terminateDirectoryPath(this.fileSysCropsParent, PATH_TERMINATOR);
+        return returnVal;
     }
 
     public void setFileSysCropsParent(String fileSysCropsParent) {

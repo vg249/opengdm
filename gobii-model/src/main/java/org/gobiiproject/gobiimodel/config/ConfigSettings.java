@@ -155,10 +155,6 @@ public class ConfigSettings {
 
     public void setDefaultGobiiCropType(String defaultGobiiCropType) throws Exception {
 
-        if (this.getCropConfig(defaultGobiiCropType) == null) {
-            throw new Exception("Error setting default crop type to " + defaultGobiiCropType + ": no crop of that name has been defined");
-        }
-
         this.configValues.setDefaultGobiiCropType(defaultGobiiCropType);
     }
 

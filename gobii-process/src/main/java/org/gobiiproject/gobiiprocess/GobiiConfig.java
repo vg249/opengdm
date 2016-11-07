@@ -161,7 +161,7 @@ public class GobiiConfig {
 
              # Set log file directory (global)
              java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gL  /shared_data/gobii
-        
+
              # Mark crop TEST inactive
              java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  TEST  -cD
 

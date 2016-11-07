@@ -46,8 +46,6 @@ public class TestGobiiConfig {
 
         returnVal = testExecConfig.getConfigUtilCommandlineStem() + " " + arguments;
 
-        System.out.println(returnVal);
-
         return returnVal;
     }
 
