@@ -58,6 +58,7 @@ public class GobiiConfig {
     private static String CONFIG_REMOVE_CROP = "cR";
     private static String CONFIG_GLOBAL_DEFAULT_CROP = "gD";
     private static String CONFIG_GLOBAL_FILESYS_ROOT = "gR";
+    private static String CONFIG_GLOBAL_FILESYS_LOG = "gL";
 
 
     private static String CONFIG_SVR_GLOBAL_EMAIL = "stE"; // does not require -c
@@ -153,8 +154,8 @@ public class GobiiConfig {
             setOption(options, CONFIG_MARK_CROP_NOTACTIVE, false, "Marks the specified crop inactive", "crop ID");
 
             setOption(options, CONFIG_GLOBAL_DEFAULT_CROP, true, "Default crop (global)", "crop id");
-
             setOption(options, CONFIG_GLOBAL_FILESYS_ROOT, true, "Absolute path to the gobii file system root (global)", "gobii root fqpn");
+            setOption(options, CONFIG_GLOBAL_FILESYS_LOG, true, "Log file directory (global)", "log directory");
 
             setOption(options, CONFIG_CROP_ID, true, "Identifier of crop to add or modify; must be accompanied by a server specifier and its options", "crop ID");
 
@@ -463,6 +464,16 @@ public class GobiiConfig {
                         Arrays.asList(CONFIG_GLOBAL_FILESYS_ROOT),
                         Arrays.asList(fileSysRoot));
 
+
+            } else if(commandLine.hasOption(CONFIG_GLOBAL_FILESYS_LOG)) {
+                String fileSysLog = commandLine.getOptionValue(CONFIG_GLOBAL_FILESYS_LOG);
+                configSettings.setFileSystemLog(fileSysLog);
+                configSettings.commit();
+
+                writeConfigSettingsMessage(options,
+                        propFileFqpn,
+                        Arrays.asList(CONFIG_GLOBAL_FILESYS_LOG),
+                        Arrays.asList(fileSysLog));
 
             } else if (commandLine.hasOption(CONFIG_MARK_CROP_ACTIVE) &&
                     commandLine.hasOption(CONFIG_CROP_ID)) {
@@ -905,7 +916,7 @@ public class GobiiConfig {
                         System.err.println("The postgresdb for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
                     } else {
-                        returnVal = verifyDbConfig(GobiiDbType.POSTGRESQL, cropDbConfigPostGres);
+                        returnVal = returnVal && verifyDbConfig(GobiiDbType.POSTGRESQL, cropDbConfigPostGres);
                     }
 
                     CropDbConfig cropDbConfigMonetDB = currentCropConfig.getCropDbConfig(GobiiDbType.MONETDB);
@@ -913,7 +924,7 @@ public class GobiiConfig {
                         System.err.println("The monetdb for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
                     } else {
-                        returnVal = verifyDbConfig(GobiiDbType.POSTGRESQL, cropDbConfigMonetDB);
+                        returnVal = returnVal && verifyDbConfig(GobiiDbType.POSTGRESQL, cropDbConfigMonetDB);
                     }
                 }
             }

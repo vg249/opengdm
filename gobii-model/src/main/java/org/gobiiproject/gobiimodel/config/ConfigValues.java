@@ -101,12 +101,14 @@ class ConfigValues {
             throw new Exception("Unknown crop type: " + cropType);
         }
 
-        String root = LineUtils.terminateDirectoryPath(this.fileSystemRoot, PATH_TERMINATOR);
-        String parent = LineUtils.terminateDirectoryPath(this.fileSysCropsParent, PATH_TERMINATOR);
+//        String root = LineUtils.terminateDirectoryPath(this.fileSystemRoot, PATH_TERMINATOR);
+//        String parent = LineUtils.terminateDirectoryPath(this.fileSysCropsParent, PATH_TERMINATOR);
+
+        String cropRoot = this.getFileSysCropsParent();
         String crop = LineUtils.terminateDirectoryPath(cropType, PATH_TERMINATOR);
         String relativePath = LineUtils.terminateDirectoryPath(relativePaths.get(gobiiFileProcessDir), PATH_TERMINATOR);
 
-        returnVal = root + parent + crop + relativePath;
+        returnVal = cropRoot + crop + relativePath;
 
         return returnVal;
     } //
@@ -288,7 +290,10 @@ class ConfigValues {
     }
 
     public String getFileSysCropsParent() {
-        return fileSysCropsParent;
+
+        String returnVal = LineUtils.terminateDirectoryPath(this.fileSystemRoot, PATH_TERMINATOR);
+        returnVal  += LineUtils.terminateDirectoryPath(this.fileSysCropsParent, PATH_TERMINATOR);
+        return  returnVal;
     }
 
     public void setFileSysCropsParent(String fileSysCropsParent) {

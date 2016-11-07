@@ -458,6 +458,70 @@ public class TestGobiiConfig {
         return addCropSucceeded;
     }
 
+    private boolean configureWebServer(String testFileFqpn,
+                                       String cropId,
+                                       String host,
+                                       String contextPath,
+                                       Integer port) {
+
+        boolean returnVal = false;
+
+        String commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -c "
+                + cropId
+                + " -stW "
+                + " -soH "
+                + host
+                + " -soN "
+                + port.toString()
+                + " -soR "
+                + contextPath);
+
+        returnVal = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, returnVal);
+
+
+        return returnVal;
+    }
+
+    private boolean configureDataBase(String testFileFqpn,
+                                      String cropId,
+                                      GobiiDbType gobiiDbType,
+                                      String host,
+                                      String databaseName,
+                                      Integer port,
+                                      String user,
+                                      String password) {
+
+        boolean returnVal;
+
+
+        String serverType = gobiiDbType == GobiiDbType.POSTGRESQL ? " -stP " :  "-stM ";
+
+        String commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -c "
+                + cropId
+                + serverType
+                + " -soH "
+                + host
+                + " -soN "
+                + port.toString()
+                + " -soU "
+                + user
+                + " -soP "
+                + password
+                + " -soR "
+                + databaseName);
+
+        returnVal = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, returnVal);
+
+        return returnVal;
+
+    }
+
     @Test
     public void testSetCropActive() {
 
@@ -513,6 +577,227 @@ public class TestGobiiConfig {
 
         Assert.assertNull("The crop was not removed: " + cropToRemove,
                 configSettings.getCropConfig(cropToRemove));
+    }
+
+    @Test
+    public void testSetDefaultCrop() throws Exception {
+
+        String testFileFqpn = makeTestFileFqpn("defaultcrop");
+
+        createCrops(testFileFqpn, Arrays.asList("DEV", "TEST", "EXTRA"));
+
+        String defaultCrop = "DEV";
+
+        String setDefaultCrop = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -gD "
+                + " " + defaultCrop + " ");
+
+        boolean succeeded = HelperFunctions.tryExec(setDefaultCrop, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + setDefaultCrop, succeeded);
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+        Assert.assertTrue("The crop was not set as the default: " + defaultCrop,
+                configSettings.getDefaultGobiiCropType().equals(defaultCrop));
+    }
+
+
+    @Test
+    public void testSetLogFileLocation() throws Exception {
+
+        String testFileFqpn = makeTestFileFqpn("logfilelocation");
+
+        String logFileLocation = "log_" + UUID.randomUUID().toString();
+
+        String setLogFileLocation = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -gL "
+                + " " + logFileLocation + " ");
+
+        boolean succeeded = HelperFunctions.tryExec(setLogFileLocation, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + setLogFileLocation, succeeded);
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+        Assert.assertTrue("The log file location was not set: " + logFileLocation,
+                configSettings.getFileSystemLog().equals(logFileLocation));
+    }
+
+
+    /**
+     * This method creates a complete configuration file. It passes the verificaiton test in GobiiConfig.
+     * It has also been verified that with this configuraiton, the web server will start and unit tests will
+     * run. It has not yet been tested with the Digestor and Extractor
+     */
+    @Test
+    public void makeValidConfigFile() {
+
+        String testFileFqpn = makeTestFileFqpn("makecompleteconfig");
+
+
+        // SET FILE SYSTEM ROOT ****************************
+        String commandLine = makeCommandline("-a -wfqpn " + testFileFqpn + " -gR \"/shared_data/gobii/\"");
+        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+        // SET EMAIL OPTIONS **********************************
+        String user = "gobii.jira@gmail.com";
+        String password = "***REMOVED***";
+        String host = "smtp.gmail.com";
+        String type = "SMTP";
+        String hash = "na";
+        Integer port = 465;
+
+        commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -stE "
+                + " -soH "
+                + host
+                + " -soN "
+                + port.toString()
+                + " -soU "
+                + user
+                + " -soP "
+                + password
+                + " -stT "
+                + type
+                + " -stH "
+                + hash);
+
+        succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+
+
+        // CONFIGURE THE VARIOUS SERVERS *******************************
+        String cropIdDev = " DEV ";
+        String cropidTest = " TEST ";
+
+        configureWebServer(testFileFqpn,
+                cropIdDev,
+                "localhost",
+                "/gobii-dev/",
+                8282);
+        configureWebServer(testFileFqpn,
+                cropidTest,
+                "localhost",
+                "/gobii-test/",
+                8383);
+
+
+        configureDataBase(testFileFqpn,
+                cropIdDev,
+                GobiiDbType.POSTGRESQL,
+                "localhost",
+                "gobii_dev",
+                5432,
+                "appuser",
+                "***REMOVED***");
+
+        configureDataBase(testFileFqpn,
+                cropIdDev,
+                GobiiDbType.MONETDB,
+                "localhost",
+                "gobii_dev",
+                5000,
+                "appuser",
+                "appuser");
+
+        configureDataBase(testFileFqpn,
+                cropidTest,
+                GobiiDbType.POSTGRESQL,
+                "localhost",
+                "gobii_test",
+                5432,
+                "appuser",
+                "appuser");
+
+        configureDataBase(testFileFqpn,
+                cropidTest,
+                GobiiDbType.MONETDB,
+                "localhost",
+                "gobii_test",
+                5000,
+                "appuser",
+                "appuser");
+
+
+        // CONFIGURE TEST SETTINGS **********************************
+
+        String configFileTestDirectory = "/gobii-config-test";
+        String configUtilCommandlineStem = " \"java -jar C:\\phil-source\\IntelliJ\\gobiiproject\\gobii-process\\target\\gobiiconfig.jar\" ";
+        String initialConfigUrl = "http://localhost:8282/gobii-dev";
+        String initialConfigUrlForSshOverride = "http://localhost:8080/gobii-dev";
+        String sshOverrideHost = "localhost";
+        Integer sshOverridePort = 8080;
+
+        boolean isTestSsh = false;
+
+        commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -gt "
+                + " -gtcd "
+                + configFileTestDirectory
+                + " -gtcq "
+                + testFileFqpn
+                + " -gtcr "
+                + cropIdDev // SIC
+                + " -gtcs "
+                + configUtilCommandlineStem
+                + " -gtiu "
+                + initialConfigUrl
+                + " -gtsf "
+                + (isTestSsh ? "true" : "false")
+                + " -gtsh "
+                + sshOverrideHost
+                + " -gtsp "
+                + sshOverridePort
+                + " -gtsu "
+                + initialConfigUrlForSshOverride);
+
+
+        succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+        // ************************ SET DEFAULT CROP TYPE
+        commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -gD "
+                + " " + cropIdDev + " ");
+
+        succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+        // ******************** SET LOG FILE LOCATION
+        String logFileLocation = "/shared_data/gobii";
+
+        commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -gL "
+                + " " + logFileLocation + " ");
+
+        succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+
+
+        // *********************** MARK TEST INSTANCE NOT ACTIVE
+        String commandline = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -c "
+                + cropidTest
+                + " -cD ");
+
+        succeeded = HelperFunctions.tryExec(commandline, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandline, succeeded);
+
+
+        // ************************ VALIDATE WHAT WE CREATED
+        commandLine = makeCommandline("-validate -wfqpn " + testFileFqpn);
+        succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
     }
 
 }
