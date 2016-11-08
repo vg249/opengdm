@@ -30,7 +30,7 @@ public class PayloadResponse<T> {
                                              String additionalReason) throws Exception {
         return method.toUpperCase()
                 + " method on "
-                + this.restUri.makeUrl()
+                + httpMethodResult.getUri().toString()
                 + " failed with status code "
                 + Integer.toString(httpMethodResult.getResponseCode())
                 + ": "

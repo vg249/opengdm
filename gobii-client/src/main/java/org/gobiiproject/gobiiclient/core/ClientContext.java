@@ -82,7 +82,7 @@ public final class ClientContext {
 //            clientContext.defaultGobiiCropType = configSettings.getDefaultGobiiCropType();
 //            clientContext.currentGobiiCropType = clientContext.defaultGobiiCropType;
 
-            if( null == cropType ) {
+            if (null == cropType) {
                 clientContext.defaultGobiiCropType = configSettings.getDefaultGobiiCropType();
                 clientContext.currentGobiiCropType = clientContext.defaultGobiiCropType;
             } else {
@@ -92,7 +92,7 @@ public final class ClientContext {
 
             for (CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
 
-                ServerConfig currentServerConfig =  new ServerConfig(currentCropConfig,
+                ServerConfig currentServerConfig = new ServerConfig(currentCropConfig,
                         configSettings.getProcessingPath(currentCropConfig.getGobiiCropType(),
                                 GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS),
                         configSettings.getProcessingPath(currentCropConfig.getGobiiCropType(),
@@ -192,7 +192,7 @@ public final class ClientContext {
                 context);
 
         RestUri configSettingsUri = new UriFactory(null).RestUriFromUri(settingsPath);
-        HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri,returnVal.userToken);
+        HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri, returnVal.userToken);
         PayloadResponse<ConfigSettingsDTO> payloadResponse = new PayloadResponse<>(configSettingsUri);
 
         PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = payloadResponse.getPayloadFromResponse(ConfigSettingsDTO.class,
@@ -254,6 +254,19 @@ public final class ClientContext {
 
     public String getCurrentCropContextRoot() {
         return serverConfigs.get(this.currentGobiiCropType).getContextRoot();
+    }
+
+    public String getCropContextRoot(String cropType) throws Exception {
+
+        String returnVal;
+
+        if (serverConfigs.get(cropType) == null) {
+            throw new Exception("There is no server configuration for crop " + cropType);
+        }
+
+        returnVal = this.serverConfigs.get(cropType).getContextRoot();
+
+        return returnVal;
     }
 
 

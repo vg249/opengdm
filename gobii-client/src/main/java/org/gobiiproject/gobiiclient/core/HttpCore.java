@@ -172,7 +172,7 @@ public class HttpCore {
 
         int responseCode = httpResponse.getStatusLine().getStatusCode();
         String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
-        returnVal.setResponse(responseCode, reasonPhrase);
+        returnVal.setResponse(responseCode, reasonPhrase, uri);
 
 
         if (HttpStatus.SC_NOT_FOUND != responseCode &&

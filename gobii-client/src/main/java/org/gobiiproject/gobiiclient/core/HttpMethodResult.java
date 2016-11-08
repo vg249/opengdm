@@ -2,6 +2,9 @@ package org.gobiiproject.gobiiclient.core;
 
 import com.google.gson.JsonObject;
 
+import java.net.URI;
+
+
 /**
  * Created by Phil on 9/21/2016.
  */
@@ -11,6 +14,7 @@ public class HttpMethodResult {
 
     String reasonPhrase;
     JsonObject payLoad;
+    URI uri;
 
     public int getResponseCode() {
         return responseCode;
@@ -20,10 +24,14 @@ public class HttpMethodResult {
         return reasonPhrase;
     }
 
+    public URI getUri() {
+        return uri;
+    }
 
-    public void setResponse(int responseCode, String reasonPhrase) {
+    public void setResponse(int responseCode, String reasonPhrase, URI uri) {
         this.responseCode = responseCode;
         this.reasonPhrase = reasonPhrase;
+        this.uri = uri;
     }
 
     public JsonObject getPayLoad() {
