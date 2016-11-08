@@ -128,7 +128,10 @@ public class HttpCore {
         returnVal = submitUriRequest(postRequest, userName, password, null);
 
         if (HttpStatus.SC_OK != returnVal.getStatusLine().getStatusCode()) {
-            throw new Exception("Request did not succeed: " + returnVal.getStatusLine().getStatusCode());
+            throw new Exception("Request did not succeed with http status code "
+                    + returnVal.getStatusLine().getStatusCode()
+                    + "; the url is: "
+                    + uri.toString());
         }
 
 
