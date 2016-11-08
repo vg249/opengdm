@@ -13,7 +13,7 @@ gobii-web/target
 .settings
 .classpath
 .project
-
+*.log
 gobii-web/src/main/ts/*.js
 gobii-web/src/main/ts/*.map
 gobii-web/src/main/ts/.baseDir.ts

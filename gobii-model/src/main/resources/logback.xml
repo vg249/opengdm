@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="log-dir" value="/shared_data/gobii/log"/>
+    <!--<property name="log-dir" value="/shared_data/gobii/log"/>-->
     <!-- Send debug messages to System.out -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- By default, encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
@@ -13,7 +13,8 @@
     <timestamp key="timestamp" datePattern="yyyyMMdd'T'HHmmss"/>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>${log-dir}/process-${timestamp}.log</file>
+        <!--<file>${log-dir}/process-${timestamp}.log</file>-->
+        <file>process-${timestamp}.log</file>
 
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
