@@ -159,6 +159,10 @@ public class HelperFunctions {
 	//Null outputFIle to get output to standard out.
 	public static boolean tryExec(String execString,String outputFile, String errorFile, String inputFile){
 		String[] exec=execString.split(" ");
+		String executedProcName=exec[0];
+		if(executedProcName.equals("python")){
+			executedProcName=exec[1];
+		}
         ProcessBuilder builder = new ProcessBuilder(exec);
         if(outputFile!=null)builder.redirectOutput(new File(outputFile));
         if(errorFile!=null)builder.redirectError(new File(errorFile));
@@ -167,12 +171,13 @@ public class HelperFunctions {
 		try {
 			p = builder.start();
 		    p.waitFor();
-	} catch (Exception e) {
-			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exception in process",e);
+		} catch (Exception e) {
+			ErrorLogger.logError(executedProcName,"Exception in process",e);
+			ErrorLogger.logError(executedProcName,"Error File Contents",errorFile);
 			return false;
 		}
 		if(p.exitValue()!=0){
-			ErrorLogger.logError(execString.substring(0,execString.indexOf(" ")),"Exit code " + p.exitValue(),errorFile);
+			ErrorLogger.logError(executedProcName,"Exit code " + p.exitValue(),errorFile);
 			return false;
 		}
 		return true;
@@ -299,7 +304,6 @@ public class HelperFunctions {
 		}
 		if(!success){
 			content+="\nAn unexpected error occurred when processing your request.";
-			if(checkFileExistance(errorLogLoc))content+="\n\nAn error log may be available at " + errorLogLoc;
 			if(digestTempFiles != null){
 				for(String file:digestTempFiles){
 					if(checkFileExistance(file.substring(file.indexOf('\t')+1,file.length()))){
