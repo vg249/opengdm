@@ -116,16 +116,16 @@ public class GobiiExtractor {
 					ErrorLogger.logDebug("Extractor", new StringBuilder(mdePath.toString()).append(" does not exist!").toString());
 					return;
 				}
-				String gobiiMDE = new StringBuilder("python ").
-						          append(mdePath).
-						          append(" -c ").append(HelperFunctions.getPostgresConnectionString(cropConfig)).
-					              append(" -m ").append(markerFile).
-						          append(" -s ").append(sampleFile).
-						          append(" -p ").append(projectFile).
-					              append(" -d ").append(extract.getDataSetId()).
-						          append(" -l -v ").toString();
+				String gobiiMDE = "python "+ mdePath+
+						" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
+						" -m " + markerFile +
+						" -s " + sampleFile +
+						" -p " + projectFile +
+						" -d " + extract.getDataSetId() +
+						" -v ";
 				String errorFile=getLogName(extract,cropConfig,extract.getDataSetId());
 				ErrorLogger.logInfo("Extractor","Executing MDEs");
+				ErrorLogger.logDebug("Extractor",gobiiMDE);
 				tryExec(gobiiMDE, null, errorFile);
 				Integer dataSetId=extract.getDataSetId();
 
