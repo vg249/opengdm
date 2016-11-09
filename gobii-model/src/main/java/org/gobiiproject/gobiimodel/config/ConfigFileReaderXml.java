@@ -39,7 +39,9 @@ public class ConfigFileReaderXml {
         Serializer serializer = new Persister();
         File file = new File(fileName);
 
-        returnVal = serializer.read(ConfigValues.class, file);
+        // third parameter false causes serializer to ignore elements in the
+        // file that do not have a corresponding proeprty in te pojo.
+        returnVal = serializer.read(ConfigValues.class, file,false);
 
         return returnVal;
 

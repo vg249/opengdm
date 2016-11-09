@@ -26,7 +26,7 @@ class ConfigValues {
 
     private final char PATH_TERMINATOR = '/';
 
-    @Element
+    @Element(required = false)
     private TestExecConfig testExecConfig = new TestExecConfig();
 
     @ElementMap(required = false)
