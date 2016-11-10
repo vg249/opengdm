@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.config;
 
 
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.ElementMap;
@@ -68,7 +69,7 @@ public class CropConfig {
         if (cropDbConfig == null) {
 
             cropDbConfig = new CropDbConfig();
-            this.cropDbConfigsByDbType.put(gobiiDbType,cropDbConfig);
+            this.cropDbConfigsByDbType.put(gobiiDbType, cropDbConfig);
 
         }
 
@@ -102,6 +103,7 @@ public class CropConfig {
 
 
     public String getServiceDomain() {
+
         return serviceDomain;
     }
 
@@ -115,7 +117,8 @@ public class CropConfig {
     }
 
     public String getServiceAppRoot() {
-        return serviceAppRoot;
+
+        return LineUtils.terminateDirectoryPath(this.serviceAppRoot);
     }
 
     public CropConfig setServiceAppRoot(String serviceAppRoot) {

@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
  */
 class ConfigValues {
 
-    private final char PATH_TERMINATOR = '/';
-
     @Element(required = false)
     private TestExecConfig testExecConfig = new TestExecConfig();
 
@@ -108,8 +106,8 @@ class ConfigValues {
         }
 
         String cropRoot = this.getFileSysCropsParent();
-        String crop = LineUtils.terminateDirectoryPath(cropType, PATH_TERMINATOR);
-        String relativePath = LineUtils.terminateDirectoryPath(relativePaths.get(gobiiFileProcessDir), PATH_TERMINATOR);
+        String crop = LineUtils.terminateDirectoryPath(cropType);
+        String relativePath = LineUtils.terminateDirectoryPath(relativePaths.get(gobiiFileProcessDir));
 
         returnVal = cropRoot + crop + relativePath;
 
@@ -293,8 +291,8 @@ class ConfigValues {
 
     public String getFileSysCropsParent() {
 
-        String returnVal = LineUtils.terminateDirectoryPath(this.fileSystemRoot, PATH_TERMINATOR);
-        returnVal += LineUtils.terminateDirectoryPath(this.fileSysCropsParent, PATH_TERMINATOR);
+        String returnVal = LineUtils.terminateDirectoryPath(this.fileSystemRoot);
+        returnVal += LineUtils.terminateDirectoryPath(this.fileSysCropsParent);
         return returnVal;
     }
 

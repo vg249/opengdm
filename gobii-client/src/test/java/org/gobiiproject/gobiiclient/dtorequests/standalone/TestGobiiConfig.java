@@ -10,6 +10,7 @@ import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -168,7 +169,8 @@ public class TestGobiiConfig {
 
         String cropId = "FOOCROP";
         String host = "host_" + UUID.randomUUID().toString();
-        String contextPath = "context-" + UUID.randomUUID().toString();
+        String contextPathWithoutTerminator = "context-" + UUID.randomUUID().toString();
+        String contextPathWithTerminator = contextPathWithoutTerminator + LineUtils.PATH_TERMINATOR;
         Integer port = 8080;
 
 //     * Set crop web options:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -c "barcrop" -stW -soH "foohost" -soN 8080 -soU "foo userr" -soP "foo password" -soR "foo-web"
@@ -183,7 +185,7 @@ public class TestGobiiConfig {
                 + " -soN "
                 + port.toString()
                 + " -soR "
-                + contextPath);
+                + contextPathWithoutTerminator);
 
         boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
         Assert.assertTrue("Command failed: " + commandLine, succeeded);
@@ -208,7 +210,7 @@ public class TestGobiiConfig {
                 cropConfig.isActive());
 
         Assert.assertTrue("The context path not match",
-                cropConfig.getServiceAppRoot().equals(contextPath));
+                cropConfig.getServiceAppRoot().equals(contextPathWithTerminator));
 
     }
 
