@@ -1,10 +1,12 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
+import org.gobiiproject.gobiiclient.dtorequests.dtorequest.DtoRequestExperimentTest;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 
@@ -124,12 +126,15 @@ public class TestDtoFactory {
 
     public static DataSetDTO makePopulatedDataSetDTO(Integer uniqueStem,
                                                      Integer callingAnalysisId,
-                                                     List<Integer> analysisIds) {
+                                                     List<Integer> analysisIds) throws Exception {
 
         DataSetDTO returnVal = new DataSetDTO();
 
 
         // set the big-ticket items
+
+        Integer experimentId = (new GlobalPkColl<DtoRequestExperimentTest>().getAPkVal(DtoRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+
 
         returnVal.getScores().add(1);
         returnVal.getScores().add(2);
@@ -142,7 +147,7 @@ public class TestDtoFactory {
         returnVal.setCreatedDate(new Date());
         returnVal.setDataFile(uniqueStem + ": foo file");
         returnVal.setQualityFile(uniqueStem + ": foo quality file");
-        returnVal.setExperimentId(2);
+        returnVal.setExperimentId(experimentId);
         returnVal.setDataTable(uniqueStem + ": foo table");
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
