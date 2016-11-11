@@ -11,6 +11,7 @@ import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.*;
@@ -34,14 +35,9 @@ import java.util.stream.Collectors;
  */
 public class DtoRequestPlatformTest {
 
-    private static UriFactory uriFactory;
-
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
-        String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        DtoRequestPlatformTest.uriFactory = new UriFactory(currentCropContextRoot);
-
     }
 
     @AfterClass
@@ -60,7 +56,7 @@ public class DtoRequestPlatformTest {
 //        nameIdListDTORequest.setFilter("platform_type");
 //
 //        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        RestUri namesUri = uriFactory.nameIdList();
+        RestUri namesUri = ClientContext.getInstance(null, false).getUriFactory().nameIdList();
         namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "platform_type");
@@ -83,8 +79,7 @@ public class DtoRequestPlatformTest {
                 .makePopulatedPlatformDTO(GobiiProcessType.CREATE, 1, entityParamValues);
 
         PayloadEnvelope<PlatformDTO> payloadEnvelope = new PayloadEnvelope<>(newPlatformDto, GobiiProcessType.CREATE);
-        RestResource<PlatformDTO> restResource = new RestResource<>(DtoRequestPlatformTest
-                .uriFactory
+        RestResource<PlatformDTO> restResource = new RestResource<>(ClientContext.getInstance(null, false).getUriFactory()
                 .resourceColl(ServiceRequestId.URL_PLATFORM));
         PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelope = restResource.post(PlatformDTO.class,
                 payloadEnvelope);
@@ -93,10 +88,11 @@ public class DtoRequestPlatformTest {
         Assert.assertNotEquals(null, platformDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOResponseEnvelope.getHeader()));
         Assert.assertTrue(platformDTOResponse.getPlatformId() > 0);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PLATFORMS, platformDTOResponse.getPlatformId());
 
 
-        RestUri restUriPlatformForGetById = DtoRequestPlatformTest
-                .uriFactory
+        RestUri restUriPlatformForGetById = ClientContext.getInstance(null, false)
+                .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
         restUriPlatformForGetById.setParamValue("id", platformDTOResponse.getPlatformId().toString());
         RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
@@ -147,7 +143,7 @@ public class DtoRequestPlatformTest {
 //        List<NameIdDTO> platformProperTerms = new ArrayList<>(nameIdListDTO
 //                .getNamesById());
 
-        RestUri namesUri = uriFactory.nameIdList();
+        RestUri namesUri = ClientContext.getInstance(null, false).getUriFactory().nameIdList();
         namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "platform_type");
@@ -169,8 +165,8 @@ public class DtoRequestPlatformTest {
                 .makePopulatedPlatformDTO(GobiiProcessType.CREATE, 1, entityParamValues);
 
         PayloadEnvelope<PlatformDTO> payloadEnvelope = new PayloadEnvelope<>(newPlatformDto, GobiiProcessType.CREATE);
-        RestResource<PlatformDTO> restResource = new RestResource<>(DtoRequestPlatformTest
-                .uriFactory
+        RestResource<PlatformDTO> restResource = new RestResource<>(ClientContext.getInstance(null, false)
+                .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_PLATFORM));
         PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelope = restResource.post(PlatformDTO.class,
                 payloadEnvelope);
@@ -178,8 +174,8 @@ public class DtoRequestPlatformTest {
 
         // re-retrieve the platform we just created so we start with a fresh READ mode dto
 
-        RestUri restUriPlatformForGetById = DtoRequestPlatformTest
-                .uriFactory
+        RestUri restUriPlatformForGetById = ClientContext.getInstance(null, false)
+                .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
         restUriPlatformForGetById.setParamValue("id", newPlatformDTOResponse.getPlatformId().toString());
         RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
@@ -236,7 +232,9 @@ public class DtoRequestPlatformTest {
 
 
         // get a list of platforms
-        RestUri restUriPlatform = DtoRequestPlatformTest.uriFactory.resourceColl(ServiceRequestId.URL_PLATFORM);
+        RestUri restUriPlatform = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_PLATFORM);
         RestResource<PlatformDTO> restResource = new RestResource<>(restUriPlatform);
         PayloadEnvelope<PlatformDTO> resultEnvelope = restResource
                 .get(PlatformDTO.class);
@@ -250,8 +248,8 @@ public class DtoRequestPlatformTest {
 
         // use an artibrary platform id
         Integer platformId = platformDTOList.get(0).getPlatformId();
-        RestUri restUriPlatformForGetById = DtoRequestPlatformTest
-                .uriFactory
+        RestUri restUriPlatformForGetById = ClientContext.getInstance(null, false)
+                .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
         restUriPlatformForGetById.setParamValue("id", platformId.toString());
         RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
@@ -267,7 +265,9 @@ public class DtoRequestPlatformTest {
     @Test
     public void getPlatformsWithHttpGet() throws Exception {
 
-        RestUri restUriPlatform = DtoRequestPlatformTest.uriFactory.resourceColl(ServiceRequestId.URL_PLATFORM);
+        RestUri restUriPlatform = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_PLATFORM);
         RestResource<PlatformDTO> restResource = new RestResource<>(restUriPlatform);
         PayloadEnvelope<PlatformDTO> resultEnvelope = restResource
                 .get(PlatformDTO.class);
@@ -280,7 +280,7 @@ public class DtoRequestPlatformTest {
 
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
-        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == platformDTOList.size() );
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == platformDTOList.size());
 
         List<Integer> itemsToTest = new ArrayList<>();
         if (platformDTOList.size() > 50) {
@@ -297,8 +297,8 @@ public class DtoRequestPlatformTest {
 
             Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
 
-            RestUri restUriPlatformForGetById = DtoRequestPlatformTest
-                    .uriFactory
+            RestUri restUriPlatformForGetById = ClientContext.getInstance(null, false)
+                    .getUriFactory()
                     .RestUriFromUri(currentLink.getHref());
             RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
             PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = restResourceForGetById

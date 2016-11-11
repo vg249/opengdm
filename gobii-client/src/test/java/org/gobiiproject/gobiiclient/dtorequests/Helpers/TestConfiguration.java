@@ -41,7 +41,7 @@ public class TestConfiguration {
         String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
 
         if (configFileLocation != null) {
-            LOGGER.error("FQPN of configuration file read from environment variable " + CONFIG_FILE_LOCATION_PROP + ": " + configFileLocation);
+            LOGGER.info("FQPN of configuration file read from environment variable " + CONFIG_FILE_LOCATION_PROP + ": " + configFileLocation);
         } else {
             String message = "The the environment does not define the FQPN of configuration in environment variable: " + CONFIG_FILE_LOCATION_PROP;
             LOGGER.error(message);

@@ -238,6 +238,20 @@ public final class ClientContext {
     List<String> gobiiCropTypes = new ArrayList<>();
 
 
+    public UriFactory getUriFactory() {
+
+        String contextPath;
+        if( ! LineUtils.isNullOrEmpty(currentGobiiCropType) ) {
+
+            contextPath = serverConfigs.get(currentGobiiCropType).getContextRoot();
+        } else {
+            contextPath = serverConfigs.get(defaultGobiiCropType).getContextRoot();
+        }
+
+        return new UriFactory(contextPath);
+    }
+
+
     public String getCurrentCropDomain() {
 
         String returnVal;

@@ -13,10 +13,13 @@ import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
+import org.gobiiproject.gobiiclient.dtorequests.DtoRequestManifest;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.junit.AfterClass;
@@ -79,13 +82,35 @@ public class DtoRequestExperimentTest {
 
         //DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 
+        Integer projectId = GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.PROJECTS);
+        if(projectId == null ) {
+            new DtoRequestProjectTest().testCreateProject();
+            projectId = GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.PROJECTS);
+        }
+
+        Integer platformId = GlobalPkValues
+                .getInstance()
+                .getAPkVal(GobiiEntityNameType.PLATFORMS);
+        if( platformId == null ) {
+            new DtoRequestPlatformTest().testCreatePlatformWithHttpPost();
+            platformId = GlobalPkValues
+                    .getInstance()
+                    .getAPkVal(GobiiEntityNameType.PLATFORMS);
+        }
+
+        Integer manifestId = GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.MANIFESTS);
+        if(manifestId == null ) {
+            new DtoRequestManifesTest().testCreateManifest();
+             manifestId = GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.MANIFESTS);
+        }
+
         ExperimentDTO experimentDTORequest = new ExperimentDTO();
-        experimentDTORequest.setExperimentId(1);
-        experimentDTORequest.setManifestId(1);
-        experimentDTORequest.setPlatformId(1);
-        experimentDTORequest.setProjectId(1);
-        experimentDTORequest.setCreatedBy(2);
-        experimentDTORequest.setModifiedBy(2);
+        // experimentDTORequest.setExperimentId(1);
+        experimentDTORequest.setManifestId(manifestId);
+        experimentDTORequest.setPlatformId(platformId);
+        experimentDTORequest.setProjectId(projectId);
+        experimentDTORequest.setCreatedBy(1);
+        experimentDTORequest.setModifiedBy(1);
         experimentDTORequest.setExperimentCode("foocode");
         experimentDTORequest.setExperimentDataFile("foofile");
         experimentDTORequest.setStatusId(1);

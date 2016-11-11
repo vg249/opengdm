@@ -14,10 +14,12 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.junit.AfterClass;
@@ -32,13 +34,10 @@ import java.util.stream.Collectors;
 
 public class DtoRequestProjectTest {
 
-    private static UriFactory uriFactory;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
-        String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        uriFactory = new UriFactory(currentCropContextRoot);
     }
 
     @AfterClass
@@ -49,7 +48,6 @@ public class DtoRequestProjectTest {
 
     @Test
     public void testCreateProject() throws Exception {
-
 
         ProjectDTO newProjectDTO = new ProjectDTO();
         newProjectDTO.setCreatedBy(1);
@@ -67,8 +65,8 @@ public class DtoRequestProjectTest {
 
 //        DtoRequestProject dtoRequestProject = new DtoRequestProject();
 //        ProjectDTO projectDTOResponse = dtoRequestProject.process(projectDTORequest);
-
-        RestUri projectsUri = uriFactory.resourceColl(ServiceRequestId.URL_PROJECTS);
+        
+        RestUri projectsUri = ClientContext.getInstance(null, false).getUriFactory().resourceColl(ServiceRequestId.URL_PROJECTS);
         RestResource<ProjectDTO> restResourceForProjects = new RestResource<>(projectsUri);
         PayloadEnvelope<ProjectDTO> payloadEnvelope = new PayloadEnvelope<>(newProjectDTO, GobiiProcessType.CREATE);
         PayloadEnvelope<ProjectDTO> resultEnvelope = restResourceForProjects
@@ -83,6 +81,7 @@ public class DtoRequestProjectTest {
         Assert.assertNotEquals(null, projectDTOResponse);
         Assert.assertNotEquals(null, projectDTOResponse.getProjectId());
         Assert.assertTrue(projectDTOResponse.getProjectId() > 0);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROJECTS,projectDTOResponse.getProjectId());
 
         Assert.assertNotEquals(null, projectDTOResponse.getProperties());
         Assert.assertTrue(projectDTOResponse.getProperties().size() > 0);
@@ -102,7 +101,7 @@ public class DtoRequestProjectTest {
     @Test
     public void testGetProjectDetails() throws Exception {
 
-        RestUri projectsUri = uriFactory
+        RestUri projectsUri = ClientContext.getInstance(null, false).getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PROJECTS);
         projectsUri.setParamValue("id", "1");
         RestResource<ProjectDTO> restResourceForProjects = new RestResource<>(projectsUri);
@@ -128,7 +127,7 @@ public class DtoRequestProjectTest {
     @Test
     public void testCreateExistingProject() throws Exception {
 
-        RestUri projectsUri = uriFactory
+        RestUri projectsUri = ClientContext.getInstance(null, false).getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PROJECTS);
         projectsUri.setParamValue("id", "1");
         RestResource<ProjectDTO> restResourceForProjectGet = new RestResource<>(projectsUri);
@@ -143,7 +142,7 @@ public class DtoRequestProjectTest {
                 GobiiProcessType.CREATE);
 
         RestResource<ProjectDTO> restResourceForProjectPost =
-                new RestResource<>(uriFactory.resourceColl(ServiceRequestId.URL_PROJECTS));
+                new RestResource<>(ClientContext.getInstance(null, false).getUriFactory().resourceColl(ServiceRequestId.URL_PROJECTS));
 
          resultEnvelope = restResourceForProjectPost
                 .post(ProjectDTO.class, payloadEnvelope);
@@ -169,7 +168,7 @@ public class DtoRequestProjectTest {
     @Test
     public void testViolateUniqueConstraintProject() throws Exception {
 
-        RestUri projectsUri = uriFactory
+        RestUri projectsUri = ClientContext.getInstance(null, false).getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PROJECTS);
         projectsUri.setParamValue("id", "1");
         RestResource<ProjectDTO> restResourceForProjectGet = new RestResource<>(projectsUri);
@@ -185,7 +184,7 @@ public class DtoRequestProjectTest {
                 GobiiProcessType.CREATE);
 
         RestResource<ProjectDTO> restResourceForProjectPost =
-                new RestResource<>(uriFactory.resourceColl(ServiceRequestId.URL_PROJECTS));
+                new RestResource<>(ClientContext.getInstance(null, false).getUriFactory().resourceColl(ServiceRequestId.URL_PROJECTS));
 
         resultEnvelope = restResourceForProjectPost
                 .post(ProjectDTO.class, payloadEnvelope);
@@ -216,7 +215,7 @@ public class DtoRequestProjectTest {
 //        ProjectDTO projectDTORequest = new ProjectDTO();
 //        projectDTORequest.setProjectId(1);
 
-        RestUri projectsUri = uriFactory
+        RestUri projectsUri = ClientContext.getInstance(null, false).getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PROJECTS);
         projectsUri.setParamValue("id", "1");
         RestResource<ProjectDTO> restResourceForProjectGet = new RestResource<>(projectsUri);
@@ -281,7 +280,7 @@ public class DtoRequestProjectTest {
     @Test
     public void getProjects() throws Exception {
 
-        RestUri restUriProject = DtoRequestProjectTest.uriFactory.resourceColl(ServiceRequestId.URL_PROJECTS);
+        RestUri restUriProject = ClientContext.getInstance(null, false).getUriFactory().resourceColl(ServiceRequestId.URL_PROJECTS);
         RestResource<ProjectDTO> restResource = new RestResource<>(restUriProject);
         PayloadEnvelope<ProjectDTO> resultEnvelope = restResource
                 .get(ProjectDTO.class);
@@ -311,8 +310,8 @@ public class DtoRequestProjectTest {
 
             Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
 
-            RestUri restUriProjectForGetById = DtoRequestProjectTest
-                    .uriFactory
+            RestUri restUriProjectForGetById = ClientContext.getInstance(null,false)
+                    .getUriFactory()
                     .RestUriFromUri(currentLink.getHref());
             RestResource<ProjectDTO> restResourceForGetById = new RestResource<>(restUriProjectForGetById);
             PayloadEnvelope<ProjectDTO> resultEnvelopeForGetByID = restResourceForGetById
