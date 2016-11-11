@@ -21,7 +21,7 @@ import org.junit.Test;
 
 import java.util.UUID;
 
-public class DtoRequestManifesTest {
+public class DtoRequestManifestTest implements DtoRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -34,7 +34,8 @@ public class DtoRequestManifesTest {
     }
 
     @Test
-    public void testGetManifest() throws Exception {
+    @Override
+    public void get() throws Exception {
         DtoRequestManifest dtoRequestManifest = new DtoRequestManifest();
         ManifestDTO ManifestDTORequest = new ManifestDTO();
         ManifestDTORequest.setManifestId(1);
@@ -46,7 +47,8 @@ public class DtoRequestManifesTest {
 
 
     @Test
-    public void testCreateManifest() throws Exception {
+    @Override
+    public void create() throws Exception {
 
         DtoRequestManifest dtoRequestManifest = new DtoRequestManifest();
 
@@ -66,7 +68,8 @@ public class DtoRequestManifesTest {
 
 
     @Test
-    public void testUpdateManifest() throws Exception {
+    @Override
+    public void update() throws Exception {
         DtoRequestManifest dtoRequestManifest = new DtoRequestManifest();
 
         // create a new manifest for our test
@@ -96,6 +99,11 @@ public class DtoRequestManifesTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestManifestReRetrieved));
 
         Assert.assertTrue(dtoRequestManifestReRetrieved.getFilePath().equals(newDataFile));
+
+    }
+
+    @Override
+    public void getList() throws Exception {
 
     }
 }

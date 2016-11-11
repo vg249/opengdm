@@ -1,11 +1,15 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
+import org.gobiiproject.gobiiclient.dtorequests.dtorequest.DtoRequestTest;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
+import static javafx.scene.input.KeyCode.T;
 
 /**
  * Created by Phil on 11/11/2016.
@@ -31,7 +35,7 @@ public class GlobalPkValues {
 
         Integer returnVal = 0;
 
-        if( pkMap.containsKey(gobiiEntityNameType)) {
+        if (pkMap.containsKey(gobiiEntityNameType)) {
             returnVal = pkMap.get(gobiiEntityNameType).size();
         }
 
@@ -42,20 +46,18 @@ public class GlobalPkValues {
 
         Integer returnVal = null;
 
-        if( pkMap.containsKey(gobiiEntityNameType)
-                && pkMap.get(gobiiEntityNameType).size() > 0 ) {
+        if (pkMap.containsKey(gobiiEntityNameType)
+                && pkMap.get(gobiiEntityNameType).size() > 0) {
             returnVal = pkMap.get(gobiiEntityNameType).get(0); // get arbitrary value for now
         }
 
         return returnVal;
     }
 
+    public Integer addPkVal(GobiiEntityNameType gobiiEntityNameType, Integer pkVal) {
 
-
-    public Integer addPkVal(GobiiEntityNameType gobiiEntityNameType, Integer pkVal ) {
-
-        if( !pkMap.containsKey(gobiiEntityNameType) ) {
-            pkMap.put(gobiiEntityNameType,new ArrayList<>());
+        if (!pkMap.containsKey(gobiiEntityNameType)) {
+            pkMap.put(gobiiEntityNameType, new ArrayList<>());
         }
 
         pkMap.get(gobiiEntityNameType).add(pkVal);

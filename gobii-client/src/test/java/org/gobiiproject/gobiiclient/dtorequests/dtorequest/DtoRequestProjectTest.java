@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class DtoRequestProjectTest {
+public class DtoRequestProjectTest implements DtoRequestTest  {
 
 
     @BeforeClass
@@ -47,7 +47,8 @@ public class DtoRequestProjectTest {
 
 
     @Test
-    public void testCreateProject() throws Exception {
+    @Override
+    public void create() throws Exception {
 
         ProjectDTO newProjectDTO = new ProjectDTO();
         newProjectDTO.setCreatedBy(1);
@@ -99,7 +100,8 @@ public class DtoRequestProjectTest {
     }
 
     @Test
-    public void testGetProjectDetails() throws Exception {
+    @Override
+    public void get() throws Exception {
 
         RestUri projectsUri = ClientContext.getInstance(null, false).getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PROJECTS);
@@ -209,7 +211,8 @@ public class DtoRequestProjectTest {
     } // testCreateProject()
 
     @Test
-    public void testUpdateProject() throws Exception {
+    @Override
+    public void update() throws Exception {
 
 //        DtoRequestProject dtoRequestProject = new DtoRequestProject();
 //        ProjectDTO projectDTORequest = new ProjectDTO();
@@ -278,7 +281,8 @@ public class DtoRequestProjectTest {
 
 
     @Test
-    public void getProjects() throws Exception {
+    @Override
+    public void getList() throws Exception {
 
         RestUri restUriProject = ClientContext.getInstance(null, false).getUriFactory().resourceColl(ServiceRequestId.URL_PROJECTS);
         RestResource<ProjectDTO> restResource = new RestResource<>(restUriProject);

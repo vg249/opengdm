@@ -13,9 +13,8 @@ import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
-import org.gobiiproject.gobiiclient.dtorequests.DtoRequestManifest;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
@@ -51,7 +50,7 @@ public class DtoRequestExperimentTest {
 
     @Test
     public void testGetExperimentDetailsByExperimentId() throws Exception {
-        
+
         //DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 
 //        ExperimentDTO experimentDTO = new ExperimentDTO();
@@ -82,27 +81,11 @@ public class DtoRequestExperimentTest {
 
         //DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 
-        Integer projectId = GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.PROJECTS);
-        if(projectId == null ) {
-            new DtoRequestProjectTest().testCreateProject();
-            projectId = GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.PROJECTS);
-        }
+        Integer projectId = (new GlobalPkColl<DtoRequestProjectTest>().getAPkVal(DtoRequestProjectTest.class, GobiiEntityNameType.PROJECTS));
 
-        Integer platformId = GlobalPkValues
-                .getInstance()
-                .getAPkVal(GobiiEntityNameType.PLATFORMS);
-        if( platformId == null ) {
-            new DtoRequestPlatformTest().testCreatePlatformWithHttpPost();
-            platformId = GlobalPkValues
-                    .getInstance()
-                    .getAPkVal(GobiiEntityNameType.PLATFORMS);
-        }
+        Integer platformId = (new GlobalPkColl<DtoRequestPlatformTest>().getAPkVal(DtoRequestPlatformTest.class, GobiiEntityNameType.PLATFORMS));
 
-        Integer manifestId = GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.MANIFESTS);
-        if(manifestId == null ) {
-            new DtoRequestManifesTest().testCreateManifest();
-             manifestId = GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.MANIFESTS);
-        }
+        Integer manifestId = (new GlobalPkColl<DtoRequestManifestTest>().getAPkVal(DtoRequestManifestTest.class, GobiiEntityNameType.MANIFESTS));
 
         ExperimentDTO experimentDTORequest = new ExperimentDTO();
         // experimentDTORequest.setExperimentId(1);
@@ -205,13 +188,12 @@ public class DtoRequestExperimentTest {
         experimentDTOReceived.setExperimentDataFile(newDataFile);
 
 
-        PayloadEnvelope<ExperimentDTO> postRequestEnvelope = new PayloadEnvelope<>(experimentDTOReceived,GobiiProcessType.UPDATE);
+        PayloadEnvelope<ExperimentDTO> postRequestEnvelope = new PayloadEnvelope<>(experimentDTOReceived, GobiiProcessType.UPDATE);
         resultEnvelope = restResourceForExperimentsById
-                .put(ExperimentDTO.class,postRequestEnvelope);
+                .put(ExperimentDTO.class, postRequestEnvelope);
 
         // ExperimentDTO experimentDTOResponse = dtoRequestExperiment.process(experimentDTOReceived);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-
 
 
         ExperimentDTO dtoRequestExperimentExperimentReRetrieved = resultEnvelope.getPayload().getData().get(0);
@@ -238,7 +220,7 @@ public class DtoRequestExperimentTest {
 
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
-        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == experimentDTOList.size() );
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == experimentDTOList.size());
 
         List<Integer> itemsToTest = new ArrayList<>();
         if (experimentDTOList.size() > 50) {

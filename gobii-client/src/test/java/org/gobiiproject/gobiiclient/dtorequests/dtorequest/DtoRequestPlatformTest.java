@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Angel on 5/9/2016.
  */
-public class DtoRequestPlatformTest {
+public class DtoRequestPlatformTest implements DtoRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -47,7 +47,8 @@ public class DtoRequestPlatformTest {
 
 
     @Test
-    public void testCreatePlatformWithHttpPost() throws Exception {
+    @Override
+    public void create() throws Exception {
 
         // BEGIN:   ****** THIS PART WILL HAVE TO BE REFACTORED LATER *********
 //        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
@@ -130,7 +131,8 @@ public class DtoRequestPlatformTest {
     }
 
     @Test
-    public void testUpdatePlatformWithHttpPut() throws Exception {
+    @Override
+    public void update() throws Exception {
 
 
         // BEGIN:   ****** THIS PART WILL HAVE TO BE REFACTORED LATER *********
@@ -228,7 +230,8 @@ public class DtoRequestPlatformTest {
 
 
     @Test
-    public void testGetPlatformDetailsWithHttpGet() throws Exception {
+    @Override
+    public void get() throws Exception {
 
 
         // get a list of platforms
@@ -263,7 +266,8 @@ public class DtoRequestPlatformTest {
     }
 
     @Test
-    public void getPlatformsWithHttpGet() throws Exception {
+    @Override
+    public void getList() throws Exception {
 
         RestUri restUriPlatform = ClientContext.getInstance(null, false)
                 .getUriFactory()
