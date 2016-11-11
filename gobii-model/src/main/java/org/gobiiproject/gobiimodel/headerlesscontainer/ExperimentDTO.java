@@ -16,7 +16,7 @@ public class ExperimentDTO extends DTOBase {
     }
 
 
-    private Integer experimentId;
+    private Integer experimentId = 0;
     private String experimentName = null;
     private String experimentCode = null;
     private String experimentDataFile = null;

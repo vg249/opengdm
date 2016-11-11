@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Ignore
 public class DtoRequestMarkerGroupTest {
 
     @BeforeClass

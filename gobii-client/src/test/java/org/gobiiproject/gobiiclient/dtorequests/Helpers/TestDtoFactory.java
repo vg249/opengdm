@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiiclient.dtorequests.dtorequest.DtoRequestExperimentTest;
+import org.gobiiproject.gobiiclient.dtorequests.dtorequest.DtoRequestOrganizationTest;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
@@ -241,11 +242,15 @@ public class TestDtoFactory {
     }
 
     public static ContactDTO makePopulatedContactDTO(GobiiProcessType gobiiProcessType,
-                                                     Integer uniqueStem) {
+                                                     String uniqueStem) throws Exception {
 
         String uniqueStemString = uniqueStem.toString();
         ContactDTO returnVal = new ContactDTO();
         // set the plain properties
+
+        Integer organizationId = (new GlobalPkColl<DtoRequestOrganizationTest>()).getAPkVal(DtoRequestOrganizationTest.class,
+                GobiiEntityNameType.ORGANIZATIONS);
+
 
         returnVal.setFirstName(uniqueStem + " new contact");
         returnVal.setLastName(uniqueStem + "new lastname");
@@ -255,7 +260,7 @@ public class TestDtoFactory {
         returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
-        returnVal.setOrganizationId(1);
+        returnVal.setOrganizationId(organizationId);
         returnVal.getRoles().add(1);
         returnVal.getRoles().add(2);
 

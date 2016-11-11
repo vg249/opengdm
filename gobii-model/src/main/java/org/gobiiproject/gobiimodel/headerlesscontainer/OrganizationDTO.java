@@ -19,7 +19,7 @@ public class OrganizationDTO extends DTOBase {
 
     // we are waiting until we a have a view to retirn
     // properties for that property: we don't know how to represent them yet
-    private Integer organizationId;
+    private Integer organizationId = 0;
     private String name;
     private String address;
     private String website;

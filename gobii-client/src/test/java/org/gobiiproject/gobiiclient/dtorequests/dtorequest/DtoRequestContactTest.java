@@ -16,9 +16,11 @@ import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -54,7 +56,7 @@ public class DtoRequestContactTest {
         RestUri restUriContact = DtoRequestContactTest
                 .uriFactory
                 .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
-        restUriContact.setParamValue("id", "6");
+        restUriContact.setParamValue("id", "1");
         RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<ContactDTO> resultEnvelope = restResource
                 .get(ContactDTO.class);
@@ -105,7 +107,7 @@ public class DtoRequestContactTest {
         // create a new contact for our test
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
         ContactDTO newContactDto = TestDtoFactory
-                .makePopulatedContactDTO(GobiiProcessType.CREATE, 1);
+                .makePopulatedContactDTO(GobiiProcessType.CREATE, UUID.randomUUID().toString());
 
         RestResource<ContactDTO> restResourceContacts = new RestResource<>(DtoRequestContactTest.uriFactory.contacts());
 
@@ -114,6 +116,9 @@ public class DtoRequestContactTest {
                 new PayloadEnvelope<>(newContactDto, GobiiProcessType.CREATE));
         //PayloadEnvelope<ContactDTO> resultEnvelopeNewContact = dtoRequestContact.process(new PayloadEnvelope<>(newContactDto, GobiiProcessType.CREATE));
 
+        Assert.assertNotNull(resultEnvelopeNewContact);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeNewContact.getHeader()));
+        Assert.assertTrue(resultEnvelopeNewContact.getPayload().getData().size() > 0 );
         ContactDTO newContactDTOResponse = resultEnvelopeNewContact.getPayload().getData().get(0);
 
 
@@ -182,7 +187,7 @@ public class DtoRequestContactTest {
     public void getContactsBySearchWithHttpGet() throws Exception {
 
         RestUri restUriContact = DtoRequestContactTest.uriFactory.contactsByQueryParams();
-        restUriContact.setParamValue("email", "dummy@email.address");
+        restUriContact.setParamValue("email", "user.gobii@gobii.com");
         RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<ContactDTO> resultEnvelope = restResource
                 .get(ContactDTO.class);
@@ -203,16 +208,19 @@ public class DtoRequestContactTest {
         // We are creating a new contact here.
         ContactDTO newContactDTO = new ContactDTO();
 
+        Integer organizationId = (new GlobalPkColl<DtoRequestOrganizationTest>()).getAPkVal(DtoRequestOrganizationTest.class,
+                GobiiEntityNameType.ORGANIZATIONS);
+
         // set the plain properties
         newContactDTO.setFirstName("Angel Manica");
         newContactDTO.setLastName("Raquel");
-        newContactDTO.setEmail("added dummy email");
+        newContactDTO.setEmail(UUID.randomUUID().toString());
         newContactDTO.setCode("added New Code");
         newContactDTO.setCreatedBy(1);
         newContactDTO.setCreatedDate(new Date());
         newContactDTO.setModifiedBy(1);
         newContactDTO.setModifiedDate(new Date());
-        newContactDTO.setOrganizationId(1);
+        newContactDTO.setOrganizationId(organizationId);
         newContactDTO.getRoles().add(1);
         newContactDTO.getRoles().add(2);
 
