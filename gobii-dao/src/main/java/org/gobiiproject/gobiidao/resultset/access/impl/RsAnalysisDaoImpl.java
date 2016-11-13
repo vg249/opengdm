@@ -90,24 +90,29 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
 
         Integer returnVal = null;
 
-        try {
+//        try {
 
-            if (spRunnerCallable.run(new SpInsAnalysis(), parameters)) {
+        if (spRunnerCallable.run(new SpInsAnalysis(), parameters)) {
 
-                returnVal = spRunnerCallable.getResult();
+            returnVal = spRunnerCallable.getResult();
 
-            } else {
+        } else {
 
-                throw new GobiiDaoException(spRunnerCallable.getErrorString());
-
-            }
-
-        } catch (Exception e) {
-
-            LOGGER.error("Error creating analysis", e);
-            throw (new GobiiDaoException(e));
+            throw new GobiiDaoException(spRunnerCallable.getErrorString());
 
         }
+
+//        } catch (GobiiDaoException e) {
+//
+//            LOGGER.error("Error creating analysis", e);
+//            throw (new GobiiDaoException(e));
+//        }
+//        } catch (Exception e) {
+//
+//            LOGGER.error("Error creating analysis", e);
+//            throw (new GobiiDaoException(e));
+//
+//        }
 
         return returnVal;
     }
@@ -116,32 +121,32 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
     @Override
     public void updateAnalysis(Map<String, Object> parameters) throws GobiiDaoException {
 
-        try {
+//        try {
 
-            if (!spRunnerCallable.run(new SpUpdAnalysis(), parameters)) {
-                throw new GobiiDaoException(spRunnerCallable.getErrorString());
-            }
-
-        } catch (Exception e) {
-
-            LOGGER.error("Error updating analysis", e);
-            throw (new GobiiDaoException(e));
+        if (!spRunnerCallable.run(new SpUpdAnalysis(), parameters)) {
+            throw new GobiiDaoException(spRunnerCallable.getErrorString());
         }
+
+//        } catch (Exception e) {
+//
+//            LOGGER.error("Error updating analysis", e);
+//            throw (new GobiiDaoException(e));
+//        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void createUpdateParameter(Map<String, Object> parameters) throws GobiiDaoException {
 
-        try {
-            spRunnerCallable.run(new SpInsAnalysisParameters(), parameters);
+//        try {
+        spRunnerCallable.run(new SpInsAnalysisParameters(), parameters);
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error updating project property", e);
-            throw (new GobiiDaoException(e));
-
-        }
+//        } catch (Exception e) {
+//
+//            LOGGER.error("Error updating project property", e);
+//            throw (new GobiiDaoException(e));
+//
+//        }
     } // createUpdateMapSetProperty
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -149,7 +154,7 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
     public ResultSet getParameters(Integer analysisId) throws GobiiDaoException {
         ResultSet returnVal = null;
 
-        try {
+//        try {
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put(EntityPropertyParamNames.PROPPCOLARAMNAME_ENTITY_ID, analysisId);
@@ -157,25 +162,25 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
             storedProcExec.doWithConnection(spGetPropertiesForAnalysis);
             returnVal = spGetPropertiesForAnalysis.getResultSet();
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error retrieving project properties", e);
-            throw (new GobiiDaoException(e));
-
-        }
+//        } catch (Exception e) {
+//
+//            LOGGER.error("Error retrieving project properties", e);
+//            throw (new GobiiDaoException(e));
+//
+//        }
 
 
         return returnVal;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-	@Override
-	public ResultSet getAnalysisNamesByTypeId(int typeId) throws GobiiDaoException {
-		// TODO Auto-generated method stub
+    @Override
+    public ResultSet getAnalysisNamesByTypeId(int typeId) throws GobiiDaoException {
+        // TODO Auto-generated method stub
 
         ResultSet returnVal = null;
 
-        try {
+//        try {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("typeId", typeId);
             SpGetAnalysisNamesByTypeId spGetAnalysisNamesByTypeId = new SpGetAnalysisNamesByTypeId(parameters);
@@ -183,14 +188,14 @@ public class RsAnalysisDaoImpl implements RsAnalysisDao {
             storedProcExec.doWithConnection(spGetAnalysisNamesByTypeId);
 
             returnVal = spGetAnalysisNamesByTypeId.getResultSet();
-        } catch (Exception e) {
-
-            LOGGER.error("Error retrieving Analysis Names by type", e);
-            throw (new GobiiDaoException(e));
-
-        }
-
+//        } catch (Exception e) {
+//
+//            LOGGER.error("Error retrieving Analysis Names by type", e);
+//            throw (new GobiiDaoException(e));
+//
+//        }
+//
 
         return returnVal;
-	}
+    }
 }

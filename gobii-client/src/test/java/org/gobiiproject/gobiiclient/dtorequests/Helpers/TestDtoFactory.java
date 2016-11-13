@@ -62,6 +62,10 @@ public class TestDtoFactory {
         returnVal.setProgramVersion(uniqueStem + ":  foo version");
         returnVal.setAnlaysisTypeId(1);
         returnVal.setStatusId(1);
+        returnVal.setCreatedBy(1);
+        returnVal.setModifiedBy(1);
+        returnVal.setCreatedDate(new Date());
+        returnVal.setModifiedDate(new Date());
 
         returnVal.setParameters(entityParamValues.getProperties());
 

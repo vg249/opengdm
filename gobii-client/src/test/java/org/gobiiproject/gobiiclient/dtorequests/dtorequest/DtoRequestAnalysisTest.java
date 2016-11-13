@@ -18,11 +18,13 @@ import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Ignore
 public class DtoRequestAnalysisTest {
 
     @BeforeClass
@@ -92,6 +94,7 @@ public class DtoRequestAnalysisTest {
         AnalysisDTO newAnalysisDto = TestDtoFactory
                 .makePopulatedAnalysisDTO(GobiiProcessType.CREATE, 1, entityParamValues);
         AnalysisDTO newAnalysisDTOResponse = dtoRequestAnalysis.process(newAnalysisDto);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(newAnalysisDTOResponse));
 
 
         // re-retrieve the analysis we just created so we start with a fresh READ mode dto
