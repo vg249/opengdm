@@ -19,7 +19,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class DtoRequestDisplayTest {
+public class DtoRequestDisplayTest implements DtoRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -33,7 +33,8 @@ public class DtoRequestDisplayTest {
 
 
     @Test
-    public void testGetTableDisplayNamesWithColDisplay() throws Exception {
+    @Override
+    public void get() throws Exception {
 
         DtoRequestDisplay dtoRequestDisplay = new DtoRequestDisplay();
 
@@ -55,7 +56,8 @@ public class DtoRequestDisplayTest {
     } // testGetMarkers()
 
     @Test
-    public void testCreateDisplay() throws Exception {
+    @Override
+    public void create() throws Exception {
 
         DtoRequestDisplay dtoRequestDisplay = new DtoRequestDisplay();
 
@@ -87,7 +89,8 @@ public class DtoRequestDisplayTest {
 
 
     @Test
-    public void testUpdateDisplay() throws Exception {
+    @Override
+    public void update() throws Exception {
         DtoRequestDisplay dtoRequestDisplay = new DtoRequestDisplay();
 
         // create a new reference for our test
@@ -117,6 +120,11 @@ public class DtoRequestDisplayTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestDisplayReRetrieved));
 
         Assert.assertTrue(dtoRequestDisplayReRetrieved.getDisplayName().equals(newDisplayName));
+    }
+
+    @Override
+    public void getList() throws Exception {
+
     }
 
 }

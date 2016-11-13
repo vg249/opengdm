@@ -29,7 +29,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Ignore
-public class DtoRequestMarkerGroupTest {
+public class DtoRequestMarkerGroupTest implements DtoRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -58,7 +58,8 @@ public class DtoRequestMarkerGroupTest {
 
 
     @Test
-    public void testMarkerGroupCreate() throws Exception {
+    @Override
+    public void create() throws Exception {
 
         DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
 
@@ -175,7 +176,8 @@ public class DtoRequestMarkerGroupTest {
 
 
     @Test
-    public void testMarkerGroupGet() throws Exception {
+    @Override
+    public void get() throws Exception {
 
         // CREATE A MARKER GROUP
         DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
@@ -220,7 +222,8 @@ public class DtoRequestMarkerGroupTest {
 
 
     @Test
-    public void testUpdateMarkerGroup() throws Exception {
+    @Override
+    public void update() throws Exception {
 
         // CREATE A MARKER GROUP
         DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
@@ -304,6 +307,11 @@ public class DtoRequestMarkerGroupTest {
                         .collect(Collectors.toList())
                         .size() == 1
         );
+
+    }
+
+    @Override
+    public void getList() throws Exception {
 
     }
 

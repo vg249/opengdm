@@ -9,11 +9,13 @@ package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestAnalysis;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -25,7 +27,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Ignore
-public class DtoRequestAnalysisTest {
+public class DtoRequestAnalysisTest implements DtoRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -39,7 +41,8 @@ public class DtoRequestAnalysisTest {
 
 
     @Test
-    public void testAnalysisGet() throws Exception {
+    @Override
+    public void get() throws Exception {
 
 
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
@@ -55,7 +58,8 @@ public class DtoRequestAnalysisTest {
     }
 
     @Test
-    public void testAnalysisCreate() throws Exception {
+    @Override
+    public void create() throws Exception {
 
 
 
@@ -69,6 +73,7 @@ public class DtoRequestAnalysisTest {
         Assert.assertNotEquals(null, analysisDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));
         Assert.assertTrue(analysisDTOResponse.getAnalysisId() > 1);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ANALYSES,analysisDTOResponse.getAnalysisId());
 
         AnalysisDTO analysisDTORequestForParams = new AnalysisDTO();
         analysisDTORequestForParams.setAnalysisId(analysisDTOResponse.getAnalysisId());
@@ -85,7 +90,8 @@ public class DtoRequestAnalysisTest {
     } // testAnalysisCreate
 
     @Test
-    public void testUpdateAnalysis() throws Exception {
+    @Override
+    public void update() throws Exception {
 
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
 
@@ -134,6 +140,10 @@ public class DtoRequestAnalysisTest {
 
         Assert.assertTrue(matchedProperty.getPropertyValue().equals(updatedPropertyValue));
 
+    }
+
+    @Override
+    public void getList() throws Exception {
     }
 
 }

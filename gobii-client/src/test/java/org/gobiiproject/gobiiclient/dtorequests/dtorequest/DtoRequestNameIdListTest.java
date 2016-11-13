@@ -29,13 +29,9 @@ import java.util.List;
 
 public class DtoRequestNameIdListTest {
 
-    private static UriFactory uriFactory;
-
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
-        String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        DtoRequestNameIdListTest.uriFactory = new UriFactory(currentCropContextRoot);
 
     }
 
@@ -47,7 +43,9 @@ public class DtoRequestNameIdListTest {
     private void testNameRetrieval(GobiiEntityNameType gobiiEntityNameType,
                                    GobiiFilterType gobiiFilterType,
                                    String filterValue) throws Exception {
-        RestUri namesUri = uriFactory.nameIdList();
+        RestUri namesUri = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .nameIdList();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
         namesUri.setParamValue("entity", gobiiEntityNameType.toString().toLowerCase());
 
@@ -120,7 +118,9 @@ public class DtoRequestNameIdListTest {
     public void testGetNamesWithBadEntityValue() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        RestUri namesUri = uriFactory.nameIdList();
+        RestUri namesUri = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .nameIdList();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
 
         namesUri.setParamValue("entity", "foo");
@@ -142,7 +142,9 @@ public class DtoRequestNameIdListTest {
     public void testGetAnalysisNamesByTypeIdErrorBadFilterType() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        RestUri namesUri = uriFactory.nameIdList();
+        RestUri namesUri = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .nameIdList();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
 
         namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSES.toString().toLowerCase());
@@ -166,7 +168,9 @@ public class DtoRequestNameIdListTest {
     public void testGetAnalysisNamesByTypeIdErrorEmptyFilterValue() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        RestUri namesUri = uriFactory.nameIdList();
+        RestUri namesUri = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .nameIdList();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
 
         namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSES.toString().toLowerCase());
@@ -252,7 +256,9 @@ public class DtoRequestNameIdListTest {
 
         // Assumes rice data with seed script is loaded
         //testNameRetrieval(GobiiEntityNameType.PLATFORMS, GobiiFilterType.NONE, null);
-        RestUri namesUri = uriFactory.nameIdList();
+        RestUri namesUri = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .nameIdList();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
         namesUri.setParamValue("entity", GobiiEntityNameType.PLATFORMS.toString().toLowerCase());
 
@@ -306,8 +312,8 @@ public class DtoRequestNameIdListTest {
             NameIdDTO currentPlatformNameDto = nameIdDTOList.get(currentIdx);
 
             Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
-            RestUri restUriPlatformForGetById = DtoRequestNameIdListTest
-                    .uriFactory
+            RestUri restUriPlatformForGetById = ClientContext.getInstance(null,false)
+                    .getUriFactory()
                     .RestUriFromUri(currentLink.getHref());
             RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
             PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = restResourceForGetById
