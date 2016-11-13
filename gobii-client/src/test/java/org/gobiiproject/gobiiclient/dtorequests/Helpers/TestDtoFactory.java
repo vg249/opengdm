@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
-import org.gobiiproject.gobiiclient.dtorequests.dtorequest.DtoRequestExperimentTest;
-import org.gobiiproject.gobiiclient.dtorequests.dtorequest.DtoRequestOrganizationTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestExperimentTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestOrganizationTest;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
@@ -138,7 +138,7 @@ public class TestDtoFactory {
 
         // set the big-ticket items
 
-        Integer experimentId = (new GlobalPkColl<DtoRequestExperimentTest>().getAPkVal(DtoRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
 
 
         returnVal.getScores().add(1);
@@ -252,7 +252,7 @@ public class TestDtoFactory {
         ContactDTO returnVal = new ContactDTO();
         // set the plain properties
 
-        Integer organizationId = (new GlobalPkColl<DtoRequestOrganizationTest>()).getAPkVal(DtoRequestOrganizationTest.class,
+        Integer organizationId = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()).getAPkVal(DtoCrudRequestOrganizationTest.class,
                 GobiiEntityNameType.ORGANIZATIONS);
 
 

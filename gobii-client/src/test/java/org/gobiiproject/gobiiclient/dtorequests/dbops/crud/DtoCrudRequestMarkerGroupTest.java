@@ -3,14 +3,13 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestMarkerGroup;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
@@ -29,7 +28,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Ignore
-public class DtoRequestMarkerGroupTest implements DtoRequestTest {
+public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {

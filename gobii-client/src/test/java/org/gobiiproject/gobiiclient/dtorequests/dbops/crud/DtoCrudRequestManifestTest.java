@@ -3,14 +3,13 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestManifest;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.ManifestDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -21,7 +20,7 @@ import org.junit.Test;
 
 import java.util.UUID;
 
-public class DtoRequestManifestTest implements DtoRequestTest {
+public class DtoCrudRequestManifestTest implements DtoCrudRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {

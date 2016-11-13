@@ -3,12 +3,11 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestCv;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
 import org.gobiiproject.gobiimodel.entity.CvItem;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -20,7 +19,7 @@ import org.junit.Test;
 
 import java.util.UUID;
 
-public class DtoRequestCvTest implements DtoRequestTest {
+public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {

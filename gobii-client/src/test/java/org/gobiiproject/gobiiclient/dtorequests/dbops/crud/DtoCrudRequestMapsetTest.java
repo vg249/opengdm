@@ -1,9 +1,8 @@
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
  * Created by Phil on 4/27/2016.
  * Modified by AVB on 10/01/2016.
  */
-public class DtoRequestMapsetTest implements DtoRequestTest {
+public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
 
 
     @BeforeClass

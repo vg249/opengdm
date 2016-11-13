@@ -1,10 +1,9 @@
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
@@ -27,7 +26,7 @@ import java.util.UUID;
 /**
  * Created by Angel on 5/9/2016.
  */
-public class DtoRequestOrganizationTest implements DtoRequestTest {
+public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
 
 
     @BeforeClass

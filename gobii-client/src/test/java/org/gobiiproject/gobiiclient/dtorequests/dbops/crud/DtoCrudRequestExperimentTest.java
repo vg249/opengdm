@@ -3,13 +3,12 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
@@ -32,7 +31,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class DtoRequestExperimentTest implements DtoRequestTest {
+public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
 
 
     @BeforeClass
@@ -57,7 +56,7 @@ public class DtoRequestExperimentTest implements DtoRequestTest {
 //        dtoRequestExperiment.process(experimentDTO);
 
 
-        Integer experimentId = (new GlobalPkColl<DtoRequestExperimentTest>().getAPkVal(DtoRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
 
         RestUri experimentsUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -85,11 +84,11 @@ public class DtoRequestExperimentTest implements DtoRequestTest {
 
         //DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 
-        Integer projectId = (new GlobalPkColl<DtoRequestProjectTest>().getAPkVal(DtoRequestProjectTest.class, GobiiEntityNameType.PROJECTS));
+        Integer projectId = (new GlobalPkColl<DtoCrudRequestProjectTest>().getAPkVal(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECTS));
 
-        Integer platformId = (new GlobalPkColl<DtoRequestPlatformTest>().getAPkVal(DtoRequestPlatformTest.class, GobiiEntityNameType.PLATFORMS));
+        Integer platformId = (new GlobalPkColl<DtoCrudRequestPlatformTest>().getAPkVal(DtoCrudRequestPlatformTest.class, GobiiEntityNameType.PLATFORMS));
 
-        Integer manifestId = (new GlobalPkColl<DtoRequestManifestTest>().getAPkVal(DtoRequestManifestTest.class, GobiiEntityNameType.MANIFESTS));
+        Integer manifestId = (new GlobalPkColl<DtoCrudRequestManifestTest>().getAPkVal(DtoCrudRequestManifestTest.class, GobiiEntityNameType.MANIFESTS));
 
         ExperimentDTO experimentDTORequest = new ExperimentDTO();
         // experimentDTORequest.setExperimentId(1);
@@ -133,7 +132,7 @@ public class DtoRequestExperimentTest implements DtoRequestTest {
 //        experimentDTORequest.setExperimentId(2);
 //        ExperimentDTO ExperimentDTOExisting = dtoRequestExperiment.process(experimentDTORequest);
 
-        Integer experimentId = (new GlobalPkColl<DtoRequestExperimentTest>().getAPkVal(DtoRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
 
         RestUri experimentsUriById = ClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -186,7 +185,7 @@ public class DtoRequestExperimentTest implements DtoRequestTest {
 //        experimentDTORequest.setExperimentId(2);
 //        ExperimentDTO experimentDTOReceived = dtoRequestExperiment.process(experimentDTORequest);
 
-        Integer experimentId = (new GlobalPkColl<DtoRequestExperimentTest>().getAPkVal(DtoRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
         RestUri experimentsUriById = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_EXPERIMENTS);

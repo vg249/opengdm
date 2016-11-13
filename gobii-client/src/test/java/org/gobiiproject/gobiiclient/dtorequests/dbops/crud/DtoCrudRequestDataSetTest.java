@@ -3,14 +3,13 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
@@ -36,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DtoRequestDataSetTest implements DtoRequestTest {
+public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -59,7 +58,7 @@ public class DtoRequestDataSetTest implements DtoRequestTest {
 //        dataSetDTORequest.setDataSetId(2);
 //        DataSetDTO dataSetDTOResponse = dtoRequestDataSet.process(dataSetDTORequest);
 
-        Integer dataSetid = (new GlobalPkColl<DtoRequestDataSetTest>().getAPkVal(DtoRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+        Integer dataSetid = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
 
         RestUri projectsUri = ClientContext.getInstance(null, false)
                 .getUriFactory()

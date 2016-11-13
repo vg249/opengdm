@@ -1,12 +1,12 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
-import org.gobiiproject.gobiiclient.dtorequests.dtorequest.DtoRequestTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestTest;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
 /**
  * Created by Phil on 11/11/2016.
  */
-public class GlobalPkColl<T extends DtoRequestTest> {
+public class GlobalPkColl<T extends DtoCrudRequestTest> {
 
 
     // this only works if all create() methods put their PK value into

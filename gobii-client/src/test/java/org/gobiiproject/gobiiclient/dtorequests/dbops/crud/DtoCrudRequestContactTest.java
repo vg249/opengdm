@@ -3,10 +3,9 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 
-import com.sun.deploy.util.SessionState;
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -14,7 +13,6 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
@@ -34,7 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class DtoRequestContactTest implements DtoRequestTest {
+public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
 
 
     @BeforeClass
@@ -220,7 +218,7 @@ public class DtoRequestContactTest implements DtoRequestTest {
         // We are creating a new contact here.
         ContactDTO newContactDTO = new ContactDTO();
 
-        Integer organizationId = (new GlobalPkColl<DtoRequestOrganizationTest>()).getAPkVal(DtoRequestOrganizationTest.class,
+        Integer organizationId = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()).getAPkVal(DtoCrudRequestOrganizationTest.class,
                 GobiiEntityNameType.ORGANIZATIONS);
 
         // set the plain properties

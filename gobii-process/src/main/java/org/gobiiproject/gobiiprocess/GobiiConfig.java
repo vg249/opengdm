@@ -187,7 +187,7 @@ public class GobiiConfig {
             setOption(options, COPY_WARS, false, "create war files for active crops from the specified war file (requires " + PROP_FILE_FQPN + ")", "copy wars");
             setOption(options, PROP_FILE_FQPN, true, "fqpn of gobii configuration file", "config fqpn");
             setOption(options, PROP_FILE_PROPS_TO_XML, false, "Convert existing gobii-properties file to xml (requires " + PROP_FILE_FQPN + ")", "convert to xml");
-            setOption(options, CONFIG_ADD_ITEM, false, "Adds or updates the configuration value specified by one of the standalone parameters ("
+            setOption(options, CONFIG_ADD_ITEM, false, "Adds or updates the configuration value specified by one of the infrastructure parameters ("
                     + CONFIG_GLOBAL_FILESYS_ROOT + ", " + CONFIG_GLOBAL_DEFAULT_CROP + ") or parameters that require server option parameters ("
                     + CONFIG_SVR_GLOBAL_EMAIL + ", " + CONFIG_CROP_ID + ")", "add config item");
 
