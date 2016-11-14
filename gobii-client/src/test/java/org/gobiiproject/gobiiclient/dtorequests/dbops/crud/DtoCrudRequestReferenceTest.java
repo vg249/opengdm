@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class DtoCrudRequestReferenceTest implements DtoCrudRequestTest {
@@ -62,6 +63,10 @@ public class DtoCrudRequestReferenceTest implements DtoCrudRequestTest {
         referenceDTORequest.setFilePath("C://pathy/dummy/path");
         referenceDTORequest.setLink("dummylink.com");
         referenceDTORequest.setVersion("version1");
+        referenceDTORequest.setModifiedDate(new Date());
+        referenceDTORequest.setModifiedBy(1);
+        referenceDTORequest.setCreatedDate(new Date());
+        referenceDTORequest.setCreatedBy(1);
         ReferenceDTO referenceDTOResponse = dtoRequestReference.process(referenceDTORequest);
 
         Assert.assertNotEquals(null, referenceDTOResponse);

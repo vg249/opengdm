@@ -1,6 +1,6 @@
 // ************************************************************************
 // (c) 2016 GOBii Project
-// Initial Version: Phil Glaser
+// Initial Version: Phil Glaserb
 // Create Date:   2016-03-25
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests.dbops.readonly;
@@ -13,7 +13,15 @@ import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestAnalysisTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestContactTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestDataSetTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestMapsetTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestProjectTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestReferenceTest;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -21,6 +29,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -32,6 +41,12 @@ public class DtoRequestNameIdListTest {
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
 
+//        (new GlobalPkColl<DtoCrudRequestAnalysisTest>()).getPkVals(DtoCrudRequestAnalysisTest.class,GobiiEntityNameType.ANALYSES,10);
+        (new GlobalPkColl<DtoCrudRequestProjectTest>()).getPkVals(DtoCrudRequestProjectTest.class,GobiiEntityNameType.PROJECTS,10);
+        (new GlobalPkColl<DtoCrudRequestMapsetTest>()).getPkVals(DtoCrudRequestMapsetTest.class,GobiiEntityNameType.MAPSETS,10);
+        (new GlobalPkColl<DtoCrudRequestContactTest>()).getPkVals(DtoCrudRequestContactTest.class,GobiiEntityNameType.CONTACTS,10);
+        (new GlobalPkColl<DtoCrudRequestReferenceTest>()).getPkVals(DtoCrudRequestReferenceTest.class,GobiiEntityNameType.REFERENCES,10);
+        (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getPkVals(DtoCrudRequestDataSetTest.class,GobiiEntityNameType.DATASETS,10);
     }
 
     @AfterClass
@@ -101,6 +116,8 @@ public class DtoRequestNameIdListTest {
     public void testGetAnalysisNames() throws Exception {
 
         // Assumes rice data with seed script is loaded
+
+
         testNameRetrieval(GobiiEntityNameType.ANALYSES, GobiiFilterType.NONE, null);
 
     } // testGetAnalysisNames()
@@ -109,7 +126,7 @@ public class DtoRequestNameIdListTest {
     public void testGetAnalysisNamesByTypeId() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        testNameRetrieval(GobiiEntityNameType.ANALYSES, GobiiFilterType.BYTYPEID, "33");
+        testNameRetrieval(GobiiEntityNameType.ANALYSES, GobiiFilterType.BYTYPEID, "1");
 
     }
 
@@ -194,7 +211,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetContactsByIdForContactType() throws Exception {
 
-        testNameRetrieval(GobiiEntityNameType.CONTACTS, GobiiFilterType.BYTYPENAME, "Curator");
+        testNameRetrieval(GobiiEntityNameType.CONTACTS, GobiiFilterType.BYTYPENAME, "Admin");
 
     } // testGetMarkers()
 
@@ -221,7 +238,7 @@ public class DtoRequestNameIdListTest {
     public void testGetProjectNamesByContactId() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        testNameRetrieval(GobiiEntityNameType.PROJECTS, GobiiFilterType.BYTYPEID, "2");
+        testNameRetrieval(GobiiEntityNameType.PROJECTS, GobiiFilterType.BYTYPEID, "1");
     }
 
     @Test
@@ -238,16 +255,13 @@ public class DtoRequestNameIdListTest {
 
         // Assumes rice data with seed script is loaded
         testNameRetrieval(GobiiEntityNameType.EXPERIMENTS, GobiiFilterType.NONE, null);
-
     }
 
     @Test
     public void testGetCvTermsByGroup() throws Exception {
 
         // Assumes rice data with seed script is loaded
-
-        testNameRetrieval(GobiiEntityNameType.CVTERMS, GobiiFilterType.BYTYPENAME, "strand");
-
+        testNameRetrieval(GobiiEntityNameType.CVTERMS, GobiiFilterType.BYTYPENAME, "status");
     }
 
     @Test
@@ -336,7 +350,7 @@ public class DtoRequestNameIdListTest {
     } // testGetMarkers()
 
 
-    @Test
+    @Ignore
     public void testGetMarkerGroupNames() throws Exception {
 
         testNameRetrieval(GobiiEntityNameType.MARKERGROUPS, GobiiFilterType.NONE, null);
@@ -362,7 +376,7 @@ public class DtoRequestNameIdListTest {
 
     @Test
     public void testGetMapsSetNamesByType() throws Exception {
-        testNameRetrieval(GobiiEntityNameType.MAPSETS, GobiiFilterType.BYTYPEID, "19");
+        testNameRetrieval(GobiiEntityNameType.MAPSETS, GobiiFilterType.BYTYPEID, "1");
 
     } // testGetMarkers()
 
@@ -410,7 +424,7 @@ public class DtoRequestNameIdListTest {
     public void testGetDataSetNamesByExperimentId() throws Exception {
 
         // Assumes rice data with seed script is loaded
-        testNameRetrieval(GobiiEntityNameType.DATASETS, GobiiFilterType.BYTYPEID, "2");
+        testNameRetrieval(GobiiEntityNameType.DATASETS, GobiiFilterType.BYTYPEID, "1");
 
     }
 

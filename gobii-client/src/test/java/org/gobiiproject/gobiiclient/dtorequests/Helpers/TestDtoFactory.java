@@ -183,7 +183,7 @@ public class TestDtoFactory {
         returnVal.setMapType(1);
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
-        returnVal.setReferenceId(1);
+        returnVal.setReferenceId(GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.REFERENCES));
         returnVal.setStatusId(1);
 
         returnVal.setProperties(entityParamValues.getProperties());

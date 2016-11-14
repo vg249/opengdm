@@ -114,8 +114,8 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
 
         Assert.assertNotEquals(null, mapsetDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponse));
-        Assert.assertTrue(mapsetDTOResponse.getMapsetId() > 1);
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MAPSETS, mapsetDTORequest.getMapsetId());
+        Assert.assertTrue(mapsetDTOResponse.getMapsetId() > 0);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MAPSETS, mapsetDTOResponse.getMapsetId());
 
         MapsetDTO mapsetDTORequestForParams = new MapsetDTO();
         mapsetDTORequestForParams.setMapsetId(mapsetDTOResponse.getMapsetId());

@@ -73,7 +73,7 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
 
         Assert.assertNotEquals(null, markerGroupDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOResponse));
-        Assert.assertTrue(markerGroupDTOResponse.getMarkerGroupId() > 1);
+        Assert.assertTrue(markerGroupDTOResponse.getMarkerGroupId() > 0);
 
         Assert.assertNotNull(markerGroupDTOResponse.getMarkers());
 

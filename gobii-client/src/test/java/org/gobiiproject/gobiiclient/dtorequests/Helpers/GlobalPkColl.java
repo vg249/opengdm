@@ -3,6 +3,9 @@ package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestTest;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Phil on 11/11/2016.
  */
@@ -18,7 +21,7 @@ public class GlobalPkColl<T extends DtoCrudRequestTest> {
             testClass.create();
             returnVal = GlobalPkValues.getInstance().getAPkVal(gobiiEntityNameType);
 
-            if( returnVal == null ) {
+            if (returnVal == null) {
                 throw new Exception("Error retrieving test pk for entity "
                         + gobiiEntityNameType.toString()
                         + ":  "
@@ -30,6 +33,20 @@ public class GlobalPkColl<T extends DtoCrudRequestTest> {
 
         return returnVal;
 
-    }
+    } //
+
+    public List<Integer> getPkVals(Class<T> dtoRequestTestType,
+                                   GobiiEntityNameType gobiiEntityNameType,
+                                   Integer totalPks) throws Exception {
+
+        List<Integer> returnVal = new ArrayList<>();
+
+        for( int idx=0; idx< totalPks; idx++) {
+            returnVal.add(this.getAPkVal(dtoRequestTestType,gobiiEntityNameType));
+        }
+
+        return  returnVal;
+
+    } //
 
 }

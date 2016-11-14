@@ -25,7 +25,7 @@ import org.junit.Test;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Ignore
+
 public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
 
     @BeforeClass
@@ -71,7 +71,7 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
 
         Assert.assertNotEquals(null, analysisDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));
-        Assert.assertTrue(analysisDTOResponse.getAnalysisId() > 1);
+        Assert.assertTrue(analysisDTOResponse.getAnalysisId() > 0);
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ANALYSES,analysisDTOResponse.getAnalysisId());
 
         AnalysisDTO analysisDTORequestForParams = new AnalysisDTO();

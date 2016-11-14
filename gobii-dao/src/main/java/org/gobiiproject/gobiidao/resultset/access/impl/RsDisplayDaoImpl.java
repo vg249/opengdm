@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -100,20 +101,22 @@ public class RsDisplayDaoImpl implements RsDisplayDao {
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ResultSet getTableDisplayDetailByDisplayId(Integer displayId) throws GobiiDaoException {
-        ResultSet returnVal = null;
 
-        try {
+        ResultSet returnVal;
 
-            SpGetTableDisplayDetailByDisplayId spGetTableDisplayDetailByDisplayId = new SpGetTableDisplayDetailByDisplayId();
-            storedProcExec.doWithConnection(spGetTableDisplayDetailByDisplayId);
-            returnVal = spGetTableDisplayDetailByDisplayId.getResultSet();
+        if( (displayId == null) || (displayId < 1 ) ) {
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error retrieving display names", e);
-            throw (new GobiiDaoException(e));
-
+            throw new GobiiDaoException("The specified displayId is null or 0");
         }
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("displayId", displayId);
+
+
+        SpGetTableDisplayDetailByDisplayId spGetTableDisplayDetailByDisplayId = new SpGetTableDisplayDetailByDisplayId(parameters);
+        storedProcExec.doWithConnection(spGetTableDisplayDetailByDisplayId);
+        returnVal = spGetTableDisplayDetailByDisplayId.getResultSet();
+
 
         return returnVal;
     }

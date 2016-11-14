@@ -9,9 +9,12 @@ import java.util.UUID;
 
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestDisplay;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.DisplayDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -38,9 +41,10 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
         DtoRequestDisplay dtoRequestDisplay = new DtoRequestDisplay();
 
         DisplayDTO displayDTORequest = new DisplayDTO();
-        displayDTORequest.getTableNamesWithColDisplay();
+        Integer displayId = (new GlobalPkColl<DtoCrudRequestDisplayTest>()).getAPkVal(DtoCrudRequestDisplayTest.class,
+                GobiiEntityNameType.DISPLAYNAMES);
+        displayDTORequest.setDisplayId(displayId);
         displayDTORequest.setIncludeDetailsList(true);
-
 
         DisplayDTO displayDTOResponse = dtoRequestDisplay.process(displayDTORequest);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(displayDTOResponse));
@@ -60,22 +64,23 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
 
         DtoRequestDisplay dtoRequestDisplay = new DtoRequestDisplay();
 
-        DisplayDTO displayDTORequest = TestDtoFactory
+        DisplayDTO createDisplayDTO = TestDtoFactory
                 .makePopulatedDisplayDTO(GobiiProcessType.CREATE, 1);
 
         // set the plain properties
 
-        String testTableName = displayDTORequest.getTableName();
+        String testTableName = createDisplayDTO.getTableName();
 
-        DisplayDTO referenceDTOResponse = dtoRequestDisplay.process(displayDTORequest);
+        DisplayDTO createDisplayDTOResponse = dtoRequestDisplay.process(createDisplayDTO);
 
-        Assert.assertNotEquals(null, referenceDTOResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(referenceDTOResponse));
-        Assert.assertTrue(referenceDTOResponse.getDisplayId() > 0);
-        Assert.assertNotNull(referenceDTOResponse.getDisplayRank());
+        Assert.assertNotEquals(null, createDisplayDTOResponse);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(createDisplayDTOResponse));
+        Assert.assertTrue(createDisplayDTOResponse.getDisplayId() > 0);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DISPLAYNAMES,createDisplayDTOResponse.getDisplayId());
+        Assert.assertNotNull(createDisplayDTOResponse.getDisplayRank());
 
         DisplayDTO reRequestDto = new DisplayDTO();
-        reRequestDto.setDisplayId(displayDTORequest.getDisplayId());
+        reRequestDto.setDisplayId(createDisplayDTOResponse.getDisplayId());
         DisplayDTO reResponseDto = dtoRequestDisplay.process(reRequestDto);
 
         Assert.assertNotEquals(null, reResponseDto);
@@ -90,6 +95,7 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
     @Test
     @Override
     public void update() throws Exception {
+
         DtoRequestDisplay dtoRequestDisplay = new DtoRequestDisplay();
 
         // create a new reference for our test
@@ -97,28 +103,54 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
         DisplayDTO newDisplayDto = TestDtoFactory
                 .makePopulatedDisplayDTO(GobiiProcessType.CREATE, 1);
         DisplayDTO newDisplayDTOResponse = dtoRequestDisplay.process(newDisplayDto);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(newDisplayDTOResponse));
 
+        Integer newDisplayId = newDisplayDTOResponse.getDisplayId();
+        Assert.assertTrue(newDisplayId > 0);
 
         // re-retrieve the reference we just created so we start with a fresh READ mode dto
-        DisplayDTO DisplayDTORequest = new DisplayDTO();
-        DisplayDTORequest.setDisplayId(newDisplayDTOResponse.getDisplayId());
-        DisplayDTO referenceDTOReceived = dtoRequestDisplay.process(DisplayDTORequest);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(referenceDTOReceived));
+        DisplayDTO displayDTORequest = new DisplayDTO();
+        displayDTORequest.setDisplayId(newDisplayId);
+        DisplayDTO displayDTOReceived = dtoRequestDisplay.process(displayDTORequest);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(displayDTOReceived));
 
 
         // so this would be the typical workflow for the client app
-        referenceDTOReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
+        displayDTOReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
+        String oldDisplayName = displayDTOReceived.getDisplayName();
         String newDisplayName = UUID.randomUUID().toString();
-        referenceDTOReceived.setDisplayName(newDisplayName);
+        displayDTOReceived.setDisplayName(newDisplayName);
 
-        DisplayDTO DisplayDTOResponse = dtoRequestDisplay.process(referenceDTOReceived);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(DisplayDTOResponse));
+        DisplayDTO displayDTOResponse = dtoRequestDisplay.process(displayDTOReceived);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(displayDTOResponse));
 
+        DisplayDTO displayDTOReRequest = new DisplayDTO();
+        displayDTOReRequest.setGobiiProcessType(GobiiProcessType.READ);
+        displayDTOReRequest.setDisplayId(newDisplayId);
         DisplayDTO dtoRequestDisplayReRetrieved =
-                dtoRequestDisplay.process(DisplayDTORequest);
+                dtoRequestDisplay.process(displayDTORequest);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestDisplayReRetrieved));
 
-        Assert.assertTrue(dtoRequestDisplayReRetrieved.getDisplayName().equals(newDisplayName));
+        Assert.assertFalse(
+                "The retrieved display name ("
+                        + dtoRequestDisplayReRetrieved.getDisplayName()
+                        + ") matches the previous value("
+                        + oldDisplayName
+                        + "); it is not set to the new value("
+                        + newDisplayName
+                        + ")"
+                ,
+                dtoRequestDisplayReRetrieved.getDisplayName().equals(oldDisplayName));
+
+        Assert.assertTrue(
+                "The retrieved display name ("
+                        + dtoRequestDisplayReRetrieved.getDisplayName()
+                        + ") does not match the updated value("
+                        + newDisplayName
+                        + "); the display id is "
+                        + newDisplayId
+                ,
+                dtoRequestDisplayReRetrieved.getDisplayName().equals(newDisplayName));
     }
 
     @Override
