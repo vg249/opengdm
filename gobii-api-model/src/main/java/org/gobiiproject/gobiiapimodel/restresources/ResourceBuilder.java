@@ -136,6 +136,11 @@ public class ResourceBuilder {
                 returnVal += "roles";
                 break;
 
+
+            case URL_MARKERS:
+                returnVal += "markers";
+                break;
+
             default:
                 throw new Exception("Unknown request id : " + requestId.toString());
         }

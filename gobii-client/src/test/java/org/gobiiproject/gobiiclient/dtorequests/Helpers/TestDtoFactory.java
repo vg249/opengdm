@@ -2,9 +2,11 @@ package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestExperimentTest;
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestOrganizationTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestPlatformTest;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -71,6 +73,21 @@ public class TestDtoFactory {
 
         return returnVal;
 
+    }
+
+    public static MarkerDTO makeMarkerDTO(String markerName) throws Exception {
+
+        MarkerDTO returnVal = new MarkerDTO();
+
+        // required values
+        returnVal.setName(markerName);
+        Integer platformId = (new GlobalPkColl<DtoCrudRequestPlatformTest>())
+                .getAPkVal(DtoCrudRequestPlatformTest.class,
+                        GobiiEntityNameType.PLATFORMS);
+        returnVal.setPlatformId(platformId);
+        returnVal.setStatus(1);
+
+        return returnVal;
     }
 
     public static PlatformDTO makePopulatedPlatformDTO(GobiiProcessType gobiiProcessType,
@@ -157,7 +174,7 @@ public class TestDtoFactory {
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
         returnVal.setCallingAnalysisId(callingAnalysisId);
-        for (Integer currentAnalysisId : analysisIds ) {
+        for (Integer currentAnalysisId : analysisIds) {
             returnVal.getAnalysesIds().add(currentAnalysisId);
         }
         returnVal.setTypeId(93);

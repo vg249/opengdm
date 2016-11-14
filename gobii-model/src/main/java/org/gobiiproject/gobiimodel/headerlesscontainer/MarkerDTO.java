@@ -3,13 +3,11 @@ package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 
 
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
+import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
+
 import java.util.List;
 
-/** This class is not used yet. It was created in anticipation of a markers service.
- * However, this services not necessary yet. This class still needs annotations. There are
- * no ResultSet (RS), marker, or service classes. However, RsMarkerGroupsImpl does retrieve
- * markers for platform groups.
- */
 public class MarkerDTO extends  DTOBase {
 
 
@@ -40,110 +38,125 @@ public class MarkerDTO extends  DTOBase {
         this.markerId = id;
     }
 
+    @GobiiEntityParam(paramName = "platformId")
+    public Integer getPlatformId() {
+        return(this.platformId);
+    }
+
+    @GobiiEntityColumn(columnName = "platform_id")
     public void setPlatformId(Integer platformId) {
         this.platformId = platformId;
     }
 
+    @GobiiEntityParam(paramName = "alts")
     public List<Integer> getAlts() {
         return alts;
     }
 
+    @GobiiEntityColumn(columnName = "alts")
     public void setAlts(List<Integer> alts) {
         this.alts = alts;
     }
 
+    @GobiiEntityParam(paramName = "strandId")
     public Integer getStrandId() {
         return strandId;
     }
 
+    @GobiiEntityColumn(columnName = "strand_id")
     public void setStrandId(Integer strandId) {
         this.strandId = strandId;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
+    @GobiiEntityParam(paramName = "markerId")
     public Integer getMarkerId() {
         return this.markerId;
     }
 
+    @GobiiEntityColumn(columnName = "marker_id")
     public void setMarkerId(Integer markerId) {
         this.markerId = markerId;
     }
 
-    public int getPlatformId() {
-        return this.platformId;
-    }
-
-    public void setPlatformId(int platformId) {
-        this.platformId = platformId;
-    }
-
+    @GobiiEntityParam(paramName = "variantId")
     public Integer getVariantId() {
         return this.variantId;
     }
 
+    @GobiiEntityColumn(columnName = "variant_id")
     public void setVariantId(Integer variantId) {
         this.variantId = variantId;
     }
 
+    @GobiiEntityParam(paramName = "name")
     public String getName() {
         return this.name;
     }
 
+    @GobiiEntityColumn(columnName = "name")
     public void setName(String name) {
         this.name = name;
     }
 
+    @GobiiEntityParam(paramName = "code")
     public String getCode() {
         return this.code;
     }
 
+    @GobiiEntityColumn(columnName = "code")
     public void setCode(String code) {
         this.code = code;
     }
 
+    @GobiiEntityParam(paramName = "ref")
     public String getRef() {
         return this.ref;
     }
 
+    @GobiiEntityColumn(columnName = "ref")
     public void setRef(String ref) {
         this.ref = ref;
     }
 
+    @GobiiEntityParam(paramName = "sequence")
     public String getSequence() {
         return this.sequence;
     }
 
+    @GobiiEntityColumn(columnName = "sequence")
     public void setSequence(String sequence) {
         this.sequence = sequence;
     }
 
+    @GobiiEntityParam(paramName = "referenceId")
     public Integer getReferenceId() {
         return this.referenceId;
     }
 
+    @GobiiEntityColumn(columnName = "reference_id")
     public void setReferenceId(Integer referenceId) {
         this.referenceId = referenceId;
     }
 
+    @GobiiEntityParam(paramName = "strandId")
     public Integer getStrand() {
         return this.strandId;
     }
 
+    @GobiiEntityColumn(columnName = "strand_id")
     public void setStrand(Integer strandId) {
         this.strandId = strandId;
     }
 
-    public int getStatus() {
+    @GobiiEntityParam(paramName = "status")
+    public Integer getStatus() {
         return this.status;
     }
 
-    public void setStatus(int status) {
+    @GobiiEntityColumn(columnName = "status")
+    public void setStatus(Integer status) {
         this.status = status;
     }
-
 
 }
 

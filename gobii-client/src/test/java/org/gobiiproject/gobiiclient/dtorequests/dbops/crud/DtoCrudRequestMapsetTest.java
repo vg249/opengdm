@@ -44,8 +44,7 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
     public static void tearDownUpClass() throws Exception {
         Assert.assertTrue(Authenticator.deAuthenticate());
     }
-
-    @Ignore
+    
     @Override
     public void get() throws Exception {
         RestUri restUriMapset = ClientContext.getInstance(null,false)

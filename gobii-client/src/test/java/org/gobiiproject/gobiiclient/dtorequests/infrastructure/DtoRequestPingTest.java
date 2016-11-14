@@ -28,23 +28,6 @@ public class DtoRequestPingTest {
     }
 
 
-    @Ignore
-    public void testGetPingFromExtractController() throws Exception {
-
-        PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
-
-        DtoRequestPing dtoRequestPing = new DtoRequestPing();
-        PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
-
-        Assert.assertNotEquals(null, pingDTOResponse);
-        Assert.assertNotEquals(null, pingDTOResponse.getDbMetaData());
-        Assert.assertNotEquals(null, pingDTOResponse.getPingResponses());
-        Assert.assertTrue(pingDTOResponse.getPingResponses().size()
-                >= pingDTORequest.getDbMetaData().size());
-
-    } // testGetMarkers()
-
-
     @Test
     public void testGetPingFromLoadController() throws Exception {
 
