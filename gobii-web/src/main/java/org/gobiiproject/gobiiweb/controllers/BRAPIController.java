@@ -875,16 +875,18 @@ public class BRAPIController {
 
     }
 
-    @RequestMapping(value = "/markers/{markerName:[a-zA-Z-]+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/marker-search",
+            params = {"name"},
+            method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<MarkerDTO> getMarkerByName(@PathVariable String markerName,
+    public PayloadEnvelope<MarkerDTO> getMarkerByName(@RequestParam("name") String name,
                                                     HttpServletRequest request,
                                                     HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            List<MarkerDTO> markersByName = markerService.getMarkersByName(markerName);
+            List<MarkerDTO> markersByName = markerService.getMarkersByName(name);
 
             PayloadWriter<MarkerDTO> payloadWriter = new PayloadWriter<>(request,
                     MarkerDTO.class);

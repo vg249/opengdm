@@ -110,12 +110,12 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
 
         MarkerDTO arbitraryMarkerDTO = this.getArbitraryMarkerDTO();
         String arbitaryMarkerName = arbitraryMarkerDTO.getMarkerName();
-
-        RestUri projectsUri = ClientContext.getInstance(null, false)
+        RestUri restUriContact = ClientContext.getInstance(null,false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_MARKERS);
-        projectsUri.setParamValue("id", arbitaryMarkerName);
-        RestResource<MarkerDTO> restResourceForProjects = new RestResource<>(projectsUri);
+                .markerssByQueryParams();
+        restUriContact.setParamValue("name", arbitaryMarkerName);
+
+        RestResource<MarkerDTO> restResourceForProjects = new RestResource<>(restUriContact);
         PayloadEnvelope<MarkerDTO> resultEnvelope = restResourceForProjects
                 .get(MarkerDTO.class);
 
@@ -129,7 +129,6 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
 
         Assert.assertTrue(markerDTOResponse.getMarkerId() > 0);
 
-        Assert.assertTrue(arbitraryMarkerDTO.getMarkerId().equals(markerDTOResponse.getMarkerId()));
 
     }
 

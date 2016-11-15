@@ -6,12 +6,18 @@
 package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestMarkerGroup;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -27,7 +33,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Ignore
+
 public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
 
     @BeforeClass
@@ -35,8 +41,43 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         Assert.assertTrue(Authenticator.authenticate());
 
 
+        for (String currentMarkerName : validMarkerNames) {
+
+            makeMarker(currentMarkerName);
+
+        }
 
     }
+
+    private static void makeMarker(String markerName ) throws Exception {
+
+
+        RestUri restUriMarkerByName = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .markerssByQueryParams();
+        restUriMarkerByName.setParamValue("name", markerName);
+        RestResource<MarkerDTO> restResourceForProjects = new RestResource<>(restUriMarkerByName);
+        PayloadEnvelope<MarkerDTO> resultEnvelope = restResourceForProjects
+                .get(MarkerDTO.class);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+        if ((resultEnvelope.getPayload().getData().size() == 0)
+                || (resultEnvelope.getPayload().getData().get(0).getMarkerId() == 0)) {
+            MarkerDTO markerDTORequest = TestDtoFactory
+                    .makeMarkerDTO(markerName);
+
+            RestUri markerCollUri = ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceColl(ServiceRequestId.URL_MARKERS);
+            RestResource<MarkerDTO> restResourceForMarkerPost = new RestResource<>(markerCollUri);
+            resultEnvelope = restResourceForMarkerPost
+                    .post(MarkerDTO.class, new PayloadEnvelope<>(markerDTORequest, GobiiProcessType.CREATE));
+
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+        }
+    }
+
 
     @AfterClass
     public static void tearDownUpClass() throws Exception {
@@ -44,8 +85,8 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
     }
 
 
-
-    private List<String> validMarkerNames = Arrays.asList("4806",
+    private static List<String> validMarkerNames = Arrays.asList(
+            "4806",
             "4824",
             "4831",
             "7925",
@@ -247,8 +288,13 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         String newName = UUID.randomUUID().toString();
         markerGroupDTOResponseToUpdate.setName(newName);
 
+
+        // make pre-requisite marker
+        String testMarkerName = "40539";
+        makeMarker(testMarkerName);
+
         MarkerGroupMarkerDTO markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
-        markerGroupMarkerDTOToAdd.setMarkerName("40539");
+        markerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
         markerGroupMarkerDTOToAdd.setFavorableAllele("N");
         String newMarkerName = markerGroupMarkerDTOToAdd.getMarkerName();
         markerGroupDTOResponseToUpdate.getMarkers().add(markerGroupMarkerDTOToAdd);
