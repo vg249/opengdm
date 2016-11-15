@@ -12,14 +12,19 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.UUID;
 
 public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
 
@@ -34,34 +39,40 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
     }
 
 
+    private MarkerDTO getArbitraryMarkerDTO() throws Exception {
+
+        MarkerDTO returnVal;
+
+        Integer markerId = (new GlobalPkColl<DtoCrudRequestMarkerTest>().getAPkVal(DtoCrudRequestMarkerTest.class,
+                GobiiEntityNameType.MARKERS));
+
+        RestUri projectsUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_MARKERS);
+        projectsUri.setParamValue("id", markerId.toString());
+        RestResource<MarkerDTO> restResourceForProjects = new RestResource<>(projectsUri);
+        PayloadEnvelope<MarkerDTO> resultEnvelope = restResourceForProjects
+                .get(MarkerDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        returnVal = resultEnvelope.getPayload().getData().get(0);
+
+        return returnVal;
+
+    }
+
     @Test
     @Override
     public void get() throws Exception {
 
 
-//        Integer markerid = (new GlobalPkColl<DtoCrudRequestMarkerTest>().getAPkVal(DtoCrudRequestMarkerTest.class, GobiiEntityNameType.DATASETS));
-//
-//        RestUri projectsUri = ClientContext.getInstance(null, false)
-//                .getUriFactory()
-//                .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
-//        projectsUri.setParamValue("id", markerid.toString());
-//        RestResource<MarkerDTO> restResourceForProjects = new RestResource<>(projectsUri);
-//        PayloadEnvelope<MarkerDTO> resultEnvelope = restResourceForProjects
-//                .get(MarkerDTO.class);
-//
-//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-//        MarkerDTO markerDTOResponse = resultEnvelope.getPayload().getData().get(0);
-//
-//        Assert.assertNotEquals(null, markerDTOResponse);
-//        Assert.assertNotEquals(null, markerDTOResponse.getDataFile());
-//        Assert.assertNotNull(markerDTOResponse.getCallingAnalysisId());
-//        Assert.assertTrue(markerDTOResponse.getCallingAnalysisId() > 0);
-//        Assert.assertTrue(markerDTOResponse
-//                .getAnalysesIds()
-//                .stream()
-//                .filter(a -> a.equals(null))
-//                .toArray().length == 0);
+        MarkerDTO arbitraryMarkerDTO = this.getArbitraryMarkerDTO();
 
+        Assert.assertNotEquals(null, arbitraryMarkerDTO);
+        Assert.assertNotNull(arbitraryMarkerDTO.getMarkerName());
+        Assert.assertNotNull(arbitraryMarkerDTO.getPlatformId());
+        Assert.assertTrue(arbitraryMarkerDTO.getPlatformId() > 0);
+        Assert.assertTrue(arbitraryMarkerDTO.getMarkerId() > 0);
 
     } //
 
@@ -72,7 +83,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
 
 
         MarkerDTO markerDTORequest = TestDtoFactory
-                .makeMarkerDTO("marker 1");
+                .makeMarkerDTO("testmarker");
 
         RestUri markerCollUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -82,40 +93,43 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
                 .post(MarkerDTO.class, new PayloadEnvelope<>(markerDTORequest, GobiiProcessType.CREATE));
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-//        MarkerDTO markerDTOResponse = resultEnvelope.getPayload().getData().get(0);
-//
-//        Assert.assertNotEquals(null, markerDTOResponse);
-//        Assert.assertTrue(markerDTOResponse.getMarkerId() > 0);
-//        Assert.assertTrue(markerDTOResponse.getCallingAnalysisId() > 0);
-//        Assert.assertNotNull(markerDTOResponse.getAnalysesIds());
-//        Assert.assertTrue(markerDTOResponse.getAnalysesIds().size() > 0);
-//        Assert.assertTrue(markerDTOResponse.getTypeId() > 0);
-//
-//        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DATASETS,markerDTOResponse.getMarkerId());
-//
-//
-//        RestUri projectsByIdUri = ClientContext.getInstance(null, false)
-//                .getUriFactory()
-//                .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
-//        RestResource<MarkerDTO> restResourceForMarkerGet = new RestResource<>(projectsByIdUri);
-//        restResourceForMarkerGet.setParamValue("id", markerDTOResponse.getMarkerId().toString());
-//        resultEnvelope = restResourceForMarkerGet
-//                .get(MarkerDTO.class);
-//
-//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-//
-//        MarkerDTO markerDTOReResponse = resultEnvelope.getPayload().getData().get(0);
-//
-//        Assert.assertNotEquals(null, markerDTOReResponse);
-//        Assert.assertTrue(markerDTOReResponse.getMarkerId() > 0);
-//        Assert.assertTrue(markerDTOReResponse.getCallingAnalysisId() > 0);
-//        Assert.assertNotNull(markerDTOReResponse.getAnalysesIds());
-//        Assert.assertTrue(markerDTOReResponse.getAnalysesIds().size() > 0);
-//        Assert.assertTrue(0 == markerDTOReResponse
-//                .getAnalysesIds()
-//                .stream()
-//                .filter(a -> a.equals(null))
-//                .count());
+        MarkerDTO markerDTOResponse = resultEnvelope.getPayload().getData().get(0);
+
+        Assert.assertNotEquals(null, markerDTOResponse);
+        Assert.assertNotNull(markerDTOResponse.getMarkerName());
+        Assert.assertNotNull(markerDTOResponse.getPlatformId());
+        Assert.assertTrue(markerDTOResponse.getPlatformId() > 0);
+
+        Assert.assertTrue(markerDTOResponse.getMarkerId() > 0);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MARKERS,markerDTOResponse.getMarkerId());
+
+    }
+
+    @Test
+    public void getMarkerByName() throws Exception {
+
+        MarkerDTO arbitraryMarkerDTO = this.getArbitraryMarkerDTO();
+        String arbitaryMarkerName = arbitraryMarkerDTO.getMarkerName();
+
+        RestUri projectsUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_MARKERS);
+        projectsUri.setParamValue("id", arbitaryMarkerName);
+        RestResource<MarkerDTO> restResourceForProjects = new RestResource<>(projectsUri);
+        PayloadEnvelope<MarkerDTO> resultEnvelope = restResourceForProjects
+                .get(MarkerDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        MarkerDTO markerDTOResponse = resultEnvelope.getPayload().getData().get(0);
+
+        Assert.assertNotEquals(null, arbitraryMarkerDTO);
+        Assert.assertNotNull(markerDTOResponse.getMarkerName());
+        Assert.assertNotNull(markerDTOResponse.getPlatformId());
+        Assert.assertTrue(markerDTOResponse.getPlatformId() > 0);
+
+        Assert.assertTrue(markerDTOResponse.getMarkerId() > 0);
+
+        Assert.assertTrue(arbitraryMarkerDTO.getMarkerId().equals(markerDTOResponse.getMarkerId()));
 
     }
 
@@ -233,7 +247,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
 //        List<MarkerDTO> markerDTOList = resultEnvelope.getPayload().getData();
 //        Assert.assertNotNull(markerDTOList);
 //        Assert.assertTrue(markerDTOList.size() > 0);
-//        Assert.assertNotNull(markerDTOList.get(0).getName());
+//        Assert.assertNotNull(markerDTOList.get(0).getMarkerName());
 //
 //
 //        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
@@ -263,7 +277,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
 //            Assert.assertNotNull(resultEnvelopeForGetByID);
 //            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
 //            MarkerDTO markerDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
-//            Assert.assertTrue(currentMarkerDto.getName().equals(markerDTOFromLink.getName()));
+//            Assert.assertTrue(currentMarkerDto.getMarkerName().equals(markerDTOFromLink.getMarkerName()));
 //            Assert.assertTrue(currentMarkerDto.getMarkerId().equals(markerDTOFromLink.getMarkerId()));
 //
 //            Assert.assertNotNull(markerDTOFromLink.getAnalysesIds());

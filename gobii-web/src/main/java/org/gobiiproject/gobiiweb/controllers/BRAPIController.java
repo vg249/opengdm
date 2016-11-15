@@ -875,6 +875,37 @@ public class BRAPIController {
 
     }
 
+    @RequestMapping(value = "/markers/{markerName:[a-zA-Z-]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<MarkerDTO> getMarkerByName(@PathVariable String markerName,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            List<MarkerDTO> markersByName = markerService.getMarkersByName(markerName);
+
+            PayloadWriter<MarkerDTO> payloadWriter = new PayloadWriter<>(request,
+                    MarkerDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    ServiceRequestId.URL_MARKERS,
+                    markersByName);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
     // *********************************************
     // *************************** NameIDList
     // *********************************************

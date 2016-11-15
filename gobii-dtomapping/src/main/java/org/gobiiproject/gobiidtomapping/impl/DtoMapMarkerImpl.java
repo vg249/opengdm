@@ -102,4 +102,28 @@ public class DtoMapMarkerImpl implements DtoMapMarker {
         return returnVal;
     }
 
+
+    @Override
+    public List<MarkerDTO> getMarkersByName(String markerName) throws GobiiDtoMappingException {
+
+        List<MarkerDTO> returnVal = new ArrayList<>();
+
+
+        try {
+            ResultSet resultSet = rsMarkerDao.getMarkersByMarkerName(markerName);
+
+            while (resultSet.next()) {
+
+                MarkerDTO currentMarkerDTO = new MarkerDTO();
+                ResultColumnApplicator.applyColumnValues(resultSet, currentMarkerDTO);
+                returnVal.add(currentMarkerDTO);
+            }
+
+        } catch(SQLException e) {
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
+
 } // DtoMapMarkerImpl

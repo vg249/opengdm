@@ -6,6 +6,8 @@ import org.gobiiproject.gobiidao.resultset.access.RsMarkerDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMarker;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkersByMarkerId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkersByMarkerName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,20 +37,39 @@ public class RsMarkerDaoImpl implements RsMarkerDao {
     @Override
     public ResultSet getMarkerDetailsByMarkerId(Integer markerId) throws GobiiDaoException {
 
-        throw new NotImplementedException();
-//        ResultSet returnVal = null;
-//
-//        Map<String, Object> parameters = new HashMap<>();
-//        parameters.put("markerId", markerId);
-//        SpGetMarkerDetailsByMarkerId spGetMarkerDetailsByExperimentId = new SpGetMarkerDetailsByMarkerId(parameters);
-//
-//        storedProcExec.doWithConnection(spGetMarkerDetailsByExperimentId);
-//
-//        returnVal = spGetMarkerDetailsByExperimentId.getResultSet();
-//
-//
-//        return returnVal;
+
+        ResultSet returnVal;
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("markerId", markerId);
+        SpGetMarkersByMarkerId spGetMarkerDetailsByExperimentId = new SpGetMarkersByMarkerId(parameters);
+
+        storedProcExec.doWithConnection(spGetMarkerDetailsByExperimentId);
+
+        returnVal = spGetMarkerDetailsByExperimentId.getResultSet();
+
+        return returnVal;
     }
+
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getMarkersByMarkerName(String markerName) throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("markerName", markerName);
+        SpGetMarkersByMarkerName spGetMarkerDetailsByExperimentId = new SpGetMarkersByMarkerName(parameters);
+
+        storedProcExec.doWithConnection(spGetMarkerDetailsByExperimentId);
+
+        returnVal = spGetMarkerDetailsByExperimentId.getResultSet();
+
+
+        return returnVal;
+    }
+
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override

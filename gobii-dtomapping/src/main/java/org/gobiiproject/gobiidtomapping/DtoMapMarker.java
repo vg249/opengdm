@@ -20,4 +20,6 @@ public interface DtoMapMarker {
 
     MarkerDTO replaceMarker(Integer markerId, MarkerDTO markerDTO) throws GobiiDtoMappingException;
 
+    List<MarkerDTO> getMarkersByName(String markerName) throws GobiiDtoMappingException;
+
 }

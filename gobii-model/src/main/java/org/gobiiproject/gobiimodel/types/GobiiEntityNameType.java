@@ -19,5 +19,6 @@ public enum GobiiEntityNameType {
     EXPERIMENTS,
     REFERENCES,
     ROLES,
-    DISPLAYNAMES
+    DISPLAYNAMES,
+    MARKERS
 }

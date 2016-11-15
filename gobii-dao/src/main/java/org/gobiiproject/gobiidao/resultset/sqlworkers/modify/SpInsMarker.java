@@ -28,7 +28,7 @@ public class SpInsMarker extends SpDef {
 
         this.addParamDef("platformId", Integer.class).setNullable(false);
         this.addParamDef("variantId", Integer.class).setNullable(true);
-        this.addParamDef("name", String.class).setNullable(false);
+        this.addParamDef("markerName", String.class).setNullable(false);
         this.addParamDef("code", String.class).setNullable(true);
         this.addParamDef("ref", String.class).setNullable(true);
         this.addParamDef("alts", ArrayList.class).setNullable(true);

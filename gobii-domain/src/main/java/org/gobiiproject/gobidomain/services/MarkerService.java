@@ -15,5 +15,6 @@ public interface MarkerService {
     MarkerDTO replaceMarker(Integer MarkerId, MarkerDTO MarkerDTO) throws GobiiDomainException;
     List<MarkerDTO> getMarkers() throws GobiiDomainException;
     MarkerDTO getMarkerById(Integer MarkerId) throws GobiiDomainException;
+    List<MarkerDTO> getMarkersByName(String markerName) throws GobiiDomainException;
 
 }

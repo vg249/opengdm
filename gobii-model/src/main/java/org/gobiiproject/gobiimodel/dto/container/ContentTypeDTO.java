@@ -32,7 +32,7 @@ public class ContentTypeDTO extends Header {
 //    public void mapFromeEntity(ContentType contentType) {
 //
 //        this.setContentTypeId(contentType.getContentTypeId());
-//        this.setName(contentType.getName());
+//        this.setMarkerName(contentType.getMarkerName());
 //        this.setScope(contentType.getScope());
 //    }
 

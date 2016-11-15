@@ -80,7 +80,7 @@ public class TestDtoFactory {
         MarkerDTO returnVal = new MarkerDTO();
 
         // required values
-        returnVal.setName(markerName);
+        returnVal.setMarkerName(markerName);
         Integer platformId = (new GlobalPkColl<DtoCrudRequestPlatformTest>())
                 .getAPkVal(DtoCrudRequestPlatformTest.class,
                         GobiiEntityNameType.PLATFORMS);

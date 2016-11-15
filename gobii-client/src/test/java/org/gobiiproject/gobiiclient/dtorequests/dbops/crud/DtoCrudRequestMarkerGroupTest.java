@@ -33,6 +33,9 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
+
+
+
     }
 
     @AfterClass

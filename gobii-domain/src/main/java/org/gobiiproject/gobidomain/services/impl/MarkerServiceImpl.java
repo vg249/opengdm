@@ -152,4 +152,38 @@ public class MarkerServiceImpl implements MarkerService {
 
         return returnVal;
     }
+
+    @Override
+    public List<MarkerDTO> getMarkersByName(String markerName) throws GobiiDomainException {
+
+        List<MarkerDTO> returnVal;
+
+        try {
+            returnVal = dtoMapMarker.getMarkersByName(markerName);
+
+            for( MarkerDTO currentMarkerDTO : returnVal ) {
+                currentMarkerDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                currentMarkerDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+
+            }
+
+            if (null == returnVal) {
+                throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+                        "The specified markerId ("
+                                + markerName
+                                + ") does not match an existing marker ");
+            }
+
+        } catch (Exception e) {
+
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+
+        }
+
+        return returnVal;
+
+    }
+
 }

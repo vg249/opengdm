@@ -14,7 +14,8 @@ public class MarkerDTO extends  DTOBase {
     private Integer markerId = 0;
     private Integer platformId;
     private Integer variantId;
-    private String name;
+    private String markerName;
+    private String platformName;
     private String code;
     private String ref;
     private List<Integer> alts;
@@ -88,14 +89,24 @@ public class MarkerDTO extends  DTOBase {
         this.variantId = variantId;
     }
 
-    @GobiiEntityParam(paramName = "name")
-    public String getName() {
-        return this.name;
+    @GobiiEntityParam(paramName = "markerName")
+    public String getMarkerName() {
+        return this.markerName;
     }
 
-    @GobiiEntityColumn(columnName = "name")
-    public void setName(String name) {
-        this.name = name;
+    @GobiiEntityColumn(columnName = "marker_name")
+    public void setMarkerName(String markerName) {
+        this.markerName = markerName;
+    }
+
+    @GobiiEntityParam(paramName = "platformName")
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    @GobiiEntityColumn(columnName = "platform_name")
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
     }
 
     @GobiiEntityParam(paramName = "code")
