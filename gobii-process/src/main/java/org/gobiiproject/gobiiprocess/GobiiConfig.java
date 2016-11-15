@@ -961,7 +961,7 @@ public class GobiiConfig {
                         System.err.println("The postgresdb for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
                     } else {
-                        returnVal = returnVal && verifyDbConfig(GobiiDbType.POSTGRESQL, cropDbConfigPostGres);
+                        returnVal = returnVal && verifyDbConfig(cropDbConfigPostGres);
                     }
 
                     CropDbConfig cropDbConfigMonetDB = currentCropConfig.getCropDbConfig(GobiiDbType.MONETDB);
@@ -969,7 +969,7 @@ public class GobiiConfig {
                         System.err.println("The monetdb for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
                     } else {
-                        returnVal = returnVal && verifyDbConfig(GobiiDbType.POSTGRESQL, cropDbConfigMonetDB);
+                        returnVal = returnVal && verifyDbConfig(cropDbConfigMonetDB);
                     }
                 }
             }
@@ -984,35 +984,35 @@ public class GobiiConfig {
     } //
 
 
-    private static boolean verifyDbConfig(GobiiDbType gobiiDbType, CropDbConfig cropDbConfig) {
+    private static boolean verifyDbConfig(CropDbConfig cropDbConfig) {
 
         boolean returnVal = true;
 
         if (LineUtils.isNullOrEmpty(cropDbConfig.getHost())) {
-            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a host");
+            System.err.println("The db config for " + cropDbConfig.getGobiiDbType().toString() + " does not define a host");
             returnVal = false;
         }
 
 
         if (cropDbConfig.getPort() == null) {
-            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a port");
+            System.err.println("The db config for " + cropDbConfig.getGobiiDbType().toString() + " does not define a port");
             returnVal = false;
         }
 
 
         if (LineUtils.isNullOrEmpty(cropDbConfig.getUserName())) {
-            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a user name");
+            System.err.println("The db config for " + cropDbConfig.getGobiiDbType().toString() + " does not define a user name");
             returnVal = false;
         }
 
 
         if (LineUtils.isNullOrEmpty(cropDbConfig.getPassword())) {
-            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a password");
+            System.err.println("The db config for " + cropDbConfig.getGobiiDbType().toString() + " does not define a password");
             returnVal = false;
         }
 
         if (LineUtils.isNullOrEmpty(cropDbConfig.getDbName())) {
-            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a database name");
+            System.err.println("The db config for " + cropDbConfig.getGobiiDbType().toString() + " does not define a database name");
             returnVal = false;
         }
 
