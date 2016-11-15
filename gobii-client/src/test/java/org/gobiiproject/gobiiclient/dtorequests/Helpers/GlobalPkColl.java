@@ -17,7 +17,7 @@ import java.util.List;
  * add the PK values for the entities they create to GlobalPkValues. The awkwardness of
  * this idiom is compensated for by the error message which, in the case that the create()
  * method is not adding the PK values to GlobalPkValues, gives a precise indication of
- * where and why the thing went awry 
+ * where and why the thing went awry
  */
 public class GlobalPkColl<T extends DtoCrudRequestTest> {
 
