@@ -8,7 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Phil on 11/11/2016.
+ * This class serves as a central repository for PK values for specific entities.
+ * Unit tests often need to create entities that have foreign keys to other entities.
+ * So, when a unit test requires the PK value of another entity for an FK, rather
+ * than creating the FK entity on its own, it can
+ * use this class (though the getInstance() method) to get the PK if it already exists.
+ * Aside from conenience, this mechanism has the added advantage of reducing database thrash.
+ * The GobiiEntityNameType enum is used to identify the entities. A list of PK values for each entity is stored
+ * because more than one such value may be needed. Of course, in order for the PK values
+ * to be available, they must be added to the collection with addPkVal().
  */
 public class GlobalPkValues {
 
