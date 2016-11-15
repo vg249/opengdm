@@ -3,26 +3,28 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestAnalysis;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 
 
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -33,15 +35,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DtoRequestDataSetTest {
-
-    private static UriFactory uriFactory;
+public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
-        String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        uriFactory = new UriFactory(currentCropContextRoot);
     }
 
     @AfterClass
@@ -51,7 +49,8 @@ public class DtoRequestDataSetTest {
 
 
     @Test
-    public void testGetDataSet() throws Exception {
+    @Override
+    public void get() throws Exception {
 
 
 //        DtoRequestDataSet dtoRequestDataSet = new DtoRequestDataSet();
@@ -59,10 +58,12 @@ public class DtoRequestDataSetTest {
 //        dataSetDTORequest.setDataSetId(2);
 //        DataSetDTO dataSetDTOResponse = dtoRequestDataSet.process(dataSetDTORequest);
 
+        Integer dataSetid = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
 
-        RestUri projectsUri = uriFactory
+        RestUri projectsUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
-        projectsUri.setParamValue("id", "2");
+        projectsUri.setParamValue("id", dataSetid.toString());
         RestResource<DataSetDTO> restResourceForProjects = new RestResource<>(projectsUri);
         PayloadEnvelope<DataSetDTO> resultEnvelope = restResourceForProjects
                 .get(DataSetDTO.class);
@@ -85,7 +86,8 @@ public class DtoRequestDataSetTest {
 
 
     @Test
-    public void testCreateDataSet() throws Exception {
+    @Override
+    public void create() throws Exception {
 
 
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
@@ -127,7 +129,8 @@ public class DtoRequestDataSetTest {
                         callingAnalysisDTO.getAnalysisId(),
                         analysisIds);
 
-        RestUri projectsCollUri = uriFactory
+        RestUri projectsCollUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_DATASETS);
         RestResource<DataSetDTO> restResourceForDataSetPost = new RestResource<>(projectsCollUri);
         PayloadEnvelope<DataSetDTO> resultEnvelope = restResourceForDataSetPost
@@ -145,13 +148,16 @@ public class DtoRequestDataSetTest {
         Assert.assertTrue(dataSetDTOResponse.getAnalysesIds().size() > 0);
         Assert.assertTrue(dataSetDTOResponse.getTypeId() > 0);
 
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.DATASETS,dataSetDTOResponse.getDataSetId());
+
 
 //        DataSetDTO dataSetDTOReRequest = new DataSetDTO();
 //        dataSetDTOReRequest.setDataSetId(dataSetDTOResponse.getDataSetId());
 //        //DataSetDTO dataSetDTOReResponse = dtoRequestDataSet.process(dataSetDTOReRequest);
 
 
-        RestUri projectsByIdUri = uriFactory
+        RestUri projectsByIdUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
         RestResource<DataSetDTO> restResourceForDataSetGet = new RestResource<>(projectsByIdUri);
         restResourceForDataSetGet.setParamValue("id", dataSetDTOResponse.getDataSetId().toString());
@@ -176,7 +182,8 @@ public class DtoRequestDataSetTest {
     }
 
     @Test
-    public void UpdateDataSet() throws Exception {
+    @Override
+    public void update() throws Exception {
 
         // ******** make analyses we'll need for the new data set
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
@@ -222,7 +229,8 @@ public class DtoRequestDataSetTest {
         //DataSetDTO newDataSetDTOResponse = dtoRequestDataSet.process(newDataSetDto);
 
 
-        RestUri projectsCollUri = uriFactory
+        RestUri projectsCollUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_DATASETS);
         RestResource<DataSetDTO> restResourceForDataSetPost = new RestResource<>(projectsCollUri);
         PayloadEnvelope<DataSetDTO> resultEnvelope = restResourceForDataSetPost
@@ -239,7 +247,8 @@ public class DtoRequestDataSetTest {
 //        dataSetDTORequest.setDataSetId(newDataSetDTOResponse.getDataSetId());
 //        DataSetDTO dataSetDTOReceived = dtoRequestDataSet.process(dataSetDTORequest);
 
-        RestUri projectsByIdUri = uriFactory
+        RestUri projectsByIdUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
         RestResource<DataSetDTO> restResourceForDataSetById = new RestResource<>(projectsByIdUri);
         restResourceForDataSetById.setParamValue("id", newDataSetDTOResponse.getDataSetId().toString());
@@ -290,9 +299,11 @@ public class DtoRequestDataSetTest {
 
 
     @Test
-    public void getDataSets() throws Exception {
+    @Override
+    public void getList() throws Exception {
 
-        RestUri restUriDataSet = DtoRequestDataSetTest.uriFactory.resourceColl(ServiceRequestId.URL_DATASETS);
+        RestUri restUriDataSet = ClientContext.getInstance(null, false)
+                .getUriFactory().resourceColl(ServiceRequestId.URL_DATASETS);
         RestResource<DataSetDTO> restResource = new RestResource<>(restUriDataSet);
         PayloadEnvelope<DataSetDTO> resultEnvelope = restResource
                 .get(DataSetDTO.class);
@@ -322,8 +333,8 @@ public class DtoRequestDataSetTest {
 
             Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
 
-            RestUri restUriDataSetForGetById = DtoRequestDataSetTest
-                    .uriFactory
+            RestUri restUriDataSetForGetById = ClientContext.getInstance(null, false)
+                    .getUriFactory()
                     .RestUriFromUri(currentLink.getHref());
             RestResource<DataSetDTO> restResourceForGetById = new RestResource<>(restUriDataSetForGetById);
             PayloadEnvelope<DataSetDTO> resultEnvelopeForGetByID = restResourceForGetById

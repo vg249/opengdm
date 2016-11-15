@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.infrastructure;
 
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
@@ -26,23 +26,6 @@ public class DtoRequestPingTest {
     public static void tearDownUpClass() throws Exception {
         Assert.assertTrue(Authenticator.deAuthenticate());
     }
-
-
-    @Ignore
-    public void testGetPingFromExtractController() throws Exception {
-
-        PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
-
-        DtoRequestPing dtoRequestPing = new DtoRequestPing();
-        PingDTO pingDTOResponse = dtoRequestPing.process(pingDTORequest);
-
-        Assert.assertNotEquals(null, pingDTOResponse);
-        Assert.assertNotEquals(null, pingDTOResponse.getDbMetaData());
-        Assert.assertNotEquals(null, pingDTOResponse.getPingResponses());
-        Assert.assertTrue(pingDTOResponse.getPingResponses().size()
-                >= pingDTORequest.getDbMetaData().size());
-
-    } // testGetMarkers()
 
 
     @Test

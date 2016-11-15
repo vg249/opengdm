@@ -28,5 +28,7 @@ public enum ServiceRequestId {
     URL_PLATFORM,
     URL_MAPSET,
     URL_CONFIGSETTINGS,
-    URL_ROLES
+    URL_ROLES,
+    URL_MARKERS,
+    URL_MARKER_SEARCH
 }

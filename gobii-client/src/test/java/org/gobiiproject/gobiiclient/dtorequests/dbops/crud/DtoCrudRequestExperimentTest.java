@@ -3,20 +3,22 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.junit.AfterClass;
@@ -29,15 +31,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class DtoRequestExperimentTest {
+public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
 
-    private static UriFactory uriFactory;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
-        String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        uriFactory = new UriFactory(currentCropContextRoot);
     }
 
     @AfterClass
@@ -47,17 +46,22 @@ public class DtoRequestExperimentTest {
 
 
     @Test
-    public void testGetExperimentDetailsByExperimentId() throws Exception {
-        
+    @Override
+    public void get() throws Exception {
+
         //DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 
 //        ExperimentDTO experimentDTO = new ExperimentDTO();
 //        experimentDTO.setExperimentId(2);
 //        dtoRequestExperiment.process(experimentDTO);
 
-        RestUri experimentsUri = uriFactory
+
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+
+        RestUri experimentsUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_EXPERIMENTS);
-        experimentsUri.setParamValue("id", "2");
+        experimentsUri.setParamValue("id", experimentId.toString());
         RestResource<ExperimentDTO> restResourceForExperiments = new RestResource<>(experimentsUri);
         PayloadEnvelope<ExperimentDTO> resultEnvelope = restResourceForExperiments
                 .get(ExperimentDTO.class);
@@ -75,17 +79,24 @@ public class DtoRequestExperimentTest {
     } // testGetMarkers()
 
     @Test
-    public void testCreateExperiment() throws Exception {
+    @Override
+    public void create() throws Exception {
 
         //DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 
+        Integer projectId = (new GlobalPkColl<DtoCrudRequestProjectTest>().getAPkVal(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECTS));
+
+        Integer platformId = (new GlobalPkColl<DtoCrudRequestPlatformTest>().getAPkVal(DtoCrudRequestPlatformTest.class, GobiiEntityNameType.PLATFORMS));
+
+        Integer manifestId = (new GlobalPkColl<DtoCrudRequestManifestTest>().getAPkVal(DtoCrudRequestManifestTest.class, GobiiEntityNameType.MANIFESTS));
+
         ExperimentDTO experimentDTORequest = new ExperimentDTO();
-        experimentDTORequest.setExperimentId(1);
-        experimentDTORequest.setManifestId(1);
-        experimentDTORequest.setPlatformId(1);
-        experimentDTORequest.setProjectId(1);
-        experimentDTORequest.setCreatedBy(2);
-        experimentDTORequest.setModifiedBy(2);
+        // experimentDTORequest.setExperimentId(1);
+        experimentDTORequest.setManifestId(manifestId);
+        experimentDTORequest.setPlatformId(platformId);
+        experimentDTORequest.setProjectId(projectId);
+        experimentDTORequest.setCreatedBy(1);
+        experimentDTORequest.setModifiedBy(1);
         experimentDTORequest.setExperimentCode("foocode");
         experimentDTORequest.setExperimentDataFile("foofile");
         experimentDTORequest.setStatusId(1);
@@ -93,7 +104,9 @@ public class DtoRequestExperimentTest {
 
         //dtoRequestExperiment.process(experimentDTORequest);
 
-        RestUri experimentsUri = uriFactory.resourceColl(ServiceRequestId.URL_EXPERIMENTS);
+        RestUri experimentsUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_EXPERIMENTS);
         RestResource<ExperimentDTO> restResourceForExperiments = new RestResource<>(experimentsUri);
         PayloadEnvelope<ExperimentDTO> payloadEnvelope = new PayloadEnvelope<>(experimentDTORequest, GobiiProcessType.CREATE);
         PayloadEnvelope<ExperimentDTO> resultEnvelope = restResourceForExperiments
@@ -107,6 +120,7 @@ public class DtoRequestExperimentTest {
 
         Assert.assertNotEquals(experimentDTOResponse, null);
         Assert.assertTrue(experimentDTOResponse.getExperimentId() > 0);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.EXPERIMENTS, experimentDTOResponse.getExperimentId());
 
     } // testGetMarkers()
 
@@ -118,9 +132,12 @@ public class DtoRequestExperimentTest {
 //        experimentDTORequest.setExperimentId(2);
 //        ExperimentDTO ExperimentDTOExisting = dtoRequestExperiment.process(experimentDTORequest);
 
-        RestUri experimentsUriById = uriFactory
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+
+        RestUri experimentsUriById = ClientContext.getInstance(null, false)
+                .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_EXPERIMENTS);
-        experimentsUriById.setParamValue("id", "2");
+        experimentsUriById.setParamValue("id", experimentId.toString());
         RestResource<ExperimentDTO> restResourceForExperiments = new RestResource<>(experimentsUriById);
         PayloadEnvelope<ExperimentDTO> resultEnvelope = restResourceForExperiments
                 .get(ExperimentDTO.class);
@@ -129,7 +146,9 @@ public class DtoRequestExperimentTest {
         ExperimentDTO experimentDTOExisting = resultEnvelope.getPayload().getData().get(0);
 
 
-        RestUri experimentCollUri = uriFactory.resourceColl(ServiceRequestId.URL_EXPERIMENTS);
+        RestUri experimentCollUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_EXPERIMENTS);
         RestResource<ExperimentDTO> restResourceForProjectPost =
                 new RestResource<>(experimentCollUri);
         PayloadEnvelope<ExperimentDTO> payloadEnvelope = new PayloadEnvelope<>(experimentDTOExisting,
@@ -158,16 +177,19 @@ public class DtoRequestExperimentTest {
     } // testCreateExperiment()
 
     @Test
-    public void testUpdateExperiment() throws Exception {
+    @Override
+    public void update() throws Exception {
 
 //        DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 //        ExperimentDTO experimentDTORequest = new ExperimentDTO();
 //        experimentDTORequest.setExperimentId(2);
 //        ExperimentDTO experimentDTOReceived = dtoRequestExperiment.process(experimentDTORequest);
 
-        RestUri experimentsUriById = uriFactory
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+        RestUri experimentsUriById = ClientContext.getInstance(null, false)
+                .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_EXPERIMENTS);
-        experimentsUriById.setParamValue("id", "2");
+        experimentsUriById.setParamValue("id", experimentId.toString());
         RestResource<ExperimentDTO> restResourceForExperimentsById = new RestResource<>(experimentsUriById);
         PayloadEnvelope<ExperimentDTO> resultEnvelope = restResourceForExperimentsById
                 .get(ExperimentDTO.class);
@@ -180,13 +202,12 @@ public class DtoRequestExperimentTest {
         experimentDTOReceived.setExperimentDataFile(newDataFile);
 
 
-        PayloadEnvelope<ExperimentDTO> postRequestEnvelope = new PayloadEnvelope<>(experimentDTOReceived,GobiiProcessType.UPDATE);
+        PayloadEnvelope<ExperimentDTO> postRequestEnvelope = new PayloadEnvelope<>(experimentDTOReceived, GobiiProcessType.UPDATE);
         resultEnvelope = restResourceForExperimentsById
-                .put(ExperimentDTO.class,postRequestEnvelope);
+                .put(ExperimentDTO.class, postRequestEnvelope);
 
         // ExperimentDTO experimentDTOResponse = dtoRequestExperiment.process(experimentDTOReceived);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-
 
 
         ExperimentDTO dtoRequestExperimentExperimentReRetrieved = resultEnvelope.getPayload().getData().get(0);
@@ -198,9 +219,12 @@ public class DtoRequestExperimentTest {
     }
 
     @Test
-    public void getExperiments() throws Exception {
+    @Override
+    public void getList() throws Exception {
 
-        RestUri restUriExperiment = DtoRequestExperimentTest.uriFactory.resourceColl(ServiceRequestId.URL_EXPERIMENTS);
+        RestUri restUriExperiment = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_EXPERIMENTS);
         RestResource<ExperimentDTO> restResource = new RestResource<>(restUriExperiment);
         PayloadEnvelope<ExperimentDTO> resultEnvelope = restResource
                 .get(ExperimentDTO.class);
@@ -213,7 +237,7 @@ public class DtoRequestExperimentTest {
 
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
-        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == experimentDTOList.size() );
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == experimentDTOList.size());
 
         List<Integer> itemsToTest = new ArrayList<>();
         if (experimentDTOList.size() > 50) {
@@ -230,8 +254,8 @@ public class DtoRequestExperimentTest {
 
             Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
 
-            RestUri restUriExperimentForGetById = DtoRequestExperimentTest
-                    .uriFactory
+            RestUri restUriExperimentForGetById = ClientContext.getInstance(null, false)
+                    .getUriFactory()
                     .RestUriFromUri(currentLink.getHref());
             RestResource<ExperimentDTO> restResourceForGetById = new RestResource<>(restUriExperimentForGetById);
             PayloadEnvelope<ExperimentDTO> resultEnvelopeForGetByID = restResourceForGetById

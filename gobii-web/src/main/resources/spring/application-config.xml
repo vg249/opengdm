@@ -58,11 +58,6 @@
           class="org.gobiiproject.gobidomain.services.impl.PingServiceImpl"/>
 
 
-    <!-- **** Marker Beans *************************************** -->
-    <bean id="markerDao"
-          class="org.gobiiproject.gobiidao.entity.access.impl.mock.MarkerEntityDaoImplMock"/>
-    <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>
-
     <!-- **** NameIdList Beans *************************************** -->
     <bean id="rsContact"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsContactDaoImpl"/>
@@ -252,6 +247,16 @@
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapsetImpl"/>
     <bean id="MapsetService"
           class="org.gobiiproject.gobidomain.services.impl.MapsetServiceImpl"/>
+
+
+    <!-- **** Marker Beans *************************************** -->
+    <bean id="rsMarkerDao"
+          class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerDaoImpl"/>
+    <bean id="dtoMapMarker" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMarkerImpl"/>
+    <bean id="markerService"
+          class="org.gobiiproject.gobidomain.services.impl.MarkerServiceImpl"/>
+
+
 
     <!-- <bean id="dtoMapMap" class="org.gobiiproject.gobiidtomapping.impl.DtoMapMapImpl"/>
         <bean id="MapService" class="org.gobiiproject.gobidomain.services.impl.MapServiceImpl"/> -->

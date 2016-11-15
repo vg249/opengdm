@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.infrastructure;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;

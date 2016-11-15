@@ -18,7 +18,7 @@ public class PlatformDTO extends DTOBase {
     public PlatformDTO() {
     }
 
-    private Integer platformId;
+    private Integer platformId = 0;
     private String platformName;
     private String platformCode;
     private Integer platformVendor;

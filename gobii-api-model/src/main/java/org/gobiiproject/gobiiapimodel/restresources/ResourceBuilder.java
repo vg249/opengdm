@@ -1,4 +1,4 @@
-// ************************************************************************
+/// ************************************************************************
 // (c) 2016 GOBii Project
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
@@ -134,6 +134,15 @@ public class ResourceBuilder {
 
             case URL_ROLES:
                 returnVal += "roles";
+                break;
+
+
+            case URL_MARKERS:
+                returnVal += "markers";
+                break;
+
+            case URL_MARKER_SEARCH:
+                returnVal += "marker-search";
                 break;
 
             default:

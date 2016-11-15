@@ -35,6 +35,11 @@ public class AnalysisDTO extends Header {
     private Integer referenceId;
     private Date timeExecuted;
     private Integer statusId;
+    private Integer createdBy;
+    private Date createdDate;
+    private Integer modifiedBy;
+    private Date modifiedDate;
+
     private List<EntityPropertyDTO> parameters = new ArrayList<>();
 
     @GobiiEntityParam(paramName = "analysisId")
@@ -165,6 +170,46 @@ public class AnalysisDTO extends Header {
     @GobiiEntityColumn(columnName = "status")
     public void setStatusId(Integer statusId) {
         this.statusId = statusId;
+    }
+
+    @GobiiEntityParam(paramName = "createdBy")
+    public Integer getCreatedBy() {
+        return createdBy;
+    }
+
+    @GobiiEntityColumn(columnName = "created_by")
+    public void setCreatedBy(Integer createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @GobiiEntityParam(paramName = "createdDate")
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    @GobiiEntityColumn(columnName = "created_date")
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    @GobiiEntityParam(paramName = "modifiedBy")
+    public Integer getModifiedBy() {
+        return modifiedBy;
+    }
+
+    @GobiiEntityColumn(columnName = "modified_by")
+    public void setModifiedBy(Integer modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    @GobiiEntityParam(paramName = "modifiedDate")
+    public Date getModifiedDate() {
+        return modifiedDate;
+    }
+
+    @GobiiEntityColumn(columnName = "modified_date")
+    public void setModifiedDate(Date modifiedDate) {
+        this.modifiedDate = modifiedDate;
     }
 
     public List<EntityPropertyDTO> getParameters() {

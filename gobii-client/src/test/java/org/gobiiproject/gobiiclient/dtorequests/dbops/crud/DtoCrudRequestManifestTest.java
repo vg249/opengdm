@@ -3,14 +3,15 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestManifest;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.ManifestDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -19,7 +20,7 @@ import org.junit.Test;
 
 import java.util.UUID;
 
-public class DtoRequestManifesTest {
+public class DtoCrudRequestManifestTest implements DtoCrudRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -32,7 +33,8 @@ public class DtoRequestManifesTest {
     }
 
     @Test
-    public void testGetManifest() throws Exception {
+    @Override
+    public void get() throws Exception {
         DtoRequestManifest dtoRequestManifest = new DtoRequestManifest();
         ManifestDTO ManifestDTORequest = new ManifestDTO();
         ManifestDTORequest.setManifestId(1);
@@ -44,7 +46,8 @@ public class DtoRequestManifesTest {
 
 
     @Test
-    public void testCreateManifest() throws Exception {
+    @Override
+    public void create() throws Exception {
 
         DtoRequestManifest dtoRequestManifest = new DtoRequestManifest();
 
@@ -57,12 +60,15 @@ public class DtoRequestManifesTest {
         Assert.assertNotEquals(null, manifestDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(manifestDTOResponse));
         Assert.assertTrue(manifestDTOResponse.getManifestId() > 0);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MANIFESTS,
+                manifestDTOResponse.getManifestId());
 
     }
 
 
     @Test
-    public void testUpdateManifest() throws Exception {
+    @Override
+    public void update() throws Exception {
         DtoRequestManifest dtoRequestManifest = new DtoRequestManifest();
 
         // create a new manifest for our test
@@ -92,6 +98,11 @@ public class DtoRequestManifesTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestManifestReRetrieved));
 
         Assert.assertTrue(dtoRequestManifestReRetrieved.getFilePath().equals(newDataFile));
+
+    }
+
+    @Override
+    public void getList() throws Exception {
 
     }
 }

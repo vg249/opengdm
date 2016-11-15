@@ -187,7 +187,7 @@ public class GobiiConfig {
             setOption(options, COPY_WARS, false, "create war files for active crops from the specified war file (requires " + PROP_FILE_FQPN + ")", "copy wars");
             setOption(options, PROP_FILE_FQPN, true, "fqpn of gobii configuration file", "config fqpn");
             setOption(options, PROP_FILE_PROPS_TO_XML, false, "Convert existing gobii-properties file to xml (requires " + PROP_FILE_FQPN + ")", "convert to xml");
-            setOption(options, CONFIG_ADD_ITEM, false, "Adds or updates the configuration value specified by one of the standalone parameters ("
+            setOption(options, CONFIG_ADD_ITEM, false, "Adds or updates the configuration value specified by one of the infrastructure parameters ("
                     + CONFIG_GLOBAL_FILESYS_ROOT + ", " + CONFIG_GLOBAL_DEFAULT_CROP + ") or parameters that require server option parameters ("
                     + CONFIG_SVR_GLOBAL_EMAIL + ", " + CONFIG_CROP_ID + ")", "add config item");
 
@@ -961,7 +961,7 @@ public class GobiiConfig {
                         System.err.println("The postgresdb for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
                     } else {
-                        returnVal = returnVal && verifyDbConfig(GobiiDbType.POSTGRESQL, cropDbConfigPostGres);
+                        returnVal = returnVal && verifyDbConfig(cropDbConfigPostGres);
                     }
 
                     CropDbConfig cropDbConfigMonetDB = currentCropConfig.getCropDbConfig(GobiiDbType.MONETDB);
@@ -969,7 +969,7 @@ public class GobiiConfig {
                         System.err.println("The monetdb for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
                     } else {
-                        returnVal = returnVal && verifyDbConfig(GobiiDbType.POSTGRESQL, cropDbConfigMonetDB);
+                        returnVal = returnVal && verifyDbConfig(cropDbConfigMonetDB);
                     }
                 }
             }
@@ -984,35 +984,35 @@ public class GobiiConfig {
     } //
 
 
-    private static boolean verifyDbConfig(GobiiDbType gobiiDbType, CropDbConfig cropDbConfig) {
+    private static boolean verifyDbConfig(CropDbConfig cropDbConfig) {
 
         boolean returnVal = true;
 
         if (LineUtils.isNullOrEmpty(cropDbConfig.getHost())) {
-            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a host");
+            System.err.println("The db config for " + cropDbConfig.getGobiiDbType().toString() + " does not define a host");
             returnVal = false;
         }
 
 
         if (cropDbConfig.getPort() == null) {
-            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a port");
+            System.err.println("The db config for " + cropDbConfig.getGobiiDbType().toString() + " does not define a port");
             returnVal = false;
         }
 
 
         if (LineUtils.isNullOrEmpty(cropDbConfig.getUserName())) {
-            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a user name");
+            System.err.println("The db config for " + cropDbConfig.getGobiiDbType().toString() + " does not define a user name");
             returnVal = false;
         }
 
 
         if (LineUtils.isNullOrEmpty(cropDbConfig.getPassword())) {
-            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a password");
+            System.err.println("The db config for " + cropDbConfig.getGobiiDbType().toString() + " does not define a password");
             returnVal = false;
         }
 
         if (LineUtils.isNullOrEmpty(cropDbConfig.getDbName())) {
-            System.err.println("The db config for " + gobiiDbType.toString() + " does not define a database name");
+            System.err.println("The db config for " + cropDbConfig.getGobiiDbType().toString() + " does not define a database name");
             returnVal = false;
         }
 

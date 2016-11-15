@@ -27,7 +27,7 @@ public class DataSetDTO extends  DTOBase{
         this.dataSetId = id;
     }
 
-    private Integer dataSetId;
+    private Integer dataSetId = 0;
     private String name;
     private Integer experimentId;
     private Integer callingAnalysisId;

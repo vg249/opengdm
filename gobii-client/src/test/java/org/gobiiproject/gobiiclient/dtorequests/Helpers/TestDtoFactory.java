@@ -1,10 +1,15 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestExperimentTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestOrganizationTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestPlatformTest;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 
@@ -59,11 +64,30 @@ public class TestDtoFactory {
         returnVal.setProgramVersion(uniqueStem + ":  foo version");
         returnVal.setAnlaysisTypeId(1);
         returnVal.setStatusId(1);
+        returnVal.setCreatedBy(1);
+        returnVal.setModifiedBy(1);
+        returnVal.setCreatedDate(new Date());
+        returnVal.setModifiedDate(new Date());
 
         returnVal.setParameters(entityParamValues.getProperties());
 
         return returnVal;
 
+    }
+
+    public static MarkerDTO makeMarkerDTO(String markerName) throws Exception {
+
+        MarkerDTO returnVal = new MarkerDTO();
+
+        // required values
+        returnVal.setMarkerName(markerName);
+        Integer platformId = (new GlobalPkColl<DtoCrudRequestPlatformTest>())
+                .getAPkVal(DtoCrudRequestPlatformTest.class,
+                        GobiiEntityNameType.PLATFORMS);
+        returnVal.setPlatformId(platformId);
+        returnVal.setStatus(1);
+
+        return returnVal;
     }
 
     public static PlatformDTO makePopulatedPlatformDTO(GobiiProcessType gobiiProcessType,
@@ -124,12 +148,15 @@ public class TestDtoFactory {
 
     public static DataSetDTO makePopulatedDataSetDTO(Integer uniqueStem,
                                                      Integer callingAnalysisId,
-                                                     List<Integer> analysisIds) {
+                                                     List<Integer> analysisIds) throws Exception {
 
         DataSetDTO returnVal = new DataSetDTO();
 
 
         // set the big-ticket items
+
+        Integer experimentId = (new GlobalPkColl<DtoCrudRequestExperimentTest>().getAPkVal(DtoCrudRequestExperimentTest.class, GobiiEntityNameType.EXPERIMENTS));
+
 
         returnVal.getScores().add(1);
         returnVal.getScores().add(2);
@@ -142,12 +169,12 @@ public class TestDtoFactory {
         returnVal.setCreatedDate(new Date());
         returnVal.setDataFile(uniqueStem + ": foo file");
         returnVal.setQualityFile(uniqueStem + ": foo quality file");
-        returnVal.setExperimentId(2);
+        returnVal.setExperimentId(experimentId);
         returnVal.setDataTable(uniqueStem + ": foo table");
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
         returnVal.setCallingAnalysisId(callingAnalysisId);
-        for (Integer currentAnalysisId : analysisIds ) {
+        for (Integer currentAnalysisId : analysisIds) {
             returnVal.getAnalysesIds().add(currentAnalysisId);
         }
         returnVal.setTypeId(93);
@@ -173,7 +200,7 @@ public class TestDtoFactory {
         returnVal.setMapType(1);
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
-        returnVal.setReferenceId(1);
+        returnVal.setReferenceId(GlobalPkValues.getInstance().getAPkVal(GobiiEntityNameType.REFERENCES));
         returnVal.setStatusId(1);
 
         returnVal.setProperties(entityParamValues.getProperties());
@@ -236,11 +263,15 @@ public class TestDtoFactory {
     }
 
     public static ContactDTO makePopulatedContactDTO(GobiiProcessType gobiiProcessType,
-                                                     Integer uniqueStem) {
+                                                     String uniqueStem) throws Exception {
 
         String uniqueStemString = uniqueStem.toString();
         ContactDTO returnVal = new ContactDTO();
         // set the plain properties
+
+        Integer organizationId = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()).getAPkVal(DtoCrudRequestOrganizationTest.class,
+                GobiiEntityNameType.ORGANIZATIONS);
+
 
         returnVal.setFirstName(uniqueStem + " new contact");
         returnVal.setLastName(uniqueStem + "new lastname");
@@ -250,7 +281,7 @@ public class TestDtoFactory {
         returnVal.setCreatedDate(new Date());
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
-        returnVal.setOrganizationId(1);
+        returnVal.setOrganizationId(organizationId);
         returnVal.getRoles().add(1);
         returnVal.getRoles().add(2);
 

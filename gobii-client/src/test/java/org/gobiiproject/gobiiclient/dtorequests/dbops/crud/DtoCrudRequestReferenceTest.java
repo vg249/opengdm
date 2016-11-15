@@ -3,25 +3,27 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestReference;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.ReferenceDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.UUID;
 
-public class DtoRequestReferenceTest {
+public class DtoCrudRequestReferenceTest implements DtoCrudRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -35,7 +37,8 @@ public class DtoRequestReferenceTest {
 
 
     @Test
-    public void testGetReference() throws Exception {
+    @Override
+    public void get() throws Exception {
 
         DtoRequestReference dtoRequestReference = new DtoRequestReference();
         ReferenceDTO referenceDTORequest = new ReferenceDTO();
@@ -49,7 +52,8 @@ public class DtoRequestReferenceTest {
 
 
     @Test
-    public void testCreateReference() throws Exception {
+    @Override
+    public void create() throws Exception {
 
         DtoRequestReference dtoRequestReference = new DtoRequestReference();
         ReferenceDTO referenceDTORequest = new ReferenceDTO(GobiiProcessType.CREATE);
@@ -59,17 +63,24 @@ public class DtoRequestReferenceTest {
         referenceDTORequest.setFilePath("C://pathy/dummy/path");
         referenceDTORequest.setLink("dummylink.com");
         referenceDTORequest.setVersion("version1");
+        referenceDTORequest.setModifiedDate(new Date());
+        referenceDTORequest.setModifiedBy(1);
+        referenceDTORequest.setCreatedDate(new Date());
+        referenceDTORequest.setCreatedBy(1);
         ReferenceDTO referenceDTOResponse = dtoRequestReference.process(referenceDTORequest);
 
         Assert.assertNotEquals(null, referenceDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(referenceDTOResponse));
         Assert.assertTrue(referenceDTOResponse.getReferenceId() > 0);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.REFERENCES,
+                referenceDTOResponse.getReferenceId());
 
     }
 
 
     @Test
-    public void testUpdateReference() throws Exception {
+    @Override
+    public void update() throws Exception {
         DtoRequestReference dtoRequestReference = new DtoRequestReference();
 
         // create a new reference for our test
@@ -100,6 +111,11 @@ public class DtoRequestReferenceTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestReferenceReRetrieved));
 
         Assert.assertTrue(dtoRequestReferenceReRetrieved.getFilePath().equals(newDataFile));
+
+    }
+
+    @Override
+    public void getList() throws Exception {
 
     }
 }

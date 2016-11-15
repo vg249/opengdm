@@ -3,27 +3,30 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestAnalysis;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class DtoRequestAnalysisTest {
+
+public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -37,7 +40,8 @@ public class DtoRequestAnalysisTest {
 
 
     @Test
-    public void testAnalysisGet() throws Exception {
+    @Override
+    public void get() throws Exception {
 
 
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
@@ -53,7 +57,10 @@ public class DtoRequestAnalysisTest {
     }
 
     @Test
-    public void testAnalysisCreate() throws Exception {
+    @Override
+    public void create() throws Exception {
+
+
 
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
         EntityParamValues entityParamValues = TestDtoFactory.makeArbitraryEntityParams();
@@ -64,7 +71,8 @@ public class DtoRequestAnalysisTest {
 
         Assert.assertNotEquals(null, analysisDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));
-        Assert.assertTrue(analysisDTOResponse.getAnalysisId() > 1);
+        Assert.assertTrue(analysisDTOResponse.getAnalysisId() > 0);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ANALYSES,analysisDTOResponse.getAnalysisId());
 
         AnalysisDTO analysisDTORequestForParams = new AnalysisDTO();
         analysisDTORequestForParams.setAnalysisId(analysisDTOResponse.getAnalysisId());
@@ -81,7 +89,8 @@ public class DtoRequestAnalysisTest {
     } // testAnalysisCreate
 
     @Test
-    public void testUpdateAnalysis() throws Exception {
+    @Override
+    public void update() throws Exception {
 
         DtoRequestAnalysis dtoRequestAnalysis = new DtoRequestAnalysis();
 
@@ -90,6 +99,7 @@ public class DtoRequestAnalysisTest {
         AnalysisDTO newAnalysisDto = TestDtoFactory
                 .makePopulatedAnalysisDTO(GobiiProcessType.CREATE, 1, entityParamValues);
         AnalysisDTO newAnalysisDTOResponse = dtoRequestAnalysis.process(newAnalysisDto);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(newAnalysisDTOResponse));
 
 
         // re-retrieve the analysis we just created so we start with a fresh READ mode dto
@@ -129,6 +139,10 @@ public class DtoRequestAnalysisTest {
 
         Assert.assertTrue(matchedProperty.getPropertyValue().equals(updatedPropertyValue));
 
+    }
+
+    @Override
+    public void getList() throws Exception {
     }
 
 }

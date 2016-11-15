@@ -18,6 +18,7 @@ import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
 import org.gobiiproject.gobidomain.services.ManifestService;
 import org.gobiiproject.gobidomain.services.MapsetService;
 import org.gobiiproject.gobidomain.services.MarkerGroupService;
+import org.gobiiproject.gobidomain.services.MarkerService;
 import org.gobiiproject.gobidomain.services.NameIdListService;
 import org.gobiiproject.gobidomain.services.OrganizationService;
 import org.gobiiproject.gobidomain.services.PingService;
@@ -33,6 +34,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
@@ -119,6 +121,9 @@ public class BRAPIController {
 
     @Autowired
     private CvService cvService = null;
+
+    @Autowired
+    private MarkerService markerService = null;
 
     @Autowired
     private DataSetService dataSetService = null;
@@ -728,6 +733,180 @@ public class BRAPIController {
 
     }
 
+
+    // *********************************************
+    // *************************** MARKER METHODS
+    // *********************************************
+    @RequestMapping(value = "/markers", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<MarkerDTO> createMarker(@RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            PayloadReader<MarkerDTO> payloadReader = new PayloadReader<>(MarkerDTO.class);
+            MarkerDTO markerDtoToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            MarkerDTO dataSetDTONew = markerService.createMarker(markerDtoToCreate);
+
+
+            PayloadWriter<MarkerDTO> payloadWriter = new PayloadWriter<>(request,
+                    MarkerDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_MARKERS,
+                    dataSetDTONew);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/markers/{markerId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<MarkerDTO> replaceMarker(@RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
+                                                      @PathVariable Integer markerId,
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response) {
+
+        PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<MarkerDTO> payloadReader = new PayloadReader<>(MarkerDTO.class);
+            MarkerDTO markerDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            MarkerDTO dataSetDTOReplaced = markerService.replaceMarker(markerId, markerDTOToReplace);
+
+
+            PayloadWriter<MarkerDTO> payloadWriter = new PayloadWriter<>(request,
+                    MarkerDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_MARKERS,
+                    dataSetDTOReplaced);
+//
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+    @RequestMapping(value = "/markers", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<MarkerDTO> getMarkers(HttpServletRequest request,
+                                                   HttpServletResponse response) {
+
+        PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            //PayloadReader<MarkerDTO> payloadReader = new PayloadReader<>(MarkerDTO.class);
+            List<MarkerDTO> markerDTOs = markerService.getMarkers();
+
+            PayloadWriter<MarkerDTO> payloadWriter = new PayloadWriter<>(request,
+                    MarkerDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    ServiceRequestId.URL_MARKERS,
+                    markerDTOs);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/markers/{markerId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<MarkerDTO> getMarkerById(@PathVariable Integer markerId,
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            MarkerDTO dataSetDTO = markerService.getMarkerById(markerId);
+
+            PayloadWriter<MarkerDTO> payloadWriter = new PayloadWriter<>(request,
+                    MarkerDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_MARKERS,
+                    dataSetDTO);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/marker-search",
+            params = {"name"},
+            method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<MarkerDTO> getMarkerByName(@RequestParam("name") String name,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            List<MarkerDTO> markersByName = markerService.getMarkersByName(name);
+
+            PayloadWriter<MarkerDTO> payloadWriter = new PayloadWriter<>(request,
+                    MarkerDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    ServiceRequestId.URL_MARKERS,
+                    markersByName);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
     // *********************************************
     // *************************** NameIDList

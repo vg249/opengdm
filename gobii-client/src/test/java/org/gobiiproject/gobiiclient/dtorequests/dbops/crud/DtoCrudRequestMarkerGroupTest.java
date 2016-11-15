@@ -3,22 +3,28 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestMarkerGroup;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -27,12 +33,51 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class DtoRequestMarkerGroupTest {
+
+public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
+
+
+        for (String currentMarkerName : validMarkerNames) {
+
+            makeMarker(currentMarkerName);
+
+        }
+
     }
+
+    private static void makeMarker(String markerName ) throws Exception {
+
+
+        RestUri restUriMarkerByName = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .markerssByQueryParams();
+        restUriMarkerByName.setParamValue("name", markerName);
+        RestResource<MarkerDTO> restResourceForProjects = new RestResource<>(restUriMarkerByName);
+        PayloadEnvelope<MarkerDTO> resultEnvelope = restResourceForProjects
+                .get(MarkerDTO.class);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+        if ((resultEnvelope.getPayload().getData().size() == 0)
+                || (resultEnvelope.getPayload().getData().get(0).getMarkerId() == 0)) {
+            MarkerDTO markerDTORequest = TestDtoFactory
+                    .makeMarkerDTO(markerName);
+
+            RestUri markerCollUri = ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceColl(ServiceRequestId.URL_MARKERS);
+            RestResource<MarkerDTO> restResourceForMarkerPost = new RestResource<>(markerCollUri);
+            resultEnvelope = restResourceForMarkerPost
+                    .post(MarkerDTO.class, new PayloadEnvelope<>(markerDTORequest, GobiiProcessType.CREATE));
+
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+        }
+    }
+
 
     @AfterClass
     public static void tearDownUpClass() throws Exception {
@@ -40,8 +85,8 @@ public class DtoRequestMarkerGroupTest {
     }
 
 
-
-    private List<String> validMarkerNames = Arrays.asList("4806",
+    private static List<String> validMarkerNames = Arrays.asList(
+            "4806",
             "4824",
             "4831",
             "7925",
@@ -56,7 +101,8 @@ public class DtoRequestMarkerGroupTest {
 
 
     @Test
-    public void testMarkerGroupCreate() throws Exception {
+    @Override
+    public void create() throws Exception {
 
         DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
 
@@ -71,7 +117,7 @@ public class DtoRequestMarkerGroupTest {
 
         Assert.assertNotEquals(null, markerGroupDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOResponse));
-        Assert.assertTrue(markerGroupDTOResponse.getMarkerGroupId() > 1);
+        Assert.assertTrue(markerGroupDTOResponse.getMarkerGroupId() > 0);
 
         Assert.assertNotNull(markerGroupDTOResponse.getMarkers());
 
@@ -173,7 +219,8 @@ public class DtoRequestMarkerGroupTest {
 
 
     @Test
-    public void testMarkerGroupGet() throws Exception {
+    @Override
+    public void get() throws Exception {
 
         // CREATE A MARKER GROUP
         DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
@@ -218,7 +265,8 @@ public class DtoRequestMarkerGroupTest {
 
 
     @Test
-    public void testUpdateMarkerGroup() throws Exception {
+    @Override
+    public void update() throws Exception {
 
         // CREATE A MARKER GROUP
         DtoRequestMarkerGroup dtoRequestMarkerGroup = new DtoRequestMarkerGroup();
@@ -240,8 +288,13 @@ public class DtoRequestMarkerGroupTest {
         String newName = UUID.randomUUID().toString();
         markerGroupDTOResponseToUpdate.setName(newName);
 
+
+        // make pre-requisite marker
+        String testMarkerName = "40539";
+        makeMarker(testMarkerName);
+
         MarkerGroupMarkerDTO markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
-        markerGroupMarkerDTOToAdd.setMarkerName("40539");
+        markerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
         markerGroupMarkerDTOToAdd.setFavorableAllele("N");
         String newMarkerName = markerGroupMarkerDTOToAdd.getMarkerName();
         markerGroupDTOResponseToUpdate.getMarkers().add(markerGroupMarkerDTOToAdd);
@@ -302,6 +355,11 @@ public class DtoRequestMarkerGroupTest {
                         .collect(Collectors.toList())
                         .size() == 1
         );
+
+    }
+
+    @Override
+    public void getList() throws Exception {
 
     }
 

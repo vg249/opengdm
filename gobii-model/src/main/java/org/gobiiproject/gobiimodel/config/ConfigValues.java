@@ -111,6 +111,8 @@ class ConfigValues {
 
         returnVal = cropRoot + crop + relativePath;
 
+        returnVal = returnVal.toLowerCase();
+
         return returnVal;
     } //
 

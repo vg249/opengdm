@@ -3,12 +3,11 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestCv;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
 import org.gobiiproject.gobiimodel.entity.CvItem;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -20,7 +19,7 @@ import org.junit.Test;
 
 import java.util.UUID;
 
-public class DtoRequestCvTest {
+public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -35,7 +34,8 @@ public class DtoRequestCvTest {
 
 
     @Test
-    public void testGetCvDetailsByCvId() throws Exception {
+    @Override
+    public void get() throws Exception {
         DtoRequestCv dtoRequestCv = new DtoRequestCv();
 
         CvDTO cvDTORequest = new CvDTO();
@@ -61,7 +61,8 @@ public class DtoRequestCvTest {
     } // testGetMarkers()
 
     @Test
-    public void testCreateCv() throws Exception {
+    @Override
+    public void create() throws Exception {
 
         DtoRequestCv dtoRequestCv = new DtoRequestCv();
         CvDTO cvDTORequest = TestDtoFactory
@@ -77,7 +78,8 @@ public class DtoRequestCvTest {
 
 
     @Test
-    public void testUpdateCv() throws Exception {
+    @Override
+    public void update() throws Exception {
         DtoRequestCv dtoRequestCv = new DtoRequestCv();
 
         // create a new cv for our test
@@ -108,6 +110,12 @@ public class DtoRequestCvTest {
         Assert.assertTrue(dtoRequestCvReRetrieved.getGroup().equals(newName));
 
     }
+
+    @Override
+    public void getList() throws Exception {
+
+    }
+
 
     @Test
     public void testDeleteCv() throws Exception {

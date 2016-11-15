@@ -1,15 +1,15 @@
-package org.gobiiproject.gobiiclient.dtorequests.dtorequest;
+package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestMapset;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
@@ -32,25 +32,24 @@ import java.util.stream.Collectors;
  * Created by Phil on 4/27/2016.
  * Modified by AVB on 10/01/2016.
  */
-public class DtoRequestMapsetTest {
+public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
 
-    private static UriFactory uriFactory;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
-        String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        DtoRequestMapsetTest.uriFactory = new UriFactory(currentCropContextRoot);
     }
 
     @AfterClass
     public static void tearDownUpClass() throws Exception {
         Assert.assertTrue(Authenticator.deAuthenticate());
     }
-
-    @Ignore
-    public void testMapsWithHttpGet() throws Exception {
-        RestUri restUriMapset = DtoRequestMapsetTest.uriFactory.resourceColl(ServiceRequestId.URL_MAPSET);
+    
+    @Override
+    public void get() throws Exception {
+        RestUri restUriMapset = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_MAPSET);
         RestResource<MapsetDTO> restResource = new RestResource<>(restUriMapset);
         PayloadEnvelope<MapsetDTO> resultEnvelope = restResource.get(MapsetDTO.class);
 
@@ -77,7 +76,8 @@ public class DtoRequestMapsetTest {
 
     //waiting for properties stored procedure change to test this
     @Test
-    public void testCreateMapset() throws Exception {
+    @Override
+    public void create() throws Exception {
         //get terms for mapset properties:
 //        DtoRequestNameIdList dtoRequestNameIdList = new DtoRequestNameIdList();
 //        NameIdListDTO nameIdListDTORequest = new NameIdListDTO();
@@ -87,7 +87,9 @@ public class DtoRequestMapsetTest {
 //        List<NameIdDTO> mapsetProperTerms = new ArrayList<>(nameIdListDTO
 //                .getNamesById());
 
-        RestUri namesUri = uriFactory.nameIdList();
+        RestUri namesUri = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .nameIdList();
         namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "mapset_type");
@@ -111,7 +113,8 @@ public class DtoRequestMapsetTest {
 
         Assert.assertNotEquals(null, mapsetDTOResponse);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(mapsetDTOResponse));
-        Assert.assertTrue(mapsetDTOResponse.getMapsetId() > 1);
+        Assert.assertTrue(mapsetDTOResponse.getMapsetId() > 0);
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MAPSETS, mapsetDTOResponse.getMapsetId());
 
         MapsetDTO mapsetDTORequestForParams = new MapsetDTO();
         mapsetDTORequestForParams.setMapsetId(mapsetDTOResponse.getMapsetId());
@@ -128,7 +131,8 @@ public class DtoRequestMapsetTest {
 
     //waiting for properties stored procedure change to test this
     @Test
-    public void testUpdateMapset() throws Exception {
+    @Override
+    public void update() throws Exception {
 
         DtoRequestMapset dtoRequestMapset = new DtoRequestMapset();
 
@@ -141,7 +145,9 @@ public class DtoRequestMapsetTest {
 //        List<NameIdDTO> mapsetProperTerms = new ArrayList<>(nameIdListDTO
 //                .getNamesById());
 
-        RestUri namesUri = uriFactory.nameIdList();
+        RestUri namesUri = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .nameIdList();
         namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "mapset_type");
@@ -198,6 +204,11 @@ public class DtoRequestMapsetTest {
                 .get(0);
 
         Assert.assertTrue(matchedProperty.getPropertyValue().equals(updatedPropertyValue));
+
+    }
+
+    @Override
+    public void getList() throws Exception {
 
     }
 }
