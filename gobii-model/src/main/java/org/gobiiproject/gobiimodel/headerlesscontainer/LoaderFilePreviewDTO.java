@@ -15,7 +15,7 @@ public class LoaderFilePreviewDTO extends DTOBase {
     private Integer id;
     private String directoryName;
     private String previewFileName;
-    private List<File> fileList =  new ArrayList<File>();
+    private List<String> fileList =  new ArrayList<String>();
     private List<String[]> filePreview = new ArrayList<String[]>(); //will contain the A list of 50 rows with 50 items each.
 
 
@@ -47,11 +47,11 @@ public class LoaderFilePreviewDTO extends DTOBase {
         this.previewFileName = previewFileName;
     }
 
-    public List<File> getFileList() {
+    public List<String> getFileList() {
         return fileList;
     }
 
-    public void setFileList(List<File> fileList) {
+    public void setFileList(List<String> fileList) {
         this.fileList = fileList;
     }
 

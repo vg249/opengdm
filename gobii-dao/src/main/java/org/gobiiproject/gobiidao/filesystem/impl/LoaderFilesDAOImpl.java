@@ -8,12 +8,11 @@ import org.gobiiproject.gobiidao.filesystem.LoaderInstructionsDAO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderFilePreviewDTO;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Created by Phil on 4/12/2016.
@@ -43,24 +42,92 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
     }
 
     @Override
-    public LoaderFilePreviewDTO makeDirectory(String directoryName) throws GobiiDaoException {
+    public LoaderFilePreviewDTO makeDirectory(String directoryPath) throws GobiiDaoException {
         LoaderFilePreviewDTO returnVal = new LoaderFilePreviewDTO();
-        if (!doesPathExist(directoryName)) {
+        if (!doesPathExist(directoryPath)) {
 
-            File pathToCreate = new File(directoryName);
+            File pathToCreate = new File(directoryPath);
 
             if (!pathToCreate.mkdirs()) {
-                throw new GobiiDaoException("Unable to create directory " + directoryName);
+                throw new GobiiDaoException("Unable to create directory " + directoryPath);
             }
 
-            verifyDirectoryPermissions(directoryName);
+            verifyDirectoryPermissions(directoryPath);
             returnVal.setDirectoryName(pathToCreate.getName());
 
         } else {
-            throw new GobiiDaoException("The specified path already exists: " + directoryName);
+            throw new GobiiDaoException("The specified path already exists: " + directoryPath);
         }
 
         return returnVal;
     }
+
+    @Override
+    public LoaderFilePreviewDTO getPreview(String directoryPath, String fileFormat) throws GobiiDaoException {
+        LoaderFilePreviewDTO returnVal = new LoaderFilePreviewDTO();
+
+        String extension ="."+fileFormat;
+        File directory = new File(directoryPath);
+        File[] files = directory.listFiles();
+
+
+        if(files.length==0){
+            throw new GobiiDaoException("There are no files in this directory:" + directory.getName());
+        }else {
+            for (File file : files) {
+                if (file.getName().endsWith(extension)) {
+                    if (returnVal.getFileList().isEmpty()) {//if first file in directory, get preview
+                      returnVal.setFilePreview(getFilePreview(file, fileFormat));
+                    }
+
+                }
+            }
+        }
+        return returnVal;
+    }
+
+    private List<String[]> getFilePreview(File file, String fileFormat) {
+        List<String[]> returnVal = new ArrayList<String[]>();
+        Scanner input = new Scanner(System.in);
+        try {
+            int lineCtr = 0; //count lines read
+            input = new Scanner(file);
+            while (lineCtr<50) { //read first 50 lines only
+                int ctr=0; //count words stored
+                List<String> lineRead = new ArrayList<String>();
+                String line = input.nextLine();
+                for(String s: line.split(getDelimiterFor(fileFormat))){
+                    if(ctr==50) break;
+                    else{
+                        lineRead.add(s);
+                        ctr++;
+                    }
+                }
+                returnVal.add(lineRead.toArray(new String[lineRead.size()]));
+                lineCtr++;
+            }
+            input.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return returnVal;
+    }
+
+    private String getDelimiterFor(String fileFormat) {
+        String delimiter;
+        switch (fileFormat) {
+            case "csv":
+                delimiter = ",";
+                break;
+            case "txt":
+                delimiter = ".";
+                break;
+            default:
+                throw new GobiiDaoException("File Format not supported: " + fileFormat);
+        }
+        return delimiter;
+    }
+
 
 } // LoaderInstructionsDAOImpl

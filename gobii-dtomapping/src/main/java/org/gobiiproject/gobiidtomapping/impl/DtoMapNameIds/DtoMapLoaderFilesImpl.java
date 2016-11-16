@@ -60,42 +60,28 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
             }
         }
 
-        System.out.println("fileCropDirectory: "+ fileCropDirectory);
         returnVal.setId(0); //this is arbitrary for now
         return returnVal;
 
     } // createDirectories()
 
     public LoaderFilePreviewDTO getPreview(String cropType, String directoryName, String fileFormat) throws GobiiDaoException {
-        LoaderFilePreviewDTO returnVal = new LoaderFilePreviewDTO();
-        String fileCropDirectory = null;
+        LoaderFilePreviewDTO returnVal = null;
+
         ConfigSettings configSettings = new ConfigSettings();
+        String fileCropDirectory = null;
         try {
             fileCropDirectory = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.RAW_USER_FILES);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (null != fileCropDirectory) {
-            if (!loaderFilesDAO.doesPathExist(fileCropDirectory)) {
-                loaderFilesDAO.makeDirectory(fileCropDirectory);
-            } else {
-                loaderFilesDAO.verifyDirectoryPermissions(fileCropDirectory);
+        String directoryPath = fileCropDirectory+ File.separator + directoryName;
+        if (!loaderFilesDAO.doesPathExist(directoryPath)) {
+                throw new GobiiDaoException("The specified directory does not exist: " + directoryName);
+            }else{
+                returnVal = loaderFilesDAO.getPreview(directoryPath, fileFormat);
             }
-
-            System.out.println("fileCropDirectory: "+ fileCropDirectory);
-        }
-
-        if (null != directoryName) {
-            String directoryPath = fileCropDirectory+ File.separator + directoryName;
-            if (!loaderFilesDAO.doesPathExist(directoryName)) {
-                returnVal = loaderFilesDAO.makeDirectory(directoryName);
-            } else {
-                loaderFilesDAO.verifyDirectoryPermissions(directoryName);
-            }
-        }
-
-        System.out.println("fileCropDirectory: "+ fileCropDirectory);
         returnVal.setId(0); //this is arbitrary for now
         return returnVal;
 

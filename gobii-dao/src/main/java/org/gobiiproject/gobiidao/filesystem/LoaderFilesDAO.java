@@ -13,8 +13,10 @@ public interface LoaderFilesDAO {
 
     boolean doesPathExist(String pathName) throws GobiiDaoException;
 
-    LoaderFilePreviewDTO makeDirectory(String directoryName) throws GobiiDaoException;
+    LoaderFilePreviewDTO makeDirectory(String directoryPath) throws GobiiDaoException;
 
     void verifyDirectoryPermissions(String pathName) throws GobiiDaoException;
+
+    LoaderFilePreviewDTO getPreview(String directoryPath, String fileExtension) throws GobiiDaoException;
 
 }
