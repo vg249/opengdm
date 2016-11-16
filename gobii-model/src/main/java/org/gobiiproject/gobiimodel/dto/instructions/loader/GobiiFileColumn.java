@@ -30,9 +30,10 @@ public class GobiiFileColumn {
     private String constantValue = null;
     //Name of other digest file to dereference to determine the value of this entry (Unused)
     private String index = null;
+
     //If true, this column is affixed to the previous column (and header is removed)
     private boolean subcolumn = false;
-    //Delimited to use to affix this column to the previous column.
+    //Delimiter to use to affix this column to the previous column.
     private String subcolumnDelimiter = null;
 
     private DataSetType dataSetType = DataSetType.IUPAC;
