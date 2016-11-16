@@ -79,8 +79,11 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
                     if (returnVal.getFileList().isEmpty()) {//if first file in directory, get preview
                       returnVal.setFilePreview(getFilePreview(file, fileFormat));
                     }
-
+                    returnVal.getFileList().add(file.getName());
                 }
+            }
+            if (returnVal.getFileList().isEmpty()) {//if no files are found that matches format
+                throw new GobiiDaoException("There are no files of the specified format in the directory:" + directory.getName());
             }
         }
         return returnVal;

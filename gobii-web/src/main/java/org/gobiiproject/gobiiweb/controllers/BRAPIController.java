@@ -1450,7 +1450,7 @@ public class BRAPIController {
             method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<LoaderFilePreviewDTO> getFilePreviewBySearch(@PathVariable("directoryName") String directoryName,
-                                                              @RequestParam("fileFormat") String fileFormat,
+                                                                        @RequestParam(value = "fileFormat", required = false) String fileFormat,
                                                            HttpServletRequest request,
                                                            HttpServletResponse response) {
 

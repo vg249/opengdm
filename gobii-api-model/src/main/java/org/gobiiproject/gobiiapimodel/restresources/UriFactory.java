@@ -209,5 +209,19 @@ public class UriFactory {
         return returnVal;
 
     } //
+    public RestUri fileLoaderPreviewQuery() throws Exception {
 
+
+        RestUri returnVal;
+
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+                this.cropContextRoot,
+                ServiceRequestId.URL_FILE_LOAD);
+
+        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("directoryName"));
+        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "fileFormat");
+
+        return returnVal;
+
+    } // resourceByUriIdParam();
 }

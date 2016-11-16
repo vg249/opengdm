@@ -62,4 +62,21 @@ public class DtoRequestLoaderFilePreviewTest {
         Assert.assertNotNull(loaderFilePreviewDTO.getDirectoryName());
 
     }
+
+    @Test
+    public void testGetFilePreview() throws Exception {
+        LoaderFilePreviewDTO loaderFilePreviewDTO = new LoaderFilePreviewDTO();
+        RestUri namesUri = uriFactory.fileLoaderPreviewQuery();
+        namesUri.setParamValue("directoryName", "NewFilePreviewDirectory");
+
+        RestResource<LoaderFilePreviewDTO> restResource = new RestResource<>(namesUri);
+        PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelope = restResource.get(LoaderFilePreviewDTO.class);
+
+
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        LoaderFilePreviewDTO resultLoaderFilePreviewDTO = resultEnvelope.getPayload().getData().get(0);
+        Assert.assertNotNull(loaderFilePreviewDTO.getDirectoryName());
+
+    }
 }
