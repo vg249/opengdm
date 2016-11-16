@@ -68,6 +68,7 @@ public class DtoRequestLoaderFilePreviewTest {
         LoaderFilePreviewDTO loaderFilePreviewDTO = new LoaderFilePreviewDTO();
         RestUri namesUri = uriFactory.fileLoaderPreviewQuery();
         namesUri.setParamValue("directoryName", "NewFilePreviewDirectory");
+        namesUri.setParamValue("fileFormat", "txt");
 
         RestResource<LoaderFilePreviewDTO> restResource = new RestResource<>(namesUri);
         PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelope = restResource.get(LoaderFilePreviewDTO.class);
