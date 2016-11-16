@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Base Extractor Instruction class. Contains common data fields for an extractor request.
+ * Represents a complete extraction request.
+ * @see GobiiDataSetExtract for data related to specific data sets
  * Created by Phil on 6/6/2016.
  */
 public class GobiiExtractorInstruction {
