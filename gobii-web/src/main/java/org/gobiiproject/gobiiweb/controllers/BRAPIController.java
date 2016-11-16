@@ -6,40 +6,14 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.gobiiproject.gobidomain.services.AnalysisService;
-import org.gobiiproject.gobidomain.services.ConfigSettingsService;
-import org.gobiiproject.gobidomain.services.ContactService;
-import org.gobiiproject.gobidomain.services.CvService;
-import org.gobiiproject.gobidomain.services.DataSetService;
-import org.gobiiproject.gobidomain.services.DisplayService;
-import org.gobiiproject.gobidomain.services.ExperimentService;
-import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
-import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
-import org.gobiiproject.gobidomain.services.ManifestService;
-import org.gobiiproject.gobidomain.services.MapsetService;
-import org.gobiiproject.gobidomain.services.MarkerGroupService;
-import org.gobiiproject.gobidomain.services.NameIdListService;
-import org.gobiiproject.gobidomain.services.OrganizationService;
-import org.gobiiproject.gobidomain.services.PingService;
-import org.gobiiproject.gobidomain.services.PlatformService;
-import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobidomain.services.ReferenceService;
+import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.EntityNameConverter;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -113,6 +87,9 @@ public class BRAPIController {
 
     @Autowired
     private ExtractorInstructionFilesService extractorInstructionFilesService = null;
+
+    @Autowired
+    private LoaderFilesService loaderFilesService = null;
 
     @Autowired
     private DisplayService displayService = null;
@@ -1428,6 +1405,79 @@ public class BRAPIController {
 
         return (returnVal);
 
+    }
+
+    // *********************************************
+    // *************************** FILE PREVIEW METHODS
+    // *********************************************
+
+
+    @RequestMapping(value = "/files/loader/{directoryName}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<LoaderFilePreviewDTO> createLoaderFileDirectory(@PathVariable("directoryName") String directoryName,
+                                                                           @RequestBody PayloadEnvelope<LoaderFilePreviewDTO> payloadEnvelope,
+                                                                      HttpServletRequest request,
+                                                                      HttpServletResponse response) {
+
+        PayloadEnvelope<LoaderFilePreviewDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            LoaderFilePreviewDTO loaderFilePreviewDTO = loaderFilesService.makeDirectory(cropType, directoryName);
+            PayloadWriter<LoaderFilePreviewDTO> payloadWriter = new PayloadWriter<>(request,
+                    LoaderFilePreviewDTO.class);
+
+            payloadWriter.writeSingleItemForId(returnVal,
+                    ServiceRequestId.URL_FILE_LOAD,
+                    loaderFilePreviewDTO,
+                    loaderFilePreviewDTO.getDirectoryName());
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/files/loader/{directoryName}",
+            params = {"fileFormat"},
+            method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<LoaderFilePreviewDTO> getFilePreviewBySearch(@PathVariable("directoryName") String directoryName,
+                                                              @RequestParam("fileFormat") String fileFormat,
+                                                           HttpServletRequest request,
+                                                           HttpServletResponse response) {
+
+
+        PayloadEnvelope<LoaderFilePreviewDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            LoaderFilePreviewDTO loaderFilePreviewDTO = loaderFilesService.getPreview(cropType, directoryName, fileFormat);
+            PayloadWriter<LoaderFilePreviewDTO> payloadWriter = new PayloadWriter<>(request,
+                    LoaderFilePreviewDTO.class);
+
+            payloadWriter.writeSingleItemForId(returnVal,
+                    ServiceRequestId.URL_FILE_LOAD,
+                    loaderFilePreviewDTO,
+                    loaderFilePreviewDTO.getDirectoryName());
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
     }
 
 

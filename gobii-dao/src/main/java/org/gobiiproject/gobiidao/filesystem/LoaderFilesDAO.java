@@ -1,0 +1,20 @@
+package org.gobiiproject.gobiidao.filesystem;
+
+import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderFilePreviewDTO;
+
+import java.util.List;
+
+/**
+ * Created by Phil on 4/12/2016.
+ */
+public interface LoaderFilesDAO {
+
+    boolean doesPathExist(String pathName) throws GobiiDaoException;
+
+    LoaderFilePreviewDTO makeDirectory(String directoryName) throws GobiiDaoException;
+
+    void verifyDirectoryPermissions(String pathName) throws GobiiDaoException;
+
+}
