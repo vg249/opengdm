@@ -3,13 +3,18 @@ package org.gobiiproject.gobiimodel.dto.instructions.extractor;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 
 /**
+ * Data Set-Specific extract. Each represents a single data set extracting to a unique file name.
  * Created by Phil on 6/6/2016.
  */
 public class GobiiDataSetExtract {
 
+    //Type of file to export (or meta data without separate data entries
     private GobiiFileType gobiiFileType = null;
+    //Combine data sets into a single output file (Unused/unsupported)
     private boolean accolate = false;
+    //Descriptive name of the data set. Used in reporting
     private String dataSetName = null;
+    //Internal ID of the data set. Used for internal lookups.
     private Integer dataSetId = null;
     String extractDestinationDirectory = null;
 
