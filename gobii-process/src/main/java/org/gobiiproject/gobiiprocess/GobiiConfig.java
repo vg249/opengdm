@@ -73,7 +73,6 @@ public class GobiiConfig {
     private static String CONFIG_TST_GLOBAL_SSH_HOST = "gtsh";
     private static String CONFIG_TST_GLOBAL_SSH_PORT = "gtsp";
     private static String CONFIG_TST_GLOBAL_SSH_FLAG = "gtsf";
-    private static String CONFIG_TST_GLOBAL_CONFIG_FQPN = "gtcq";
     private static String CONFIG_TST_GLOBAL_CONFIG_DIR_TEST = "gtcd";
     private static String CONFIG_TST_GLOBAL_CONFIG_UTIL_CMD_STEM = "gtcs";
     private static String CONFIG_TST_GLOBAL_CONFIG_CROP_ID = "gtcr";
@@ -227,7 +226,6 @@ public class GobiiConfig {
             setOption(options, CONFIG_TST_GLOBAL_SSH_HOST, true, "test option: host for ssh", "ssh host");
             setOption(options, CONFIG_TST_GLOBAL_SSH_PORT, true, "test option: port for ssh", "ssh port");
             setOption(options, CONFIG_TST_GLOBAL_SSH_FLAG, true, "test option: flag to test SSH", "ssh flag");
-            setOption(options, CONFIG_TST_GLOBAL_CONFIG_FQPN, true, "fqpn of configuration file of reocrd for automated testing", "config fqpn");
             setOption(options, CONFIG_TST_GLOBAL_CONFIG_DIR_TEST, true, "directory for creating test configuration files", "test directory");
             setOption(options, CONFIG_TST_GLOBAL_CONFIG_UTIL_CMD_STEM, true, "configuration utility command to which command args are appended", "config cmd");
             setOption(options, CONFIG_TST_GLOBAL_CONFIG_CROP_ID, true, "Crop to use for automated testing", "crop id");
@@ -600,13 +598,6 @@ public class GobiiConfig {
                     configSettings.getTestExecConfig().setTestSsh(isTestSsh);
                 }
 
-                if (commandLine.hasOption(CONFIG_TST_GLOBAL_CONFIG_FQPN)) {
-                    configFileFqpn = commandLine.getOptionValue(CONFIG_TST_GLOBAL_CONFIG_FQPN);
-                    argsSet.add(CONFIG_TST_GLOBAL_CONFIG_FQPN);
-                    valsSet.add(configFileFqpn);
-                    configSettings.getTestExecConfig().setConfigFileFqpn(configFileFqpn);
-                }
-
                 if (commandLine.hasOption(CONFIG_TST_GLOBAL_CONFIG_DIR_TEST)) {
                     configFileTestDirectory = commandLine.getOptionValue(CONFIG_TST_GLOBAL_CONFIG_DIR_TEST);
                     argsSet.add(CONFIG_TST_GLOBAL_CONFIG_DIR_TEST);
@@ -889,17 +880,17 @@ public class GobiiConfig {
                 }
 
 
-                if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getConfigFileFqpn())) {
-                    System.err.println("A configuration file for testing is not defined");
-                    returnVal = false;
-                } else {
-                    File fqpnFile = new File(configSettings.getTestExecConfig().getConfigFileFqpn());
-                    if (!fqpnFile.exists()) {
-                        System.err.println("The specified configuration file for testing does not exist: " +
-                                configSettings.getTestExecConfig().getConfigFileFqpn());
-                        returnVal = false;
-                    }
-                }
+//                if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getConfigFileFqpn())) {
+//                    System.err.println("A configuration file for testing is not defined");
+//                    returnVal = false;
+//                } else {
+//                    File fqpnFile = new File(configSettings.getTestExecConfig().getConfigFileFqpn());
+//                    if (!fqpnFile.exists()) {
+//                        System.err.println("The specified configuration file for testing does not exist: " +
+//                                configSettings.getTestExecConfig().getConfigFileFqpn());
+//                        returnVal = false;
+//                    }
+//                }
 
 
                 if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getConfigFileTestDirectory())) {

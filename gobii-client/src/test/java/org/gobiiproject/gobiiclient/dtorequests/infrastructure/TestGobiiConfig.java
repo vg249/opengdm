@@ -327,7 +327,6 @@ public class TestGobiiConfig {
 
         String testFileFqpn = makeTestFileFqpn("testvals");
 
-        String configFileFqpn = "fqpn_" + UUID.randomUUID().toString();
         String configFileTestDirectory = "test_dir_" + UUID.randomUUID().toString();
         String configUtilCommandlineStem = "comandstem_" + UUID.randomUUID().toString();
         String initialConfigUrl = "configurl_" + UUID.randomUUID().toString();
@@ -342,8 +341,6 @@ public class TestGobiiConfig {
                 + " -gt "
                 + " -gtcd "
                 + configFileTestDirectory
-                + " -gtcq "
-                + configFileFqpn
                 + " -gtcr "
                 + testCrop
                 + " -gtcs "
@@ -367,7 +364,6 @@ public class TestGobiiConfig {
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
 
 
-        Assert.assertTrue("Config test value does not match: configFileFqpn", configSettings.getTestExecConfig().getConfigFileFqpn().equals(configFileFqpn));
         Assert.assertTrue("Config test value does not match: test directory", configSettings.getTestExecConfig().getConfigFileTestDirectory().equals(configFileTestDirectory));
         Assert.assertTrue("Config test value does not match: commandline stem", configSettings.getTestExecConfig().getConfigUtilCommandlineStem().equals(configUtilCommandlineStem));
         Assert.assertTrue("Config test value does not match: config URL", configSettings.getTestExecConfig().getInitialConfigUrl().equals(initialConfigUrl));
@@ -736,8 +732,6 @@ public class TestGobiiConfig {
                 + " -gt "
                 + " -gtcd "
                 + configFileTestDirectory
-                + " -gtcq "
-                + testFileFqpn
                 + " -gtcr "
                 + cropIdDev // SIC
                 + " -gtcs "

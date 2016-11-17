@@ -26,9 +26,6 @@ public class TestExecConfig {
     private boolean isTestSsh = false;
 
     @Element(required = false)
-    private String configFileFqpn = "/gobii-config/gobii-web.properties";
-
-    @Element(required = false)
     private String configFileTestDirectory = "/gobii-config-test";
 
     @Element(required = false)
@@ -84,15 +81,6 @@ public class TestExecConfig {
 
     public TestExecConfig setTestSsh(boolean testSsh) {
         isTestSsh = testSsh;
-        return this;
-    }
-
-    public String getConfigFileFqpn() {
-        return configFileFqpn;
-    }
-
-    public TestExecConfig setConfigFileFqpn(String configFileFqpn) {
-        this.configFileFqpn = configFileFqpn;
         return this;
     }
 
