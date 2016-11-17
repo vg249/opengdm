@@ -37,7 +37,7 @@ public class ServerConfig {
                 .put(GobiiFileProcessDir.LOADER_INSTRUCTIONS, loaderInstructionsDir);
 
         fileLocations
-                .put(GobiiFileProcessDir.INTERMEDIATE_FILES, intermediateFilesDir);
+                .put(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES, intermediateFilesDir);
 
         fileLocations
                 .put(GobiiFileProcessDir.RAW_USER_FILES, rawUserFilesDir);

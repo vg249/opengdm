@@ -63,7 +63,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         String digesterOutputDirectory =
                 ClientContext.getInstance(null, false)
-                        .getFileLocationOfCurrenCrop(GobiiFileProcessDir.INTERMEDIATE_FILES);
+                        .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
 
         loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
 

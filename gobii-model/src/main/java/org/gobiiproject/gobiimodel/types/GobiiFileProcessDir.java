@@ -6,7 +6,8 @@ package org.gobiiproject.gobiimodel.types;
 public enum GobiiFileProcessDir {
     RAW_USER_FILES,
     LOADER_INSTRUCTIONS,
-    INTERMEDIATE_FILES,
+    LOADER_INTERMEDIATE_FILES,
+    LOADER_INPROGRESS_FILES,
     EXTRACTOR_INSTRUCTIONS,
     EXTRACTOR_OUTPUT,
     QC_NOTIFICATIONS
