@@ -880,19 +880,6 @@ public class GobiiConfig {
                 }
 
 
-//                if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getConfigFileFqpn())) {
-//                    System.err.println("A configuration file for testing is not defined");
-//                    returnVal = false;
-//                } else {
-//                    File fqpnFile = new File(configSettings.getTestExecConfig().getConfigFileFqpn());
-//                    if (!fqpnFile.exists()) {
-//                        System.err.println("The specified configuration file for testing does not exist: " +
-//                                configSettings.getTestExecConfig().getConfigFileFqpn());
-//                        returnVal = false;
-//                    }
-//                }
-
-
                 if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getConfigFileTestDirectory())) {
                     System.err.println("A a directory for test files is not defined");
                     returnVal = false;
