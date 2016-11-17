@@ -1059,7 +1059,7 @@ public class GobiiConfig {
             GobiiConfig.printField("User file upload directory", ClientContext.getInstance(null, false)
                     .getFileLocationOfCurrenCrop(GobiiFileProcessDir.RAW_USER_FILES));
             GobiiConfig.printField("Digester output directory ", ClientContext.getInstance(null, false)
-                    .getFileLocationOfCurrenCrop(GobiiFileProcessDir.INTERMEDIATE_FILES));
+                    .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES));
             GobiiConfig.printField("Extractor instructions directory", ClientContext.getInstance(null, false)
                     .getFileLocationOfCurrenCrop(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS));
 

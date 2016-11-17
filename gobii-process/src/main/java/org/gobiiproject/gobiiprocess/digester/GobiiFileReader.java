@@ -309,7 +309,7 @@ public class GobiiFileReader {
 			String pathToIFL=loaderScriptPath+"postgres/gobii_ifl/gobii_ifl.py";
 			String outputDir = null;
 			try {
-				outputDir = " -o " + configuration.getProcessingPath(crop, GobiiFileProcessDir.INTERMEDIATE_FILES);
+				outputDir = " -o " + configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
 			} catch(Exception e) {
 				logError("Path Retrieval", "Error retrieving intermediate file path", e);
 			}

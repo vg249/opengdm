@@ -98,7 +98,7 @@ public final class ClientContext {
                         configSettings.getProcessingPath(currentCropConfig.getGobiiCropType(),
                                 GobiiFileProcessDir.LOADER_INSTRUCTIONS),
                         configSettings.getProcessingPath(currentCropConfig.getGobiiCropType(),
-                                GobiiFileProcessDir.INTERMEDIATE_FILES),
+                                GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES),
                         configSettings.getProcessingPath(currentCropConfig.getGobiiCropType(),
                                 GobiiFileProcessDir.RAW_USER_FILES)
                 );
