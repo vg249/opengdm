@@ -1427,10 +1427,9 @@ public class BRAPIController {
             PayloadWriter<LoaderFilePreviewDTO> payloadWriter = new PayloadWriter<>(request,
                     LoaderFilePreviewDTO.class);
 
-            payloadWriter.writeSingleItemForId(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_FILE_LOAD,
-                    loaderFilePreviewDTO,
-                    loaderFilePreviewDTO.getDirectoryName());
+                    loaderFilePreviewDTO);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1463,10 +1462,9 @@ public class BRAPIController {
             PayloadWriter<LoaderFilePreviewDTO> payloadWriter = new PayloadWriter<>(request,
                     LoaderFilePreviewDTO.class);
 
-            payloadWriter.writeSingleItemForId(returnVal,
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_FILE_LOAD,
-                    loaderFilePreviewDTO,
-                    loaderFilePreviewDTO.getDirectoryName());
+                    loaderFilePreviewDTO);
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);

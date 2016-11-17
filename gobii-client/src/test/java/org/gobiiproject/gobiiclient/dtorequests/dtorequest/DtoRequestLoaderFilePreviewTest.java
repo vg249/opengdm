@@ -73,8 +73,6 @@ public class DtoRequestLoaderFilePreviewTest {
         RestResource<LoaderFilePreviewDTO> restResource = new RestResource<>(namesUri);
         PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelope = restResource.get(LoaderFilePreviewDTO.class);
 
-
-
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         LoaderFilePreviewDTO resultLoaderFilePreviewDTO = resultEnvelope.getPayload().getData().get(0);
         Assert.assertNotNull(loaderFilePreviewDTO.getDirectoryName());

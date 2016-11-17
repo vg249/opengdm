@@ -14,8 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+
 /**
- * Created by Phil on 4/12/2016.
+ * Created by Angel on 11/2016.
  */
 public class LoaderFilesDAOImpl implements LoaderFilesDAO {
 
@@ -89,8 +90,8 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
         return returnVal;
     }
 
-    private List<String[]> getFilePreview(File file, String fileFormat) {
-        List<String[]> returnVal = new ArrayList<String[]>();
+    private List<List<String>> getFilePreview(File file, String fileFormat) {
+        List<List<String>> returnVal = new ArrayList<List<String>>();
         Scanner input = new Scanner(System.in);
         try {
             int lineCtr = 0; //count lines read
@@ -106,12 +107,12 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
                         ctr++;
                     }
                 }
-                returnVal.add(lineRead.toArray(new String[lineRead.size()]));
+                returnVal.add(lineRead);
                 lineCtr++;
             }
             input.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw new GobiiDaoException("Cannot find file. " + e.getMessage());
         }
 
         return returnVal;
@@ -124,7 +125,7 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
                 delimiter = ",";
                 break;
             case "txt":
-                delimiter = ".";
+                delimiter = "\t";
                 break;
             default:
                 throw new GobiiDaoException("File Format not supported: " + fileFormat);

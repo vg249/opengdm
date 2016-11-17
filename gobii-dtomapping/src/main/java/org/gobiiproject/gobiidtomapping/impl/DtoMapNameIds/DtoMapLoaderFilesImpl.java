@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Created by Phil on 4/12/2016.
+ * Created by Angel on 11/2016.
  */
 public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
 
@@ -38,7 +38,7 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
         try {
             fileCropDirectory = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.RAW_USER_FILES);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GobiiDaoException("could not get processing path because of: " + e.getMessage());
         }
 
         if (null != fileCropDirectory) {
@@ -47,12 +47,10 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
             } else {
                 loaderFilesDAO.verifyDirectoryPermissions(fileCropDirectory);
             }
-
-            System.out.println("fileCropDirectory: "+ fileCropDirectory);
         }
 
         if (null != directoryName) {
-            String directoryPath = fileCropDirectory+ File.separator + directoryName;
+            String directoryPath = fileCropDirectory+ directoryName;
             if (!loaderFilesDAO.doesPathExist(directoryName)) {
                 returnVal = loaderFilesDAO.makeDirectory(directoryName);
             } else {
@@ -73,14 +71,15 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
         try {
             fileCropDirectory = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.RAW_USER_FILES);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GobiiDaoException("could not get processing path because of: " + e.getMessage());
         }
 
-        String directoryPath = fileCropDirectory+ File.separator + directoryName;
+        String directoryPath = fileCropDirectory+ directoryName;
         if (!loaderFilesDAO.doesPathExist(directoryPath)) {
-                throw new GobiiDaoException("The specified directory does not exist: " + directoryName);
+                throw new GobiiDaoException("The specified directory does not exist: " + directoryPath);
             }else{
                 returnVal = loaderFilesDAO.getPreview(directoryPath, fileFormat);
+                returnVal.setDirectoryName(directoryName);
             }
         returnVal.setId(0); //this is arbitrary for now
         return returnVal;

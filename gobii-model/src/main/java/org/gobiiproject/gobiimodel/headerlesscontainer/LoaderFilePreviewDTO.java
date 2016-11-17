@@ -8,15 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Phil on 4/8/2016.
+ * Created by Angel on 11/2016.
  */
 public class LoaderFilePreviewDTO extends DTOBase {
 
-    private Integer id;
+    private Integer id=0;
     private String directoryName;
     private String previewFileName;
     private List<String> fileList =  new ArrayList<String>();
-    private List<String[]> filePreview = new ArrayList<String[]>(); //will contain the A list of 50 rows with 50 items each.
+    private List<List<String>> filePreview = new ArrayList<List<String>>(); //will contain the A list of 50 rows with 50 items each.
 
 
     @Override
@@ -55,11 +55,11 @@ public class LoaderFilePreviewDTO extends DTOBase {
         this.fileList = fileList;
     }
 
-    public List<String[]> getFilePreview() {
+    public List<List<String>> getFilePreview() {
         return filePreview;
     }
 
-    public void setFilePreview(List<String[]> filePreview) {
+    public void setFilePreview(List<List<String>> filePreview) {
         this.filePreview = filePreview;
     }
 
