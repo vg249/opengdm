@@ -270,7 +270,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         DtoRestRequestUtils<PlatformDTO> dtoDtoRestRequestUtils =
                 new DtoRestRequestUtils<>(PlatformDTO.class, ServiceRequestId.URL_PLATFORM);
         Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
-        Integer nonExistentId = ++maxId;
+        Integer nonExistentId = maxId + 1;
 
 
         PayloadEnvelope<PlatformDTO> resultEnvelope

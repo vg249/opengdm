@@ -82,7 +82,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
         DtoRestRequestUtils<MarkerDTO> dtoDtoRestRequestUtils =
                 new DtoRestRequestUtils<>(MarkerDTO.class,ServiceRequestId.URL_MARKERS);
         Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
-        Integer nonExistentId = ++maxId;
+        Integer nonExistentId = maxId + 1;
 
 
         PayloadEnvelope<MarkerDTO> resultEnvelope =

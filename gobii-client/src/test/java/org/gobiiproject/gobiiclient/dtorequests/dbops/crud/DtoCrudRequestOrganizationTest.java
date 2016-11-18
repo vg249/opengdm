@@ -179,7 +179,7 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
         DtoRestRequestUtils<OrganizationDTO> dtoDtoRestRequestUtils =
                 new DtoRestRequestUtils<>(OrganizationDTO.class,ServiceRequestId.URL_ORGANIZATION);
         Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
-        Integer nonExistentId = ++maxId;
+        Integer nonExistentId = maxId + 1;
 
 
         PayloadEnvelope<OrganizationDTO> resultEnvelope =

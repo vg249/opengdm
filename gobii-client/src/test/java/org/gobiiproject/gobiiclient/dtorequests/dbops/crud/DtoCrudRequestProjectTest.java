@@ -132,7 +132,7 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
         DtoRestRequestUtils<ProjectDTO> dtoDtoRestRequestUtils =
                 new DtoRestRequestUtils<>(ProjectDTO.class,ServiceRequestId.URL_PROJECTS);
         Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
-        Integer nonExistentId = ++maxId;
+        Integer nonExistentId = maxId + 1;
 
 
         PayloadEnvelope<ProjectDTO> resultEnvelope =

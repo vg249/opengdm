@@ -83,7 +83,7 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
         DtoRestRequestUtils<ExperimentDTO> dtoDtoRestRequestUtils =
                 new DtoRestRequestUtils<>(ExperimentDTO.class,ServiceRequestId.URL_EXPERIMENTS);
         Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
-        Integer nonExistentId = ++maxId;
+        Integer nonExistentId = maxId + 1;
 
 
 

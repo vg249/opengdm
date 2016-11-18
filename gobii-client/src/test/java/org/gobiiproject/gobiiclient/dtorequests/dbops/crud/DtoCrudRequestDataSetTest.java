@@ -92,7 +92,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         DtoRestRequestUtils<DataSetDTO> dtoDtoRestRequestUtils =
                 new DtoRestRequestUtils<>(DataSetDTO.class,ServiceRequestId.URL_DATASETS);
         Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
-        Integer nonExistentId = ++maxId;
+        Integer nonExistentId = maxId + 1;
 
         PayloadEnvelope<DataSetDTO> resultEnvelope =
                 dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());

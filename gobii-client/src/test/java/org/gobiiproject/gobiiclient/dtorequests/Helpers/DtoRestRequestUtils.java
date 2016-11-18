@@ -28,11 +28,24 @@ public class DtoRestRequestUtils<T extends DTOBase> {
     private Class<T> dtoType;
     private ServiceRequestId serviceRequestId;
 
+    /**
+     * Constructs a DtoRestRequestUtils specic to a DTO type and a ServiceRequestId enum value.
+     * @param dtoType
+     * The class type of the DTO
+     * @param serviceRequestId
+     * The ServiceReuqestId for the corresponding URI
+     */
     public DtoRestRequestUtils(Class<T> dtoType, ServiceRequestId serviceRequestId) {
         this.dtoType = dtoType;
         this.serviceRequestId = serviceRequestId;
     }
 
+    /**
+     * Returns a PaylaodEnvelope containing a list of the specified type.
+     * If there is no data for the entity, the list should be empty.
+     * @return A list of T
+     * @throws Exception
+     */
     public PayloadEnvelope<T> getEnvelopeResultList() throws Exception {
 
         PayloadEnvelope<T> returnVal;
@@ -86,7 +99,11 @@ public class DtoRestRequestUtils<T extends DTOBase> {
     }
 
 
-    // this only works if all create() methods put their PK value into
+    /**
+     * Gets the maximum PK value for the entity corresponding to the DTO type.
+     * @return The Integer value of the maximum PK
+     * @throws Exception
+     */
     public Integer getMaxPkVal() throws Exception {
 
         Integer returnVal = 0;
@@ -109,6 +126,14 @@ public class DtoRestRequestUtils<T extends DTOBase> {
     } //
 
 
+    /**
+     * Returns the PayloadEnvelope for a request to retrieve a single instance of the DTO type
+     * with the PK value specified by the id.
+     * @param id The PK value for the specified entity
+     * @return The PayloadEnvelope containing the entity. The data collection should be 0 if there is
+     * no corresponding entity for that PK.
+     * @throws Exception
+     */
     public PayloadEnvelope<T> getResponseEnvelopeForEntityId(String id) throws Exception {
 
         PayloadEnvelope<T> returnVal;

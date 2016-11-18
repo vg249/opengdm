@@ -75,7 +75,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
                 new DtoRestRequestUtils<>(ContactDTO.class, ServiceRequestId.URL_CONTACTS);
 
         Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
-        Integer nonExistentId = ++maxId;
+        Integer nonExistentId = maxId + 1;
 
         PayloadEnvelope<ContactDTO> resultEnvelope =
                 dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
