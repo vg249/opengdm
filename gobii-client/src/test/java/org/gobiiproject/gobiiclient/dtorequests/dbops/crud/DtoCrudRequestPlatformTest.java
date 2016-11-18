@@ -10,14 +10,13 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -268,10 +267,15 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 
     @Test
     public void testEmptyResult() throws Exception {
+
+        Integer maxId = (new DtoUtils<>(PlatformDTO.class).getMaxPkVal(ServiceRequestId.URL_PLATFORM));
+        Integer nonExistentId = maxId++;
+
+
         RestUri restUriContact = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
-        restUriContact.setParamValue("id",UUID.randomUUID().toString());
+        restUriContact.setParamValue("id",nonExistentId.toString());
         RestResource<PlatformDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<PlatformDTO> resultEnvelope = restResource
                 .get(PlatformDTO.class);

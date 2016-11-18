@@ -13,9 +13,11 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
@@ -127,10 +129,15 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
 
     @Test
     public void testEmptyResult() throws Exception {
+
+        Integer maxId = (new DtoUtils<>(ProjectDTO.class).getMaxPkVal(ServiceRequestId.URL_PROJECTS));
+        Integer nonExistentId = maxId++;
+
+
         RestUri restUriContact = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PROJECTS);
-        restUriContact.setParamValue("id",UUID.randomUUID().toString());
+        restUriContact.setParamValue("id",nonExistentId.toString());
         RestResource<ProjectDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<ProjectDTO> resultEnvelope = restResource
                 .get(ProjectDTO.class);

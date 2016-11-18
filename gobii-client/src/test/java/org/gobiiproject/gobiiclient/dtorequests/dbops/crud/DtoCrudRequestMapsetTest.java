@@ -8,6 +8,7 @@ import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestMapset;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
@@ -65,18 +66,7 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
 
     @Test
     public void testEmptyResult() throws Exception {
-        RestUri restUriContact = ClientContext.getInstance(null,false)
-                .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_MAPSET);
-        restUriContact.setParamValue("id",UUID.randomUUID().toString());
-        RestResource<MapsetDTO> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<MapsetDTO> resultEnvelope = restResource
-                .get(MapsetDTO.class);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-        Assert.assertNotNull(resultEnvelope.getPayload());
-        Assert.assertNotNull(resultEnvelope.getPayload().getData());
-        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
     }
 
 

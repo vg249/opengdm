@@ -12,9 +12,25 @@ public enum ListSqlId {
     QUERY_ID_EXPERIMENT("select p.name \"platform_name\",e.*\n" +
             "from experiment e\n" +
             "join platform p on (e.platform_id=p.platform_id)\n" +
-            "order by lower(e.name)");
+            "order by lower(e.name)"),
+    QUERY_ID_MARKER_ALL("select m.marker_id,\n" +
+            "p.platform_id,\n" +
+            "m.variant_id, \n" +
+            "m.name \"marker_name\", \n" +
+            "m.code, \n" +
+            "m.ref, \n" +
+            "m.alts, \n" +
+            "m.sequence, \n" +
+            "m.reference_id, \n" +
+            "m.strand_id, \n" +
+            "m.status, \n" +
+            "p.name \"platform_name\"\n" +
+            "from marker m\n" +
+            "join platform p on (m.platform_id=p.platform_id)\n" +
+            "order by lower(m.name)");
 
     private String sql;
+
     ListSqlId(String sql) {
         this.sql = sql;
     }

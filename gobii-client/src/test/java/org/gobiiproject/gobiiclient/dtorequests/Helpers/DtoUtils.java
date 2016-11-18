@@ -37,7 +37,9 @@ public class DtoUtils<T extends DTOBase> {
         if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
             String message = "Request for collection of "
                     + dtoType.getClass()
-                    + " did not succeded";
+                    + " did not succeded with URI "
+                    + restUriContact.makeUrl()
+                    + ": ";
 
             for (HeaderStatusMessage headerStatusMessage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
                 message += headerStatusMessage.getMessage();
@@ -54,6 +56,8 @@ public class DtoUtils<T extends DTOBase> {
 
                 String message = "When the collection "
                         + dtoType.getClass()
+                        + " with URI "
+                        + restUriContact.makeUrl()
                         + " has no results, it should return an empty list!!!";
 
                 throw (new Exception(message));

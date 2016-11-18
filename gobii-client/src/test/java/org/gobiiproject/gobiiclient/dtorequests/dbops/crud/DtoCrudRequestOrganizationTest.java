@@ -8,9 +8,11 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -174,10 +176,15 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
 
     @Test
     public void testEmptyResult() throws Exception {
+
+        Integer maxId = (new DtoUtils<>(OrganizationDTO.class).getMaxPkVal(ServiceRequestId.URL_ORGANIZATION));
+        Integer nonExistentId = maxId++;
+
+
         RestUri restUriContact = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_ORGANIZATION);
-        restUriContact.setParamValue("id",UUID.randomUUID().toString());
+        restUriContact.setParamValue("id",nonExistentId.toString());
         RestResource<OrganizationDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<OrganizationDTO> resultEnvelope = restResource
                 .get(OrganizationDTO.class);

@@ -15,6 +15,7 @@ import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestAnalysis;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
@@ -87,10 +88,14 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
 
     @Test
     public void testEmptyResult() throws Exception {
+
+        Integer maxId = (new DtoUtils<>(DataSetDTO.class).getMaxPkVal(ServiceRequestId.URL_DATASETS));
+        Integer nonExistentId = maxId++;
+
         RestUri restUriContact = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
-        restUriContact.setParamValue("id",UUID.randomUUID().toString());
+        restUriContact.setParamValue("id",nonExistentId.toString());
         RestResource<DataSetDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<DataSetDTO> resultEnvelope = restResource
                 .get(DataSetDTO.class);
