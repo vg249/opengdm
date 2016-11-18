@@ -24,46 +24,60 @@ public class DtoRestRequestUtils<T extends DTOBase> {
         this.serviceRequestId = serviceRequestId;
     }
 
-    // this only works if all create() methods put their PK value into
-    public Integer getMaxPkVal() throws Exception {
+    public PayloadEnvelope<T> getEnvelopeResultList() throws Exception {
 
-        Integer returnVal = 0;
+        PayloadEnvelope<T> returnVal;
 
         RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(this.serviceRequestId);
         RestResource<T> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<T> resultEnvelope = restResource
-                .get(dtoType);
 
-        if (!resultEnvelope.getHeader().getStatus().isSucceeded()) {
+        returnVal = restResource.get(dtoType);
+
+        if (!returnVal.getHeader().getStatus().isSucceeded()) {
             String message = "Request for collection of "
                     + dtoType.getClass()
                     + " did not succeded with URI "
                     + restUriContact.makeUrl()
                     + ": ";
 
-            for (HeaderStatusMessage headerStatusMessage : resultEnvelope.getHeader().getStatus().getStatusMessages()) {
+            for (HeaderStatusMessage headerStatusMessage : returnVal.getHeader().getStatus().getStatusMessages()) {
                 message += headerStatusMessage.getMessage();
             }
 
             throw new Exception(message);
         }
 
+        return returnVal;
+
+    }
+
+
+    // this only works if all create() methods put their PK value into
+    public Integer getMaxPkVal() throws Exception {
+
+        Integer returnVal = 0;
+
+        PayloadEnvelope<T> resultEnvelope = this.getEnvelopeResultList();
+
+
         if (resultEnvelope.getPayload().getData().size() > 0) {
 
+            boolean gotNullResult = ( (resultEnvelope
+                    .getPayload()
+                    .getData()
+                    .stream()
+                    .filter(i -> i.getId() == null))
+                    .count() > 0);
 
-            if ((resultEnvelope.getPayload().getData().size() == 1) &&
-                    (resultEnvelope.getPayload().getData().get(0).getId() == null)) {
+            if (gotNullResult) {
 
                 String message = "When the collection "
                         + dtoType.getClass()
-                        + " with URI "
-                        + restUriContact.makeUrl()
                         + " has no results, it should return an empty list!!!";
 
                 throw (new Exception(message));
-
             }
 
             T dto = resultEnvelope
