@@ -14,6 +14,15 @@ import org.junit.Assert;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * This class encapsulates common standard functionality that can be used for retreiving and
+ * getting statistics about entities. It is used with the modern RestRequest client
+ * infrastructure only. Note that getEnvelopeResultList() is implicitly testing that
+ * if there are no items to be retrieved, the list has 0 items. There is no easy deterministic
+ * way to do this -- this is the best we can do.
+ * @param <T>
+ */
 public class DtoRestRequestUtils<T extends DTOBase> {
 
     private Class<T> dtoType;
@@ -28,18 +37,20 @@ public class DtoRestRequestUtils<T extends DTOBase> {
 
         PayloadEnvelope<T> returnVal;
 
-        RestUri restUriContact = ClientContext.getInstance(null, false)
+        RestUri restUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(this.serviceRequestId);
-        RestResource<T> restResource = new RestResource<>(restUriContact);
+        RestResource<T> restResource = new RestResource<>(restUri);
 
         returnVal = restResource.get(dtoType);
 
         if (!returnVal.getHeader().getStatus().isSucceeded()) {
             String message = "Request for collection of "
                     + dtoType.getClass()
+                    + " with request "
+                    + restUri.makeUrl()
                     + " did not succeded with URI "
-                    + restUriContact.makeUrl()
+                    + restUri.makeUrl()
                     + ": ";
 
             for (HeaderStatusMessage headerStatusMessage : returnVal.getHeader().getStatus().getStatusMessages()) {
@@ -47,6 +58,27 @@ public class DtoRestRequestUtils<T extends DTOBase> {
             }
 
             throw new Exception(message);
+        }
+
+        if (returnVal.getPayload().getData().size() > 0) {
+
+            boolean gotNullResult = ((returnVal
+                    .getPayload()
+                    .getData()
+                    .stream()
+                    .filter(i -> i.getId() == null))
+                    .count() > 0);
+
+            if (gotNullResult) {
+
+                String message = "When the collection "
+                        + dtoType.getClass()
+                        + " with request "
+                        + restUri.makeUrl()
+                        + " has no results, it should return an empty list!!!";
+
+                throw (new Exception(message));
+            }
         }
 
         return returnVal;
@@ -61,25 +93,6 @@ public class DtoRestRequestUtils<T extends DTOBase> {
 
         PayloadEnvelope<T> resultEnvelope = this.getEnvelopeResultList();
 
-
-        if (resultEnvelope.getPayload().getData().size() > 0) {
-
-            boolean gotNullResult = ( (resultEnvelope
-                    .getPayload()
-                    .getData()
-                    .stream()
-                    .filter(i -> i.getId() == null))
-                    .count() > 0);
-
-            if (gotNullResult) {
-
-                String message = "When the collection "
-                        + dtoType.getClass()
-                        + " has no results, it should return an empty list!!!";
-
-                throw (new Exception(message));
-            }
-
             T dto = resultEnvelope
                     .getPayload()
                     .getData()
@@ -90,7 +103,6 @@ public class DtoRestRequestUtils<T extends DTOBase> {
             if (dto != null) {
                 returnVal = dto.getId();
             }
-        }
 
         return returnVal;
 
