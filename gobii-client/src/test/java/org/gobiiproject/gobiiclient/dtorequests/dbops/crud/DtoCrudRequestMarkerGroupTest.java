@@ -266,6 +266,12 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
 
     @Test
     @Override
+    public void testEmptyResult() throws Exception {
+    }
+
+
+    @Test
+    @Override
     public void update() throws Exception {
 
         // CREATE A MARKER GROUP

@@ -44,6 +44,11 @@ public class DtoCrudRequestManifestTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(ManifestDTOResponse));
     }
 
+    @Test
+    @Override
+    public void testEmptyResult() throws Exception {
+    }
+
 
     @Test
     @Override

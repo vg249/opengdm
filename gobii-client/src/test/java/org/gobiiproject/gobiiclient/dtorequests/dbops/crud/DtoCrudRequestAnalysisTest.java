@@ -58,6 +58,12 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
 
     @Test
     @Override
+    public void testEmptyResult() throws Exception {
+    }
+
+
+    @Test
+    @Override
     public void create() throws Exception {
 
 
