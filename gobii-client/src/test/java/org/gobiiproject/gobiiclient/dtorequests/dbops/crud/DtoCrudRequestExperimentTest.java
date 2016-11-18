@@ -13,9 +13,11 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -69,14 +71,33 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         ExperimentDTO experimentDTOResponse = resultEnvelope.getPayload().getData().get(0);
 
-//        ExperimentDTO experimentDTOResponse = dtoRequestExperiment.process(experimentDTO);
-//
-//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(experimentDTOResponse));
         Assert.assertNotEquals(experimentDTOResponse, null);
         Assert.assertTrue(experimentDTOResponse.getExperimentId() > 0);
         Assert.assertNotNull(experimentDTOResponse.getPlatformName());
 
-    } // testGetMarkers()
+    }
+
+    @Test
+    public void testEmptyResult() throws Exception {
+
+        DtoRestRequestUtils<ExperimentDTO> dtoDtoRestRequestUtils =
+                new DtoRestRequestUtils<>(ExperimentDTO.class,ServiceRequestId.URL_EXPERIMENTS);
+        Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
+        Integer nonExistentId = maxId + 1;
+
+
+
+        PayloadEnvelope<ExperimentDTO> resultEnvelope =
+                dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
+
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        Assert.assertNotNull(resultEnvelope.getPayload());
+        Assert.assertNotNull(resultEnvelope.getPayload().getData());
+        Assert.assertTrue("Request for experiment with ID " + nonExistentId.toString() + " should not have retrieved a result",
+                resultEnvelope.getPayload().getData().size() == 0 );
+    }
+
 
     @Test
     @Override

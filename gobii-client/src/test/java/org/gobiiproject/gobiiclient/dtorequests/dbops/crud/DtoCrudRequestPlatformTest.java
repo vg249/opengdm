@@ -9,13 +9,13 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -263,6 +263,25 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         Assert.assertTrue(platformDTO.getPlatformId() > 0);
         Assert.assertNotNull(platformDTO.getPlatformName());
     }
+
+    @Test
+    public void testEmptyResult() throws Exception {
+
+        DtoRestRequestUtils<PlatformDTO> dtoDtoRestRequestUtils =
+                new DtoRestRequestUtils<>(PlatformDTO.class, ServiceRequestId.URL_PLATFORM);
+        Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
+        Integer nonExistentId = maxId + 1;
+
+
+        PayloadEnvelope<PlatformDTO> resultEnvelope
+                = dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        Assert.assertNotNull(resultEnvelope.getPayload());
+        Assert.assertNotNull(resultEnvelope.getPayload().getData());
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0);
+    }
+
 
     @Test
     @Override

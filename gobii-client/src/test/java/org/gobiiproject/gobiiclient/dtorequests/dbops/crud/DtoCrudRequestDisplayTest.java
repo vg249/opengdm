@@ -60,6 +60,12 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
 
     @Test
     @Override
+    public void testEmptyResult() throws Exception {
+    }
+
+
+    @Test
+    @Override
     public void create() throws Exception {
 
         DtoRequestDisplay dtoRequestDisplay = new DtoRequestDisplay();

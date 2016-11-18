@@ -1587,8 +1587,6 @@ public class BRAPIController {
 
             ExperimentDTO experimentDTO = experimentService.getExperimentById(experimentId);
 
-            returnVal.getPayload().getData().add(experimentDTO);
-
             PayloadWriter<ExperimentDTO> payloadWriter = new PayloadWriter<>(request,
                     ExperimentDTO.class);
 

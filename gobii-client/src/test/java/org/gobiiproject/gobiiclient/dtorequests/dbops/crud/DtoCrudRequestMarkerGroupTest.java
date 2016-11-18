@@ -15,6 +15,7 @@ import org.gobiiproject.gobiiclient.dtorequests.DtoRequestMarkerGroup;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
@@ -261,6 +262,11 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
                 .size() == 0);
 
 
+    }
+
+    @Test
+    @Override
+    public void testEmptyResult() throws Exception {
     }
 
 

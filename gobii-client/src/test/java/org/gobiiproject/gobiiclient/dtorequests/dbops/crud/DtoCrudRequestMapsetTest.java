@@ -21,7 +21,6 @@ import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -47,6 +46,7 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
     
     @Override
     public void get() throws Exception {
+
         RestUri restUriMapset = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_MAPSET);
@@ -60,6 +60,12 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
         for (int mapsetDTOIndex = 0; mapsetDTOIndex < mapsetDTOList.size(); mapsetDTOIndex++) {
             Assert.assertNotNull(mapsetDTOList.get(mapsetDTOIndex).getName()); }
     }
+
+    @Test
+    public void testEmptyResult() throws Exception {
+
+    }
+
 
     @Test
     public void testGetMapsetDetails() throws Exception {

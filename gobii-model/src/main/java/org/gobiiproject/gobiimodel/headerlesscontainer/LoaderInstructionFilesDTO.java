@@ -12,19 +12,19 @@ import java.util.List;
  */
 public class LoaderInstructionFilesDTO extends DTOBase {
 
-    private Integer id;
+
     private List<GobiiLoaderInstruction> gobiiLoaderInstructions = new ArrayList<>();
     private String instructionFileName = null;
 
 
     @Override
     public Integer getId() {
-        return this.id;
+        return 1;
     }
 
     @Override
     public void setId(Integer id) {
-        this.id = id;
+        ;
     }
 
     public List<GobiiLoaderInstruction> getGobiiLoaderInstructions() {

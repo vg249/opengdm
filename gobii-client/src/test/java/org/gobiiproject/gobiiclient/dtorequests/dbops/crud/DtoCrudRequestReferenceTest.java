@@ -77,6 +77,10 @@ public class DtoCrudRequestReferenceTest implements DtoCrudRequestTest {
 
     }
 
+    @Test
+    @Override
+    public void testEmptyResult() throws Exception {
+    }
 
     @Test
     @Override

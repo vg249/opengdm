@@ -13,8 +13,10 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
@@ -123,6 +125,24 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
         Assert.assertTrue(projectDTO.getProperties().size() > 0);
 
     } // testGetMarkers()
+
+    @Test
+    public void testEmptyResult() throws Exception {
+
+        DtoRestRequestUtils<ProjectDTO> dtoDtoRestRequestUtils =
+                new DtoRestRequestUtils<>(ProjectDTO.class,ServiceRequestId.URL_PROJECTS);
+        Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
+        Integer nonExistentId = maxId + 1;
+
+
+        PayloadEnvelope<ProjectDTO> resultEnvelope =
+                dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        Assert.assertNotNull(resultEnvelope.getPayload());
+        Assert.assertNotNull(resultEnvelope.getPayload().getData());
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
+    }
 
 
     @Test

@@ -10,6 +10,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.DTOBase;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -35,7 +36,10 @@ public class PayloadWriter<T extends DTOBase> {
                                      T itemToWrite,
                                      String id) throws Exception {
 
-        if (null != itemToWrite) {
+        if ((null != itemToWrite) &&
+                !LineUtils.isNullOrEmpty(id) &&
+                (itemToWrite.getId() != null) &&
+                (itemToWrite.getId() > 0)) {
 
             if (itemToWrite.getClass() == this.dtoType) {
 
@@ -78,11 +82,6 @@ public class PayloadWriter<T extends DTOBase> {
                                 + this.dtoType
                                 + ")");
             }
-        } else {
-            throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
-                    GobiiValidationStatusType.BAD_REQUEST,
-                    "Null dto item");
-
         }
     }
 
@@ -90,12 +89,14 @@ public class PayloadWriter<T extends DTOBase> {
                                             ServiceRequestId serviceRequestId,
                                             T itemToWrite) throws GobiiWebException, Exception {
 
-        String id = itemToWrite.getId().toString();
+        if ((null != itemToWrite) && (itemToWrite.getId() != null)) {
+            String id = itemToWrite.getId().toString();
 
-        this.writeSingleItemForId(payloadEnvelope,
-                serviceRequestId,
-                itemToWrite,
-                id);
+            this.writeSingleItemForId(payloadEnvelope,
+                    serviceRequestId,
+                    itemToWrite,
+                    id);
+        }
 
     }
 
