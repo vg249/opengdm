@@ -269,7 +269,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
     public void testEmptyResult() throws Exception {
 
         Integer maxId = (new DtoUtils<>(PlatformDTO.class).getMaxPkVal(ServiceRequestId.URL_PLATFORM));
-        Integer nonExistentId = maxId++;
+        Integer nonExistentId = ++maxId;
 
 
         RestUri restUriContact = ClientContext.getInstance(null,false)

@@ -81,7 +81,7 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
     public void testEmptyResult() throws Exception {
 
         Integer maxId = (new DtoUtils<>(ExperimentDTO.class).getMaxPkVal(ServiceRequestId.URL_EXPERIMENTS));
-        Integer nonExistentId = maxId++;
+        Integer nonExistentId = ++maxId;
 
 
 
@@ -96,7 +96,8 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertNotNull(resultEnvelope.getPayload());
         Assert.assertNotNull(resultEnvelope.getPayload().getData());
-        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
+        Assert.assertTrue("Request for experiment with ID " + nonExistentId.toString() + " should not have retrieved a result",
+                resultEnvelope.getPayload().getData().size() == 0 );
     }
 
 

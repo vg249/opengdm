@@ -90,7 +90,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
     public void testEmptyResult() throws Exception {
 
         Integer maxId = (new DtoUtils<>(DataSetDTO.class).getMaxPkVal(ServiceRequestId.URL_DATASETS));
-        Integer nonExistentId = maxId++;
+        Integer nonExistentId = ++maxId;
 
         RestUri restUriContact = ClientContext.getInstance(null,false)
                 .getUriFactory()

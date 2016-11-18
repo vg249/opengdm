@@ -82,7 +82,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
     public void testEmptyResult() throws Exception {
 
         Integer maxId = (new DtoUtils<>(MarkerDTO.class).getMaxPkVal(ServiceRequestId.URL_MARKERS));
-        Integer nonExistentId = maxId++;
+        Integer nonExistentId = ++maxId;
 
 
         RestUri restUriContact = ClientContext.getInstance(null,false)

@@ -169,7 +169,6 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             loaderInstructionsDAO.writeInstructions(instructionFileFqpn,
                     returnVal.getGobiiLoaderInstructions());
-            returnVal.setId(0); //this is arbitrary for now
 
         } catch(GobiiException e) {
             throw e;
@@ -204,7 +203,6 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                 if (null != instructions) {
                     returnVal.setInstructionFileName(instructionFileName);
                     returnVal.setGobiiLoaderInstructions(instructions);
-                    returnVal.setId(0);//this is arbitrary for now
 
                 } else {
 

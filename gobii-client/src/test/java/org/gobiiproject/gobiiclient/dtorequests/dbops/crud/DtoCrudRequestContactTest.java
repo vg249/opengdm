@@ -52,7 +52,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
     @Override
     public void get() throws Exception {
 
-        RestUri restUriContact = ClientContext.getInstance(null,false)
+        RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
         restUriContact.setParamValue("id", "1");
@@ -64,7 +64,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         ContactDTO contactDTO = resultEnvelope.getPayload().getData().get(0);
         Assert.assertTrue(contactDTO.getContactId() > 0);
         Assert.assertNotNull(contactDTO.getEmail());
-        Assert.assertTrue(contactDTO.getRoles().size() > 0 );
+        Assert.assertTrue(contactDTO.getRoles().size() > 0);
     } //
 
 
@@ -72,12 +72,12 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
     public void testEmptyResult() throws Exception {
 
         Integer maxId = (new DtoUtils<>(ContactDTO.class).getMaxPkVal(ServiceRequestId.URL_CONTACTS));
-        Integer nonExistentId = maxId++;
+        Integer nonExistentId = ++maxId;
 
-        RestUri restUriContact = ClientContext.getInstance(null,false)
+        RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
-        restUriContact.setParamValue("id",nonExistentId.toString());
+        restUriContact.setParamValue("id", nonExistentId.toString());
         RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<ContactDTO> resultEnvelope = restResource
                 .get(ContactDTO.class);
@@ -85,7 +85,8 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertNotNull(resultEnvelope.getPayload());
         Assert.assertNotNull(resultEnvelope.getPayload().getData());
-        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
+        Assert.assertTrue("Query for Contact with id " + nonExistentId.toString() + "  should not have gotten a result",
+                resultEnvelope.getPayload().getData().size() == 0);
     }
 
 //    @Test
@@ -129,7 +130,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         ContactDTO newContactDto = TestDtoFactory
                 .makePopulatedContactDTO(GobiiProcessType.CREATE, UUID.randomUUID().toString());
 
-        RestResource<ContactDTO> restResourceContacts = new RestResource<>(ClientContext.getInstance(null,false)
+        RestResource<ContactDTO> restResourceContacts = new RestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .contacts());
 
@@ -140,11 +141,11 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
 
         Assert.assertNotNull(resultEnvelopeNewContact);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeNewContact.getHeader()));
-        Assert.assertTrue(resultEnvelopeNewContact.getPayload().getData().size() > 0 );
+        Assert.assertTrue(resultEnvelopeNewContact.getPayload().getData().size() > 0);
         ContactDTO newContactDTOResponse = resultEnvelopeNewContact.getPayload().getData().get(0);
 
 
-        RestUri restUriContact = ClientContext.getInstance(null,false)
+        RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
         restUriContact.setParamValue("id", newContactDTOResponse.getContactId().toString());
@@ -175,7 +176,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelopeUpdate.getHeader()));
 
 
-        RestUri restUriContactReRetrive = ClientContext.getInstance(null,false)
+        RestUri restUriContactReRetrive = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
         restUriContactReRetrive.setParamValue("id", contactDTOReceived.getContactId().toString());
@@ -196,7 +197,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
     @Test
     public void getSingleContactWithHttpGet() throws Exception {
 
-        RestUri restUriContact = ClientContext.getInstance(null,false)
+        RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
         restUriContact.setParamValue("id", "1");
@@ -214,7 +215,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
     @Test
     public void getContactsBySearchWithHttpGet() throws Exception {
 
-        RestUri restUriContact = ClientContext.getInstance(null,false)
+        RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .contactsByQueryParams();
         restUriContact.setParamValue("email", "user.gobii@gobii.com");
@@ -257,7 +258,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
 
         //Set up the POST request to create the contact
         PayloadEnvelope<ContactDTO> payloadEnvelope = new PayloadEnvelope<>(newContactDTO, GobiiProcessType.CREATE);
-        RestResource<ContactDTO> restResource = new RestResource<>(ClientContext.getInstance(null,false)
+        RestResource<ContactDTO> restResource = new RestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .contacts());
         PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = restResource.post(ContactDTO.class,
@@ -282,7 +283,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         Link linkForCreatedItem = contactDTOResponseEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().get(0);
 
 
-        RestUri restUriContact = ClientContext.getInstance(null,false)
+        RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .RestUriFromUri(linkForCreatedItem.getHref());
         RestResource<ContactDTO> restResourceForReRetrieve = new RestResource<>(restUriContact);
@@ -298,12 +299,11 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
     }
 
 
-
     @Test
     @Override
     public void getList() throws Exception {
 
-        RestUri restUriContact = ClientContext.getInstance(null,false)
+        RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_CONTACTS);
         RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
@@ -318,7 +318,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
 
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
-        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == contactDTOList.size() );
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == contactDTOList.size());
 
         List<Integer> itemsToTest = new ArrayList<>();
         if (contactDTOList.size() > 50) {
@@ -335,7 +335,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
 
             Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
 
-            RestUri restUriContactForGetById = ClientContext.getInstance(null,false)
+            RestUri restUriContactForGetById = ClientContext.getInstance(null, false)
                     .getUriFactory()
                     .RestUriFromUri(currentLink.getHref());
             RestResource<ContactDTO> restResourceForGetById = new RestResource<>(restUriContactForGetById);
@@ -350,6 +350,6 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         }
 
     }
-    
+
 
 }

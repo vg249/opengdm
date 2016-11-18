@@ -131,7 +131,7 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
     public void testEmptyResult() throws Exception {
 
         Integer maxId = (new DtoUtils<>(ProjectDTO.class).getMaxPkVal(ServiceRequestId.URL_PROJECTS));
-        Integer nonExistentId = maxId++;
+        Integer nonExistentId = ++maxId;
 
 
         RestUri restUriContact = ClientContext.getInstance(null,false)

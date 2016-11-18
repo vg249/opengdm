@@ -178,7 +178,7 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
     public void testEmptyResult() throws Exception {
 
         Integer maxId = (new DtoUtils<>(OrganizationDTO.class).getMaxPkVal(ServiceRequestId.URL_ORGANIZATION));
-        Integer nonExistentId = maxId++;
+        Integer nonExistentId = ++maxId;
 
 
         RestUri restUriContact = ClientContext.getInstance(null,false)

@@ -12,16 +12,14 @@ import java.util.List;
  */
 public class ExtractorInstructionFilesDTO extends DTOBase {
 
-    private Integer id;
-
     @Override
     public Integer getId() {
-        return this.id;
+        return 1;
     }
 
     @Override
     public void setId(Integer id) {
-        this.id = id;
+        ;
     }
 
     private List<GobiiExtractorInstruction>  gobiiExtractorInstructions = new ArrayList<>();

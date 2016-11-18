@@ -14,7 +14,7 @@ public class ConfigSettingsDTO extends DTOBase {
 
     @Override
     public Integer getId() {
-        return 0;
+        return 1;
     }
 
     @Override
