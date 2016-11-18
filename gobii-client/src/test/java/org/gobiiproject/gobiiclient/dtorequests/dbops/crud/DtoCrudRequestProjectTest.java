@@ -15,6 +15,7 @@ import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
@@ -123,6 +124,22 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
         Assert.assertTrue(projectDTO.getProperties().size() > 0);
 
     } // testGetMarkers()
+
+    @Test
+    public void testEmptyResult() throws Exception {
+        RestUri restUriContact = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_PROJECTS);
+        restUriContact.setParamValue("id",UUID.randomUUID().toString());
+        RestResource<ProjectDTO> restResource = new RestResource<>(restUriContact);
+        PayloadEnvelope<ProjectDTO> resultEnvelope = restResource
+                .get(ProjectDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        Assert.assertNotNull(resultEnvelope.getPayload());
+        Assert.assertNotNull(resultEnvelope.getPayload().getData());
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
+    }
 
 
     @Test

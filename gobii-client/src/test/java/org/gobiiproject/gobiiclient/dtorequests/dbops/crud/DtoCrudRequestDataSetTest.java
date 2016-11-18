@@ -21,6 +21,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.AnalysisDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 
 
@@ -84,6 +85,21 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
 
     } //
 
+    @Test
+    public void testEmptyResult() throws Exception {
+        RestUri restUriContact = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
+        restUriContact.setParamValue("id",UUID.randomUUID().toString());
+        RestResource<DataSetDTO> restResource = new RestResource<>(restUriContact);
+        PayloadEnvelope<DataSetDTO> resultEnvelope = restResource
+                .get(DataSetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        Assert.assertNotNull(resultEnvelope.getPayload());
+        Assert.assertNotNull(resultEnvelope.getPayload().getData());
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
+    }
 
     @Test
     @Override

@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
+import javafx.application.Platform;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
@@ -14,6 +15,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.*;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -263,6 +265,24 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         Assert.assertTrue(platformDTO.getPlatformId() > 0);
         Assert.assertNotNull(platformDTO.getPlatformName());
     }
+
+    @Test
+    public void testEmptyResult() throws Exception {
+        RestUri restUriContact = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
+        restUriContact.setParamValue("id",UUID.randomUUID().toString());
+        RestResource<PlatformDTO> restResource = new RestResource<>(restUriContact);
+        PayloadEnvelope<PlatformDTO> resultEnvelope = restResource
+                .get(PlatformDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        Assert.assertNotNull(resultEnvelope.getPayload());
+        Assert.assertNotNull(resultEnvelope.getPayload().getData());
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
+    }
+
+
 
     @Test
     @Override

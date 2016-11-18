@@ -14,6 +14,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
@@ -47,6 +48,7 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
     
     @Override
     public void get() throws Exception {
+
         RestUri restUriMapset = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_MAPSET);
@@ -60,6 +62,23 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
         for (int mapsetDTOIndex = 0; mapsetDTOIndex < mapsetDTOList.size(); mapsetDTOIndex++) {
             Assert.assertNotNull(mapsetDTOList.get(mapsetDTOIndex).getName()); }
     }
+
+    @Test
+    public void testEmptyResult() throws Exception {
+        RestUri restUriContact = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_MAPSET);
+        restUriContact.setParamValue("id",UUID.randomUUID().toString());
+        RestResource<MapsetDTO> restResource = new RestResource<>(restUriContact);
+        PayloadEnvelope<MapsetDTO> resultEnvelope = restResource
+                .get(MapsetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        Assert.assertNotNull(resultEnvelope.getPayload());
+        Assert.assertNotNull(resultEnvelope.getPayload().getData());
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
+    }
+
 
     @Test
     public void testGetMapsetDetails() throws Exception {

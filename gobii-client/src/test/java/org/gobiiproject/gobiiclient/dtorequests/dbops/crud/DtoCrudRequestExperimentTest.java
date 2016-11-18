@@ -16,6 +16,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -69,14 +70,28 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         ExperimentDTO experimentDTOResponse = resultEnvelope.getPayload().getData().get(0);
 
-//        ExperimentDTO experimentDTOResponse = dtoRequestExperiment.process(experimentDTO);
-//
-//        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(experimentDTOResponse));
         Assert.assertNotEquals(experimentDTOResponse, null);
         Assert.assertTrue(experimentDTOResponse.getExperimentId() > 0);
         Assert.assertNotNull(experimentDTOResponse.getPlatformName());
 
-    } // testGetMarkers()
+    }
+
+    @Test
+    public void testEmptyResult() throws Exception {
+        RestUri restUriContact = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_EXPERIMENTS);
+        restUriContact.setParamValue("id",UUID.randomUUID().toString());
+        RestResource<ExperimentDTO> restResource = new RestResource<>(restUriContact);
+        PayloadEnvelope<ExperimentDTO> resultEnvelope = restResource
+                .get(ExperimentDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        Assert.assertNotNull(resultEnvelope.getPayload());
+        Assert.assertNotNull(resultEnvelope.getPayload().getData());
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
+    }
+
 
     @Test
     @Override
