@@ -14,22 +14,24 @@ import org.junit.Assert;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DtoUtils<T extends DTOBase> {
+public class DtoRestRequestUtils<T extends DTOBase> {
 
     private Class<T> dtoType;
+    private ServiceRequestId serviceRequestId;
 
-    public DtoUtils(Class<T> dtoType) {
+    public DtoRestRequestUtils(Class<T> dtoType, ServiceRequestId serviceRequestId) {
         this.dtoType = dtoType;
+        this.serviceRequestId = serviceRequestId;
     }
 
     // this only works if all create() methods put their PK value into
-    public Integer getMaxPkVal(ServiceRequestId serviceRequestId) throws Exception {
+    public Integer getMaxPkVal() throws Exception {
 
         Integer returnVal = 0;
 
         RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(serviceRequestId);
+                .resourceColl(this.serviceRequestId);
         RestResource<T> restResource = new RestResource<>(restUriContact);
         PayloadEnvelope<T> resultEnvelope = restResource
                 .get(dtoType);
@@ -79,5 +81,24 @@ public class DtoUtils<T extends DTOBase> {
         return returnVal;
 
     } //
+
+
+    public PayloadEnvelope<T> getResponseEnvelopeForEntityId(String id) throws Exception {
+
+        PayloadEnvelope<T> returnVal;
+
+        RestUri restUriContact = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(this.serviceRequestId);
+
+        restUriContact.setParamValue("id", id);
+        RestResource<T> restResource = new RestResource<>(restUriContact);
+
+        returnVal = restResource
+                .get(this.dtoType);
+
+        return returnVal;
+
+    }
 
 }

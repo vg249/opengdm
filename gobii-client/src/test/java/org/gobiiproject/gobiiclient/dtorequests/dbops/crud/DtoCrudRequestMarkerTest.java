@@ -12,12 +12,12 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoUtils;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -25,8 +25,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.UUID;
 
 public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
 
@@ -81,7 +79,9 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
     @Test
     public void testEmptyResult() throws Exception {
 
-        Integer maxId = (new DtoUtils<>(MarkerDTO.class).getMaxPkVal(ServiceRequestId.URL_MARKERS));
+        DtoRestRequestUtils<MarkerDTO> dtoDtoRestRequestUtils =
+                new DtoRestRequestUtils<>(MarkerDTO.class,ServiceRequestId.URL_MARKERS);
+        Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
         Integer nonExistentId = ++maxId;
 
 

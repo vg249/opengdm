@@ -14,7 +14,7 @@ import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoUtils;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
@@ -71,16 +71,14 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
     @Test
     public void testEmptyResult() throws Exception {
 
-        Integer maxId = (new DtoUtils<>(ContactDTO.class).getMaxPkVal(ServiceRequestId.URL_CONTACTS));
+        DtoRestRequestUtils<ContactDTO> dtoDtoRestRequestUtils =
+                new DtoRestRequestUtils<>(ContactDTO.class, ServiceRequestId.URL_CONTACTS);
+
+        Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
         Integer nonExistentId = ++maxId;
 
-        RestUri restUriContact = ClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
-        restUriContact.setParamValue("id", nonExistentId.toString());
-        RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<ContactDTO> resultEnvelope = restResource
-                .get(ContactDTO.class);
+        PayloadEnvelope<ContactDTO> resultEnvelope =
+                dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertNotNull(resultEnvelope.getPayload());

@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
-import javafx.application.Platform;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
@@ -10,7 +9,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoUtils;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
@@ -268,7 +267,9 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
     @Test
     public void testEmptyResult() throws Exception {
 
-        Integer maxId = (new DtoUtils<>(PlatformDTO.class).getMaxPkVal(ServiceRequestId.URL_PLATFORM));
+        DtoRestRequestUtils<PlatformDTO> dtoDtoRestRequestUtils =
+                new DtoRestRequestUtils<>(PlatformDTO.class,ServiceRequestId.URL_PLATFORM);
+        Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
         Integer nonExistentId = ++maxId;
 
 

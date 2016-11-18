@@ -13,11 +13,10 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoUtils;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
@@ -130,7 +129,9 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
     @Test
     public void testEmptyResult() throws Exception {
 
-        Integer maxId = (new DtoUtils<>(ProjectDTO.class).getMaxPkVal(ServiceRequestId.URL_PROJECTS));
+        DtoRestRequestUtils<ProjectDTO> dtoDtoRestRequestUtils =
+                new DtoRestRequestUtils<>(ProjectDTO.class,ServiceRequestId.URL_PROJECTS);
+        Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
         Integer nonExistentId = ++maxId;
 
 

@@ -13,7 +13,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoUtils;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
@@ -80,7 +80,9 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
     @Test
     public void testEmptyResult() throws Exception {
 
-        Integer maxId = (new DtoUtils<>(ExperimentDTO.class).getMaxPkVal(ServiceRequestId.URL_EXPERIMENTS));
+        DtoRestRequestUtils<ExperimentDTO> dtoDtoRestRequestUtils =
+                new DtoRestRequestUtils<>(ExperimentDTO.class,ServiceRequestId.URL_EXPERIMENTS);
+        Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
         Integer nonExistentId = ++maxId;
 
 
