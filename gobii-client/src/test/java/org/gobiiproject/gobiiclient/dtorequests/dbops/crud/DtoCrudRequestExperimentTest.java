@@ -87,13 +87,9 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
 
 
 
-        RestUri restUriContact = ClientContext.getInstance(null,false)
-                .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_EXPERIMENTS);
-        restUriContact.setParamValue("id",nonExistentId.toString());
-        RestResource<ExperimentDTO> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<ExperimentDTO> resultEnvelope = restResource
-                .get(ExperimentDTO.class);
+        PayloadEnvelope<ExperimentDTO> resultEnvelope =
+                dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
+
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertNotNull(resultEnvelope.getPayload());

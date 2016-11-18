@@ -85,13 +85,8 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
         Integer nonExistentId = ++maxId;
 
 
-        RestUri restUriContact = ClientContext.getInstance(null,false)
-                .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_MARKERS);
-        restUriContact.setParamValue("id",nonExistentId.toString());
-        RestResource<MarkerDTO> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<MarkerDTO> resultEnvelope = restResource
-                .get(MarkerDTO.class);
+        PayloadEnvelope<MarkerDTO> resultEnvelope =
+                dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertNotNull(resultEnvelope.getPayload());

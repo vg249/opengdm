@@ -182,13 +182,8 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
         Integer nonExistentId = ++maxId;
 
 
-        RestUri restUriContact = ClientContext.getInstance(null,false)
-                .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_ORGANIZATION);
-        restUriContact.setParamValue("id",nonExistentId.toString());
-        RestResource<OrganizationDTO> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<OrganizationDTO> resultEnvelope = restResource
-                .get(OrganizationDTO.class);
+        PayloadEnvelope<OrganizationDTO> resultEnvelope =
+                dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertNotNull(resultEnvelope.getPayload());

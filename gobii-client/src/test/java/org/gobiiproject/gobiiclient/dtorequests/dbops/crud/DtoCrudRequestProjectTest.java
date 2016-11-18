@@ -135,13 +135,8 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
         Integer nonExistentId = ++maxId;
 
 
-        RestUri restUriContact = ClientContext.getInstance(null,false)
-                .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_PROJECTS);
-        restUriContact.setParamValue("id",nonExistentId.toString());
-        RestResource<ProjectDTO> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<ProjectDTO> resultEnvelope = restResource
-                .get(ProjectDTO.class);
+        PayloadEnvelope<ProjectDTO> resultEnvelope =
+                dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertNotNull(resultEnvelope.getPayload());

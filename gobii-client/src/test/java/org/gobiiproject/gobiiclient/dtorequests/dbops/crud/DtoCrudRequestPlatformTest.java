@@ -268,25 +268,19 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
     public void testEmptyResult() throws Exception {
 
         DtoRestRequestUtils<PlatformDTO> dtoDtoRestRequestUtils =
-                new DtoRestRequestUtils<>(PlatformDTO.class,ServiceRequestId.URL_PLATFORM);
+                new DtoRestRequestUtils<>(PlatformDTO.class, ServiceRequestId.URL_PLATFORM);
         Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
         Integer nonExistentId = ++maxId;
 
 
-        RestUri restUriContact = ClientContext.getInstance(null,false)
-                .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
-        restUriContact.setParamValue("id",nonExistentId.toString());
-        RestResource<PlatformDTO> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<PlatformDTO> resultEnvelope = restResource
-                .get(PlatformDTO.class);
+        PayloadEnvelope<PlatformDTO> resultEnvelope
+                = dtoDtoRestRequestUtils.getResponseEnvelopeForEntityId(nonExistentId.toString());
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertNotNull(resultEnvelope.getPayload());
         Assert.assertNotNull(resultEnvelope.getPayload().getData());
-        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0);
     }
-
 
 
     @Test
