@@ -418,6 +418,7 @@ public class GobiiConfig {
                 if (commandLine.hasOption(PROP_FILE_FQPN) &&
                         (null != (propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN)))) {
                     if (validateGobiiConfiguration(propFileFqpn, options, commandLine)) {
+                        System.out.print("File " + propFileFqpn + " is valid.");
                         exitCode = 0;
                     }
                 } else {
