@@ -1,13 +1,17 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 
+import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -117,6 +121,14 @@ public class TestDtoFactory {
         returnVal.setModifiedDate(new Date());
         returnVal.setTableName(uniqueStem + "dummy table");
         returnVal.setDisplayRank(uniqueStem);
+
+
+        return returnVal;
+    }
+
+    public static String getRandomName(String type) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        String returnVal = type + timestamp.getTime();
 
 
         return returnVal;
@@ -303,5 +315,11 @@ public class TestDtoFactory {
         return returnVal;
 
     }
+    /*
+    public static File getCurrentCropDirectory() {
 
+        ConfigSettings configSettings = new ConfigSettings();
+        String fileCropDirectory = null;
+        fileCropDirectory = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.RAW_USER_FILES);
+    }*/
 }

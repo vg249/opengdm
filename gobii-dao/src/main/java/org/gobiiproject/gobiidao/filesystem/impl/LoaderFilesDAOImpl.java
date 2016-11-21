@@ -31,7 +31,6 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
 
     @Override
     public void verifyDirectoryPermissions(String pathName) throws GobiiDaoException {
-
         File pathToCreate = new File(pathName);
         if (!pathToCreate.canRead() && !pathToCreate.setReadable(true, false)) {
             throw new GobiiDaoException("Unable to set read permissions on directory " + pathName);
@@ -51,15 +50,14 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
 
             if (!pathToCreate.mkdirs()) {
                 throw new GobiiDaoException("Unable to create directory " + directoryPath);
+            }else{
+                returnVal.setDirectoryName(pathToCreate.getAbsolutePath());
+                verifyDirectoryPermissions(directoryPath);
             }
-
-            verifyDirectoryPermissions(directoryPath);
-            returnVal.setDirectoryName(pathToCreate.getName());
 
         } else {
             throw new GobiiDaoException("The specified path already exists: " + directoryPath);
         }
-
         return returnVal;
     }
 
@@ -87,6 +85,7 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
                 throw new GobiiDaoException("There are no files of the specified format in the directory:" + directory.getName());
             }
         }
+        returnVal.setDirectoryName(directory.getAbsolutePath());
         return returnVal;
     }
 

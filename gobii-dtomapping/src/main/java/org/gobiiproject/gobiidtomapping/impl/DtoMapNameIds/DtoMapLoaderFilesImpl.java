@@ -32,7 +32,7 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
     private LoaderFilesDAO loaderFilesDAO;
 
     public LoaderFilePreviewDTO makeDirectory(String cropType, String directoryName) throws GobiiDaoException {
-        LoaderFilePreviewDTO returnVal = new LoaderFilePreviewDTO();
+        LoaderFilePreviewDTO returnVal = null;
         String fileCropDirectory = null;
         ConfigSettings configSettings = new ConfigSettings();
         try {
@@ -40,6 +40,7 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
         } catch (Exception e) {
             throw new GobiiDaoException("could not get processing path because of: " + e.getMessage());
         }
+
 
         if (null != fileCropDirectory) {
             if (!loaderFilesDAO.doesPathExist(fileCropDirectory)) {
@@ -49,16 +50,18 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
             }
         }
 
+
         if (null != directoryName) {
             String directoryPath = fileCropDirectory+ directoryName;
-            if (!loaderFilesDAO.doesPathExist(directoryName)) {
-                returnVal = loaderFilesDAO.makeDirectory(directoryName);
+            if (!loaderFilesDAO.doesPathExist(directoryPath)) {
+                returnVal = loaderFilesDAO.makeDirectory(directoryPath);
+                returnVal.setId(0); //this is arbitrary for now
             } else {
-                loaderFilesDAO.verifyDirectoryPermissions(directoryName);
+                loaderFilesDAO.verifyDirectoryPermissions(directoryPath);
             }
         }
 
-        returnVal.setId(0); //this is arbitrary for now
+
         return returnVal;
 
     } // createDirectories()
