@@ -5,7 +5,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>org.gobiiproject</groupId>
-        <version>1.0.12-SNAPSHOT</version>
+        <version>1.0.13-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -23,13 +23,13 @@
         <dependency>
             <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-model</artifactId>
-            <version>1.0.12-SNAPSHOT</version>
+            <version>1.0.13-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.gobiiproject</groupId>
             <artifactId>gobii-api-model</artifactId>
-            <version>1.0.12-SNAPSHOT</version>
+            <version>1.0.13-SNAPSHOT</version>
         </dependency>
 
         <!-- HTTP client -->
