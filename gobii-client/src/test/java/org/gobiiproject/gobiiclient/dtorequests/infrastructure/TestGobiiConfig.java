@@ -80,7 +80,7 @@ public class TestGobiiConfig {
     } //
 
     @Test
-    public void testSetFileSystemRoot() {
+    public void testSetFileSystemRoot() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("filesystemroot");
 
@@ -104,7 +104,7 @@ public class TestGobiiConfig {
     }
 
     @Test
-    public void testSetEmailServer() {
+    public void testSetEmailServer() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("setemailoptions");
 
@@ -158,7 +158,7 @@ public class TestGobiiConfig {
     }
 
     @Test
-    public void testSetCropWebServerOptions() {
+    public void testSetCropWebServerOptions() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("cropwebserver");
 
@@ -210,7 +210,7 @@ public class TestGobiiConfig {
     }
 
     @Test
-    public void testSetPostGresForCrop() {
+    public void testSetPostGresForCrop() throws Exception {
         //-a -wfqpn "c:\gobii-config-test\testconfig.xml" -c "barcrop" -stP -soH "foohost" -soN 5433 -soU "foo userr" -soP "foo password" -soR "foodb"
 
         String testFileFqpn = makeTestFileFqpn("croppgsql");
@@ -268,7 +268,7 @@ public class TestGobiiConfig {
     }
 
     @Test
-    public void testSetMonetGresForCrop() {
+    public void testSetMonetGresForCrop() throws Exception {
         String testFileFqpn = makeTestFileFqpn("cropmonet");
 
         String cropId = "BARCROP";
@@ -323,7 +323,7 @@ public class TestGobiiConfig {
     }
 
     @Test
-    public void testSetTestOptions() {
+    public void testSetTestOptions() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("testvals");
 
@@ -413,7 +413,7 @@ public class TestGobiiConfig {
 
     }
 
-    private boolean createCrops(String testFileFqpn, List<String> cropIds) {
+    private boolean createCrops(String testFileFqpn, List<String> cropIds) throws Exception {
 
         boolean addCropSucceeded = false;
 
@@ -516,7 +516,7 @@ public class TestGobiiConfig {
     }
 
     @Test
-    public void testSetCropActive() {
+    public void testSetCropActive()  throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("setcropactive");
 
@@ -624,7 +624,7 @@ public class TestGobiiConfig {
      * run. It has not yet been tested with the Digestor and Extractor
      */
     @Test
-    public void makeValidConfigFile() {
+    public void makeValidConfigFile() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("makecompleteconfig");
 
