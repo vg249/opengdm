@@ -19,8 +19,10 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
+import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
@@ -29,15 +31,15 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.net.URL;
+
 public class DtoRequestConfigSettingsPropsTest {
 
-    private static UriFactory uriFactory;
+
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(Authenticator.authenticate());
-        String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-        DtoRequestConfigSettingsPropsTest.uriFactory = new UriFactory(currentCropContextRoot);
     }
 
     @AfterClass
@@ -49,11 +51,9 @@ public class DtoRequestConfigSettingsPropsTest {
     public void testGetConfigSettings() throws Exception {
 
 
-//        DtoRequestConfigSettings dtoRequestConfigSettings = new DtoRequestConfigSettings();
-//        ConfigSettingsDTO configSettingsDTORequest = new ConfigSettingsDTO();
-//        ConfigSettingsDTO configSettingsDTOResponse = dtoRequestConfigSettings.process(configSettingsDTORequest);
-
-        RestUri confgSettingsUri = uriFactory.resourceColl(ServiceRequestId.URL_CONFIGSETTINGS);
+        RestUri confgSettingsUri = ClientContext.getInstance(null,false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_CONFIGSETTINGS);
         RestResource<ConfigSettingsDTO> restResource = new RestResource<>(confgSettingsUri);
         PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = restResource
                 .get(ConfigSettingsDTO.class);
@@ -61,31 +61,52 @@ public class DtoRequestConfigSettingsPropsTest {
         TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader());
         ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
 
-        // this works because in our test environment we know that our gobii.config
-        // here on the client is the same as on the server
-        ConfigSettings configSettings = new TestConfiguration().getConfigSettings();
-        Assert.assertTrue(configSettings
-                .getActiveCropConfigs()
-                .size() == configSettingsDTOResponse.getServerConfigs().size());
+        Assert.assertNotNull(configSettingsDTOResponse);
+        Assert.assertTrue(configSettingsDTOResponse.getServerConfigs().size() > 0);
 
-        CropConfig cropConfigArbitrary = configSettings.getActiveCropConfigs().get(0);
+        Assert.assertNotNull("The server configuration does not define a default crop",
+                configSettingsDTOResponse.getDefaultCrop());
+
+        String defaultCrop = configSettingsDTOResponse.getDefaultCrop();
+
+        ServerConfig serverConfigDefaultCrop = configSettingsDTOResponse
+                .getServerConfigs()
+                .get(defaultCrop);
+
+        Assert.assertNotNull("The remote server configuration does not define crop type",
+                serverConfigDefaultCrop.getGobiiCropType());
+
+        Assert.assertTrue("The default crop's crop ID does not match the settings default crop",
+                defaultCrop.equals(serverConfigDefaultCrop.getGobiiCropType()));
+
+        Assert.assertNotNull("The remote server configuration does not define a domain for crop type " + serverConfigDefaultCrop.getGobiiCropType(),
+                serverConfigDefaultCrop.getDomain());
+
+        Assert.assertNotNull("The remote server configuration does not define a context root for crop type " + serverConfigDefaultCrop.getGobiiCropType(),
+                serverConfigDefaultCrop.getContextRoot());
+
+        Assert.assertNotNull("The remote server configuration does not define a port for crop type " + serverConfigDefaultCrop.getGobiiCropType(),
+                serverConfigDefaultCrop.getPort());
 
 
-//        List<ServerConfig> matches = configSettingsDTOResponse
-//                .getServerConfigs()
-//                .entrySet()
-//                .stream()
-//                .filter(e ->
-//                        (e.getValue().getDomain().equals(cropConfigArbitrary.getServiceDomain())) &&
-//                                (e.getValue().getPort().equals(cropConfigArbitrary.getServicePort())) &&
-//                                (e.getValue().getFileLocations().get(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS)
-//                                        .equals(configSettings.getProcessingPath(cropConfigArbitrary.getGobiiCropType(),GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS))) &&
-//                                (e.getKey().equals(cropConfigArbitrary.getGobiiCropType())))
-//                .map(Map.Entry::getValue)
-//                .collect(Collectors.toList());
+        URL url = new URL("http",
+                serverConfigDefaultCrop.getDomain(),
+                serverConfigDefaultCrop.getPort(),
+                serverConfigDefaultCrop.getContextRoot());
 
-//        Assert.assertTrue(1 == matches.size());
-//        Assert.assertNotNull(matches.get(0).getContextRoot());
+        String serviceUrl = url.toString();
+
+
+        ClientContext.resetConfiguration();
+
+        ClientContext.getInstance(serviceUrl, true);
+
+        ClientContext.getInstance(null, false)
+                .setCurrentClientCrop(defaultCrop);
+
+        SystemUserDetail userDetail = (new SystemUsers()).getDetail(SystemUserNames.USER_READER.toString());
+        Assert.assertTrue("Unable to authenticate to remote server with default drop " + defaultCrop,
+                ClientContext.getInstance(null, false).login(userDetail.getUserName(), userDetail.getPassword()));
     }
 
     @Test
@@ -102,7 +123,11 @@ public class DtoRequestConfigSettingsPropsTest {
 
         Assert.assertTrue("Unable to log in with locally instantiated config settings",
                 ClientContext.getInstance(configSettings,
-                        testConfiguration.getConfigSettings().getTestExecConfig().getTestCrop()).login(userDetail.getUserName(), userDetail.getPassword()));
+                        testConfiguration
+                                .getConfigSettings()
+                                .getTestExecConfig()
+                                .getTestCrop())
+                        .login(userDetail.getUserName(), userDetail.getPassword()));
 
         PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
 

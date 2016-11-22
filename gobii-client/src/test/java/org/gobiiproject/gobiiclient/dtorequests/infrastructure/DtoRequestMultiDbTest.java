@@ -5,6 +5,11 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests.infrastructure;
 
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestCv;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
@@ -13,11 +18,14 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
+import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.dto.container.CvDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 
+import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -42,19 +50,35 @@ public class DtoRequestMultiDbTest {
     @Test
     public void testGetPingDatabaseConfig() throws Exception {
 
-        ConfigSettings configSettings = new TestConfiguration().getConfigSettings(); // we're deliberately going to the source instead of using ClientContext
+//        ConfigSettings configSettings = new TestConfiguration().getConfigSettings(); // we're deliberately going to the source instead of using ClientContext
 
 
-        List<String> activeCropTypes = configSettings
-                .getActiveCropConfigs()
-                .stream()
-                .map(CropConfig::getGobiiCropType)
-                .collect(Collectors.toList());
+//        List<String> activeCropTypes = configSettings
+//                .getActiveCropConfigs()
+//                .stream()
+//                .map(CropConfig::getGobiiCropType)
+//                .collect(Collectors.toList());
+
+
+        RestUri confgSettingsUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_CONFIGSETTINGS);
+
+        RestResource<ConfigSettingsDTO> restResource = new RestResource<>(confgSettingsUri);
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = restResource
+                .get(ConfigSettingsDTO.class);
+
+        TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader());
+        Assert.assertTrue("Config settings were not retrieved",
+                resultEnvelope.getPayload().getData().size() > 0);
+        ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
+
 
         PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
-        for (String currentCropType : activeCropTypes) {
+        for (ServerConfig currentServerConfig : configSettingsDTOResponse.getServerConfigs().values()) {
 
             // should cause server to assign the correct datasource
+            String currentCropType = currentServerConfig.getGobiiCropType();
             Assert.assertTrue(Authenticator.authenticate(currentCropType));
 
             DtoRequestPing currentDtoRequestPing = new DtoRequestPing();
@@ -63,20 +87,16 @@ public class DtoRequestMultiDbTest {
                     TestUtils.checkAndPrintHeaderMessages(currentPingDTOResponse)
             );
 
-            String currentCropDbUrl = configSettings
-                    .getCropConfig(currentCropType)
-                    .getCropDbConfig(GobiiDbType.POSTGRESQL)
-                    .getConnectionString();
+            Assert.assertNotNull("The ping response does not contain the db url for crop "
+                    + currentPingDTOResponse.getDbMetaData());
 
-            Assert.assertTrue("The ping response does not contain the db url for crop "
-                            + currentCropType.toString()
-                            + ": "
-                            + currentCropDbUrl,
-                    1 == currentPingDTOResponse
-                            .getPingResponses()
-                            .stream()
-                            .filter(r -> r.contains(currentCropDbUrl))
-                            .count());
+            Assert.assertTrue("The ping response contains null data ",
+                    + currentPingDTOResponse
+                    .getDbMetaData()
+                    .stream()
+                    .filter(item -> LineUtils.isNullOrEmpty(item))
+                    .count() == 0);
+
         }
 
     }
