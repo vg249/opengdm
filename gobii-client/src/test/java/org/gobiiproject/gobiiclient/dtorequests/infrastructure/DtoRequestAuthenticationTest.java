@@ -51,19 +51,6 @@ public class DtoRequestAuthenticationTest {
     public void testSucceedWithOneAuthentication() throws Exception {
 
         Assert.assertTrue(Authenticator.authenticate());
-
-        AnalysisDTO analysisDTORequest = new AnalysisDTO();
-        analysisDTORequest.setAnalysisId(1);
-
-        AnalysisDTO analysisDTOResponse = new DtoRequestProcessor<AnalysisDTO>().process(analysisDTORequest,
-                AnalysisDTO.class,
-                ControllerType.LOADER,
-                ServiceRequestId.URL_ANALYSIS);
-
-        Assert.assertNotEquals(null, analysisDTOResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));
-        Assert.assertNotEquals(null, analysisDTOResponse.getProgram());
-
     }
 
     @Test
@@ -87,19 +74,7 @@ public class DtoRequestAuthenticationTest {
 
         DtoRequestProcessor<AnalysisDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
 
-        AnalysisDTO analysisDTOResponse = dtoDtoRequestProcessor.getTypedHtppResponseForDto(
-                ClientContext.getInstance(null, false).getCurrentCropDomain(),
-                ClientContext.getInstance(null, false).getCurrentCropPort(),
-                ClientContext.getInstance(null, false).getCurrentCropContextRoot(),
-                url,
-                AnalysisDTO.class,
-                analysisDTORequest,
-                oldToken);
 
-
-        Assert.assertNotEquals(null, analysisDTOResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(analysisDTOResponse));
-        Assert.assertNotEquals(null, analysisDTOResponse.getProgram());
 
     }
 
