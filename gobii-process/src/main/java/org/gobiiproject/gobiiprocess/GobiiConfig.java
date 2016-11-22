@@ -117,55 +117,54 @@ public class GobiiConfig {
     /**
      * Main method of the configuration utility. This utility has a number of functions, all of which can be
      * seen in the help listing -- run the utility without options to get a help listing.
-     * This utility and this utility alone should be used for creating configuration files for deployment 
-     * purposes. The -validate option should be used on files before attempting a deployment: it will 
+     * This utility and this utility alone should be used for creating configuration files for deployment
+     * purposes. The -validate option should be used on files before attempting a deployment: it will
      * point out missing and, to some extent, invalid values in the file (it does _not_ test whether server
      * configurations are valid). The gobii-client project contains a unit test that demonstrates many (but
      * not all) of the configuration options. Note that some of the commandline items are global to a deployment
      * whilst others are specific to a crop.
-
+     * <p>
      * The following example sequence of commands illustrates how to create and validate a complete configuration file.
-     *
-             # Set root gobii directory (global)
-             java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gR "/shared_data/gobii/"
-
-             # Configure email server (global)
-             java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -stE  -soH smtp.gmail.com -soN 465 -soU gobii.jira@gmail.com -soP ***REMOVED*** -stT SMTP -stH na
-
-             # Configure web server for crop DEV
-             java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  DEV  -stW  -soH localhost -soN 8282 -soR /gobii-dev/
-
-             # Configure web server for crop TEST
-             java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  TEST  -stW  -soH localhost -soN 8383 -soR /gobii-test/
-
-             # Configure PostGRES server for crop DEV
-             java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  DEV  -stP
-             -soH localhost -soN 5432 -soU appuser -soP ***REMOVED*** -soR gobii_dev
-
-             # Configure MonetDB server for crop DEV
-             java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  DEV -stM  -soH localhost -soN 5000 -soU appuser -soP appuser -soR gobii_dev
-
-             # Configure PostGRES server for crop TEST
-             java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  TEST  -stP  -soH localhost -soN 5432 -soU appuser -soP appuser -soR gobii_test
-
-             # Configure MonetDB server for crop DEV
-             java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  TEST -stM  -soH localhost -soN 5000 -soU appuser -soP appuser -soR gobii_test
-
-             # Configure integration testing (global)
-             java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gt  -gtcd /gobii-config-test -gtcq /gobii-config-test/gobii-web.xml -gtcr  DEV  -gtcs  "java -jar gobiiconfig.jar"  -gtiu http://localhost:8282/gobii-dev -gtsf false -gtsh localhost -gtsp 8080 -gtsu http://localhost:8080/gobii-dev
-
-             # Set default crop to DEV (global)
-             java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gD   DEV
-
-             # Set log file directory (global)
-             java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gL  /shared_data/gobii
-
-             # Mark crop TEST inactive
-             java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  TEST  -cD
-
-             # Validate the file
-             java -jar gobiiconfig.jar -validate -wfqpn /gobii-config-test/gobii-web.xml
-
+     * <p>
+     * # Set root gobii directory (global)
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gR "/shared_data/gobii/"
+     * <p>
+     * # Configure email server (global)
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -stE  -soH smtp.gmail.com -soN 465 -soU gobii.jira@gmail.com -soP ***REMOVED*** -stT SMTP -stH na
+     * <p>
+     * # Configure web server for crop DEV
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  DEV  -stW  -soH localhost -soN 8282 -soR /gobii-dev/
+     * <p>
+     * # Configure web server for crop TEST
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  TEST  -stW  -soH localhost -soN 8383 -soR /gobii-test/
+     * <p>
+     * # Configure PostGRES server for crop DEV
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  DEV  -stP
+     * -soH localhost -soN 5432 -soU appuser -soP ***REMOVED*** -soR gobii_dev
+     * <p>
+     * # Configure MonetDB server for crop DEV
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  DEV -stM  -soH localhost -soN 5000 -soU appuser -soP appuser -soR gobii_dev
+     * <p>
+     * # Configure PostGRES server for crop TEST
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  TEST  -stP  -soH localhost -soN 5432 -soU appuser -soP appuser -soR gobii_test
+     * <p>
+     * # Configure MonetDB server for crop DEV
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  TEST -stM  -soH localhost -soN 5000 -soU appuser -soP appuser -soR gobii_test
+     * <p>
+     * # Configure integration testing (global)
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gt  -gtcd /gobii-config-test -gtcq /gobii-config-test/gobii-web.xml -gtcr  DEV  -gtcs  "java -jar gobiiconfig.jar"  -gtiu http://localhost:8282/gobii-dev -gtsf false -gtsh localhost -gtsp 8080 -gtsu http://localhost:8080/gobii-dev
+     * <p>
+     * # Set default crop to DEV (global)
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gD   DEV
+     * <p>
+     * # Set log file directory (global)
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gL  /shared_data/gobii
+     * <p>
+     * # Mark crop TEST inactive
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  TEST  -cD
+     * <p>
+     * # Validate the file
+     * java -jar gobiiconfig.jar -validate -wfqpn /gobii-config-test/gobii-web.xml
      *
      * @param args
      */
@@ -204,7 +203,7 @@ public class GobiiConfig {
             setOption(options, CONFIG_SVR_GLOBAL_EMAIL, false, "Server type: Email (not crop specific)", "server: email"); // does not require -c
             setOption(options, CONFIG_SVR_GLOBAL_EMAIL_TYPE, true, "Email server type", "server type"); // does not require -c
             setOption(options, CONFIG_SVR_GLOBAL_EMAIL_HASHTYPE, true, "Email server hash type", "hash type"); // does not require -c
-            setOption(options, CONFIG_SVR_CROP_WEB, false, "Server type: Web (requires )", "server: web");
+            setOption(options, CONFIG_SVR_CROP_WEB, false, "Server type: Web", "server: web");
             setOption(options, CONFIG_SVR_CROP_POSTGRES, false, "Server type: postgres", "server: pgsql");
             setOption(options, CONFIG_SVR_CROP_MONET, false, "Server type: Monet DB", "server: monet");
 
@@ -442,13 +441,22 @@ public class GobiiConfig {
     private static void writeConfigSettingsMessage(Options options,
                                                    String configFileFqpn,
                                                    List<String> configArgs,
-                                                   List<String> configVals) throws Exception {
+                                                   List<String> configVals,
+                                                   String cropId) throws Exception {
 
         if (configArgs.size() != configArgs.size()) {
             throw new Exception("The size of the options and values arrays do not match");
         }
 
-        System.out.println("These options were written to the the config file " + configFileFqpn);
+        String contextMessage = "The following "
+                + (LineUtils.isNullOrEmpty(cropId) ? "global " : "")
+                + "options "
+                + (LineUtils.isNullOrEmpty(cropId) ? "" : "for the " + cropId + " crop ")
+                + "are being written to the the config file "
+                + configFileFqpn
+                + ": ";
+
+        System.out.println(contextMessage);
         for (int idx = 0; idx < configArgs.size(); idx++) {
             String currentArg = configArgs.get(idx);
             String currentOption = options.getOption(currentArg).getArgName();
@@ -490,7 +498,8 @@ public class GobiiConfig {
                 writeConfigSettingsMessage(options,
                         propFileFqpn,
                         Arrays.asList(CONFIG_GLOBAL_DEFAULT_CROP),
-                        Arrays.asList(defaultCrop));
+                        Arrays.asList(defaultCrop),
+                        null);
 
 
             } else if (commandLine.hasOption(CONFIG_GLOBAL_FILESYS_ROOT)) {
@@ -503,10 +512,11 @@ public class GobiiConfig {
                 writeConfigSettingsMessage(options,
                         propFileFqpn,
                         Arrays.asList(CONFIG_GLOBAL_FILESYS_ROOT),
-                        Arrays.asList(fileSysRoot));
+                        Arrays.asList(fileSysRoot),
+                        null);
 
 
-            } else if(commandLine.hasOption(CONFIG_GLOBAL_FILESYS_LOG)) {
+            } else if (commandLine.hasOption(CONFIG_GLOBAL_FILESYS_LOG)) {
                 String fileSysLog = commandLine.getOptionValue(CONFIG_GLOBAL_FILESYS_LOG);
                 configSettings.setFileSystemLog(fileSysLog);
                 configSettings.commit();
@@ -514,7 +524,8 @@ public class GobiiConfig {
                 writeConfigSettingsMessage(options,
                         propFileFqpn,
                         Arrays.asList(CONFIG_GLOBAL_FILESYS_LOG),
-                        Arrays.asList(fileSysLog));
+                        Arrays.asList(fileSysLog),
+                        null);
 
             } else if (commandLine.hasOption(CONFIG_MARK_CROP_ACTIVE) &&
                     commandLine.hasOption(CONFIG_CROP_ID)) {
@@ -625,7 +636,8 @@ public class GobiiConfig {
                 writeConfigSettingsMessage(options,
                         propFileFqpn,
                         argsSet,
-                        valsSet);
+                        valsSet,
+                        null);
 
             } else if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL) ||
                     commandLine.hasOption(CONFIG_CROP_ID)) {
@@ -713,6 +725,9 @@ public class GobiiConfig {
 
                     if (commandLine.hasOption(CONFIG_SVR_CROP_WEB)) {
 
+                        argsSet.add(CONFIG_SVR_CROP_WEB);
+                        valsSet.add("");
+
                         cropConfig.setServiceDomain(svrHost);
                         cropConfig.setServicePort(svrPort);
                         cropConfig.setServiceAppRoot(contextRoot);
@@ -723,9 +738,14 @@ public class GobiiConfig {
                         GobiiDbType gobiiDbType = GobiiDbType.UNKNOWN;
                         if (commandLine.hasOption(CONFIG_SVR_CROP_POSTGRES)) {
                             gobiiDbType = GobiiDbType.POSTGRESQL;
+                            argsSet.add(CONFIG_SVR_CROP_POSTGRES);
+                            valsSet.add("");
                         } else if (commandLine.hasOption(CONFIG_SVR_CROP_MONET)) {
                             gobiiDbType = GobiiDbType.MONETDB;
+                            argsSet.add(CONFIG_SVR_CROP_MONET);
+                            valsSet.add("");
                         }
+
 
                         cropConfig.setCropDbConfig(gobiiDbType,
                                 svrHost,
@@ -738,15 +758,16 @@ public class GobiiConfig {
                         // do nothing: allow control to fall through to print help
                     }
 
+                    writeConfigSettingsMessage(options,
+                            propFileFqpn,
+                            argsSet,
+                            valsSet,
+                            cropId);
 
                 }
 
                 configSettings.commit();
 
-                writeConfigSettingsMessage(options,
-                        propFileFqpn,
-                        argsSet,
-                        valsSet);
 
 
             } else if (commandLine.hasOption(CONFIG_REMOVE_CROP)) {
