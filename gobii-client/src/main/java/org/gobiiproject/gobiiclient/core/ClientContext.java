@@ -219,7 +219,6 @@ public final class ClientContext {
 
     private ClientContext() throws Exception {
 
-
     }
 
     public enum ProcessMode {Asynch, Block}
@@ -238,59 +237,65 @@ public final class ClientContext {
     List<String> gobiiCropTypes = new ArrayList<>();
 
 
-    public UriFactory getUriFactory() {
+    private ServerConfig getServerConfig() throws Exception {
 
-        String contextPath;
-        if( ! LineUtils.isNullOrEmpty(currentGobiiCropType) ) {
+        ServerConfig returnVal;
 
-            contextPath = serverConfigs.get(currentGobiiCropType).getContextRoot();
+        String cropType;
+        if (!LineUtils.isNullOrEmpty(currentGobiiCropType)) {
+            cropType = this.currentGobiiCropType;
         } else {
-            contextPath = serverConfigs.get(defaultGobiiCropType).getContextRoot();
+            cropType = this.defaultGobiiCropType;
         }
+
+        returnVal = this.getServerConfigByCropType(cropType);
+
+        return returnVal;
+    }
+
+    public UriFactory getUriFactory() throws Exception {
+
+
+        String contextPath = this.getServerConfig().getContextRoot();
 
         return new UriFactory(contextPath);
     }
 
 
-    public String getCurrentCropDomain() {
+    public String getCurrentCropDomain() throws Exception {
 
         String returnVal;
 
         if (null == sshOverrideHost) {
-            returnVal = serverConfigs.get(this.currentGobiiCropType).getDomain();
+            returnVal = this.getServerConfig().getDomain();
         } else {
             returnVal = sshOverrideHost;
         }
 
-
         return returnVal;
     }
 
-    public String getCurrentCropContextRoot() {
-        return serverConfigs.get(this.currentGobiiCropType).getContextRoot();
+    public String getCurrentCropContextRoot() throws Exception {
+        return this.getServerConfigByCropType(this.currentGobiiCropType).getContextRoot();
     }
 
     public String getCropContextRoot(String cropType) throws Exception {
 
         String returnVal;
 
-        if (serverConfigs.get(cropType) == null) {
-            throw new Exception("There is no server configuration for crop " + cropType);
-        }
-
-        returnVal = this.serverConfigs.get(cropType).getContextRoot();
+        returnVal = this.getServerConfigByCropType(cropType).getContextRoot();
 
         return returnVal;
     }
 
 
-    public Integer getCurrentCropPort() {
+    public Integer getCurrentCropPort() throws Exception {
 
         Integer returnVal;
 
         if (null == sshOverridePort) {
 
-            returnVal = serverConfigs.get(this.currentGobiiCropType).getPort();
+            returnVal = this.getServerConfigByCropType(this.currentGobiiCropType).getPort();
         } else {
             returnVal = sshOverridePort;
         }
@@ -316,8 +321,10 @@ public final class ClientContext {
         return this.defaultGobiiCropType;
     }
 
-    public String getFileLocationOfCurrenCrop(GobiiFileProcessDir gobiiFileProcessDir) {
-        return this.serverConfigs.get(this.currentGobiiCropType).getFileLocations().get(gobiiFileProcessDir);
+    public String getFileLocationOfCurrenCrop(GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+        return this.getServerConfigByCropType(this.currentGobiiCropType)
+                .getFileLocations()
+                .get(gobiiFileProcessDir);
     }
 
     public boolean login(String userName, String password) throws Exception {
@@ -347,5 +354,18 @@ public final class ClientContext {
 
     public String getFileSystemRoot() {
         return fileSystemRoot;
+    }
+
+    private ServerConfig getServerConfigByCropType(String cropType) throws Exception {
+
+        ServerConfig returnVal;
+
+        if (!this.serverConfigs.containsKey(cropType)) {
+            throw new Exception("No server configuration is defined for crop: " + cropType);
+        }
+
+        returnVal = this.serverConfigs.get(cropType);
+
+        return returnVal;
     }
 }

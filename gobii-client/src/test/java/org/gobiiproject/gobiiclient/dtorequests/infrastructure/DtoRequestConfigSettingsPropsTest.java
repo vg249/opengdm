@@ -8,7 +8,6 @@ package org.gobiiproject.gobiiclient.dtorequests.infrastructure;
 
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
@@ -18,11 +17,9 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestConfiguration;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;
 import org.gobiiproject.gobiimodel.types.SystemUsers;
@@ -47,9 +44,9 @@ public class DtoRequestConfigSettingsPropsTest {
         Assert.assertTrue(Authenticator.deAuthenticate());
     }
 
-    @Test
-    public void testGetConfigSettings() throws Exception {
+    private PayloadEnvelope<ConfigSettingsDTO> getConfigSettingsFromServer() throws Exception {
 
+        PayloadEnvelope<ConfigSettingsDTO> returnVal = null;
 
         RestUri confgSettingsUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
@@ -59,6 +56,19 @@ public class DtoRequestConfigSettingsPropsTest {
                 .get(ConfigSettingsDTO.class);
 
         TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader());
+
+        returnVal = resultEnvelope;
+
+
+        return returnVal;
+
+    }
+
+    @Test
+    public void testGetConfigSettings() throws Exception {
+
+
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope =  getConfigSettingsFromServer();
         ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
 
         Assert.assertNotNull(configSettingsDTOResponse);
@@ -107,6 +117,46 @@ public class DtoRequestConfigSettingsPropsTest {
         SystemUserDetail userDetail = (new SystemUsers()).getDetail(SystemUserNames.USER_READER.toString());
         Assert.assertTrue("Unable to authenticate to remote server with default drop " + defaultCrop,
                 ClientContext.getInstance(null, false).login(userDetail.getUserName(), userDetail.getPassword()));
+    }
+
+    @Test
+    public void testWithCaseMisMatchedCropname() throws  Exception {
+
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope =  getConfigSettingsFromServer();
+        ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
+
+        String defaultCrop = configSettingsDTOResponse.getDefaultCrop();
+
+        ServerConfig serverConfigDefaultCrop = configSettingsDTOResponse
+                .getServerConfigs()
+                .get(defaultCrop);
+
+
+        URL url = new URL("http",
+                serverConfigDefaultCrop.getDomain(),
+                serverConfigDefaultCrop.getPort(),
+                serverConfigDefaultCrop.getContextRoot());
+
+        String serviceUrl = url.toString();
+
+
+        ClientContext.resetConfiguration();
+
+        ClientContext.getInstance(serviceUrl, true);
+
+
+        String defaultCropMismatched;
+        if( Character.isUpperCase( defaultCrop.charAt(0) )) {
+            defaultCropMismatched = defaultCrop.toLowerCase();
+
+        } else {
+            defaultCropMismatched = defaultCrop.toUpperCase();
+        }
+
+
+        ClientContext.getInstance(null, false)
+                .setCurrentClientCrop(defaultCropMismatched);
+
     }
 
     @Test
