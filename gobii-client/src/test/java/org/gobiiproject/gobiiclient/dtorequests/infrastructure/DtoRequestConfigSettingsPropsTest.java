@@ -6,7 +6,6 @@
 package org.gobiiproject.gobiiclient.dtorequests.infrastructure;
 
 
-import com.sun.xml.internal.ws.api.policy.PolicyResolver;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;

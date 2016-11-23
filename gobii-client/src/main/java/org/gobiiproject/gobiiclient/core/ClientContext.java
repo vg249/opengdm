@@ -79,10 +79,8 @@ public final class ClientContext {
 
             clientContext = new ClientContext();
             clientContext.fileSystemRoot = configSettings.getFileSystemRoot();
-//            clientContext.defaultGobiiCropType = configSettings.getDefaultGobiiCropType();
-//            clientContext.currentGobiiCropType = clientContext.defaultGobiiCropType;
 
-            if (null == cropType) {
+            if (LineUtils.isNullOrEmpty(cropType)) {
                 clientContext.defaultGobiiCropType = configSettings.getDefaultGobiiCropType();
                 clientContext.currentGobiiCropType = clientContext.defaultGobiiCropType;
             } else {
