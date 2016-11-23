@@ -15,11 +15,9 @@ import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Phil on 4/27/2016.
@@ -344,6 +342,41 @@ public class TestDtoFactory {
 
         return returnVal;
 
+    }
+
+    public static File getFileOfType(String fileName, File resourcesDirectory) {
+
+        File newFile = new File(fileName);
+        for(File f: resourcesDirectory.listFiles()){
+            if(f.getName().equals(newFile.getName())) return f;
+        }
+        return null;
+    }
+
+    public static boolean checkPreviewFileMatch(List<List<String>> previewFileItems, File resourcesDirectory,String fileName) {
+
+        Scanner input = new Scanner(System.in);
+        try {
+            int lineCtr = 0; //count lines read
+            input = new Scanner(getFileOfType(fileName,resourcesDirectory));
+            while (lineCtr<50) { //read first 50 lines only
+                int ctr=0; //count words stored
+                String line = input.nextLine();
+                for(String s: line.split("\t")){
+                    if(ctr==50) break;
+                    else{
+                        if(!previewFileItems.get(lineCtr).get(ctr).equals(s)) return false;
+                            ctr++;
+                    }
+                }
+                lineCtr++;
+            }
+            input.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return true;
     }
     /*
     public static File getCurrentCropDirectory() {

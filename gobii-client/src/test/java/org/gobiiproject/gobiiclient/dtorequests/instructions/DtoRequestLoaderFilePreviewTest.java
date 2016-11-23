@@ -23,7 +23,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class DtoRequestLoaderFilePreviewTest {
 
@@ -105,6 +109,10 @@ public class DtoRequestLoaderFilePreviewTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         LoaderFilePreviewDTO resultLoaderFilePreviewDTO = resultEnvelope.getPayload().getData().get(0);
         Assert.assertNotNull(resultLoaderFilePreviewDTO.getDirectoryName());
+
+        //compare results read to file
+        Assert.assertTrue(TestDtoFactory.checkPreviewFileMatch(resultLoaderFilePreviewDTO.getFilePreview(), resourcesDirectory,resultLoaderFilePreviewDTO.getDirectoryName()));
+
 
     }
 }
