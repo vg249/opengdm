@@ -104,6 +104,10 @@ public class ConfigSettings {
         this.configValues.removeCrop(cropId);
     }
 
+    public boolean isCropDefined(String gobiiCropType ) {
+        return this.configValues.isCropDefined(gobiiCropType);
+    }
+
     public CropConfig getCropConfig(String gobiiCropType) throws Exception {
 
         return (this.configValues.getCropConfig(gobiiCropType));

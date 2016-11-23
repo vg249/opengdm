@@ -6,6 +6,7 @@
 package org.gobiiproject.gobiiclient.dtorequests.infrastructure;
 
 
+import com.sun.xml.internal.ws.api.policy.PolicyResolver;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
@@ -26,6 +27,7 @@ import org.gobiiproject.gobiimodel.types.SystemUsers;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URL;
@@ -36,15 +38,16 @@ public class DtoRequestConfigSettingsPropsTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        Assert.assertTrue(Authenticator.authenticate());
     }
 
     @AfterClass
     public static void tearDownUpClass() throws Exception {
-        Assert.assertTrue(Authenticator.deAuthenticate());
     }
 
     private PayloadEnvelope<ConfigSettingsDTO> getConfigSettingsFromServer() throws Exception {
+
+        ClientContext.resetConfiguration();
+        Assert.assertTrue(Authenticator.authenticate());
 
         PayloadEnvelope<ConfigSettingsDTO> returnVal = null;
 
@@ -59,6 +62,8 @@ public class DtoRequestConfigSettingsPropsTest {
 
         returnVal = resultEnvelope;
 
+        Assert.assertTrue(Authenticator.deAuthenticate());
+
 
         return returnVal;
 
@@ -67,6 +72,8 @@ public class DtoRequestConfigSettingsPropsTest {
     @Test
     public void testGetConfigSettings() throws Exception {
 
+        ClientContext.resetConfiguration();
+        Assert.assertTrue(Authenticator.authenticate());
 
         PayloadEnvelope<ConfigSettingsDTO> resultEnvelope =  getConfigSettingsFromServer();
         ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
@@ -117,6 +124,9 @@ public class DtoRequestConfigSettingsPropsTest {
         SystemUserDetail userDetail = (new SystemUsers()).getDetail(SystemUserNames.USER_READER.toString());
         Assert.assertTrue("Unable to authenticate to remote server with default drop " + defaultCrop,
                 ClientContext.getInstance(null, false).login(userDetail.getUserName(), userDetail.getPassword()));
+
+        Assert.assertTrue(Authenticator.deAuthenticate());
+
     }
 
     @Test
@@ -145,17 +155,20 @@ public class DtoRequestConfigSettingsPropsTest {
         ClientContext.getInstance(serviceUrl, true);
 
 
-        String defaultCropMismatched;
-        if( Character.isUpperCase( defaultCrop.charAt(0) )) {
-            defaultCropMismatched = defaultCrop.toLowerCase();
+        String defaultCropMismatched = defaultCrop.toUpperCase();
 
-        } else {
-            defaultCropMismatched = defaultCrop.toUpperCase();
+
+
+        try {
+            ClientContext.getInstance(null, false)
+                    .setCurrentClientCrop(defaultCropMismatched);
+        } catch(Exception e) {
+            Assert.assertTrue("Setting context to a case-mismatched crop type does not throw an exception",
+                    e.getMessage().contains("No server configuration is defined for crop: " + defaultCropMismatched));
+
         }
 
-
-        ClientContext.getInstance(null, false)
-                .setCurrentClientCrop(defaultCropMismatched);
+        Assert.assertTrue(Authenticator.deAuthenticate());
 
     }
 
@@ -189,6 +202,8 @@ public class DtoRequestConfigSettingsPropsTest {
         Assert.assertNotEquals(null, pingDTOResponse.getPingResponses());
         Assert.assertTrue(pingDTOResponse.getPingResponses().size()
                 >= pingDTORequest.getDbMetaData().size());
+
+        Assert.assertTrue(Authenticator.deAuthenticate());
 
     } // testInitContextFromConfigSettings()
 

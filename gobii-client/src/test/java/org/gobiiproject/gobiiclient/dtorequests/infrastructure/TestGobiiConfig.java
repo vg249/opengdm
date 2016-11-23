@@ -162,7 +162,7 @@ public class TestGobiiConfig {
 
         String testFileFqpn = makeTestFileFqpn("cropwebserver");
 
-        String cropId = "FOOCROP";
+        String cropId = "foocrop";
         String host = "host_" + UUID.randomUUID().toString();
         String contextPathWithoutTerminator = "context-" + UUID.randomUUID().toString();
         String contextPathWithTerminator = contextPathWithoutTerminator + LineUtils.PATH_TERMINATOR;
@@ -215,7 +215,7 @@ public class TestGobiiConfig {
 
         String testFileFqpn = makeTestFileFqpn("croppgsql");
 
-        String cropId = "FOOCROP";
+        String cropId = "foocrop";
         String user = "user_" + UUID.randomUUID().toString();
         String password = "password_" + UUID.randomUUID().toString();
         String host = "host_" + UUID.randomUUID().toString();
@@ -271,7 +271,7 @@ public class TestGobiiConfig {
     public void testSetMonetGresForCrop() throws Exception {
         String testFileFqpn = makeTestFileFqpn("cropmonet");
 
-        String cropId = "BARCROP";
+        String cropId = "barcrop";
         String user = "user_" + UUID.randomUUID().toString();
         String password = "password_" + UUID.randomUUID().toString();
         String host = "host_" + UUID.randomUUID().toString();
@@ -389,7 +389,7 @@ public class TestGobiiConfig {
         boolean succeeded = HelperFunctions.tryExec(createConfigCommand, testFileFqpn + ".out", testFileFqpn + ".err");
         Assert.assertTrue("Command failed: " + createConfigCommand, succeeded);
 
-        createCrops(testFileFqpn, Arrays.asList("DEV", "TEST", "EXTRA"));
+        createCrops(testFileFqpn, Arrays.asList("dev", "test", "extra"));
 
         String createDirectoriesCommand = makeCommandline(" -wfqpn "
                 + testFileFqpn
@@ -520,32 +520,32 @@ public class TestGobiiConfig {
 
         String testFileFqpn = makeTestFileFqpn("setcropactive");
 
-        createCrops(testFileFqpn, Arrays.asList("DEV", "TEST", "EXTRA"));
+        createCrops(testFileFqpn, Arrays.asList("dev", "test", "extra"));
 
         String commandSetTestActive = makeCommandline("-a -wfqpn "
                 + testFileFqpn
                 + " -c "
-                + " TEST "
+                + " test "
                 + " -cA ");
 
         boolean succeeded = HelperFunctions.tryExec(commandSetTestActive, testFileFqpn + ".out", testFileFqpn + ".err");
         Assert.assertTrue("Command failed: " + commandSetTestActive, succeeded);
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
-        Assert.assertTrue("The TEST Crop was not marked active", configSettings.getCropConfig("TEST").isActive());
+        Assert.assertTrue("The TEST Crop was not marked active", configSettings.getCropConfig("test").isActive());
 
 
         String commandSetTestNotActive = makeCommandline("-a -wfqpn "
                 + testFileFqpn
                 + " -c "
-                + "TEST "
+                + "test "
                 + " -cD ");
 
         succeeded = HelperFunctions.tryExec(commandSetTestNotActive, testFileFqpn + ".out", testFileFqpn + ".err");
         Assert.assertTrue("Command failed: " + commandSetTestNotActive, succeeded);
 
         configSettings = new ConfigSettings(testFileFqpn);
-        Assert.assertFalse("The TEST Crop was not marked inactive", configSettings.getCropConfig("TEST").isActive());
+        Assert.assertFalse("The test Crop was not marked inactive", configSettings.getCropConfig("test").isActive());
 
     }
 
@@ -554,9 +554,9 @@ public class TestGobiiConfig {
 
         String testFileFqpn = makeTestFileFqpn("removecrop");
 
-        createCrops(testFileFqpn, Arrays.asList("DEV", "TEST", "EXTRA"));
+        createCrops(testFileFqpn, Arrays.asList("dev", "test", "extra"));
 
-        String cropToRemove = "TEST";
+        String cropToRemove = "test";
 
         String commandRemoveCrop = makeCommandline("-a -wfqpn "
                 + testFileFqpn
@@ -568,8 +568,8 @@ public class TestGobiiConfig {
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
 
-        Assert.assertNull("The crop was not removed: " + cropToRemove,
-                configSettings.getCropConfig(cropToRemove));
+        Assert.assertFalse("The crop was not removed: " + cropToRemove,
+                configSettings.isCropDefined(cropToRemove));
     }
 
     @Test
@@ -577,9 +577,9 @@ public class TestGobiiConfig {
 
         String testFileFqpn = makeTestFileFqpn("defaultcrop");
 
-        createCrops(testFileFqpn, Arrays.asList("DEV", "TEST", "EXTRA"));
+        createCrops(testFileFqpn, Arrays.asList("dev", "test", "extra"));
 
-        String defaultCrop = "DEV";
+        String defaultCrop = "dev";
 
         String setDefaultCrop = makeCommandline("-a -wfqpn "
                 + testFileFqpn
@@ -664,8 +664,8 @@ public class TestGobiiConfig {
 
 
         // CONFIGURE THE VARIOUS SERVERS *******************************
-        String cropIdDev = " DEV ";
-        String cropidTest = " TEST ";
+        String cropIdDev = " dev ";
+        String cropidTest = " test ";
 
         configureWebServer(testFileFqpn,
                 cropIdDev,

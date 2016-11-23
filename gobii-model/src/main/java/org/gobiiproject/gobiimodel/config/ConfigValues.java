@@ -87,12 +87,15 @@ class ConfigValues {
         this.testExecConfig = testExecConfig;
     }
 
+    public boolean isCropDefined(String gobiiCropType) {
+        return this.getCropConfigs().containsKey(gobiiCropType);
+    }
 
     public CropConfig getCropConfig(String gobiiCropType) throws Exception {
 
         CropConfig returnVal = null;
 
-        if( ! getCropConfigs().containsKey(gobiiCropType)) {
+        if (!getCropConfigs().containsKey(gobiiCropType)) {
             throw new Exception("There is no configuration defined for crop " + gobiiCropType);
         }
 
@@ -131,7 +134,7 @@ class ConfigValues {
                 .collect(Collectors.toList());
     }
 
-    public CropConfig getCurrentCropConfig() throws  Exception {
+    public CropConfig getCurrentCropConfig() throws Exception {
         return getCropConfig(getCurrentGobiiCropType());
     }
 
@@ -181,7 +184,7 @@ class ConfigValues {
         for (Map.Entry<String, CropConfig> entry : cropConfigs.entrySet()) {
             String lowerCaseCropType = entry.getValue().getGobiiCropType();
             entry.getValue().setGobiiCropType(lowerCaseCropType);
-            this.cropConfigs.put(lowerCaseCropType,entry.getValue());
+            this.cropConfigs.put(lowerCaseCropType, entry.getValue());
         }
     }
 
@@ -189,13 +192,14 @@ class ConfigValues {
                         boolean isActive,
                         String serviceDomain,
                         String serviceAppRoot,
-                        Integer servicePort) throws Exception{
+                        Integer servicePort) throws Exception {
 
         gobiiCropType = gobiiCropType.toLowerCase();
 
-        CropConfig cropConfig = this.getCropConfig(gobiiCropType);
-
-        if (null == cropConfig) {
+        CropConfig cropConfig;
+        if (this.isCropDefined(gobiiCropType)) {
+            cropConfig = this.getCropConfig(gobiiCropType);
+        } else {
             cropConfig = new CropConfig();
             this.cropConfigs.put(gobiiCropType, cropConfig);
         }
