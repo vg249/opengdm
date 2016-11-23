@@ -14,6 +14,7 @@ import org.gobiiproject.gobidomain.services.DataSetService;
 import org.gobiiproject.gobidomain.services.DisplayService;
 import org.gobiiproject.gobidomain.services.ExperimentService;
 import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
+import org.gobiiproject.gobidomain.services.LoaderFilesService;
 import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
 import org.gobiiproject.gobidomain.services.ManifestService;
 import org.gobiiproject.gobidomain.services.MapsetService;
@@ -34,6 +35,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderFilePreviewDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
@@ -115,6 +117,9 @@ public class BRAPIController {
 
     @Autowired
     private ExtractorInstructionFilesService extractorInstructionFilesService = null;
+
+    @Autowired
+    private LoaderFilesService loaderFilesService = null;
 
     @Autowired
     private DisplayService displayService = null;
@@ -1605,6 +1610,78 @@ public class BRAPIController {
 
         return (returnVal);
 
+    }
+
+    // *********************************************
+    // *************************** FILE PREVIEW METHODS
+    // *********************************************
+
+
+    @RequestMapping(value = "/files/loader/{directoryName}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<LoaderFilePreviewDTO> createLoaderFileDirectory(@PathVariable("directoryName") String directoryName,
+                                                                           @RequestBody PayloadEnvelope<LoaderFilePreviewDTO> payloadEnvelope,
+                                                                           HttpServletRequest request,
+                                                                           HttpServletResponse response) {
+
+        PayloadEnvelope<LoaderFilePreviewDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            LoaderFilePreviewDTO loaderFilePreviewDTO = loaderFilesService.makeDirectory(cropType, directoryName);
+            PayloadWriter<LoaderFilePreviewDTO> payloadWriter = new PayloadWriter<>(request,
+                    LoaderFilePreviewDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_FILE_LOAD,
+                    loaderFilePreviewDTO);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/files/loader/{directoryName}",
+            params = {"fileFormat"},
+            method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<LoaderFilePreviewDTO> getFilePreviewBySearch(@PathVariable("directoryName") String directoryName,
+                                                                        @RequestParam(value = "fileFormat", required = false) String fileFormat,
+                                                           HttpServletRequest request,
+                                                           HttpServletResponse response) {
+
+
+        PayloadEnvelope<LoaderFilePreviewDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            LoaderFilePreviewDTO loaderFilePreviewDTO = loaderFilesService.getPreview(cropType, directoryName, fileFormat);
+            PayloadWriter<LoaderFilePreviewDTO> payloadWriter = new PayloadWriter<>(request,
+                    LoaderFilePreviewDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_FILE_LOAD,
+                    loaderFilePreviewDTO);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
     }
 
 

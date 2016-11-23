@@ -64,6 +64,10 @@ public class ResourceBuilder {
                 returnVal += "names";
                 break;
 
+            case URL_FILE_LOAD:
+                returnVal += "files/loader";
+                break;
+
             case URL_FILE_LOAD_INSTRUCTIONS:
                 returnVal += "instructions/loader";
                 break;
