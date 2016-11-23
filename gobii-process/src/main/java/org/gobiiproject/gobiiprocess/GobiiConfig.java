@@ -487,7 +487,7 @@ public class GobiiConfig {
 
                 String defaultCrop = commandLine.getOptionValue(CONFIG_GLOBAL_DEFAULT_CROP);
 
-                if (configSettings.getCropConfig(defaultCrop) == null) {
+                if (!configSettings.isCropDefined(defaultCrop)) {
                     configSettings.setCrop(defaultCrop, true, null, null, null);
                 }
 
@@ -531,24 +531,29 @@ public class GobiiConfig {
                     commandLine.hasOption(CONFIG_CROP_ID)) {
 
                 String cropId = commandLine.getOptionValue(CONFIG_CROP_ID);
-                CropConfig cropConfig = configSettings.getCropConfig(cropId);
-                if (cropConfig == null) {
+                if (configSettings.isCropDefined(cropId)) {
+                    CropConfig cropConfig = configSettings.getCropConfig(cropId);
+                    cropConfig.setActive(true);
+                } else {
                     returnVal = false;
                     System.err.println("The specified crop does not exist: " + cropId);
                 }
-                cropConfig.setActive(true);
+
                 configSettings.commit();
 
             } else if (commandLine.hasOption(CONFIG_MARK_CROP_NOTACTIVE) &&
                     commandLine.hasOption(CONFIG_CROP_ID)) {
 
                 String cropId = commandLine.getOptionValue(CONFIG_CROP_ID);
-                CropConfig cropConfig = configSettings.getCropConfig(cropId);
-                if (cropConfig == null) {
+                if (configSettings.isCropDefined(cropId)) {
+                    CropConfig cropConfig = configSettings.getCropConfig(cropId);
+                    cropConfig.setActive(false);
+                } else {
                     returnVal = false;
                     System.err.println("The specified crop does not exist: " + cropId);
+
                 }
-                cropConfig.setActive(false);
+
                 configSettings.commit();
 
             } else if (commandLine.hasOption(CONFIG_TST_GLOBAL)) {
@@ -710,11 +715,12 @@ public class GobiiConfig {
 
                     String cropId = commandLine.getOptionValue(CONFIG_CROP_ID);
 
-                    CropConfig cropConfig = configSettings.getCropConfig(cropId);
-                    if (cropConfig == null) {
+
+                    if (!configSettings.isCropDefined(cropId)) {
                         configSettings.setCrop(cropId, true, null, null, null);
-                        cropConfig = configSettings.getCropConfig(cropId);
                     }
+
+                    CropConfig cropConfig = configSettings.getCropConfig(cropId);
 
                     String contextRoot = null;
                     if (commandLine.hasOption(CONFIG_SVR_OPTIONS_CONTEXT_ROOT)) {
@@ -769,13 +775,11 @@ public class GobiiConfig {
                 configSettings.commit();
 
 
-
             } else if (commandLine.hasOption(CONFIG_REMOVE_CROP)) {
 
                 String cropId = commandLine.getOptionValue(CONFIG_REMOVE_CROP);
 
-                CropConfig cropConfig = configSettings.getCropConfig(cropId);
-                if (null != cropConfig) {
+                if (configSettings.isCropDefined(cropId)) {
 
                     configSettings.removeCrop(cropId);
                     configSettings.commit();
@@ -878,9 +882,9 @@ public class GobiiConfig {
                     System.err.println("A test crop id is not defined");
                     returnVal = false;
                 } else {
-                    String cropId = configSettings.getTestExecConfig().getTestCrop();
 
-                    if (configSettings.getCropConfig(cropId) == null) {
+                    String cropId = configSettings.getTestExecConfig().getTestCrop();
+                    if (!configSettings.isCropDefined(cropId)) {
                         System.err.println("The test crop is not defined in the crop configurations: " + cropId);
                         returnVal = false;
                     }

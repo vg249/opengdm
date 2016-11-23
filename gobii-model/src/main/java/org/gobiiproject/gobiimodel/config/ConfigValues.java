@@ -87,10 +87,18 @@ class ConfigValues {
         this.testExecConfig = testExecConfig;
     }
 
+    public boolean isCropDefined(String gobiiCropType) {
+        return this.getCropConfigs().containsKey(gobiiCropType);
+    }
 
-    public CropConfig getCropConfig(String gobiiCropType) {
+    public CropConfig getCropConfig(String gobiiCropType) throws Exception {
 
         CropConfig returnVal = null;
+
+        if (!getCropConfigs().containsKey(gobiiCropType)) {
+            throw new Exception("There is no configuration defined for crop " + gobiiCropType);
+        }
+
         returnVal = getCropConfigs().get(gobiiCropType);
 
         return returnVal;
@@ -126,7 +134,7 @@ class ConfigValues {
                 .collect(Collectors.toList());
     }
 
-    public CropConfig getCurrentCropConfig() {
+    public CropConfig getCurrentCropConfig() throws Exception {
         return getCropConfig(getCurrentGobiiCropType());
     }
 
@@ -172,18 +180,26 @@ class ConfigValues {
     }
 
     public void setCropConfigs(Map<String, CropConfig> cropConfigs) {
-        this.cropConfigs = cropConfigs;
+
+        for (Map.Entry<String, CropConfig> entry : cropConfigs.entrySet()) {
+            String lowerCaseCropType = entry.getValue().getGobiiCropType();
+            entry.getValue().setGobiiCropType(lowerCaseCropType);
+            this.cropConfigs.put(lowerCaseCropType, entry.getValue());
+        }
     }
 
     public void setCrop(String gobiiCropType,
                         boolean isActive,
                         String serviceDomain,
                         String serviceAppRoot,
-                        Integer servicePort) {
+                        Integer servicePort) throws Exception {
 
-        CropConfig cropConfig = this.getCropConfig(gobiiCropType);
+        gobiiCropType = gobiiCropType.toLowerCase();
 
-        if (null == cropConfig) {
+        CropConfig cropConfig;
+        if (this.isCropDefined(gobiiCropType)) {
+            cropConfig = this.getCropConfig(gobiiCropType);
+        } else {
             cropConfig = new CropConfig();
             this.cropConfigs.put(gobiiCropType, cropConfig);
         }

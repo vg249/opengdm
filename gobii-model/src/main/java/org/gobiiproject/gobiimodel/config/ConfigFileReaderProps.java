@@ -136,7 +136,8 @@ public class ConfigFileReaderProps {
 
         String currentPrefix = null;
 
-        String candidateCropName = this.getPropValue(PROP_NAME_WEB_SVR_DEFAULT_CROP).toUpperCase();
+        String candidateCropName =
+                this.getPropValue(PROP_NAME_WEB_SVR_DEFAULT_CROP).toLowerCase();
         if (!LineUtils.isNullOrEmpty(candidateCropName)) {
             returnVal.setDefaultGobiiCropType(candidateCropName);
             returnVal.setCurrentGobiiCropType(returnVal.getDefaultGobiiCropType());
@@ -169,20 +170,15 @@ public class ConfigFileReaderProps {
             final String cropTypeFromProp = currentPrefix
                     .replace(CROP_PREFIX, "")
                     .replace(".", "")
-                    .toUpperCase();
+                    .toLowerCase();
 
 
-            String currentGobiiCropType = cropTypeFromProp.toUpperCase();
+            String currentGobiiCropType = cropTypeFromProp.toLowerCase();
 
 
             String serviceDomain = this.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_DOMAIN);
             String serviceAppRoot = this.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_APPROOT);
             Integer servicePort = Integer.parseInt(this.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_PORT));
-            String userFilesLocation = this.getPropValue(currentPrefix + CROP_SUFFIX_USER_FILE_LOCLOCATION);
-            String loaderFilesLocation = this.getPropValue(currentPrefix + CROP_SUFFIX_LOADR_FILE_LOCATION);
-            String extractorFilesLocation = this.getPropValue(currentPrefix + CROP_SUFFIX_EXTRACTOR_FILE_LOCATION);
-            String extractorFilesOutputLocation = this.getPropValue(currentPrefix + CROP_SUFFIX_EXTRACTOR_FILE_OUTPUT);
-            String intermediateFilesLocation = this.getPropValue(currentPrefix + CROP_SUFFIX_INTERMEDIATE_FILE_LOCATION);
             String isActiveString = this.getPropValue(currentPrefix + CROP_SUFFIX_INTERMEDIATE_FILE_ACTIVE);
             boolean isActive = isActiveString.toLowerCase().equals("true");
 
@@ -190,14 +186,8 @@ public class ConfigFileReaderProps {
                     serviceDomain,
                     serviceAppRoot,
                     servicePort,
-//                    loaderFilesLocation,
-//                    extractorFilesLocation,
-//                    extractorFilesOutputLocation,
-//                    userFilesLocation,
-//                    intermediateFilesLocation,
                     isActive);
 
-            //crops.rice.db.monetdb.password=appuser
             for (GobiiDbType currentDbType : GobiiDbType.values()) {
 
                 if (currentDbType != GobiiDbType.UNKNOWN) {
@@ -222,17 +212,12 @@ public class ConfigFileReaderProps {
                     currentCropConfig.addCropDbConfig(currentDbType, currentCropDbConfig);
                 }
 
-
                 cropConfigs.put(currentGobiiCropType, currentCropConfig);
-                //cropConfigsToSerialize.add(currentCropConfig);
-
             }
 
         } // iterate crop configs
 
         returnVal.setCropConfigs(cropConfigs);
-        //returnVal.setCropConfigsToSerialize(cropConfigsToSerialize);
-
 
         if (0 == returnVal.getActiveCropConfigs()
                 .stream()

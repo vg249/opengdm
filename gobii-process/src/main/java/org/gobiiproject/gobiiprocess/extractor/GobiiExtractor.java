@@ -92,7 +92,15 @@ public class GobiiExtractor {
 		
 		
 		String crop = divineCrop(instructionFile);
-		CropConfig cropConfig=configuration.getCropConfig(crop);
+
+		CropConfig cropConfig = null;
+		try {
+			cropConfig = configuration.getCropConfig(crop);
+		} catch( Exception e) {
+			ErrorLogger.logError("Error retrieving crop " + crop,e.getMessage());
+		}
+
+
 		if(pathToHDF5Files==null)pathToHDF5Files=rootDir+"crops/"+crop.toString().toLowerCase()+"/hdf5/";
 		
 		List<GobiiExtractorInstruction> list= parseExtractorInstructionFile(instructionFile);
