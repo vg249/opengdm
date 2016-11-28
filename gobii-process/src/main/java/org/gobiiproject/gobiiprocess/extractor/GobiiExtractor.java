@@ -1,6 +1,17 @@
 package org.gobiiproject.gobiiprocess.extractor;
 
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
@@ -13,18 +24,8 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInst
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
-
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
+import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
 
 public class GobiiExtractor {
 	//Paths
@@ -67,13 +68,12 @@ public class GobiiExtractor {
     	
     	if(propertiesFile==null)propertiesFile=rootDir+"config/gobii-web.properties";
 		
-		
 		boolean success=true;
 		ConfigSettings configuration=null;
 		try {
 			configuration = new ConfigSettings(propertiesFile);
 		} catch (Exception e) {
-			ErrorLogger.logError("Extractor","Failure to read Configurations",e);
+			logError("Extractor","Failure to read Configurations",e);
 			return;
 		}
 		String logDir=configuration.getFileSystemLog();
@@ -89,26 +89,32 @@ public class GobiiExtractor {
 		else{
 			instructionFile=args[0];
 		}
-		
-		
-		String crop = divineCrop(instructionFile);
 
-		CropConfig cropConfig = null;
-		try {
-			cropConfig = configuration.getCropConfig(crop);
-		} catch( Exception e) {
-			ErrorLogger.logError("Error retrieving crop " + crop,e.getMessage());
-		}
-
-
-		if(pathToHDF5Files==null)pathToHDF5Files=rootDir+"crops/"+crop.toString().toLowerCase()+"/hdf5/";
-		
 		List<GobiiExtractorInstruction> list= parseExtractorInstructionFile(instructionFile);
 		if(list==null){
 			ErrorLogger.logError("Extractor","No instruction for file "+instructionFile);
 			return;
 		}
 		for(GobiiExtractorInstruction inst:list){
+			String crop = inst.getGobiiCropType();
+			if(crop==null) crop=divineCrop(instructionFile);
+			Path cropPath = Paths.get(rootDir+"crops/"+crop.toLowerCase());
+			if (!(Files.exists(cropPath) &&
+				  Files.isDirectory(cropPath))) {
+				ErrorLogger.logError("Extractor","Unknown Crop Type: "+crop);
+				return;
+			}
+			CropConfig cropConfig= null;
+			try {
+				cropConfig = configuration.getCropConfig(crop.toUpperCase());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (cropConfig == null) {
+				logError("Extractor","Unknown Crop Type: "+crop+" in the Configuration File");
+				return;
+			}
+			if(pathToHDF5Files==null)pathToHDF5Files=cropPath.toString()+"/hdf5/";
 			for(GobiiDataSetExtract extract:inst.getDataSetExtracts()){
 				String extractDir=extract.getExtractDestinationDirectory();
 				tryExec("rm -f "+extractDir+"*");
