@@ -1,25 +1,24 @@
 package org.gobiiproject.gobiiprocess.digester;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.ParseException;
+import java.util.*;
+
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
-
-
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
-
-
-
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
-
-
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
-
-
-
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.impl.LoaderInstructionsDAOImpl;
@@ -35,12 +34,6 @@ import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.*;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
@@ -81,35 +74,29 @@ public class GobiiFileReader {
          		.addOption("e", "errlog", true, "Error log override location")
          		.addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
          		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
-         		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
-         		;
+         		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files");
         DigesterMessage dm = new DigesterMessage();
-		 CommandLineParser parser = new DefaultParser();
-         try{
-               CommandLine cli = parser.parse( o, args );
-               if(cli.hasOption("rootDir")) rootDir = cli.getOptionValue("rootDir");
-               if(cli.hasOption("verbose")) verbose=true;
-               if(cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
-               if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
-               if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
-                args=cli.getArgs();//Remaining args passed through
+		CommandLineParser parser = new DefaultParser();
+        try{
+			CommandLine cli = parser.parse( o, args );
+            if(cli.hasOption("rootDir")) rootDir = cli.getOptionValue("rootDir");
+            if(cli.hasOption("verbose")) verbose=true;
+            if(cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
+            if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
+            if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
+            args=cli.getArgs();//Remaining args passed through
                 
-         }catch(org.apache.commons.cli.ParseException exp ) {
-             new HelpFormatter().printHelp("java -jar Digester.jar ","Also accepts input file directly after arguments\n"
-                		+ "Example: java -jar Digester.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json",o,null,true);
-              
+		}catch(org.apache.commons.cli.ParseException exp ) {
+			new HelpFormatter().printHelp("java -jar Digester.jar ","Also accepts input file directly after arguments\n" +
+                		                  "Example: java -jar Digester.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json",o,null,true);
                System.exit(2);
-         }
-		
-		
+		}
 		
      	extractorScriptPath=rootDir+"extractors/";
      	loaderScriptPath=rootDir+"loaders/";
      	pathToHDF5=loaderScriptPath+"hdf5/bin/";
     	
     	if(propertiesFile==null)propertiesFile=rootDir+"config/gobii-web.properties";
-		
-		
 		
 		boolean success=true;
 		Map<String,File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
@@ -147,7 +134,6 @@ public class GobiiFileReader {
 		GobiiLoaderInstruction zero=list.iterator().next();
 		Integer dataSetId=zero.getDataSetId();
 
-
 		dm.addIdentifier("Project",zero.getProject());
 		dm.addIdentifier("Platform",zero.getPlatform());
 		dm.addIdentifier("Experiment",zero.getExperiment());
@@ -158,20 +144,26 @@ public class GobiiFileReader {
 		dm.addPath("destination directory",new File(HelperFunctions.getDestinationFile(zero)).getParentFile().getAbsolutePath());//Convert to directory
 		dm.addPath("input directory",zero.getGobiiFile().getSource());
 
-
 		String crop=zero.getGobiiCropType();
 		if(crop==null) crop=divineCrop(instructionFile);
-
-		CropConfig cropConfig = null;
-		try {
-			 cropConfig = configuration.getCropConfig(crop);
-		} catch( Exception e ) {
-			logError("Error retrieving crop " + crop, e.getMessage());
+		Path cropPath = Paths.get(rootDir+"crops/"+crop.toLowerCase());
+		if (!(Files.exists(cropPath) &&
+			  Files.isDirectory(cropPath))) {
+			logError("Digester","Unknown Crop Type: "+crop);
+			return;
 		}
+		CropConfig cropConfig= null;
+		try {
+			cropConfig = configuration.getCropConfig(crop.toUpperCase());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (cropConfig == null) {
+			logError("Digester","Unknown Crop Type: "+crop+" in the Configuration File");
+			return;
+		}
+		if(pathToHDF5Files==null)pathToHDF5Files=cropPath.toString()+"/hdf5/";
 
-		if(pathToHDF5Files==null)pathToHDF5Files=rootDir+"crops/"+crop.toLowerCase()+"/hdf5/";
-
-		
 		String errorPath=getLogName(zero,cropConfig,crop);
 
 		//TODO: HACK - Job's name is 
@@ -358,7 +350,7 @@ public class GobiiFileReader {
 		if(variantFile!=null && dataSetId==null){
 				logError("Digester","Data Set ID is null for variant call");
 		}
-		if((variantFile!=null)&&dataSetId!=null){	
+		if((variantFile!=null)&&dataSetId!=null){
 			String loadVariantMatrix=loaderScriptPath+"monet/loadVariantMatrix.py";
 			//python loadVariantMatrix.py <Dataset Name> <Dataset_Identifier.variant> <Dataset_Identifier.marker_id> <Dataset_Identifier.dnarun_id> <hostname> <port> <dbuser> <dbpass> <dbname>
 			CropDbConfig monetConf=cropConfig.getCropDbConfig(GobiiDbType.MONETDB);
@@ -370,7 +362,7 @@ public class GobiiFileReader {
 				//HDF-5
 				//Usage: %s <datasize> <input file> <output HDF5 file
 				String loadHDF5=pathToHDF5+"loadHDF5";
-			dm.addPath("matrix directory",pathToHDF5Files);
+				dm.addPath("matrix directory",pathToHDF5Files);
 				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
 				int size=0;
 				switch(dst){		
@@ -392,8 +384,6 @@ public class GobiiFileReader {
 			else{
 				ErrorLogger.logWarning("Digester","Unsuccessfully Uploaded files");
 			}
-			
-			
 		}//endif(success)
 		else{
 			ErrorLogger.logWarning("Digester","Unsuccessfully Generated files");
