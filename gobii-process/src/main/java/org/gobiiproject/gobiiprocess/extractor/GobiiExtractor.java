@@ -124,7 +124,7 @@ public class GobiiExtractor {
 				String sampleFile=extractDir+"sample.file";
 				String projectFile=extractDir+"project.file";
 				String chrLengthFile = new StringBuilder(extractDir).append("marker.file.chr").toString();
-				Path mdePath = FileSystems.getDefault().getPath(new StringBuilder(extractorScriptPath).append("mde/gobii_mde.py").toString());
+				Path mdePath = FileSystems.getDefault().getPath(new StringBuilder(extractorScriptPath).append("postgres/gobii_mde/gobii_mde.py").toString());
 				if (!(mdePath.toFile().exists() &&
 					  mdePath.toFile().isFile())) {
 					ErrorLogger.logDebug("Extractor", new StringBuilder(mdePath.toString()).append(" does not exist!").toString());
