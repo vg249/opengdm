@@ -154,9 +154,10 @@ public class GobiiFileReader {
 		}
 		CropConfig cropConfig= null;
 		try {
-			cropConfig = configuration.getCropConfig(crop.toUpperCase());
+			cropConfig = configuration.getCropConfig(crop);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logError("Digester","Lower Case for Choosing the Crop Configuration from the Configuration File");
+			return;
 		}
 		if (cropConfig == null) {
 			logError("Digester","Unknown Crop Type: "+crop+" in the Configuration File");
