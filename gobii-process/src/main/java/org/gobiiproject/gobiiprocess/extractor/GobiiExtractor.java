@@ -107,7 +107,7 @@ public class GobiiExtractor {
 			try {
 				cropConfig = configuration.getCropConfig(crop);
 			} catch (Exception e) {
-				logError("Extractor","Lower Case for Choosing the Crop Configuration from the Configuration File");
+				logError("Extractor","Unknown exception getting crop",e);
 				return;
 			}
 			if (cropConfig == null) {
