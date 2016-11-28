@@ -41,8 +41,7 @@ public class GobiiExtractor {
          		.addOption("e", "errlog", true, "Error log override location")
          		.addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
          		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
-         		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
-         		;
+         		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files");
         
 		 CommandLineParser parser = new DefaultParser();
          try{
@@ -106,9 +105,10 @@ public class GobiiExtractor {
 			}
 			CropConfig cropConfig= null;
 			try {
-				cropConfig = configuration.getCropConfig(crop.toUpperCase());
+				cropConfig = configuration.getCropConfig(crop);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logError("Extractor","Lower Case for Choosing the Crop Configuration from the Configuration File");
+				return;
 			}
 			if (cropConfig == null) {
 				logError("Extractor","Unknown Crop Type: "+crop+" in the Configuration File");
