@@ -296,9 +296,11 @@ public class HelperFunctions {
 		String content=subject+"\n";
 		if(success && fileLocation!=null)content+="Your file is available at "+fileLocation;
 		if(success && showTempFiles){
-			for(String file:digestTempFiles){
-				if(checkFileExistance(file.substring(file.indexOf('\t')+1,file.length()))){
-					content+="\nThe loader has created digest file: "+file;
+			if(digestTempFiles != null) {
+				for (String file : digestTempFiles) {
+					if (checkFileExistance(file.substring(file.indexOf('\t') + 1, file.length()))) {
+						content += "\nThe loader has created digest file: " + file;
+					}
 				}
 			}
 		}

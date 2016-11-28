@@ -354,12 +354,13 @@ public class GobiiFileReader {
 		if((variantFile!=null)&&dataSetId!=null){
 			String loadVariantMatrix=loaderScriptPath+"monet/loadVariantMatrix.py";
 			//python loadVariantMatrix.py <Dataset Name> <Dataset_Identifier.variant> <Dataset_Identifier.marker_id> <Dataset_Identifier.dnarun_id> <hostname> <port> <dbuser> <dbpass> <dbname>
-			CropDbConfig monetConf=cropConfig.getCropDbConfig(GobiiDbType.MONETDB);
-			String loadVariantUserPort=monetConf.getHost()+" "+monetConf.getPort() + " " +monetConf.getUserName()+ " " + monetConf.getPassword() + " " + monetConf.getDbName();
-			generateIdLists(cropConfig, markerFileLoc, sampleFileLoc, dataSetId, errorPath);
-			ErrorLogger.logDebug("MonetDB","python "+loadVariantMatrix+" DS"+dataSetId+" "+variantFile.getPath()+" "+new File(markerFileLoc).getAbsolutePath()+" "+new File(sampleFileLoc).getAbsolutePath()+" "+loadVariantUserPort);
-			HelperFunctions.tryExec("python "+loadVariantMatrix+" DS"+dataSetId+" "+variantFile.getPath()+" "+new File(markerFileLoc).getAbsolutePath()+" "+new File(sampleFileLoc).getAbsolutePath()+" "+loadVariantUserPort,null,errorPath);
-			
+			if(false) {//TODO - Turned off MonetDB
+				CropDbConfig monetConf = cropConfig.getCropDbConfig(GobiiDbType.MONETDB);
+				String loadVariantUserPort = monetConf.getHost() + " " + monetConf.getPort() + " " + monetConf.getUserName() + " " + monetConf.getPassword() + " " + monetConf.getDbName();
+				generateIdLists(cropConfig, markerFileLoc, sampleFileLoc, dataSetId, errorPath);
+				ErrorLogger.logDebug("MonetDB", "python " + loadVariantMatrix + " DS" + dataSetId + " " + variantFile.getPath() + " " + new File(markerFileLoc).getAbsolutePath() + " " + new File(sampleFileLoc).getAbsolutePath() + " " + loadVariantUserPort);
+				HelperFunctions.tryExec("python " + loadVariantMatrix + " DS" + dataSetId + " " + variantFile.getPath() + " " + new File(markerFileLoc).getAbsolutePath() + " " + new File(sampleFileLoc).getAbsolutePath() + " " + loadVariantUserPort, null, errorPath);
+			}
 				//HDF-5
 				//Usage: %s <datasize> <input file> <output HDF5 file
 				String loadHDF5=pathToHDF5+"loadHDF5";
