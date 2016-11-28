@@ -53,6 +53,25 @@ public class ExtractorInstructionFileServiceImpl implements ExtractorInstruction
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
 
         return returnVal;
-    }    
+    }
 
+    @Override
+    public ExtractorInstructionFilesDTO getStatus(String cropType, String jobId)  throws GobiiException {
+
+        ExtractorInstructionFilesDTO returnVal;
+
+        try {
+            returnVal = dtoMapExtractorInstructions.getStatus(cropType,jobId);
+
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+
+        } catch (Exception e) {
+
+            LOGGER.error("Gobii service error", e);
+            throw new GobiiDomainException(e);
+
+        }
+
+        return returnVal;
+    }
 } // ExtractorInstructionFileServiceImpl

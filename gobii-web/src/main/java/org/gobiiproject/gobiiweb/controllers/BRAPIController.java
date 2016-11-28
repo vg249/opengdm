@@ -738,6 +738,41 @@ public class BRAPIController {
 
     }
 
+    @RequestMapping(value = "/instructions/extractor/status/{jobId}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ExtractorInstructionFilesDTO> getExtractorInstructionStatus(@PathVariable("jobId") String jobId,
+                                                                                 HttpServletRequest request,
+                                                                                 HttpServletResponse response) {
+
+        PayloadEnvelope<ExtractorInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            ExtractorInstructionFilesDTO extractorInstructionFilesDTO = extractorInstructionFilesService.getStatus(cropType, jobId);
+
+
+            PayloadWriter<ExtractorInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
+                    ExtractorInstructionFilesDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_FILE_EXTRACTOR_STATUS,
+                    extractorInstructionFilesDTO);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
 
     // *********************************************
     // *************************** MARKER METHODS

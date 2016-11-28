@@ -237,4 +237,20 @@ public class UriFactory {
         return returnVal;
 
     } // resourceByUriIdParam();
+
+    public RestUri getExtractorInstructionStatus() throws Exception {
+
+        RestUri returnVal;
+
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+                this.cropContextRoot,
+                ServiceRequestId.URL_FILE_EXTRACTOR_STATUS);
+
+        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("jobId"));
+
+        return returnVal;
+
+    } // getExtractorInsrtuctionStatus();
 }
+
+

@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests.instructions;
 
+import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
@@ -7,10 +8,12 @@ import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
@@ -20,6 +23,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.stream.Collectors;
 
 /**
@@ -222,6 +227,21 @@ public class DtoRequestFileExtractorInstructionsTest {
                         .size());
 
 
-    } // testGetMarkers()
+        //testGetExtractorInstructionStatus(
 
-}
+            RestUri namesUri = ClientContext
+                    .getInstance(null,false)
+                    .getUriFactory().getExtractorInstructionStatus();
+            namesUri.setParamValue("jobId", extractorInstructionFilesDTOFromSecondRetrieval.getInstructionFileName());
+
+            RestResource<ExtractorInstructionFilesDTO> restResource = new RestResource<>(namesUri);
+            PayloadEnvelope<ExtractorInstructionFilesDTO> statusResultEnvelope = restResource.get(ExtractorInstructionFilesDTO.class);
+
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(statusResultEnvelope.getHeader()));
+            ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO = statusResultEnvelope.getPayload().getData().get(0);
+            Assert.assertNotNull(resultExtractorInstructionFilesDTO.getGobiiJobStatus());
+        }
+
+
+    }
+

@@ -12,4 +12,6 @@ public interface ExtractorInstructionFilesService {
 
     ExtractorInstructionFilesDTO getInstruction(String cropType, String instructionFileName) throws GobiiException;
 
+    ExtractorInstructionFilesDTO getStatus(String cropType, String instructionFileName) throws GobiiException;
+
 }

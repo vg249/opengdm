@@ -13,4 +13,5 @@ public interface DtoMapExtractorInstructions {
 
     ExtractorInstructionFilesDTO writeInstructions(String cropType, ExtractorInstructionFilesDTO extractorInstructionFilesDTO)  throws GobiiException;
     ExtractorInstructionFilesDTO readInstructions(String cropType, String instructionFileName)  throws GobiiException;
+    ExtractorInstructionFilesDTO getStatus(String cropType, String jobId)  throws GobiiException;
 }

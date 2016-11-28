@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface ExtractorInstructionsDAO {
 
-    String writeInstructions(String instructionFileFqpn,
+    boolean writeInstructions(String instructionFileFqpn,
                              List<GobiiExtractorInstruction> instructions) throws GobiiDaoException;
 
     List<GobiiExtractorInstruction> getInstructions(String instructionFileFqpn) throws GobiiDaoException;

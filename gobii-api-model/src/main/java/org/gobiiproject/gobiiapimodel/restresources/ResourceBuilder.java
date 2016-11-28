@@ -76,6 +76,10 @@ public class ResourceBuilder {
                 returnVal += "instructions/extractor";
                 break;
 
+            case URL_FILE_EXTRACTOR_STATUS:
+                returnVal += "instructions/extractor/status";
+                break;
+
             case URL_DISPLAY:
                 returnVal += "display";
                 break;

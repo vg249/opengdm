@@ -2,6 +2,7 @@ package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.ArrayList;
@@ -11,6 +12,10 @@ import java.util.List;
  * Created by Phil on 4/8/2016.
  */
 public class ExtractorInstructionFilesDTO extends DTOBase {
+
+
+    private String jobId;
+    private GobiiJobStatus gobiiJobStatus;
 
     @Override
     public Integer getId() {
@@ -39,6 +44,22 @@ public class ExtractorInstructionFilesDTO extends DTOBase {
 
     public void setInstructionFileName(String instructionFileName) {
         this.instructionFileName = instructionFileName;
+    }
+
+    public GobiiJobStatus getGobiiJobStatus() {
+        return gobiiJobStatus;
+    }
+
+    public void setGobiiJobStatus(GobiiJobStatus gobiiJobStatus) {
+        this.gobiiJobStatus = gobiiJobStatus;
+    }
+
+    public String getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
     }
 
 }
