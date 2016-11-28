@@ -35,10 +35,12 @@ class ConfigValues {
         // these defaults should generally not be changed
         // note that they will be appended to the crops root directory
         put(GobiiFileProcessDir.RAW_USER_FILES, "files/");
+        put(GobiiFileProcessDir.HDF5_FILES, "hdf5/");
         put(GobiiFileProcessDir.LOADER_INSTRUCTIONS, "loader/instructions/");
         put(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES, "loader/digest/");
         put(GobiiFileProcessDir.LOADER_INPROGRESS_FILES, "loader/inprogress/");
         put(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, "extractor/instructions/");
+        put(GobiiFileProcessDir.EXTRACTOR_INPROGRESS, "extractor/inprogress/");
         put(GobiiFileProcessDir.EXTRACTOR_OUTPUT, "extractor/output/");
         put(GobiiFileProcessDir.QC_NOTIFICATIONS, "qcnotifications/");
 
