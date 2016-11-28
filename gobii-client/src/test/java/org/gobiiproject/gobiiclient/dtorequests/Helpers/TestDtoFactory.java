@@ -344,21 +344,23 @@ public class TestDtoFactory {
 
     }
 
-    public static File getFileOfType(String fileName, File resourcesDirectory) {
+    public static File getFileOfType(String filePath, File resourcesDirectory) {
 
-        File newFile = new File(fileName);
+        File newFile = new File(filePath);
         for(File f: resourcesDirectory.listFiles()){
-            if(f.getName().equals(newFile.getName())) return f;
+            if(f.getName().equals(newFile.getName())){
+                return f;
+            }
         }
         return null;
     }
 
-    public static boolean checkPreviewFileMatch(List<List<String>> previewFileItems, File resourcesDirectory,String fileName) {
+    public static boolean checkPreviewFileMatch(List<List<String>> previewFileItems, File resourcesDirectory, String filePath) {
 
         Scanner input = new Scanner(System.in);
         try {
             int lineCtr = 0; //count lines read
-            input = new Scanner(getFileOfType(fileName,resourcesDirectory));
+            input = new Scanner(getFileOfType(filePath, resourcesDirectory));
             while (lineCtr<50) { //read first 50 lines only
                 int ctr=0; //count words stored
                 String line = input.nextLine();

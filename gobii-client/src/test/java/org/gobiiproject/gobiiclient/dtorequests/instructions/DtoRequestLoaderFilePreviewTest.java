@@ -42,7 +42,7 @@ public class DtoRequestLoaderFilePreviewTest {
         Assert.assertTrue(Authenticator.deAuthenticate());
     }
 
-    @Ignore
+    @Test
     public void testCreateDirectory() throws Exception {
         LoaderFilePreviewDTO loaderFilePreviewDTO = new LoaderFilePreviewDTO();
 
@@ -64,7 +64,7 @@ public class DtoRequestLoaderFilePreviewTest {
 
     }
 
-    @Ignore
+    @Test
     public void testGetFilePreview() throws Exception {
         //Create newFolder
         LoaderFilePreviewDTO loaderFileCreateDTO = new LoaderFilePreviewDTO();
@@ -84,7 +84,7 @@ public class DtoRequestLoaderFilePreviewTest {
         Assert.assertNotNull(resultLoaderFilePreviewDTOCreated.getDirectoryName());
 
         //copyContentsFromCreatedFolder
-        File resourcesDirectory = new File("src/test/resources");
+        File resourcesDirectory = new File("src/test/resources/datasets");
         File dst = new File(resultLoaderFilePreviewDTOCreated.getDirectoryName());
 
         try {
@@ -95,7 +95,6 @@ public class DtoRequestLoaderFilePreviewTest {
 
 
         //retrieve contents from created name
-        LoaderFilePreviewDTO loaderFilePreviewDTO = new LoaderFilePreviewDTO();
         RestUri namesUri = ClientContext
                 .getInstance(null,false)
                 .getUriFactory()
@@ -109,9 +108,10 @@ public class DtoRequestLoaderFilePreviewTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         LoaderFilePreviewDTO resultLoaderFilePreviewDTO = resultEnvelope.getPayload().getData().get(0);
         Assert.assertNotNull(resultLoaderFilePreviewDTO.getDirectoryName());
+        Assert.assertNotNull(resultLoaderFilePreviewDTO.getFileList().get(0));
 
         //compare results read to file
-        Assert.assertTrue(TestDtoFactory.checkPreviewFileMatch(resultLoaderFilePreviewDTO.getFilePreview(), resourcesDirectory,resultLoaderFilePreviewDTO.getDirectoryName()));
+        Assert.assertTrue(TestDtoFactory.checkPreviewFileMatch(resultLoaderFilePreviewDTO.getFilePreview(), resourcesDirectory,resultLoaderFilePreviewDTO.getFileList().get(0)));
 
 
     }

@@ -52,6 +52,7 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
                 throw new GobiiDaoException("Unable to create directory " + directoryPath);
             }else{
                 returnVal.setDirectoryName(pathToCreate.getAbsolutePath());
+                returnVal.setId(1);//this is arbitrary for now
                 verifyDirectoryPermissions(directoryPath);
             }
 
@@ -86,6 +87,7 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
             }
         }
         returnVal.setDirectoryName(directory.getAbsolutePath());
+        returnVal.setId(1);//this is arbitrary for now
         return returnVal;
     }
 

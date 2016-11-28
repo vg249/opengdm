@@ -1635,7 +1635,8 @@ public class BRAPIController {
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
                     ServiceRequestId.URL_FILE_LOAD,
-                    loaderFilePreviewDTO);
+                    loaderFilePreviewDTO
+            );
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1664,25 +1665,26 @@ public class BRAPIController {
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            LoaderFilePreviewDTO loaderFilePreviewDTO = loaderFilesService.getPreview(cropType, directoryName, fileFormat);
-            PayloadWriter<LoaderFilePreviewDTO> payloadWriter = new PayloadWriter<>(request,
-                    LoaderFilePreviewDTO.class);
+    LoaderFilePreviewDTO loaderFilePreviewDTO = loaderFilesService.getPreview(cropType, directoryName, fileFormat);
+    PayloadWriter<LoaderFilePreviewDTO> payloadWriter = new PayloadWriter<>(request,
+            LoaderFilePreviewDTO.class);
 
-            payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_FILE_LOAD,
-                    loaderFilePreviewDTO);
+        payloadWriter.writeSingleItemForDefaultId(returnVal,
+        ServiceRequestId.URL_FILE_LOAD,
+        loaderFilePreviewDTO
+        );
 
         } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
+        returnVal.getHeader().getStatus().addException(e);
         }
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-                response,
-                HttpStatus.CREATED,
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        response,
+        HttpStatus.CREATED,
+        HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
-    }
+        }
 
 
-}// BRAPIController
+        }// BRAPIController
