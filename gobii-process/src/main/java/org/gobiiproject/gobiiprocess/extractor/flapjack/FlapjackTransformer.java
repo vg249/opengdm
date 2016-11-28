@@ -40,7 +40,7 @@ public class FlapjackTransformer {
 		rm(new StringBuilder(tempDir).append("tmp").toString());
 		
 		HelperFunctions.tryExec(new StringBuilder("cat ").append(tempDir).append("map.header ").
-				                                          append(tempDir).append(chrLengthsExists?"map.chrLengths ":"").
+				                                          append(chrLengthsExists?tempDir:"").append(chrLengthsExists?"map.chrLengths ":"").
 				                                          append(tempDir).append("map.body").toString(),
 				                outFile,
 				                errorFile);
