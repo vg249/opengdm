@@ -1,6 +1,9 @@
 package org.gobiiproject.gobiiprocess.extractor.flapjack;
 
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+
+import java.io.File;
+
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 
 /**
@@ -18,14 +21,16 @@ public class FlapjackTransformer {
 		5) cat all the three files into the new output file
 		Example for the marker file process: cut -f1,2,4 derp.txt | tail -n +2 > derp2.txt
 	*/
+   boolean chrLengthsExists=new File(chrLengthFile).exists();
 		HelperFunctions.tryExec(new StringBuilder("echo # fjFile = MAP").toString(),
 				                new StringBuilder(tempDir).append("map.header").toString(),
 				                errorFile);
 
-		HelperFunctions.tryExec(new StringBuilder("tail -n +2 ").append(chrLengthFile).toString(),
-				                new StringBuilder(tempDir).append("map.chrLengths").toString(),
-				                errorFile);
-
+		if(chrLengthsExists) {
+			HelperFunctions.tryExec(new StringBuilder("tail -n +2 ").append(chrLengthFile).toString(),
+					new StringBuilder(tempDir).append("map.chrLengths").toString(),
+					errorFile);
+		}
 		HelperFunctions.tryExec(new StringBuilder("cut -f1,3,4 ").append(markerFile).toString(),
 				                new StringBuilder(tempDir).append("tmp").toString(),
 				                errorFile);
@@ -35,13 +40,13 @@ public class FlapjackTransformer {
 		rm(new StringBuilder(tempDir).append("tmp").toString());
 		
 		HelperFunctions.tryExec(new StringBuilder("cat ").append(tempDir).append("map.header ").
-				                                          append(tempDir).append("map.chrLengths ").
+				                                          append(tempDir).append(chrLengthsExists?"map.chrLengths ":"").
 				                                          append(tempDir).append("map.body").toString(),
 				                outFile,
 				                errorFile);
 
 		rm(new StringBuilder(tempDir).append("map.header").toString());
-		rm(new StringBuilder(tempDir).append("map.chrLengths").toString());
+		if(chrLengthsExists)rm(new StringBuilder(tempDir).append("map.chrLengths").toString());
 		rm(new StringBuilder(tempDir).append("map.body").toString());
 
 		return true;
