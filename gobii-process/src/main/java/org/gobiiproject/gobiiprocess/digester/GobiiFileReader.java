@@ -156,7 +156,7 @@ public class GobiiFileReader {
 		try {
 			cropConfig = configuration.getCropConfig(crop);
 		} catch (Exception e) {
-			logError("Digester","Lower Case for Choosing the Crop Configuration from the Configuration File");
+			logError("Digester","Unknown loading error",e);
 			return;
 		}
 		if (cropConfig == null) {
