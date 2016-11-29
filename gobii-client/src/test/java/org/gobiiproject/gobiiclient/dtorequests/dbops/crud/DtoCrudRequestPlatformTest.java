@@ -83,10 +83,10 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
                 .resourceColl(ServiceRequestId.URL_PLATFORM));
         PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelope = restResource.post(PlatformDTO.class,
                 payloadEnvelope);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOResponseEnvelope.getHeader()));
         PlatformDTO platformDTOResponse = platformDTOResponseEnvelope.getPayload().getData().get(0);
 
         Assert.assertNotEquals(null, platformDTOResponse);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOResponseEnvelope.getHeader()));
         Assert.assertTrue(platformDTOResponse.getPlatformId() > 0);
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PLATFORMS, platformDTOResponse.getPlatformId());
 

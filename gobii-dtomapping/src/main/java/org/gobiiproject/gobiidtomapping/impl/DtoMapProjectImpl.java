@@ -137,6 +137,7 @@ public class DtoMapProjectImpl implements DtoMapProject {
         ProjectDTO returnVal = projectDTO;
 
 
+        // validate that the dto does not specify a project that already exists
         if (null != returnVal.getProjectId() && returnVal.getProjectId() > 0) {
             try {
                 ResultSet resultSet = rsProjectDao.getProjectDetailsForProjectId(returnVal.getProjectId());
