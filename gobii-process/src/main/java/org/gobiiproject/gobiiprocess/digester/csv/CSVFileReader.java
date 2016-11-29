@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
+
 /**
  * CSV-Specific File Loader class, used by {@link org.gobiiproject.gobiiprocess.digester.GobiiFileReader}
  * Contains methods specific to the reading of single-character separated text files, such as .csv, tab-delimited, and pipe-separated values.
@@ -169,7 +171,7 @@ public class CSVFileReader {
 	        String commandStr = "paste -d"+delimiterString+""+fileListString;//+" > "+loaderInstruction.getFile().getDestination()+" 2>>/home/jdl232/err.log";
 	       HelperFunctions.tryExec(commandStr, HelperFunctions.getDestinationFile(loaderInstruction),"err.log" );
 	        for(String filename:tempFiles){
-	        	HelperFunctions.tryExec("rm " + filename);
+	        	rm(filename);
 	        }
 		} catch (FileNotFoundException e) {
 			ErrorLogger.logError("CSVReader","Unexpected Missing File",e);

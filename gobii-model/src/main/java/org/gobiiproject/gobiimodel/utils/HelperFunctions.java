@@ -177,6 +177,10 @@ public class HelperFunctions {
 			return false;
 		}
 		if(p.exitValue()!=0){
+			if(executedProcName.equals("rm")){ //TODO: Temporary removal of 'RM' errors as 'ERROR' type
+				ErrorLogger.logDebug(executedProcName,"Unable to rm "+ exec[1]);
+				return false;
+			}
 			ErrorLogger.logError(executedProcName,"Exit code " + p.exitValue(),errorFile);
 			return false;
 		}
