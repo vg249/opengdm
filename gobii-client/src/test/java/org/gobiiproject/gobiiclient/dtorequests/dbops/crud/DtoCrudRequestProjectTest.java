@@ -67,7 +67,7 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
 
 //        DtoRequestProject dtoRequestProject = new DtoRequestProject();
 //        ProjectDTO projectDTOResponse = dtoRequestProject.process(projectDTORequest);
-        
+
         RestUri projectsUri = ClientContext.getInstance(null, false).getUriFactory().resourceColl(ServiceRequestId.URL_PROJECTS);
         RestResource<ProjectDTO> restResourceForProjects = new RestResource<>(projectsUri);
         PayloadEnvelope<ProjectDTO> payloadEnvelope = new PayloadEnvelope<>(newProjectDTO, GobiiProcessType.CREATE);
@@ -76,14 +76,17 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
+
+        Assert.assertTrue("At least one project should have been retrieved",
+                resultEnvelope.getPayload().getData().size() > 0);
+
         ProjectDTO projectDTOResponse = resultEnvelope.getPayload().getData().get(0);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
 
         Assert.assertNotEquals(null, projectDTOResponse);
         Assert.assertNotEquals(null, projectDTOResponse.getProjectId());
         Assert.assertTrue(projectDTOResponse.getProjectId() > 0);
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROJECTS,projectDTOResponse.getProjectId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROJECTS, projectDTOResponse.getProjectId());
 
         Assert.assertNotEquals(null, projectDTOResponse.getProperties());
         Assert.assertTrue(projectDTOResponse.getProperties().size() > 0);
@@ -112,7 +115,8 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
                 .get(ProjectDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-
+        Assert.assertTrue("At least one project should have been retrieved ",
+                resultEnvelope.getPayload().getData().size() > 0 );
         ProjectDTO projectDTO = resultEnvelope.getPayload().getData().get(0);
 
 //        DtoRequestProject dtoRequestProject = new DtoRequestProject();
@@ -130,7 +134,7 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
     public void testEmptyResult() throws Exception {
 
         DtoRestRequestUtils<ProjectDTO> dtoDtoRestRequestUtils =
-                new DtoRestRequestUtils<>(ProjectDTO.class,ServiceRequestId.URL_PROJECTS);
+                new DtoRestRequestUtils<>(ProjectDTO.class, ServiceRequestId.URL_PROJECTS);
         Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
         Integer nonExistentId = maxId + 1;
 
@@ -141,7 +145,7 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertNotNull(resultEnvelope.getPayload());
         Assert.assertNotNull(resultEnvelope.getPayload().getData());
-        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0 );
+        Assert.assertTrue(resultEnvelope.getPayload().getData().size() == 0);
     }
 
 
@@ -165,7 +169,7 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
         RestResource<ProjectDTO> restResourceForProjectPost =
                 new RestResource<>(ClientContext.getInstance(null, false).getUriFactory().resourceColl(ServiceRequestId.URL_PROJECTS));
 
-         resultEnvelope = restResourceForProjectPost
+        resultEnvelope = restResourceForProjectPost
                 .post(ProjectDTO.class, payloadEnvelope);
 
 
@@ -255,6 +259,11 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
         projectDTORequestReceived.setProjectDescription(newDescription);
 
         String divisionPropertyNewValue = UUID.randomUUID().toString();
+
+        Assert.assertTrue("At least one property should have been retrieved",
+                projectDTORequestReceived.getProperties().size() > 0);
+
+
         EntityPropertyDTO divisionProperty = projectDTORequestReceived
                 .getProperties()
                 .stream()
@@ -266,12 +275,11 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
 
         PayloadEnvelope<ProjectDTO> requestEnvelope = new PayloadEnvelope<>(projectDTORequestReceived, GobiiProcessType.UPDATE);
         resultEnvelope = restResourceForProjectGet
-                .put(ProjectDTO.class,requestEnvelope);
+                .put(ProjectDTO.class, requestEnvelope);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
-       // ProjectDTO projectDTOResponse = resultEnvelope.getPayload().getData().get(0);
+        // ProjectDTO projectDTOResponse = resultEnvelope.getPayload().getData().get(0);
         /// ProjectDTO projectDTOResponse = dtoRequestProject.process(projectDTORequestReceived);
-
 
 
 //        ProjectDTO projectDTOReRequest = new ProjectDTO();
@@ -282,7 +290,7 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
         resultEnvelope = restResourceForProjectGet
                 .get(ProjectDTO.class);
 
-       ProjectDTO dtoRequestProjectProjectReRetrieved = resultEnvelope.getPayload().getData().get(0);
+        ProjectDTO dtoRequestProjectProjectReRetrieved = resultEnvelope.getPayload().getData().get(0);
 
         Assert.assertTrue(dtoRequestProjectProjectReRetrieved.getProjectDescription().equals(newDescription));
 
@@ -316,7 +324,7 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
 
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
-        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == projectDTOList.size() );
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == projectDTOList.size());
 
         List<Integer> itemsToTest = new ArrayList<>();
         if (projectDTOList.size() > 50) {
@@ -333,7 +341,7 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
 
             Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
 
-            RestUri restUriProjectForGetById = ClientContext.getInstance(null,false)
+            RestUri restUriProjectForGetById = ClientContext.getInstance(null, false)
                     .getUriFactory()
                     .RestUriFromUri(currentLink.getHref());
             RestResource<ProjectDTO> restResourceForGetById = new RestResource<>(restUriProjectForGetById);
@@ -346,6 +354,6 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
             Assert.assertTrue(currentProjectDto.getProjectId().equals(projectDTOFromLink.getProjectId()));
         }
 
-    }    
+    }
 
 }
