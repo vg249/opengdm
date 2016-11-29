@@ -54,6 +54,7 @@ public class GobiiFileReader {
 	private static String loaderScriptPath,extractorScriptPath,pathToHDF5;
 	private static final String VARIANT_CALL_TABNAME="matrix";
 	private static final String	LINKAGE_GROUP_TABNAME="linkage_group";
+	private static final String GERMPLASM_PROP_TABNAME="germplasm_prop";
 	private static final String GERMPLASM_TABNAME="germplasm";
 	private static String pathToHDF5Files;
 	private static boolean verbose;
@@ -298,7 +299,7 @@ public class GobiiFileReader {
 			String instructionName=inst.getTable();
 			loaderInstructionMap.put(instructionName, new File(HelperFunctions.getDestinationFile(inst)));
 			loaderInstructionList.add(instructionName);//TODO Hack - for ordering
-			if(LINKAGE_GROUP_TABNAME.equals(instructionName)||GERMPLASM_TABNAME.equals(instructionName)){
+			if(LINKAGE_GROUP_TABNAME.equals(instructionName)||GERMPLASM_TABNAME.equals(instructionName)||GERMPLASM_PROP_TABNAME.equals(instructionName)){
 				success&=HelperFunctions.tryExec(loaderScriptPath+"LGduplicates.py -i "+HelperFunctions.getDestinationFile(inst));
 			}
 		}
