@@ -13,6 +13,7 @@ import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
+import org.gobiiproject.gobiimodel.utils.DateUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -147,9 +148,9 @@ public class TestDtoFactory {
         return returnVal;
     }
 
-    public static String getRandomName(String type) {
+    public static String getFolderNameWithTimestamp(String folderName) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String returnVal = type + timestamp.getTime();
+        String returnVal = folderName.replaceAll(" ", "_") + DateUtils.makeDateIdString();
 
 
         return returnVal;
@@ -344,47 +345,4 @@ public class TestDtoFactory {
 
     }
 
-    public static File getFileOfType(String filePath, File resourcesDirectory) {
-
-        File newFile = new File(filePath);
-        for(File f: resourcesDirectory.listFiles()){
-            if(f.getName().equals(newFile.getName())){
-                return f;
-            }
-        }
-        return null;
-    }
-
-    public static boolean checkPreviewFileMatch(List<List<String>> previewFileItems, File resourcesDirectory, String filePath) {
-
-        Scanner input = new Scanner(System.in);
-        try {
-            int lineCtr = 0; //count lines read
-            input = new Scanner(getFileOfType(filePath, resourcesDirectory));
-            while (lineCtr<50) { //read first 50 lines only
-                int ctr=0; //count words stored
-                String line = input.nextLine();
-                for(String s: line.split("\t")){
-                    if(ctr==50) break;
-                    else{
-                        if(!previewFileItems.get(lineCtr).get(ctr).equals(s)) return false;
-                            ctr++;
-                    }
-                }
-                lineCtr++;
-            }
-            input.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return true;
-    }
-    /*
-    public static File getCurrentCropDirectory() {
-
-        ConfigSettings configSettings = new ConfigSettings();
-        String fileCropDirectory = null;
-        fileCropDirectory = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.RAW_USER_FILES);
-    }*/
 }

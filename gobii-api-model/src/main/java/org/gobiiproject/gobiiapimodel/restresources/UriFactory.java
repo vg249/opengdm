@@ -87,7 +87,7 @@ public class UriFactory {
 
     } // resourceByUriIdParam();
 
-    public RestUri createLoaderFilesByLoaderFileName() throws Exception {
+    public RestUri createLoaderDirectory() throws Exception {
 
         RestUri returnVal;
 
