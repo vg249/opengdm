@@ -137,9 +137,6 @@ public class DtoRequestFileExtractorInstructionsTest {
         Assert.assertNotEquals(null, extractorInstructionFileDTOResponseEnvelope);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(extractorInstructionFileDTOResponseEnvelope.getHeader()));
-        ExtractorInstructionFilesDTO extractorInstructionFilesDTOResponse = extractorInstructionFileDTOResponseEnvelope.getPayload().getData().get(0);
-
-
         // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE, IMPLICITLY TESTING LINK
 
         LinkCollection linkCollection = extractorInstructionFileDTOResponseEnvelope.getPayload().getLinkCollection();

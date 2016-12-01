@@ -39,6 +39,8 @@ class ConfigValues {
         put(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES, "loader/digest/");
         put(GobiiFileProcessDir.LOADER_INPROGRESS_FILES, "loader/inprogress/");
         put(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, "extractor/instructions/");
+        put(GobiiFileProcessDir.EXTRACTOR_INPROGRESS, "extractor/inprogress/");
+        put(GobiiFileProcessDir.EXTRACTOR_DONE, "extractor/done/");
         put(GobiiFileProcessDir.EXTRACTOR_OUTPUT, "extractor/output/");
         put(GobiiFileProcessDir.QC_NOTIFICATIONS, "qcnotifications/");
 
