@@ -81,7 +81,6 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
                 throw new GobiiDaoException("The specified directory does not exist: " + directoryPath);
             }else{
                 returnVal = loaderFilesDAO.getPreview(directoryPath, fileFormat);
-                returnVal.setDirectoryName(directoryName);
             }
         return returnVal;
 

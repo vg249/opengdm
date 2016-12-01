@@ -89,7 +89,7 @@ public class DtoRequestLoaderFilePreviewTest {
         TestConfiguration testConfiguration = new TestConfiguration();
         String testCrop = testConfiguration.getConfigSettings().getTestExecConfig().getTestCrop();
         String destinationDirectory = testConfiguration.getConfigSettings().getProcessingPath(testCrop, GobiiFileProcessDir.RAW_USER_FILES);
-        String createdFileDirectory = destinationDirectory + resultLoaderFilePreviewDTOCreated.getDirectoryName();
+        String createdFileDirectory = destinationDirectory + new File(resultLoaderFilePreviewDTOCreated.getDirectoryName()).getName();
 
         //copyContentsFromCreatedFolder
         File resourcesDirectory = new File("src/test/resources/datasets");
@@ -112,7 +112,7 @@ public class DtoRequestLoaderFilePreviewTest {
         Assert.assertTrue("No file preview DTO received", resultEnvelopeCreate.getPayload().getData().size() > 0);
         LoaderFilePreviewDTO resultLoaderFilePreviewDTO = resultEnvelope.getPayload().getData().get(0);
         Assert.assertNotNull(resultLoaderFilePreviewDTO.getDirectoryName());
-        Assert.assertTrue(resultLoaderFilePreviewDTO.getDirectoryName().equals(createdFileDirectory));
+        Assert.assertTrue(resultLoaderFilePreviewDTO.getDirectoryName().replace("C:","").equals(createdFileDirectory.replaceAll("/","\\\\"))); // because the getAbsolutePath function in files returns a windows format path to the file
         Assert.assertNotNull(resultLoaderFilePreviewDTO.getFileList().get(0));
 
         //compare results read to file
