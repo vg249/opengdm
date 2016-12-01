@@ -8,7 +8,7 @@ package org.gobiiproject.gobiiclient.dtorequests.instructions;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
@@ -20,13 +20,10 @@ import org.gobiiproject.gobiimodel.types.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -50,9 +47,9 @@ public class DtoRequestLoaderFilePreviewTest {
         RestUri previewTestUri = ClientContext
                 .getInstance(null,false)
                 .getUriFactory()
-                .createLoaderDirectory();
+                .resourceByUriIdParam(ServiceRequestId.URL_FILE_LOAD);
 
-        previewTestUri.setParamValue("directoryName", TestDtoFactory.getFolderNameWithTimestamp("Loader File Preview Test"));
+        previewTestUri.setParamValue("id", TestDtoFactory.getFolderNameWithTimestamp("Loader File Preview Test"));
         RestResource<LoaderFilePreviewDTO> restResource = new RestResource<>(previewTestUri);
         PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelope = restResource.put(LoaderFilePreviewDTO.class,
                 new PayloadEnvelope<>(loaderFilePreviewDTO, GobiiProcessType.CREATE));
@@ -73,8 +70,8 @@ public class DtoRequestLoaderFilePreviewTest {
         RestUri previewTestUriCreate = ClientContext
                 .getInstance(null,false)
                 .getUriFactory()
-                .createLoaderDirectory();
-        previewTestUriCreate.setParamValue("directoryName", TestDtoFactory.getFolderNameWithTimestamp("Loader File Preview Test"));
+                .resourceByUriIdParam(ServiceRequestId.URL_FILE_LOAD);
+        previewTestUriCreate.setParamValue("id", TestDtoFactory.getFolderNameWithTimestamp("Loader File Preview Test"));
         RestResource<LoaderFilePreviewDTO> restResourceCreate = new RestResource<>(previewTestUriCreate);
         PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelopeCreate = restResourceCreate.put(LoaderFilePreviewDTO.class,
                 new PayloadEnvelope<>(loaderFileCreateDTO, GobiiProcessType.CREATE));
@@ -101,7 +98,7 @@ public class DtoRequestLoaderFilePreviewTest {
         RestUri previewTestUri = ClientContext
                 .getInstance(null,false)
                 .getUriFactory()
-                .fileLoaderPreviewQuery();
+                .fileLoaderPreview();
         previewTestUri.setParamValue("directoryName", dst.getName());
         previewTestUri.setParamValue("fileFormat", "txt");
 
