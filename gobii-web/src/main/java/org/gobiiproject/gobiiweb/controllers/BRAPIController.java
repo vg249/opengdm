@@ -681,9 +681,9 @@ public class BRAPIController {
                     ExtractorInstructionFilesDTO.class);
 
             payloadWriter.writeSingleItemForId(returnVal,
-                    ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS,
+                    ServiceRequestId.URL_FILE_EXTRACTOR_STATUS,
                     extractorInstructionFilesDTONew,
-                    extractorInstructionFilesDTONew.getInstructionFileName());
+                    extractorInstructionFilesDTONew.getJobId());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -700,28 +700,26 @@ public class BRAPIController {
 
     }
 
-    @RequestMapping(value = "/instructions/extractor/{instructionFileName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/instructions/extractor/status/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ExtractorInstructionFilesDTO> getExtractorInstruction(@PathVariable("instructionFileName") String instructionFileName,
+    public PayloadEnvelope<ExtractorInstructionFilesDTO> getExtractorInstructionStatus(@PathVariable("id") String jobId,
                                                                                  HttpServletRequest request,
                                                                                  HttpServletResponse response) {
 
         PayloadEnvelope<ExtractorInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-//            PayloadReader<ExtractorInstructionFilesDTO> payloadReader = new PayloadReader<>(ExtractorInstructionFilesDTO.class);
-//            ExtractorInstructionFilesDTO extractorInstructionFilesDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            ExtractorInstructionFilesDTO extractorInstructionFilesDTO = extractorInstructionFilesService.getInstruction(cropType, instructionFileName);
+            ExtractorInstructionFilesDTO extractorInstructionFilesDTO = extractorInstructionFilesService.getStatus(cropType, jobId);
 
 
             PayloadWriter<ExtractorInstructionFilesDTO> payloadWriter = new PayloadWriter<>(request,
                     ExtractorInstructionFilesDTO.class);
 
             payloadWriter.writeSingleItemForId(returnVal,
-                    ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS,
+                    ServiceRequestId.URL_FILE_EXTRACTOR_STATUS,
                     extractorInstructionFilesDTO,
-                    extractorInstructionFilesDTO.getInstructionFileName());
+                    extractorInstructionFilesDTO.getJobId());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);

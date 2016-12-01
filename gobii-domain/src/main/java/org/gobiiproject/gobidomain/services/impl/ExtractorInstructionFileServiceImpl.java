@@ -22,14 +22,25 @@ public class ExtractorInstructionFileServiceImpl implements ExtractorInstruction
     @Autowired
     private DtoMapExtractorInstructions dtoMapExtractorInstructions = null;
 
+    @Override
+    public ExtractorInstructionFilesDTO createInstruction(String cropType, ExtractorInstructionFilesDTO ExtractorInstructionFilesDTO)
+            throws GobiiException {
+        ExtractorInstructionFilesDTO returnVal;
+
+        returnVal = dtoMapExtractorInstructions.writeInstructions(cropType,ExtractorInstructionFilesDTO);
+
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+
+        return returnVal;
+    }
 
     @Override
-    public ExtractorInstructionFilesDTO getInstruction(String cropType, String instructionFileName)  throws GobiiException {
+    public ExtractorInstructionFilesDTO getStatus(String cropType, String jobId)  throws GobiiException {
 
         ExtractorInstructionFilesDTO returnVal;
 
         try {
-            returnVal = dtoMapExtractorInstructions.readInstructions(cropType,instructionFileName);
+            returnVal = dtoMapExtractorInstructions.getStatus(cropType,jobId);
 
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
 
@@ -42,17 +53,4 @@ public class ExtractorInstructionFileServiceImpl implements ExtractorInstruction
 
         return returnVal;
     }
-
-    @Override
-    public ExtractorInstructionFilesDTO createInstruction(String cropType, ExtractorInstructionFilesDTO ExtractorInstructionFilesDTO)
-            throws GobiiException {
-        ExtractorInstructionFilesDTO returnVal;
-
-        returnVal = dtoMapExtractorInstructions.writeInstructions(cropType,ExtractorInstructionFilesDTO);
-
-        returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-
-        return returnVal;
-    }    
-
 } // ExtractorInstructionFileServiceImpl

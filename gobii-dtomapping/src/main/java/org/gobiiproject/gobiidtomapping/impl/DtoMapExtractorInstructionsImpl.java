@@ -12,6 +12,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFiles
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -152,11 +153,14 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
             } // iterate instructions/files
 
-
             if (!extractorInstructionsDAO.doesPathExist(instructionFileFqpn)) {
+                if(extractorInstructionsDAO.writeInstructions(instructionFileFqpn,
+                        returnVal.getGobiiExtractorInstructions())){
+                    returnVal.setJobId(extractorInstructionFilesDTO.getInstructionFileName());
+                    returnVal.setGobiiJobStatus(GobiiJobStatus.STARTED);
+                }
+                else returnVal.setGobiiJobStatus(GobiiJobStatus.FAILED);
 
-                extractorInstructionsDAO.writeInstructions(instructionFileFqpn,
-                        returnVal.getGobiiExtractorInstructions());
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
@@ -178,7 +182,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
     } // writeInstructions
 
     @Override
-    public ExtractorInstructionFilesDTO readInstructions(String cropType, String instructionFileName) throws GobiiException {
+    public ExtractorInstructionFilesDTO getStatus(String cropType, String instructionFileName) throws GobiiException {
 
         ExtractorInstructionFilesDTO returnVal = new ExtractorInstructionFilesDTO();
 
@@ -186,14 +190,23 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
             ConfigSettings configSettings = new ConfigSettings();
 
+            //check Status
+            String outputInstructionFile = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_OUTPUT)
+                    + instructionFileName
+                    + INSTRUCTION_FILE_EXT;
+
+            if (extractorInstructionsDAO.doesPathExist(outputInstructionFile)) {
+                returnVal.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
+            } else {
+                returnVal.setGobiiJobStatus(GobiiJobStatus.IN_PROGRESS);
+            }
+
+            //ReadFile
             String instructionFileFqpn = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS)
                     + instructionFileName
                     + INSTRUCTION_FILE_EXT;
 
-
             if (extractorInstructionsDAO.doesPathExist(instructionFileFqpn)) {
-
-
                 List<GobiiExtractorInstruction> instructions =
                         extractorInstructionsDAO
                                 .getInstructions(instructionFileFqpn);
@@ -208,8 +221,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                     instructionFileFqpn);
                 }
 
+                returnVal.setJobId(instructionFileName);
             } else {
-
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                         "The specified instruction file does not exist: " +
@@ -226,5 +239,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
         }
 
         return returnVal;
+
     }
 }

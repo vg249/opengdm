@@ -21,10 +21,10 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
     private final String LOADER_FILE_EXT = ".json";
 
     @Override
-    public String writeInstructions(String instructionFileFqpn,
+    public boolean writeInstructions(String instructionFileFqpn,
                                     List<GobiiExtractorInstruction> instructions) throws GobiiDaoException {
 
-        String returnVal = null;
+        boolean returnVal = false;
 
         try {
 
@@ -48,6 +48,7 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
                         bufferedWriter.write(instructionsAsJson);
                         bufferedWriter.flush();
                         bufferedWriter.close();
+                        returnVal = true;
                     } else {
                         throw new GobiiDaoException("Path of specified instruction file name is not a directory: "
                                 + destinationDirectory);
