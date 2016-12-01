@@ -4,6 +4,7 @@ import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
@@ -119,7 +120,8 @@ public class DtoRequestFileExtractorInstructionsTest {
         extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(gobiiExtractorInstructionTwo);
 
         PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        RestResource<ExtractorInstructionFilesDTO> restResourceForPost = new RestResource<>(uriFactory.extractorInstructionFile());
+        RestResource<ExtractorInstructionFilesDTO> restResourceForPost = new RestResource<>(uriFactory
+                .resourceColl(ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS));
         PayloadEnvelope<ExtractorInstructionFilesDTO> extractorInstructionFileDTOResponseEnvelope = restResourceForPost.post(ExtractorInstructionFilesDTO.class,
                 payloadEnvelope);
 

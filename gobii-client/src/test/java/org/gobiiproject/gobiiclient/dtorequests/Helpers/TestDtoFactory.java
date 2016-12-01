@@ -13,13 +13,12 @@ import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
+import org.gobiiproject.gobiimodel.utils.DateUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Phil on 4/27/2016.
@@ -149,9 +148,9 @@ public class TestDtoFactory {
         return returnVal;
     }
 
-    public static String getRandomName(String type) {
+    public static String getFolderNameWithTimestamp(String folderName) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String returnVal = type + timestamp.getTime();
+        String returnVal = folderName.replaceAll(" ", "_") + DateUtils.makeDateIdString();
 
 
         return returnVal;
@@ -345,11 +344,5 @@ public class TestDtoFactory {
         return returnVal;
 
     }
-    /*
-    public static File getCurrentCropDirectory() {
 
-        ConfigSettings configSettings = new ConfigSettings();
-        String fileCropDirectory = null;
-        fileCropDirectory = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.RAW_USER_FILES);
-    }*/
 }

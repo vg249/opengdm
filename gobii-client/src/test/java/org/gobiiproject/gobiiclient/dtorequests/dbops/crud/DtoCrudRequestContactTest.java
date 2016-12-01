@@ -130,7 +130,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
 
         RestResource<ContactDTO> restResourceContacts = new RestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .contacts());
+                .resourceColl(ServiceRequestId.URL_CONTACTS));
 
 
         PayloadEnvelope<ContactDTO> resultEnvelopeNewContact = restResourceContacts.post(ContactDTO.class,
@@ -258,7 +258,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         PayloadEnvelope<ContactDTO> payloadEnvelope = new PayloadEnvelope<>(newContactDTO, GobiiProcessType.CREATE);
         RestResource<ContactDTO> restResource = new RestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .contacts());
+                .resourceColl(ServiceRequestId.URL_CONTACTS));
         PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = restResource.post(ContactDTO.class,
                 payloadEnvelope);
 

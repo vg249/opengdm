@@ -69,25 +69,7 @@ public class UriFactory {
     }
 
 
-    public RestUri contacts() throws Exception {
-
-        return new RestUri(ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
-                this.cropContextRoot,
-                ServiceRequestId.URL_CONTACTS),
-                DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-
-    } // resourceByUriIdParam();
-
-    public RestUri loaderInstructionFile() throws Exception {
-
-        return new RestUri(ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
-                this.cropContextRoot,
-                ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS),
-                DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-
-    } // resourceByUriIdParam();
-
-    public RestUri createLoaderFilesByLoaderFileName() throws Exception {
+    public RestUri createLoaderDirectory() throws Exception {
 
         RestUri returnVal;
 
@@ -101,39 +83,6 @@ public class UriFactory {
 
     } //
 
-    public RestUri extractorInstructionFile() throws Exception {
-
-        return new RestUri(ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
-                this.cropContextRoot,
-                ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS),
-                DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-
-    } // resourceByUriIdParam();
-
-    public RestUri extractorInstructionsByInstructionFileName() throws Exception {
-
-        RestUri returnVal;
-
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
-                this.cropContextRoot,
-                ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS);
-
-        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("instructionFileName"));
-
-        return returnVal;
-
-    } //
-
-
-    public RestUri organization() throws Exception {
-
-        return new RestUri(ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
-                this.cropContextRoot,
-                ServiceRequestId.URL_ORGANIZATION),
-                DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-
-    } // resourceByUriIdParam();
-
     public RestUri resourceColl(ServiceRequestId serviceRequestId) throws Exception {
 
         RestUri returnVal;
@@ -146,7 +95,7 @@ public class UriFactory {
 
         return returnVal;
 
-    } // resourceByUriIdParam();
+    } //
 
 
     public RestUri resourceByUriIdParam(ServiceRequestId serviceRequestId) throws Exception {
@@ -176,7 +125,7 @@ public class UriFactory {
 
         return returnVal;
 
-    } // resourceByUriIdParam();
+    } //
 
     public RestUri markerssByQueryParams() throws Exception {
 
@@ -189,23 +138,9 @@ public class UriFactory {
         returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "name");
         return returnVal;
 
-    } // resourceByUriIdParam();
+    }
 
-    public RestUri organizationsByQueryParams() throws Exception {
-
-        RestUri returnVal;
-
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
-                this.cropContextRoot,
-                ServiceRequestId.URL_ORGANIZATION_SEARCH);
-        returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "name");
-
-        return returnVal;
-
-    } // resourceByUriIdParam();
-
-    public RestUri nameIdList() throws Exception {
+    public RestUri nameIdListByQueryParams() throws Exception {
 
         RestUri returnVal;
 
@@ -222,7 +157,8 @@ public class UriFactory {
         return returnVal;
 
     } //
-    public RestUri fileLoaderPreviewQuery() throws Exception {
+
+    public RestUri fileLoaderPreview() throws Exception {
 
 
         RestUri returnVal;
@@ -236,5 +172,5 @@ public class UriFactory {
 
         return returnVal;
 
-    } // resourceByUriIdParam();
+    } //
 }

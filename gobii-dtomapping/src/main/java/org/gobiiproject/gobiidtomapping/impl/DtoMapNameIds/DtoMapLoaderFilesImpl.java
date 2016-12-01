@@ -55,7 +55,6 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
             String directoryPath = fileCropDirectory+ directoryName;
             if (!loaderFilesDAO.doesPathExist(directoryPath)) {
                 returnVal = loaderFilesDAO.makeDirectory(directoryPath);
-                returnVal.setId(0); //this is arbitrary for now
             } else {
                 loaderFilesDAO.verifyDirectoryPermissions(directoryPath);
             }
@@ -82,9 +81,7 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
                 throw new GobiiDaoException("The specified directory does not exist: " + directoryPath);
             }else{
                 returnVal = loaderFilesDAO.getPreview(directoryPath, fileFormat);
-                returnVal.setDirectoryName(directoryName);
             }
-        returnVal.setId(0); //this is arbitrary for now
         return returnVal;
 
     } // createDirectories()

@@ -14,9 +14,7 @@ import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestAnalysisTest;
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestContactTest;
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestDataSetTest;
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestMapsetTest;
@@ -59,7 +57,7 @@ public class DtoRequestNameIdListTest {
                                    String filterValue) throws Exception {
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
-                .nameIdList();
+                .nameIdListByQueryParams();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
         namesUri.setParamValue("entity", gobiiEntityNameType.toString().toLowerCase());
 
@@ -136,7 +134,7 @@ public class DtoRequestNameIdListTest {
         // Assumes rice data with seed script is loaded
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
-                .nameIdList();
+                .nameIdListByQueryParams();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
 
         namesUri.setParamValue("entity", "foo");
@@ -160,7 +158,7 @@ public class DtoRequestNameIdListTest {
         // Assumes rice data with seed script is loaded
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
-                .nameIdList();
+                .nameIdListByQueryParams();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
 
         namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSES.toString().toLowerCase());
@@ -186,7 +184,7 @@ public class DtoRequestNameIdListTest {
         // Assumes rice data with seed script is loaded
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
-                .nameIdList();
+                .nameIdListByQueryParams();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
 
         namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSES.toString().toLowerCase());
@@ -271,7 +269,7 @@ public class DtoRequestNameIdListTest {
         //testNameRetrieval(GobiiEntityNameType.PLATFORMS, GobiiFilterType.NONE, null);
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
-                .nameIdList();
+                .nameIdListByQueryParams();
         RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
         namesUri.setParamValue("entity", GobiiEntityNameType.PLATFORMS.toString().toLowerCase());
 

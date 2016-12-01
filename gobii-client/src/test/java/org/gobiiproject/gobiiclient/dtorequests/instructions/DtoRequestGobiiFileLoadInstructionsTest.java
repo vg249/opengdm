@@ -9,6 +9,7 @@ import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
@@ -178,7 +179,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().add(gobiiLoaderInstructionTwo);
 
         PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        RestResource<LoaderInstructionFilesDTO> restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.loaderInstructionFile());
+        RestResource<LoaderInstructionFilesDTO> restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = restResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -273,7 +274,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
 
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.loaderInstructionFile());
+        restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         loaderInstructionFileDTOResponseEnvelope = restResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -302,7 +303,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setRequireDirectoriesToExist(true); // <== should result in validation error
 
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.loaderInstructionFile());
+        restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         loaderInstructionFileDTOResponseEnvelope = restResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -311,7 +312,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         // ************** VERIFY THAT WE GET AN ERROR WHEN A FILE ALREADY EXISTS
         loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileNameNoError);
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.loaderInstructionFile());
+        restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         loaderInstructionFileDTOResponseEnvelope = restResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -340,7 +341,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
 
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.loaderInstructionFile());
+        restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         PayloadEnvelope<LoaderInstructionFilesDTO> testForuserInputFileExistsCausesErrorEnvelopse = restResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -375,7 +376,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setCreateSource(false); // <== should result in validation error
 
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.loaderInstructionFile());
+        restResource = new RestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         PayloadEnvelope<LoaderInstructionFilesDTO> testForuserInputFileExistsNoErrorEnvelope = restResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 

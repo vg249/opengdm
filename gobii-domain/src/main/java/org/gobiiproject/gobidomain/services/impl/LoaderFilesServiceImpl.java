@@ -33,7 +33,6 @@ public class LoaderFilesServiceImpl implements LoaderFilesService {
         try {
             returnVal = dtoMapLoaderFiles.makeDirectory(cropType, directoryName);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.CREATE);
 
         } catch (Exception e) {
 
@@ -54,7 +53,6 @@ public class LoaderFilesServiceImpl implements LoaderFilesService {
 
             returnVal = dtoMapLoaderFiles.getPreview(cropType, directoryName, fileFormat);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
 
         } catch (Exception e) {

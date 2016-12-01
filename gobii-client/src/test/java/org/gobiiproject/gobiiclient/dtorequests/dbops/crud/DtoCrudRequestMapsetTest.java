@@ -95,7 +95,7 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
 
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
-                .nameIdList();
+                .nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "mapset_type");
@@ -153,7 +153,7 @@ public class DtoCrudRequestMapsetTest implements DtoCrudRequestTest {
 
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
-                .nameIdList();
+                .nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "mapset_type");

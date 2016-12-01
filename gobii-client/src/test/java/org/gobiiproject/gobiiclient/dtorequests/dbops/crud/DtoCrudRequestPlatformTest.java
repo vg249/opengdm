@@ -56,7 +56,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 //        nameIdListDTORequest.setFilter("platform_type");
 //
 //        NameIdListDTO nameIdListDTO = dtoRequestNameIdList.process(nameIdListDTORequest);
-        RestUri namesUri = ClientContext.getInstance(null, false).getUriFactory().nameIdList();
+        RestUri namesUri = ClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "platform_type");
@@ -144,7 +144,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 //        List<NameIdDTO> platformProperTerms = new ArrayList<>(nameIdListDTO
 //                .getNamesById());
 
-        RestUri namesUri = ClientContext.getInstance(null, false).getUriFactory().nameIdList();
+        RestUri namesUri = ClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "platform_type");
