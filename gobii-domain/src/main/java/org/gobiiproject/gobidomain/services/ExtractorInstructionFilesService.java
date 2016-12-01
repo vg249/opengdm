@@ -9,9 +9,6 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFiles
  */
 public interface ExtractorInstructionFilesService {
     ExtractorInstructionFilesDTO createInstruction(String cropType, ExtractorInstructionFilesDTO extractorInstructionFilesDTO) throws GobiiException;
-
-    ExtractorInstructionFilesDTO getInstruction(String cropType, String instructionFileName) throws GobiiException;
-
     ExtractorInstructionFilesDTO getStatus(String cropType, String instructionFileName) throws GobiiException;
 
 }

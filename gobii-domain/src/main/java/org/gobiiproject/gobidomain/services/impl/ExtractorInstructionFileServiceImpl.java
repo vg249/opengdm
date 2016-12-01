@@ -22,27 +22,6 @@ public class ExtractorInstructionFileServiceImpl implements ExtractorInstruction
     @Autowired
     private DtoMapExtractorInstructions dtoMapExtractorInstructions = null;
 
-
-    @Override
-    public ExtractorInstructionFilesDTO getInstruction(String cropType, String instructionFileName)  throws GobiiException {
-
-        ExtractorInstructionFilesDTO returnVal;
-
-        try {
-            returnVal = dtoMapExtractorInstructions.readInstructions(cropType,instructionFileName);
-
-            returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-
-        } catch (Exception e) {
-
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-
-        }
-
-        return returnVal;
-    }
-
     @Override
     public ExtractorInstructionFilesDTO createInstruction(String cropType, ExtractorInstructionFilesDTO ExtractorInstructionFilesDTO)
             throws GobiiException {

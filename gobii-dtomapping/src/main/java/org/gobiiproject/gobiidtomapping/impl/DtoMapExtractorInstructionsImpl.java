@@ -181,10 +181,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
     } // writeInstructions
 
-
-
     @Override
-    public ExtractorInstructionFilesDTO readInstructions(String cropType, String instructionFileName) throws GobiiException {
+    public ExtractorInstructionFilesDTO getStatus(String cropType, String instructionFileName) throws GobiiException {
 
         ExtractorInstructionFilesDTO returnVal = new ExtractorInstructionFilesDTO();
 
@@ -192,14 +190,23 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
             ConfigSettings configSettings = new ConfigSettings();
 
+            //check Status
+            String outputInstructionFile = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_OUTPUT)
+                    + instructionFileName
+                    + INSTRUCTION_FILE_EXT;
+
+            if (extractorInstructionsDAO.doesPathExist(outputInstructionFile)) {
+                returnVal.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
+            } else {
+                returnVal.setGobiiJobStatus(GobiiJobStatus.IN_PROGRESS);
+            }
+
+            //ReadFile
             String instructionFileFqpn = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS)
                     + instructionFileName
                     + INSTRUCTION_FILE_EXT;
 
-
             if (extractorInstructionsDAO.doesPathExist(instructionFileFqpn)) {
-
-
                 List<GobiiExtractorInstruction> instructions =
                         extractorInstructionsDAO
                                 .getInstructions(instructionFileFqpn);
@@ -214,8 +221,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                     instructionFileFqpn);
                 }
 
+                returnVal.setJobId(instructionFileName);
             } else {
-
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                         "The specified instruction file does not exist: " +
@@ -232,33 +239,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
         }
 
         return returnVal;
-    }
 
-    @Override
-    public ExtractorInstructionFilesDTO getStatus(String cropType, String jobId) throws GobiiException {
-
-        ExtractorInstructionFilesDTO returnVal = new ExtractorInstructionFilesDTO();
-
-        try {
-            ConfigSettings configSettings = new ConfigSettings();
-            String instructionFile = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_OUTPUT)
-                    + jobId
-                    + INSTRUCTION_FILE_EXT;
-            if (extractorInstructionsDAO.doesPathExist(instructionFile)) {
-                returnVal.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
-            } else {
-                returnVal.setGobiiJobStatus(GobiiJobStatus.IN_PROGRESS);
-            } // if-else instruction file exists
-
-        } catch (GobiiException e) {
-            LOGGER.error("Gobii Maping Error", e);
-            throw e;
-        } catch (Exception e) {
-            LOGGER.error("Gobii Maping Error", e);
-            throw new GobiiException(e);
-        }
-
-        returnVal.setId(1);//this is arbitrary
-        return returnVal;
     }
 }
