@@ -433,6 +433,9 @@ public class GobiiFileReader {
 		File sourceFolder=new File(source);
 		File[] f=sourceFolder.listFiles();
 		if(f.length!=0) source=f[0].getName();
+		else{
+			source=sourceFolder.getName();//Otherwise we get full paths in source.
+		}
 		return source;
 	}
 
