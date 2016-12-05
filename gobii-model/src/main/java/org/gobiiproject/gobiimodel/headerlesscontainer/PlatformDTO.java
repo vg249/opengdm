@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/21/2016.
  */
-public class PlatformDTO extends DTOBase {
+public class    PlatformDTO extends DTOBase {
 
     public PlatformDTO() {
     }
@@ -21,7 +21,6 @@ public class PlatformDTO extends DTOBase {
     private Integer platformId = 0;
     private String platformName;
     private String platformCode;
-    private Integer platformVendor;
     private String platformDescription;
     private Integer createdBy;
     private Date createdDate;
@@ -69,16 +68,6 @@ public class PlatformDTO extends DTOBase {
     @GobiiEntityColumn(columnName = "code")
     public void setPlatformCode(String platformCode) {
         this.platformCode = platformCode;
-    }
-
-    @GobiiEntityParam(paramName = "platformVendor")
-    public Integer getPlatformVendor() {
-        return platformVendor;
-    }
-
-    @GobiiEntityColumn(columnName = "vendor_id")
-    public void setPlatformVendor(Integer platformVendor) {
-        this.platformVendor = platformVendor;
     }
 
     @GobiiEntityParam(paramName = "platformDescription")
