@@ -63,22 +63,16 @@ public class VCFFileReader {
 		//Default's on all parameters
 	}
 
-	public void parseInstructions(List<GobiiLoaderInstruction> instructions){
-		for(GobiiLoaderInstruction instruction:instructions){
-			parseInstruction(instruction);
-		}
-	}
-
 	/**
 	 * Parses a single 'Loader Instruction', creating a digest.table file in the output directory.
 	 * @param instruction GobiiLoaderInstruction object representing the instruction to load
 	 * @return true on success, false on failure. This is a holdover from an earlier design
 	 */
-	public boolean parseInstruction(GobiiLoaderInstruction instruction){
+	public boolean parseInstruction(GobiiLoaderInstruction instruction, File destDir){
 		ErrorLogger.logDebug("VCFFileReader","Beginning digest of " + instruction.getTable());
 		VcfParameters params=instruction.getVcfParameters();
 		String inFile= instruction.getGobiiFile().getSource()+"/"+GobiiFileReader.getSourceFileName(instruction.getGobiiFile());
-		String outFile=instruction.getGobiiFile().getDestination()+"/digest."+instruction.getTable();
+		String outFile=new File(destDir,"digest."+instruction.getTable()).getAbsolutePath();
 		String errorFile=instruction.getGobiiFile().getDestination()+"/ERRORS";//TODO: Better error file name
 		VCFFileReader vfr=new VCFFileReader();
 		vfr.setFile(inFile);
