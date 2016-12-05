@@ -73,7 +73,6 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
 
         Assert.assertNotEquals(experimentDTOResponse, null);
         Assert.assertTrue(experimentDTOResponse.getExperimentId() > 0);
-        Assert.assertNotNull(experimentDTOResponse.getPlatformName());
 
     }
 
@@ -114,7 +113,6 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
         ExperimentDTO experimentDTORequest = new ExperimentDTO();
         // experimentDTORequest.setExperimentId(1);
         experimentDTORequest.setManifestId(manifestId);
-        experimentDTORequest.setPlatformId(platformId);
         experimentDTORequest.setProjectId(projectId);
         experimentDTORequest.setCreatedBy(1);
         experimentDTORequest.setModifiedBy(1);
@@ -192,8 +190,6 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
         HeaderStatusMessage headerStatusMessageValidation = headerStatusMessages.get(0);
         Assert.assertTrue(headerStatusMessageValidation.getMessage().toLowerCase().contains("name"));
         Assert.assertTrue(headerStatusMessageValidation.getMessage().toLowerCase().contains("project"));
-        Assert.assertTrue(headerStatusMessageValidation.getMessage().toLowerCase().contains("platform"));
-
 
     } // testCreateExperiment()
 
