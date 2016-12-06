@@ -24,6 +24,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInst
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
 
@@ -188,18 +189,19 @@ public class GobiiExtractor {
 								" -m "+genoFile+ 
 								" -o "+hapmapOutFile;
 						//HapmapTransformer.generateFile(markerFile,sampleFile,projectFile,tempFolder,hapmapOutFile,errorFile);
-					  HelperFunctions.tryExec(hapmapTransform, null, errorFile);
+						HelperFunctions.tryExec(hapmapTransform, null, errorFile);
+						rm(genoFile);
 					}catch(Exception e){
 						ErrorLogger.logError("Extractor","Exception in HapMap creation",e);
 					}
 					HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
 					break;
-					
+
 					default:
 						ErrorLogger.logError("Extractor","Unknown Extract Type "+extract.getGobiiFileType());
 						HelperFunctions.sendEmail(extract.getDataSetName()+" "+extract.getGobiiFileType()+" Extract",null,false,errorFile,configuration,inst.getContactEmail());
 				}
-				System.out.println("DataSet "+dataSetId+" Created");	
+				ErrorLogger.logDebug("Extractor","DataSet "+dataSetId+" Created");
 			}
 		}
 	}
