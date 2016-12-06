@@ -51,11 +51,6 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
             LOGGER.error("Error getting platform names with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error getting platform names ", e);
-            throw (new GobiiDaoException(e));
-
         }
 
 
@@ -83,11 +78,6 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
             LOGGER.error("Error getting platform names by type id with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error getting platform names by type id ", e);
-            throw (new GobiiDaoException(e));
-
         }
 
         return returnVal;
@@ -113,11 +103,6 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
         } catch (SQLGrammarException e) {
             LOGGER.error("Error getting platform details by platform id with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
-
-        } catch (Exception e) {
-
-            LOGGER.error("Error getting platform details by platform id ", e);
-            throw (new GobiiDaoException(e));
 
         }
 
@@ -147,11 +132,6 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
             LOGGER.error("Error creating platform with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error creating platform ", e);
-            throw (new GobiiDaoException(e));
-
         }
 
         return returnVal;
@@ -170,11 +150,6 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
         } catch (SQLGrammarException e) {
             LOGGER.error("Error updating platform with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
-
-        } catch (Exception e) {
-
-            LOGGER.error("Error updating platform ", e);
-            throw (new GobiiDaoException(e));
 
         }
     }
@@ -195,13 +170,7 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
             LOGGER.error("Error updating platform property with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error updating platform property ", e);
-            throw (new GobiiDaoException(e));
-
         }
-
         return returnVal;
 
     } // createUpdatePlatformProperty
@@ -222,11 +191,6 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
         } catch (SQLGrammarException e) {
             LOGGER.error("Error retrieving platform properties with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
-
-        } catch (Exception e) {
-
-            LOGGER.error("Error reetriveing platform properties  ", e);
-            throw (new GobiiDaoException(e));
 
         }
 

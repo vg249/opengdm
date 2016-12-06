@@ -54,13 +54,7 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
             LOGGER.error("Error getting experiment names by project id  with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error getting experiment names by project id ", e);
-            throw (new GobiiDaoException(e));
-
         }
-
 
         return returnVal;
     }
@@ -83,11 +77,6 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
             LOGGER.error("Error getting experiment details by experiment id with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error getting experiment details by experiment id ", e);
-            throw (new GobiiDaoException(e));
-
         }
 
         return returnVal;
@@ -109,11 +98,6 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
         } catch(SQLGrammarException e) {
             LOGGER.error("Error getting all experiment names with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
-
-        } catch (Exception e) {
-
-            LOGGER.error("Error getting all experiment names  ", e);
-            throw (new GobiiDaoException(e));
 
         }
 
@@ -141,11 +125,6 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
             LOGGER.error("Error creating dataset with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error creating dataset", e);
-            throw (new GobiiDaoException(e));
-
         }
 
         return returnVal;
@@ -166,10 +145,6 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
             LOGGER.error("Error updating experiment with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error updating experiment  ", e);
-            throw (new GobiiDaoException(e));
         }
     }
 
@@ -192,10 +167,6 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
             LOGGER.error("Error getting experiment by name and project id with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error getting experiment by name and project id ", e);
-            throw (new GobiiDaoException(e));
         }
 
         return returnVal;
