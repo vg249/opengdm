@@ -22,32 +22,24 @@ public class FlapjackTransformer {
 		Example for the marker file process: cut -f1,2,4 derp.txt | tail -n +2 > derp2.txt
 	*/
    boolean chrLengthsExists=new File(chrLengthFile).exists();
-		HelperFunctions.tryExec(new StringBuilder("echo # fjFile = MAP").toString(),
-				                new StringBuilder(tempDir).append("map.header").toString(),
-				                errorFile);
+		HelperFunctions.tryExec("echo # fjFile = MAP",tempDir+"map.header", errorFile);
 
 		if(chrLengthsExists) {
-			HelperFunctions.tryExec(new StringBuilder("tail -n +2 ").append(chrLengthFile).toString(),
-					new StringBuilder(tempDir).append("map.chrLengths").toString(),
+			HelperFunctions.tryExec("tail -n +2 "+chrLengthFile, tempDir+"map.chrLengths",
 					errorFile);
 		}
-		HelperFunctions.tryExec(new StringBuilder("cut -f1,3,4 ").append(markerFile).toString(),
-				                new StringBuilder(tempDir).append("tmp").toString(),
-				                errorFile);
-		HelperFunctions.tryExec(new StringBuilder("tail -n +2 ").append(tempDir).append("tmp").toString(),
-				                new StringBuilder(tempDir).append("map.body").toString(),
-				                errorFile);
-		rm(new StringBuilder(tempDir).append("tmp").toString());
+		HelperFunctions.tryExec("cut -f1,3,4 "+markerFile,tempDir+"tmp",errorFile);
+		HelperFunctions.tryExec("tail -n +2 "+tempDir+"tmp",tempDir+"map.body",errorFile);
+		rm(tempDir+"tmp");
 		
-		HelperFunctions.tryExec(new StringBuilder("cat ").append(tempDir).append("map.header ").
-				                                          append(chrLengthsExists?tempDir:"").append(chrLengthsExists?"map.chrLengths ":"").
-				                                          append(tempDir).append("map.body").toString(),
-				                outFile,
-				                errorFile);
+		HelperFunctions.tryExec("cat "+tempDir+"map.header "+
+						(chrLengthsExists?tempDir:"")+ (chrLengthsExists?"map.chrLengths ":"")+
+						tempDir+"map.body", outFile, errorFile);
 
-		rm(new StringBuilder(tempDir).append("map.header").toString());
-		if(chrLengthsExists)rm(new StringBuilder(tempDir).append("map.chrLengths").toString());
-		rm(new StringBuilder(tempDir).append("map.body").toString());
+		rm(tempDir+"map.header");
+		if(chrLengthsExists)rm(tempDir+"map.chrLengths");
+		if(chrLengthsExists)rm(chrLengthFile);
+		rm(tempDir+"map.body");
 
 		return true;
 	}
@@ -105,6 +97,7 @@ transpose marker names
 		HelperFunctions.tryExec("cat "+tempDir+"map.response "+ inverseMarkerList+" " + tempDir+"blank.file "+ tempDir+"sample.matrix",outFile,errorFile);
 
 		rm(tempDir+"map.response");
+		rm(genotypeFile);
 		rm(markerList);
 		rm(inverseMarkerList);
 		rm(tempDir+"genotype.sampleList");
