@@ -31,7 +31,6 @@ public class PlatformServiceImpl implements PlatformService {
 
         List<PlatformDTO> returnVal;
 
-        try {
             returnVal = dtoMapPlatform.getPlatforms();
             for(PlatformDTO currentPlatformDTO : returnVal ) {
                 currentPlatformDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
@@ -43,13 +42,6 @@ public class PlatformServiceImpl implements PlatformService {
                 returnVal = new ArrayList<>();
             }
 
-        } catch (Exception e) {
-
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-
-        }
-
         return returnVal;
     }
 
@@ -58,7 +50,6 @@ public class PlatformServiceImpl implements PlatformService {
 
         PlatformDTO returnVal;
 
-        try {
             returnVal = dtoMapPlatform.getPlatformDetails(platformId);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
@@ -72,13 +63,6 @@ public class PlatformServiceImpl implements PlatformService {
                                 + ") does not match an existing platform ");
             }
 
-        } catch (Exception e) {
-
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-
-        }
-
         return returnVal;
     }
 
@@ -86,7 +70,6 @@ public class PlatformServiceImpl implements PlatformService {
     public PlatformDTO createPlatform(PlatformDTO platformDTO) throws GobiiDomainException {
         PlatformDTO returnVal;
 
-        try {
 
             returnVal = dtoMapPlatform.createPlatform(platformDTO);
 
@@ -94,11 +77,6 @@ public class PlatformServiceImpl implements PlatformService {
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
-        } catch (Exception e) {
-
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-        }
         return returnVal;
     }
 
@@ -106,7 +84,6 @@ public class PlatformServiceImpl implements PlatformService {
     public PlatformDTO replacePlatform(Integer platformId, PlatformDTO platformDTO) throws GobiiDomainException {
         PlatformDTO returnVal;
 
-        try {
 
             if (null == platformDTO.getPlatformId() ||
                     platformDTO.getPlatformId().equals(platformId)) {
@@ -141,13 +118,6 @@ public class PlatformServiceImpl implements PlatformService {
                                 + ")");
 
             }
-
-
-        } catch (Exception e) {
-
-            LOGGER.error("Gobii service error", e);
-            throw new GobiiDomainException(e);
-        }
 
 
         return returnVal;
