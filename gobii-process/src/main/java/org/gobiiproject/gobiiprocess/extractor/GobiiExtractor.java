@@ -136,7 +136,7 @@ public class GobiiExtractor {
 						" -s " + sampleFile +
 						" -p " + projectFile +
 						" -d " + extract.getDataSetId() +
-						" -v ";
+						" -l -v ";
 				String errorFile=getLogName(extract,cropConfig,extract.getDataSetId());
 				ErrorLogger.logInfo("Extractor","Executing MDEs");
 				ErrorLogger.logDebug("Extractor",gobiiMDE);
