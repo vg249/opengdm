@@ -118,15 +118,7 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
 
         try {
 
-            if (spRunnerCallable.run(new SpInsPlatform(), parameters)) {
-
-                returnVal = spRunnerCallable.getResult();
-
-            } else {
-
-                throw new GobiiDaoException(spRunnerCallable.getErrorString());
-
-            }
+            spRunnerCallable.run(new SpInsPlatform(), parameters);
 
         } catch (SQLGrammarException e) {
             LOGGER.error("Error creating platform with SQL " + e.getSQL(), e.getSQLException());
@@ -143,9 +135,7 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
 
         try {
 
-            if (!spRunnerCallable.run(new SpUpdPlatform(), parameters)) {
-                throw new GobiiDaoException(spRunnerCallable.getErrorString());
-            }
+            spRunnerCallable.run(new SpUpdPlatform(), parameters);
 
         } catch (SQLGrammarException e) {
             LOGGER.error("Error updating platform with SQL " + e.getSQL(), e.getSQLException());

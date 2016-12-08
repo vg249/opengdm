@@ -19,6 +19,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiapimodel.restresources.ResourceParam;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.RestMethodTypes;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ public class HttpCore {
     private String host = null;
     private Integer port = null;
     private UriFactory uriFactory;
-    private boolean logJson = false;
+    private boolean logJson = true;
 
 
     public HttpCore(String host,
@@ -195,11 +196,6 @@ public class HttpCore {
 
             String jsonAsString = stringBuilder.toString();
 
-            if (logJson) {
-                System.out.println("=====================: " + restUri.makeUrl());
-                System.out.println(jsonAsString);
-            }
-
             JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
 
             returnVal.setPayLoad(jsonObject);
@@ -221,10 +217,36 @@ public class HttpCore {
 
     }
 
+    private void logRequest(RestMethodTypes restMethodType,
+                            RestUri restUri,
+                            String body,
+                            HttpMethodResult httpMethodResult) throws Exception {
+
+        if (logJson) {
+
+            System.out.println("=========method: " + restMethodType.toString() + " on resource: " + restUri.makeUrl());
+
+            if (!LineUtils.isNullOrEmpty(body)) {
+
+                System.out.println("body:");
+                System.out.println(body);
+            }
+
+            System.out.println("Response: ");
+            System.out.println(httpMethodResult.getPayLoad().toString());
+
+            System.out.println();
+            System.out.println();
+        }
+
+    }
+
     public HttpMethodResult get(RestUri restUri,
                                 String token) throws Exception {
 
-        return this.submitHttpMethod(new HttpGet(), restUri, token);
+        HttpMethodResult returnVal = this.submitHttpMethod(new HttpGet(), restUri, token);
+        this.logRequest(RestMethodTypes.GET, restUri, null, returnVal);
+        return returnVal;
 
     }
 
@@ -232,21 +254,26 @@ public class HttpCore {
                                  String body,
                                  String token) throws Exception {
 
+        HttpMethodResult returnVal;
 
         HttpPost httpPost = new HttpPost();
         this.setHttpBody(httpPost, body);
-        return this.submitHttpMethod(httpPost, restUri, token);
+        returnVal = this.submitHttpMethod(httpPost, restUri, token);
+        this.logRequest(RestMethodTypes.POST, restUri, body, returnVal);
 
+        return returnVal;
     }
 
     public HttpMethodResult put(RestUri restUri,
                                 String body,
                                 String token) throws Exception {
 
+        HttpMethodResult returnVal;
         HttpPut httpPut = new HttpPut();
         this.setHttpBody(httpPut, body);
-        return this.submitHttpMethod(httpPut, restUri, token);
-
+        returnVal = this.submitHttpMethod(httpPut, restUri, token);
+        this.logRequest(RestMethodTypes.PUT, restUri, body, returnVal);
+        return returnVal;
     }
 
     public HttpMethodResult patch(RestUri restUri,

@@ -102,8 +102,8 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
 
         // so this would be the typical workflow for the client app
         cvDTOReceived.setGobiiProcessType(GobiiProcessType.UPDATE);
-        String newName = UUID.randomUUID().toString();
-        cvDTOReceived.setGroup(newName);
+        Integer newGrouopId = 2;
+        cvDTOReceived.setGroupId(newGrouopId);
 
         CvDTO CvDTOResponse = dtoRequestCv.process(cvDTOReceived);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(CvDTOResponse));
@@ -113,7 +113,7 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(dtoRequestCvReRetrieved));
 
-        Assert.assertTrue(dtoRequestCvReRetrieved.getGroup().equals(newName));
+        Assert.assertTrue(dtoRequestCvReRetrieved.getGroupId().equals(newGrouopId));
 
     }
 
