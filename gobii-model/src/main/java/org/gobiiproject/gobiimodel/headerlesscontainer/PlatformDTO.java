@@ -1,10 +1,8 @@
 package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,7 +11,7 @@ import java.util.List;
 /**
  * Created by Phil on 4/21/2016.
  */
-public class PlatformDTO extends DTOBase {
+public class    PlatformDTO extends DTOBase {
 
     public PlatformDTO() {
     }
@@ -21,7 +19,6 @@ public class PlatformDTO extends DTOBase {
     private Integer platformId = 0;
     private String platformName;
     private String platformCode;
-    private Integer platformVendor;
     private String platformDescription;
     private Integer createdBy;
     private Date createdDate;
@@ -69,16 +66,6 @@ public class PlatformDTO extends DTOBase {
     @GobiiEntityColumn(columnName = "code")
     public void setPlatformCode(String platformCode) {
         this.platformCode = platformCode;
-    }
-
-    @GobiiEntityParam(paramName = "platformVendor")
-    public Integer getPlatformVendor() {
-        return platformVendor;
-    }
-
-    @GobiiEntityColumn(columnName = "vendor_id")
-    public void setPlatformVendor(Integer platformVendor) {
-        this.platformVendor = platformVendor;
     }
 
     @GobiiEntityParam(paramName = "platformDescription")

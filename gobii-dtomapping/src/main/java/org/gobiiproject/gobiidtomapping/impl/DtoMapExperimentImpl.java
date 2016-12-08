@@ -7,9 +7,7 @@ import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.DtoMapExperiment;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.slf4j.Logger;
@@ -41,14 +39,9 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
 
         List<ExperimentDTO> returnVal = new ArrayList<>();
 
-        try {
 
-            returnVal = (List<ExperimentDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_EXPERIMENT,null);
+        returnVal = (List<ExperimentDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_EXPERIMENT, null);
 
-        } catch (Exception e) {
-            LOGGER.error("Gobii Maping Error", e);
-            throw new GobiiDtoMappingException(e);
-        }
 
         return returnVal;
     }
@@ -60,11 +53,12 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
 
         ExperimentDTO returnVal = new ExperimentDTO();
 
+
+        ResultSet resultSet = rsExperimentDao.getExperimentDetailsForExperimentId(experimentId);
+
+        boolean retrievedOneRecord = false;
+
         try {
-
-            ResultSet resultSet = rsExperimentDao.getExperimentDetailsForExperimentId(experimentId);
-
-            boolean retrievedOneRecord = false;
             while (resultSet.next()) {
 
                 if (true == retrievedOneRecord) {
@@ -77,11 +71,12 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
 
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
             }
-
         } catch (SQLException e) {
             LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);
+
         }
+
 
         return returnVal;
     }
@@ -90,14 +85,11 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
 
         String experimentName = experimentDTO.getExperimentName();
         Integer projectId = experimentDTO.getProjectId();
-        Integer platformId = experimentDTO.getPlatformId();
 
         ResultSet resultSetExistingProject =
-                rsExperimentDao.getExperimentsByNameProjectidPlatformId(experimentName, projectId, platformId);
+                rsExperimentDao.getExperimentsByNameProjectid(experimentName, projectId);
 
         try {
-
-
             if (resultSetExistingProject.next()) {
 
                 throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
@@ -105,10 +97,7 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
                         "An experiment with name "
                                 + experimentName
                                 + " and project id "
-                                + projectId
-                                + "and platform id"
-                                + platformId
-                                + "already exists");
+                                + projectId);
             }
         } catch (SQLException e) {
             throw new GobiiDtoMappingException(e);
@@ -120,7 +109,6 @@ public class DtoMapExperimentImpl implements DtoMapExperiment {
     public ExperimentDTO createExperiment(ExperimentDTO experimentDTO) throws GobiiDtoMappingException {
 
         ExperimentDTO returnVal = experimentDTO;
-
 
         validateExperimentRequest(returnVal);
         Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);

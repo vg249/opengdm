@@ -6,10 +6,11 @@ import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsExperiment;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdExperiment;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentByNameProjectIdPlatformId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentByNameProjectId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentDetailsByExperimentId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetExperimentNamesByProjectId;
+import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +49,12 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
             storedProcExec.doWithConnection(spGetExperimentNamesByProjectId);
 
             returnVal = spGetExperimentNamesByProjectId.getResultSet();
-        } catch (Exception e) {
 
-            LOGGER.error("Error retrieving experiment names", e);
-            throw (new GobiiDaoException(e));
+        } catch(SQLGrammarException e) {
+            LOGGER.error("Error getting experiment names by project id  with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
 
         }
-
 
         return returnVal;
     }
@@ -72,10 +72,10 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
             SpGetExperimentDetailsByExperimentId spGetExperimentDetailsByExperimentId = new SpGetExperimentDetailsByExperimentId(parameters);
             storedProcExec.doWithConnection(spGetExperimentDetailsByExperimentId);
             returnVal = spGetExperimentDetailsByExperimentId.getResultSet();
-        } catch (Exception e) {
 
-            LOGGER.error("Error retrieving experiment details", e);
-            throw (new GobiiDaoException(e));
+        } catch(SQLGrammarException e) {
+            LOGGER.error("Error getting experiment details by experiment id with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
 
         }
 
@@ -94,10 +94,10 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
             SpGetExperimentNames spGetExperimentNames = new SpGetExperimentNames();
             storedProcExec.doWithConnection(spGetExperimentNames);
             returnVal = spGetExperimentNames.getResultSet();
-        } catch (Exception e) {
 
-            LOGGER.error("Error retrieving all experiment names", e);
-            throw (new GobiiDaoException(e));
+        } catch(SQLGrammarException e) {
+            LOGGER.error("Error getting all experiment names with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
 
         }
 
@@ -121,10 +121,9 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
             }
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error creating dataset", e);
-            throw (new GobiiDaoException(e));
+        } catch(SQLGrammarException e) {
+            LOGGER.error("Error creating dataset with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
 
         }
 
@@ -142,34 +141,31 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
                 throw new GobiiDaoException(spRunnerCallable.getErrorString());
             }
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error creating experiment", e);
-            throw (new GobiiDaoException(e));
+        } catch(SQLGrammarException e) {
+            LOGGER.error("Error updating experiment with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
 
         }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public ResultSet getExperimentsByNameProjectidPlatformId(String experimentName, Integer projectId, Integer platformId) throws GobiiDaoException {
+    public ResultSet getExperimentsByNameProjectid(String experimentName, Integer projectId) throws GobiiDaoException {
         ResultSet returnVal = null;
 
         try {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("experimentName", experimentName);
             parameters.put("projectId", projectId);
-            parameters.put("platformId", platformId);
-            SpGetExperimentByNameProjectIdPlatformId spGetExperimentByNameProjectIdPlatformId = new SpGetExperimentByNameProjectIdPlatformId(parameters);
+            SpGetExperimentByNameProjectId spGetExperimentByNameProjectId = new SpGetExperimentByNameProjectId(parameters);
 
-            storedProcExec.doWithConnection(spGetExperimentByNameProjectIdPlatformId);
+            storedProcExec.doWithConnection(spGetExperimentByNameProjectId);
 
-            returnVal = spGetExperimentByNameProjectIdPlatformId.getResultSet();
+            returnVal = spGetExperimentByNameProjectId.getResultSet();
 
-        } catch (Exception e) {
-
-            LOGGER.error("Error retrieving experiment names", e);
-            throw (new GobiiDaoException(e));
+        } catch(SQLGrammarException e) {
+            LOGGER.error("Error getting experiment by name and project id with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
 
         }
 

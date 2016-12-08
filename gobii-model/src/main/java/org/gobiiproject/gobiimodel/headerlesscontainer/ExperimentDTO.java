@@ -21,8 +21,7 @@ public class ExperimentDTO extends DTOBase {
     private String experimentCode = null;
     private String experimentDataFile = null;
     private Integer projectId;
-    private Integer platformId;
-    private String platformName;
+    private Integer vendorProtocolId = null;
     private Integer manifestId;
     private Integer createdBy;
     private Date createdDate;
@@ -91,24 +90,15 @@ public class ExperimentDTO extends DTOBase {
         this.projectId = projectId;
     }
 
-    @GobiiEntityParam(paramName = "platformId")
-    public Integer getPlatformId() {
-        return platformId;
+
+    @GobiiEntityParam(paramName = "vendorProtocolId")
+    public Integer getVendorProtocolId() {
+        return vendorProtocolId;
     }
 
-    @GobiiEntityColumn(columnName = "platform_id")
-    public void setPlatformId(Integer platformId) {
-        this.platformId = platformId;
-    }
-
-    @GobiiEntityParam(paramName = "platformName")
-    public String getPlatformName() {
-        return platformName;
-    }
-
-    @GobiiEntityColumn(columnName = "platform_name")
-    public void setPlatformName(String platformName) {
-        this.platformName = platformName;
+    @GobiiEntityColumn(columnName = "vendor_protocol_id")
+    public void setVendorProtocolId(Integer vendorProtocolId) {
+        this.vendorProtocolId = vendorProtocolId;
     }
 
     @GobiiEntityParam(paramName = "manifestId")

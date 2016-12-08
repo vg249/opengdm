@@ -22,8 +22,7 @@ public interface RsExperimentDao {
 
     void updateExperiment(Map<String, Object> parameters) throws GobiiDaoException;
 
-    ResultSet getExperimentsByNameProjectidPlatformId(String experimentName,
-                                                      Integer projectId,
-                                                      Integer platformId) throws GobiiDaoException;
+    ResultSet getExperimentsByNameProjectid(String experimentName,
+                                            Integer projectId) throws GobiiDaoException;
 
 }

@@ -11,13 +11,13 @@ import java.util.Map;
 /**
  * Created by Phil on 4/11/2016.
  */
-public class SpGetExperimentByNameProjectIdPlatformId implements Work {
+public class SpGetExperimentByNameProjectId implements Work {
     /**
      * Created by Phil on 4/7/2016.
      */
     private Map<String, Object> parameters = null;
 
-    public SpGetExperimentByNameProjectIdPlatformId(Map<String, Object> parameters) {
+    public SpGetExperimentByNameProjectId(Map<String, Object> parameters) {
         this.parameters = parameters;
     }
 
@@ -31,21 +31,17 @@ public class SpGetExperimentByNameProjectIdPlatformId implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String Sql = "select p.name \"platform_name\",e.*\n" +
+        String Sql = "select e.*\n" +
                 "from experiment e\n" +
-                "join platform p on (e.platform_id=p.platform_id)\n" +
                 "\twhere e.name= ?  \n" +
-                "\t\t\tAND e.project_id= ?\n" +
-                "\t\t\tand e.platform_id = ?\n ";
+                "\t\t\tAND e.project_id= ?\n";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
         String experimentName = (String) parameters.get("experimentName");
         Integer projectId = (Integer) parameters.get("projectId");
-        Integer platformId = (Integer) parameters.get("platformId");
 
         preparedStatement.setString(1,experimentName);
         preparedStatement.setInt(2, projectId);
-        preparedStatement.setInt(3, platformId);
 
         resultSet = preparedStatement.executeQuery();
 

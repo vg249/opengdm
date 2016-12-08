@@ -108,7 +108,6 @@ public class TestDtoFactory {
         returnVal.setPlatformCode(uniqueStem + "dummy code");
         returnVal.setPlatformDescription(uniqueStem + "dummy description");
         returnVal.setPlatformName(uniqueStem + "New Platform");
-        returnVal.setPlatformVendor(1);
         returnVal.setTypeId(1);
 
         returnVal.setProperties(entityParamValues.getProperties());

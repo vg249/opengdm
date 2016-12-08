@@ -1,7 +1,11 @@
 package org.gobiiproject.gobiidao.resultset.core.listquery;
 
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.hibernate.exception.SQLGrammarException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +17,7 @@ import java.util.Map;
  */
 public class DtoListQuery<T> {
 
+    Logger LOGGER = LoggerFactory.getLogger(DtoListQuery.class);
 
     private ListSqlId listSqlId;
     private Class<T> dtoType;
@@ -31,13 +36,25 @@ public class DtoListQuery<T> {
     @Transactional(propagation = Propagation.REQUIRED)
     public List<T> getDtoList(Map<String, Object> parameters) throws GobiiException {
 
-        String sql = listSqlId.getSql();
+        List<T> returnVal;
 
-        DtoListFromSql<T> dtoListFromSql = new DtoListFromSql<>(dtoType, sql, parameters);
+        try {
 
-        this.storedProcExec.doWithConnection(dtoListFromSql);
+            String sql = listSqlId.getSql();
+            DtoListFromSql<T> dtoListFromSql = new DtoListFromSql<>(dtoType, sql, parameters);
+            this.storedProcExec.doWithConnection(dtoListFromSql);
+            returnVal = dtoListFromSql.getDtoList();
 
-        List<T> returnVal = dtoListFromSql.getDtoList();
+        }catch(SQLGrammarException e) {
+            LOGGER.error("Error retrieving dto list with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving dto list ", e);
+            throw (new GobiiDaoException(e));
+
+        }
 
 
         return returnVal;
