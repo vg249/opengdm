@@ -95,7 +95,7 @@ public class SpRunnerCallable implements Work {
 
 
     @Override
-    public void execute(Connection connection) throws SQLException {
+    public void execute(Connection connection) throws SQLException, GobiiDaoException {
 
 
         CallableStatement callableStatement = connection.prepareCall(spDef.getCallString());
@@ -151,8 +151,9 @@ public class SpRunnerCallable implements Work {
                 String message = "Error executing stored procedure " + spDef.getCallString() + " with " +
                         "Param Name: " + currentParamName + "; " +
                         "Param Value: " + currentParamValue + "; " +
-                        "Param Type: " + currentParamType.toString() + "; ";
-                throw new SQLException(message,e);
+                        "Param Type: " + currentParamType.toString() + ": " +
+                        "Reported Exception: " +e.getMessage();
+                throw new GobiiDaoException(message);
             }
         }
 

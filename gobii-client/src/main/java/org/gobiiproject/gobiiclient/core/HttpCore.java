@@ -38,7 +38,7 @@ public class HttpCore {
     private String host = null;
     private Integer port = null;
     private UriFactory uriFactory;
-    private boolean logJson = true;
+    private boolean logJson = false;
 
 
     public HttpCore(String host,

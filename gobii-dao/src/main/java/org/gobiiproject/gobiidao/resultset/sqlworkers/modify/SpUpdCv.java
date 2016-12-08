@@ -10,7 +10,7 @@ public class SpUpdCv extends SpDef {
 
     public SpUpdCv() {
 
-        super("{call updatecv(?,?,?,?,?,?,?)}",false);
+        super("{call updatecv(?,?,?,?,?,?,?,?)}",false);
 
         this.addParamDef("cvId",Integer.class).setNullable(false);
         this.addParamDef("groupId", Integer.class).setNullable(false);
