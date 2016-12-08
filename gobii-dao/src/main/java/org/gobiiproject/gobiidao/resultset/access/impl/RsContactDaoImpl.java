@@ -142,6 +142,7 @@ public class RsContactDaoImpl implements RsContactDao {
         try {
 
             spRunnerCallable.run(new SpInsContact(), parameters);
+            returnVal = spRunnerCallable.getResult();
 
         } catch (SQLGrammarException e) {
 

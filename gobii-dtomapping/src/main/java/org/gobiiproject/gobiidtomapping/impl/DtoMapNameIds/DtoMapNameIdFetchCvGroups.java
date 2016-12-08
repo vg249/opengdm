@@ -45,7 +45,7 @@ public class DtoMapNameIdFetchCvGroups implements DtoMapNameIdFetch {
             NameIdDTO nameIdDTO;
             while (resultSet.next()) {
                 nameIdDTO = new NameIdDTO();
-                nameIdDTO.setId(resultSet.getInt("cv_id"));
+                nameIdDTO.setId(resultSet.getInt("cvgroup_id"));
                 nameIdDTO.setName(resultSet.getString("lower").toString());
                 returnVal.add(nameIdDTO);
             }

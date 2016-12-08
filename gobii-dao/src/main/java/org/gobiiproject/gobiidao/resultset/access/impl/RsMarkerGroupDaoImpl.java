@@ -106,6 +106,7 @@ public class RsMarkerGroupDaoImpl implements RsMarkerGroupDao {
         try {
 
             spRunnerCallable.run(new SpInsMarkerGroup(), parameters);
+            returnVal = spRunnerCallable.getResult();
 
         } catch (SQLGrammarException e) {
 

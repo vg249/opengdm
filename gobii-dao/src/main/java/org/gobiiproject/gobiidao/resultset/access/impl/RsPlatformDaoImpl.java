@@ -119,6 +119,7 @@ public class RsPlatformDaoImpl implements RsPlatformDao {
         try {
 
             spRunnerCallable.run(new SpInsPlatform(), parameters);
+            returnVal = spRunnerCallable.getResult();
 
         } catch (SQLGrammarException e) {
             LOGGER.error("Error creating platform with SQL " + e.getSQL(), e.getSQLException());

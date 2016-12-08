@@ -63,6 +63,7 @@ public class RsDisplayDaoImpl implements RsDisplayDao {
         try {
 
             spRunnerCallable.run(new SpInsDisplay(), parameters);
+            returnVal = spRunnerCallable.getResult();
 
         } catch (SQLGrammarException e) {
 

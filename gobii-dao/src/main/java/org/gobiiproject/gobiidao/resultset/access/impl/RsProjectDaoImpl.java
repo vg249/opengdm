@@ -146,6 +146,7 @@ public class RsProjectDaoImpl implements RsProjectDao {
         try {
 
             spRunnerCallable.run(new SpInsProject(), parameters);
+            returnVal = spRunnerCallable.getResult();
 
         } catch (SQLGrammarException e) {
 
@@ -179,7 +180,7 @@ public class RsProjectDaoImpl implements RsProjectDao {
     @Override
     public Integer createUpdateProjectProperty(Map<String, Object> parameters) throws GobiiDaoException {
 
-        Integer returnVal = 0;
+        Integer returnVal;
 
         try {
             spRunnerCallable.run(new SpInsProjectProperties(), parameters);

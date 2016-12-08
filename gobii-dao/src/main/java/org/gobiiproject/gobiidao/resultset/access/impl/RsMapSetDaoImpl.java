@@ -121,7 +121,7 @@ public class RsMapSetDaoImpl implements RsMapSetDao {
 
             spRunnerCallable.run(new SpInsMapset(), parameters);
 
-                returnVal = spRunnerCallable.getResult();
+            returnVal = spRunnerCallable.getResult();
 
         } catch (SQLGrammarException e) {
 

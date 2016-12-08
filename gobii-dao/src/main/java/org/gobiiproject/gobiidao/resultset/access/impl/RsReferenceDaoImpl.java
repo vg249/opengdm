@@ -84,6 +84,7 @@ public class RsReferenceDaoImpl implements RsReferenceDao {
         try {
 
             spRunnerCallable.run(new SpInsReference(), parameters);
+            returnVal = spRunnerCallable.getResult();
 
         } catch (SQLGrammarException e) {
 
