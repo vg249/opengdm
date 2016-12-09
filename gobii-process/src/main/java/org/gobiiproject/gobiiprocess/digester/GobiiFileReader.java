@@ -398,6 +398,10 @@ public class GobiiFileReader {
 		}catch(Exception e){
 			ErrorLogger.logError("MailInterface","Error Sending Mail",e);
 		}
+		//Move instruction file
+		File inprogressFolder=new File(instructionFile).getParentFile();
+		File doneFolder=new File(inprogressFolder.getParentFile(),"done");
+		FileSystemInterface.mv(instructionFile,doneFolder.getAbsolutePath());
 	}
 
 	/**
