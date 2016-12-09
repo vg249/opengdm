@@ -44,8 +44,9 @@ public class HelperFunctions {
 		}else{
 			startIndex=0;
 		}
-		if(in.contains(to)){
-			endIndex=in.lastIndexOf(to);
+		String from_in = in.substring(startIndex);
+		if(from_in.contains(to)){
+			endIndex = startIndex + from_in.indexOf(to);
 		}
 		else{
 			endIndex=in.length();
