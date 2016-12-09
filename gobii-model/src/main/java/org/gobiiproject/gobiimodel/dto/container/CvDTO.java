@@ -24,8 +24,11 @@ public class CvDTO extends Header {
 	boolean includeDetailsList = false;
 
 	private Integer cv_id;
-	private String group;
+	private Integer groupId;
+	private Integer xrefId;
+	private Integer entityStatus; // renmae to status when base class changes
 	private String term;
+	private String abbreviation;
 	private String definition;
 	private Integer rank;
 
@@ -48,13 +51,13 @@ public class CvDTO extends Header {
 	}
 
 	@GobiiEntityParam(paramName = "group")
-	public String getGroup() {
-		return group;
+	public Integer getGroup() {
+		return this.groupId;
 	}
 
-	@GobiiEntityColumn(columnName = "group")
-	public void setGroup(String group) {
-		this.group = group;
+	@GobiiEntityColumn(columnName = "cvgroup_id")
+	public void setGroup(Integer groupId) {
+		this.groupId = groupId;
 	}
 
 	@GobiiEntityParam(paramName = "term")
@@ -85,6 +88,48 @@ public class CvDTO extends Header {
 	@GobiiEntityColumn(columnName = "rank")
 	public void setRank(Integer rank) {
 		this.rank = rank;
+	}
+
+
+	@GobiiEntityParam(paramName = "groupId")
+	public Integer getGroupId() {
+		return groupId;
+	}
+
+	@GobiiEntityColumn(columnName = "cvgroup_id")
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
+	}
+
+	@GobiiEntityParam(paramName = "xrefId")
+	public Integer getXrefId() {
+		return xrefId;
+	}
+
+	@GobiiEntityColumn(columnName = "dbxref_id")
+	public void setXrefId(Integer xrefId) {
+		this.xrefId = xrefId;
+	}
+
+
+	@GobiiEntityParam(paramName = "abbreviation")
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+
+	@GobiiEntityColumn(columnName = "abbreviation")
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
+	}
+
+	@GobiiEntityParam(paramName = "status")
+	public Integer getEntityStatus() {
+		return entityStatus;
+	}
+
+	@GobiiEntityColumn(columnName = "status")
+	public void setEntityStatus(Integer entityStatus) {
+		this.entityStatus = entityStatus;
 	}
 
 	Map<String,List<CvItem>> groupCvItems = new HashMap<>();
