@@ -15,7 +15,6 @@ public class ExtractorInstructionFilesDTO extends DTOBase {
 
 
     private String jobId;
-    private GobiiJobStatus gobiiJobStatus;
 
     @Override
     public Integer getId() {
@@ -44,14 +43,6 @@ public class ExtractorInstructionFilesDTO extends DTOBase {
 
     public void setInstructionFileName(String instructionFileName) {
         this.instructionFileName = instructionFileName;
-    }
-
-    public GobiiJobStatus getGobiiJobStatus() {
-        return gobiiJobStatus;
-    }
-
-    public void setGobiiJobStatus(GobiiJobStatus gobiiJobStatus) {
-        this.gobiiJobStatus = gobiiJobStatus;
     }
 
     public String getJobId() {

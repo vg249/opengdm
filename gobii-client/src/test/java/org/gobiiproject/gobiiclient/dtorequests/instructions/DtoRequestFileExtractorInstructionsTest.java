@@ -239,7 +239,11 @@ public class DtoRequestFileExtractorInstructionsTest {
 
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetStatusByFileName.getHeader()));
             ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO = resultEnvelopeForGetStatusByFileName.getPayload().getData().get(0);
-            Assert.assertNotNull(resultExtractorInstructionFilesDTO.getGobiiJobStatus());
+
+
+        //testGetExtractorInstructionStatus(
+        //Assert.assertNotNull(resultExtractorInstructionFilesDTO.getGobiiJobStatus());
+
         }
 
 

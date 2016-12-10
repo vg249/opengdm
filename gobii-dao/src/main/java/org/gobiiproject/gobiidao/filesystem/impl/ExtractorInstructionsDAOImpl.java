@@ -4,12 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.ExtractorInstructionsDAO;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.types.GobiiFileType;
+import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,10 +26,8 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
     private final String LOADER_FILE_EXT = ".json";
 
     @Override
-    public boolean writeInstructions(String instructionFileFqpn,
+    public void writeInstructions(String instructionFileFqpn,
                                     List<GobiiExtractorInstruction> instructions) throws GobiiDaoException {
-
-        boolean returnVal = false;
 
         try {
 
@@ -48,7 +51,6 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
                         bufferedWriter.write(instructionsAsJson);
                         bufferedWriter.flush();
                         bufferedWriter.close();
-                        returnVal = true;
                     } else {
                         throw new GobiiDaoException("Path of specified instruction file name is not a directory: "
                                 + destinationDirectory);
@@ -70,9 +72,6 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
             String message = e.getMessage() + "; fqpn: " + instructionFileFqpn;
             throw new GobiiDaoException(message);
         }
-
-        return returnVal;
-
     } // writeInstructions
 
     @Override
@@ -119,6 +118,74 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
         } else {
             throw new GobiiDaoException("The specified path already exists: " + pathName);
         }
+    }
+
+    @Override
+    public void setGobiiJobStatus(boolean applyToAll, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir gobiiFileProcessDir) {
+        GobiiJobStatus gobiiJobStatus = getJobStatusForDirectory(gobiiFileProcessDir);
+        if(applyToAll){
+            for(GobiiExtractorInstruction instruction : instructions){
+                for(GobiiDataSetExtract dataSetExtract: instruction.getDataSetExtracts()){
+                    dataSetExtract.setGobiiJobStatus(gobiiJobStatus);
+                }
+            }
+        }else{ //check if the output file(s) exist in the directory specified by the *extractDestinationDirectory* field of the *DataSetExtract* item in the instruction file;
+            GobiiJobStatus statusFailed = GobiiJobStatus.FAILED;
+            for(GobiiExtractorInstruction instruction: instructions){
+                for(GobiiDataSetExtract dataSetExtract: instruction.getDataSetExtracts()){
+                    String extractDestinationDirectory = dataSetExtract.getExtractDestinationDirectory();
+                    List<String> fileNames = getFileNamesFor("DS"+ Integer.toString(dataSetExtract.getDataSetId()), dataSetExtract.getGobiiFileType());
+                        for(String s: fileNames){
+                            String currentExtractFile = extractDestinationDirectory+fileNames;
+                            if(doesPathExist(currentExtractFile))dataSetExtract.setGobiiJobStatus(gobiiJobStatus);
+                            else dataSetExtract.setGobiiJobStatus(statusFailed);
+                        }
+                    dataSetExtract.setGobiiJobStatus(gobiiJobStatus);
+                }
+            }
+
+
+        }
+    }
+
+    private List<String> getFileNamesFor(String fileName, GobiiFileType gobiiFileType) {
+        List<String> fileNames = new ArrayList<String>();
+        switch (gobiiFileType.toString().toLowerCase()) {
+            case "generic":
+                //fileNames.add(fileName+".txt"); to be added
+                break;
+            case "hapmap":
+                fileNames.add(fileName+"hmp.txt");
+                break;
+            case "flapjack":
+                fileNames.add(fileName+".map");
+                fileNames.add(fileName+".genotype");
+                break;
+            case "vcf":
+                //fileNames.add(fileName+"hmp.txt"); to be added
+                break;
+            default:
+                throw new GobiiDaoException("Noe extension assigned for GobiiFileType: " + gobiiFileType.toString().toLowerCase());
+        }
+        return fileNames;
+    }
+
+    private GobiiJobStatus getJobStatusForDirectory(GobiiFileProcessDir extractorInstructions) {
+        GobiiJobStatus gobiiJobStatus = null;
+        switch (extractorInstructions.toString()) {
+            case "EXTRACTOR_INPROGRESS":
+                gobiiJobStatus = GobiiJobStatus.IN_PROGRESS;
+                break;
+            case "EXTRACTOR_INSTRUCTIONS":
+                gobiiJobStatus = GobiiJobStatus.STARTED;
+                break;
+            case "EXTRACTOR_DONE":
+                gobiiJobStatus = GobiiJobStatus.COMPLETED;
+                break;
+            default:
+                gobiiJobStatus = GobiiJobStatus.FAILED;
+        }
+        return gobiiJobStatus;
     }
 
     @Override
