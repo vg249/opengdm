@@ -50,7 +50,7 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
             returnVal = spGetExperimentNamesByProjectId.getResultSet();
 
-        } catch(SQLGrammarException e) {
+        } catch (SQLGrammarException e) {
             LOGGER.error("Error getting experiment names by project id  with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
@@ -73,7 +73,7 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
             storedProcExec.doWithConnection(spGetExperimentDetailsByExperimentId);
             returnVal = spGetExperimentDetailsByExperimentId.getResultSet();
 
-        } catch(SQLGrammarException e) {
+        } catch (SQLGrammarException e) {
             LOGGER.error("Error getting experiment details by experiment id with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
@@ -84,9 +84,9 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
 
     @Transactional(propagation = Propagation.REQUIRED)
-	@Override
-	public ResultSet getExperimentNames() throws GobiiDaoException {
-		// TODO Auto-generated method stub
+    @Override
+    public ResultSet getExperimentNames() throws GobiiDaoException {
+        // TODO Auto-generated method stub
 
         ResultSet returnVal = null;
 
@@ -95,14 +95,14 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
             storedProcExec.doWithConnection(spGetExperimentNames);
             returnVal = spGetExperimentNames.getResultSet();
 
-        } catch(SQLGrammarException e) {
+        } catch (SQLGrammarException e) {
             LOGGER.error("Error getting all experiment names with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
         }
 
         return returnVal;
-	}
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
@@ -111,17 +111,10 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
         try {
 
-            if (spRunnerCallable.run(new SpInsExperiment(), parameters)) {
+            spRunnerCallable.run(new SpInsExperiment(), parameters);
+            returnVal = spRunnerCallable.getResult();
 
-                returnVal = spRunnerCallable.getResult();
-
-            } else {
-
-                throw new GobiiDaoException(spRunnerCallable.getErrorString());
-
-            }
-
-        } catch(SQLGrammarException e) {
+        } catch (SQLGrammarException e) {
             LOGGER.error("Error creating dataset with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
@@ -136,12 +129,9 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
     public void updateExperiment(Map<String, Object> parameters) throws GobiiDaoException {
 
         try {
+            spRunnerCallable.run(new SpUpdExperiment(), parameters);
 
-            if (!spRunnerCallable.run(new SpUpdExperiment(), parameters)) {
-                throw new GobiiDaoException(spRunnerCallable.getErrorString());
-            }
-
-        } catch(SQLGrammarException e) {
+        } catch (SQLGrammarException e) {
             LOGGER.error("Error updating experiment with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 
@@ -163,7 +153,7 @@ public class RsExperimentDaoImpl implements RsExperimentDao {
 
             returnVal = spGetExperimentByNameProjectId.getResultSet();
 
-        } catch(SQLGrammarException e) {
+        } catch (SQLGrammarException e) {
             LOGGER.error("Error getting experiment by name and project id with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
 

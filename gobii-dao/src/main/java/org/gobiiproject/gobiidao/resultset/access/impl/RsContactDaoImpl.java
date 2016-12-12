@@ -7,6 +7,7 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsContact;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdContact;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.*;
+import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,20 +141,13 @@ public class RsContactDaoImpl implements RsContactDao {
 
         try {
 
-            if (spRunnerCallable.run(new SpInsContact(), parameters)) {
+            spRunnerCallable.run(new SpInsContact(), parameters);
+            returnVal = spRunnerCallable.getResult();
 
-                returnVal = spRunnerCallable.getResult();
+        } catch (SQLGrammarException e) {
 
-            } else {
-
-                throw new GobiiDaoException(spRunnerCallable.getErrorString());
-
-            }
-
-        } catch (Exception e) {
-
-            LOGGER.error("Error creating contact", e);
-            throw (new GobiiDaoException(e));
+            LOGGER.error("Error creating contact with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
 
         }
 
@@ -166,14 +160,12 @@ public class RsContactDaoImpl implements RsContactDao {
 
         try {
 
-            if (!spRunnerCallable.run(new SpUpdContact(), parameters)) {
-                throw new GobiiDaoException(spRunnerCallable.getErrorString());
-            }
+            spRunnerCallable.run(new SpUpdContact(), parameters);
 
-        } catch (Exception e) {
+        } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error creating contact", e);
-            throw (new GobiiDaoException(e));
+            LOGGER.error("Error creating contact with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
         }
     }
 }

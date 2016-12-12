@@ -120,10 +120,11 @@ public class TestDtoFactory {
                                            Integer uniqueStem) {
 
         CvDTO returnVal = new CvDTO(gobiiProcessType);
-        returnVal.setGroup(uniqueStem + "dummy cv name");
+        returnVal.setGroupId(1);
         returnVal.setTerm(UUID.randomUUID().toString());
         returnVal.setDefinition(uniqueStem + "dummy definition");
         returnVal.setRank(1);
+        returnVal.setEntityStatus(1);
 
         return returnVal;
 

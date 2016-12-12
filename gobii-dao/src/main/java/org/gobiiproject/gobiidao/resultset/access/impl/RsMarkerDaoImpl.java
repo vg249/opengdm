@@ -8,6 +8,7 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMarker;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkersByMarkerId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkersByMarkerName;
+import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +41,18 @@ public class RsMarkerDaoImpl implements RsMarkerDao {
 
         ResultSet returnVal;
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("markerId", markerId);
-        SpGetMarkersByMarkerId spGetMarkerDetailsByExperimentId = new SpGetMarkersByMarkerId(parameters);
+        try {
 
-        storedProcExec.doWithConnection(spGetMarkerDetailsByExperimentId);
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("markerId", markerId);
+            SpGetMarkersByMarkerId spGetMarkerDetailsByExperimentId = new SpGetMarkersByMarkerId(parameters);
+            storedProcExec.doWithConnection(spGetMarkerDetailsByExperimentId);
+            returnVal = spGetMarkerDetailsByExperimentId.getResultSet();
 
-        returnVal = spGetMarkerDetailsByExperimentId.getResultSet();
+        } catch (SQLGrammarException e) {
+            LOGGER.error("Error retrieving marker detail with SQL " + e.getSQL(), e.getSQLException());
+            throw new GobiiDaoException(e.getSQLException());
+        }
 
         return returnVal;
     }
@@ -58,14 +64,20 @@ public class RsMarkerDaoImpl implements RsMarkerDao {
 
         ResultSet returnVal = null;
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("markerName", markerName);
-        SpGetMarkersByMarkerName spGetMarkerDetailsByExperimentId = new SpGetMarkersByMarkerName(parameters);
+        try {
 
-        storedProcExec.doWithConnection(spGetMarkerDetailsByExperimentId);
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("markerName", markerName);
+            SpGetMarkersByMarkerName spGetMarkerDetailsByExperimentId = new SpGetMarkersByMarkerName(parameters);
 
-        returnVal = spGetMarkerDetailsByExperimentId.getResultSet();
+            storedProcExec.doWithConnection(spGetMarkerDetailsByExperimentId);
 
+            returnVal = spGetMarkerDetailsByExperimentId.getResultSet();
+
+        } catch (SQLGrammarException e) {
+            LOGGER.error("Error retrieving markers by marker name  SQL " + e.getSQL(), e.getSQLException());
+            throw new GobiiDaoException(e.getSQLException());
+        }
 
         return returnVal;
     }
@@ -75,19 +87,17 @@ public class RsMarkerDaoImpl implements RsMarkerDao {
     @Override
     public Integer createMarker(Map<String, Object> parameters) throws GobiiDaoException {
 
-
         Integer returnVal = null;
 
-        if (spRunnerCallable.run(new SpInsMarker(), parameters)) {
+        try {
 
+            spRunnerCallable.run(new SpInsMarker(), parameters);
             returnVal = spRunnerCallable.getResult();
 
-        } else {
-
-            throw new GobiiDaoException(spRunnerCallable.getErrorString());
-
+        } catch (SQLGrammarException e) {
+            LOGGER.error("Error creating marker with SQL " + e.getSQL(), e.getSQLException());
+            throw new GobiiDaoException(e.getSQLException());
         }
-
 
         return returnVal;
     }
@@ -97,18 +107,6 @@ public class RsMarkerDaoImpl implements RsMarkerDao {
     public void updateMarker(Map<String, Object> parameters) throws GobiiDaoException {
 
         throw new NotImplementedException();
-//        try {
-//
-//            if (!spRunnerCallable.run(new SpUpdMarker(), parameters)) {
-//                throw new GobiiDaoException(spRunnerCallable.getErrorString());
-//            }
-//
-//        } catch (Exception e) {
-//
-//            LOGGER.error("Error creating marker", e);
-//            throw (new GobiiDaoException(e));
-//        }
-
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -117,17 +115,7 @@ public class RsMarkerDaoImpl implements RsMarkerDao {
         // TODO Auto-generated method stub
 
         throw new NotImplementedException();
-//        ResultSet returnVal = null;
-//
-//        SpGetMarkerNames spGetMarkerNames = new SpGetMarkerNames();
-//
-//        storedProcExec.doWithConnection(spGetMarkerNames);
-//
-//        returnVal = spGetMarkerNames.getResultSet();
-//
-//
-//        return returnVal;
     }
 
 
-} // RsProjectDaoImpl
+} //
