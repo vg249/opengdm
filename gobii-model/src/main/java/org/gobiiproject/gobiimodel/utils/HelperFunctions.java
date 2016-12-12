@@ -332,11 +332,9 @@ public class HelperFunctions {
 	 * Moves an instruction file from it's current folder to the 'done' folder
 	 * @param instructionFile Fully qualified path to the instruction file
 	 */
-	public static void completeInstruction(String instructionFile){
+	public static void completeInstruction(String instructionFile, String doneFolder){
 		//Move instruction file
-		File inprogressFolder=new File(instructionFile).getParentFile();
-		File doneFolder=new File(inprogressFolder.getParentFile(),"done");
-		FileSystemInterface.mv(instructionFile,doneFolder.getAbsolutePath());
+		FileSystemInterface.mv(instructionFile,doneFolder);
 	}
 
 	/**

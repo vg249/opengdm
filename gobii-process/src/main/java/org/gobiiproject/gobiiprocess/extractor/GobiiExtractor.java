@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Scanner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
@@ -35,7 +36,7 @@ public class GobiiExtractor {
 	private static String errorLogOverride;
 	private static boolean verbose;
 	private static String rootDir="../";
-	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, InterruptedException {
+	public static void main(String[] args) throws Exception {
 		Options o = new Options()
          		.addOption("v", "verbose", false, "Verbose output")
          		.addOption("e", "errlog", true, "Error log override location")
@@ -201,7 +202,7 @@ public class GobiiExtractor {
 				}
 				System.out.println("DataSet "+dataSetId+" Created");	
 			}
-			HelperFunctions.completeInstruction(instructionFile);
+			HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 		}
 	}
 

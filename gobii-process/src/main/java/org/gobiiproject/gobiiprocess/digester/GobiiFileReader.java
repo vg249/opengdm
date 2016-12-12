@@ -69,7 +69,7 @@ public class GobiiFileReader {
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 */
-	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, InterruptedException{
+	public static void main(String[] args) throws Exception {
 		Options o = new Options()
          		.addOption("v", "verbose", false, "Verbose output")
          		.addOption("e", "errlog", true, "Error log override location")
@@ -398,7 +398,7 @@ public class GobiiFileReader {
 		}catch(Exception e){
 			ErrorLogger.logError("MailInterface","Error Sending Mail",e);
 		}
-		HelperFunctions.completeInstruction(instructionFile);
+		HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
 	}
 
 	/**
