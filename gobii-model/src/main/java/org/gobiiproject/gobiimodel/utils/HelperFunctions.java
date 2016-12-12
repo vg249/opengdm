@@ -328,6 +328,17 @@ public class HelperFunctions {
 	}
 
 	/**
+	 * Moves an instruction file from it's current folder to the 'done' folder
+	 * @param instructionFile Fully qualified path to the instruction file
+	 */
+	public static void completeInstruction(String instructionFile){
+		//Move instruction file
+		File inprogressFolder=new File(instructionFile).getParentFile();
+		File doneFolder=new File(inprogressFolder.getParentFile(),"done");
+		FileSystemInterface.mv(instructionFile,doneFolder.getAbsolutePath());
+	}
+
+	/**
 	 * Checks if a file exists AND is non-empty.
 	 * @param fileLocation String representation of the file's location (absolute or relative).
 	 * @return true if non-empty file exists

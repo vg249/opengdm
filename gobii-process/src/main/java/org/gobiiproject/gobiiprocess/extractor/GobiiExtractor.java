@@ -201,6 +201,7 @@ public class GobiiExtractor {
 				}
 				System.out.println("DataSet "+dataSetId+" Created");	
 			}
+			HelperFunctions.completeInstruction(instructionFile);
 		}
 	}
 
