@@ -20,15 +20,16 @@ import java.util.List;
 
 /**
  * Created by Phil on 4/12/2016.
+ * Modified by Angel 12/12/2016
  */
 public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
 
     private final String LOADER_FILE_EXT = ".json";
 
     @Override
-    public void writeInstructions(String instructionFileFqpn,
-                                    List<GobiiExtractorInstruction> instructions) throws GobiiDaoException {
-
+    public boolean writeInstructions(String instructionFileFqpn,
+                                     List<GobiiExtractorInstruction> instructions) throws GobiiDaoException {
+        boolean returnVal = false;
         try {
 
             File instructionFile = new File(instructionFileFqpn);
@@ -51,6 +52,8 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
                         bufferedWriter.write(instructionsAsJson);
                         bufferedWriter.flush();
                         bufferedWriter.close();
+
+                        returnVal = true;
                     } else {
                         throw new GobiiDaoException("Path of specified instruction file name is not a directory: "
                                 + destinationDirectory);
@@ -72,6 +75,7 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
             String message = e.getMessage() + "; fqpn: " + instructionFileFqpn;
             throw new GobiiDaoException(message);
         }
+        return returnVal;
     } // writeInstructions
 
     @Override
@@ -121,32 +125,32 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
     }
 
     @Override
-    public void setGobiiJobStatus(boolean applyToAll, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir gobiiFileProcessDir) {
+    public List<GobiiExtractorInstruction> setGobiiJobStatus(boolean applyToAll, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir gobiiFileProcessDir) {
+        List<GobiiExtractorInstruction> returnVal = instructions;
         GobiiJobStatus gobiiJobStatus = getJobStatusForDirectory(gobiiFileProcessDir);
         if(applyToAll){
-            for(GobiiExtractorInstruction instruction : instructions){
+            for(GobiiExtractorInstruction instruction : returnVal){
                 for(GobiiDataSetExtract dataSetExtract: instruction.getDataSetExtracts()){
                     dataSetExtract.setGobiiJobStatus(gobiiJobStatus);
                 }
             }
         }else{ //check if the output file(s) exist in the directory specified by the *extractDestinationDirectory* field of the *DataSetExtract* item in the instruction file;
             GobiiJobStatus statusFailed = GobiiJobStatus.FAILED;
-            for(GobiiExtractorInstruction instruction: instructions){
+            for(GobiiExtractorInstruction instruction: returnVal){
                 for(GobiiDataSetExtract dataSetExtract: instruction.getDataSetExtracts()){
                     String extractDestinationDirectory = dataSetExtract.getExtractDestinationDirectory();
-                    List<String> fileNames = getFileNamesFor("DS"+ Integer.toString(dataSetExtract.getDataSetId()), dataSetExtract.getGobiiFileType());
-                        for(String s: fileNames){
-                            String currentExtractFile = extractDestinationDirectory+fileNames;
+                    List<String> datasetExtractFiles = getFileNamesFor("DS"+ Integer.toString(dataSetExtract.getDataSetId()), dataSetExtract.getGobiiFileType());
+                        for(String s: datasetExtractFiles){
+                            String currentExtractFile = extractDestinationDirectory+s;
                             if(doesPathExist(currentExtractFile))dataSetExtract.setGobiiJobStatus(gobiiJobStatus);
                             else dataSetExtract.setGobiiJobStatus(statusFailed);
                         }
-                    dataSetExtract.setGobiiJobStatus(gobiiJobStatus);
                 }
             }
-
-
         }
+        return returnVal;
     }
+
 
     private List<String> getFileNamesFor(String fileName, GobiiFileType gobiiFileType) {
         List<String> fileNames = new ArrayList<String>();

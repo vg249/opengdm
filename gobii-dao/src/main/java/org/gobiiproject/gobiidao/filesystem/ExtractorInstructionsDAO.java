@@ -11,8 +11,8 @@ import java.util.List;
  */
 public interface ExtractorInstructionsDAO {
 
-    void writeInstructions(String instructionFileFqpn,
-                             List<GobiiExtractorInstruction> instructions) throws GobiiDaoException;
+    boolean writeInstructions(String instructionFileFqpn,
+                              List<GobiiExtractorInstruction> instructions) throws GobiiDaoException;
 
     List<GobiiExtractorInstruction> getInstructions(String instructionFileFqpn) throws GobiiDaoException;
 
@@ -22,6 +22,6 @@ public interface ExtractorInstructionsDAO {
 
     void makeDirectory(String pathName) throws GobiiDaoException;
 
-    void setGobiiJobStatus(boolean applyToAll, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir extractorInstructions);
+    List<GobiiExtractorInstruction> setGobiiJobStatus(boolean applyToAll, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir extractorInstructions);
 
 }

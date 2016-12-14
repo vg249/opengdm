@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 4/12/2016.
+ * Modified by Angel 12/12/2016
  */
 public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructions {
 
@@ -149,13 +150,13 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     currentGobiiDataSetExtract.setExtractDestinationDirectory(extractorFileDestinationLocation);
 
                 }
-
-
             } // iterate instructions/files
 
             if (!extractorInstructionsDAO.doesPathExist(instructionFileFqpn)) {
-                extractorInstructionsDAO.writeInstructions(instructionFileFqpn,
-                        returnVal.getGobiiExtractorInstructions());
+                if(extractorInstructionsDAO.writeInstructions(instructionFileFqpn,
+                        returnVal.getGobiiExtractorInstructions())){
+                    returnVal.setJobId(extractorInstructionFilesDTO.getInstructionFileName());
+                }
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.VALIDATION_NOT_UNIQUE,
@@ -196,19 +197,18 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     + instructionFileName
                     + INSTRUCTION_FILE_EXT;
 
-            if (extractorInstructionsDAO.doesPathExist(fileDirExtractorInProgressFqpn)){//check if file  is in InProgress
-                returnVal.setInstructionFileName(instructionFileName);
-                setInstructions(returnVal, extractorInstructionsDAO
-                        .getInstructions(fileDirExtractorDoneFqpn), GobiiFileProcessDir.EXTRACTOR_INPROGRESS);
+            returnVal.setJobId(instructionFileName);
+            returnVal.setInstructionFileName(instructionFileName);
 
+            if (extractorInstructionsDAO.doesPathExist(fileDirExtractorInProgressFqpn)){//check if file  is in InProgress
+                returnVal.setGobiiExtractorInstructions(setInstructions(extractorInstructionsDAO
+                        .getInstructions(fileDirExtractorInProgressFqpn), GobiiFileProcessDir.EXTRACTOR_INPROGRESS));
             } else if (extractorInstructionsDAO.doesPathExist(fileDirExtractorInstructionsFqpn)) { //check if file just started
-                returnVal.setInstructionFileName(instructionFileName);
-                setInstructions(returnVal, extractorInstructionsDAO
-                        .getInstructions(fileDirExtractorDoneFqpn), GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS);
+                returnVal.setGobiiExtractorInstructions(setInstructions(extractorInstructionsDAO
+                        .getInstructions(fileDirExtractorInstructionsFqpn), GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS));
             } else if (extractorInstructionsDAO.doesPathExist(fileDirExtractorDoneFqpn)){ //check if file  is already done
-                returnVal.setInstructionFileName(instructionFileName);
-                setInstructions(returnVal, extractorInstructionsDAO
-                        .getInstructions(fileDirExtractorDoneFqpn), GobiiFileProcessDir.EXTRACTOR_DONE);
+                returnVal.setGobiiExtractorInstructions(setInstructions(extractorInstructionsDAO
+                        .getInstructions(fileDirExtractorDoneFqpn), GobiiFileProcessDir.EXTRACTOR_DONE));
             }else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
@@ -229,16 +229,17 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
     }
 
-    private void setInstructions(ExtractorInstructionFilesDTO returnVal, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir GobiFileDir) {
+    private List<GobiiExtractorInstruction> setInstructions(List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir gobiiFileDir) {
+        List<GobiiExtractorInstruction> returnVal;
         if (null != instructions) {
-            if(!GobiFileDir.toString().equals("EXTRACTOR_DONE")) extractorInstructionsDAO.setGobiiJobStatus(true, instructions, GobiFileDir);
-            else extractorInstructionsDAO.setGobiiJobStatus(false, instructions, GobiFileDir); //individually check and set status of files based on if written in the output directories
-            returnVal.setGobiiExtractorInstructions(instructions);
+            if(gobiiFileDir.toString().equals("EXTRACTOR_DONE")) returnVal = extractorInstructionsDAO.setGobiiJobStatus(false, instructions, gobiiFileDir); //individually check and set status of files based on if written in the output directories
+            else returnVal = extractorInstructionsDAO.setGobiiJobStatus(true, instructions, gobiiFileDir);
         } else {
             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                     GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-                    "The instruction file exists, but could not be read in directory "+ GobiFileDir.toString() +": " +
-                            returnVal.getInstructionFileName());
+                    "The instruction file exists, but could not be read in directory "+ gobiiFileDir.toString());
         }
+
+        return returnVal;
     }
 }
