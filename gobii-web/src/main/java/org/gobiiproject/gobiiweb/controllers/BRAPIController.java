@@ -6,32 +6,14 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.gobiiproject.gobidomain.services.AnalysisService;
-import org.gobiiproject.gobidomain.services.ConfigSettingsService;
-import org.gobiiproject.gobidomain.services.ContactService;
-import org.gobiiproject.gobidomain.services.CvService;
-import org.gobiiproject.gobidomain.services.DataSetService;
-import org.gobiiproject.gobidomain.services.DisplayService;
-import org.gobiiproject.gobidomain.services.ExperimentService;
-import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
-import org.gobiiproject.gobidomain.services.LoaderFilesService;
-import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
-import org.gobiiproject.gobidomain.services.ManifestService;
-import org.gobiiproject.gobidomain.services.MapsetService;
-import org.gobiiproject.gobidomain.services.MarkerGroupService;
-import org.gobiiproject.gobidomain.services.MarkerService;
-import org.gobiiproject.gobidomain.services.NameIdListService;
-import org.gobiiproject.gobidomain.services.OrganizationService;
-import org.gobiiproject.gobidomain.services.PingService;
-import org.gobiiproject.gobidomain.services.PlatformService;
-import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobidomain.services.ReferenceService;
+import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.EntityNameConverter;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.container.ProtocolDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
@@ -141,6 +123,9 @@ public class BRAPIController {
 
     @Autowired
     private ConfigSettingsService configSettingsService;
+
+    @Autowired
+    private ProtocolService protocolService = null;
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
@@ -1604,6 +1589,76 @@ public class BRAPIController {
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
                 HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    // *********************************************
+    // *************************** PROTOCOL METHODS
+    // *********************************************
+    @RequestMapping(value = "/protocols", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<ProtocolDTO> createProtocol(@RequestBody PayloadEnvelope<ProtocolDTO> payloadEnvelope,
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            PayloadReader<ProtocolDTO> payloadReader = new PayloadReader<>(ProtocolDTO.class);
+            ProtocolDTO protocolDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            ProtocolDTO protocolDTONew = protocolService.createProtocol(protocolDTOToCreate);
+
+            PayloadWriter<ProtocolDTO> payloadWriter = new PayloadWriter<>(request,
+                    ProtocolDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_PROTOCOL,
+                    protocolDTONew);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/protocols/{protocolId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<ProtocolDTO> replaceProtocol(@RequestBody PayloadEnvelope<ProtocolDTO> payloadEnvelope,
+                                                        @PathVariable Integer protocolId,
+                                                        HttpServletRequest request,
+                                                        HttpServletResponse response) {
+
+        PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<ProtocolDTO> payloadReader = new PayloadReader<>(ProtocolDTO.class);
+            ProtocolDTO protocolDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            ProtocolDTO protocolDTOReplaced = protocolService.replaceProtocol(protocolId, protocolDTOToReplace);
+
+            PayloadWriter<ProtocolDTO> payloadWriter = new PayloadWriter<>(request,
+                    ProtocolDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_PROTOCOL,
+                    protocolDTOReplaced);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);

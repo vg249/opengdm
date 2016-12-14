@@ -1,0 +1,91 @@
+package org.gobiiproject.gobiidao.resultset.access.impl;
+
+import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiidao.resultset.access.RsProtocolDao;
+
+import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
+import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProtocol;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProtocol;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProtocolDetailsByProtocolId;
+import org.hibernate.exception.SQLGrammarException;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.ResultSet;
+import java.util.Map;
+import java.util.HashMap;
+/**
+ * Created by VCalaminos on 2016-12-14.
+ */
+public class RsProtocolDaoImpl implements RsProtocolDao {
+
+    Logger LOGGER = LoggerFactory.getLogger(RsProtocolDao.class);
+
+    @Autowired
+    private StoredProcExec storedProcExec = null;
+
+    @Autowired
+    private SpRunnerCallable spRunnerCallable;
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Integer createProtocol(Map<String, Object> paramaters) throws GobiiDaoException{
+        Integer returnVal = null;
+
+        try{
+
+            spRunnerCallable.run(new SpInsProtocol(), paramaters);
+            returnVal = spRunnerCallable.getResult();
+        } catch (SQLGrammarException e){
+            LOGGER.error("Error creating dataset with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+        }
+
+        return returnVal;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateProtocol(Map<String, Object> parameters) throws GobiiDaoException{
+
+        try {
+
+            spRunnerCallable.run(new SpUpdProtocol(), parameters);
+
+        } catch (SQLGrammarException e){
+            LOGGER.error("Error updating protocol with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+        }
+
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getProtocolDetailsByProtocolId(Integer protocolId) throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("protocolId", protocolId);
+            SpGetProtocolDetailsByProtocolId spGetProtocolDetailsByProtocolId = new SpGetProtocolDetailsByProtocolId(parameters);
+
+            storedProcExec.doWithConnection(spGetProtocolDetailsByProtocolId);
+
+            returnVal = spGetProtocolDetailsByProtocolId.getResultSet();
+
+        } catch (Exception e) {
+
+            LOGGER.error("Error retrieving protocol details", e);
+            throw (new GobiiDaoException(e));
+
+        }
+
+        return returnVal;
+    }
+}

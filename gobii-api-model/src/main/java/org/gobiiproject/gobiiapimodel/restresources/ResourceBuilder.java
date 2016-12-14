@@ -152,7 +152,9 @@ public class ResourceBuilder {
             case URL_MARKER_SEARCH:
                 returnVal += "marker-search";
                 break;
-
+            case URL_PROTOCOL:
+                returnVal += "protocols";
+                break;
             default:
                 throw new Exception("Unknown request id : " + requestId.toString());
         }
