@@ -31,7 +31,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/datas
                     this.dataSetId = dataSetId;
                 }
                 DtoRequestItemDataSet.prototype.getUrl = function () {
-                    var baseUrl = "brapi/v1/datasets";
+                    var baseUrl = "gobii/v1/datasets";
                     var returnVal = baseUrl;
                     if (this.dataSetId) {
                         returnVal = baseUrl + "/" + this.dataSetId;

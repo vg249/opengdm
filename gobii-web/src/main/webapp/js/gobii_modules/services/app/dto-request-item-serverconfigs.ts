@@ -11,7 +11,7 @@ export class DtoRequestItemServerConfigs implements DtoRequestItem<ServerConfig[
     }
 
     public getUrl():string {
-        return "brapi/v1/configsettings";
+        return "gobii/v1/configsettings";
     } // getUrl()
 
     private processType:ProcessType = ProcessType.READ;

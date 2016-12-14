@@ -15,7 +15,7 @@ export class DtoRequestItemExtractorSubmission implements DtoRequestItem<Extract
     }
 
     public getUrl():string {
-        return "brapi/v1/instructions/extractor";
+        return "gobii/v1/instructions/extractor";
     } // getUrl()
 
     private processType:ProcessType = ProcessType.CREATE;

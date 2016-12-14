@@ -14,7 +14,7 @@ public class ResourceBuilder {
     //private final static String APP_ROOT = "/gobii-web/";
     private final static String CTRLR_EXTRACT = "extract/";
     private final static String CTRLR_LOAD = "load/";
-    private final static String CTRLR_BRAPI = "brapi/v1/";
+    private final static String CTRLR_GOBII = "gobii/v1/";
 
 
 
@@ -36,8 +36,8 @@ public class ResourceBuilder {
             controller = CTRLR_LOAD;
         } else if (controllerType == ControllerType.EXTRACTOR) {
             controller = CTRLR_EXTRACT;
-        } else if (controllerType == ControllerType.BRAPI) {
-            controller = CTRLR_BRAPI;
+        } else if (controllerType == ControllerType.GOBII) {
+            controller = CTRLR_GOBII;
         }
 
         String returnVal = contextRoot + controller;

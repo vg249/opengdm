@@ -39,7 +39,7 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
                     return null;
                 };
                 DtoRequestItemNameIds.prototype.getUrl = function () {
-                    var baseUrl = "brapi/v1/names";
+                    var baseUrl = "gobii/v1/names";
                     var returnVal = baseUrl + "/" + type_entity_1.EntityType[this.entityType].toLowerCase();
                     if (this.entityFilter && (type_entity_filter_1.EntityFilter.NONE != this.entityFilter)) {
                         returnVal += "?"

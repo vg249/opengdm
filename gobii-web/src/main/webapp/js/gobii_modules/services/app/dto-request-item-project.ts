@@ -11,7 +11,7 @@ export class DtoRequestItemProject implements DtoRequestItem<Project> {
     }
 
     public getUrl():string {
-        let baseUrl:string = "brapi/v1/projects";
+        let baseUrl:string = "gobii/v1/projects";
 
         let returnVal:string  = baseUrl;
         if( this.projectId ) {

@@ -29,7 +29,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/serve
                     this.processType = type_process_1.ProcessType.READ;
                 }
                 DtoRequestItemServerConfigs.prototype.getUrl = function () {
-                    return "brapi/v1/configsettings";
+                    return "gobii/v1/configsettings";
                 }; // getUrl()
                 DtoRequestItemServerConfigs.prototype.getRequestBody = function () {
                     return JSON.stringify({

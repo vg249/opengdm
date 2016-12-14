@@ -12,7 +12,7 @@ export class DtoRequestItemExperiment implements DtoRequestItem<Experiment> {
 
     public getUrl():string {
 
-        let baseUrl:string = "brapi/v1/experiments";
+        let baseUrl:string = "gobii/v1/experiments";
 
         let returnVal:string = baseUrl;
         if (this.experimentId) {

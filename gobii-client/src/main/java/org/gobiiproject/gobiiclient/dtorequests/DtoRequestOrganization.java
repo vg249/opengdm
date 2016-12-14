@@ -16,7 +16,7 @@ public class DtoRequestOrganization {
 
         return new DtoRequestProcessor<OrganizationDTO>().process(organizationDTO,
                 OrganizationDTO.class,
-                ControllerType.BRAPI,
+                ControllerType.GOBII,
                 ServiceRequestId.URL_ORGANIZATION);
 
     } // getPing()

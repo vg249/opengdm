@@ -4,7 +4,6 @@ package org.gobiiproject.gobiiapimodel.restresources;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -73,7 +72,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
                 this.cropContextRoot,
                 ServiceRequestId.URL_FILE_LOAD);
 
@@ -87,7 +86,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
                 this.cropContextRoot,
                 serviceRequestId);
 
@@ -102,7 +101,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
                 this.cropContextRoot,
                 serviceRequestId);
         returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("id"));
@@ -115,7 +114,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
                 this.cropContextRoot,
                 ServiceRequestId.URL_CONTACT_SEARCH);
         returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
@@ -131,7 +130,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
                 this.cropContextRoot,
                 ServiceRequestId.URL_MARKER_SEARCH);
         returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
@@ -144,7 +143,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
                 this.cropContextRoot,
                 ServiceRequestId.URL_NAMES);
 
@@ -163,7 +162,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
                 this.cropContextRoot,
                 ServiceRequestId.URL_FILE_LOAD);
 

@@ -31,7 +31,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/proje
                     this.projectId = projectId;
                 }
                 DtoRequestItemProject.prototype.getUrl = function () {
-                    var baseUrl = "brapi/v1/projects";
+                    var baseUrl = "gobii/v1/projects";
                     var returnVal = baseUrl;
                     if (this.projectId) {
                         returnVal = baseUrl + "/" + this.projectId;

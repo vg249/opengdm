@@ -77,10 +77,10 @@ import java.util.List;
  */
 @Scope(value = "request")
 @Controller
-@RequestMapping("/brapi/v1")
-public class BRAPIController {
+@RequestMapping("/gobii/v1")
+public class GOBIIControllerV1 {
 
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIController.class);
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GOBIIControllerV1.class);
 
     @Autowired
     private PingService pingService = null;
@@ -404,7 +404,7 @@ public class BRAPIController {
 
     }
 
-    // Example: http://localhost:8282/gobii-dev/brapi/v1/contact-search?email=foo&lastName=bar&firstName=snot
+    // Example: http://localhost:8282/gobii-dev/gobii/v1/contact-search?email=foo&lastName=bar&firstName=snot
     // all parameters must be present, but they don't all neeed a value
     @RequestMapping(value = "/contact-search",
             params = {"email", "lastName", "firstName"},

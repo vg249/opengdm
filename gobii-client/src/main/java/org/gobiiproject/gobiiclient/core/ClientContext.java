@@ -185,7 +185,7 @@ public final class ClientContext {
         returnVal.userToken = httpCore.getTokenForUser(authPath, userDetail.getUserName(), userDetail.getPassword());
 
         // now get the settings
-        String settingsPath = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+        String settingsPath = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
                 ServiceRequestId.URL_CONFIGSETTINGS,
                 context);
 
