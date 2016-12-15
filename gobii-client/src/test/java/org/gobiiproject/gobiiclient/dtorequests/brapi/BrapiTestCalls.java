@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiclient.dtorequests.brapi;
 
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.HttpMethodResult;
@@ -30,12 +31,12 @@ public class BrapiTestCalls {
     }
 
 
-    @Ignore
+    @Test
     public void getCalls() throws Exception {
 
 
         RestUri restUriCalls = ClientContext.getInstance(null, false)
-                .getUriFactory()
+                .getUriFactory(ControllerType.BRAPI)
                 .resourceColl(ServiceRequestId.URL_CALLS);
 
         RestResourceUtils restResourceUtils = new RestResourceUtils();

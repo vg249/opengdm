@@ -253,10 +253,14 @@ public final class ClientContext {
 
     public UriFactory getUriFactory() throws Exception {
 
+        String contextPath = this.getServerConfig().getContextRoot();
+        return new UriFactory(contextPath);
+    }
+
+    public UriFactory getUriFactory(ControllerType controllerType) throws Exception {
 
         String contextPath = this.getServerConfig().getContextRoot();
-
-        return new UriFactory(contextPath);
+        return new UriFactory(contextPath, controllerType);
     }
 
 

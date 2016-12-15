@@ -158,7 +158,7 @@ public class ResourceBuilder {
                 break;
 
             case URL_CALLS:
-                returnVal = "calls";
+                returnVal += "calls";
                 break;
             default:
                 throw new Exception("Unknown request id : " + requestId.toString());
