@@ -5,7 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.controllers;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.gobiiproject.gobidomain.services.AnalysisService;
 import org.gobiiproject.gobidomain.services.ConfigSettingsService;
 import org.gobiiproject.gobidomain.services.ContactService;
@@ -26,52 +26,19 @@ import org.gobiiproject.gobidomain.services.PingService;
 import org.gobiiproject.gobidomain.services.PlatformService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
-import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.EntityNameConverter;
-import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
-import org.gobiiproject.gobiiapimodel.types.RestMethodTypes;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
-import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.container.PingDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderFilePreviewDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.GobiiFilterType;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
-import org.gobiiproject.gobiiweb.automation.ControllerUtils;
-import org.gobiiproject.gobiiweb.automation.PayloadReader;
-import org.gobiiproject.gobiiweb.automation.PayloadWriter;
+import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCallsItem;
+import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
+import org.gobiiproject.gobiibrapi.core.BrapiResponseWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 
@@ -149,31 +116,57 @@ public class BRAPIIControllerV1 {
     // *********************************************
     // *************************** CALLS
     // *********************************************
-    @RequestMapping(value = "/calls", method = RequestMethod.GET)
+    @RequestMapping(value = "/calls",
+            method = RequestMethod.GET,
+            produces = "application/json")
     @ResponseBody
     public String getCalls(
             HttpServletRequest request,
             HttpServletResponse response) {
 
-        return("{\n" +
-                "  \"metadata\" : {\n" +
-                "    \"pagination\" : {\n" +
-                "      \"pageSize\" : 0,\n" +
-                "      \"currentPage\" : 0,\n" +
-                "      \"totalCount\" : 0,\n" +
-                "      \"totalPages\" : 0\n" +
-                "    },\n" +
-                "    \"status\" : [ ],\n" +
-                "    \"datafiles\" : [ ]\n" +
-                "  },\n" +
-                "  \"result\" : {\n" +
-                "    \"data\" : [ {\n" +
-                "      \"call\" : \"calls\",\n" +
-                "      \"datatypes\" : [ \"json\" ],\n" +
-                "      \"methods\" : [ \"GET\" ]\n" +
-                "    }]\n" +
-                "  }\n" +
-                "}");
+        String returnVal;
+
+        try {
+
+            BrapiResponseMapCalls brapiResponseMapCalls = new BrapiResponseMapCalls();
+            List<BrapiResponseCallsItem> brapiResponseCallsItems = brapiResponseMapCalls
+                    .getBrapiResponseCallsItems();
+
+            BrapiResponseWriter<BrapiResponseCallsItem, ObjectUtils.Null> brapiResponseWriter =
+                    new BrapiResponseWriter<>(BrapiResponseCallsItem.class, ObjectUtils.Null.class);
+
+            returnVal = brapiResponseWriter.makeBrapiResponse(brapiResponseCallsItems,
+                    null,
+                    null,
+                    null,
+                    null);
+
+
+        } catch (Exception e) {
+
+            returnVal = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+        }
+
+        return returnVal;
+//        return ("{\n" +
+//                "  \"metadata\" : {\n" +
+//                "    \"pagination\" : {\n" +
+//                "      \"pageSize\" : 0,\n" +
+//                "      \"currentPage\" : 0,\n" +
+//                "      \"totalCount\" : 0,\n" +
+//                "      \"totalPages\" : 0\n" +
+//                "    },\n" +
+//                "    \"status\" : [ ],\n" +
+//                "    \"datafiles\" : [ ]\n" +
+//                "  },\n" +
+//                "  \"result\" : {\n" +
+//                "    \"data\" : [ {\n" +
+//                "      \"call\" : \"calls\",\n" +
+//                "      \"datatypes\" : [ \"json\" ],\n" +
+//                "      \"methods\" : [ \"GET\" ]\n" +
+//                "    }]\n" +
+//                "  }\n" +
+//                "}");
 
     }
 }// BRAPIController
