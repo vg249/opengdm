@@ -361,6 +361,9 @@ public class GobiiFileReader {
 				generateIdLists(cropConfig, markerFileLoc, sampleFileLoc, dataSetId, errorPath);
 				ErrorLogger.logDebug("MonetDB", "python " + loadVariantMatrix + " DS" + dataSetId + " " + variantFile.getPath() + " " + new File(markerFileLoc).getAbsolutePath() + " " + new File(sampleFileLoc).getAbsolutePath() + " " + loadVariantUserPort);
 				HelperFunctions.tryExec("python " + loadVariantMatrix + " DS" + dataSetId + " " + variantFile.getPath() + " " + new File(markerFileLoc).getAbsolutePath() + " " + new File(sampleFileLoc).getAbsolutePath() + " " + loadVariantUserPort, null, errorPath);
+				//Clean up marker and sample data
+				rm(markerFileLoc);
+				rm(sampleFileLoc);
 			}
 				//HDF-5
 				//Usage: %s <datasize> <input file> <output HDF5 file
@@ -369,7 +372,7 @@ public class GobiiFileReader {
 				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
 				int size=0;
 				switch(dst){		
-				case NUCLEOTIDE_2_LETTER: case IUPAC:
+					case NUCLEOTIDE_2_LETTER: case IUPAC:
 						size=2;break;
 					case SSR_ALLELE_SIZE:size=8;break;
 					case CO_DOMINANT_NON_NUCLEOTIDE:
@@ -377,9 +380,10 @@ public class GobiiFileReader {
 					default:
 						logError("Digester","Unknown type "+dst.toString());break;
 				}
-				ErrorLogger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
-				HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
-				updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
+			ErrorLogger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
+			HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
+			updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
+			rm(variantFile.getPath());
 			}
 			if(success && ErrorLogger.success()){
 				ErrorLogger.logInfo("Digester","Successfully Uploaded files");
