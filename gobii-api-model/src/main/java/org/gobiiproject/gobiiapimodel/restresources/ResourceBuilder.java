@@ -15,7 +15,7 @@ public class ResourceBuilder {
     private final static String CTRLR_EXTRACT = "extract/";
     private final static String CTRLR_LOAD = "load/";
     private final static String CTRLR_GOBII = "gobii/v1/";
-
+    private final static String CTRLR_BRAPI = "brapi/v1/";
 
 
     public static String getRequestUrl(ControllerType controllerType,
@@ -31,13 +31,17 @@ public class ResourceBuilder {
                                        ServiceRequestId requestId,
                                        String contextRoot) throws Exception {
 
-        String controller = null;
+        String controller;
         if (controllerType == ControllerType.LOADER) {
             controller = CTRLR_LOAD;
         } else if (controllerType == ControllerType.EXTRACTOR) {
             controller = CTRLR_EXTRACT;
         } else if (controllerType == ControllerType.GOBII) {
             controller = CTRLR_GOBII;
+        } else if (controllerType == ControllerType.BRAPI) {
+            controller = CTRLR_BRAPI;
+        } else {
+            throw new Exception("Unknown controller type: " + controllerType.toString());
         }
 
         String returnVal = contextRoot + controller;
@@ -153,6 +157,9 @@ public class ResourceBuilder {
                 returnVal += "marker-search";
                 break;
 
+            case URL_CALLS:
+                returnVal = "calls";
+                break;
             default:
                 throw new Exception("Unknown request id : " + requestId.toString());
         }

@@ -16,16 +16,30 @@ public class UriFactory {
     private final String DELIM_PARAM_END = "}";
     private final char URL_SEPARATOR = '/';
 
+    private ControllerType controllerType;
     private String cropContextRoot;
 
-    public UriFactory(String cropContextRoot) {
 
-        this.cropContextRoot = cropContextRoot;
+    private void delimitCropContextRoot() {
+
         if (null != this.cropContextRoot) {
             if (this.cropContextRoot.lastIndexOf(URL_SEPARATOR) != this.cropContextRoot.length() - 1) {
                 this.cropContextRoot = this.cropContextRoot + URL_SEPARATOR;
             }
         }
+    }
+
+    public UriFactory(String cropContextRoot, ControllerType controllerType) {
+        this.controllerType = controllerType;
+        this.cropContextRoot = cropContextRoot;
+        this.delimitCropContextRoot();
+    }
+
+    public UriFactory(String cropContextRoot) {
+
+        this.controllerType = ControllerType.GOBII;
+        this.cropContextRoot = cropContextRoot;
+        this.delimitCropContextRoot();
     }
 
 
@@ -72,7 +86,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
+        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
                 this.cropContextRoot,
                 ServiceRequestId.URL_FILE_LOAD);
 
@@ -86,7 +100,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
+        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
                 this.cropContextRoot,
                 serviceRequestId);
 
@@ -101,7 +115,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
+        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
                 this.cropContextRoot,
                 serviceRequestId);
         returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("id"));
@@ -114,7 +128,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
+        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
                 this.cropContextRoot,
                 ServiceRequestId.URL_CONTACT_SEARCH);
         returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
@@ -130,7 +144,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
+        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
                 this.cropContextRoot,
                 ServiceRequestId.URL_MARKER_SEARCH);
         returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
@@ -143,7 +157,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
+        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
                 this.cropContextRoot,
                 ServiceRequestId.URL_NAMES);
 
@@ -162,7 +176,7 @@ public class UriFactory {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
+        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
                 this.cropContextRoot,
                 ServiceRequestId.URL_FILE_LOAD);
 

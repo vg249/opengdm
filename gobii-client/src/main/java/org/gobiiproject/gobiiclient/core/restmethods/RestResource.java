@@ -22,13 +22,14 @@ public class RestResource<T> {
     Logger LOGGER = LoggerFactory.getLogger(RestResource.class);
 
     private RestUri restUri;
-    private HttpCore httpCore = null;
     private ClientContext clientContext;
     private ObjectMapper objectMapper = new ObjectMapper();
     private PayloadResponse<T> payloadResponse = null;
+    private RestResourceUtils restResourceUtils;
 
     public RestResource(RestUri restUri) {
         this.restUri = restUri;
+        this.restResourceUtils = new RestResourceUtils();
         this.payloadResponse = new PayloadResponse<>(this.restUri);
     }
 
@@ -39,28 +40,12 @@ public class RestResource<T> {
 
     private ClientContext getClientContext() throws Exception {
 
-        if (!ClientContext.isInitialized()) {
-            throw new Exception("Client context is not initialized");
-        }
-
-        clientContext = ClientContext.getInstance(null, false);
-
-        return clientContext;
-
+        return this.restResourceUtils.getClientContext();
     }
 
     private HttpCore getHttp() throws Exception {
 
-
-        if (null == this.httpCore) {
-            String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
-            Integer port = ClientContext.getInstance(null, false).getCurrentCropPort();
-            String clientContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-            this.httpCore = new HttpCore(host, port, clientContextRoot);
-        }
-
-
-        return httpCore;
+        return this.restResourceUtils.getHttp();
     }
 
 
