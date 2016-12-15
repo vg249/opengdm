@@ -70,6 +70,7 @@ public class GobiiFileReader {
 	 * @throws InterruptedException
 	 */
 	public static void main(String[] args) throws Exception {
+		//Section - Setup
 		Options o = new Options()
          		.addOption("v", "verbose", false, "Verbose output")
          		.addOption("e", "errlog", true, "Error log override location")
@@ -142,7 +143,9 @@ public class GobiiFileReader {
 		dm.addIdentifier("Mapset",zero.getMapset());
 		dm.addIdentifier("Dataset Type",zero.getDatasetType());
 
-		dm.addPath("destination directory",new File(HelperFunctions.getDestinationFile(zero)).getParentFile().getAbsolutePath());//Convert to directory
+		File dstDir=new File(HelperFunctions.getDestinationFile(zero));//Intermediate file
+		if(dstDir.isFile()) dstDir=dstDir.getParentFile();
+		dm.addPath("destination directory",dstDir.getAbsolutePath());//Convert to directory
 		dm.addPath("input directory",zero.getGobiiFile().getSource());
 
 		String crop=zero.getGobiiCropType();
@@ -183,6 +186,7 @@ public class GobiiFileReader {
 		}
 
 
+		//Section - Processing
 		ErrorLogger.logTrace("Digester","Beginning List Processing");
 		success=true;
 		for(GobiiLoaderInstruction inst:list){
@@ -193,7 +197,8 @@ public class GobiiFileReader {
 			if(dataSetId==null){
 				dataSetId=inst.getDataSetId();//Pick it up from relevant instruction
 			}
-			String destinationFile=HelperFunctions.getDestinationFile(inst);//Intermediate file
+			dstDir=new File(HelperFunctions.getDestinationFile(inst));//Intermediate file
+			if(dstDir.isFile()) dstDir=dstDir.getParentFile();
 			GobiiFile file = inst.getGobiiFile();
 			if(file==null){
 				logError("Digester","Instruction " + instructionFile + " Table " + inst.getTable() + " has bad 'file' column" );
@@ -205,22 +210,19 @@ public class GobiiFileReader {
 				continue;
 			}
 			
-			VCFFileReader vcfReader=new VCFFileReader(loaderScriptPath);
 			switch(inst.getGobiiFile().getGobiiFileType()){
 			case VCF:
-				success&=vcfReader.parseInstruction(inst);
+				VCFFileReader vcfReader=new VCFFileReader(loaderScriptPath);
+				success&=vcfReader.parseInstruction(inst,dstDir);
 				break;
 			case GENERIC:
-				String dstDir=destinationFile;
-				if(!new File(destinationFile).isDirectory()){
-					dstDir=destinationFile.substring(0, destinationFile.lastIndexOf("/"));
-				}
-				CSVFileReader reader = new CSVFileReader(dstDir,"/");
+				CSVFileReader reader = new CSVFileReader(dstDir.getAbsolutePath(),"/");
 				reader.processCSV(inst);
 				break;
-			case HAPMAP:
-				String tmpFile=inst.getGobiiFile().getSource()+list.indexOf(inst);
-				ArrayList<GobiiLoaderInstruction> justTheOne=new ArrayList<GobiiLoaderInstruction>();
+
+			case HAPMAP: //This is currently not used by the loaderUI
+				String tmpFile=new File(dstDir,inst.getTable()+".tmp").getAbsolutePath();//DestinationDirectory plus table name
+				ArrayList<GobiiLoaderInstruction> justTheOne=new ArrayList<>();
 				justTheOne.add(inst);
 				try {
 					new LoaderInstructionsDAOImpl().writeInstructions(tmpFile, justTheOne );
@@ -233,8 +235,9 @@ public class GobiiFileReader {
 				System.err.println("Unable to deal with file type " + inst.getGobiiFile().getGobiiFileType());
 				break;
 			}
-			
-			//Check if columns need to be translated
+
+			//Section - Matrix Post-processing
+			//Dataset is the first non-empty dataset type
 			for(GobiiFileColumn gfc:inst.getGobiiFileColumns()){
 				if(gfc.getDataSetType()!=null){
 					dst=gfc.getDataSetType();
@@ -290,10 +293,9 @@ public class GobiiFileReader {
 				boolean isSampleFast=false;
 				if(DataSetOrientationType.SAMPLE_FAST.equals(dso))isSampleFast=true;
 				if(isSampleFast){
-					//Rotate to marker fast before loading it
+					//Rotate to marker fast before loading it - all data is marker fast in the system
 					HelperFunctions.tryExec("python "+loaderScriptPath+"TransposeMatrix.py -i " + fromFile);
 				}
-				
 			}
 			
 			String instructionName=inst.getTable();
@@ -322,20 +324,26 @@ public class GobiiFileReader {
 				if(!VARIANT_CALL_TABNAME.equals(key)){
 					int totalLines= FileSystemInterface.lineCount(loaderInstructionMap.get(key).getAbsolutePath());
 					String inputFile=" -i "+loaderInstructionMap.get(key);
-					String outputFile=outputDir;
+					String outputFile=outputDir; //Output here is temporary files
 					ErrorLogger.logInfo("Digester","Running IFL: "+pathToIFL+connectionString+inputFile+outputFile);
+					//Lines affected returned by method call
 					int fileLines=HelperFunctions.iExec(pathToIFL+connectionString+inputFile+outputFile,errorPath);
 
+					//Default to 'we had an error'
 					String totalLinesVal="error";
 					String linesLoadedVal="error";
 					String duplicateLinesVal="error";
-					if(totalLines>0 && fileLines >=0){
+					//If total lines/file lines less than 0, something's wrong. Also if total lines is < changed, something's wrong.
+					if((totalLines>0) && (fileLines >=0) &&(totalLines>fileLines)){
 						if(fileLines>0){
 							loadedData=true;
 						}
 						totalLinesVal=(totalLines-1)+"";
 						linesLoadedVal=(fileLines)+"";//Header
 						duplicateLinesVal=((totalLines-1)-fileLines)+"";
+					}
+					else{
+						ErrorLogger.logDebug("FileReader","Failed lines check with total lines:"+totalLines+" and loaded lines:"+fileLines);
 					}
 					dm.addEntry(key,totalLinesVal,linesLoadedVal,duplicateLinesVal);
 
@@ -430,6 +438,9 @@ public class GobiiFileReader {
 		File sourceFolder=new File(source);
 		File[] f=sourceFolder.listFiles();
 		if(f.length!=0) source=f[0].getName();
+		else{
+			source=sourceFolder.getName();//Otherwise we get full paths in source.
+		}
 		return source;
 	}
 

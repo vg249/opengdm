@@ -86,7 +86,7 @@ public class CSVFileReader {
 	 * @throws InterruptedException If interrupted (Signals, etc)
 	 */
 	public void processCSV(GobiiLoaderInstruction loaderInstruction) throws IOException, InterruptedException{
-	List<String> tempFiles = new ArrayList<>();
+		Set<String> tempFiles = new HashSet<>();//Deduplicate temp files stored multiple times
 		file_column_constant = new HashMap<>();
 		file_column_autoincrement= new HashMap<>();
 		try {
