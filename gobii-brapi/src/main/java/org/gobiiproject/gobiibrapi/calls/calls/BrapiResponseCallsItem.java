@@ -38,11 +38,11 @@ public class BrapiResponseCallsItem {
         this.methods = methods;
     }
 
-    public List<BrapiDataTypes> getDataTypes() {
+    public List<BrapiDataTypes> getDatatypes() {
         return this.datatypes;
     }
 
-    public void setDataTypes(List<BrapiDataTypes> dataTypes) {
-        this.datatypes = dataTypes;
+    public void setDatatypes(List<BrapiDataTypes> datatypes) {
+        this.datatypes = datatypes;
     }
 }
