@@ -11,6 +11,9 @@ import java.util.List;
  */
 public class BrapiResponseCallsItem {
 
+
+    public BrapiResponseCallsItem() {}
+
     public BrapiResponseCallsItem(String call, List<RestMethodTypes> methods, List<BrapiDataTypes> dataTypes) {
         this.call = call;
         this.methods = methods;

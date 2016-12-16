@@ -1,10 +1,10 @@
 package org.gobiiproject.gobiiclient.dtorequests.brapi;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCallsItem;
+import org.gobiiproject.gobiibrapi.calls.studies.BrapiRequestStudiesSearch;
+import org.gobiiproject.gobiibrapi.calls.studies.BrapiResponseStudiesSearchItem;
 import org.gobiiproject.gobiibrapi.core.BrapiResponse;
 import org.gobiiproject.gobiiclient.core.ClientContext;
 import org.gobiiproject.gobiiclient.core.HttpMethodResult;
@@ -14,15 +14,12 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.List;
 
 /**
  * Created by Phil on 12/15/2016.
  */
-public class BrapiTestCalls {
+public class BrapiTestSearchStudies {
 
 
     @BeforeClass
@@ -38,21 +35,21 @@ public class BrapiTestCalls {
 
 
     @Test
-    public void getCalls() throws Exception {
+    public void getStudies() throws Exception {
 
 
-        RestUri restUriCalls = ClientContext.getInstance(null, false)
+        RestUri restUriStudiesSearch = ClientContext.getInstance(null, false)
                 .getUriFactory(ControllerType.BRAPI)
-                .resourceColl(ServiceRequestId.URL_CALLS);
+                .resourceColl(ServiceRequestId.URL_STUDIES_SEARCH);
 
-        BrapiResource<ObjectUtils.Null, BrapiResponseCallsItem> brapiResource =
-                new BrapiResource<>(restUriCalls, ObjectUtils.Null.class, BrapiResponseCallsItem.class);
+        BrapiResource<BrapiRequestStudiesSearch, BrapiResponseStudiesSearchItem> brapiResource = new BrapiResource<>(restUriStudiesSearch,
+                BrapiRequestStudiesSearch.class,
+                BrapiResponseStudiesSearchItem.class);
 
-        BrapiResponse<BrapiResponseCallsItem> brapiResponseCalls = brapiResource.get();
+        BrapiRequestStudiesSearch brapiRequestStudiesSearch = new BrapiRequestStudiesSearch();
+        brapiRequestStudiesSearch.setStudyType("genotype");
+        BrapiResponse<BrapiResponseStudiesSearchItem> brapiResponse = brapiResource.post(brapiRequestStudiesSearch);
 
-        (new BrapiTestResponseStructure<BrapiResponseCallsItem>()).validatateBrapiResponseStructure(brapiResponseCalls);
-
-        Assert.assertTrue(brapiResponseCalls.getData().size() > 0 );
-
+        (new BrapiTestResponseStructure<BrapiResponseStudiesSearchItem>()).validatateBrapiResponseStructure(brapiResponse);
     }
 }

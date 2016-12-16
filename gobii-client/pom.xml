@@ -32,6 +32,12 @@
             <version>1.0.14-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.gobiiproject</groupId>
+            <artifactId>gobii-brapi</artifactId>
+            <version>1.0.14-SNAPSHOT</version>
+        </dependency>
+
         <!-- HTTP client -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

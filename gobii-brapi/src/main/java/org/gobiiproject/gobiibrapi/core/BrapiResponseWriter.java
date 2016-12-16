@@ -3,9 +3,7 @@ package org.gobiiproject.gobiibrapi.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Pagination;
 
 import java.util.List;
@@ -54,14 +52,6 @@ public class BrapiResponseWriter<T_LIST_ITEM, T_LIST_META> {
 //}
 
 
-    private final String BRAPI_KEY_METADATA = "metadata";
-    private final String BRAPI_KEY_METADATA_PAGINATION = "pagination";
-    private final String BRAPI_KEY_METADATA_STATUS = "status";
-    private final String BRAPI_KEY_METADATA_DATAFILES = "datafiles";
-    private final String BRAPI_KEY_RESULT = "result";
-    private final String BRAPI_KEY_RESULT_DATA = "data";
-
-
     public String makeBrapiResponse(List<T_LIST_ITEM> listItems,
                                     T_LIST_META listMetadData,
                                     Pagination pagination,
@@ -70,7 +60,7 @@ public class BrapiResponseWriter<T_LIST_ITEM, T_LIST_META> {
     ) throws Exception {
 
         JsonObject jsonObjectRoot = new JsonObject();
-        // jsonObjectRoot.add(BRAPI_KEY_METADATA,new JsonObject());
+        // jsonObjectRoot.add(BrapiJsonKeys.METADATA,new JsonObject());
 
 
         Gson gson = new GsonBuilder().create();
@@ -79,7 +69,7 @@ public class BrapiResponseWriter<T_LIST_ITEM, T_LIST_META> {
         if (pagination != null) {
             brapiMetaData.setPagination(pagination);
         }
-        //jsonObjectRoot.get(BRAPI_KEY_METADATA).getAsJsonObject().add(BRAPI_KEY_METADATA_PAGINATION, );
+        //jsonObjectRoot.get(BrapiJsonKeys.METADATA).getAsJsonObject().add(BrapiJsonKeys.METADATA_PAGINATION, );
 
         if (statusItems != null) {
             brapiMetaData.setStatus(statusItems);
@@ -90,14 +80,14 @@ public class BrapiResponseWriter<T_LIST_ITEM, T_LIST_META> {
         }
 
         String metaDataAsString = this.objectMapper.writeValueAsString(brapiMetaData);
-        jsonObjectRoot.addProperty(BRAPI_KEY_METADATA, gson.toJson(metaDataAsString));
+        jsonObjectRoot.addProperty(BrapiJsonKeys.METADATA, gson.toJson(metaDataAsString));
 
         BrapiResult<T_LIST_ITEM> brapiResult = new BrapiResult<>(listItemType);
         brapiResult.setData(listItems);
         if (listMetadData == null) {
 
             String resultAsString = objectMapper.writeValueAsString(brapiResult);
-            jsonObjectRoot.addProperty(BRAPI_KEY_RESULT, gson.toJson(resultAsString));
+            jsonObjectRoot.addProperty(BrapiJsonKeys.RESULT, gson.toJson(resultAsString));
         }
 
 

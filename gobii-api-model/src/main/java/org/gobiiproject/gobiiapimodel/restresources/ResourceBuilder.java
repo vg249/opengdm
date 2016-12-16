@@ -160,6 +160,11 @@ public class ResourceBuilder {
             case URL_CALLS:
                 returnVal += "calls";
                 break;
+
+            case URL_STUDIES_SEARCH:
+                returnVal += "studies-search";
+                break;
+
             default:
                 throw new Exception("Unknown request id : " + requestId.toString());
         }

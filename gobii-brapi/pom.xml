@@ -32,7 +32,7 @@
 
         <dependency>
             <groupId>org.gobiiproject</groupId>
-            <artifactId>gobii-api_model</artifactId>
+            <artifactId>gobii-api-model</artifactId>
             <version>1.0.14-SNAPSHOT</version>
         </dependency>
 

@@ -28,11 +28,16 @@ import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCallsItem;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
+import org.gobiiproject.gobiibrapi.calls.studies.BrapiRequestStudiesSearch;
+import org.gobiiproject.gobiibrapi.calls.studies.BrapiResponseMapStudiesSearch;
+import org.gobiiproject.gobiibrapi.calls.studies.BrapiResponseStudiesSearchItem;
+import org.gobiiproject.gobiibrapi.core.BrapiRequestReader;
 import org.gobiiproject.gobiibrapi.core.BrapiResponseWriter;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -148,25 +153,48 @@ public class BRAPIIControllerV1 {
         }
 
         return returnVal;
-//        return ("{\n" +
-//                "  \"metadata\" : {\n" +
-//                "    \"pagination\" : {\n" +
-//                "      \"pageSize\" : 0,\n" +
-//                "      \"currentPage\" : 0,\n" +
-//                "      \"totalCount\" : 0,\n" +
-//                "      \"totalPages\" : 0\n" +
-//                "    },\n" +
-//                "    \"status\" : [ ],\n" +
-//                "    \"datafiles\" : [ ]\n" +
-//                "  },\n" +
-//                "  \"result\" : {\n" +
-//                "    \"data\" : [ {\n" +
-//                "      \"call\" : \"calls\",\n" +
-//                "      \"datatypes\" : [ \"json\" ],\n" +
-//                "      \"methods\" : [ \"GET\" ]\n" +
-//                "    }]\n" +
-//                "  }\n" +
-//                "}");
-
     }
+
+    // *********************************************
+    // *************************** STUDIES_SEARCH
+    // *********************************************
+    @RequestMapping(value = "/studies-search",
+            method = RequestMethod.POST,
+            produces = "application/json")
+    @ResponseBody
+    public String getStudies(@RequestBody String studiesRequestBody,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        String returnVal;
+
+        try {
+
+            BrapiRequestReader<BrapiRequestStudiesSearch> brapiRequestReader = new BrapiRequestReader<>(BrapiRequestStudiesSearch.class);
+            BrapiRequestStudiesSearch brapiRequestStudiesSearch = brapiRequestReader.makeRequestObj(studiesRequestBody);
+
+            BrapiResponseMapStudiesSearch brapiResponseMapStudiesSearch = new BrapiResponseMapStudiesSearch();
+            List<BrapiResponseStudiesSearchItem> searchItems = brapiResponseMapStudiesSearch.getBrapiResponseStudySearchItems(brapiRequestStudiesSearch);
+
+
+
+            BrapiResponseWriter<BrapiResponseStudiesSearchItem, ObjectUtils.Null> brapiResponseWriter =
+                    new BrapiResponseWriter<>(BrapiResponseStudiesSearchItem.class, ObjectUtils.Null.class);
+
+            returnVal = brapiResponseWriter.makeBrapiResponse(searchItems,
+                    null,
+                    new Pagination(searchItems.size(),1,1,0),
+                    null,
+                    null);
+
+
+        } catch (Exception e) {
+
+            returnVal = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+        }
+
+        return returnVal;
+    }
+
+
 }// BRAPIController

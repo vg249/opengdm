@@ -21,7 +21,6 @@ public class RestResource<T> {
     Logger LOGGER = LoggerFactory.getLogger(RestResource.class);
 
     private RestUri restUri;
-    private ClientContext clientContext;
     private ObjectMapper objectMapper = new ObjectMapper();
     private PayloadResponse<T> payloadResponse = null;
     private RestResourceUtils restResourceUtils;
@@ -48,7 +47,6 @@ public class RestResource<T> {
     }
 
 
-
     private String makeHttpBody(PayloadEnvelope<T> payloadEnvelope) throws Exception {
 
         String returnVal = null;
@@ -59,7 +57,6 @@ public class RestResource<T> {
 
         return returnVal;
     }
-
 
 
     public PayloadEnvelope<T> get(Class<T> dtoType) throws Exception {
