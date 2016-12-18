@@ -5,6 +5,13 @@ package org.gobiiproject.gobiibrapi.calls.studies.observationvariables;
  */
 public class ObservationScale {
 
+    public ObservationScale() {}
+
+    public ObservationScale(String scaleDbId, String name) {
+        this.scaleDbId = scaleDbId;
+        this.name = name;
+    }
+
     private ScaleValidValues scaleValidValues;
 
     private String scaleDbId;

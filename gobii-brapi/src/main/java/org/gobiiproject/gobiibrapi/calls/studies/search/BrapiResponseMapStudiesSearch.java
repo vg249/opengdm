@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiibrapi.calls.studies.search;
 
+import org.gobiiproject.gobiibrapi.core.derived.BrapiListResult;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +10,7 @@ import java.util.List;
  */
 public class BrapiResponseMapStudiesSearch {
 
-    public List<BrapiResponseStudiesSearchItem> getBrapiResponseStudySearchItems(BrapiRequestStudiesSearch brapiRequestStudiesSearch) {
+    public List<BrapiResponseStudiesSearchItem> getBrapiJsonResponseStudySearchItems(BrapiRequestStudiesSearch brapiRequestStudiesSearch) {
 
         List<BrapiResponseStudiesSearchItem> returnVal = new ArrayList<>();
 
@@ -23,5 +25,15 @@ public class BrapiResponseMapStudiesSearch {
 
 
         return returnVal;
+    }
+
+    public BrapiListResult<BrapiResponseStudiesSearchItem> getBrapiResponseStudySearchItems(BrapiRequestStudiesSearch brapiRequestStudiesSearch) {
+
+        BrapiListResult<BrapiResponseStudiesSearchItem> returnVal = new BrapiListResult<>(BrapiResponseStudiesSearchItem.class);
+
+        returnVal.setData(getBrapiJsonResponseStudySearchItems(brapiRequestStudiesSearch));
+
+        return returnVal;
+
     }
 }

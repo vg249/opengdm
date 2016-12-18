@@ -174,7 +174,7 @@ public class BRAPIIControllerV1 {
             BrapiRequestStudiesSearch brapiRequestStudiesSearch = brapiRequestReader.makeRequestObj(studiesRequestBody);
 
             BrapiResponseMapStudiesSearch brapiResponseMapStudiesSearch = new BrapiResponseMapStudiesSearch();
-            List<BrapiResponseStudiesSearchItem> searchItems = brapiResponseMapStudiesSearch.getBrapiResponseStudySearchItems(brapiRequestStudiesSearch);
+            List<BrapiResponseStudiesSearchItem> searchItems = brapiResponseMapStudiesSearch.getBrapiJsonResponseStudySearchItems(brapiRequestStudiesSearch);
 
 
 

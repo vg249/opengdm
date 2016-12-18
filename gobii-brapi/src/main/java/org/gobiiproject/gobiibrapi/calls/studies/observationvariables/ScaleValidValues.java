@@ -1,15 +1,26 @@
 package org.gobiiproject.gobiibrapi.calls.studies.observationvariables;
 
+import java.util.List;
+
 /**
  * Created by Phil on 12/18/2016.
  */
 public class ScaleValidValues {
 
+
+    public ScaleValidValues() {}
+
+    public ScaleValidValues(String min, String max, List<String> categories) {
+        this.min = min;
+        this.max = max;
+        this.categories = categories;
+    }
+
     private String min;
 
     private String max;
 
-    private String[] categories;
+    private List<String> categories;
 
     public String getMin ()
     {
@@ -31,12 +42,12 @@ public class ScaleValidValues {
         this.max = max;
     }
 
-    public String[] getCategories ()
+    public List<String> getCategories ()
     {
         return categories;
     }
 
-    public void setCategories (String[] categories)
+    public void setCategories (List<String> categories)
     {
         this.categories = categories;
     }

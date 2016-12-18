@@ -2,6 +2,7 @@ package org.gobiiproject.gobiibrapi.calls.germplasm;
 
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,7 +15,6 @@ public class BrapiResponseGermplasmSearch extends BrapiMetaData {
     private String pedigree;
 
     private String seedSource;
-
     private String species;
 
     private String subtaxa;
@@ -37,7 +37,7 @@ public class BrapiResponseGermplasmSearch extends BrapiMetaData {
 
     private String acquisitionDate;
 
-    private List<GermplasmDonor> donors;
+    private List<GermplasmDonor> donors = new ArrayList<>();
 
     private String accessionNumber;
 

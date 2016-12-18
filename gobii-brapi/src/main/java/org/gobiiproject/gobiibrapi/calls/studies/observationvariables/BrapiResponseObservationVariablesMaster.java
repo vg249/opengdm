@@ -12,6 +12,8 @@ public class BrapiResponseObservationVariablesMaster extends BrapiListResult<Bra
         super(BrapiResponseObservationVariablesDetail.class);
     }
 
+
+
     Integer studyDbId;
     String trialName;
 

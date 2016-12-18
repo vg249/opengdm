@@ -11,6 +11,14 @@ public class GermplasmDonor {
 
     private String donorInstituteCode;
 
+    public GermplasmDonor() {}
+
+    public GermplasmDonor(String donorGermplasmPUI, String donorAccessionNumber, String donorInstituteCode) {
+        this.donorGermplasmPUI = donorGermplasmPUI;
+        this.donorAccessionNumber = donorAccessionNumber;
+        this.donorInstituteCode = donorInstituteCode;
+    }
+
     public String getDonorGermplasmPUI ()
     {
         return donorGermplasmPUI;

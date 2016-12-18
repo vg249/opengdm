@@ -7,6 +7,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ObservationMethhod {
 
+    public ObservationMethhod() {}
+
+    public ObservationMethhod(String methodDbId, String name) {
+        this.methodDbId = methodDbId;
+        this.name = name;
+    }
+
     private String methodDbId;
 
     private String description;

@@ -6,6 +6,7 @@ gobii-domain/target
 gobii-dtomapping/target
 gobii-model/target
 gobii-api-model/target
+gobii-brapi/target
 gobii-process/target
 gobii-web/target
 /bin/

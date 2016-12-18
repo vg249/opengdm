@@ -9,6 +9,13 @@ import java.util.List;
  */
 public class ObservationTrait {
 
+    public ObservationTrait() {}
+
+    public ObservationTrait(String name, String traitDbId) {
+        this.name = name;
+        this.traitDbId = traitDbId;
+    }
+
     private String traitDbId;
 
     private String status;
