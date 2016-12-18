@@ -5,19 +5,14 @@ import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCallsItem;
-import org.gobiiproject.gobiibrapi.core.BrapiResponse;
+import org.gobiiproject.gobiibrapi.core.json.BrapiResponseJson;
 import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.restmethods.BrapiResource;
-import org.gobiiproject.gobiiclient.core.restmethods.RestResourceUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.List;
 
 /**
  * Created by Phil on 12/15/2016.
@@ -48,11 +43,11 @@ public class BrapiTestCalls {
         BrapiResource<ObjectUtils.Null, BrapiResponseCallsItem> brapiResource =
                 new BrapiResource<>(restUriCalls, ObjectUtils.Null.class, BrapiResponseCallsItem.class);
 
-        BrapiResponse<BrapiResponseCallsItem> brapiResponseCalls = brapiResource.get();
+        BrapiResponseJson<BrapiResponseCallsItem> brapiResponseJsonCalls = brapiResource.get();
 
-        (new BrapiTestResponseStructure<BrapiResponseCallsItem>()).validatateBrapiResponseStructure(brapiResponseCalls);
+        (new BrapiTestResponseStructure<BrapiResponseCallsItem>()).validatateBrapiResponseStructure(brapiResponseJsonCalls);
 
-        Assert.assertTrue(brapiResponseCalls.getData().size() > 0 );
+        Assert.assertTrue(brapiResponseJsonCalls.getData().size() > 0 );
 
     }
 }

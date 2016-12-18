@@ -1,9 +1,10 @@
-package org.gobiiproject.gobiibrapi.core;
+package org.gobiiproject.gobiibrapi.core.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Pagination;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Map;
 /**
  * Created by Phil on 12/15/2016.
  */
-public class BrapiResponseWriter<T_LIST_ITEM, T_LIST_META> {
+public class BrapiResponseWriterJson<T_LIST_ITEM, T_LIST_META> {
 
 
     Class<T_LIST_ITEM> listItemType;
@@ -20,7 +21,7 @@ public class BrapiResponseWriter<T_LIST_ITEM, T_LIST_META> {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public BrapiResponseWriter(Class<T_LIST_ITEM> listItemType, Class<T_LIST_META> listMetaType) {
+    public BrapiResponseWriterJson(Class<T_LIST_ITEM> listItemType, Class<T_LIST_META> listMetaType) {
         this.listItemType = listItemType;
         this.listMetaType = listMetaType;
         //objectMapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
@@ -82,11 +83,11 @@ public class BrapiResponseWriter<T_LIST_ITEM, T_LIST_META> {
         String metaDataAsString = this.objectMapper.writeValueAsString(brapiMetaData);
         jsonObjectRoot.addProperty(BrapiJsonKeys.METADATA, gson.toJson(metaDataAsString));
 
-        BrapiResult<T_LIST_ITEM> brapiResult = new BrapiResult<>(listItemType);
-        brapiResult.setData(listItems);
+        BrapiListResultJson<T_LIST_ITEM> brapiListResultJson = new BrapiListResultJson<>(listItemType);
+        brapiListResultJson.setData(listItems);
         if (listMetadData == null) {
 
-            String resultAsString = objectMapper.writeValueAsString(brapiResult);
+            String resultAsString = objectMapper.writeValueAsString(brapiListResultJson);
             jsonObjectRoot.addProperty(BrapiJsonKeys.RESULT, gson.toJson(resultAsString));
         }
 

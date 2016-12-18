@@ -28,11 +28,11 @@ import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCallsItem;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
-import org.gobiiproject.gobiibrapi.calls.studies.BrapiRequestStudiesSearch;
-import org.gobiiproject.gobiibrapi.calls.studies.BrapiResponseMapStudiesSearch;
-import org.gobiiproject.gobiibrapi.calls.studies.BrapiResponseStudiesSearchItem;
-import org.gobiiproject.gobiibrapi.core.BrapiRequestReader;
-import org.gobiiproject.gobiibrapi.core.BrapiResponseWriter;
+import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
+import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
+import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
+import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
+import org.gobiiproject.gobiibrapi.core.json.BrapiResponseWriterJson;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -137,10 +137,10 @@ public class BRAPIIControllerV1 {
             List<BrapiResponseCallsItem> brapiResponseCallsItems = brapiResponseMapCalls
                     .getBrapiResponseCallsItems();
 
-            BrapiResponseWriter<BrapiResponseCallsItem, ObjectUtils.Null> brapiResponseWriter =
-                    new BrapiResponseWriter<>(BrapiResponseCallsItem.class, ObjectUtils.Null.class);
+            BrapiResponseWriterJson<BrapiResponseCallsItem, ObjectUtils.Null> brapiResponseWriterJson =
+                    new BrapiResponseWriterJson<>(BrapiResponseCallsItem.class, ObjectUtils.Null.class);
 
-            returnVal = brapiResponseWriter.makeBrapiResponse(brapiResponseCallsItems,
+            returnVal = brapiResponseWriterJson.makeBrapiResponse(brapiResponseCallsItems,
                     null,
                     null,
                     null,
@@ -178,10 +178,10 @@ public class BRAPIIControllerV1 {
 
 
 
-            BrapiResponseWriter<BrapiResponseStudiesSearchItem, ObjectUtils.Null> brapiResponseWriter =
-                    new BrapiResponseWriter<>(BrapiResponseStudiesSearchItem.class, ObjectUtils.Null.class);
+            BrapiResponseWriterJson<BrapiResponseStudiesSearchItem, ObjectUtils.Null> brapiResponseWriterJson =
+                    new BrapiResponseWriterJson<>(BrapiResponseStudiesSearchItem.class, ObjectUtils.Null.class);
 
-            returnVal = brapiResponseWriter.makeBrapiResponse(searchItems,
+            returnVal = brapiResponseWriterJson.makeBrapiResponse(searchItems,
                     null,
                     new Pagination(searchItems.size(),1,1,0),
                     null,

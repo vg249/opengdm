@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiibrapi.core;
+package org.gobiiproject.gobiibrapi.core.common;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Pagination;
 

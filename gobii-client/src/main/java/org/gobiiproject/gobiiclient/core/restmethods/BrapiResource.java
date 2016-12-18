@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiibrapi.core.BrapiJsonKeys;
-import org.gobiiproject.gobiibrapi.core.BrapiMetaData;
-import org.gobiiproject.gobiibrapi.core.BrapiResponse;
+import org.gobiiproject.gobiibrapi.core.json.BrapiJsonKeys;
+import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
+import org.gobiiproject.gobiibrapi.core.json.BrapiResponseJson;
 import org.gobiiproject.gobiiclient.core.HttpMethodResult;
 
 import java.util.List;
@@ -33,9 +33,9 @@ public class BrapiResource<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
         this.restResourceUtils = new RestResourceUtils();
     }
 
-    private BrapiResponse<T_RESPONSE_OBJ_DATA_LIST> extractResponse(HttpMethodResult httpMethodResult) throws Exception {
+    private BrapiResponseJson<T_RESPONSE_OBJ_DATA_LIST> extractResponse(HttpMethodResult httpMethodResult) throws Exception {
 
-        BrapiResponse<T_RESPONSE_OBJ_DATA_LIST> returnVal = new BrapiResponse<>();
+        BrapiResponseJson<T_RESPONSE_OBJ_DATA_LIST> returnVal = new BrapiResponseJson<>();
 
         String brapiMetaDataString = httpMethodResult.getPayLoad().get(BrapiJsonKeys.METADATA).toString();
         BrapiMetaData brapiMetaData = objectMapper.readValue(brapiMetaDataString, BrapiMetaData.class);
@@ -55,9 +55,9 @@ public class BrapiResource<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
     }
 
 
-    public BrapiResponse<T_RESPONSE_OBJ_DATA_LIST> get() throws Exception {
+    public BrapiResponseJson<T_RESPONSE_OBJ_DATA_LIST> get() throws Exception {
 
-        BrapiResponse<T_RESPONSE_OBJ_DATA_LIST> returnVal;
+        BrapiResponseJson<T_RESPONSE_OBJ_DATA_LIST> returnVal;
 
         HttpMethodResult httpMethodResult =
                 this.restResourceUtils.getHttp()
@@ -69,10 +69,10 @@ public class BrapiResource<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
         return returnVal;
     }
 
-    public BrapiResponse<T_RESPONSE_OBJ_DATA_LIST> post(T_POST_OBJ_TYPE bodyObj) throws Exception {
+    public BrapiResponseJson<T_RESPONSE_OBJ_DATA_LIST> post(T_POST_OBJ_TYPE bodyObj) throws Exception {
 
 
-        BrapiResponse<T_RESPONSE_OBJ_DATA_LIST> returnVal;
+        BrapiResponseJson<T_RESPONSE_OBJ_DATA_LIST> returnVal;
 
         String bodyAsString = objectMapper.writeValueAsString(bodyObj);
 

@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiibrapi.core;
+package org.gobiiproject.gobiibrapi.core.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;

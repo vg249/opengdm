@@ -1,13 +1,14 @@
-package org.gobiiproject.gobiibrapi.core;
+package org.gobiiproject.gobiibrapi.core.json;
 
 import com.google.gson.JsonObject;
+import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 
 import java.util.List;
 
 /**
  * Created by Phil on 12/16/2016.
  */
-public class BrapiResponse<T_LIST_ITEM> {
+public class BrapiResponseJson<T_LIST_ITEM> {
 
     BrapiMetaData brapiMetaData;
     JsonObject resultMasterJson;

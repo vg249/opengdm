@@ -1,11 +1,6 @@
-package org.gobiiproject.gobiibrapi.calls.studies;
-
-import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCallsItem;
-import org.gobiiproject.gobiibrapi.types.BrapiDataTypes;
-import org.gobiiproject.gobiimodel.types.RestMethodTypes;
+package org.gobiiproject.gobiibrapi.calls.studies.search;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

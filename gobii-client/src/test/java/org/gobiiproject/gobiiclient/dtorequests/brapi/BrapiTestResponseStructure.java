@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests.brapi;
 
-import org.gobiiproject.gobiibrapi.core.BrapiResponse;
+import org.gobiiproject.gobiibrapi.core.json.BrapiResponseJson;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,11 +10,11 @@ import org.junit.Test;
 public class BrapiTestResponseStructure<T_RESPONSE_OBJ_DATA_LIST> {
 
     @Test
-    public void validatateBrapiResponseStructure(BrapiResponse<T_RESPONSE_OBJ_DATA_LIST> brapiResponse) {
+    public void validatateBrapiResponseStructure(BrapiResponseJson<T_RESPONSE_OBJ_DATA_LIST> brapiResponseJson) {
 
-        Assert.assertNotNull(brapiResponse.getBrapiMetaData());
-        Assert.assertNotNull(brapiResponse.getData());
-        Assert.assertNotNull(brapiResponse.getResultMasterJson());
+        Assert.assertNotNull(brapiResponseJson.getBrapiMetaData());
+        Assert.assertNotNull(brapiResponseJson.getData());
+        Assert.assertNotNull(brapiResponseJson.getResultMasterJson());
     }
 
 }

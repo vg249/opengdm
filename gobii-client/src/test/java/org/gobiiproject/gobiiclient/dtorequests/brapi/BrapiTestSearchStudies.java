@@ -3,13 +3,11 @@ package org.gobiiproject.gobiiclient.dtorequests.brapi;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiibrapi.calls.studies.BrapiRequestStudiesSearch;
-import org.gobiiproject.gobiibrapi.calls.studies.BrapiResponseStudiesSearchItem;
-import org.gobiiproject.gobiibrapi.core.BrapiResponse;
+import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
+import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
+import org.gobiiproject.gobiibrapi.core.json.BrapiResponseJson;
 import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.restmethods.BrapiResource;
-import org.gobiiproject.gobiiclient.core.restmethods.RestResourceUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -48,8 +46,8 @@ public class BrapiTestSearchStudies {
 
         BrapiRequestStudiesSearch brapiRequestStudiesSearch = new BrapiRequestStudiesSearch();
         brapiRequestStudiesSearch.setStudyType("genotype");
-        BrapiResponse<BrapiResponseStudiesSearchItem> brapiResponse = brapiResource.post(brapiRequestStudiesSearch);
+        BrapiResponseJson<BrapiResponseStudiesSearchItem> brapiResponseJson = brapiResource.post(brapiRequestStudiesSearch);
 
-        (new BrapiTestResponseStructure<BrapiResponseStudiesSearchItem>()).validatateBrapiResponseStructure(brapiResponse);
+        (new BrapiTestResponseStructure<BrapiResponseStudiesSearchItem>()).validatateBrapiResponseStructure(brapiResponseJson);
     }
 }

@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiibrapi.calls.studies;
+package org.gobiiproject.gobiibrapi.calls.studies.search;
 
 import java.util.List;
 

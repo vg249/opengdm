@@ -1,13 +1,14 @@
-package org.gobiiproject.gobiibrapi.core;
+package org.gobiiproject.gobiibrapi.core.derived;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 
 import java.util.List;
 
 /**
  * Created by Phil on 12/15/2016.
  */
-public class BrapiResult<T_LIST_ITEM> {
+public class BrapiListResult<T_LIST_ITEM> extends BrapiMetaData {
 
     @JsonIgnore
     private Class<T_LIST_ITEM> listItemType;
@@ -15,7 +16,7 @@ public class BrapiResult<T_LIST_ITEM> {
 
     private List<T_LIST_ITEM> data;
 
-    public BrapiResult(Class<T_LIST_ITEM> listItemType) {
+    public BrapiListResult(Class<T_LIST_ITEM> listItemType) {
         this.listItemType = listItemType;
     }
 

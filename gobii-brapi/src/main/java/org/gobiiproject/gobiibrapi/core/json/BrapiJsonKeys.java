@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiibrapi.core;
+package org.gobiiproject.gobiibrapi.core.json;
 
 /**
  * Created by Phil on 12/16/2016.
