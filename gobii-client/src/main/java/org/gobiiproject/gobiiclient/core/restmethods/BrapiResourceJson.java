@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Phil on 12/16/2016.
  */
-public class BrapiResource<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
+public class BrapiResourceJson<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
 
     private RestUri restUri;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -23,9 +23,9 @@ public class BrapiResource<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
     private Class<T_POST_OBJ_TYPE> brapiPostObjType;
     private Class<T_RESPONSE_OBJ_DATA_LIST> brapiResponsebjType;
 
-    public BrapiResource(RestUri restUri,
-                         Class<T_POST_OBJ_TYPE> brapiPostObjType,
-                         Class<T_RESPONSE_OBJ_DATA_LIST> brapiResponseObjType) {
+    public BrapiResourceJson(RestUri restUri,
+                             Class<T_POST_OBJ_TYPE> brapiPostObjType,
+                             Class<T_RESPONSE_OBJ_DATA_LIST> brapiResponseObjType) {
 
         this.restUri = restUri;
         this.brapiPostObjType = brapiPostObjType;

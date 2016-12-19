@@ -5,6 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiweb.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.ObjectUtils;
 import org.gobiiproject.gobidomain.services.AnalysisService;
 import org.gobiiproject.gobidomain.services.ConfigSettingsService;
@@ -30,10 +31,14 @@ import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCallsItem;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
 import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseGermplasmSearch;
 import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseMapGermplasmSearch;
+import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseMapObservationVariables;
+import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseObservationVariablesMaster;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
+import org.gobiiproject.gobiibrapi.core.derived.BrapiListResult;
+import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelope;
 import org.gobiiproject.gobiibrapi.core.json.BrapiResponseWriterJson;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +52,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -159,7 +166,8 @@ public class BRAPIIControllerV1 {
     }
 
     // *********************************************
-    // *************************** STUDIES_SEARCH
+    // *************************** STUDIES_SEARCH (DETAILS ONLY)
+    // *************************** LIST ITEMS ONLY
     // *********************************************
     @RequestMapping(value = "/studies-search",
             method = RequestMethod.POST,
@@ -167,65 +175,120 @@ public class BRAPIIControllerV1 {
     @ResponseBody
     public String getStudies(@RequestBody String studiesRequestBody,
                              HttpServletRequest request,
-                             HttpServletResponse response) {
+                             HttpServletResponse response) throws Exception {
 
         String returnVal;
+
+        BrapiResponseEnvelope<ObjectUtils.Null, BrapiResponseStudiesSearchItem> brapiResponseEnvelope =
+                new BrapiResponseEnvelope<>(ObjectUtils.Null.class, BrapiResponseStudiesSearchItem.class);
 
         try {
 
             BrapiRequestReader<BrapiRequestStudiesSearch> brapiRequestReader = new BrapiRequestReader<>(BrapiRequestStudiesSearch.class);
             BrapiRequestStudiesSearch brapiRequestStudiesSearch = brapiRequestReader.makeRequestObj(studiesRequestBody);
 
-            BrapiResponseMapStudiesSearch brapiResponseMapStudiesSearch = new BrapiResponseMapStudiesSearch();
-            List<BrapiResponseStudiesSearchItem> searchItems = brapiResponseMapStudiesSearch.getBrapiJsonResponseStudySearchItems(brapiRequestStudiesSearch);
+            BrapiListResult<BrapiResponseStudiesSearchItem> brapiListResult = (new BrapiResponseMapStudiesSearch()).getBrapiResponseStudySearchItems(brapiRequestStudiesSearch);
 
-
-            BrapiResponseWriterJson<BrapiResponseStudiesSearchItem, ObjectUtils.Null> brapiResponseWriterJson =
-                    new BrapiResponseWriterJson<>(BrapiResponseStudiesSearchItem.class, ObjectUtils.Null.class);
-
-            returnVal = brapiResponseWriterJson.makeBrapiResponse(searchItems,
-                    null,
-                    new Pagination(searchItems.size(), 1, 1, 0),
-                    null,
-                    null);
+            brapiResponseEnvelope.setData(brapiListResult);
+            //returnVal = (new ObjectMapper()).writeValueAsString(brapiListResult);
+////            BrapiResponseMapStudiesSearch brapiResponseMapStudiesSearch = new BrapiResponseMapStudiesSearch();
+////            List<BrapiResponseStudiesSearchItem> searchItems = brapiResponseMapStudiesSearch.getBrapiJsonResponseStudySearchItems(brapiRequestStudiesSearch);
+//
+//
+//            BrapiResponseWriterJson<BrapiResponseStudiesSearchItem, ObjectUtils.Null> brapiResponseWriterJson =
+//                    new BrapiResponseWriterJson<>(BrapiResponseStudiesSearchItem.class, ObjectUtils.Null.class);
+//
+//            returnVal = brapiResponseWriterJson.makeBrapiResponse(searchItems,
+//                    null,
+//                    new Pagination(searchItems.size(), 1, 1, 0),
+//                    null,
+//                    null);
 
 
         } catch (Exception e) {
 
-            returnVal = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
+        returnVal = (new ObjectMapper()).writeValueAsString(brapiResponseEnvelope);
         return returnVal;
     }
 
     // *********************************************
-    // *************************** GERMPLASM SEARCH
+    // *************************** Germplasm search by germplasmDbId [GET]
+    // **************************** MASTER ONLY
     // *********************************************
     @RequestMapping(value = "/studies/{studyDbId}/germplasm",
             method = RequestMethod.GET,
             params = {"pageSize", "page"},
             produces = "application/json")
     @ResponseBody
-    public BrapiResponseGermplasmSearch getGermplasm(HttpServletRequest request,
-                                                     HttpServletResponse response,
-                                                     @PathVariable Integer studyDbId) {
-
-        String returnVal;
+    public String getGermplasm(HttpServletRequest request,
+                               HttpServletResponse response,
+                               @PathVariable Integer studyDbId) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String returnVal = null;
 
         try {
 
             BrapiResponseMapGermplasmSearch brapiResponseMapGermplasmSearch = new BrapiResponseMapGermplasmSearch();
 
-            BrapiResponseGermplasmSearch returnVal = brapiResponseMapGermplasmSearch.getGermplasmByDbid(studyDbId\);
+            // extends BrapiMetaData, no list items
+            BrapiResponseGermplasmSearch brapiResponseGermplasmSearch = brapiResponseMapGermplasmSearch.getGermplasmByDbid(studyDbId);
 
-            return returnVal;
+            returnVal = objectMapper.writeValueAsString(brapiResponseGermplasmSearch);
 
         } catch (Exception e) {
 
-            returnVal = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+//            BrapiListResult<ObjectUtils.Null> emptyResponse = new BrapiListResult<>(ObjectUtils.Null.class);
+//            Map<String, String> statusMap = new HashMap<>();
+//            statusMap.put("exception", e.getMessage());
+//            emptyResponse.getStatus().add(statusMap);
+//            returnVal = objectMapper.writeValueAsString(emptyResponse);
+
         }
 
         return returnVal;
     }
+
+    // *********************************************
+    // *************************** Study obsefvation variables (GET)
+    // **************************** MASTER AND DETAIL
+    // *********************************************
+    @RequestMapping(value = "/studies/{studyDbId}/observationVariables",
+            method = RequestMethod.GET,
+            params = {"pageSize", "page"},
+            produces = "application/json")
+    @ResponseBody
+    public String getObservationVariables(HttpServletRequest request,
+                                          HttpServletResponse response,
+                                          @PathVariable Integer studyDbId) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String returnVal = null;
+
+        try {
+
+            BrapiResponseMapObservationVariables brapiResponseMapObservationVariables = new BrapiResponseMapObservationVariables();
+
+            // extends BrapiMetaData, no list items
+            BrapiResponseObservationVariablesMaster brapiResponseObservationVariablesMaster = brapiResponseMapObservationVariables.gerObservationVariablesByStudyId(studyDbId);
+
+            returnVal = objectMapper.writeValueAsString(brapiResponseObservationVariablesMaster);
+
+        } catch (Exception e) {
+
+//            BrapiListResult<ObjectUtils.Null> emptyResponse = new BrapiListResult<>(ObjectUtils.Null.class);
+//            Map<String, String> statusMap = new HashMap<>();
+//            statusMap.put("exception", e.getMessage());
+//            emptyResponse.getStatus().add(statusMap);
+//            returnVal = objectMapper.writeValueAsString(emptyResponse);
+
+        }
+
+        return returnVal;
+    }
+
 
 }// BRAPIController

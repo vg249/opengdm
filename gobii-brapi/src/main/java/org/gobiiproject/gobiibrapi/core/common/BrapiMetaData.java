@@ -34,6 +34,16 @@ public class BrapiMetaData {
         this.pagination = pagination;
     }
 
+    public void addStatusMessage(String code, String message) {
+        if( this.status == null ) {
+            this.status = new ArrayList<>();
+        }
+
+        Map<String,String> statusItem = new HashMap<>();
+        statusItem.put(code,message);
+        this.status.add(statusItem);
+    }
+
     public List<Map<String, String>> getStatus() {
         return status;
     }

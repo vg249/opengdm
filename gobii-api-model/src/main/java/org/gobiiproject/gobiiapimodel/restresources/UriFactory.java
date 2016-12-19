@@ -124,6 +124,21 @@ public class UriFactory {
 
     } //
 
+    public RestUri childResourceByUriIdParam(ServiceRequestId parentServiceRequestId, ServiceRequestId childServiceRequestId) throws Exception {
+
+        RestUri returnVal;
+
+        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
+                this.cropContextRoot,
+                parentServiceRequestId);
+        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("id"));
+
+        returnVal.appendSegment(this.URL_SEPARATOR + ResourceBuilder.getUrlSegment(childServiceRequestId));
+
+        return returnVal;
+
+    } //
+
     public RestUri contactsByQueryParams() throws Exception {
 
         RestUri returnVal;

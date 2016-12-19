@@ -7,7 +7,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCallsItem;
 import org.gobiiproject.gobiibrapi.core.json.BrapiResponseJson;
 import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.restmethods.BrapiResource;
+import org.gobiiproject.gobiiclient.core.restmethods.BrapiResourceJson;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -40,10 +40,10 @@ public class BrapiTestCalls {
                 .getUriFactory(ControllerType.BRAPI)
                 .resourceColl(ServiceRequestId.URL_CALLS);
 
-        BrapiResource<ObjectUtils.Null, BrapiResponseCallsItem> brapiResource =
-                new BrapiResource<>(restUriCalls, ObjectUtils.Null.class, BrapiResponseCallsItem.class);
+        BrapiResourceJson<ObjectUtils.Null, BrapiResponseCallsItem> brapiResourceJson =
+                new BrapiResourceJson<>(restUriCalls, ObjectUtils.Null.class, BrapiResponseCallsItem.class);
 
-        BrapiResponseJson<BrapiResponseCallsItem> brapiResponseJsonCalls = brapiResource.get();
+        BrapiResponseJson<BrapiResponseCallsItem> brapiResponseJsonCalls = brapiResourceJson.get();
 
         (new BrapiTestResponseStructure<BrapiResponseCallsItem>()).validatateBrapiResponseStructure(brapiResponseJsonCalls);
 

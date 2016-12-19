@@ -8,7 +8,8 @@ import java.util.List;
 /**
  * Created by Phil on 12/15/2016.
  */
-public class BrapiListResult<T_LIST_ITEM> extends BrapiMetaData {
+public class BrapiListResult<T_LIST_ITEM> {
+
 
     @JsonIgnore
     private Class<T_LIST_ITEM> listItemType;
@@ -16,6 +17,7 @@ public class BrapiListResult<T_LIST_ITEM> extends BrapiMetaData {
 
     private List<T_LIST_ITEM> data;
 
+    public BrapiListResult() {}
     public BrapiListResult(Class<T_LIST_ITEM> listItemType) {
         this.listItemType = listItemType;
     }
