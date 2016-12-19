@@ -28,6 +28,8 @@ import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCallsItem;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
+import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseGermplasmSearch;
+import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseMapGermplasmSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
@@ -37,6 +39,7 @@ import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -163,8 +166,8 @@ public class BRAPIIControllerV1 {
             produces = "application/json")
     @ResponseBody
     public String getStudies(@RequestBody String studiesRequestBody,
-            HttpServletRequest request,
-            HttpServletResponse response) {
+                             HttpServletRequest request,
+                             HttpServletResponse response) {
 
         String returnVal;
 
@@ -177,13 +180,12 @@ public class BRAPIIControllerV1 {
             List<BrapiResponseStudiesSearchItem> searchItems = brapiResponseMapStudiesSearch.getBrapiJsonResponseStudySearchItems(brapiRequestStudiesSearch);
 
 
-
             BrapiResponseWriterJson<BrapiResponseStudiesSearchItem, ObjectUtils.Null> brapiResponseWriterJson =
                     new BrapiResponseWriterJson<>(BrapiResponseStudiesSearchItem.class, ObjectUtils.Null.class);
 
             returnVal = brapiResponseWriterJson.makeBrapiResponse(searchItems,
                     null,
-                    new Pagination(searchItems.size(),1,1,0),
+                    new Pagination(searchItems.size(), 1, 1, 0),
                     null,
                     null);
 
@@ -196,5 +198,34 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
+    // *********************************************
+    // *************************** GERMPLASM SEARCH
+    // *********************************************
+    @RequestMapping(value = "/studies/{studyDbId}/germplasm",
+            method = RequestMethod.GET,
+            params = {"pageSize", "page"},
+            produces = "application/json")
+    @ResponseBody
+    public BrapiResponseGermplasmSearch getGermplasm(HttpServletRequest request,
+                                                     HttpServletResponse response,
+                                                     @PathVariable Integer studyDbId) {
+
+        String returnVal;
+
+        try {
+
+            BrapiResponseMapGermplasmSearch brapiResponseMapGermplasmSearch = new BrapiResponseMapGermplasmSearch();
+
+            BrapiResponseGermplasmSearch returnVal = brapiResponseMapGermplasmSearch.getGermplasmByDbid(studyDbId\);
+
+            return returnVal;
+
+        } catch (Exception e) {
+
+            returnVal = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+        }
+
+        return returnVal;
+    }
 
 }// BRAPIController
