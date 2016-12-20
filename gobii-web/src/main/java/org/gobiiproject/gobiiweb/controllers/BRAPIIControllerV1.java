@@ -136,30 +136,31 @@ public class BRAPIIControllerV1 {
     @ResponseBody
     public String getCalls(
             HttpServletRequest request,
-            HttpServletResponse response) {
+            HttpServletResponse response) throws Exception{
 
         String returnVal;
 
+        BrapiResponseEnvelopeList<ObjectUtils.Null, BrapiResponseCallsItem> brapiResponseEnvelopeList =
+                new BrapiResponseEnvelopeList<>(ObjectUtils.Null.class, BrapiResponseCallsItem.class);
         try {
 
             BrapiResponseMapCalls brapiResponseMapCalls = new BrapiResponseMapCalls();
-            List<BrapiResponseCallsItem> brapiResponseCallsItems = brapiResponseMapCalls
-                    .getBrapiResponseCallsItems();
+            BrapiListResult<BrapiResponseCallsItem> brapiResponseCallsItems = brapiResponseMapCalls
+                    .getBrapiResponseListCalls();
 
-            BrapiResponseWriterJson<BrapiResponseCallsItem, ObjectUtils.Null> brapiResponseWriterJson =
-                    new BrapiResponseWriterJson<>(BrapiResponseCallsItem.class, ObjectUtils.Null.class);
 
-            returnVal = brapiResponseWriterJson.makeBrapiResponse(brapiResponseCallsItems,
-                    null,
-                    null,
-                    null,
-                    null);
+            brapiResponseEnvelopeList.setData(brapiResponseCallsItems);
 
 
         } catch (Exception e) {
 
-            returnVal = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            brapiResponseEnvelopeList.getBrapiMetaData().addStatusMessage("exception", message);
         }
+
+        returnVal = (new ObjectMapper()).writeValueAsString(brapiResponseEnvelopeList);
+
 
         return returnVal;
     }

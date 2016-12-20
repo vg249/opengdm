@@ -54,10 +54,7 @@ public class BrapiTestGermplasm {
 
         BrapiResponseEnvelopeMaster<BrapiResponseGermplasmSearch> brapiResponseEnvelopeMaster = brapiResourceDerived.getFromMasterResource();
 
-        Assert.assertNotNull(brapiResponseEnvelopeMaster.getBrapiMetaData());
-        Assert.assertNotNull(brapiResponseEnvelopeMaster.getBrapiMetaData().getDatafiles());
-        Assert.assertNotNull(brapiResponseEnvelopeMaster.getBrapiMetaData().getPagination());
-        Assert.assertNotNull(brapiResponseEnvelopeMaster.getBrapiMetaData().getStatus());
+        BrapiTestResponseStructure.validatateBrapiResponseStructure(brapiResponseEnvelopeMaster.getBrapiMetaData());
 
         BrapiResponseGermplasmSearch brapiRequestStudiesSearch = brapiResponseEnvelopeMaster.getResult();
 

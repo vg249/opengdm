@@ -96,6 +96,24 @@ public class BrapiResourceDerived<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, T_RES
 //
 //    } //
 
+    public BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> getFromListResource() throws Exception {
+
+
+        BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> returnVal;
+
+        HttpMethodResult httpMethodResult =
+                this.restResourceUtils.getHttp()
+                        .get(this.restUri,
+                                restResourceUtils.getClientContext().getUserToken());
+
+
+        returnVal = this.getTypedListObjFromResult(httpMethodResult);
+
+        return returnVal;
+
+    } //
+
+
     public BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> postToListResource(T_POST_OBJ_TYPE bodyObj) throws Exception {
 
 

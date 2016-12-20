@@ -41,14 +41,8 @@ public class BrapiTestSearchStudies {
                 .getUriFactory(ControllerType.BRAPI)
                 .resourceColl(ServiceRequestId.URL_STUDIES_SEARCH);
 
-//        BrapiResourceJson<BrapiRequestStudiesSearch, BrapiResponseStudiesSearchItem> brapiResourceJson = new BrapiResourceJson<>(restUriStudiesSearch,
-//                BrapiRequestStudiesSearch.class,
-//                BrapiResponseStudiesSearchItem.class);
-
         BrapiRequestStudiesSearch brapiRequestStudiesSearch = new BrapiRequestStudiesSearch();
         brapiRequestStudiesSearch.setStudyType("genotype");
-        //BrapiResponseJson<BrapiResponseStudiesSearchItem> brapiResponseJson = brapiResourceJson.post(brapiRequestStudiesSearch);
-
 
         BrapiResourceDerived<BrapiRequestStudiesSearch,ObjectUtils.Null,BrapiResponseStudiesSearchItem> brapiResourceDerived =
                 new BrapiResourceDerived<>(restUriStudiesSearch,
@@ -58,10 +52,7 @@ public class BrapiTestSearchStudies {
 
         BrapiResponseEnvelopeList<ObjectUtils.Null,BrapiResponseStudiesSearchItem> studiesResult = brapiResourceDerived.postToListResource(brapiRequestStudiesSearch);
 
-        Assert.assertNotNull(studiesResult.getBrapiMetaData());
-        Assert.assertNotNull(studiesResult.getBrapiMetaData().getDatafiles());
-        Assert.assertNotNull(studiesResult.getBrapiMetaData().getPagination());
-        Assert.assertNotNull(studiesResult.getBrapiMetaData().getStatus());
+        BrapiTestResponseStructure.validatateBrapiResponseStructure(studiesResult.getBrapiMetaData());
 
         Assert.assertTrue(studiesResult.getData().getData().size() > 0);
 
