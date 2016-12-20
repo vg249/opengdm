@@ -11,7 +11,7 @@ import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.RestResource;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
@@ -58,7 +58,7 @@ public class DtoRequestNameIdListTest {
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
-        RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
         namesUri.setParamValue("entity", gobiiEntityNameType.toString().toLowerCase());
 
         if (GobiiFilterType.NONE != gobiiFilterType) {
@@ -67,7 +67,7 @@ public class DtoRequestNameIdListTest {
         }
 
 
-        PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
+        PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(NameIdDTO.class);
 
         String assertionErrorStem = "Error testing name-id retrieval of entity "
@@ -135,10 +135,10 @@ public class DtoRequestNameIdListTest {
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
-        RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
 
         namesUri.setParamValue("entity", "foo");
-        PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
+        PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(NameIdDTO.class);
 
         Assert.assertTrue("There should be exactly one error for bad entity type",
@@ -159,12 +159,12 @@ public class DtoRequestNameIdListTest {
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
-        RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
 
         namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSES.toString().toLowerCase());
         namesUri.setParamValue("filterType", "foo");
         namesUri.setParamValue("filterValue", "33");
-        PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
+        PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(NameIdDTO.class);
 
         Assert.assertTrue("There should be exactly one error for the unsupported filter type",
@@ -185,13 +185,13 @@ public class DtoRequestNameIdListTest {
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
-        RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
 
         namesUri.setParamValue("entity", GobiiEntityNameType.ANALYSES.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPEID.toString().toUpperCase()));
         // normally would also specify "filterValue" here
 
-        PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
+        PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(NameIdDTO.class);
 
         Assert.assertTrue("There should be exactly one error for filter value not supplied",
@@ -270,10 +270,10 @@ public class DtoRequestNameIdListTest {
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
-        RestResource<NameIdDTO> restResource = new RestResource<>(namesUri);
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
         namesUri.setParamValue("entity", GobiiEntityNameType.PLATFORMS.toString().toLowerCase());
 
-        PayloadEnvelope<NameIdDTO> resultEnvelope = restResource
+        PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(NameIdDTO.class);
 
         List<NameIdDTO> nameIdDTOList = resultEnvelope.getPayload().getData();
@@ -326,8 +326,8 @@ public class DtoRequestNameIdListTest {
             RestUri restUriPlatformForGetById = ClientContext.getInstance(null,false)
                     .getUriFactory()
                     .RestUriFromUri(currentLink.getHref());
-            RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
-            PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = restResourceForGetById
+            GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriPlatformForGetById);
+            PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                     .get(PlatformDTO.class);
             Assert.assertNotNull(resultEnvelopeForGetByID);
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));

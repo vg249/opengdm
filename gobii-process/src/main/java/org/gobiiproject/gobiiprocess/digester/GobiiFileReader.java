@@ -15,7 +15,7 @@ import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.RestResource;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
@@ -521,8 +521,8 @@ public class GobiiFileReader {
 			RestUri projectsUri = uriFactory
 					.resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
 			projectsUri.setParamValue("id", dataSetId.toString());
-			RestResource<DataSetDTO> restResourceForDatasets = new RestResource<>(projectsUri);
-			PayloadEnvelope<DataSetDTO> resultEnvelope = restResourceForDatasets
+			GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(projectsUri);
+			PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets
 					.get(DataSetDTO.class);
 
 			DataSetDTO dataSetResponse;
@@ -540,7 +540,7 @@ public class GobiiFileReader {
 			dataSetResponse.setDataTable(monetTableName);
 			dataSetResponse.setDataFile(hdfFileName);
 
-			resultEnvelope = restResourceForDatasets
+			resultEnvelope = gobiiEnvelopeRestResourceForDatasets
 					.put(DataSetDTO.class,new PayloadEnvelope<>(dataSetResponse,GobiiProcessType.UPDATE));
 
 

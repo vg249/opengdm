@@ -17,19 +17,19 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Phil on 5/13/2016.
  */
-public class RestResource<T> {
+public class GobiiEnvelopeRestResource<T> {
 
-    Logger LOGGER = LoggerFactory.getLogger(RestResource.class);
+    Logger LOGGER = LoggerFactory.getLogger(GobiiEnvelopeRestResource.class);
 
     private RestUri restUri;
     private ObjectMapper objectMapper = new ObjectMapper();
-    private PayloadResponse<T> payloadResponse = null;
+    private GobiiPayloadResponse<T> gobiiPayloadResponse = null;
     private RestResourceUtils restResourceUtils;
 
-    public RestResource(RestUri restUri) {
+    public GobiiEnvelopeRestResource(RestUri restUri) {
         this.restUri = restUri;
         this.restResourceUtils = new RestResourceUtils();
-        this.payloadResponse = new PayloadResponse<>(this.restUri);
+        this.gobiiPayloadResponse = new GobiiPayloadResponse<>(this.restUri);
     }
 
     public void setParamValue(String paramName, String value) throws Exception {
@@ -69,7 +69,7 @@ public class RestResource<T> {
                         .get(this.restUri,
                                 this.getClientContext().getUserToken());
 
-        returnVal = this.payloadResponse.getPayloadFromResponse(dtoType,
+        returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.GET,
                 HttpStatus.SC_OK,
                 httpMethodResult);
@@ -90,7 +90,7 @@ public class RestResource<T> {
                                 postBody,
                                 this.getClientContext().getUserToken());
 
-        returnVal = this.payloadResponse.getPayloadFromResponse(dtoType,
+        returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.POST,
                 HttpStatus.SC_CREATED,
                 httpMethodResult);
@@ -111,7 +111,7 @@ public class RestResource<T> {
                                 putBody,
                                 this.getClientContext().getUserToken());
 
-        returnVal = this.payloadResponse.getPayloadFromResponse(dtoType,
+        returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.PUT,
                 HttpStatus.SC_OK,
                 httpMethodResult);

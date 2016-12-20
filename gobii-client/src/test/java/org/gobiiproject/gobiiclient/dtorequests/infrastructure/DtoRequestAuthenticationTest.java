@@ -11,7 +11,7 @@ import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
-import org.gobiiproject.gobiiclient.core.gobii.RestResource;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.gobii.dtopost.DtoRequestProcessor;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestConfiguration;
@@ -143,8 +143,8 @@ public class DtoRequestAuthenticationTest {
             RestUri restUriContact = uriFactory
                     .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
             restUriContact.setParamValue("id", "6");
-            RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
-            PayloadEnvelope<ContactDTO> resultEnvelope = restResource
+            GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
+            PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResource
                     .get(ContactDTO.class);
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
@@ -155,8 +155,8 @@ public class DtoRequestAuthenticationTest {
             restUriContact = uriFactory
                     .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
             restUriContact.setParamValue("id", "6");
-            restResource = new RestResource<>(restUriContact);
-            resultEnvelope = restResource
+            gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
+            resultEnvelope = gobiiEnvelopeRestResource
                     .get(ContactDTO.class);
 
             Assert.assertTrue("Method with incorrectly configured uriFactory should have failed with 404",
@@ -178,8 +178,8 @@ public class DtoRequestAuthenticationTest {
             restUriContact = uriFactory
                     .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
             restUriContact.setParamValue("id", "6");
-            restResource = new RestResource<>(restUriContact);
-            resultEnvelope = restResource
+            gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
+            resultEnvelope = gobiiEnvelopeRestResource
                     .get(ContactDTO.class);
 
 

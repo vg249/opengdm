@@ -8,7 +8,7 @@ import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearc
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeList;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
-import org.gobiiproject.gobiiclient.core.brapi.BrapiResourceDerived;
+import org.gobiiproject.gobiiclient.core.brapi.BrapiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -44,13 +44,13 @@ public class BrapiTestSearchStudies {
         BrapiRequestStudiesSearch brapiRequestStudiesSearch = new BrapiRequestStudiesSearch();
         brapiRequestStudiesSearch.setStudyType("genotype");
 
-        BrapiResourceDerived<BrapiRequestStudiesSearch,ObjectUtils.Null,BrapiResponseStudiesSearchItem> brapiResourceDerived =
-                new BrapiResourceDerived<>(restUriStudiesSearch,
+        BrapiEnvelopeRestResource<BrapiRequestStudiesSearch,ObjectUtils.Null,BrapiResponseStudiesSearchItem> brapiEnvelopeRestResource =
+                new BrapiEnvelopeRestResource<>(restUriStudiesSearch,
                         BrapiRequestStudiesSearch.class,
                         ObjectUtils.Null.class,
                         BrapiResponseStudiesSearchItem.class);
 
-        BrapiResponseEnvelopeList<ObjectUtils.Null,BrapiResponseStudiesSearchItem> studiesResult = brapiResourceDerived.postToListResource(brapiRequestStudiesSearch);
+        BrapiResponseEnvelopeList<ObjectUtils.Null,BrapiResponseStudiesSearchItem> studiesResult = brapiEnvelopeRestResource.postToListResource(brapiRequestStudiesSearch);
 
         BrapiTestResponseStructure.validatateBrapiResponseStructure(studiesResult.getBrapiMetaData());
 

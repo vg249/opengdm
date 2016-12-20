@@ -7,7 +7,7 @@ import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.RestResource;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.EntityParamValues;
@@ -61,8 +61,8 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "platform_type");
 
-        RestResource<NameIdDTO> restResourceForPlatformTerms = new RestResource<>(namesUri);
-        PayloadEnvelope<NameIdDTO> resultEnvelope = restResourceForPlatformTerms
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForPlatformTerms = new GobiiEnvelopeRestResource<>(namesUri);
+        PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResourceForPlatformTerms
                 .get(NameIdDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -79,9 +79,9 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
                 .makePopulatedPlatformDTO(GobiiProcessType.CREATE, 1, entityParamValues);
 
         PayloadEnvelope<PlatformDTO> payloadEnvelope = new PayloadEnvelope<>(newPlatformDto, GobiiProcessType.CREATE);
-        RestResource<PlatformDTO> restResource = new RestResource<>(ClientContext.getInstance(null, false).getUriFactory()
+        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false).getUriFactory()
                 .resourceColl(ServiceRequestId.URL_PLATFORM));
-        PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelope = restResource.post(PlatformDTO.class,
+        PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelope = gobiiEnvelopeRestResource.post(PlatformDTO.class,
                 payloadEnvelope);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOResponseEnvelope.getHeader()));
         PlatformDTO platformDTOResponse = platformDTOResponseEnvelope.getPayload().getData().get(0);
@@ -95,8 +95,8 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
         restUriPlatformForGetById.setParamValue("id", platformDTOResponse.getPlatformId().toString());
-        RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
-        PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = restResourceForGetById
+        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriPlatformForGetById);
+        PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                 .get(PlatformDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
@@ -149,8 +149,8 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
         namesUri.setParamValue("filterValue", "platform_type");
 
-        RestResource<NameIdDTO> restResourceForPlatformTerms = new RestResource<>(namesUri);
-        PayloadEnvelope<NameIdDTO> resultEnvelope = restResourceForPlatformTerms
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForPlatformTerms = new GobiiEnvelopeRestResource<>(namesUri);
+        PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResourceForPlatformTerms
                 .get(NameIdDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -166,10 +166,10 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
                 .makePopulatedPlatformDTO(GobiiProcessType.CREATE, 1, entityParamValues);
 
         PayloadEnvelope<PlatformDTO> payloadEnvelope = new PayloadEnvelope<>(newPlatformDto, GobiiProcessType.CREATE);
-        RestResource<PlatformDTO> restResource = new RestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_PLATFORM));
-        PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelope = restResource.post(PlatformDTO.class,
+        PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelope = gobiiEnvelopeRestResource.post(PlatformDTO.class,
                 payloadEnvelope);
         PlatformDTO newPlatformDTOResponse = platformDTOResponseEnvelope.getPayload().getData().get(0);
 
@@ -179,8 +179,8 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
         restUriPlatformForGetById.setParamValue("id", newPlatformDTOResponse.getPlatformId().toString());
-        RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
-        PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = restResourceForGetById
+        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriPlatformForGetById);
+        PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                 .get(PlatformDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
@@ -197,7 +197,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         propertyToUpdate.setPropertyValue(updatedPropertyValue);
 
         restUriPlatformForGetById.setParamValue("id", platformDTOReceived.getPlatformId().toString());
-        PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelopeUpdate = restResourceForGetById.put(PlatformDTO.class,
+        PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelopeUpdate = gobiiEnvelopeRestResourceForGetById.put(PlatformDTO.class,
                 new PayloadEnvelope<>(platformDTOReceived, GobiiProcessType.UPDATE));
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOResponseEnvelopeUpdate.getHeader()));
@@ -208,7 +208,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 //        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(PlatformDTOResponse));
 
         restUriPlatformForGetById.setParamValue("id", PlatformDTORequest.getPlatformId().toString());
-        resultEnvelopeForGetByID = restResourceForGetById
+        resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                 .get(PlatformDTO.class);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
 
@@ -237,8 +237,8 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         RestUri restUriPlatform = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_PLATFORM);
-        RestResource<PlatformDTO> restResource = new RestResource<>(restUriPlatform);
-        PayloadEnvelope<PlatformDTO> resultEnvelope = restResource
+        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriPlatform);
+        PayloadEnvelope<PlatformDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(PlatformDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -254,8 +254,8 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
         restUriPlatformForGetById.setParamValue("id", platformId.toString());
-        RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
-        PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = restResourceForGetById
+        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriPlatformForGetById);
+        PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                 .get(PlatformDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -290,8 +290,8 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         RestUri restUriPlatform = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_PLATFORM);
-        RestResource<PlatformDTO> restResource = new RestResource<>(restUriPlatform);
-        PayloadEnvelope<PlatformDTO> resultEnvelope = restResource
+        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriPlatform);
+        PayloadEnvelope<PlatformDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(PlatformDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -322,8 +322,8 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
             RestUri restUriPlatformForGetById = ClientContext.getInstance(null, false)
                     .getUriFactory()
                     .RestUriFromUri(currentLink.getHref());
-            RestResource<PlatformDTO> restResourceForGetById = new RestResource<>(restUriPlatformForGetById);
-            PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = restResourceForGetById
+            GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriPlatformForGetById);
+            PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                     .get(PlatformDTO.class);
             Assert.assertNotNull(resultEnvelopeForGetByID);
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));

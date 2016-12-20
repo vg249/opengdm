@@ -6,7 +6,7 @@ import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
-import org.gobiiproject.gobiiclient.core.gobii.PayloadResponse;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiPayloadResponse;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
@@ -191,9 +191,9 @@ public final class ClientContext {
 
         RestUri configSettingsUri = new UriFactory(null).RestUriFromUri(settingsPath);
         HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri, returnVal.userToken);
-        PayloadResponse<ConfigSettingsDTO> payloadResponse = new PayloadResponse<>(configSettingsUri);
+        GobiiPayloadResponse<ConfigSettingsDTO> gobiiPayloadResponse = new GobiiPayloadResponse<>(configSettingsUri);
 
-        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = payloadResponse.getPayloadFromResponse(ConfigSettingsDTO.class,
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiPayloadResponse.getPayloadFromResponse(ConfigSettingsDTO.class,
                 RestMethodTypes.GET,
                 HttpStatus.SC_OK,
                 httpMethodResult);

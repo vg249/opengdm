@@ -10,7 +10,7 @@ import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.RestResource;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestConfiguration;
@@ -52,8 +52,8 @@ public class DtoRequestConfigSettingsPropsTest {
         RestUri confgSettingsUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_CONFIGSETTINGS);
-        RestResource<ConfigSettingsDTO> restResource = new RestResource<>(confgSettingsUri);
-        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = restResource
+        GobiiEnvelopeRestResource<ConfigSettingsDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(confgSettingsUri);
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(ConfigSettingsDTO.class);
 
         TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader());

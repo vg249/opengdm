@@ -11,10 +11,10 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 /**
  * Created by Phil on 10/19/2016.
  */
-public class PayloadResponse<T> {
+public class GobiiPayloadResponse<T> {
 
     private RestUri restUri;
-    public PayloadResponse(RestUri restUri) {
+    public GobiiPayloadResponse(RestUri restUri) {
         this.restUri = restUri;
     }
 

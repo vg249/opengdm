@@ -9,7 +9,7 @@ import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiRespo
 import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseObservationVariablesMaster;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
-import org.gobiiproject.gobiiclient.core.brapi.BrapiResourceDerived;
+import org.gobiiproject.gobiiclient.core.brapi.BrapiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -44,14 +44,14 @@ public class BrapiTestObservationVariables {
                         ServiceRequestId.URL_OBSERVATION_VARIABLES);
         restUriObservationVariables.setParamValue("id", "1");
 
-        BrapiResourceDerived<ObjectUtils.Null, BrapiResponseObservationVariablesMaster, BrapiResponseObservationVariablesDetail> brapiResourceDerived =
-                new BrapiResourceDerived<>(restUriObservationVariables,
+        BrapiEnvelopeRestResource<ObjectUtils.Null, BrapiResponseObservationVariablesMaster, BrapiResponseObservationVariablesDetail> brapiEnvelopeRestResource =
+                new BrapiEnvelopeRestResource<>(restUriObservationVariables,
                         ObjectUtils.Null.class,
                         BrapiResponseObservationVariablesMaster.class,
                         BrapiResponseObservationVariablesDetail.class);
 
         BrapiResponseEnvelopeMaster<BrapiResponseObservationVariablesMaster> brapiResponseEnvelopeMaster =
-                brapiResourceDerived.getFromMasterResource();
+                brapiEnvelopeRestResource.getFromMasterResource();
 
         BrapiTestResponseStructure.validatateBrapiResponseStructure(brapiResponseEnvelopeMaster.getBrapiMetaData());
 

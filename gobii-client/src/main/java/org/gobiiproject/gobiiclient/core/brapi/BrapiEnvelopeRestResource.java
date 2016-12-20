@@ -12,7 +12,7 @@ import org.gobiiproject.gobiiclient.core.common.RestResourceUtils;
 /**
  * Created by Phil on 12/16/2016.
  */
-public class BrapiResourceDerived<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> {
+public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> {
 
     private RestUri restUri;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -22,10 +22,10 @@ public class BrapiResourceDerived<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, T_RES
     private Class<T_RESPONSE_TYPE_MASTER> brapiResponseTypeMaster;
     private Class<T_RESPONSE_TYPE_DETAIL> brapiResponseTypeDetail;
 
-    public BrapiResourceDerived(RestUri restUri,
-                                Class<T_POST_OBJ_TYPE> brapiPostObjType,
-                                Class<T_RESPONSE_TYPE_MASTER> brapiResponseTypeMaster,
-                                Class<T_RESPONSE_TYPE_DETAIL> brapiResponseTypeDetail) {
+    public BrapiEnvelopeRestResource(RestUri restUri,
+                                     Class<T_POST_OBJ_TYPE> brapiPostObjType,
+                                     Class<T_RESPONSE_TYPE_MASTER> brapiResponseTypeMaster,
+                                     Class<T_RESPONSE_TYPE_DETAIL> brapiResponseTypeDetail) {
 
         this.restUri = restUri;
         this.brapiPostObjType = brapiPostObjType;

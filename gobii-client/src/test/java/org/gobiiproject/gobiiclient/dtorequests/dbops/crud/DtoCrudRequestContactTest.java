@@ -11,7 +11,7 @@ import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.RestResource;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoRestRequestUtils;
@@ -56,8 +56,8 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
         restUriContact.setParamValue("id", "1");
-        RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<ContactDTO> resultEnvelope = restResource
+        GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
+        PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(ContactDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -128,12 +128,12 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         ContactDTO newContactDto = TestDtoFactory
                 .makePopulatedContactDTO(GobiiProcessType.CREATE, UUID.randomUUID().toString());
 
-        RestResource<ContactDTO> restResourceContacts = new RestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceContacts = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_CONTACTS));
 
 
-        PayloadEnvelope<ContactDTO> resultEnvelopeNewContact = restResourceContacts.post(ContactDTO.class,
+        PayloadEnvelope<ContactDTO> resultEnvelopeNewContact = gobiiEnvelopeRestResourceContacts.post(ContactDTO.class,
                 new PayloadEnvelope<>(newContactDto, GobiiProcessType.CREATE));
         //PayloadEnvelope<ContactDTO> resultEnvelopeNewContact = dtoRequestContact.process(new PayloadEnvelope<>(newContactDto, GobiiProcessType.CREATE));
 
@@ -147,8 +147,8 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
         restUriContact.setParamValue("id", newContactDTOResponse.getContactId().toString());
-        RestResource<ContactDTO> restResourceContactById = new RestResource<>(restUriContact);
-        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = restResourceContactById
+        GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceContactById = new GobiiEnvelopeRestResource<>(restUriContact);
+        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = gobiiEnvelopeRestResourceContactById
                 .get(ContactDTO.class);
 
         Assert.assertNotEquals(null, contactDTOResponseEnvelope);
@@ -167,8 +167,8 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
 
         //PayloadEnvelope<ContactDTO> contactDTOResponseEnvelopeUpdate = dtoRequestContact.process();
 
-        restResourceContactById.setParamValue("id", contactDTOReceived.getContactId().toString());
-        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelopeUpdate = restResourceContactById.put(ContactDTO.class,
+        gobiiEnvelopeRestResourceContactById.setParamValue("id", contactDTOReceived.getContactId().toString());
+        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelopeUpdate = gobiiEnvelopeRestResourceContactById.put(ContactDTO.class,
                 new PayloadEnvelope<>(contactDTOReceived, GobiiProcessType.UPDATE));
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOResponseEnvelopeUpdate.getHeader()));
@@ -178,8 +178,8 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
         restUriContactReRetrive.setParamValue("id", contactDTOReceived.getContactId().toString());
-        RestResource<ContactDTO> restResourceReRetrieve = new RestResource<>(restUriContactReRetrive);
-        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelopeReRetrieved = restResourceReRetrieve
+        GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceReRetrieve = new GobiiEnvelopeRestResource<>(restUriContactReRetrive);
+        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelopeReRetrieved = gobiiEnvelopeRestResourceReRetrieve
                 .get(ContactDTO.class);
 
 
@@ -199,8 +199,8 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
         restUriContact.setParamValue("id", "1");
-        RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<ContactDTO> resultEnvelope = restResource
+        GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
+        PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(ContactDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -217,8 +217,8 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .contactsByQueryParams();
         restUriContact.setParamValue("email", "user.gobii@gobii.com");
-        RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<ContactDTO> resultEnvelope = restResource
+        GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
+        PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(ContactDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -256,10 +256,10 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
 
         //Set up the POST request to create the contact
         PayloadEnvelope<ContactDTO> payloadEnvelope = new PayloadEnvelope<>(newContactDTO, GobiiProcessType.CREATE);
-        RestResource<ContactDTO> restResource = new RestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_CONTACTS));
-        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = restResource.post(ContactDTO.class,
+        PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = gobiiEnvelopeRestResource.post(ContactDTO.class,
                 payloadEnvelope);
 
 
@@ -284,8 +284,8 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .RestUriFromUri(linkForCreatedItem.getHref());
-        RestResource<ContactDTO> restResourceForReRetrieve = new RestResource<>(restUriContact);
-        PayloadEnvelope<ContactDTO> reRetrieveResultEnvelope = restResourceForReRetrieve
+        GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceForReRetrieve = new GobiiEnvelopeRestResource<>(restUriContact);
+        PayloadEnvelope<ContactDTO> reRetrieveResultEnvelope = gobiiEnvelopeRestResourceForReRetrieve
                 .get(ContactDTO.class);
         Assert.assertNotNull(reRetrieveResultEnvelope);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(reRetrieveResultEnvelope.getHeader()));
@@ -304,8 +304,8 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_CONTACTS);
-        RestResource<ContactDTO> restResource = new RestResource<>(restUriContact);
-        PayloadEnvelope<ContactDTO> resultEnvelope = restResource
+        GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
+        PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(ContactDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -336,8 +336,8 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
             RestUri restUriContactForGetById = ClientContext.getInstance(null, false)
                     .getUriFactory()
                     .RestUriFromUri(currentLink.getHref());
-            RestResource<ContactDTO> restResourceForGetById = new RestResource<>(restUriContactForGetById);
-            PayloadEnvelope<ContactDTO> resultEnvelopeForGetByID = restResourceForGetById
+            GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriContactForGetById);
+            PayloadEnvelope<ContactDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                     .get(ContactDTO.class);
             Assert.assertNotNull(resultEnvelopeForGetByID);
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));

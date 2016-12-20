@@ -10,7 +10,7 @@ import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.RestResource;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestMarkerGroup;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
@@ -55,8 +55,8 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .markerssByQueryParams();
         restUriMarkerByName.setParamValue("name", markerName);
-        RestResource<MarkerDTO> restResourceForProjects = new RestResource<>(restUriMarkerByName);
-        PayloadEnvelope<MarkerDTO> resultEnvelope = restResourceForProjects
+        GobiiEnvelopeRestResource<MarkerDTO> gobiiEnvelopeRestResourceForProjects = new GobiiEnvelopeRestResource<>(restUriMarkerByName);
+        PayloadEnvelope<MarkerDTO> resultEnvelope = gobiiEnvelopeRestResourceForProjects
                 .get(MarkerDTO.class);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
@@ -68,8 +68,8 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
             RestUri markerCollUri = ClientContext.getInstance(null, false)
                     .getUriFactory()
                     .resourceColl(ServiceRequestId.URL_MARKERS);
-            RestResource<MarkerDTO> restResourceForMarkerPost = new RestResource<>(markerCollUri);
-            resultEnvelope = restResourceForMarkerPost
+            GobiiEnvelopeRestResource<MarkerDTO> gobiiEnvelopeRestResourceForMarkerPost = new GobiiEnvelopeRestResource<>(markerCollUri);
+            resultEnvelope = gobiiEnvelopeRestResourceForMarkerPost
                     .post(MarkerDTO.class, new PayloadEnvelope<>(markerDTORequest, GobiiProcessType.CREATE));
 
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));

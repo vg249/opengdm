@@ -10,7 +10,7 @@ import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.RestResource;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestConfiguration;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
@@ -50,8 +50,8 @@ public class DtoRequestLoaderFilePreviewTest {
                 .resourceByUriIdParam(ServiceRequestId.URL_FILE_LOAD);
 
         previewTestUri.setParamValue("id", TestDtoFactory.getFolderNameWithTimestamp("Loader File Preview Test"));
-        RestResource<LoaderFilePreviewDTO> restResource = new RestResource<>(previewTestUri);
-        PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelope = restResource.put(LoaderFilePreviewDTO.class,
+        GobiiEnvelopeRestResource<LoaderFilePreviewDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(previewTestUri);
+        PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelope = gobiiEnvelopeRestResource.put(LoaderFilePreviewDTO.class,
                 new PayloadEnvelope<>(loaderFilePreviewDTO, GobiiProcessType.CREATE));
 
 
@@ -72,8 +72,8 @@ public class DtoRequestLoaderFilePreviewTest {
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_FILE_LOAD);
         previewTestUriCreate.setParamValue("id", TestDtoFactory.getFolderNameWithTimestamp("Loader File Preview Test"));
-        RestResource<LoaderFilePreviewDTO> restResourceCreate = new RestResource<>(previewTestUriCreate);
-        PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelopeCreate = restResourceCreate.put(LoaderFilePreviewDTO.class,
+        GobiiEnvelopeRestResource<LoaderFilePreviewDTO> gobiiEnvelopeRestResourceCreate = new GobiiEnvelopeRestResource<>(previewTestUriCreate);
+        PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelopeCreate = gobiiEnvelopeRestResourceCreate.put(LoaderFilePreviewDTO.class,
                 new PayloadEnvelope<>(loaderFileCreateDTO, GobiiProcessType.CREATE));
 
 
@@ -102,8 +102,8 @@ public class DtoRequestLoaderFilePreviewTest {
         previewTestUri.setParamValue("directoryName", dst.getName());
         previewTestUri.setParamValue("fileFormat", "txt");
 
-        RestResource<LoaderFilePreviewDTO> restResource = new RestResource<>(previewTestUri);
-        PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelope = restResource.get(LoaderFilePreviewDTO.class);
+        GobiiEnvelopeRestResource<LoaderFilePreviewDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(previewTestUri);
+        PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelope = gobiiEnvelopeRestResource.get(LoaderFilePreviewDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertTrue("No file preview DTO received", resultEnvelopeCreate.getPayload().getData().size() > 0);

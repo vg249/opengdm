@@ -57,7 +57,52 @@ import java.util.List;
 
 
 /**
- * Created by MrPhil on 7/6/2015.
+ * This controller is only for BRAPI v1. compliant calls. It consumes the gobii-brapi module.
+ *
+ * BRAPI responses all containa a "metadata" and a "result" key. The "result" key's value can take
+ * three forms:
+ * 1) A "data" property that is an array of items of the same type (e.g., /studies-search)
+ * 2) A set of arbitrary properties (i.e., a specific type in Java) (e.g., /studies/{studyDbId}/germplasm)
+ * 3) A set of arbitrary properties and a "data" property (e.g., /studies/{studyDbId}/observationVariables)
+ *
+ * Type 3) is for a master-detail scenario: you have a master record that is related to one or more detail
+ * records. Type 2) is just the master. Type 3) is just the detail records.
+ *
+ * The classes that support this API are as follows:
+ *
+ * BrapiResponseEnvelopeList: This class is used for type 1). It encapsulates "metadata" and is
+ * type-parmaeterized for type type of the items contained in the list. The class for which
+ * it is type-parameterized is an arbitrary pojo.
+ *
+ * BrapiResponseEnvelopeMaster: This class is used for type 2) and 3). It is type-parameterized
+ * for an arbitrary pojo. The pojo may (as in the case of BrapiResponseObservationVariablesMaster)
+ * extend BrapiResponseEnvelopeList. In that case, it is of type 3). If it does not,
+ * it is of type 2.
+ *
+ * In the calls namespace of gobii-brapi is organized as the brapi API is organized.
+ * Each call contains several sorts of classes:
+ * ---- POJOs named BrapiResponse<CallName>: these are the arbitrary pojos that
+ *      type-parameterize BrapiResponseEnvelopeList and BrapiResponseEnvelopeMaster
+ * ---- POJOs anemed BrapiRequest<CallName>: these are POST/PUT bodies for which the
+ *      relevant methods in this class have @RequestBody parameters (e.g., BrapiRequestStudiesSearch)
+ * ---- POJOs named BrapiResponseMap<CallName>: Right now these clases crate dummy responses; the real
+ *      implementations of these classes will consume classes from the gobii-domain project (i.e., the Service
+ *      classes): they will get data from gobii in terms of gobii DTOs and convert the DTOs in to the
+ *      BRAPI POJOs
+ *
+ * Note that this controller receives and sends plain String json data. This approach is different
+ * from the gobii api. The BrapiResponseEnvelopeList and BrapiResponseEnvelopeMaster are serialzied to
+ * json and sent over the wire in this way rather than letting the Jackson embedded through Spring do
+ * the job automatically. This approach is more traditionally the web service way of doing things.
+ *
+ * The current state of this controller and the supporting classes in gobii-brapi is a proof-of-concept.
+ * There is more work to be done. For example, the two types of BrapiReseponseEnvelope* should extend a
+ * class that has "metadata" as a property. I'm also puzzled by the fact that in
+ * BrapiEnvelopeRestResource.getMasterObjFromResult() we have to pull out the json segments separately for
+ * de-serialization whilst in getTypedListObjFromResult() the derserialization just works autoamtically. However,
+ * what we have here is the most systematic way I could find to deal with with BRAPI's document oriented
+ * response structure in a way that is systematic for a strongly typed web framework in Java.
+ *
  */
 @Scope(value = "request")
 @Controller
@@ -190,20 +235,6 @@ public class BRAPIIControllerV1 {
             BrapiListResult<BrapiResponseStudiesSearchItem> brapiListResult = (new BrapiResponseMapStudiesSearch()).getBrapiResponseStudySearchItems(brapiRequestStudiesSearch);
 
             brapiResponseEnvelopeList.setData(brapiListResult);
-            //returnVal = (new ObjectMapper()).writeValueAsString(brapiListResult);
-////            BrapiResponseMapStudiesSearch brapiResponseMapStudiesSearch = new BrapiResponseMapStudiesSearch();
-////            List<BrapiResponseStudiesSearchItem> searchItems = brapiResponseMapStudiesSearch.getBrapiJsonResponseStudySearchItems(brapiRequestStudiesSearch);
-//
-//
-//            BrapiResponseWriterJson<BrapiResponseStudiesSearchItem, ObjectUtils.Null> brapiResponseWriterJson =
-//                    new BrapiResponseWriterJson<>(BrapiResponseStudiesSearchItem.class, ObjectUtils.Null.class);
-//
-//            returnVal = brapiResponseWriterJson.makeBrapiResponse(searchItems,
-//                    null,
-//                    new Pagination(searchItems.size(), 1, 1, 0),
-//                    null,
-//                    null);
-
 
         } catch (Exception e) {
 
