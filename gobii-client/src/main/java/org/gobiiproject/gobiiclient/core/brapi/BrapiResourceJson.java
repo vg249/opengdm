@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.core.restmethods;
+package org.gobiiproject.gobiiclient.core.brapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
@@ -7,7 +7,8 @@ import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiibrapi.core.json.BrapiJsonKeys;
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiibrapi.core.json.BrapiResponseJson;
-import org.gobiiproject.gobiiclient.core.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.common.RestResourceUtils;
 
 import java.util.List;
 

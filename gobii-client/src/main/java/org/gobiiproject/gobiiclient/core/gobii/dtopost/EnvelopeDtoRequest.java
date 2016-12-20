@@ -1,7 +1,7 @@
-package org.gobiiproject.gobiiclient.core.restmethods.dtopost;
+package org.gobiiproject.gobiiclient.core.gobii.dtopost;
 
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
 
 import org.gobiiproject.gobiiapimodel.types.ControllerType;

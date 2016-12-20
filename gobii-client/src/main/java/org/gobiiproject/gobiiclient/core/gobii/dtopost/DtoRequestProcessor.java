@@ -1,9 +1,9 @@
-package org.gobiiproject.gobiiclient.core.restmethods.dtopost;
+package org.gobiiproject.gobiiclient.core.gobii.dtopost;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.HttpCore;
-import org.gobiiproject.gobiiclient.core.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.common.HttpCore;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;

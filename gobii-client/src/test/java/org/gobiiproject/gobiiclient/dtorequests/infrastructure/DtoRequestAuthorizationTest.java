@@ -8,7 +8,7 @@ import org.apache.http.Header;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 //import org.gobiiproject.gobiimodel.dto.response.HeaderAuth;

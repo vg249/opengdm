@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.core;
+package org.gobiiproject.gobiiclient.core.common;
 
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -6,7 +6,7 @@ import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
-import org.gobiiproject.gobiiclient.core.restmethods.PayloadResponse;
+import org.gobiiproject.gobiiclient.core.gobii.PayloadResponse;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;

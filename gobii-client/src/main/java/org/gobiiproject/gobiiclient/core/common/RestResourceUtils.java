@@ -1,7 +1,5 @@
-package org.gobiiproject.gobiiclient.core.restmethods;
+package org.gobiiproject.gobiiclient.core.common;
 
-import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.HttpCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

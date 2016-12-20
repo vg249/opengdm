@@ -5,7 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests;
 
-import org.gobiiproject.gobiiclient.core.restmethods.dtopost.DtoRequestProcessor;
+import org.gobiiproject.gobiiclient.core.gobii.dtopost.DtoRequestProcessor;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;

@@ -3,16 +3,10 @@ package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.RestResource;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DTOBase;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.junit.Assert;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**

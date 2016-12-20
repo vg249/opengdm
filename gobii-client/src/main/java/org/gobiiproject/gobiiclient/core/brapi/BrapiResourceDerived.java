@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.core.restmethods;
+package org.gobiiproject.gobiiclient.core.brapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
@@ -6,7 +6,8 @@ import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeList;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.json.BrapiJsonKeys;
-import org.gobiiproject.gobiiclient.core.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.common.RestResourceUtils;
 
 /**
  * Created by Phil on 12/16/2016.
