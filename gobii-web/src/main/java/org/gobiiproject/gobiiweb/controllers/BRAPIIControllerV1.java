@@ -266,33 +266,35 @@ public class BRAPIIControllerV1 {
     // *********************************************
     @RequestMapping(value = "/studies/{studyDbId}/observationVariables",
             method = RequestMethod.GET,
-            params = {"pageSize", "page"},
+//            params = {"pageSize", "page"},
             produces = "application/json")
     @ResponseBody
     public String getObservationVariables(HttpServletRequest request,
                                           HttpServletResponse response,
                                           @PathVariable Integer studyDbId) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String returnVal = null;
+
+        BrapiResponseEnvelopeMaster<BrapiResponseObservationVariablesMaster> responseEnvelope
+                = new BrapiResponseEnvelopeMaster<>(BrapiResponseObservationVariablesMaster.class);
+
+        String returnVal;
 
         try {
 
             BrapiResponseMapObservationVariables brapiResponseMapObservationVariables = new BrapiResponseMapObservationVariables();
 
-            // extends BrapiMetaData, no list items
             BrapiResponseObservationVariablesMaster brapiResponseObservationVariablesMaster = brapiResponseMapObservationVariables.gerObservationVariablesByStudyId(studyDbId);
 
-            returnVal = objectMapper.writeValueAsString(brapiResponseObservationVariablesMaster);
+            responseEnvelope.setResult(brapiResponseObservationVariablesMaster);
 
         } catch (Exception e) {
 
-//            BrapiListResult<ObjectUtils.Null> emptyResponse = new BrapiListResult<>(ObjectUtils.Null.class);
-//            Map<String, String> statusMap = new HashMap<>();
-//            statusMap.put("exception", e.getMessage());
-//            emptyResponse.getStatus().add(statusMap);
-//            returnVal = objectMapper.writeValueAsString(emptyResponse);
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            responseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
 
         }
+
+        returnVal = (new ObjectMapper()).writeValueAsString(responseEnvelope);
 
         return returnVal;
     }

@@ -17,7 +17,6 @@ public class BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> {
         this.brapiResponseTypeMaster = brapiResponseTypeMaster;
     }
 
-
     private BrapiMetaData brapiMetaData = new BrapiMetaData();
 
     private T_RESPONSE_TYPE_MASTER result;

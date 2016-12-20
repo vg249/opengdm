@@ -159,6 +159,10 @@ public class ResourceBuilder {
                 returnVal = "germplasm";
                 break;
 
+            case URL_OBSERVATION_VARIABLES:
+                returnVal = "observationVariables";
+                break;
+
             default:
                 throw new Exception("Unknown request id : " + serviceRequestId.toString());
         }

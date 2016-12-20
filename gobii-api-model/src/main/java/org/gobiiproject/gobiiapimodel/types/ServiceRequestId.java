@@ -36,5 +36,6 @@ public enum ServiceRequestId {
     URL_CALLS,
     URL_STUDIES_SEARCH,
     URL_STUDIES,
-    URL_GERMPLASM
+    URL_GERMPLASM,
+    URL_OBSERVATION_VARIABLES
 }
