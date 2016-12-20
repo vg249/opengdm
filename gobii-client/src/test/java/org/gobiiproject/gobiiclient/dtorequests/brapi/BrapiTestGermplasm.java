@@ -1,0 +1,69 @@
+package org.gobiiproject.gobiiclient.dtorequests.brapi;
+
+
+import org.apache.commons.lang.ObjectUtils;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseGermplasmSearch;
+import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
+import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
+import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeList;
+import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMaster;
+import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.restmethods.BrapiResourceDerived;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+/**
+ * Created by Phil on 12/15/2016.
+ */
+public class BrapiTestGermplasm {
+
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.authenticate());
+
+    }
+
+    @AfterClass
+    public static void tearDownUpClass() throws Exception {
+        Assert.assertTrue(Authenticator.deAuthenticate());
+    }
+
+
+    @Test
+    public void getGermplasm() throws Exception {
+
+
+        RestUri restUriGermplasm = ClientContext.getInstance(null, false)
+                .getUriFactory(ControllerType.BRAPI)
+                .childResourceByUriIdParam(ServiceRequestId.URL_STUDIES,
+                        ServiceRequestId.URL_GERMPLASM);
+        restUriGermplasm.setParamValue("id", "1");
+
+        BrapiResourceDerived<ObjectUtils.Null, BrapiResponseGermplasmSearch, ObjectUtils.Null> brapiResourceDerived =
+                new BrapiResourceDerived<>(restUriGermplasm,
+                        ObjectUtils.Null.class,
+                        BrapiResponseGermplasmSearch.class,
+                        ObjectUtils.Null.class);
+
+        BrapiResponseEnvelopeMaster<BrapiResponseGermplasmSearch> brapiResponseEnvelopeMaster = brapiResourceDerived.getFromMasterResource();
+
+        Assert.assertNotNull(brapiResponseEnvelopeMaster.getBrapiMetaData());
+        Assert.assertNotNull(brapiResponseEnvelopeMaster.getBrapiMetaData().getDatafiles());
+        Assert.assertNotNull(brapiResponseEnvelopeMaster.getBrapiMetaData().getPagination());
+        Assert.assertNotNull(brapiResponseEnvelopeMaster.getBrapiMetaData().getStatus());
+
+        BrapiResponseGermplasmSearch brapiRequestStudiesSearch = brapiResponseEnvelopeMaster.getResult();
+
+        Assert.assertNotNull(brapiRequestStudiesSearch.getGermplasmDbId());
+        Assert.assertNotNull(brapiRequestStudiesSearch.getGermplasmName());
+        Assert.assertTrue(brapiRequestStudiesSearch.getDonors().size() > 0);
+
+    }
+}

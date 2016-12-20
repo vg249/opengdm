@@ -1,18 +1,17 @@
 package org.gobiiproject.gobiiclient.core.restmethods;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonArray;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiibrapi.core.derived.BrapiListResult;
-import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelope;
+import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
+import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeList;
+import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMaster;
+import org.gobiiproject.gobiibrapi.core.json.BrapiJsonKeys;
 import org.gobiiproject.gobiiclient.core.HttpMethodResult;
-
-import java.util.List;
 
 /**
  * Created by Phil on 12/16/2016.
  */
-public class BrapiResourceDerived<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER,T_RESPONSE_TYPE_DETAIL> {
+public class BrapiResourceDerived<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> {
 
     private RestUri restUri;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -34,11 +33,31 @@ public class BrapiResourceDerived<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER,T_RESP
         this.restResourceUtils = new RestResourceUtils();
     }
 
-    private BrapiResponseEnvelope<T_RESPONSE_TYPE_MASTER,T_RESPONSE_TYPE_DETAIL> getTypedListObjFromResult(HttpMethodResult httpMethodResult) throws Exception {
+    private BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> getTypedListObjFromResult(HttpMethodResult httpMethodResult) throws Exception {
 
-        BrapiResponseEnvelope<T_RESPONSE_TYPE_MASTER,T_RESPONSE_TYPE_DETAIL> returnVal;
+        BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> returnVal;
         String responseAsString = httpMethodResult.getPayLoad().toString();
-        returnVal = objectMapper.readValue(responseAsString,BrapiResponseEnvelope.class);
+        returnVal = objectMapper.readValue(responseAsString, BrapiResponseEnvelopeList.class);
+
+        return returnVal;
+    }
+
+    private BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> getMasterObjFromResult(HttpMethodResult httpMethodResult) throws Exception {
+
+        BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> returnVal = new BrapiResponseEnvelopeMaster<>();
+
+
+
+        String metaDataAsString = httpMethodResult.getPayLoad().get(BrapiJsonKeys.METADATA).toString();
+        BrapiMetaData brapiMetaData = objectMapper.readValue(metaDataAsString, BrapiMetaData.class);
+        returnVal.setBrapiMetaData(brapiMetaData);
+
+        String resultAsString = httpMethodResult.getPayLoad().get(BrapiJsonKeys.RESULT).toString();
+        T_RESPONSE_TYPE_MASTER result = objectMapper.readValue(resultAsString, this.brapiResponseTypeMaster);
+        returnVal.setResult(result);
+
+
+        //returnVal = objectMapper.readValue(responseAsString, BrapiResponseEnvelopeMaster.class);
 
         return returnVal;
     }
@@ -77,10 +96,10 @@ public class BrapiResourceDerived<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER,T_RESP
 //
 //    } //
 
-    public BrapiResponseEnvelope<T_RESPONSE_TYPE_MASTER,T_RESPONSE_TYPE_DETAIL> postToListResource(T_POST_OBJ_TYPE bodyObj) throws Exception {
+    public BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> postToListResource(T_POST_OBJ_TYPE bodyObj) throws Exception {
 
 
-        BrapiResponseEnvelope<T_RESPONSE_TYPE_MASTER,T_RESPONSE_TYPE_DETAIL> returnVal;
+        BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> returnVal;
 
         String bodyAsString = objectMapper.writeValueAsString(bodyObj);
 
@@ -96,5 +115,19 @@ public class BrapiResourceDerived<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER,T_RESP
         return returnVal;
 
     } //
+
+    public BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> getFromMasterResource() throws Exception {
+
+        BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> returnVal;
+
+        HttpMethodResult httpMethodResult =
+                this.restResourceUtils.getHttp()
+                        .get(this.restUri,
+                                restResourceUtils.getClientContext().getUserToken());
+
+        returnVal = this.getMasterObjFromResult(httpMethodResult);
+
+        return returnVal;
+    }
 
 }

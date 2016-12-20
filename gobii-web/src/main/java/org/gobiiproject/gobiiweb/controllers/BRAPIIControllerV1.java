@@ -38,9 +38,9 @@ import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesS
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiListResult;
-import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelope;
+import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeList;
+import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.json.BrapiResponseWriterJson;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -48,13 +48,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -179,8 +178,8 @@ public class BRAPIIControllerV1 {
 
         String returnVal;
 
-        BrapiResponseEnvelope<ObjectUtils.Null, BrapiResponseStudiesSearchItem> brapiResponseEnvelope =
-                new BrapiResponseEnvelope<>(ObjectUtils.Null.class, BrapiResponseStudiesSearchItem.class);
+        BrapiResponseEnvelopeList<ObjectUtils.Null, BrapiResponseStudiesSearchItem> brapiResponseEnvelopeList =
+                new BrapiResponseEnvelopeList<>(ObjectUtils.Null.class, BrapiResponseStudiesSearchItem.class);
 
         try {
 
@@ -189,7 +188,7 @@ public class BRAPIIControllerV1 {
 
             BrapiListResult<BrapiResponseStudiesSearchItem> brapiListResult = (new BrapiResponseMapStudiesSearch()).getBrapiResponseStudySearchItems(brapiRequestStudiesSearch);
 
-            brapiResponseEnvelope.setData(brapiListResult);
+            brapiResponseEnvelopeList.setData(brapiListResult);
             //returnVal = (new ObjectMapper()).writeValueAsString(brapiListResult);
 ////            BrapiResponseMapStudiesSearch brapiResponseMapStudiesSearch = new BrapiResponseMapStudiesSearch();
 ////            List<BrapiResponseStudiesSearchItem> searchItems = brapiResponseMapStudiesSearch.getBrapiJsonResponseStudySearchItems(brapiRequestStudiesSearch);
@@ -209,10 +208,10 @@ public class BRAPIIControllerV1 {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+            brapiResponseEnvelopeList.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
-        returnVal = (new ObjectMapper()).writeValueAsString(brapiResponseEnvelope);
+        returnVal = (new ObjectMapper()).writeValueAsString(brapiResponseEnvelopeList);
         return returnVal;
     }
 
@@ -222,14 +221,22 @@ public class BRAPIIControllerV1 {
     // *********************************************
     @RequestMapping(value = "/studies/{studyDbId}/germplasm",
             method = RequestMethod.GET,
-            params = {"pageSize", "page"},
+//            params = {"pageSize", "page"},
             produces = "application/json")
     @ResponseBody
     public String getGermplasm(HttpServletRequest request,
                                HttpServletResponse response,
-                               @PathVariable Integer studyDbId) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String returnVal = null;
+                               @PathVariable Integer studyDbId
+//            ,
+//                               @RequestParam(value = "pageSize",required = false) Integer pageSize,
+//                               @RequestParam(value = "page", required = false) Integer page
+    ) throws Exception {
+
+
+        BrapiResponseEnvelopeMaster<BrapiResponseGermplasmSearch> responseEnvelope
+                = new BrapiResponseEnvelopeMaster<>(BrapiResponseGermplasmSearch.class);
+
+        String returnVal;
 
         try {
 
@@ -238,18 +245,18 @@ public class BRAPIIControllerV1 {
             // extends BrapiMetaData, no list items
             BrapiResponseGermplasmSearch brapiResponseGermplasmSearch = brapiResponseMapGermplasmSearch.getGermplasmByDbid(studyDbId);
 
-            returnVal = objectMapper.writeValueAsString(brapiResponseGermplasmSearch);
+            responseEnvelope.setResult(brapiResponseGermplasmSearch);
+
 
         } catch (Exception e) {
 
-//            BrapiListResult<ObjectUtils.Null> emptyResponse = new BrapiListResult<>(ObjectUtils.Null.class);
-//            Map<String, String> statusMap = new HashMap<>();
-//            statusMap.put("exception", e.getMessage());
-//            emptyResponse.getStatus().add(statusMap);
-//            returnVal = objectMapper.writeValueAsString(emptyResponse);
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            responseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
 
         }
 
+        returnVal = (new ObjectMapper()).writeValueAsString(responseEnvelope);
         return returnVal;
     }
 

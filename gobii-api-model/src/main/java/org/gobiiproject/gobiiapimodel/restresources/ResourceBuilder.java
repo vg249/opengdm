@@ -156,7 +156,7 @@ public class ResourceBuilder {
                 break;
 
             case URL_GERMPLASM:
-                returnVal = "germplam";
+                returnVal = "germplasm";
                 break;
 
             default:
