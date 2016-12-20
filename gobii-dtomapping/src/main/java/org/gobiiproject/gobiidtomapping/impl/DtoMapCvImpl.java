@@ -77,7 +77,8 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         try {
 
-            Map<String, Object> parameters = ParamExtractor.makeParamVals(cvDTO);
+            returnVal.setEntityStatus(1);
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             Integer cvId = rsCvDao.createCv(parameters);
             returnVal.setCvId(cvId);
 
@@ -96,6 +97,7 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         try {
 
+            returnVal.setEntityStatus(1);
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             rsCvDao.updateCv(parameters);
 
@@ -114,6 +116,7 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         try {
 
+            returnVal.setEntityStatus(0);
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             rsCvDao.deleteCv(parameters);
 
