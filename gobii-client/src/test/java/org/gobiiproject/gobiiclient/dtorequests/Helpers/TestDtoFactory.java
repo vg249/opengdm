@@ -9,14 +9,12 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -249,6 +247,30 @@ public class TestDtoFactory {
         returnVal.setModifiedBy(1);
         returnVal.setModifiedDate(new Date());
         returnVal.setStatusId(1);
+
+        return returnVal;
+
+    }
+
+    public static ProtocolDTO makePopulatedProtocolDTO(GobiiProcessType gobiiProcessType,
+                                                       Integer uniqueStem) throws Exception {
+
+        ProtocolDTO returnVal = new ProtocolDTO();
+
+        Integer platformId = (new GlobalPkColl<DtoCrudRequestPlatformTest>())
+                .getAPkVal(DtoCrudRequestPlatformTest.class,
+                        GobiiEntityNameType.PLATFORMS);
+
+        String uniqueStemString = UUID.randomUUID().toString();
+        returnVal.setName(uniqueStemString + ": protocol");
+        returnVal.setDescription(uniqueStemString + ": dummy description");
+        returnVal.setTypeId(1);
+        returnVal.setCreatedBy(1);
+        returnVal.setCreatedDate(new Date());
+        returnVal.setModifiedBy(1);
+        returnVal.setModifiedDate(new Date());
+        returnVal.setPlatformId(platformId);
+        returnVal.setStatus(1);
 
         return returnVal;
 
