@@ -8,6 +8,7 @@ gobii-model/target
 gobii-api-model/target
 gobii-process/target
 gobii-web/target
+gobii-brapi/target
 /bin/
 
 .settings
