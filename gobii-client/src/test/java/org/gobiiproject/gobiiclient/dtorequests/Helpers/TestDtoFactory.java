@@ -254,6 +254,30 @@ public class TestDtoFactory {
 
     }
 
+    public static ProtocolDTO makePopulatedProtocolDTO(GobiiProcessType gobiiProcessType,
+                                                               Integer uniqueStem) throws Exception {
+
+        ProtocolDTO returnVal = new ProtocolDTO();
+
+        Integer platformId = (new GlobalPkColl<DtoCrudRequestPlatformTest>())
+                .getAPkVal(DtoCrudRequestPlatformTest.class,
+                        GobiiEntityNameType.PLATFORMS);
+
+        String uniqueStemString = UUID.randomUUID().toString();
+        returnVal.setName(uniqueStemString + ": protocol");
+        returnVal.setDescription(uniqueStemString + ": dummy description");
+        returnVal.setTypeId(1);
+        returnVal.setCreatedBy(1);
+        returnVal.setCreatedDate(new Date());
+        returnVal.setModifiedBy(1);
+        returnVal.setModifiedDate(new Date());
+        returnVal.setPlatformId(platformId);
+        returnVal.setStatus(1);
+
+        return returnVal;
+
+    }
+
     public static ManifestDTO makePopulatedManifestDTO(GobiiProcessType gobiiProcessType,
                                                        Integer uniqueStem) {
 
