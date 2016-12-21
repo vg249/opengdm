@@ -1727,7 +1727,42 @@ public class BRAPIController {
 
         return (returnVal);
 
-    }    
+    }
+
+    @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<OrganizationDTO> addVendorToProtocol(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+                                                        @PathVariable Integer protocolId,
+                                                        HttpServletRequest request,
+                                                        HttpServletResponse response) {
+
+        PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
+            OrganizationDTO protocolDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            //ProtocolDTO protocolDTOReplaced = protocolService.replaceProtocol(protocolId, protocolDTOToReplace);
+
+            PayloadWriter<ProtocolDTO> payloadWriter = new PayloadWriter<>(request,
+                    ProtocolDTO.class);
+
+//            payloadWriter.writeSingleItemForDefaultId(returnVal,
+//                    ServiceRequestId.URL_PROTOCOL,
+//                    protocolDTOReplaced);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
     // *********************************************
     // *************************** FILE PREVIEW METHODS
