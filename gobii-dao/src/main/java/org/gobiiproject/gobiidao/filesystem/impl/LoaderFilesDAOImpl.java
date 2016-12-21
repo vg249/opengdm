@@ -42,8 +42,8 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
     }
 
     @Override
-    public LoaderFilePreviewDTO makeDirectory(String directoryPath) throws GobiiDaoException {
-        LoaderFilePreviewDTO returnVal = new LoaderFilePreviewDTO();
+    public void makeDirectory(String directoryPath) throws GobiiDaoException {
+
         if (!doesPathExist(directoryPath)) {
 
             File pathToCreate = new File(directoryPath);
@@ -51,47 +51,17 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
             if (!pathToCreate.mkdirs()) {
                 throw new GobiiDaoException("Unable to create directory " + directoryPath);
             }else{
-                returnVal.setDirectoryName(pathToCreate.getAbsolutePath());
-                returnVal.setId(1);//this is arbitrary for now
                 verifyDirectoryPermissions(directoryPath);
             }
 
         } else {
             throw new GobiiDaoException("The specified path already exists: " + directoryPath);
         }
-        return returnVal;
+
     }
 
     @Override
-    public LoaderFilePreviewDTO getPreview(String directoryPath, String fileFormat) throws GobiiDaoException {
-        LoaderFilePreviewDTO returnVal = new LoaderFilePreviewDTO();
-
-        String extension ="."+fileFormat;
-        File directory = new File(directoryPath);
-        File[] files = directory.listFiles();
-
-
-        if(files.length==0){
-            throw new GobiiDaoException("There are no files in this directory:" + directory.getName());
-        }else {
-            for (File file : files) {
-                if (file.getName().endsWith(extension)) {
-                    if (returnVal.getFileList().isEmpty()) {//if first file in directory, get preview
-                      returnVal.setFilePreview(getFilePreview(file, fileFormat));
-                    }
-                    returnVal.getFileList().add(file.getName());
-                }
-            }
-            if (returnVal.getFileList().isEmpty()) {//if no files are found that matches format
-                throw new GobiiDaoException("There are no files of the specified format in the directory:" + directory.getName());
-            }
-        }
-        returnVal.setDirectoryName(directory.getAbsolutePath());
-        returnVal.setId(1);//this is arbitrary for now
-        return returnVal;
-    }
-
-    private List<List<String>> getFilePreview(File file, String fileFormat) {
+    public List<List<String>> getFilePreview(File file, String fileFormat) {
         List<List<String>> returnVal = new ArrayList<List<String>>();
         Scanner input = new Scanner(System.in);
         try {

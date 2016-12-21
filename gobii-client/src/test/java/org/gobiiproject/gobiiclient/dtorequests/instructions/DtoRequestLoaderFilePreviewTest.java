@@ -49,7 +49,8 @@ public class DtoRequestLoaderFilePreviewTest {
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_FILE_LOAD);
 
-        previewTestUri.setParamValue("id", TestDtoFactory.getFolderNameWithTimestamp("Loader File Preview Test"));
+        String folderName = TestDtoFactory.getFolderNameWithTimestamp("Loader File Preview Test");
+        previewTestUri.setParamValue("id", folderName );
         RestResource<LoaderFilePreviewDTO> restResource = new RestResource<>(previewTestUri);
         PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelope = restResource.put(LoaderFilePreviewDTO.class,
                 new PayloadEnvelope<>(loaderFilePreviewDTO, GobiiProcessType.CREATE));
@@ -60,6 +61,14 @@ public class DtoRequestLoaderFilePreviewTest {
         Assert.assertTrue("No directory name DTO received", resultEnvelope.getPayload().getData().size() > 0);
         LoaderFilePreviewDTO  resultLoaderFilePreviewDTO = resultEnvelope.getPayload().getData().get(0);
         Assert.assertNotNull(resultLoaderFilePreviewDTO.getDirectoryName());
+
+
+
+        PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelopeSecondRequest = restResource.put(LoaderFilePreviewDTO.class,
+                new PayloadEnvelope<>(loaderFilePreviewDTO, GobiiProcessType.CREATE));
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeSecondRequest.getHeader()));
+
 
     }
 

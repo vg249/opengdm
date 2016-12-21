@@ -32,7 +32,16 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
     private LoaderFilesDAO loaderFilesDAO;
 
     public LoaderFilePreviewDTO makeDirectory(String cropType, String directoryName) throws GobiiDaoException {
-        LoaderFilePreviewDTO returnVal = null;
+
+        LoaderFilePreviewDTO returnVal = new LoaderFilePreviewDTO();
+
+        if (LineUtils.isNullOrEmpty(cropType)) {
+            throw new GobiiDaoException("Crop type is required");
+        }
+        if (LineUtils.isNullOrEmpty(directoryName)) {
+            throw new GobiiDaoException("A directory name is required");
+        }
+
         String fileCropDirectory = null;
         ConfigSettings configSettings = new ConfigSettings();
         try {
@@ -41,32 +50,49 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
             throw new GobiiDaoException("could not get processing path because of: " + e.getMessage());
         }
 
+        if (LineUtils.isNullOrEmpty(fileCropDirectory)) {
+            throw new GobiiDaoException("There is no directory defined for this configuraiton item "
+                    + GobiiFileProcessDir.RAW_USER_FILES.toString());
+        }
 
-        if (null != fileCropDirectory) {
-            if (!loaderFilesDAO.doesPathExist(fileCropDirectory)) {
-                loaderFilesDAO.makeDirectory(fileCropDirectory);
-            } else {
-                loaderFilesDAO.verifyDirectoryPermissions(fileCropDirectory);
-            }
+        if (!loaderFilesDAO.doesPathExist(fileCropDirectory)) {
+            loaderFilesDAO.makeDirectory(fileCropDirectory);
+        } else {
+            loaderFilesDAO.verifyDirectoryPermissions(fileCropDirectory);
         }
 
 
-        if (null != directoryName) {
-            String directoryPath = fileCropDirectory+ directoryName;
-            if (!loaderFilesDAO.doesPathExist(directoryPath)) {
-                returnVal = loaderFilesDAO.makeDirectory(directoryPath);
-            } else {
-                loaderFilesDAO.verifyDirectoryPermissions(directoryPath);
-            }
+        String directoryPath = fileCropDirectory + directoryName;
+        if (!loaderFilesDAO.doesPathExist(directoryPath)) {
+            loaderFilesDAO.makeDirectory(directoryPath);
+
+        } else {
+            loaderFilesDAO.verifyDirectoryPermissions(directoryPath);
         }
 
+        returnVal.setDirectoryName(directoryPath);
+        returnVal.setId(1);//this is arbitrary for now
 
         return returnVal;
 
     } // createDirectories()
 
     public LoaderFilePreviewDTO getPreview(String cropType, String directoryName, String fileFormat) throws GobiiDaoException {
-        LoaderFilePreviewDTO returnVal = null;
+
+        LoaderFilePreviewDTO returnVal = new LoaderFilePreviewDTO();
+
+        if (LineUtils.isNullOrEmpty(cropType)) {
+            throw new GobiiDaoException("Crop type is required");
+        }
+
+        if (LineUtils.isNullOrEmpty(directoryName)) {
+            throw new GobiiDaoException("A directory name is required");
+        }
+
+        if (LineUtils.isNullOrEmpty(fileFormat)) {
+            throw new GobiiDaoException("A file format is required");
+        }
+
 
         ConfigSettings configSettings = new ConfigSettings();
         String fileCropDirectory = null;
@@ -76,18 +102,45 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
             throw new GobiiDaoException("could not get processing path because of: " + e.getMessage());
         }
 
-        String directoryPath = fileCropDirectory+ directoryName;
+        if (LineUtils.isNullOrEmpty(fileCropDirectory)) {
+            throw new GobiiDaoException("There is no directory defined for this configuraiton item "
+                    + GobiiFileProcessDir.RAW_USER_FILES.toString());
+        }
+
+        String directoryPath = fileCropDirectory + directoryName;
+
         if (!loaderFilesDAO.doesPathExist(directoryPath)) {
-                throw new GobiiDaoException("The specified directory does not exist: " + directoryPath);
-            }else{
-                returnVal = loaderFilesDAO.getPreview(directoryPath, fileFormat);
+            throw new GobiiDaoException("The specified directory does not exist: " + directoryPath);
+        } else {
+
+//            returnVal = loaderFilesDAO.getPreview(directoryPath, fileFormat);
+
+            String extension ="."+fileFormat;
+            File directory = new File(directoryPath);
+            File[] files = directory.listFiles();
+
+
+            if(files.length==0){
+                throw new GobiiDaoException("There are no files in this directory:" + directory.getName());
+            }else {
+                for (File file : files) {
+                    if (file.getName().endsWith(extension)) {
+                        if (returnVal.getFileList().isEmpty()) {//if first file in directory, get preview
+                            returnVal.setFilePreview(loaderFilesDAO.getFilePreview(file, fileFormat));
+                        }
+                        returnVal.getFileList().add(file.getName());
+                    }
+                }
+                if (returnVal.getFileList().isEmpty()) {//if no files are found that matches format
+                    throw new GobiiDaoException("There are no files of the specified format in the directory:" + directory.getName());
+                }
             }
+            returnVal.setDirectoryName(directory.getAbsolutePath());
+            returnVal.setId(1);//this is arbitrary for now
+        }
         return returnVal;
 
     } // createDirectories()
-
-
-
 
 
 }

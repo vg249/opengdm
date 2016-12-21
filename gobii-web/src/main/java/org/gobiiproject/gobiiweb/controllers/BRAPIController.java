@@ -158,6 +158,7 @@ public class BRAPIController {
             LOGGER.error(e.getMessage());
         }
 
+
         return (returnVal);
 
     }//getPingResponse()
@@ -210,9 +211,12 @@ public class BRAPIController {
                         "Unable to retrieve config settings");
             }
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -248,9 +252,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_CONTACTS,
                     contactDTONew);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -285,6 +292,8 @@ public class BRAPIController {
                     contactDTOReplaced);
 
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -324,6 +333,8 @@ public class BRAPIController {
                         "Unable to retrieve a contact with contactId " + contactId);
             }
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -355,6 +366,8 @@ public class BRAPIController {
                     ServiceRequestId.URL_CONTACTS,
                     platformDTOs);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -390,6 +403,8 @@ public class BRAPIController {
             //contactRequestDTO.setEmail(email);
             //returnVal = contactService.processDml(new PayloadEnvelope<>(contactRequestDTO, GobiiProcessType.READ));
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -426,9 +441,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_CONTACTS,
                     contactDTO);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -505,6 +523,8 @@ public class BRAPIController {
                     dataSetDTOReplaced);
 //
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -537,6 +557,8 @@ public class BRAPIController {
                     ServiceRequestId.URL_DATASETS,
                     dataSetDTOs);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -568,6 +590,8 @@ public class BRAPIController {
                     ServiceRequestId.URL_DATASETS,
                     dataSetDTO);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -644,6 +668,8 @@ public class BRAPIController {
                     loaderInstructionFilesDTO,
                     loaderInstructionFilesDTO.getInstructionFileName());
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -703,8 +729,8 @@ public class BRAPIController {
     @RequestMapping(value = "/instructions/extractor/status/{id}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ExtractorInstructionFilesDTO> getExtractorInstructionStatus(@PathVariable("id") String jobId,
-                                                                                 HttpServletRequest request,
-                                                                                 HttpServletResponse response) {
+                                                                                       HttpServletRequest request,
+                                                                                       HttpServletResponse response) {
 
         PayloadEnvelope<ExtractorInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -743,8 +769,8 @@ public class BRAPIController {
     @RequestMapping(value = "/markers", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<MarkerDTO> createMarker(@RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+                                                   HttpServletRequest request,
+                                                   HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -780,9 +806,9 @@ public class BRAPIController {
     @RequestMapping(value = "/markers/{markerId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<MarkerDTO> replaceMarker(@RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
-                                                      @PathVariable Integer markerId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+                                                    @PathVariable Integer markerId,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
 
@@ -802,6 +828,8 @@ public class BRAPIController {
                     dataSetDTOReplaced);
 //
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -819,7 +847,7 @@ public class BRAPIController {
     @RequestMapping(value = "/markers", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MarkerDTO> getMarkers(HttpServletRequest request,
-                                                   HttpServletResponse response) {
+                                                 HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -834,9 +862,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_MARKERS,
                     markerDTOs);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -850,8 +881,8 @@ public class BRAPIController {
     @RequestMapping(value = "/markers/{markerId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MarkerDTO> getMarkerById(@PathVariable Integer markerId,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -865,9 +896,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_MARKERS,
                     dataSetDTO);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -883,8 +917,8 @@ public class BRAPIController {
             method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MarkerDTO> getMarkerByName(@RequestParam("name") String name,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -898,9 +932,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_MARKERS,
                     markersByName);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -999,9 +1036,12 @@ public class BRAPIController {
                     EntityNameConverter.toServiceRequestId(gobiiEntityNameType),
                     nameIdList);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1038,6 +1078,8 @@ public class BRAPIController {
                     ServiceRequestId.URL_ORGANIZATION,
                     OrganizationDTONew);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -1075,9 +1117,12 @@ public class BRAPIController {
                     organizationDTOReplaced);
 
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1107,9 +1152,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_ORGANIZATION,
                     organizationDTOs);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1139,9 +1187,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_ORGANIZATION,
                     organizationDTO);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1175,9 +1226,12 @@ public class BRAPIController {
                 returnVal.getPayload().getData().add(currentMapsetDTO);
             }
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1213,9 +1267,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_PLATFORM,
                     platformDTONew);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1250,9 +1307,12 @@ public class BRAPIController {
                     platformDTOReplaced);
 
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1282,9 +1342,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_PLATFORM,
                     platformDTOs);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1314,9 +1377,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_PLATFORM,
                     platformDTO);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1393,6 +1459,8 @@ public class BRAPIController {
                     projectDTOReplaced);
 //
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -1425,9 +1493,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_PROJECTS,
                     projectDTOs);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1456,9 +1527,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_PROJECTS,
                     projectDTO);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1534,9 +1608,12 @@ public class BRAPIController {
                     exprimentDTOReplaced);
 
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1566,9 +1643,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_EXPERIMENTS,
                     experimentDTOs);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1597,9 +1677,12 @@ public class BRAPIController {
                     ServiceRequestId.URL_EXPERIMENTS,
                     experimentDTO);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1636,9 +1719,12 @@ public class BRAPIController {
                     loaderFilePreviewDTO
             );
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
@@ -1655,34 +1741,38 @@ public class BRAPIController {
     @ResponseBody
     public PayloadEnvelope<LoaderFilePreviewDTO> getFilePreviewBySearch(@PathVariable("directoryName") String directoryName,
                                                                         @RequestParam(value = "fileFormat", required = false) String fileFormat,
-                                                           HttpServletRequest request,
-                                                           HttpServletResponse response) {
+                                                                        HttpServletRequest request,
+                                                                        HttpServletResponse response) {
 
 
         PayloadEnvelope<LoaderFilePreviewDTO> returnVal = new PayloadEnvelope<>();
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-    LoaderFilePreviewDTO loaderFilePreviewDTO = loaderFilesService.getPreview(cropType, directoryName, fileFormat);
-    PayloadWriter<LoaderFilePreviewDTO> payloadWriter = new PayloadWriter<>(request,
-            LoaderFilePreviewDTO.class);
+            LoaderFilePreviewDTO loaderFilePreviewDTO = loaderFilesService.getPreview(cropType, directoryName, fileFormat);
+            PayloadWriter<LoaderFilePreviewDTO> payloadWriter = new PayloadWriter<>(request,
+                    LoaderFilePreviewDTO.class);
 
-        payloadWriter.writeSingleItemForDefaultId(returnVal,
-        ServiceRequestId.URL_FILE_LOAD,
-        loaderFilePreviewDTO
-        );
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_FILE_LOAD,
+                    loaderFilePreviewDTO
+            );
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
-        returnVal.getHeader().getStatus().addException(e);
+            returnVal.getHeader().getStatus().addException(e);
         }
+
+
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-        response,
-        HttpStatus.CREATED,
-        HttpStatus.INTERNAL_SERVER_ERROR);
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
-        }
+    }
 
 
-        }// BRAPIController
+}// BRAPIController
