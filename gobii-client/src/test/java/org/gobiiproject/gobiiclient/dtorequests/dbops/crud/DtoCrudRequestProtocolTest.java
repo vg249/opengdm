@@ -25,7 +25,6 @@ import java.util.UUID;
  * Created by VCalaminos on 2016-12-14.
  */
 
-@Ignore
 public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
 
     @BeforeClass
