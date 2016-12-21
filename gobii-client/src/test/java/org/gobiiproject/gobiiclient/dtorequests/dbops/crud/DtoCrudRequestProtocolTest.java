@@ -14,6 +14,7 @@ import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ import java.util.UUID;
 /**
  * Created by VCalaminos on 2016-12-14.
  */
+
+@Ignore
 public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
 
     @BeforeClass
