@@ -4,15 +4,19 @@ import org.gobiiproject.gobiidao.resultset.access.RsProtocolDao;
 import org.gobiiproject.gobiidao.resultset.access.RsVendorProtocolDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
+import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
+import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.DtoMapProtocol;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.container.ProtocolDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 /**
  * Created by VCalaminos on 2016-12-14.
@@ -26,6 +30,29 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
     @Autowired
     private RsVendorProtocolDao rsVendorProtocolDao;
+
+    @Autowired
+    private DtoListQueryColl dtoListQueryColl;
+
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ProtocolDTO> getProtocols() throws GobiiDtoMappingException {
+
+        List<ProtocolDTO> returnVal = new ArrayList<>();
+
+        try {
+
+            returnVal = (List<ProtocolDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_PROTOCOL_ALL,null);
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
+
 
     @Override
     public ProtocolDTO createProtocol(ProtocolDTO protocolDTO) throws GobiiDtoMappingException {

@@ -13,7 +13,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.container.ProtocolDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
@@ -688,8 +688,8 @@ public class BRAPIController {
     @RequestMapping(value = "/instructions/extractor/status/{id}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ExtractorInstructionFilesDTO> getExtractorInstructionStatus(@PathVariable("id") String jobId,
-                                                                                 HttpServletRequest request,
-                                                                                 HttpServletResponse response) {
+                                                                                       HttpServletRequest request,
+                                                                                       HttpServletResponse response) {
 
         PayloadEnvelope<ExtractorInstructionFilesDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -728,8 +728,8 @@ public class BRAPIController {
     @RequestMapping(value = "/markers", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<MarkerDTO> createMarker(@RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+                                                   HttpServletRequest request,
+                                                   HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -765,9 +765,9 @@ public class BRAPIController {
     @RequestMapping(value = "/markers/{markerId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<MarkerDTO> replaceMarker(@RequestBody PayloadEnvelope<MarkerDTO> payloadEnvelope,
-                                                      @PathVariable Integer markerId,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+                                                    @PathVariable Integer markerId,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
 
@@ -804,7 +804,7 @@ public class BRAPIController {
     @RequestMapping(value = "/markers", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MarkerDTO> getMarkers(HttpServletRequest request,
-                                                   HttpServletResponse response) {
+                                                 HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -835,8 +835,8 @@ public class BRAPIController {
     @RequestMapping(value = "/markers/{markerId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MarkerDTO> getMarkerById(@PathVariable Integer markerId,
-                                                       HttpServletRequest request,
-                                                       HttpServletResponse response) {
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -868,8 +868,8 @@ public class BRAPIController {
             method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MarkerDTO> getMarkerByName(@RequestParam("name") String name,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response) {
 
         PayloadEnvelope<MarkerDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1665,6 +1665,70 @@ public class BRAPIController {
 
     }
 
+    @RequestMapping(value = "/protocols/{protocolId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ProtocolDTO> replaceProtocol(@PathVariable Integer protocolId,
+                                                        HttpServletRequest request,
+                                                        HttpServletResponse response) {
+
+        PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+
+            ProtocolDTO protocolDTO = protocolService.getProtocolById(protocolId);
+
+            PayloadWriter<ProtocolDTO> payloadWriter = new PayloadWriter<>(request,
+                    ProtocolDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_PROTOCOL,
+                    protocolDTO);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+        
+    }
+
+    @RequestMapping(value = "/protocols", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ProtocolDTO> getProtocols(HttpServletRequest request,
+                                                   HttpServletResponse response) {
+
+        PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            //PayloadReader<ProtocolDTO> payloadReader = new PayloadReader<>(ProtocolDTO.class);
+            List<ProtocolDTO> ProtocolDTOs = protocolService.getProtocols();
+
+            PayloadWriter<ProtocolDTO> payloadWriter = new PayloadWriter<>(request,
+                    ProtocolDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    ServiceRequestId.URL_PROTOCOL,
+                    ProtocolDTOs);
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }    
+
     // *********************************************
     // *************************** FILE PREVIEW METHODS
     // *********************************************
@@ -1710,34 +1774,34 @@ public class BRAPIController {
     @ResponseBody
     public PayloadEnvelope<LoaderFilePreviewDTO> getFilePreviewBySearch(@PathVariable("directoryName") String directoryName,
                                                                         @RequestParam(value = "fileFormat", required = false) String fileFormat,
-                                                           HttpServletRequest request,
-                                                           HttpServletResponse response) {
+                                                                        HttpServletRequest request,
+                                                                        HttpServletResponse response) {
 
 
         PayloadEnvelope<LoaderFilePreviewDTO> returnVal = new PayloadEnvelope<>();
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-    LoaderFilePreviewDTO loaderFilePreviewDTO = loaderFilesService.getPreview(cropType, directoryName, fileFormat);
-    PayloadWriter<LoaderFilePreviewDTO> payloadWriter = new PayloadWriter<>(request,
-            LoaderFilePreviewDTO.class);
+            LoaderFilePreviewDTO loaderFilePreviewDTO = loaderFilesService.getPreview(cropType, directoryName, fileFormat);
+            PayloadWriter<LoaderFilePreviewDTO> payloadWriter = new PayloadWriter<>(request,
+                    LoaderFilePreviewDTO.class);
 
-        payloadWriter.writeSingleItemForDefaultId(returnVal,
-        ServiceRequestId.URL_FILE_LOAD,
-        loaderFilePreviewDTO
-        );
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_FILE_LOAD,
+                    loaderFilePreviewDTO
+            );
 
         } catch (Exception e) {
-        returnVal.getHeader().getStatus().addException(e);
+            returnVal.getHeader().getStatus().addException(e);
         }
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-        response,
-        HttpStatus.CREATED,
-        HttpStatus.INTERNAL_SERVER_ERROR);
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
-        }
+    }
 
 
-        }// BRAPIController
+}// BRAPIController

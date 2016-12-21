@@ -9,14 +9,12 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -255,7 +253,7 @@ public class TestDtoFactory {
     }
 
     public static ProtocolDTO makePopulatedProtocolDTO(GobiiProcessType gobiiProcessType,
-                                                               Integer uniqueStem) throws Exception {
+                                                       Integer uniqueStem) throws Exception {
 
         ProtocolDTO returnVal = new ProtocolDTO();
 

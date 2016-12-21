@@ -26,7 +26,8 @@ public enum ListSqlId {
             "p.name \"platform_name\"\n" +
             "from marker m\n" +
             "join platform p on (m.platform_id=p.platform_id)\n" +
-            "order by lower(m.name)");
+            "order by lower(m.name)"),
+    QUERY_ID_PROTOCOL_ALL("select * from protocol order by lower(name)");
 
     private String sql;
 
