@@ -11,7 +11,7 @@ export class DtoRequestItemDataSet implements DtoRequestItem<DataSet> {
     }
 
     public getUrl():string {
-        let baseUrl:string = "brapi/v1/datasets";
+        let baseUrl:string = "gobii/v1/datasets";
 
         let returnVal:string  = baseUrl;
         if( this.dataSetId ) {

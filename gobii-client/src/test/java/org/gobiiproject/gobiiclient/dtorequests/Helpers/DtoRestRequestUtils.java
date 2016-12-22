@@ -3,16 +3,10 @@ package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DTOBase;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.junit.Assert;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -53,9 +47,9 @@ public class DtoRestRequestUtils<T extends DTOBase> {
         RestUri restUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(this.serviceRequestId);
-        RestResource<T> restResource = new RestResource<>(restUri);
+        GobiiEnvelopeRestResource<T> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
 
-        returnVal = restResource.get(dtoType);
+        returnVal = gobiiEnvelopeRestResource.get(dtoType);
 
         if (!returnVal.getHeader().getStatus().isSucceeded()) {
             String message = "Request for collection of "
@@ -143,9 +137,9 @@ public class DtoRestRequestUtils<T extends DTOBase> {
                 .resourceByUriIdParam(this.serviceRequestId);
 
         restUriContact.setParamValue("id", id);
-        RestResource<T> restResource = new RestResource<>(restUriContact);
+        GobiiEnvelopeRestResource<T> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
 
-        returnVal = restResource
+        returnVal = gobiiEnvelopeRestResource
                 .get(this.dtoType);
 
         return returnVal;

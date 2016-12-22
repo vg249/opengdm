@@ -69,6 +69,7 @@
     <modules>
         <module>gobii-model</module>
         <module>gobii-api-model</module>
+        <module>gobii-brapi</module>
         <module>gobii-client</module>
         <module>gobii-dao</module>
         <module>gobii-dtomapping</module>

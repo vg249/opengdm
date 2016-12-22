@@ -1,6 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
-import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.types.SystemUserDetail;
 import org.gobiiproject.gobiimodel.types.SystemUserNames;

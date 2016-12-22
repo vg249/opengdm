@@ -54,6 +54,10 @@ public class RestUri {
         this.paramMap.get(paramName).setValue(value);
     }
 
+    public void appendSegment(String segment) {
+        this.requestTemplate += segment;
+    }
+
     public String makeUrl() throws Exception {
 
         String returnVal = this.requestTemplate; // in case there are no path variables

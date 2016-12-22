@@ -8,8 +8,8 @@ package org.gobiiproject.gobiiclient.dtorequests.infrastructure;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestCv;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
@@ -23,7 +23,6 @@ import org.gobiiproject.gobiimodel.dto.container.CvDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
-import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.junit.AfterClass;
@@ -64,8 +63,8 @@ public class DtoRequestMultiDbTest {
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_CONFIGSETTINGS);
 
-        RestResource<ConfigSettingsDTO> restResource = new RestResource<>(confgSettingsUri);
-        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = restResource
+        GobiiEnvelopeRestResource<ConfigSettingsDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(confgSettingsUri);
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(ConfigSettingsDTO.class);
 
         TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader());

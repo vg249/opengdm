@@ -6,7 +6,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang.math.NumberUtils;
-import org.gobiiproject.gobiiclient.core.ClientContext;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;

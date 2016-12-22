@@ -34,7 +34,7 @@ System.register(["@angular/core", "../../model/type-process", "../../model/extra
                     this.extractorInstructionFilesDTO = extractorInstructionFilesDTO;
                 }
                 DtoRequestItemExtractorSubmission.prototype.getUrl = function () {
-                    return "brapi/v1/instructions/extractor";
+                    return "gobii/v1/instructions/extractor";
                 }; // getUrl()
                 DtoRequestItemExtractorSubmission.prototype.getRequestBody = function () {
                     var rawJsonExtractorInstructionFileDTO = this.extractorInstructionFilesDTO.getJson();

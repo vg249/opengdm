@@ -1,12 +1,12 @@
-package org.gobiiproject.gobiiclient.core;
+package org.gobiiproject.gobiiclient.core.common;
 
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
-import org.gobiiproject.gobiiapimodel.types.RestMethodTypes;
-import org.gobiiproject.gobiiclient.core.restmethods.PayloadResponse;
+import org.gobiiproject.gobiimodel.types.RestMethodTypes;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiPayloadResponse;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
@@ -185,15 +185,15 @@ public final class ClientContext {
         returnVal.userToken = httpCore.getTokenForUser(authPath, userDetail.getUserName(), userDetail.getPassword());
 
         // now get the settings
-        String settingsPath = ResourceBuilder.getRequestUrl(ControllerType.BRAPI,
+        String settingsPath = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
                 ServiceRequestId.URL_CONFIGSETTINGS,
                 context);
 
         RestUri configSettingsUri = new UriFactory(null).RestUriFromUri(settingsPath);
         HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri, returnVal.userToken);
-        PayloadResponse<ConfigSettingsDTO> payloadResponse = new PayloadResponse<>(configSettingsUri);
+        GobiiPayloadResponse<ConfigSettingsDTO> gobiiPayloadResponse = new GobiiPayloadResponse<>(configSettingsUri);
 
-        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = payloadResponse.getPayloadFromResponse(ConfigSettingsDTO.class,
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiPayloadResponse.getPayloadFromResponse(ConfigSettingsDTO.class,
                 RestMethodTypes.GET,
                 HttpStatus.SC_OK,
                 httpMethodResult);
@@ -253,10 +253,14 @@ public final class ClientContext {
 
     public UriFactory getUriFactory() throws Exception {
 
+        String contextPath = this.getServerConfig().getContextRoot();
+        return new UriFactory(contextPath);
+    }
+
+    public UriFactory getUriFactory(ControllerType controllerType) throws Exception {
 
         String contextPath = this.getServerConfig().getContextRoot();
-
-        return new UriFactory(contextPath);
+        return new UriFactory(contextPath, controllerType);
     }
 
 

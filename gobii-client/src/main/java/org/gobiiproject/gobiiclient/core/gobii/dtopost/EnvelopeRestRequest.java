@@ -3,15 +3,15 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-25
 // ************************************************************************
-package org.gobiiproject.gobiiclient.core.restmethods.dtopost;
+package org.gobiiproject.gobiiclient.core.gobii.dtopost;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiclient.core.HttpCore;
-import org.gobiiproject.gobiiclient.core.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.common.HttpCore;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 
 import org.slf4j.Logger;

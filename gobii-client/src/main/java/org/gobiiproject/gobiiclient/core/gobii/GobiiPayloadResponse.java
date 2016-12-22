@@ -1,20 +1,20 @@
-package org.gobiiproject.gobiiclient.core.restmethods;
+package org.gobiiproject.gobiiclient.core.gobii;
 
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.types.RestMethodTypes;
-import org.gobiiproject.gobiiclient.core.HttpMethodResult;
+import org.gobiiproject.gobiimodel.types.RestMethodTypes;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 
 /**
  * Created by Phil on 10/19/2016.
  */
-public class PayloadResponse<T> {
+public class GobiiPayloadResponse<T> {
 
     private RestUri restUri;
-    public PayloadResponse(RestUri restUri) {
+    public GobiiPayloadResponse(RestUri restUri) {
         this.restUri = restUri;
     }
 

@@ -1,35 +1,35 @@
-package org.gobiiproject.gobiiclient.core.restmethods;
+package org.gobiiproject.gobiiclient.core.gobii;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.HttpCore;
-import org.gobiiproject.gobiiclient.core.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.common.HttpCore;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.common.RestResourceUtils;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 
-import org.gobiiproject.gobiiapimodel.types.RestMethodTypes;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Created by Phil on 5/13/2016.
  */
-public class RestResource<T> {
+public class GobiiEnvelopeRestResource<T> {
 
-    Logger LOGGER = LoggerFactory.getLogger(RestResource.class);
+    Logger LOGGER = LoggerFactory.getLogger(GobiiEnvelopeRestResource.class);
 
     private RestUri restUri;
-    private HttpCore httpCore = null;
-    private ClientContext clientContext;
     private ObjectMapper objectMapper = new ObjectMapper();
-    private PayloadResponse<T> payloadResponse = null;
+    private GobiiPayloadResponse<T> gobiiPayloadResponse = null;
+    private RestResourceUtils restResourceUtils;
 
-    public RestResource(RestUri restUri) {
+    public GobiiEnvelopeRestResource(RestUri restUri) {
         this.restUri = restUri;
-        this.payloadResponse = new PayloadResponse<>(this.restUri);
+        this.restResourceUtils = new RestResourceUtils();
+        this.gobiiPayloadResponse = new GobiiPayloadResponse<>(this.restUri);
     }
 
     public void setParamValue(String paramName, String value) throws Exception {
@@ -39,30 +39,13 @@ public class RestResource<T> {
 
     private ClientContext getClientContext() throws Exception {
 
-        if (!ClientContext.isInitialized()) {
-            throw new Exception("Client context is not initialized");
-        }
-
-        clientContext = ClientContext.getInstance(null, false);
-
-        return clientContext;
-
+        return this.restResourceUtils.getClientContext();
     }
 
     private HttpCore getHttp() throws Exception {
 
-
-        if (null == this.httpCore) {
-            String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
-            Integer port = ClientContext.getInstance(null, false).getCurrentCropPort();
-            String clientContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-            this.httpCore = new HttpCore(host, port, clientContextRoot);
-        }
-
-
-        return httpCore;
+        return this.restResourceUtils.getHttp();
     }
-
 
 
     private String makeHttpBody(PayloadEnvelope<T> payloadEnvelope) throws Exception {
@@ -77,7 +60,6 @@ public class RestResource<T> {
     }
 
 
-
     public PayloadEnvelope<T> get(Class<T> dtoType) throws Exception {
 
         PayloadEnvelope<T> returnVal;
@@ -87,7 +69,7 @@ public class RestResource<T> {
                         .get(this.restUri,
                                 this.getClientContext().getUserToken());
 
-        returnVal = this.payloadResponse.getPayloadFromResponse(dtoType,
+        returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.GET,
                 HttpStatus.SC_OK,
                 httpMethodResult);
@@ -108,7 +90,7 @@ public class RestResource<T> {
                                 postBody,
                                 this.getClientContext().getUserToken());
 
-        returnVal = this.payloadResponse.getPayloadFromResponse(dtoType,
+        returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.POST,
                 HttpStatus.SC_CREATED,
                 httpMethodResult);
@@ -129,7 +111,7 @@ public class RestResource<T> {
                                 putBody,
                                 this.getClientContext().getUserToken());
 
-        returnVal = this.payloadResponse.getPayloadFromResponse(dtoType,
+        returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.PUT,
                 HttpStatus.SC_OK,
                 httpMethodResult);

@@ -28,7 +28,7 @@ System.register(["@angular/core", "../../model/type-process"], function(exports_
                     this.experimentId = experimentId;
                 }
                 DtoRequestItemExperiment.prototype.getUrl = function () {
-                    var baseUrl = "brapi/v1/experiments";
+                    var baseUrl = "gobii/v1/experiments";
                     var returnVal = baseUrl;
                     if (this.experimentId) {
                         returnVal = baseUrl + "/" + this.experimentId;

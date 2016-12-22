@@ -5,6 +5,9 @@ package org.gobiiproject.gobiimodel.tobemovedtoapimodel;
  */
 public class Pagination {
 
+
+    public Pagination() {}
+
     public Pagination(Integer totalCount,
                       Integer pageSize,
                       Integer totalPages,

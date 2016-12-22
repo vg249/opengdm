@@ -5,14 +5,13 @@ import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -51,10 +50,10 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
                 .makePopulatedOrganizationDTO(GobiiProcessType.CREATE, 1);
 
         PayloadEnvelope<OrganizationDTO> payloadEnvelope = new PayloadEnvelope<>(newOrganizationDto, GobiiProcessType.CREATE);
-        RestResource<OrganizationDTO> restResource = new RestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_ORGANIZATION));
-        PayloadEnvelope<OrganizationDTO> organizationDTOResponseEnvelope = restResource.post(OrganizationDTO.class,
+        PayloadEnvelope<OrganizationDTO> organizationDTOResponseEnvelope = gobiiEnvelopeRestResource.post(OrganizationDTO.class,
                 payloadEnvelope);
         OrganizationDTO organizationDTOResponse = organizationDTOResponseEnvelope.getPayload().getData().get(0);
 
@@ -70,8 +69,8 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_ORGANIZATION);
         restUriOrganizationForGetById.setParamValue("id", organizationDTOResponse.getOrganizationId().toString());
-        RestResource<OrganizationDTO> restResourceForGetById = new RestResource<>(restUriOrganizationForGetById);
-        PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetByID = restResourceForGetById
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriOrganizationForGetById);
+        PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                 .get(OrganizationDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
@@ -88,10 +87,10 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
                 .makePopulatedOrganizationDTO(GobiiProcessType.CREATE, 1);
 
         PayloadEnvelope<OrganizationDTO> payloadEnvelope = new PayloadEnvelope<>(newOrganizationDto, GobiiProcessType.CREATE);
-        RestResource<OrganizationDTO> restResource = new RestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_ORGANIZATION));
-        PayloadEnvelope<OrganizationDTO> organizationDTOResponseEnvelope = restResource.post(OrganizationDTO.class,
+        PayloadEnvelope<OrganizationDTO> organizationDTOResponseEnvelope = gobiiEnvelopeRestResource.post(OrganizationDTO.class,
                 payloadEnvelope);
         OrganizationDTO newOrganizationDTOResponse = organizationDTOResponseEnvelope.getPayload().getData().get(0);
 
@@ -101,8 +100,8 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_ORGANIZATION);
         restUriOrganizationForGetById.setParamValue("id", newOrganizationDTOResponse.getOrganizationId().toString());
-        RestResource<OrganizationDTO> restResourceForGetById = new RestResource<>(restUriOrganizationForGetById);
-        PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetByID = restResourceForGetById
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriOrganizationForGetById);
+        PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                 .get(OrganizationDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
@@ -112,8 +111,8 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
         // so this would be the typical workflow for the client app
         String newName = UUID.randomUUID().toString();
         organizationDTOReceived.setName(newName);
-        restResourceForGetById.setParamValue("id", organizationDTOReceived.getOrganizationId().toString());
-        PayloadEnvelope<OrganizationDTO> organizationDTOResponseEnvelopeUpdate = restResourceForGetById.put(OrganizationDTO.class,
+        gobiiEnvelopeRestResourceForGetById.setParamValue("id", organizationDTOReceived.getOrganizationId().toString());
+        PayloadEnvelope<OrganizationDTO> organizationDTOResponseEnvelopeUpdate = gobiiEnvelopeRestResourceForGetById.put(OrganizationDTO.class,
                 new PayloadEnvelope<>(organizationDTOReceived, GobiiProcessType.UPDATE));
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(organizationDTOResponseEnvelopeUpdate.getHeader()));
@@ -124,7 +123,7 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
 //        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(OrganizationDTOResponse));
 
         restUriOrganizationForGetById.setParamValue("id", OrganizationDTORequest.getOrganizationId().toString());
-        resultEnvelopeForGetByID = restResourceForGetById
+        resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                 .get(OrganizationDTO.class);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
 
@@ -145,8 +144,8 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
         RestUri restUriOrganization = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_ORGANIZATION);
-        RestResource<OrganizationDTO> restResource = new RestResource<>(restUriOrganization);
-        PayloadEnvelope<OrganizationDTO> resultEnvelope = restResource
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriOrganization);
+        PayloadEnvelope<OrganizationDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(OrganizationDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -162,8 +161,8 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_ORGANIZATION);
         restUriOrganizationForGetById.setParamValue("id", organizationId.toString());
-        RestResource<OrganizationDTO> restResourceForGetById = new RestResource<>(restUriOrganizationForGetById);
-        PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetByID = restResourceForGetById
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriOrganizationForGetById);
+        PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                 .get(OrganizationDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
@@ -200,8 +199,8 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
         RestUri restUriOrganization = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_ORGANIZATION);
-        RestResource<OrganizationDTO> restResource = new RestResource<>(restUriOrganization);
-        PayloadEnvelope<OrganizationDTO> resultEnvelope = restResource
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriOrganization);
+        PayloadEnvelope<OrganizationDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(OrganizationDTO.class);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         List<OrganizationDTO> organizationDTOList = resultEnvelope.getPayload().getData();
@@ -231,8 +230,8 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
             RestUri restUriOrganizationForGetById = ClientContext.getInstance(null, false)
                     .getUriFactory()
                     .RestUriFromUri(currentLink.getHref());
-            RestResource<OrganizationDTO> restResourceForGetById = new RestResource<>(restUriOrganizationForGetById);
-            PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetByID = restResourceForGetById
+            GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriOrganizationForGetById);
+            PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                     .get(OrganizationDTO.class);
             Assert.assertNotNull(resultEnvelopeForGetByID);
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
