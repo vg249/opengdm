@@ -64,7 +64,7 @@ public class DtoRequestLoaderFilePreviewTest {
 
 
 
-        PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelopeSecondRequest = restResource.put(LoaderFilePreviewDTO.class,
+        PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelopeSecondRequest = gobiiEnvelopeRestResource.put(LoaderFilePreviewDTO.class,
                 new PayloadEnvelope<>(loaderFilePreviewDTO, GobiiProcessType.CREATE));
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeSecondRequest.getHeader()));
