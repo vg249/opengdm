@@ -163,7 +163,7 @@ public class ResourceBuilder {
                 returnVal = "observationVariables";
                 break;
             case URL_PROTOCOL:
-                returnVal += "protocols";
+                returnVal = "protocols";
                 break;
             default:
                 throw new Exception("Unknown request id : " + serviceRequestId.toString());
