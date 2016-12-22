@@ -50,7 +50,7 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
 
             if (!pathToCreate.mkdirs()) {
                 throw new GobiiDaoException("Unable to create directory " + directoryPath);
-            }else{
+            } else {
                 verifyDirectoryPermissions(directoryPath);
             }
 
@@ -67,13 +67,14 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
         try {
             int lineCtr = 0; //count lines read
             input = new Scanner(file);
-            while (lineCtr<50) { //read first 50 lines only
-                int ctr=0; //count words stored
+
+            while (input.hasNextLine() && lineCtr < 50) { //read first 50 lines only
+                int ctr = 0; //count words stored
                 List<String> lineRead = new ArrayList<String>();
                 String line = input.nextLine();
-                for(String s: line.split(getDelimiterFor(fileFormat))){
-                    if(ctr==50) break;
-                    else{
+                for (String s : line.split(getDelimiterFor(fileFormat))) {
+                    if (ctr == 50) break;
+                    else {
                         lineRead.add(s);
                         ctr++;
                     }
@@ -96,6 +97,9 @@ public class LoaderFilesDAOImpl implements LoaderFilesDAO {
                 delimiter = ",";
                 break;
             case "txt":
+                delimiter = "\t";
+                break;
+            case "vcf":
                 delimiter = "\t";
                 break;
             default:
