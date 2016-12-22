@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsProtocolDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProtocol;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsVendorProtocol;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProtocol;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProtocolDetailsByProtocolId;
 import org.hibernate.exception.SQLGrammarException;
@@ -37,7 +38,6 @@ public class RsProtocolDaoImpl implements RsProtocolDao {
         Integer returnVal = null;
 
         try{
-
             spRunnerCallable.run(new SpInsProtocol(), paramaters);
             returnVal = spRunnerCallable.getResult();
         } catch (SQLGrammarException e){
@@ -88,4 +88,21 @@ public class RsProtocolDaoImpl implements RsProtocolDao {
 
         return returnVal;
     }
+
+    public Integer createVendorProtocol(Map<String, Object> parameters) throws GobiiDaoException {
+        Integer returnVal = null;
+
+        try{
+            spRunnerCallable.run(new SpInsVendorProtocol(), parameters);
+            returnVal = spRunnerCallable.getResult();
+        } catch (SQLGrammarException e){
+            LOGGER.error("Error creating vendor protocol record with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+        }
+
+        return returnVal;
+
+    }
+
+
 }

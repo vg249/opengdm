@@ -11,5 +11,6 @@ public interface RsProtocolDao {
     ResultSet getProtocolDetailsByProtocolId(Integer protocolId) throws GobiiDaoException;
     Integer createProtocol(Map<String, Object> parameters) throws GobiiDaoException;
     void updateProtocol(Map<String, Object> parameters) throws GobiiDaoException;
+    Integer createVendorProtocol(Map<String, Object> parameters) throws GobiiDaoException;
 
 }

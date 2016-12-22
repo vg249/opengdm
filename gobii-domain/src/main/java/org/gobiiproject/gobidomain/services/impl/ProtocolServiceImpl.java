@@ -3,6 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ProtocolService;
 import org.gobiiproject.gobiidtomapping.DtoMapProtocol;
+import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -154,5 +155,14 @@ public class ProtocolServiceImpl implements ProtocolService {
 
         return returnVal;
     }
+
+    public OrganizationDTO addVendotrToProtocol(Integer protocolId ) throws GobiiDomainException {
+
+        OrganizationDTO returnVal = null;
+
+        return returnVal;
+
+    }
+
     
 }
