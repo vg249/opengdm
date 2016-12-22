@@ -156,9 +156,12 @@ public class ProtocolServiceImpl implements ProtocolService {
         return returnVal;
     }
 
-    public OrganizationDTO addVendotrToProtocol(Integer protocolId ) throws GobiiDomainException {
+    @Override
+    public OrganizationDTO addVendotrToProtocol(Integer protocolId, OrganizationDTO organizationDTO ) throws GobiiDomainException {
 
-        OrganizationDTO returnVal = null;
+        OrganizationDTO returnVal;
+
+        returnVal = dtoMapProtocol.addVendotrToProtocol(protocolId, organizationDTO);
 
         return returnVal;
 

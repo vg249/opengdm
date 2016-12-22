@@ -14,10 +14,14 @@ public interface ProtocolService {
 
 
     ProtocolDTO createProtocol(ProtocolDTO protocolDTO) throws GobiiDomainException;
+
     ProtocolDTO replaceProtocol(Integer protocolId, ProtocolDTO protocolDTO) throws GobiiDomainException;
+
     ProtocolDTO getProtocolById(Integer protocolId) throws GobiiDomainException;
+
     List<ProtocolDTO> getProtocols() throws GobiiDomainException;
-    OrganizationDTO addVendotrToProtocol(Integer protocolId ) throws GobiiDomainException;
-    
+
+    OrganizationDTO addVendotrToProtocol(Integer protocolId, OrganizationDTO organizationDTO) throws GobiiDomainException;
+
 
 }

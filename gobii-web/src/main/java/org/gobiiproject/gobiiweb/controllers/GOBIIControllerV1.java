@@ -1778,13 +1778,13 @@ public class GOBIIControllerV1 {
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
-        
+
     }
 
     @RequestMapping(value = "/protocols", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ProtocolDTO> getProtocols(HttpServletRequest request,
-                                                   HttpServletResponse response) {
+                                                     HttpServletResponse response) {
 
         PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1815,25 +1815,26 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<OrganizationDTO> addVendorToProtocol(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                        @PathVariable Integer protocolId,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+                                                                @PathVariable Integer protocolId,
+                                                                HttpServletRequest request,
+                                                                HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
 
         try {
 
             PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
-            OrganizationDTO protocolDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+            OrganizationDTO organizationDTO = payloadReader.extractSingleItem(payloadEnvelope);
 
-            //ProtocolDTO protocolDTOReplaced = protocolService.replaceProtocol(protocolId, protocolDTOToReplace);
+            OrganizationDTO protocolDTOAssociated = protocolService.addVendotrToProtocol(protocolId, organizationDTO);
 
-            PayloadWriter<ProtocolDTO> payloadWriter = new PayloadWriter<>(request,
-                    ProtocolDTO.class);
+            PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
+                    OrganizationDTO.class);
 
-//            payloadWriter.writeSingleItemForDefaultId(returnVal,
-//                    ServiceRequestId.URL_PROTOCOL,
-//                    protocolDTOReplaced);
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_ORGANIZATION,
+                    protocolDTOAssociated);
+
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -1917,7 +1918,6 @@ public class GOBIIControllerV1 {
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
-
 
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),

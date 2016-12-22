@@ -144,12 +144,20 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
             Map<String, Object> parameters = new HashMap<>();
 
             parameters.put("name", vendoProtocolName);
-            parameters.put("vendorId", Integer.class);
-            parameters.put("protocolId", Integer.class);
-            parameters.put("status", Integer.class);
+            parameters.put("vendorId", organizationDTO.getOrganizationId());
+            parameters.put("protocolId", protocolId);
+            parameters.put("status", 1);
 
 
             Integer vendorProtocolId = this.rsProtocolDao.createVendorProtocol(parameters);
+
+            if( vendorProtocolId == null || vendorProtocolId <= 0 ) {
+                throw new GobiiDtoMappingException("VendorProtocol record was not created");
+            }
+
+
+
+
         } catch (Exception e) {
             LOGGER.error("Gobii Mapping Error", e);
             throw new GobiiDtoMappingException(e);
