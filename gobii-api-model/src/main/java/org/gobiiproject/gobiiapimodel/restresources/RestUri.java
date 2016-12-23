@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiapimodel.restresources;
 
-import org.gobiiproject.gobiiapimodel.restresources.ResourceParam;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -28,20 +27,23 @@ public class RestUri {
     private List<ResourceParam> resourceParams = new ArrayList<>();
 
 
-    private void delimitCropContextRoot() {
+    private String delimitSegment(String segment) {
 
-        if (null != this.cropContextRoot) {
-            if (this.cropContextRoot.lastIndexOf(RestUri.URL_SEPARATOR) != this.cropContextRoot.length() - 1) {
-                this.cropContextRoot = this.cropContextRoot + RestUri.URL_SEPARATOR;
+        String returnVal = segment;
+
+        if (null != returnVal) {
+            if (returnVal.lastIndexOf(RestUri.URL_SEPARATOR) != returnVal.length() - 1) {
+                returnVal = returnVal+ RestUri.URL_SEPARATOR;
             }
         }
+
+        return returnVal;
     }
 
 
     public RestUri(String cropContextRoot, ControllerType controllerType, ServiceRequestId serviceRequestId) throws Exception{
         this.controllerType = controllerType;
-        this.cropContextRoot = cropContextRoot;
-        this.delimitCropContextRoot();
+        this.cropContextRoot = this.delimitSegment(cropContextRoot);
         this.requestTemplate = ResourceBuilder.getRequestUrl(this.controllerType,
                 this.cropContextRoot,
                 serviceRequestId);
@@ -82,16 +84,13 @@ public class RestUri {
     }
 
     public RestUri appendSegment(String segment) {
-        this.requestTemplate += segment;
+        this.requestTemplate += this.delimitSegment(segment);
         return this;
     }
 
     public RestUri appendPathVariable(String paramName) {
 
-        if ((0 == this.requestTemplate.length()) ||
-                (this.requestTemplate.charAt(this.requestTemplate.length() - 1) != URL_SEPARATOR)) {
-            this.requestTemplate += this.URL_SEPARATOR;
-        }
+        this.requestTemplate = this.delimitSegment(this.requestTemplate);
 
         this.requestTemplate += this.DELIM_PARAM_BEGIN + paramName + this.DELIM_PARAM_END;
 

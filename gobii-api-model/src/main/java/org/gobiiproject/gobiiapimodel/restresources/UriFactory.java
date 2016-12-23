@@ -60,26 +60,28 @@ public class UriFactory {
 
     public RestUri resourceByUriIdParam(ServiceRequestId serviceRequestId) throws Exception {
 
-        RestUri returnVal = new RestUri(this.cropContextRoot,
+        String paramName = "id";
+        return new RestUri(this.cropContextRoot,
                 this.controllerType,
-                serviceRequestId);
-
-        this.makeUriWithUriParams(returnVal, Arrays.asList("id"));
-
-        return returnVal;
-
+                serviceRequestId)
+                .appendPathVariable(paramName)
+                .addParam(ResourceParam.ResourceParamType.UriParam, paramName);
     } //
 
     public RestUri childResourceByUriIdParam(ServiceRequestId parentServiceRequestId, ServiceRequestId childServiceRequestId) throws Exception {
 
+        String paramName = "id";
         RestUri returnVal = new RestUri(this.cropContextRoot,
                 this.controllerType,
-                parentServiceRequestId);
+                parentServiceRequestId)
+                .appendPathVariable(paramName)
+                .addParam(ResourceParam.ResourceParamType.UriParam, paramName)
+                .appendSegment(RestUri.URL_SEPARATOR + ResourceBuilder.getUrlSegment(childServiceRequestId));
 
 
-        this.makeUriWithUriParams(returnVal, Arrays.asList("id"));
-
-        returnVal.appendSegment(RestUri.URL_SEPARATOR + ResourceBuilder.getUrlSegment(childServiceRequestId));
+//        this.makeUriWithUriParams(returnVal, Arrays.asList("id"));
+//
+//        returnVal.appendSegment(RestUri.URL_SEPARATOR + ResourceBuilder.getUrlSegment(childServiceRequestId));
 
         return returnVal;
 
