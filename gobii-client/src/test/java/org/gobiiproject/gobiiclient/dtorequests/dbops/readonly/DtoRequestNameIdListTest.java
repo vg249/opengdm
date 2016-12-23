@@ -430,13 +430,13 @@ public class DtoRequestNameIdListTest {
         
         testNameRetrieval(GobiiEntityNameType.DATASETS, GobiiFilterType.NONE, null);
     }
-    @Test
+    @Ignore
     public void testGetProtocols() throws Exception {
 
         
         testNameRetrieval(GobiiEntityNameType.PROTOCOLS, GobiiFilterType.NONE, null);
     }
-    @Test
+    @Ignore
     public void testGetProtocolVendors() throws Exception {
 
         
