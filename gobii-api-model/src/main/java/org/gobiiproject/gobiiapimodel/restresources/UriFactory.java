@@ -27,23 +27,9 @@ public class UriFactory {
         this.cropContextRoot = cropContextRoot;
     }
 
-
-    private void makeUriWithUriParams(RestUri restUri, List<String> uriParms) {
-
-        for (String currentParam : uriParms) {
-            restUri.appendPathVariable(currentParam);
-        }
-
-        for (String currentParam : uriParms) {
-            restUri.addParam(ResourceParam.ResourceParamType.UriParam, currentParam);
-        }
-
-    }
-
     public RestUri RestUriFromUri(String uri) {
         return new RestUri(uri);
     }
-
 
     public RestUri resourceColl(ServiceRequestId serviceRequestId) throws Exception {
 
@@ -57,15 +43,13 @@ public class UriFactory {
 
     } //
 
-
     public RestUri resourceByUriIdParam(ServiceRequestId serviceRequestId) throws Exception {
 
         String paramName = "id";
         return new RestUri(this.cropContextRoot,
                 this.controllerType,
                 serviceRequestId)
-                .appendPathVariable(paramName)
-                .addParam(ResourceParam.ResourceParamType.UriParam, paramName);
+                .addUriParam(paramName);
     } //
 
     public RestUri childResourceByUriIdParam(ServiceRequestId parentServiceRequestId, ServiceRequestId childServiceRequestId) throws Exception {
@@ -74,8 +58,7 @@ public class UriFactory {
         RestUri returnVal = new RestUri(this.cropContextRoot,
                 this.controllerType,
                 parentServiceRequestId)
-                .appendPathVariable(paramName)
-                .addParam(ResourceParam.ResourceParamType.UriParam, paramName)
+                .addUriParam(paramName)
                 .appendSegment(childServiceRequestId);
 
 
@@ -91,12 +74,10 @@ public class UriFactory {
 
         RestUri returnVal = new RestUri(this.cropContextRoot,
                 this.controllerType,
-                ServiceRequestId.URL_CONTACT_SEARCH);
-        ;
-
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "email");
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "lastName");
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "firstName");
+                ServiceRequestId.URL_CONTACT_SEARCH)
+                .addQueryParam("email")
+                .addQueryParam("lastName")
+                .addQueryParam("firstName");
 
         return returnVal;
 
@@ -106,9 +87,9 @@ public class UriFactory {
 
         RestUri returnVal = new RestUri(this.cropContextRoot,
                 this.controllerType,
-                ServiceRequestId.URL_MARKER_SEARCH);
+                ServiceRequestId.URL_MARKER_SEARCH)
+                .addQueryParam("name");
 
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "name");
         return returnVal;
 
     }
@@ -117,13 +98,10 @@ public class UriFactory {
 
         RestUri returnVal = new RestUri(this.cropContextRoot,
                 this.controllerType,
-                ServiceRequestId.URL_NAMES);
-
-
-        this.makeUriWithUriParams(returnVal, Arrays.asList("entity"));
-
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "filterType");
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "filterValue");
+                ServiceRequestId.URL_NAMES)
+                .addUriParam("entity")
+                .addQueryParam("filterType")
+                .addQueryParam("filterValue");
 
         return returnVal;
 
@@ -134,10 +112,9 @@ public class UriFactory {
 
         RestUri returnVal = new RestUri(this.cropContextRoot,
                 this.controllerType,
-                ServiceRequestId.URL_FILE_LOAD);
-
-        this.makeUriWithUriParams(returnVal, Arrays.asList("directoryName"));
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "fileFormat");
+                ServiceRequestId.URL_FILE_LOAD)
+                .addUriParam("directoryName")
+                .addQueryParam("fileFormat");
 
         return returnVal;
 

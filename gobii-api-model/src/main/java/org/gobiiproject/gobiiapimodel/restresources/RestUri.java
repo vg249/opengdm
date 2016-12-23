@@ -34,7 +34,7 @@ public class RestUri {
 
         if (null != returnVal) {
             if (returnVal.lastIndexOf(RestUri.URL_SEPARATOR) != returnVal.length() - 1) {
-                returnVal = returnVal+ RestUri.URL_SEPARATOR;
+                returnVal = returnVal + RestUri.URL_SEPARATOR;
             }
         }
 
@@ -42,7 +42,7 @@ public class RestUri {
     }
 
 
-    public RestUri(String cropContextRoot, ControllerType controllerType, ServiceRequestId serviceRequestId) throws Exception{
+    public RestUri(String cropContextRoot, ControllerType controllerType, ServiceRequestId serviceRequestId) throws Exception {
         this.controllerType = controllerType;
         this.cropContextRoot = this.delimitSegment(cropContextRoot);
         this.requestTemplate = ResourceBuilder.getRequestUrl(this.controllerType,
@@ -50,7 +50,7 @@ public class RestUri {
                 serviceRequestId);
     }
 
-    public RestUri(String restUri ) {
+    public RestUri(String restUri) {
         this.requestTemplate = restUri;
     }
 
@@ -62,8 +62,24 @@ public class RestUri {
                 .collect(Collectors.toList());
     }
 
-    public RestUri addParam(ResourceParam.ResourceParamType resourceParamType,
+
+    public RestUri addQueryParam(String name) {
+        this.addParam(ResourceParam.ResourceParamType.QueryParam, name);
+        return  this;
+    }
+
+
+    public RestUri addUriParam(String name) {
+        this.addParam(ResourceParam.ResourceParamType.UriParam, name);
+        return  this;
+    }
+
+    private RestUri addParam(ResourceParam.ResourceParamType resourceParamType,
                             String name) {
+
+        if (resourceParamType.equals(ResourceParam.ResourceParamType.UriParam)) {
+            this.appendPathVariable(name);
+        }
 
         ResourceParam resourceParam = new ResourceParam(resourceParamType, name, null);
         this.paramMap.put(resourceParam.getName(), resourceParam);
