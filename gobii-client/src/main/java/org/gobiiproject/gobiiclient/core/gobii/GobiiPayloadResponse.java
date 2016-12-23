@@ -93,7 +93,7 @@ public class GobiiPayloadResponse<T> {
                         .addStatusMessage(GobiiStatusLevel.ERROR,
                                 makeMessageFromHttpResult(restMethodType.toString(),
                                         httpMethodResult,
-                                        "One or more client DTOs may be out of date with those of the server"));
+                                        "Request format error or one or more client DTOs may be out of date with those of the server"));
             }
 
         } else {

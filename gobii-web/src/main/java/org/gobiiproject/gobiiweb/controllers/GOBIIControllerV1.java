@@ -1904,7 +1904,7 @@ public class GOBIIControllerV1 {
 
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors/{vendorProtocolName}", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> addVendorToProtocol(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+    public PayloadEnvelope<OrganizationDTO> getVendorForVendorProtocol(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
                                                                 @PathVariable Integer protocolId,
                                                                 @PathVariable String vendorProtocolName,
                                                                 HttpServletRequest request,
@@ -1913,8 +1913,6 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
 
         try {
-
-            PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
 
             OrganizationDTO protocolDTOAssociated = protocolService.getVendorForProtocolByName(vendorProtocolName);
 

@@ -143,6 +143,26 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                         ).count() == 1);
 
 
+        // ************* VERIFY THAT WE CAN RETRIEVE THE CREATED VENDOR THROUGH THE PROTOCOLS URL
+        // ********** POST VENDOR ORGANIZATION TO PROTOCOL
+        RestUri restUriOrganizationThroughProtocol = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_PROTOCOL)
+                .addUriParam("id")
+                .appendSegment(ServiceRequestId.URL_VENDORS)
+                .addUriParam("vendorProtocolName");
+        restUriOrganizationThroughProtocol.setParamValue("id", protocolId.toString());
+        restUriOrganizationThroughProtocol.setParamValue("vendorProtocolName", predictedVendorProtocolName);
+
+        GobiiEnvelopeRestResource<OrganizationDTO> protocolVendorResourceForOrganizationThroughProtocol =
+                new GobiiEnvelopeRestResource<>(restUriOrganizationThroughProtocol);
+        protocolVendorResult =
+                protocolVendorResourceForOrganizationThroughProtocol.get(OrganizationDTO.class);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(protocolVendorResult.getHeader()));
+        OrganizationDTO organizationDTOThroughProtocol = protocolVendorResult.getPayload().getData().get(0);
+        Assert.assertTrue(organizationDTOThroughProtocol.getOrganizationId().equals(organizationDTO.getOrganizationId()));
+
+
         //need services for GET /protocols/{id}/vendors/
         //                  GET /protocols/{id}/vendors/{protocol_vendor_name}
 
