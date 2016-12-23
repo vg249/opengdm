@@ -1,6 +1,7 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
@@ -22,6 +23,8 @@ public interface ProtocolService {
     List<ProtocolDTO> getProtocols() throws GobiiDomainException;
 
     OrganizationDTO addVendotrToProtocol(Integer protocolId, OrganizationDTO organizationDTO) throws GobiiDomainException;
+
+    OrganizationDTO getVendorForProtocolByName(String vendorProtocolName) throws GobiiDaoException;
 
 
 }

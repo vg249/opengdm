@@ -1740,6 +1740,9 @@ public class GOBIIControllerV1 {
                     UriFactory.resourceByUriIdParam(request.getContextPath(),
                             ServiceRequestId.URL_PROTOCOL),
                     protocolDTONew);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -1775,6 +1778,8 @@ public class GOBIIControllerV1 {
                     UriFactory.resourceByUriIdParam(request.getContextPath(),
                             ServiceRequestId.URL_PROTOCOL),
                     protocolDTOReplaced);
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -1809,6 +1814,8 @@ public class GOBIIControllerV1 {
                             ServiceRequestId.URL_PROTOCOL),
                     protocolDTO);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -1841,6 +1848,8 @@ public class GOBIIControllerV1 {
                             ServiceRequestId.URL_PROTOCOL),
                     ProtocolDTOs);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -1878,6 +1887,47 @@ public class GOBIIControllerV1 {
                             ServiceRequestId.URL_ORGANIZATION),
                     protocolDTOAssociated);
 
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors/{vendorProtocolName}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<OrganizationDTO> addVendorToProtocol(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+                                                                @PathVariable Integer protocolId,
+                                                                @PathVariable String vendorProtocolName,
+                                                                HttpServletRequest request,
+                                                                HttpServletResponse response) {
+
+        PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
+
+            OrganizationDTO protocolDTOAssociated = protocolService.getVendorForProtocolByName(vendorProtocolName);
+
+            PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
+                    OrganizationDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_ORGANIZATION),
+                    protocolDTOAssociated);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }

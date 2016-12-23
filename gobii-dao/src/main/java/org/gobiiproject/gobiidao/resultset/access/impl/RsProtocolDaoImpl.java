@@ -11,6 +11,7 @@ import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProtocol;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProjectNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProtocolDetailsByProtocolId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProtocolNames;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProtocolVendorByName;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetVendorProtocolNames;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.LoggerFactory;
@@ -140,8 +141,10 @@ public class RsProtocolDaoImpl implements RsProtocolDao {
 
         return returnVal;
 
-    }    
+    }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
     public Integer createVendorProtocol(Map<String, Object> parameters) throws GobiiDaoException {
         Integer returnVal;
 
@@ -156,4 +159,30 @@ public class RsProtocolDaoImpl implements RsProtocolDao {
         return returnVal;
 
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getVendorByProtocolVendorName(Map<String, Object> parameters) throws GobiiDaoException {
+
+        ResultSet returnVal;
+
+        try {
+            SpGetProtocolVendorByName spGetProtocolVendorByName = new SpGetProtocolVendorByName(parameters);
+
+            storedProcExec.doWithConnection(spGetProtocolVendorByName);
+
+            returnVal = spGetProtocolVendorByName.getResultSet();
+
+        } catch (SQLGrammarException e) {
+
+            LOGGER.error("Error retrieving VendorProtocol by name " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+
+        }
+
+        return returnVal;
+
+
+    }
+
 }

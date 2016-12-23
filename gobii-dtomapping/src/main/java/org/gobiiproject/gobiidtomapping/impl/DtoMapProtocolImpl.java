@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import org.gobiiproject.gobiidao.resultset.access.RsOrganizationDao;
 import org.gobiiproject.gobiidao.resultset.access.RsProtocolDao;
 import org.gobiiproject.gobiidao.resultset.access.RsVendorProtocolDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
@@ -10,6 +11,8 @@ import org.gobiiproject.gobiidtomapping.DtoMapProtocol;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +40,9 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
     @Autowired
     private DtoListQueryColl dtoListQueryColl;
+
+    @Autowired
+    private RsOrganizationDao rsOrganizationDao;
 
 
     @SuppressWarnings("unchecked")
@@ -114,6 +120,31 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
     @Transactional
     @Override
+    public OrganizationDTO getVendorForProtocolByName(String vendorProtocolName) throws GobiiDtoMappingException {
+
+        OrganizationDTO returnVal = new OrganizationDTO();
+
+        try {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("vendorProtocolName",vendorProtocolName);
+
+            ResultSet resultSet = rsProtocolDao.getVendorByProtocolVendorName(parameters);
+
+            if (resultSet.next()) {
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
+
+
+    @Transactional
+    @Override
     public OrganizationDTO addVendotrToProtocol(Integer protocolId, OrganizationDTO organizationDTO) throws GobiiDtoMappingException {
 
         OrganizationDTO returnVal = organizationDTO;
@@ -139,6 +170,12 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
         String vendoProtocolName = organizationDTO.getName() + "_" + protocolDTO.getName();
 
+        OrganizationDTO organizationDTOForName = this.getVendorForProtocolByName(vendoProtocolName);
+        if( organizationDTOForName.getOrganizationId() != null && organizationDTOForName.getOrganizationId() > 0) {
+            throw( new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                    GobiiValidationStatusType.ENTITY_ALREADY_EXISTS,
+                    "A vendor protocol association already exists for " + vendoProtocolName));
+        }
 
         try {
             Map<String, Object> parameters = new HashMap<>();

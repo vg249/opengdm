@@ -2,6 +2,7 @@ package org.gobiiproject.gobidomain.services.impl;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
 import org.gobiiproject.gobidomain.services.ProtocolService;
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidtomapping.DtoMapProtocol;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
@@ -166,6 +167,17 @@ public class ProtocolServiceImpl implements ProtocolService {
         return returnVal;
 
     }
+
+    @Override
+    public OrganizationDTO getVendorForProtocolByName(String vendorProtocolName) throws GobiiDaoException {
+
+        OrganizationDTO returnVal;
+
+        returnVal = dtoMapProtocol.getVendorForProtocolByName(vendorProtocolName);
+
+        return returnVal;
+    }
+
 
     
 }

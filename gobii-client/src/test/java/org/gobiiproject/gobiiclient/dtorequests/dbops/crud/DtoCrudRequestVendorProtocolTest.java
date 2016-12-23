@@ -20,6 +20,8 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
+import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -28,6 +30,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Created by VCalaminos on 2016-12-14.
@@ -119,6 +122,25 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                 .stream()
                 .filter(nameIdDTO -> nameIdDTO.getName().toLowerCase().equals(predictedVendorProtocolName))
                 .count() == 1);
+
+
+        // ************* VERIFY THAT REPOSTING THE SAME VENDOR TO THE SAME PROTOCOL GIVES A VALIDATION ERROR
+        protocolVendorResult =
+                protocolVendorResource.post(OrganizationDTO.class, vendorPayloadEnvelope);
+
+        Assert.assertTrue(
+                protocolVendorResult
+                        .getHeader()
+                        .getStatus()
+                        .getStatusMessages()
+                        .stream()
+                        .filter(headerStatusMessage ->
+                                headerStatusMessage
+                                        .getGobiiStatusLevel().equals(GobiiStatusLevel.VALIDATION) &&
+                                        headerStatusMessage
+                                                .getGobiiValidationStatusType()
+                                                .equals(GobiiValidationStatusType.ENTITY_ALREADY_EXISTS)
+                        ).count() == 1);
 
 
         //need services for GET /protocols/{id}/vendors/
