@@ -52,6 +52,16 @@ public class UriFactory {
                 .addUriParam(paramName);
     } //
 
+    public static RestUri resourceByUriIdParam(String contextRoot, ServiceRequestId serviceRequestId) throws Exception {
+
+        String paramName = "id";
+        return new RestUri(contextRoot,
+                ControllerType.GOBII,
+                serviceRequestId)
+                .addUriParam(paramName);
+    } //
+
+
     public RestUri childResourceByUriIdParam(ServiceRequestId parentServiceRequestId, ServiceRequestId childServiceRequestId) throws Exception {
 
         String paramName = "id";

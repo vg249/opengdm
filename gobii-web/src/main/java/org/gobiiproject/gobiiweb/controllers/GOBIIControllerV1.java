@@ -187,7 +187,8 @@ public class GOBIIControllerV1 {
                         ConfigSettingsDTO.class);
 
                 payloadWriter.writeSingleItemForDefaultId(returnVal,
-                        ServiceRequestId.URL_CONFIGSETTINGS,
+                        UriFactory.resourceByUriIdParam(request.getContextPath(),
+                                ServiceRequestId.URL_CONFIGSETTINGS),
                         configSettingsDTO);
 
                 returnVal.getPayload().getData().add(configSettingsDTO);
@@ -236,7 +237,8 @@ public class GOBIIControllerV1 {
                     ContactDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_CONTACTS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_CONTACTS),
                     contactDTONew);
 
         } catch (GobiiException e) {
@@ -275,7 +277,8 @@ public class GOBIIControllerV1 {
                     ContactDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_CONTACTS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_CONTACTS),
                     contactDTOReplaced);
 
 
@@ -311,7 +314,8 @@ public class GOBIIControllerV1 {
                         ContactDTO.class);
 
                 payloadWriter.writeSingleItemForDefaultId(returnVal,
-                        ServiceRequestId.URL_CONTACTS,
+                        UriFactory.resourceByUriIdParam(request.getContextPath(),
+                                ServiceRequestId.URL_CONTACTS),
                         contactDTO);
 
             } else {
@@ -350,7 +354,8 @@ public class GOBIIControllerV1 {
                     ContactDTO.class);
 
             payloadWriter.writeList(returnVal,
-                    ServiceRequestId.URL_CONTACTS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_CONTACTS),
                     platformDTOs);
 
         } catch (GobiiException e) {
@@ -425,7 +430,8 @@ public class GOBIIControllerV1 {
                     ContactDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_CONTACTS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_CONTACTS),
                     contactDTO);
 
         } catch (GobiiException e) {
@@ -467,7 +473,8 @@ public class GOBIIControllerV1 {
                     DataSetDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_DATASETS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DATASETS),
                     dataSetDTONew);
 
         } catch (GobiiException e) {
@@ -506,7 +513,8 @@ public class GOBIIControllerV1 {
                     DataSetDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_DATASETS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DATASETS),
                     dataSetDTOReplaced);
 //
 
@@ -541,7 +549,8 @@ public class GOBIIControllerV1 {
                     DataSetDTO.class);
 
             payloadWriter.writeList(returnVal,
-                    ServiceRequestId.URL_DATASETS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DATASETS),
                     dataSetDTOs);
 
         } catch (GobiiException e) {
@@ -574,7 +583,8 @@ public class GOBIIControllerV1 {
                     DataSetDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_DATASETS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DATASETS),
                     dataSetDTO);
 
         } catch (GobiiException e) {
@@ -616,7 +626,8 @@ public class GOBIIControllerV1 {
                     LoaderInstructionFilesDTO.class);
 
             payloadWriter.writeSingleItemForId(returnVal,
-                    ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS),
                     loaderInstructionFilesDTONew,
                     loaderInstructionFilesDTONew.getInstructionFileName());
 
@@ -651,7 +662,8 @@ public class GOBIIControllerV1 {
                     LoaderInstructionFilesDTO.class);
 
             payloadWriter.writeSingleItemForId(returnVal,
-                    ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS),
                     loaderInstructionFilesDTO,
                     loaderInstructionFilesDTO.getInstructionFileName());
 
@@ -694,7 +706,8 @@ public class GOBIIControllerV1 {
                     ExtractorInstructionFilesDTO.class);
 
             payloadWriter.writeSingleItemForId(returnVal,
-                    ServiceRequestId.URL_FILE_EXTRACTOR_STATUS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_FILE_EXTRACTOR_STATUS),
                     extractorInstructionFilesDTONew,
                     extractorInstructionFilesDTONew.getJobId());
 
@@ -730,7 +743,8 @@ public class GOBIIControllerV1 {
                     ExtractorInstructionFilesDTO.class);
 
             payloadWriter.writeSingleItemForId(returnVal,
-                    ServiceRequestId.URL_FILE_EXTRACTOR_STATUS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_FILE_EXTRACTOR_STATUS),
                     extractorInstructionFilesDTO,
                     extractorInstructionFilesDTO.getJobId());
 
@@ -772,7 +786,8 @@ public class GOBIIControllerV1 {
                     MarkerDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_MARKERS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MARKERS),
                     dataSetDTONew);
 
         } catch (GobiiException e) {
@@ -811,7 +826,8 @@ public class GOBIIControllerV1 {
                     MarkerDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_MARKERS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MARKERS),
                     dataSetDTOReplaced);
 //
 
@@ -846,7 +862,8 @@ public class GOBIIControllerV1 {
                     MarkerDTO.class);
 
             payloadWriter.writeList(returnVal,
-                    ServiceRequestId.URL_MARKERS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MARKERS),
                     markerDTOs);
 
         } catch (GobiiException e) {
@@ -880,7 +897,8 @@ public class GOBIIControllerV1 {
                     MarkerDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_MARKERS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MARKERS),
                     dataSetDTO);
 
         } catch (GobiiException e) {
@@ -916,7 +934,8 @@ public class GOBIIControllerV1 {
                     MarkerDTO.class);
 
             payloadWriter.writeList(returnVal,
-                    ServiceRequestId.URL_MARKERS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MARKERS),
                     markersByName);
 
         } catch (GobiiException e) {
@@ -1020,7 +1039,8 @@ public class GOBIIControllerV1 {
 
             PayloadWriter<NameIdDTO> payloadWriter = new PayloadWriter<>(request, NameIdDTO.class);
             payloadWriter.writeList(returnVal,
-                    EntityNameConverter.toServiceRequestId(gobiiEntityNameType),
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            EntityNameConverter.toServiceRequestId(gobiiEntityNameType)),
                     nameIdList);
 
         } catch (GobiiException e) {
@@ -1062,7 +1082,8 @@ public class GOBIIControllerV1 {
                     OrganizationDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_ORGANIZATION,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_ORGANIZATION),
                     OrganizationDTONew);
 
         } catch (GobiiException e) {
@@ -1100,7 +1121,8 @@ public class GOBIIControllerV1 {
                     OrganizationDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_ORGANIZATION,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_ORGANIZATION),
                     organizationDTOReplaced);
 
 
@@ -1136,7 +1158,8 @@ public class GOBIIControllerV1 {
                     OrganizationDTO.class);
 
             payloadWriter.writeList(returnVal,
-                    ServiceRequestId.URL_ORGANIZATION,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_ORGANIZATION),
                     organizationDTOs);
 
         } catch (GobiiException e) {
@@ -1171,7 +1194,8 @@ public class GOBIIControllerV1 {
                     OrganizationDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_ORGANIZATION,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_ORGANIZATION),
                     organizationDTO);
 
         } catch (GobiiException e) {
@@ -1251,7 +1275,8 @@ public class GOBIIControllerV1 {
                     PlatformDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_PLATFORM,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PLATFORM),
                     platformDTONew);
 
         } catch (GobiiException e) {
@@ -1290,7 +1315,8 @@ public class GOBIIControllerV1 {
                     PlatformDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_PLATFORM,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PLATFORM),
                     platformDTOReplaced);
 
 
@@ -1326,7 +1352,8 @@ public class GOBIIControllerV1 {
                     PlatformDTO.class);
 
             payloadWriter.writeList(returnVal,
-                    ServiceRequestId.URL_PLATFORM,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PLATFORM),
                     platformDTOs);
 
         } catch (GobiiException e) {
@@ -1361,7 +1388,8 @@ public class GOBIIControllerV1 {
                     PlatformDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_PLATFORM,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PLATFORM),
                     platformDTO);
 
         } catch (GobiiException e) {
@@ -1403,7 +1431,8 @@ public class GOBIIControllerV1 {
                     ProjectDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_PROJECTS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PROJECTS),
                     projectDTONew);
 
         } catch (GobiiException e) {
@@ -1442,7 +1471,8 @@ public class GOBIIControllerV1 {
                     ProjectDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_PROJECTS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PROJECTS),
                     projectDTOReplaced);
 //
 
@@ -1477,7 +1507,8 @@ public class GOBIIControllerV1 {
                     ProjectDTO.class);
 
             payloadWriter.writeList(returnVal,
-                    ServiceRequestId.URL_PROJECTS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PROJECTS),
                     projectDTOs);
 
         } catch (GobiiException e) {
@@ -1511,7 +1542,8 @@ public class GOBIIControllerV1 {
                     ProjectDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_PROJECTS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PROJECTS),
                     projectDTO);
 
         } catch (GobiiException e) {
@@ -1552,7 +1584,8 @@ public class GOBIIControllerV1 {
                     ExperimentDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_EXPERIMENTS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_EXPERIMENTS),
                     exprimentDTONew);
 
         } catch (GobiiException e) {
@@ -1591,7 +1624,8 @@ public class GOBIIControllerV1 {
                     ExperimentDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_EXPERIMENTS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_EXPERIMENTS),
                     exprimentDTOReplaced);
 
 
@@ -1627,7 +1661,8 @@ public class GOBIIControllerV1 {
                     ExperimentDTO.class);
 
             payloadWriter.writeList(returnVal,
-                    ServiceRequestId.URL_EXPERIMENTS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_EXPERIMENTS),
                     experimentDTOs);
 
         } catch (GobiiException e) {
@@ -1661,7 +1696,8 @@ public class GOBIIControllerV1 {
                     ExperimentDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_EXPERIMENTS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_EXPERIMENTS),
                     experimentDTO);
 
         } catch (GobiiException e) {
@@ -1701,7 +1737,8 @@ public class GOBIIControllerV1 {
                     ProtocolDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_PROTOCOL,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PROTOCOL),
                     protocolDTONew);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1735,7 +1772,8 @@ public class GOBIIControllerV1 {
                     ProtocolDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_PROTOCOL,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PROTOCOL),
                     protocolDTOReplaced);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1767,7 +1805,8 @@ public class GOBIIControllerV1 {
                     ProtocolDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_PROTOCOL,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PROTOCOL),
                     protocolDTO);
 
         } catch (Exception e) {
@@ -1798,7 +1837,8 @@ public class GOBIIControllerV1 {
                     ProtocolDTO.class);
 
             payloadWriter.writeList(returnVal,
-                    ServiceRequestId.URL_PROTOCOL,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PROTOCOL),
                     ProtocolDTOs);
 
         } catch (Exception e) {
@@ -1834,7 +1874,8 @@ public class GOBIIControllerV1 {
                     OrganizationDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_ORGANIZATION,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_ORGANIZATION),
                     protocolDTOAssociated);
 
         } catch (Exception e) {
@@ -1909,7 +1950,8 @@ public class GOBIIControllerV1 {
                     LoaderFilePreviewDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_FILE_LOAD,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_FILE_LOAD),
                     loaderFilePreviewDTO
             );
 
@@ -1948,7 +1990,8 @@ public class GOBIIControllerV1 {
                     LoaderFilePreviewDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    ServiceRequestId.URL_FILE_LOAD,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_FILE_LOAD),
                     loaderFilePreviewDTO
             );
 

@@ -32,7 +32,7 @@ public class PayloadWriter<T extends DTOBase> {
     }
 
     public void writeSingleItemForId(PayloadEnvelope<T> payloadEnvelope,
-                                     ServiceRequestId serviceRequestId,
+                                     RestUri restUri,
                                      T itemToWrite,
                                      String id) throws Exception {
 
@@ -45,9 +45,9 @@ public class PayloadWriter<T extends DTOBase> {
 
                 payloadEnvelope.getPayload().getData().add(itemToWrite);
 
-                String contextPath = this.httpServletRequest.getContextPath();
-                UriFactory uriFactory = new UriFactory(contextPath);
-                RestUri restUri = uriFactory.resourceByUriIdParam(serviceRequestId);
+//                String contextPath = this.httpServletRequest.getContextPath();
+//                UriFactory uriFactory = new UriFactory(contextPath);
+//                RestUri restUri = uriFactory.resourceByUriIdParam(serviceRequestId);
                 restUri.setParamValue("id", id);
                 //And hence we can create the link ehre
 
@@ -86,14 +86,14 @@ public class PayloadWriter<T extends DTOBase> {
     }
 
     public void writeSingleItemForDefaultId(PayloadEnvelope<T> payloadEnvelope,
-                                            ServiceRequestId serviceRequestId,
+                                            RestUri restUri,
                                             T itemToWrite) throws GobiiWebException, Exception {
 
         if ((null != itemToWrite) && (itemToWrite.getId() != null)) {
             String id = itemToWrite.getId().toString();
 
             this.writeSingleItemForId(payloadEnvelope,
-                    serviceRequestId,
+                    restUri,
                     itemToWrite,
                     id);
         }
@@ -101,11 +101,11 @@ public class PayloadWriter<T extends DTOBase> {
     }
 
     public void writeList(PayloadEnvelope<T> payloadEnvelope,
-                          ServiceRequestId serviceRequestId,
+                          RestUri restUri,
                           List<T> itemsToWrite) throws GobiiWebException, Exception {
 
         for (T currentItem : itemsToWrite) {
-            this.writeSingleItemForDefaultId(payloadEnvelope, serviceRequestId, currentItem);
+            this.writeSingleItemForDefaultId(payloadEnvelope, restUri, currentItem);
         }
     }
 }
