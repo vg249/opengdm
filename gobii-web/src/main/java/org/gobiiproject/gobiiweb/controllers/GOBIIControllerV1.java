@@ -1039,8 +1039,8 @@ public class GOBIIControllerV1 {
 
             PayloadWriter<NameIdDTO> payloadWriter = new PayloadWriter<>(request, NameIdDTO.class);
             payloadWriter.writeList(returnVal,
-                    UriFactory.resourceByUriIdParam(request.getContextPath(),
-                            EntityNameConverter.toServiceRequestId(gobiiEntityNameType)),
+                    EntityNameConverter.toServiceRequestId(request.getContextPath(),
+                                    gobiiEntityNameType),
                     nameIdList);
 
         } catch (GobiiException e) {
