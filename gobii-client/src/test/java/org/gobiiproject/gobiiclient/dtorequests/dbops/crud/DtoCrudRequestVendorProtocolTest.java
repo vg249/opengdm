@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -13,9 +14,11 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -92,8 +95,30 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
         PayloadEnvelope<OrganizationDTO> vendorPayloadEnvelope =
                 new PayloadEnvelope<>(organizationDTO, GobiiProcessType.CREATE);
         PayloadEnvelope<OrganizationDTO> protocolVendorResult =
-                protocolVendorResource.post(OrganizationDTO.class,vendorPayloadEnvelope);
+                protocolVendorResource.post(OrganizationDTO.class, vendorPayloadEnvelope);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(protocolVendorResult.getHeader()));
+
+
+        // ************ VERIFY THAT VENDOR-PROTOCOL WAS CREATED
+        RestUri namesUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .nameIdListByQueryParams();
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
+        namesUri.setParamValue("entity", GobiiEntityNameType.VENDORS_PROTOCOLS.toString().toLowerCase());
+
+        PayloadEnvelope<NameIdDTO> resultEnvelopeProtocoLVendornames = gobiiEnvelopeRestResource
+                .get(NameIdDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeProtocoLVendornames.getHeader()));
+
+        List<NameIdDTO> nameIdDTOs = resultEnvelopeProtocoLVendornames.getPayload().getData();
+
+        Assert.assertTrue(nameIdDTOs.size() > 0);
+
+        Assert.assertTrue(nameIdDTOs
+                .stream()
+                .filter(nameIdDTO -> nameIdDTO.getName().toLowerCase().equals(predictedVendorProtocolName))
+                .count() == 1);
 
 
         //need services for GET /protocols/{id}/vendors/
