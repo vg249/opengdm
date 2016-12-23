@@ -101,9 +101,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                 protocolVendorResource.post(OrganizationDTO.class, vendorPayloadEnvelope);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(protocolVendorResult.getHeader()));
 
-        OrganizationDTO vendorOrganizationDto = protocolVendorResult.getPayload().getData().get(0);
-
-        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.VENDORS_PROTOCOLS, vendorOrganizationDto.getOrganizationId());
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.VENDORS_PROTOCOLS, protocolDTO.getProtocolId());
 
 
         // ************ VERIFY THAT VENDOR-PROTOCOL WAS CREATED
