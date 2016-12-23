@@ -1,6 +1,8 @@
 package org.gobiiproject.gobiiapimodel.restresources;
 
 import org.gobiiproject.gobiiapimodel.restresources.ResourceParam;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 
 import java.util.ArrayList;
@@ -14,17 +16,41 @@ import java.util.stream.Collectors;
  */
 public class RestUri {
 
-    private final char URL_SEPARATOR = '/';
+    public static char URL_SEPARATOR = '/';
     private final String DELIM_PARAM_BEGIN = "{";
     private final String DELIM_PARAM_END = "}";
 
-    public RestUri(String requestTemplate) {
-        this.requestTemplate = requestTemplate;
-    } // ctor
+    private ControllerType controllerType;
+    private String cropContextRoot;
 
     private String requestTemplate;
     private Map<String, ResourceParam> paramMap = new HashMap<>();
     private List<ResourceParam> resourceParams = new ArrayList<>();
+
+
+    private void delimitCropContextRoot() {
+
+        if (null != this.cropContextRoot) {
+            if (this.cropContextRoot.lastIndexOf(RestUri.URL_SEPARATOR) != this.cropContextRoot.length() - 1) {
+                this.cropContextRoot = this.cropContextRoot + RestUri.URL_SEPARATOR;
+            }
+        }
+    }
+
+
+    public RestUri(String cropContextRoot, ControllerType controllerType, ServiceRequestId serviceRequestId) throws Exception{
+        this.controllerType = controllerType;
+        this.cropContextRoot = cropContextRoot;
+        this.delimitCropContextRoot();
+        this.requestTemplate = ResourceBuilder.getRequestUrl(this.controllerType,
+                this.cropContextRoot,
+                serviceRequestId);
+    }
+
+    public RestUri(String restUri ) {
+        this.requestTemplate = restUri;
+    }
+
 
     public List<ResourceParam> getRequestParams() {
         return this.resourceParams
@@ -34,7 +60,7 @@ public class RestUri {
     }
 
     public RestUri addParam(ResourceParam.ResourceParamType resourceParamType,
-                         String name) {
+                            String name) {
 
         ResourceParam resourceParam = new ResourceParam(resourceParamType, name, null);
         this.paramMap.put(resourceParam.getName(), resourceParam);
