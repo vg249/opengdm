@@ -110,6 +110,9 @@
     <bean id="dtoMapNameIdFetchRoles"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchRoles"/>
 
+    <bean id="dtoMapNameIdFetchProtocolNames"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchProtocols"/>
+
     <bean id="dtoMapNameIdList"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIdListImpl">
         <property name="dtoMapNameIdFetchMap">
@@ -169,6 +172,14 @@
                 <!-- ROLES -->
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).ROLES}">
                     <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchRoles"/>
+                </entry>
+                <!-- PROTOCOLS -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PROTOCOLS}">
+                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchProtocols"/>
+                </entry>
+                <!-- VENDORS_PROTOCOLS -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).VENDORS_PROTOCOLS}">
+                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchVendorProtocols"/>
                 </entry>
             </map>
         </property>

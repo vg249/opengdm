@@ -12,144 +12,77 @@ import java.util.List;
  */
 public class UriFactory {
 
-    private final String DELIM_PARAM_BEGIN = "{";
-    private final String DELIM_PARAM_END = "}";
-    private final char URL_SEPARATOR = '/';
-
     private ControllerType controllerType;
     private String cropContextRoot;
 
-
-    private void delimitCropContextRoot() {
-
-        if (null != this.cropContextRoot) {
-            if (this.cropContextRoot.lastIndexOf(URL_SEPARATOR) != this.cropContextRoot.length() - 1) {
-                this.cropContextRoot = this.cropContextRoot + URL_SEPARATOR;
-            }
-        }
-    }
-
     public UriFactory(String cropContextRoot, ControllerType controllerType) {
+
         this.controllerType = controllerType;
         this.cropContextRoot = cropContextRoot;
-        this.delimitCropContextRoot();
     }
 
     public UriFactory(String cropContextRoot) {
 
         this.controllerType = ControllerType.GOBII;
         this.cropContextRoot = cropContextRoot;
-        this.delimitCropContextRoot();
-    }
-
-
-    private String appendPathVariable(String requestUrl, String paramName) {
-
-        String returnVal = requestUrl;
-
-        if ((0 == returnVal.length()) ||
-                (returnVal.charAt(returnVal.length() - 1) != URL_SEPARATOR)) {
-
-            returnVal += URL_SEPARATOR;
-        }
-
-        returnVal += DELIM_PARAM_BEGIN + paramName + DELIM_PARAM_END;
-
-        return returnVal;
-
-    }
-
-    private RestUri makeUriWithUriParams(String baseUri, List<String> uriParms) {
-
-        String uriParamSuffix = "";
-        for (String currentParam : uriParms) {
-            uriParamSuffix = this.appendPathVariable(uriParamSuffix, currentParam);
-        }
-
-        String uri = baseUri + uriParamSuffix;
-
-        RestUri returnVal = new RestUri(uri, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-        for (String currentParam : uriParms) {
-            returnVal.addParam(ResourceParam.ResourceParamType.UriParam, currentParam);
-        }
-
-        return returnVal;
-
     }
 
     public RestUri RestUriFromUri(String uri) {
-        return new RestUri(uri, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        return new RestUri(uri);
     }
-
-
-    public RestUri createLoaderDirectory() throws Exception {
-
-        RestUri returnVal;
-
-        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
-                this.cropContextRoot,
-                ServiceRequestId.URL_FILE_LOAD);
-
-        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("directoryName"));
-
-        return returnVal;
-
-    } //
 
     public RestUri resourceColl(ServiceRequestId serviceRequestId) throws Exception {
 
         RestUri returnVal;
 
-        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
-                this.cropContextRoot,
+        returnVal = new RestUri(this.cropContextRoot,
+                this.controllerType,
                 serviceRequestId);
-
-        returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
 
         return returnVal;
 
     } //
-
 
     public RestUri resourceByUriIdParam(ServiceRequestId serviceRequestId) throws Exception {
 
-        RestUri returnVal;
-
-        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
-                this.cropContextRoot,
-                serviceRequestId);
-        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("id"));
-
-        return returnVal;
-
+        String paramName = "id";
+        return new RestUri(this.cropContextRoot,
+                this.controllerType,
+                serviceRequestId)
+                .addUriParam(paramName);
     } //
+
+    public static RestUri resourceByUriIdParam(String contextRoot, ServiceRequestId serviceRequestId) throws Exception {
+
+        String paramName = "id";
+        return new RestUri(contextRoot,
+                ControllerType.GOBII,
+                serviceRequestId)
+                .addUriParam(paramName);
+    } //
+
 
     public RestUri childResourceByUriIdParam(ServiceRequestId parentServiceRequestId, ServiceRequestId childServiceRequestId) throws Exception {
 
-        RestUri returnVal;
+        String paramName = "id";
+        RestUri returnVal = new RestUri(this.cropContextRoot,
+                this.controllerType,
+                parentServiceRequestId)
+                .addUriParam(paramName)
+                .appendSegment(childServiceRequestId);
 
-        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
-                this.cropContextRoot,
-                parentServiceRequestId);
-        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("id"));
-
-        returnVal.appendSegment(this.URL_SEPARATOR + ResourceBuilder.getUrlSegment(childServiceRequestId));
-
-        return returnVal;
+       return returnVal;
 
     } //
 
     public RestUri contactsByQueryParams() throws Exception {
 
-        RestUri returnVal;
-
-        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
-                this.cropContextRoot,
-                ServiceRequestId.URL_CONTACT_SEARCH);
-        returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "email");
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "lastName");
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "firstName");
+        RestUri returnVal = new RestUri(this.cropContextRoot,
+                this.controllerType,
+                ServiceRequestId.URL_CONTACT_SEARCH)
+                .addQueryParam("email")
+                .addQueryParam("lastName")
+                .addQueryParam("firstName");
 
         return returnVal;
 
@@ -157,30 +90,23 @@ public class UriFactory {
 
     public RestUri markerssByQueryParams() throws Exception {
 
-        RestUri returnVal;
+        RestUri returnVal = new RestUri(this.cropContextRoot,
+                this.controllerType,
+                ServiceRequestId.URL_MARKER_SEARCH)
+                .addQueryParam("name");
 
-        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
-                this.cropContextRoot,
-                ServiceRequestId.URL_MARKER_SEARCH);
-        returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "name");
         return returnVal;
 
     }
 
     public RestUri nameIdListByQueryParams() throws Exception {
 
-        RestUri returnVal;
-
-        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
-                this.cropContextRoot,
-                ServiceRequestId.URL_NAMES);
-
-
-        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("entity"));
-
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "filterType");
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "filterValue");
+        RestUri returnVal = new RestUri(this.cropContextRoot,
+                this.controllerType,
+                ServiceRequestId.URL_NAMES)
+                .addUriParam("entity")
+                .addQueryParam("filterType")
+                .addQueryParam("filterValue");
 
         return returnVal;
 
@@ -188,15 +114,11 @@ public class UriFactory {
 
     public RestUri fileLoaderPreview() throws Exception {
 
-
-        RestUri returnVal;
-
-        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
-                this.cropContextRoot,
-                ServiceRequestId.URL_FILE_LOAD);
-
-        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("directoryName"));
-        returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "fileFormat");
+        RestUri returnVal = new RestUri(this.cropContextRoot,
+                this.controllerType,
+                ServiceRequestId.URL_FILE_LOAD)
+                .addUriParam("directoryName")
+                .addQueryParam("fileFormat");
 
         return returnVal;
 

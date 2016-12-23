@@ -5,6 +5,7 @@
 // ************************************************************************
 package org.gobiiproject.gobiiclient.dtorequests.dbops.crud;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -18,8 +19,10 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkValues;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.junit.AfterClass;
@@ -104,10 +107,33 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
         //DtoRequestExperiment dtoRequestExperiment = new DtoRequestExperiment();
 
         Integer projectId = (new GlobalPkColl<DtoCrudRequestProjectTest>().getAPkVal(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECTS));
-
-        Integer platformId = (new GlobalPkColl<DtoCrudRequestPlatformTest>().getAPkVal(DtoCrudRequestPlatformTest.class, GobiiEntityNameType.PLATFORMS));
-
         Integer manifestId = (new GlobalPkColl<DtoCrudRequestManifestTest>().getAPkVal(DtoCrudRequestManifestTest.class, GobiiEntityNameType.MANIFESTS));
+        Integer idOfProtocolThatHasAVendor = (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>().getAPkVal(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDORS_PROTOCOLS));
+
+        // ** GET THE VENDOR_PROTOCOL ID *****************
+
+
+
+    
+
+        //GlobalPkValues.getInstance()
+        RestUri namesUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .nameIdListByQueryParams();
+        namesUri.setParamValue("entity", GobiiEntityNameType.VENDORS_PROTOCOLS.toString().toLowerCase());
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPEID.toString().toUpperCase()));
+        namesUri.setParamValue("filterValue", idOfProtocolThatHasAVendor.toString());
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForVendorsProtocol = new GobiiEnvelopeRestResource<>(namesUri);
+
+        PayloadEnvelope<NameIdDTO> resultEnvelopeProtocoLVendornames = gobiiEnvelopeRestResourceForVendorsProtocol
+                .get(NameIdDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeProtocoLVendornames.getHeader()));
+
+        List<NameIdDTO> nameIdDTOs = resultEnvelopeProtocoLVendornames.getPayload().getData();
+        Integer idOfArbitraryProtocolVendorRecord = nameIdDTOs.get(0).getId();
+
+        //*** SET UP THE EXPERIMENT DTO
 
         ExperimentDTO experimentDTORequest = new ExperimentDTO();
         // experimentDTORequest.setExperimentId(1);
@@ -119,8 +145,7 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
         experimentDTORequest.setExperimentDataFile("foofile");
         experimentDTORequest.setStatusId(1);
         experimentDTORequest.setExperimentName(UUID.randomUUID().toString());
-
-        //dtoRequestExperiment.process(experimentDTORequest);
+        experimentDTORequest.setVendorProtocolId(idOfArbitraryProtocolVendorRecord);
 
         RestUri experimentsUri = ClientContext.getInstance(null, false)
                 .getUriFactory()

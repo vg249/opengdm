@@ -45,10 +45,10 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
                 .makePopulatedProtocolDTO(GobiiProcessType.CREATE, 1);
 
         PayloadEnvelope<ProtocolDTO> payloadEnvelope = new PayloadEnvelope<>(newProtocolDto, GobiiProcessType.CREATE);
-    GobiiEnvelopeRestResource<ProtocolDTO> restResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_PROTOCOL));
-        PayloadEnvelope<ProtocolDTO> protocolDTOResponseEnvelope = restResource.post(ProtocolDTO.class,
+        PayloadEnvelope<ProtocolDTO> protocolDTOResponseEnvelope = gobiiEnvelopeRestResource.post(ProtocolDTO.class,
                 payloadEnvelope);
         ProtocolDTO protocolDTOResponse = protocolDTOResponseEnvelope.getPayload().getData().get(0);
 
@@ -69,6 +69,9 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
                 .get(ProtocolDTO.class);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
         ProtocolDTO protocolDTOResponseForParams = resultEnvelopeForGetByID.getPayload().getData().get(0);
+
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.PROTOCOLS, protocolDTOResponse.getProtocolId());
+
     }
 
 

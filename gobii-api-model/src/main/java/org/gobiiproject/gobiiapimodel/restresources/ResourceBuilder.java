@@ -165,6 +165,9 @@ public class ResourceBuilder {
             case URL_PROTOCOL:
                 returnVal = "protocols";
                 break;
+            case URL_VENDORS:
+                returnVal = "vendors";
+                break;
             default:
                 throw new Exception("Unknown request id : " + serviceRequestId.toString());
         }
