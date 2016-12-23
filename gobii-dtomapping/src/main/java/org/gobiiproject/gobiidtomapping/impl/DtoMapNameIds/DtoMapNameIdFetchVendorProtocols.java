@@ -34,16 +34,11 @@ public class DtoMapNameIdFetchVendorProtocols implements DtoMapNameIdFetch {
     }
 
 
-    private List<NameIdDTO> getProtocolNames() throws GobiiException {
-
+    private List<NameIdDTO> makeListFromResultSet(ResultSet resultSet) {
         List<NameIdDTO> returnVal = new ArrayList<>();
 
+        NameIdDTO nameIdDTO;
         try {
-
-            ResultSet resultSet = rsProtocolDao.getVendorProtocolNames();
-
-
-            NameIdDTO nameIdDTO;
             while (resultSet.next()) {
                 nameIdDTO = new NameIdDTO();
                 nameIdDTO.setId(resultSet.getInt("vendor_protocol_id"));
@@ -51,6 +46,38 @@ public class DtoMapNameIdFetchVendorProtocols implements DtoMapNameIdFetch {
                 returnVal.add(nameIdDTO);
             }
 
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+
+        return returnVal;
+    }
+
+    private List<NameIdDTO> getNameIdListForVendorProtcolByProtocolId(Integer protocolId) throws GobiiException {
+
+        List<NameIdDTO> returnVal;
+
+        ResultSet resultSet = rsProtocolDao.getVendorProtocolNamesByProtocolId(protocolId);
+
+        returnVal = this.makeListFromResultSet(resultSet);
+
+
+        return returnVal;
+    }
+
+
+
+    private List<NameIdDTO> getProtocolNames() throws GobiiException {
+
+        List<NameIdDTO> returnVal;
+
+        try {
+
+            ResultSet resultSet = rsProtocolDao.getVendorProtocolNames();
+
+            returnVal = this.makeListFromResultSet(resultSet);
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
@@ -67,6 +94,10 @@ public class DtoMapNameIdFetchVendorProtocols implements DtoMapNameIdFetch {
 
         if (GobiiFilterType.NONE == dtoMapNameIdParams.getGobiiFilterType()) {
             returnVal = this.getProtocolNames();
+        } else if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
+
+            returnVal = this.getNameIdListForVendorProtcolByProtocolId(dtoMapNameIdParams.getFilterValueAsInteger());
+
         } else {
 
             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,

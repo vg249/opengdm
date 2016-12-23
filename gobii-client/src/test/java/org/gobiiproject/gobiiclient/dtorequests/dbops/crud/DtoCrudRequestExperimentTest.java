@@ -120,6 +120,9 @@ public class DtoCrudRequestExperimentTest implements DtoCrudRequestTest {
         experimentDTORequest.setStatusId(1);
         experimentDTORequest.setExperimentName(UUID.randomUUID().toString());
 
+        // ** SET THE VENDOR_PROTOCOL ID
+        //GlobalPkValues.getInstance()
+
         //dtoRequestExperiment.process(experimentDTORequest);
 
         RestUri experimentsUri = ClientContext.getInstance(null, false)

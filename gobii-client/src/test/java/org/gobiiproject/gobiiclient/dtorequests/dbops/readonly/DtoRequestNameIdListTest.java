@@ -48,7 +48,7 @@ public class DtoRequestNameIdListTest {
         (new GlobalPkColl<DtoCrudRequestReferenceTest>()).getPkVals(DtoCrudRequestReferenceTest.class,GobiiEntityNameType.REFERENCES,10);
         (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getPkVals(DtoCrudRequestDataSetTest.class,GobiiEntityNameType.DATASETS,10);
         (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getPkVals(DtoCrudRequestProtocolTest.class,GobiiEntityNameType.PROTOCOLS,10);
-//        (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()).getPkVals(DtoCrudRequestVendorProtocolTest.class,GobiiEntityNameType.VENDORS_PROTOCOLS,10);
+        (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()).getPkVals(DtoCrudRequestVendorProtocolTest.class,GobiiEntityNameType.VENDORS_PROTOCOLS,10);
     }
 
     @AfterClass
@@ -433,13 +433,18 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetProtocols() throws Exception {
 
-        
         testNameRetrieval(GobiiEntityNameType.PROTOCOLS, GobiiFilterType.NONE, null);
     }
     @Test
     public void testGetProtocolVendors() throws Exception {
-
-        
         testNameRetrieval(GobiiEntityNameType.VENDORS_PROTOCOLS, GobiiFilterType.NONE, null);
+    }
+
+    @Test
+    public void testGetProtocolVendorsByProtocolId() throws Exception {
+        Integer protocolId = (new GlobalPkColl<DtoCrudRequestProtocolTest>()
+                .getAPkVal(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOLS));
+
+        testNameRetrieval(GobiiEntityNameType.VENDORS_PROTOCOLS, GobiiFilterType.BYTYPEID, protocolId.toString());
     }
 }
