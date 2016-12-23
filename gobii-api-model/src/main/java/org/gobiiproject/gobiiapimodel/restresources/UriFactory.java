@@ -76,7 +76,7 @@ public class UriFactory {
                 parentServiceRequestId)
                 .appendPathVariable(paramName)
                 .addParam(ResourceParam.ResourceParamType.UriParam, paramName)
-                .appendSegment(RestUri.URL_SEPARATOR + ResourceBuilder.getUrlSegment(childServiceRequestId));
+                .appendSegment(childServiceRequestId);
 
 
 //        this.makeUriWithUriParams(returnVal, Arrays.asList("id"));

@@ -4,6 +4,7 @@ import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 
+import java.security.Provider;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,8 +84,13 @@ public class RestUri {
         return this;
     }
 
-    public RestUri appendSegment(String segment) {
+    public RestUri appendSegment(ServiceRequestId serviceRequestId) throws Exception {
+
+        this.requestTemplate = this.delimitSegment(this.requestTemplate);
+        String segment = ResourceBuilder.getUrlSegment(serviceRequestId);
+
         this.requestTemplate += this.delimitSegment(segment);
+
         return this;
     }
 
