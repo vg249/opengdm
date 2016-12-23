@@ -177,6 +177,10 @@
                 <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).PROTOCOLS}">
                     <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchProtocols"/>
                 </entry>
+                <!-- VENDORS_PROTOCOLS -->
+                <entry key="#{T(org.gobiiproject.gobiimodel.types.GobiiEntityNameType).VENDORS_PROTOCOLS}">
+                    <bean class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdFetchVendorProtocols"/>
+                </entry>
             </map>
         </property>
     </bean>

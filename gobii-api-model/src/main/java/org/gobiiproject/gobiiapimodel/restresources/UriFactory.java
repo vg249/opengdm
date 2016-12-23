@@ -15,8 +15,8 @@ public class UriFactory {
     private ControllerType controllerType;
     private String cropContextRoot;
 
-
     public UriFactory(String cropContextRoot, ControllerType controllerType) {
+
         this.controllerType = controllerType;
         this.cropContextRoot = cropContextRoot;
     }
@@ -61,12 +61,7 @@ public class UriFactory {
                 .addUriParam(paramName)
                 .appendSegment(childServiceRequestId);
 
-
-//        this.makeUriWithUriParams(returnVal, Arrays.asList("id"));
-//
-//        returnVal.appendSegment(RestUri.URL_SEPARATOR + ResourceBuilder.getUrlSegment(childServiceRequestId));
-
-        return returnVal;
+       return returnVal;
 
     } //
 
@@ -108,7 +103,6 @@ public class UriFactory {
     } //
 
     public RestUri fileLoaderPreview() throws Exception {
-
 
         RestUri returnVal = new RestUri(this.cropContextRoot,
                 this.controllerType,
