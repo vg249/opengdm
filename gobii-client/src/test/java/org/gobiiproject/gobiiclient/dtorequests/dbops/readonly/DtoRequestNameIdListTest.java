@@ -90,26 +90,26 @@ public class DtoRequestNameIdListTest {
         Assert.assertFalse(assertionErrorStem,
                 TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
-        List<NameIdDTO> NameIdDTOList = resultEnvelope.getPayload().getData();
+        List<NameIdDTO> nameIdDTOList = resultEnvelope.getPayload().getData();
         Assert.assertNotNull(assertionErrorStem
                         + "null name id list",
-                NameIdDTOList);
+                nameIdDTOList);
 
         Assert.assertTrue(assertionErrorStem
                         + "empty name id list",
-                NameIdDTOList.size() > 0);
+                nameIdDTOList.size() > 0);
 
         Assert.assertNotNull(assertionErrorStem
                         + "null name",
-                NameIdDTOList.get(0).getName());
+                nameIdDTOList.get(0).getName());
 
         Assert.assertNotNull(assertionErrorStem
                         + "null ",
-                NameIdDTOList.get(0).getId());
+                nameIdDTOList.get(0).getId());
 
         Assert.assertTrue(assertionErrorStem
                         + "id <= 0",
-                NameIdDTOList.get(0).getId() > 0);
+                nameIdDTOList.get(0).getId() > 0);
 
     }
 

@@ -88,6 +88,17 @@ public class EntityNameConverter {
                             ServiceRequestId.URL_ROLES);
                     break;
 
+                case PROTOCOLS:
+                    returnVal = UriFactory.resourceByUriIdParam(contextRoot,
+                            ServiceRequestId.URL_PROTOCOL);
+                    break;
+
+                case VENDORS_PROTOCOLS:
+                    returnVal = UriFactory.resourceByUriIdParam(contextRoot,
+                            ServiceRequestId.URL_PROTOCOL)
+                            .appendSegment(ServiceRequestId.URL_VENDORS);
+                    break;
+
                 default:
                     throw new GobiiException("Unknown GobiiEntityTypeName: " + gobiiEntityNameType.toString());
 
