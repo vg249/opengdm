@@ -12,8 +12,6 @@ import java.util.List;
  */
 public class UriFactory {
 
-    private final String DELIM_PARAM_BEGIN = "{";
-    private final String DELIM_PARAM_END = "}";
     private final char URL_SEPARATOR = '/';
 
     private ControllerType controllerType;
@@ -43,32 +41,16 @@ public class UriFactory {
     }
 
 
-    private String appendPathVariable(String requestUrl, String paramName) {
-
-        String returnVal = requestUrl;
-
-        if ((0 == returnVal.length()) ||
-                (returnVal.charAt(returnVal.length() - 1) != URL_SEPARATOR)) {
-
-            returnVal += URL_SEPARATOR;
-        }
-
-        returnVal += DELIM_PARAM_BEGIN + paramName + DELIM_PARAM_END;
-
-        return returnVal;
-
-    }
 
     private RestUri makeUriWithUriParams(String baseUri, List<String> uriParms) {
 
-        String uriParamSuffix = "";
+        RestUri returnVal = new RestUri(baseUri);
+
+
         for (String currentParam : uriParms) {
-            uriParamSuffix = this.appendPathVariable(uriParamSuffix, currentParam);
+            returnVal.appendPathVariable(currentParam);
         }
 
-        String uri = baseUri + uriParamSuffix;
-
-        RestUri returnVal = new RestUri(uri, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
         for (String currentParam : uriParms) {
             returnVal.addParam(ResourceParam.ResourceParamType.UriParam, currentParam);
         }
@@ -78,23 +60,9 @@ public class UriFactory {
     }
 
     public RestUri RestUriFromUri(String uri) {
-        return new RestUri(uri, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        return new RestUri(uri);
     }
 
-
-    public RestUri createLoaderDirectory() throws Exception {
-
-        RestUri returnVal;
-
-        String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
-                this.cropContextRoot,
-                ServiceRequestId.URL_FILE_LOAD);
-
-        returnVal = this.makeUriWithUriParams(baseUrl, Arrays.asList("directoryName"));
-
-        return returnVal;
-
-    } //
 
     public RestUri resourceColl(ServiceRequestId serviceRequestId) throws Exception {
 
@@ -104,7 +72,7 @@ public class UriFactory {
                 this.cropContextRoot,
                 serviceRequestId);
 
-        returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        returnVal = new RestUri(baseUrl);
 
         return returnVal;
 
@@ -146,7 +114,7 @@ public class UriFactory {
         String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
                 this.cropContextRoot,
                 ServiceRequestId.URL_CONTACT_SEARCH);
-        returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        returnVal = new RestUri(baseUrl);
         returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "email");
         returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "lastName");
         returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "firstName");
@@ -162,7 +130,7 @@ public class UriFactory {
         String baseUrl = ResourceBuilder.getRequestUrl(this.controllerType,
                 this.cropContextRoot,
                 ServiceRequestId.URL_MARKER_SEARCH);
-        returnVal = new RestUri(baseUrl, DELIM_PARAM_BEGIN, DELIM_PARAM_END);
+        returnVal = new RestUri(baseUrl);
         returnVal.addParam(ResourceParam.ResourceParamType.QueryParam, "name");
         return returnVal;
 

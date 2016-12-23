@@ -14,16 +14,13 @@ import java.util.stream.Collectors;
  */
 public class RestUri {
 
-    public RestUri(String requestTemplate,
-                   String pathVarDelimBegin,
-                   String pathVarDelimEnd) {
-        this.requestTemplate = requestTemplate;
-        this.pathVarDelimBegin = pathVarDelimBegin;
-        this.pathVarDelimEnd = pathVarDelimEnd;
-    } // ctor
+    private final char URL_SEPARATOR = '/';
+    private final String DELIM_PARAM_BEGIN = "{";
+    private final String DELIM_PARAM_END = "}";
 
-    private String pathVarDelimBegin;
-    private String pathVarDelimEnd;
+    public RestUri(String requestTemplate) {
+        this.requestTemplate = requestTemplate;
+    } // ctor
 
     private String requestTemplate;
     private Map<String, ResourceParam> paramMap = new HashMap<>();
@@ -36,26 +33,44 @@ public class RestUri {
                 .collect(Collectors.toList());
     }
 
-    public void addParam(ResourceParam.ResourceParamType resourceParamType,
+    public RestUri addParam(ResourceParam.ResourceParamType resourceParamType,
                          String name) {
 
         ResourceParam resourceParam = new ResourceParam(resourceParamType, name, null);
         this.paramMap.put(resourceParam.getName(), resourceParam);
         this.resourceParams.add(resourceParam);
 
+        return this;
+
     }
 
-    public void setParamValue(String paramName, String value) throws Exception {
+    public RestUri setParamValue(String paramName, String value) throws Exception {
 
         if (null == this.paramMap.get(paramName)) {
             throw new Exception("Specified parameter does not exist: " + paramName);
         }
 
         this.paramMap.get(paramName).setValue(value);
+
+        return this;
     }
 
-    public void appendSegment(String segment) {
+    public RestUri appendSegment(String segment) {
         this.requestTemplate += segment;
+        return this;
+    }
+
+    public RestUri appendPathVariable(String paramName) {
+
+        if ((0 == this.requestTemplate.length()) ||
+                (this.requestTemplate.charAt(this.requestTemplate.length() - 1) != URL_SEPARATOR)) {
+            this.requestTemplate += this.URL_SEPARATOR;
+        }
+
+        this.requestTemplate += this.DELIM_PARAM_BEGIN + paramName + this.DELIM_PARAM_END;
+
+        return this;
+
     }
 
     public String makeUrl() throws Exception {
@@ -69,9 +84,9 @@ public class RestUri {
                 .collect(Collectors.toList());
 
         for (ResourceParam currentParam : uriParams) {
-            String paramToReplace = pathVarDelimBegin
+            String paramToReplace = this.DELIM_PARAM_BEGIN
                     + currentParam.getName()
-                    + pathVarDelimEnd;
+                    + this.DELIM_PARAM_END;
 
             if (this.requestTemplate.contains(paramToReplace)) {
 
@@ -86,16 +101,16 @@ public class RestUri {
             } else {
                 throw new Exception("The request template "
                         + this.requestTemplate
-                        + "does not contain the path path variable "
+                        + " does not contain the path path variable "
                         + paramToReplace);
             }
         }
 
-        if (returnVal.contains(this.pathVarDelimBegin)) {
+        if (returnVal.contains(this.DELIM_PARAM_BEGIN)) {
             String missingParameter = returnVal
                     .substring(
-                            returnVal.indexOf(this.pathVarDelimBegin),
-                            returnVal.indexOf(this.pathVarDelimEnd)
+                            returnVal.indexOf(this.DELIM_PARAM_BEGIN),
+                            returnVal.indexOf(this.DELIM_PARAM_END)
                     );
 
             throw new Exception("There is no parameter for uri parameter " + missingParameter);

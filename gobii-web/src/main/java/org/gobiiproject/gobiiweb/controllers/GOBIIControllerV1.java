@@ -173,7 +173,7 @@ public class GOBIIControllerV1 {
 
     @RequestMapping(value = "/configsettings", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<ConfigSettingsDTO> getContactsById(
+    public PayloadEnvelope<ConfigSettingsDTO> getConfigSettings(
             HttpServletRequest request,
             HttpServletResponse response) {
 
