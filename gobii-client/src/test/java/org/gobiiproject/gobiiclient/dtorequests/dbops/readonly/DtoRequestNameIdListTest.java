@@ -19,7 +19,9 @@ import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestContact
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestDataSetTest;
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestMapsetTest;
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestProjectTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestProtocolTest;
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestReferenceTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestVendorProtocolTest;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -45,6 +47,8 @@ public class DtoRequestNameIdListTest {
         (new GlobalPkColl<DtoCrudRequestContactTest>()).getPkVals(DtoCrudRequestContactTest.class,GobiiEntityNameType.CONTACTS,10);
         (new GlobalPkColl<DtoCrudRequestReferenceTest>()).getPkVals(DtoCrudRequestReferenceTest.class,GobiiEntityNameType.REFERENCES,10);
         (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getPkVals(DtoCrudRequestDataSetTest.class,GobiiEntityNameType.DATASETS,10);
+        (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getPkVals(DtoCrudRequestProtocolTest.class,GobiiEntityNameType.PROTOCOLS,10);
+//        (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()).getPkVals(DtoCrudRequestVendorProtocolTest.class,GobiiEntityNameType.VENDORS_PROTOCOLS,10);
     }
 
     @AfterClass
@@ -113,9 +117,6 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetAnalysisNames() throws Exception {
 
-        // Assumes rice data with seed script is loaded
-
-
         testNameRetrieval(GobiiEntityNameType.ANALYSES, GobiiFilterType.NONE, null);
 
     } // testGetAnalysisNames()
@@ -123,15 +124,12 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetAnalysisNamesByTypeId() throws Exception {
 
-        // Assumes rice data with seed script is loaded
         testNameRetrieval(GobiiEntityNameType.ANALYSES, GobiiFilterType.BYTYPEID, "1");
-
     }
 
     @Test
     public void testGetNamesWithBadEntityValue() throws Exception {
 
-        // Assumes rice data with seed script is loaded
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
@@ -155,7 +153,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetAnalysisNamesByTypeIdErrorBadFilterType() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
@@ -181,7 +179,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetAnalysisNamesByTypeIdErrorEmptyFilterValue() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
@@ -216,7 +214,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetContactNames() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.CONTACTS, GobiiFilterType.NONE, null);
 
 
@@ -226,7 +224,7 @@ public class DtoRequestNameIdListTest {
     public void testGetProjectNames() throws Exception {
 
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.PROJECTS, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
@@ -235,7 +233,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetProjectNamesByContactId() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.PROJECTS, GobiiFilterType.BYTYPEID, "1");
     }
 
@@ -243,7 +241,7 @@ public class DtoRequestNameIdListTest {
     public void testGetExperimentNamesByProjectId() throws Exception {
 
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.EXPERIMENTS, GobiiFilterType.BYTYPEID, "1");
 
     }
@@ -251,21 +249,21 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetExperimentNames() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.EXPERIMENTS, GobiiFilterType.NONE, null);
     }
 
     @Test
     public void testGetCvTermsByGroup() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.CVTERMS, GobiiFilterType.BYTYPENAME, "status");
     }
 
     @Test
     public void testGetPlatformNames() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         //testNameRetrieval(GobiiEntityNameType.PLATFORMS, GobiiFilterType.NONE, null);
         RestUri namesUri = ClientContext.getInstance(null,false)
                 .getUriFactory()
@@ -342,7 +340,7 @@ public class DtoRequestNameIdListTest {
 
     @Test
     public void testGetPlatformNamesByTypeId() throws Exception {
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.PLATFORMS, GobiiFilterType.BYTYPEID, "1");
 
     } // testGetMarkers()
@@ -359,7 +357,7 @@ public class DtoRequestNameIdListTest {
     public void testGetReferenceNames() throws Exception {
 
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.REFERENCES, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
@@ -367,7 +365,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetMapNames() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.MAPSETS, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
@@ -382,7 +380,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetCvTypes() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.CVGROUPS, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
@@ -390,7 +388,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetCvNames() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.CVTERMS, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
@@ -398,7 +396,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetRoles() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.ROLES,GobiiFilterType.NONE,null);
     } // testGetMarkers()
 
@@ -413,7 +411,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetOrganizationNames() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.ORGANIZATIONS, GobiiFilterType.NONE, null);
 
     }
@@ -421,7 +419,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetDataSetNamesByExperimentId() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.DATASETS, GobiiFilterType.BYTYPEID, "1");
 
     }
@@ -429,7 +427,19 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetDataSetNames() throws Exception {
 
-        // Assumes rice data with seed script is loaded
+        
         testNameRetrieval(GobiiEntityNameType.DATASETS, GobiiFilterType.NONE, null);
+    }
+    @Test
+    public void testGetProtocols() throws Exception {
+
+        
+        testNameRetrieval(GobiiEntityNameType.PROTOCOLS, GobiiFilterType.NONE, null);
+    }
+    @Test
+    public void testGetProtocolVendors() throws Exception {
+
+        
+        testNameRetrieval(GobiiEntityNameType.VENDORS_PROTOCOLS, GobiiFilterType.NONE, null);
     }
 }

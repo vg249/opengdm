@@ -76,6 +76,7 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
         OrganizationDTO organizationDTOResponseForParams = resultEnvelopeForGetByID.getPayload().getData().get(0);
 
+        GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.ORGANIZATIONS, organizationDTOResponse.getOrganizationId());
     }
 
     @Test
@@ -165,7 +166,7 @@ public class DtoCrudRequestOrganizationTest implements DtoCrudRequestTest {
         PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
                 .get(OrganizationDTO.class);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
         OrganizationDTO organizationDTO = resultEnvelopeForGetByID.getPayload().getData().get(0);
         Assert.assertTrue(organizationDTO.getOrganizationId() > 0);
         Assert.assertNotNull(organizationDTO.getName());

@@ -21,5 +21,6 @@ public enum GobiiEntityNameType {
     ROLES,
     DISPLAYNAMES,
     MARKERS,
-    PROTOCOLS
+    PROTOCOLS,
+    VENDORS_PROTOCOLS
 }
