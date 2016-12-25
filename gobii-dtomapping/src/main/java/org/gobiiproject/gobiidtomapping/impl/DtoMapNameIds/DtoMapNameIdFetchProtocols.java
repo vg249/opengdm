@@ -34,14 +34,11 @@ public class DtoMapNameIdFetchProtocols implements DtoMapNameIdFetch {
     }
 
 
-    private List<NameIdDTO> getProtocolNames() throws GobiiException {
+    private List<NameIdDTO> getNameIds(ResultSet resultSet ) throws GobiiException {
 
         List<NameIdDTO> returnVal = new ArrayList<>();
 
         try {
-
-            ResultSet resultSet = rsProtocolDao.getProtocolNames();
-
 
             NameIdDTO nameIdDTO;
             while (resultSet.next()) {
@@ -57,6 +54,22 @@ public class DtoMapNameIdFetchProtocols implements DtoMapNameIdFetch {
             throw new GobiiDtoMappingException(e);
         }
 
+
+        return returnVal;
+    }
+
+    private List<NameIdDTO> getProtocolNames() throws GobiiException {
+
+        List<NameIdDTO> returnVal;
+        ResultSet resultSet = rsProtocolDao.getProtocolNames();
+        returnVal = this.getNameIds(resultSet);
+        return returnVal;
+    }
+
+    private List<NameIdDTO> getNameIdListForProtocolsByPlatformId(Integer platformId) throws GobiiException {
+        List<NameIdDTO> returnVal;
+        ResultSet resultSet = rsProtocolDao.getProtocolNamesByPlatformId(platformId);
+        returnVal = this.getNameIds(resultSet);
         return returnVal;
     }
 
@@ -69,11 +82,18 @@ public class DtoMapNameIdFetchProtocols implements DtoMapNameIdFetch {
             returnVal = this.getProtocolNames();
         } else {
 
-            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                    GobiiValidationStatusType.NONE,
-                    "Unsupported filter type for "
-                            + this.getEntityTypeName().toString().toLowerCase()
-                            + ": " + dtoMapNameIdParams.getGobiiFilterType());
+            if (GobiiFilterType.BYTYPEID == dtoMapNameIdParams.getGobiiFilterType()) {
+
+                returnVal = this.getNameIdListForProtocolsByPlatformId(dtoMapNameIdParams.getFilterValueAsInteger());
+
+            } else {
+
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                        GobiiValidationStatusType.NONE,
+                        "Unsupported filter type for "
+                                + this.getEntityTypeName().toString().toLowerCase()
+                                + ": " + dtoMapNameIdParams.getGobiiFilterType());
+            }
         }
 
         return returnVal;

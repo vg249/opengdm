@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
@@ -24,6 +25,7 @@ import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestReferen
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestVendorProtocolTest;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.junit.AfterClass;
@@ -42,13 +44,13 @@ public class DtoRequestNameIdListTest {
         Assert.assertTrue(Authenticator.authenticate());
 
 //        (new GlobalPkColl<DtoCrudRequestAnalysisTest>()).getPkVals(DtoCrudRequestAnalysisTest.class,GobiiEntityNameType.ANALYSES,10);
-        (new GlobalPkColl<DtoCrudRequestProjectTest>()).getPkVals(DtoCrudRequestProjectTest.class,GobiiEntityNameType.PROJECTS,10);
-        (new GlobalPkColl<DtoCrudRequestMapsetTest>()).getPkVals(DtoCrudRequestMapsetTest.class,GobiiEntityNameType.MAPSETS,10);
-        (new GlobalPkColl<DtoCrudRequestContactTest>()).getPkVals(DtoCrudRequestContactTest.class,GobiiEntityNameType.CONTACTS,10);
-        (new GlobalPkColl<DtoCrudRequestReferenceTest>()).getPkVals(DtoCrudRequestReferenceTest.class,GobiiEntityNameType.REFERENCES,10);
-        (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getPkVals(DtoCrudRequestDataSetTest.class,GobiiEntityNameType.DATASETS,10);
-        (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getPkVals(DtoCrudRequestProtocolTest.class,GobiiEntityNameType.PROTOCOLS,10);
-        (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()).getPkVals(DtoCrudRequestVendorProtocolTest.class,GobiiEntityNameType.VENDORS_PROTOCOLS,10);
+        (new GlobalPkColl<DtoCrudRequestProjectTest>()).getPkVals(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECTS, 10);
+        (new GlobalPkColl<DtoCrudRequestMapsetTest>()).getPkVals(DtoCrudRequestMapsetTest.class, GobiiEntityNameType.MAPSETS, 10);
+        (new GlobalPkColl<DtoCrudRequestContactTest>()).getPkVals(DtoCrudRequestContactTest.class, GobiiEntityNameType.CONTACTS, 10);
+        (new GlobalPkColl<DtoCrudRequestReferenceTest>()).getPkVals(DtoCrudRequestReferenceTest.class, GobiiEntityNameType.REFERENCES, 10);
+        (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getPkVals(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS, 10);
+        (new GlobalPkColl<DtoCrudRequestProtocolTest>()).getPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOLS, 10);
+        (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()).getPkVals(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDORS_PROTOCOLS, 10);
     }
 
     @AfterClass
@@ -59,7 +61,7 @@ public class DtoRequestNameIdListTest {
     private void testNameRetrieval(GobiiEntityNameType gobiiEntityNameType,
                                    GobiiFilterType gobiiFilterType,
                                    String filterValue) throws Exception {
-        RestUri namesUri = ClientContext.getInstance(null,false)
+        RestUri namesUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
@@ -130,7 +132,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetNamesWithBadEntityValue() throws Exception {
 
-        RestUri namesUri = ClientContext.getInstance(null,false)
+        RestUri namesUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
@@ -153,8 +155,8 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetAnalysisNamesByTypeIdErrorBadFilterType() throws Exception {
 
-        
-        RestUri namesUri = ClientContext.getInstance(null,false)
+
+        RestUri namesUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
@@ -179,8 +181,8 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetAnalysisNamesByTypeIdErrorEmptyFilterValue() throws Exception {
 
-        
-        RestUri namesUri = ClientContext.getInstance(null,false)
+
+        RestUri namesUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
@@ -214,7 +216,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetContactNames() throws Exception {
 
-        
+
         testNameRetrieval(GobiiEntityNameType.CONTACTS, GobiiFilterType.NONE, null);
 
 
@@ -224,7 +226,6 @@ public class DtoRequestNameIdListTest {
     public void testGetProjectNames() throws Exception {
 
 
-        
         testNameRetrieval(GobiiEntityNameType.PROJECTS, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
@@ -233,7 +234,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetProjectNamesByContactId() throws Exception {
 
-        
+
         testNameRetrieval(GobiiEntityNameType.PROJECTS, GobiiFilterType.BYTYPEID, "1");
     }
 
@@ -241,7 +242,6 @@ public class DtoRequestNameIdListTest {
     public void testGetExperimentNamesByProjectId() throws Exception {
 
 
-        
         testNameRetrieval(GobiiEntityNameType.EXPERIMENTS, GobiiFilterType.BYTYPEID, "1");
 
     }
@@ -249,23 +249,23 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetExperimentNames() throws Exception {
 
-        
+
         testNameRetrieval(GobiiEntityNameType.EXPERIMENTS, GobiiFilterType.NONE, null);
     }
 
     @Test
     public void testGetCvTermsByGroup() throws Exception {
 
-        
+
         testNameRetrieval(GobiiEntityNameType.CVTERMS, GobiiFilterType.BYTYPENAME, "status");
     }
 
     @Test
     public void testGetPlatformNames() throws Exception {
 
-        
+
         //testNameRetrieval(GobiiEntityNameType.PLATFORMS, GobiiFilterType.NONE, null);
-        RestUri namesUri = ClientContext.getInstance(null,false)
+        RestUri namesUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
@@ -304,7 +304,7 @@ public class DtoRequestNameIdListTest {
 
         // verify that we can retrieve platofrmDtos from the links we got for the platform name IDs
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
-        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == nameIdDTOList.size() );
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == nameIdDTOList.size());
 
         List<Integer> itemsToTest = new ArrayList<>();
         if (nameIdDTOList.size() > 50) {
@@ -321,7 +321,7 @@ public class DtoRequestNameIdListTest {
             NameIdDTO currentPlatformNameDto = nameIdDTOList.get(currentIdx);
 
             Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
-            RestUri restUriPlatformForGetById = ClientContext.getInstance(null,false)
+            RestUri restUriPlatformForGetById = ClientContext.getInstance(null, false)
                     .getUriFactory()
                     .RestUriFromUri(currentLink.getHref());
             GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriPlatformForGetById);
@@ -340,7 +340,7 @@ public class DtoRequestNameIdListTest {
 
     @Test
     public void testGetPlatformNamesByTypeId() throws Exception {
-        
+
         testNameRetrieval(GobiiEntityNameType.PLATFORMS, GobiiFilterType.BYTYPEID, "1");
 
     } // testGetMarkers()
@@ -357,7 +357,6 @@ public class DtoRequestNameIdListTest {
     public void testGetReferenceNames() throws Exception {
 
 
-        
         testNameRetrieval(GobiiEntityNameType.REFERENCES, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
@@ -365,7 +364,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetMapNames() throws Exception {
 
-        
+
         testNameRetrieval(GobiiEntityNameType.MAPSETS, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
@@ -380,7 +379,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetCvTypes() throws Exception {
 
-        
+
         testNameRetrieval(GobiiEntityNameType.CVGROUPS, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
@@ -388,7 +387,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetCvNames() throws Exception {
 
-        
+
         testNameRetrieval(GobiiEntityNameType.CVTERMS, GobiiFilterType.NONE, null);
 
     } // testGetMarkers()
@@ -396,8 +395,8 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetRoles() throws Exception {
 
-        
-        testNameRetrieval(GobiiEntityNameType.ROLES,GobiiFilterType.NONE,null);
+
+        testNameRetrieval(GobiiEntityNameType.ROLES, GobiiFilterType.NONE, null);
     } // testGetMarkers()
 
 
@@ -411,7 +410,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetOrganizationNames() throws Exception {
 
-        
+
         testNameRetrieval(GobiiEntityNameType.ORGANIZATIONS, GobiiFilterType.NONE, null);
 
     }
@@ -419,7 +418,7 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetDataSetNamesByExperimentId() throws Exception {
 
-        
+
         testNameRetrieval(GobiiEntityNameType.DATASETS, GobiiFilterType.BYTYPEID, "1");
 
     }
@@ -427,14 +426,16 @@ public class DtoRequestNameIdListTest {
     @Test
     public void testGetDataSetNames() throws Exception {
 
-        
+
         testNameRetrieval(GobiiEntityNameType.DATASETS, GobiiFilterType.NONE, null);
     }
+
     @Test
     public void testGetProtocols() throws Exception {
 
         testNameRetrieval(GobiiEntityNameType.PROTOCOLS, GobiiFilterType.NONE, null);
     }
+
     @Test
     public void testGetProtocolVendors() throws Exception {
         testNameRetrieval(GobiiEntityNameType.VENDORS_PROTOCOLS, GobiiFilterType.NONE, null);
@@ -446,5 +447,34 @@ public class DtoRequestNameIdListTest {
                 .getAPkVal(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOLS));
 
         testNameRetrieval(GobiiEntityNameType.VENDORS_PROTOCOLS, GobiiFilterType.BYTYPEID, protocolId.toString());
+    }
+
+
+    @Test
+    public void testGetProtocolsByPlatformId() throws Exception {
+
+        RestUri restUriProtocol = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_PROTOCOL);
+        GobiiEnvelopeRestResource<ProtocolDTO> restResource = new GobiiEnvelopeRestResource<>(restUriProtocol);
+        PayloadEnvelope<ProtocolDTO> resultEnvelope = restResource
+                .get(ProtocolDTO.class);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<ProtocolDTO> protocolDTOList = resultEnvelope.getPayload().getData();
+
+        Integer platformId = null;
+        for (Integer idx = 0; (platformId == null) && (idx < protocolDTOList.size()); idx++) {
+
+            ProtocolDTO currentProtocolDTO = protocolDTOList.get(idx);
+            if( ( currentProtocolDTO.getPlatformId() != null ) &&
+                    currentProtocolDTO.getPlatformId() > 0 ) {
+                platformId = currentProtocolDTO.getPlatformId();
+            }
+        }
+
+        Assert.assertNotNull(platformId);
+
+
+        testNameRetrieval(GobiiEntityNameType.PROTOCOLS, GobiiFilterType.BYTYPEID, platformId.toString());
     }
 }
