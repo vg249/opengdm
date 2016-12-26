@@ -9,6 +9,7 @@ import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.DtoMapProtocol;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.VendorProtocolDTO;
@@ -38,14 +39,7 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
     private RsProtocolDao rsProtocolDao;
 
     @Autowired
-    private RsVendorProtocolDao rsVendorProtocolDao;
-
-    @Autowired
     private DtoListQueryColl dtoListQueryColl;
-
-    @Autowired
-    private RsOrganizationDao rsOrganizationDao;
-
 
     @SuppressWarnings("unchecked")
     @Override
@@ -168,7 +162,9 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
         return returnVal;
     }
 
-    private void addVendorProtocolsToOrganization(OrganizationDTO organizationDTO) {
+    @Transactional
+    @Override
+    public void addVendorProtocolsToOrganization(OrganizationDTO organizationDTO) throws GobiiException{
 
         try {
             organizationDTO.getVendorProtocols().clear();

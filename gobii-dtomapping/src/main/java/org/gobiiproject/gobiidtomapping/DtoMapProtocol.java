@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping;
 
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 
@@ -16,4 +17,5 @@ public interface DtoMapProtocol {
     List<ProtocolDTO> getProtocols() throws GobiiDtoMappingException;
     OrganizationDTO addVendotrToProtocol(Integer protocolId, OrganizationDTO organizationDTO) throws GobiiDtoMappingException;
     OrganizationDTO getVendorForProtocolByName(String vendorProtocolName) throws GobiiDtoMappingException;    List<OrganizationDTO> getVendorsForProtocolByProtocolId(Integer protocolId) throws GobiiDtoMappingException;
+    void addVendorProtocolsToOrganization(OrganizationDTO organizationDTO)  throws GobiiException;
 }

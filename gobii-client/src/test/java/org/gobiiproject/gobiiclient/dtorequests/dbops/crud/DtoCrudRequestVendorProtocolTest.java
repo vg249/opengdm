@@ -245,6 +245,25 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                 Assert.assertNotNull(currentVendorProtocolDTO.getName());
                 Assert.assertTrue(currentOrganizationDTO.getOrganizationId().equals(currentVendorProtocolDTO.getOrganizationId()));
             }
+
+            // verify we get the same result through the plain organization service
+            RestUri restUriOrganization = ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(ServiceRequestId.URL_ORGANIZATION)
+                    .setParamValue("id",currentOrganizationDTO.getOrganizationId().toString());
+
+            GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriOrganization);
+            PayloadEnvelope<OrganizationDTO> resultEnvelope = gobiiEnvelopeRestResource
+                    .get(OrganizationDTO.class);
+
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+            OrganizationDTO organizationDTOFromDedicatedUrl = resultEnvelope.getPayload().getData().get(0);
+            Assert.assertTrue(organizationDTOFromDedicatedUrl.getOrganizationId().equals(currentOrganizationDTO.getOrganizationId()));
+            Assert.assertNotNull(organizationDTOFromDedicatedUrl.getVendorProtocols());
+            Assert.assertTrue(organizationDTOFromDedicatedUrl.getVendorProtocols().size() ==
+                    currentOrganizationDTO.getVendorProtocols().size());
+
         }
     }
 

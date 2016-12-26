@@ -9,6 +9,7 @@ import org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.DtoMapOrganization;
 import org.gobiiproject.gobiidtomapping.DtoMapOrganization;
+import org.gobiiproject.gobiidtomapping.DtoMapProtocol;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
 import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
@@ -37,6 +38,9 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
     @Autowired
     private RsOrganizationDao rsOrganizationDao;
 
+    @Autowired
+    private DtoMapProtocol dtoMapProtocol;
+
     @SuppressWarnings("unchecked")
     @Override
     public List<OrganizationDTO> getOrganizations() throws GobiiDtoMappingException {
@@ -46,6 +50,10 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
         try {
 
             returnVal = (List<OrganizationDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_ORGANIZATION_ALL,null);
+
+            for( OrganizationDTO currentOrganizationDto : returnVal ) {
+                this.dtoMapProtocol.addVendorProtocolsToOrganization(currentOrganizationDto);
+            }
 
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
@@ -68,8 +76,7 @@ public class DtoMapOrganizationImpl implements DtoMapOrganization {
 
                 // apply organization values
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
-
-
+                this.dtoMapProtocol.addVendorProtocolsToOrganization(returnVal);
             } // if result set has a row
 
         } catch (Exception e) {
