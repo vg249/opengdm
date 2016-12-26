@@ -18,4 +18,5 @@ public interface RsProtocolDao {
     ResultSet getVendorsProtocolNamesByProtocolId(Integer protocolId) throws GobiiDaoException;
     ResultSet getProtocolNamesByPlatformId(Integer platformId) throws GobiiDaoException;
     ResultSet getVendorByProtocolVendorName(Map<String, Object> parameters) throws GobiiDaoException;
+    ResultSet getVendorProtocolsForVendor(Integer organizationId) throws GobiiDaoException;
 }
