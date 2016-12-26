@@ -120,11 +120,35 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
     @Transactional
     @Override
+    public List<OrganizationDTO> getVendorsForProtocolByProtocolId(Integer protocolId) throws GobiiDtoMappingException {
+
+        List<OrganizationDTO> returnVal = new ArrayList<>();
+
+        try {
+            ResultSet resultSet = rsProtocolDao.getVendorsByProtocolId(protocolId);
+
+            while (resultSet.next()) {
+                OrganizationDTO currentOrganizationDTO = new OrganizationDTO();
+                ResultColumnApplicator.applyColumnValues(resultSet, currentOrganizationDTO);
+                returnVal.add(currentOrganizationDTO);
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
+
+    @Transactional
+    @Override
     public OrganizationDTO getVendorForProtocolByName(String vendorProtocolName) throws GobiiDtoMappingException {
 
         OrganizationDTO returnVal = new OrganizationDTO();
 
         try {
+
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("vendorProtocolName",vendorProtocolName);
 
@@ -141,7 +165,6 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
         return returnVal;
     }
-
 
     @Transactional
     @Override

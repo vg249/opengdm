@@ -43,6 +43,18 @@ public class UriFactory {
 
     } //
 
+    public static RestUri resourceColl(String contextRoot, ServiceRequestId serviceRequestId) throws Exception {
+
+        RestUri returnVal;
+
+        returnVal = new RestUri(contextRoot,
+                ControllerType.GOBII,
+                serviceRequestId);
+
+        return returnVal;
+
+    } //
+
     public RestUri resourceByUriIdParam(ServiceRequestId serviceRequestId) throws Exception {
 
         String paramName = "id";
@@ -71,7 +83,7 @@ public class UriFactory {
                 .addUriParam(paramName)
                 .appendSegment(childServiceRequestId);
 
-       return returnVal;
+        return returnVal;
 
     } //
 

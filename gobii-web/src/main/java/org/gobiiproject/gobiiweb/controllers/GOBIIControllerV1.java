@@ -1040,7 +1040,7 @@ public class GOBIIControllerV1 {
             PayloadWriter<NameIdDTO> payloadWriter = new PayloadWriter<>(request, NameIdDTO.class);
             payloadWriter.writeList(returnVal,
                     EntityNameConverter.toServiceRequestId(request.getContextPath(),
-                                    gobiiEntityNameType),
+                            gobiiEntityNameType),
                     nameIdList);
 
         } catch (GobiiException e) {
@@ -1902,30 +1902,32 @@ public class GOBIIControllerV1 {
 
     }
 
-    @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors/{vendorProtocolName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<OrganizationDTO> getVendorForVendorProtocol(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                                @PathVariable Integer protocolId,
-                                                                @PathVariable String vendorProtocolName,
-                                                                HttpServletRequest request,
-                                                                HttpServletResponse response) {
+    public PayloadEnvelope<OrganizationDTO> getVendorsForProtocol(@PathVariable Integer protocolId,
+                                                                  HttpServletRequest request,
+                                                                  HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
 
         try {
 
-            OrganizationDTO protocolDTOAssociated = protocolService.getVendorForProtocolByName(vendorProtocolName);
+
+            List<OrganizationDTO> organizationDTOs = this.protocolService.getVendorsForProtocolByProtocolId(protocolId);
 
             PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
                     OrganizationDTO.class);
 
-            payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    UriFactory.resourceByUriIdParam(request.getContextPath(),
-                            ServiceRequestId.URL_ORGANIZATION),
-                    protocolDTOAssociated);
 
-        } catch (GobiiException e) {
-            returnVal.getHeader().getStatus().addException(e);
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceColl(request.getContextPath(),
+                            ServiceRequestId.URL_PROTOCOL)
+                            .addUriParam("protocolId")
+                            .setParamValue("protocolId", protocolId.toString())
+                            .appendSegment(ServiceRequestId.URL_VENDORS)
+                            .addUriParam("id"), // <-- this is the one that PayloadWriter will set based on the list
+                    organizationDTOs);
+
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
@@ -1938,43 +1940,6 @@ public class GOBIIControllerV1 {
         return (returnVal);
 
     }
-
-//    @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.GET)
-//    @ResponseBody
-//    public PayloadEnvelope<OrganizationDTO> getVendorsForProtocol(@PathVariable Integer protocolId,
-//                                                                HttpServletRequest request,
-//                                                                HttpServletResponse response) {
-//
-//        PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
-//
-//        try {
-//
-//            List<OrganizationDTO> organizationDTOs = null; //protocolService.getVendors(protocolId);
-//
-//            PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
-//                    OrganizationDTO.class);
-//
-//            String contextPath = request.getContextPath();
-//            UriFactory uriFactory = new UriFactory(contextPath);
-//            RestUri restUri = uriFactory.childResourceByUriIdParam(ServiceRequestId.URL_PROTOCOL,
-//                    ServiceRequestId.URL_VENDORS);
-//            restUri.setParamValue("id", protocolId.toString());
-//            payloadWriter.writeList(returnVal,
-//                    ServiceRequestId.URL_PROJECTS,
-//                    organizationDTOs);
-//
-//        } catch (Exception e) {
-//            returnVal.getHeader().getStatus().addException(e);
-//        }
-//
-//        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-//                response,
-//                HttpStatus.OK,
-//                HttpStatus.INTERNAL_SERVER_ERROR);
-//
-//        return (returnVal);
-//
-//    }
 
     // *********************************************
     // *************************** FILE PREVIEW METHODS

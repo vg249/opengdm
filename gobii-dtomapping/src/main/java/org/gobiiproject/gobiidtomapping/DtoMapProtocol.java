@@ -15,5 +15,5 @@ public interface DtoMapProtocol {
     ProtocolDTO replaceProtocol(Integer protocolId, ProtocolDTO protocolDTO) throws GobiiDtoMappingException;
     List<ProtocolDTO> getProtocols() throws GobiiDtoMappingException;
     OrganizationDTO addVendotrToProtocol(Integer protocolId, OrganizationDTO organizationDTO) throws GobiiDtoMappingException;
-    OrganizationDTO getVendorForProtocolByName(String vendorProtocolName) throws GobiiDtoMappingException;
+    OrganizationDTO getVendorForProtocolByName(String vendorProtocolName) throws GobiiDtoMappingException;    List<OrganizationDTO> getVendorsForProtocolByProtocolId(Integer protocolId) throws GobiiDtoMappingException;
 }

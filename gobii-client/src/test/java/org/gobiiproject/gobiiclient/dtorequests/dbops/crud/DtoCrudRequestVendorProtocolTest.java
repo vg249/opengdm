@@ -16,6 +16,7 @@ import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
@@ -191,6 +192,58 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
     @Test
     @Override
     public void getList() throws Exception {
+
+        Integer protocolId = (new GlobalPkColl<DtoCrudRequestVendorProtocolTest>()
+                .getAPkVal(DtoCrudRequestVendorProtocolTest.class, GobiiEntityNameType.VENDORS_PROTOCOLS));
+
+        RestUri restUriVendorsForProtocol = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_PROTOCOL)
+                .addUriParam("protocolId")
+                .setParamValue("protocolId",protocolId.toString())
+                .appendSegment(ServiceRequestId.URL_VENDORS);
+
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriVendorsForProtocol);
+        PayloadEnvelope<OrganizationDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .get(OrganizationDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        List<OrganizationDTO> organizationDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(organizationDTOList);
+        Assert.assertTrue(organizationDTOList.size() > 0);
+        Assert.assertNotNull(organizationDTOList.get(0).getName());
+
+
+//        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+//        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == organizationDTOList.size());
+//
+//        List<Integer> itemsToTest = new ArrayList<>();
+//        if (organizationDTOList.size() > 50) {
+//            itemsToTest = TestUtils.makeListOfIntegersInRange(10, organizationDTOList.size());
+//
+//        } else {
+//            for (int idx = 0; idx < organizationDTOList.size(); idx++) {
+//                itemsToTest.add(idx);
+//            }
+//        }
+//
+//        for (Integer currentIdx : itemsToTest) {
+//            ProjectDTO currentProjectDto = projectDTOList.get(currentIdx);
+//
+//            Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
+//
+//            RestUri restUriProjectForGetById = ClientContext.getInstance(null, false)
+//                    .getUriFactory()
+//                    .RestUriFromUri(currentLink.getHref());
+//            GobiiEnvelopeRestResource<ProjectDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriProjectForGetById);
+//            PayloadEnvelope<ProjectDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
+//                    .get(ProjectDTO.class);
+//            Assert.assertNotNull(resultEnvelopeForGetByID);
+//            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
+//            ProjectDTO projectDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
+//            Assert.assertTrue(currentProjectDto.getProjectName().equals(projectDTOFromLink.getProjectName()));
+//            Assert.assertTrue(currentProjectDto.getProjectId().equals(projectDTOFromLink.getProjectId()));
+//        }
 
     }
 
