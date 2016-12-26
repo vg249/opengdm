@@ -49,6 +49,8 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
         Assert.assertTrue(Authenticator.deAuthenticate());
     }
 
+    private final Integer TOTAL_VENDORS_PER_PROTOCOL = 10;
+
     @Test
     @Override
     public void create() throws Exception {
@@ -68,82 +70,85 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
         ProtocolDTO protocolDTO = resultEnvelopeForGetProtocolByID.getPayload().getData().get(0);
 
 
-        // ********** SET UP THE ORGANIZATION FOR THE VENDOR
-        Integer organizationId = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()
-                .getAPkVal(DtoCrudRequestOrganizationTest.class, GobiiEntityNameType.ORGANIZATIONS));
+        // ********** CREATE MULTIPLE ORGANIZATIONS FOR THE PROTOCOL
+        List<Integer> vendorPkVals = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()
+                .getFreshPkVals(DtoCrudRequestOrganizationTest.class, GobiiEntityNameType.ORGANIZATIONS, TOTAL_VENDORS_PER_PROTOCOL));
+        for (Integer currentVendorPk : vendorPkVals) {
+            // ********** SET UP THE ORGANIZATION FOR THE VENDOR
 
-        RestUri restUriForGetOrganizationById = ClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_ORGANIZATION);
-        restUriForGetOrganizationById.setParamValue("id", organizationId.toString());
-        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceForGetOrganizationById =
-                new GobiiEnvelopeRestResource<>(restUriForGetOrganizationById);
-        PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetOrganizationByID = gobiiEnvelopeRestResourceForGetOrganizationById
-                .get(OrganizationDTO.class);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetOrganizationByID.getHeader()));
-        OrganizationDTO organizationDTO = resultEnvelopeForGetOrganizationByID.getPayload().getData().get(0);
 
-        // ********** PREDICT RESULTING NAME
-        String protocolName = protocolDTO.getName();
-        String organizationName = organizationDTO.getName();
-        String predictedVendorProtocolName = organizationName + "_" + protocolName;
+            RestUri restUriForGetOrganizationById = ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceByUriIdParam(ServiceRequestId.URL_ORGANIZATION);
+            restUriForGetOrganizationById.setParamValue("id", currentVendorPk.toString());
+            GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceForGetOrganizationById =
+                    new GobiiEnvelopeRestResource<>(restUriForGetOrganizationById);
+            PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetOrganizationByID = gobiiEnvelopeRestResourceForGetOrganizationById
+                    .get(OrganizationDTO.class);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetOrganizationByID.getHeader()));
+            OrganizationDTO organizationDTO = resultEnvelopeForGetOrganizationByID.getPayload().getData().get(0);
 
-        // ********** POST VENDOR ORGANIZATION TO PROTOCOL
-        RestUri restUriProtocoLVendor = ClientContext.getInstance(null, false)
-                .getUriFactory()
-                .childResourceByUriIdParam(ServiceRequestId.URL_PROTOCOL,
-                        ServiceRequestId.URL_VENDORS);
-        restUriProtocoLVendor.setParamValue("id", protocolId.toString());
-        GobiiEnvelopeRestResource<OrganizationDTO> protocolVendorResource =
-                new GobiiEnvelopeRestResource<>(restUriProtocoLVendor);
-        PayloadEnvelope<OrganizationDTO> vendorPayloadEnvelope =
-                new PayloadEnvelope<>(organizationDTO, GobiiProcessType.CREATE);
-        PayloadEnvelope<OrganizationDTO> protocolVendorResult =
-                protocolVendorResource.post(OrganizationDTO.class, vendorPayloadEnvelope);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(protocolVendorResult.getHeader()));
+            // ********** PREDICT RESULTING NAME
+            String protocolName = protocolDTO.getName();
+            String organizationName = organizationDTO.getName();
+            String predictedVendorProtocolName = organizationName + "_" + protocolName;
+
+            // ********** POST VENDOR ORGANIZATION TO PROTOCOL
+            RestUri restUriProtocoLVendor = ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .childResourceByUriIdParam(ServiceRequestId.URL_PROTOCOL,
+                            ServiceRequestId.URL_VENDORS);
+            restUriProtocoLVendor.setParamValue("id", protocolId.toString());
+            GobiiEnvelopeRestResource<OrganizationDTO> protocolVendorResource =
+                    new GobiiEnvelopeRestResource<>(restUriProtocoLVendor);
+            PayloadEnvelope<OrganizationDTO> vendorPayloadEnvelope =
+                    new PayloadEnvelope<>(organizationDTO, GobiiProcessType.CREATE);
+            PayloadEnvelope<OrganizationDTO> protocolVendorResult =
+                    protocolVendorResource.post(OrganizationDTO.class, vendorPayloadEnvelope);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(protocolVendorResult.getHeader()));
+
+            // ************ VERIFY THAT VENDOR-PROTOCOL WAS CREATED
+            RestUri namesUri = ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .nameIdListByQueryParams();
+            GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
+            namesUri.setParamValue("entity", GobiiEntityNameType.VENDORS_PROTOCOLS.toString().toLowerCase());
+
+            PayloadEnvelope<NameIdDTO> resultEnvelopeProtocoLVendornames = gobiiEnvelopeRestResource
+                    .get(NameIdDTO.class);
+
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeProtocoLVendornames.getHeader()));
+
+            List<NameIdDTO> nameIdDTOs = resultEnvelopeProtocoLVendornames.getPayload().getData();
+
+            Assert.assertTrue(nameIdDTOs.size() > 0);
+
+            Assert.assertTrue(nameIdDTOs
+                    .stream()
+                    .filter(nameIdDTO -> nameIdDTO.getName().toLowerCase().equals(predictedVendorProtocolName))
+                    .count() == 1);
+
+
+            // ************* VERIFY THAT REPOSTING THE SAME VENDOR TO THE SAME PROTOCOL GIVES A VALIDATION ERROR
+            protocolVendorResult =
+                    protocolVendorResource.post(OrganizationDTO.class, vendorPayloadEnvelope);
+
+            Assert.assertTrue(
+                    protocolVendorResult
+                            .getHeader()
+                            .getStatus()
+                            .getStatusMessages()
+                            .stream()
+                            .filter(headerStatusMessage ->
+                                    headerStatusMessage
+                                            .getGobiiStatusLevel().equals(GobiiStatusLevel.VALIDATION) &&
+                                            headerStatusMessage
+                                                    .getGobiiValidationStatusType()
+                                                    .equals(GobiiValidationStatusType.ENTITY_ALREADY_EXISTS)
+                            ).count() == 1);
+        } // iterate through total vendors for protocol
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.VENDORS_PROTOCOLS, protocolDTO.getProtocolId());
-
-
-        // ************ VERIFY THAT VENDOR-PROTOCOL WAS CREATED
-        RestUri namesUri = ClientContext.getInstance(null, false)
-                .getUriFactory()
-                .nameIdListByQueryParams();
-        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
-        namesUri.setParamValue("entity", GobiiEntityNameType.VENDORS_PROTOCOLS.toString().toLowerCase());
-
-        PayloadEnvelope<NameIdDTO> resultEnvelopeProtocoLVendornames = gobiiEnvelopeRestResource
-                .get(NameIdDTO.class);
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeProtocoLVendornames.getHeader()));
-
-        List<NameIdDTO> nameIdDTOs = resultEnvelopeProtocoLVendornames.getPayload().getData();
-
-        Assert.assertTrue(nameIdDTOs.size() > 0);
-
-        Assert.assertTrue(nameIdDTOs
-                .stream()
-                .filter(nameIdDTO -> nameIdDTO.getName().toLowerCase().equals(predictedVendorProtocolName))
-                .count() == 1);
-
-
-        // ************* VERIFY THAT REPOSTING THE SAME VENDOR TO THE SAME PROTOCOL GIVES A VALIDATION ERROR
-        protocolVendorResult =
-                protocolVendorResource.post(OrganizationDTO.class, vendorPayloadEnvelope);
-
-        Assert.assertTrue(
-                protocolVendorResult
-                        .getHeader()
-                        .getStatus()
-                        .getStatusMessages()
-                        .stream()
-                        .filter(headerStatusMessage ->
-                                headerStatusMessage
-                                        .getGobiiStatusLevel().equals(GobiiStatusLevel.VALIDATION) &&
-                                        headerStatusMessage
-                                                .getGobiiValidationStatusType()
-                                                .equals(GobiiValidationStatusType.ENTITY_ALREADY_EXISTS)
-                        ).count() == 1);
 
 
         // ************* VERIFY THAT WE CAN RETRIEVE THE CREATED VENDOR THROUGH THE PROTOCOLS URL
@@ -200,7 +205,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_PROTOCOL)
                 .addUriParam("protocolId")
-                .setParamValue("protocolId",protocolId.toString())
+                .setParamValue("protocolId", protocolId.toString())
                 .appendSegment(ServiceRequestId.URL_VENDORS);
 
         GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriVendorsForProtocol);
@@ -210,13 +215,13 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         List<OrganizationDTO> organizationDTOList = resultEnvelope.getPayload().getData();
         Assert.assertNotNull(organizationDTOList);
-        Assert.assertTrue(organizationDTOList.size() > 0);
+        Assert.assertTrue(organizationDTOList.size() >= TOTAL_VENDORS_PER_PROTOCOL);
         Assert.assertNotNull(organizationDTOList.get(0).getName());
 
 
-//        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
-//        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == organizationDTOList.size());
-//
+        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == organizationDTOList.size());
+
 //        List<Integer> itemsToTest = new ArrayList<>();
 //        if (organizationDTOList.size() > 50) {
 //            itemsToTest = TestUtils.makeListOfIntegersInRange(10, organizationDTOList.size());
