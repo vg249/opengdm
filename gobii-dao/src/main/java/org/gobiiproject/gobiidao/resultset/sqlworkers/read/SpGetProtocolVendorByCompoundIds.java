@@ -39,11 +39,11 @@ public class SpGetProtocolVendorByCompoundIds implements Work {
                 "where vendor_id= ? and protocol_id=?;";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
-        Integer protocolId = (Integer) parameters.get("protocolId");
         Integer vendorId = (Integer) parameters.get("vendorId");
+        Integer protocolId = (Integer) parameters.get("protocolId");
 
-        preparedStatement.setInt(1, protocolId);
-        preparedStatement.setInt(2, vendorId);
+        preparedStatement.setInt(1, vendorId);
+        preparedStatement.setInt(2, protocolId);
 
         resultSet = preparedStatement.executeQuery();
 

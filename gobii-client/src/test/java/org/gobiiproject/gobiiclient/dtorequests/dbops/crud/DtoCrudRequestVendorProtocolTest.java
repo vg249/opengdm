@@ -186,10 +186,10 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
     public void multiProtocolTest() throws Exception {
 
         // ********** PRE-CREATE ENTITIES
-        List<Integer> vendorPkVals = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()
-                .getFreshPkVals(DtoCrudRequestOrganizationTest.class, GobiiEntityNameType.ORGANIZATIONS, TOTAL_VENDORS_PER_PROTOCOL));
-        List<Integer> protocolPkVals = (new GlobalPkColl<DtoCrudRequestProtocolTest>()
-                .getFreshPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOLS, TOTAL_VENDORS_PER_PROTOCOL));
+        GlobalPkColl globalPkColl = new GlobalPkColl<DtoCrudRequestProtocolTest>();
+        List<Integer> vendorPkVals = globalPkColl.getFreshPkVals(DtoCrudRequestOrganizationTest.class, GobiiEntityNameType.ORGANIZATIONS, TOTAL_VENDORS_PER_PROTOCOL);
+        List<Integer> protocolPkVals = globalPkColl
+                .getFreshPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOLS, TOTAL_VENDORS_PER_PROTOCOL);
 
 
         List<OrganizationDTO> finalPostedVendors = new ArrayList<>();
@@ -301,7 +301,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                     .getVendorProtocols()
                     .stream()
                     .filter(vendorProtocolDTO -> vendorProtocolDTO.getProtocolId().equals(vendorProtocolDTOToUpdate.getProtocolId())
-                    && vendorProtocolDTOToUpdate.getOrganizationId().equals(vendorProtocolDTOToUpdate.getOrganizationId()))
+                            && vendorProtocolDTOToUpdate.getOrganizationId().equals(vendorProtocolDTOToUpdate.getOrganizationId()))
                     .collect(Collectors.toList());
 
             Assert.assertTrue(updatedVendorProtocolDTOList.size() == 1);
