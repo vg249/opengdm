@@ -1,25 +1,23 @@
 package org.gobiiproject.gobiidao.resultset.sqlworkers.read;
 
 import org.hibernate.jdbc.Work;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
-/**
- * Created by Phil on 12/26/2016.
- */
 
 /**
  * Created by Phil on 4/11/2016.
  */
-public class SpGetProtocolVendorByName implements Work {
+public class SpGetVendorProtocolsForVendor implements Work {
     /**
      * Created by Phil on 4/7/2016.
      */
     private Map<String, Object> parameters = null;
 
-    public SpGetProtocolVendorByName(Map<String, Object> parameters) {
+    public SpGetVendorProtocolsForVendor(Map<String, Object> parameters) {
         this.parameters = parameters;
     }
 
@@ -33,19 +31,15 @@ public class SpGetProtocolVendorByName implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String Sql = "select * \n" +
-                "from organization org \n " +
-                "join vendor_protocol vp on (org.organization_id=vp.vendor_id) \n" +
-                "where lower(vp.name) = lower(?) ";
+        String sql = "select * from vendor_protocol where vendor_id= ?;";
 
-        PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
-        String vendorProtocolName = (String) parameters.get("vendorProtocolName");
+        PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
+        Integer organizationId = (Integer) parameters.get("organizationId");
 
-        preparedStatement.setString(1, vendorProtocolName);
+        preparedStatement.setInt(1, organizationId);
 
         resultSet = preparedStatement.executeQuery();
 
     } // execute()
 
 }
-

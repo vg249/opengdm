@@ -59,7 +59,7 @@ public class DtoMapNameIdFetchVendorProtocols implements DtoMapNameIdFetch {
 
         List<NameIdDTO> returnVal;
 
-        ResultSet resultSet = rsProtocolDao.getVendorProtocolNamesByProtocolId(protocolId);
+        ResultSet resultSet = rsProtocolDao.getVendorsProtocolNamesByProtocolId(protocolId);
 
         returnVal = this.makeListFromResultSet(resultSet);
 

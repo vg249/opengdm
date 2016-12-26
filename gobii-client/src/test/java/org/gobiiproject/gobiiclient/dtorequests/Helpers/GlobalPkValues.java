@@ -46,6 +46,27 @@ public class GlobalPkValues {
         return returnVal;
     }
 
+    public void resetPkVals(GobiiEntityNameType gobiiEntityNameType ) throws Exception {
+        if( this.pkMap.containsKey(gobiiEntityNameType)) {
+            this.pkMap.remove(gobiiEntityNameType);
+        }
+    }
+
+    public List<Integer> getPkVals(GobiiEntityNameType gobiiEntityNameType) throws Exception {
+
+        List<Integer> returnVal = null;
+
+        if (!pkMap.containsKey(gobiiEntityNameType)) {
+            throw new Exception("There are no PKs for entity: " + gobiiEntityNameType.toString());
+        }
+
+        if (pkMap.containsKey(gobiiEntityNameType)) {
+            returnVal = pkMap.get(gobiiEntityNameType);
+        }
+
+        return returnVal;
+    }
+
     public Integer getAPkVal(GobiiEntityNameType gobiiEntityNameType) {
 
         Integer returnVal = null;
@@ -64,7 +85,9 @@ public class GlobalPkValues {
             pkMap.put(gobiiEntityNameType, new ArrayList<>());
         }
 
-        pkMap.get(gobiiEntityNameType).add(pkVal);
+        if (!pkMap.get(gobiiEntityNameType).contains(pkVal)) {
+            pkMap.get(gobiiEntityNameType).add(pkVal);
+        }
 
         return pkMap.size();
     }

@@ -4,6 +4,7 @@ package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
+import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 //import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;;
 
 import java.text.Collator;
@@ -18,15 +19,21 @@ import java.util.Random;
  */
 public class TestUtils {
 
-    public static boolean checkAndPrintHeaderMessages(Header Header) {
+    public static boolean checkAndPrintHeaderMessages(Header header) {
 
         boolean returnVal = false;
 
-        if (!Header.getStatus().isSucceeded()) {
+        if (!header.getStatus().isSucceeded() ||
+              header
+                      .getStatus()
+                      .getStatusMessages()
+                      .stream()
+                .filter(headerStatusMessage -> headerStatusMessage.getGobiiStatusLevel().equals(GobiiStatusLevel.VALIDATION))
+                .count() > 0) {
             returnVal = true;
             System.out.println();
             System.out.println("*** Header errors: ");
-            for (HeaderStatusMessage currentStatusMesage : Header.getStatus().getStatusMessages()) {
+            for (HeaderStatusMessage currentStatusMesage : header.getStatus().getStatusMessages()) {
                 System.out.println(currentStatusMesage.getMessage());
             }
         }

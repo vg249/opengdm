@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
+import jdk.nashorn.internal.objects.Global;
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestTest;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 
@@ -22,13 +23,20 @@ import java.util.List;
 public class GlobalPkColl<T extends DtoCrudRequestTest> {
 
 
+    private void makeAnInstance(Class<T> dtoRequestTestType)  throws Exception{
+
+        T testClass = dtoRequestTestType.newInstance();
+        testClass.create();
+
+    }
+
     // this only works if all create() methods put their PK value into
-    public Integer getAPkVal(Class<T> dtoRequestTestType, GobiiEntityNameType gobiiEntityNameType) throws Exception {
+    public Integer getAPkVal(Class<T> dtoRequestTestType,
+                             GobiiEntityNameType gobiiEntityNameType) throws Exception {
 
         Integer returnVal = GlobalPkValues.getInstance().getAPkVal(gobiiEntityNameType);
         if (returnVal == null) {
-            T testClass = dtoRequestTestType.newInstance();
-            testClass.create();
+            this.makeAnInstance(dtoRequestTestType);
             returnVal = GlobalPkValues.getInstance().getAPkVal(gobiiEntityNameType);
 
             if (returnVal == null) {
@@ -44,18 +52,42 @@ public class GlobalPkColl<T extends DtoCrudRequestTest> {
         return returnVal;
 
     } //
+    public List<Integer> getFreshPkVals(Class<T> dtoRequestTestType,
+                                        GobiiEntityNameType gobiiEntityNameType,
+                                        Integer totalPks) throws Exception {
+
+        List<Integer> returnVal;
+
+        GlobalPkValues.getInstance().resetPkVals(gobiiEntityNameType);
+
+        Integer totalExistingPksSoFar = 0;
+        while( totalExistingPksSoFar < totalPks ) {
+            this.makeAnInstance(dtoRequestTestType);
+            totalExistingPksSoFar++;
+        }
+
+        returnVal = GlobalPkValues.getInstance().getPkVals(gobiiEntityNameType);
+
+        return returnVal;
+
+    }
 
     public List<Integer> getPkVals(Class<T> dtoRequestTestType,
                                    GobiiEntityNameType gobiiEntityNameType,
                                    Integer totalPks) throws Exception {
 
-        List<Integer> returnVal = new ArrayList<>();
+        List<Integer> returnVal;
 
-        for( int idx=0; idx< totalPks; idx++) {
-            returnVal.add(this.getAPkVal(dtoRequestTestType,gobiiEntityNameType));
+        Integer totalExistingPksSoFar = GlobalPkValues.getInstance().getPkValCount(gobiiEntityNameType);
+
+        while( totalExistingPksSoFar < totalPks ) {
+            this.makeAnInstance(dtoRequestTestType);
+            totalExistingPksSoFar++;
         }
 
-        return  returnVal;
+        returnVal = GlobalPkValues.getInstance().getPkVals(gobiiEntityNameType);
+
+        return returnVal;
 
     } //
 

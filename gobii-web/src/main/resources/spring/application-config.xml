@@ -327,12 +327,6 @@
     <bean id="dtoMapProtocol" class="org.gobiiproject.gobiidtomapping.impl.DtoMapProtocolImpl"/>
     <bean id="ProtocolService" class="org.gobiiproject.gobidomain.services.impl.ProtocolServiceImpl"/>
 
-    <!-- **** VendorProtocol Beans *************************************** -->
-    <bean id="rsVendorProtocolDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsVendorProtocolDaoImpl"/>
-    <!--<bean id="dtoMapVendorProtocol" class="org.gobiiproject.gobiidtomapping.impl.DtoMapVendorProtocolImpl"/>-->
-    <!--<bean id="VendorProtocolService" class="org.gobiiproject.gobidomain.services.impl.VendorProtocolServiceImpl"/>-->
-
-
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
         <property name="listQueriesBySqlId">

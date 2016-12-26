@@ -29,6 +29,16 @@ public class OrganizationDTO extends DTOBase {
     private Date modifiedDate;
     private Integer statusId;
 
+    private List<VendorProtocolDTO> vendorProtocols = new ArrayList<>();
+
+    public List<VendorProtocolDTO> getVendorProtocols() {
+        return vendorProtocols;
+    }
+
+    public void setVendorProtocols(List<VendorProtocolDTO> vendorProtocols) {
+        this.vendorProtocols = vendorProtocols;
+    }
+
     @Override
     public Integer getId() {
         return this.organizationId;
