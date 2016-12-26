@@ -276,6 +276,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                     .getUriFactory()
                     .childResourceByUriIdParam(ServiceRequestId.URL_PROTOCOL,
                             ServiceRequestId.URL_VENDORS);
+
             restUriProtocoLVendor.setParamValue("id", vendorProtocolDTOToUpdate.getProtocolId().toString());
             GobiiEnvelopeRestResource<OrganizationDTO> protocolVendorResource =
                     new GobiiEnvelopeRestResource<>(restUriProtocoLVendor);

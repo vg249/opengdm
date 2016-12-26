@@ -9,6 +9,7 @@ import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsProtocol;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsVendorProtocol;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdProtocol;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdVendorProtocol;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProtocolDetailsByProtocolId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProtocolNames;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetProtocolNamesByPlatformId;
@@ -79,7 +80,7 @@ public class RsProtocolDaoImpl implements RsProtocolDao {
     public void updateVendorProtocol(Map<String,Object> parameters) throws GobiiDaoException {
         try {
 
-            spRunnerCallable.run(new SpInsVendorProtocol(), parameters);
+            spRunnerCallable.run(new SpUpdVendorProtocol(), parameters);
 
         } catch (SQLGrammarException e) {
             LOGGER.error("Error updating protocol with SQL " + e.getSQL(), e.getSQLException());
