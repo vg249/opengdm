@@ -18,6 +18,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.VendorProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
@@ -178,6 +179,73 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
         //need services for GET /protocols/{id}/vendors/
         //                  GET /protocols/{id}/vendors/{protocol_vendor_name}
 
+    }
+
+
+    @Test
+    public void multiProtocolTest() throws Exception {
+
+        // ********** PRE-CREATE ENTITIES
+        List<Integer> vendorPkVals = (new GlobalPkColl<DtoCrudRequestOrganizationTest>()
+                .getFreshPkVals(DtoCrudRequestOrganizationTest.class, GobiiEntityNameType.ORGANIZATIONS, TOTAL_VENDORS_PER_PROTOCOL));
+        List<Integer> protocolPkVals = (new GlobalPkColl<DtoCrudRequestProtocolTest>()
+                .getFreshPkVals(DtoCrudRequestProtocolTest.class, GobiiEntityNameType.PROTOCOLS, TOTAL_VENDORS_PER_PROTOCOL));
+
+
+        List<OrganizationDTO> finalPostedVendors = new ArrayList<>();
+        // ** ITERATE PROTOCOLS
+        for (Integer currentProtocolId : protocolPkVals) {
+
+            RestUri restUriProtocoLVendor = ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .childResourceByUriIdParam(ServiceRequestId.URL_PROTOCOL,
+                            ServiceRequestId.URL_VENDORS);
+            restUriProtocoLVendor.setParamValue("id", currentProtocolId.toString());
+            GobiiEnvelopeRestResource<OrganizationDTO> protocolVendorResource =
+                    new GobiiEnvelopeRestResource<>(restUriProtocoLVendor);
+
+            // ** ITERATE VENDORS
+            for (Integer currentVendorId : vendorPkVals) {
+
+                // RETRIEVE THE VENDOR
+                RestUri restUriForGetOrganizationById = ClientContext.getInstance(null, false)
+                        .getUriFactory()
+                        .resourceByUriIdParam(ServiceRequestId.URL_ORGANIZATION);
+                restUriForGetOrganizationById.setParamValue("id", currentVendorId.toString());
+                GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceForGetOrganizationById =
+                        new GobiiEnvelopeRestResource<>(restUriForGetOrganizationById);
+                PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetOrganizationByID = gobiiEnvelopeRestResourceForGetOrganizationById
+                        .get(OrganizationDTO.class);
+                Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetOrganizationByID.getHeader()));
+                OrganizationDTO organizationDTO = resultEnvelopeForGetOrganizationByID.getPayload().getData().get(0);
+
+
+                // POST THE VENDOR
+                PayloadEnvelope<OrganizationDTO> vendorPayloadEnvelope =
+                        new PayloadEnvelope<>(organizationDTO, GobiiProcessType.CREATE);
+                PayloadEnvelope<OrganizationDTO> protocolVendorResult =
+                        protocolVendorResource.post(OrganizationDTO.class, vendorPayloadEnvelope);
+                Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(protocolVendorResult.getHeader()));
+                OrganizationDTO postedVendorDTO = protocolVendorResult.getPayload().getData().get(0);
+
+                if( postedVendorDTO.getVendorProtocols().size() == vendorPkVals.size()) {
+                    finalPostedVendors.add(postedVendorDTO);
+                }
+
+            }
+        }
+
+        for (OrganizationDTO currentOrganizationDTO : finalPostedVendors) {
+
+            Assert.assertNotNull(currentOrganizationDTO.getVendorProtocols());
+            Assert.assertTrue(currentOrganizationDTO.getVendorProtocols().size() == TOTAL_VENDORS_PER_PROTOCOL);
+
+            for(VendorProtocolDTO currentVendorProtocolDTO : currentOrganizationDTO.getVendorProtocols()) {
+                Assert.assertNotNull(currentVendorProtocolDTO.getVendorProtocolId());
+                Assert.assertNotNull(currentVendorProtocolDTO.getName());
+                Assert.assertTrue(currentOrganizationDTO.getOrganizationId().equals(currentVendorProtocolDTO.getOrganizationId()));
+            }
+        }
     }
 
 
