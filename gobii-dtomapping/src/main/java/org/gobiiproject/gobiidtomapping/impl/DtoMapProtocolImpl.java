@@ -290,11 +290,69 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
         try {
             dtoMapOrganization.replaceOrganization(returnVal.getOrganizationId(), returnVal);
 
-            for (VendorProtocolDTO currentVendorProtocolDTO : returnVal.getVendorProtocols()) {
+            List<VendorProtocolDTO> vendorProtocolsForProtocol = returnVal.getVendorProtocols()
+                    .stream()
+                    .filter(vendorProtocolDTO -> vendorProtocolDTO.getProtocolId().equals(protocolId))
+                    .collect(Collectors.toList());
 
-                Map<String, Object> parameters = ParamExtractor.makeParamVals(currentVendorProtocolDTO);
-                parameters.put("protocolId", protocolId); // <-- we don't 100% trust that the incoming VendorProtocolDTO is accurate
-                rsProtocolDao.updateVendorProtocol(parameters);
+            if (returnVal.getVendorProtocols().size() > 1 && vendorProtocolsForProtocol.size() == 0) {
+                throw new GobiiDtoMappingException("The vendor data contains vendorProtocol items, " +
+                        "but none of them matches the protocolId parameter value: " +
+                        protocolId.toString());
+            }
+
+            // there is some paranoid validation here because at the moment the schema
+            // does not have a compound unique constraint for vendor_id and protocol_id
+            for (VendorProtocolDTO currentVendorProtocolDTO : vendorProtocolsForProtocol) {
+
+                if (!currentVendorProtocolDTO.getProtocolId().equals(protocolId)) {
+                    throw new GobiiDtoMappingException("The VendorProtocolDTO protoclId ("
+                            + currentVendorProtocolDTO.getProtocolId().toString()
+                            + ") does not match the specified protocolId parameter value ("
+                            + protocolId.toString()
+                            + ")");
+                }
+
+                ResultSet resultSet =
+                        this.rsProtocolDao.getVendorProtocolForVendorProtoclId(currentVendorProtocolDTO
+                                .getVendorProtocolId());
+                if (resultSet.next()) {
+                    VendorProtocolDTO vendorProtocolDTOFromDb = new VendorProtocolDTO();
+                    ResultColumnApplicator.applyColumnValues(resultSet, vendorProtocolDTOFromDb);
+
+                    if (!vendorProtocolDTOFromDb.getProtocolId().equals(currentVendorProtocolDTO.getProtocolId())) {
+                        throw new GobiiDtoMappingException("The VendorProtocolDTO protoclId ("
+                                + currentVendorProtocolDTO.getProtocolId().toString()
+                                + ") does not match the protocolId for the vendorProtocolId in the database("
+                                + vendorProtocolDTOFromDb.getProtocolId().toString()
+                                + "); "
+                                + " the vendorProtocolId is "
+                                + vendorProtocolDTOFromDb.getVendorProtocolId().toString());
+                    }
+
+                    if (!vendorProtocolDTOFromDb.getVendorProtocolId().equals(currentVendorProtocolDTO.getVendorProtocolId())) {
+                        throw new GobiiDtoMappingException("The VendorProtocolDTO vendorId ("
+                                + currentVendorProtocolDTO.getOrganizationId().toString()
+                                + ") does not match the protocolId for the vendorProtocolId in the database("
+                                + vendorProtocolDTOFromDb.getOrganizationId().toString()
+                                + "); "
+                                + " the vendorProtocolId is "
+                                + vendorProtocolDTOFromDb.getVendorProtocolId().toString());
+                    }
+
+                    // in the end, all we should ever be setting on this record is the name
+                    // the protocol id and vendor id are sacrosanct.
+                    vendorProtocolDTOFromDb.setName(currentVendorProtocolDTO.getName());
+                    Map<String, Object> parameters = ParamExtractor.makeParamVals(vendorProtocolDTOFromDb);
+                    rsProtocolDao.updateVendorProtocol(parameters);
+
+
+                } else {
+                    throw (new GobiiDtoMappingException("There is no vendor_protocol record for vendor_protocol_id " +
+                            currentVendorProtocolDTO.getVendorProtocolId()));
+                }
+
+
             }
 
 
