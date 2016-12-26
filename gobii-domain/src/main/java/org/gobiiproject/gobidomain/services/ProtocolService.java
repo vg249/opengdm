@@ -23,6 +23,8 @@ public interface ProtocolService {
 
     OrganizationDTO addVendotrToProtocol(Integer protocolId, OrganizationDTO organizationDTO) throws GobiiDomainException;
 
+    OrganizationDTO updateOrReplaceVendotrToProtocol(Integer protocolId, OrganizationDTO organizationDTO) throws GobiiDomainException;
+
     List<OrganizationDTO> getVendorsForProtocolByProtocolId(Integer protocolId) throws GobiiDaoException;
 
 

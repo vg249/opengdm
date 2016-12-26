@@ -39,7 +39,7 @@ public class VendorProtocolDTO extends DTOBase{
         this.vendorProtocolId = vendorProtocolId;
     }
 
-    @GobiiEntityParam(paramName = "organizationId")
+    @GobiiEntityParam(paramName = "vendorId")
     public Integer getOrganizationId() {
         return organizationId;
     }

@@ -228,7 +228,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                 Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(protocolVendorResult.getHeader()));
                 OrganizationDTO postedVendorDTO = protocolVendorResult.getPayload().getData().get(0);
 
-                if( postedVendorDTO.getVendorProtocols().size() == vendorPkVals.size()) {
+                if (postedVendorDTO.getVendorProtocols().size() == vendorPkVals.size()) {
                     finalPostedVendors.add(postedVendorDTO);
                 }
 
@@ -240,7 +240,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
             Assert.assertNotNull(currentOrganizationDTO.getVendorProtocols());
             Assert.assertTrue(currentOrganizationDTO.getVendorProtocols().size() == TOTAL_VENDORS_PER_PROTOCOL);
 
-            for(VendorProtocolDTO currentVendorProtocolDTO : currentOrganizationDTO.getVendorProtocols()) {
+            for (VendorProtocolDTO currentVendorProtocolDTO : currentOrganizationDTO.getVendorProtocols()) {
                 Assert.assertNotNull(currentVendorProtocolDTO.getVendorProtocolId());
                 Assert.assertNotNull(currentVendorProtocolDTO.getName());
                 Assert.assertTrue(currentOrganizationDTO.getOrganizationId().equals(currentVendorProtocolDTO.getOrganizationId()));
@@ -250,7 +250,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
             RestUri restUriOrganization = ClientContext.getInstance(null, false)
                     .getUriFactory()
                     .resourceByUriIdParam(ServiceRequestId.URL_ORGANIZATION)
-                    .setParamValue("id",currentOrganizationDTO.getOrganizationId().toString());
+                    .setParamValue("id", currentOrganizationDTO.getOrganizationId().toString());
 
             GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriOrganization);
             PayloadEnvelope<OrganizationDTO> resultEnvelope = gobiiEnvelopeRestResource
@@ -264,6 +264,49 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
             Assert.assertTrue(organizationDTOFromDedicatedUrl.getVendorProtocols().size() ==
                     currentOrganizationDTO.getVendorProtocols().size());
 
+            // verify that we can update with the current organizationDTO
+            String newOrgName = UUID.randomUUID().toString();
+            String newVendorProtocolName = UUID.randomUUID().toString();
+
+            currentOrganizationDTO.setName(newOrgName);
+            VendorProtocolDTO vendorProtocolDTOToUpdate = currentOrganizationDTO.getVendorProtocols().get(0);
+            vendorProtocolDTOToUpdate.setName(newVendorProtocolName);
+
+            RestUri restUriProtocoLVendor = ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .childResourceByUriIdParam(ServiceRequestId.URL_PROTOCOL,
+                            ServiceRequestId.URL_VENDORS);
+            restUriProtocoLVendor.setParamValue("id", vendorProtocolDTOToUpdate.getProtocolId().toString());
+            GobiiEnvelopeRestResource<OrganizationDTO> protocolVendorResource =
+                    new GobiiEnvelopeRestResource<>(restUriProtocoLVendor);
+            PayloadEnvelope<OrganizationDTO> vendorPayloadEnvelope =
+                    new PayloadEnvelope<>(currentOrganizationDTO, GobiiProcessType.UPDATE);
+            PayloadEnvelope<OrganizationDTO> protocolVendorResult =
+                    protocolVendorResource.put(OrganizationDTO.class, vendorPayloadEnvelope);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(protocolVendorResult.getHeader()));
+
+
+            // re-retrieve updated DTO
+            restUriOrganization.setParamValue("id", currentOrganizationDTO.getOrganizationId().toString());
+            gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriOrganization);
+            resultEnvelope = gobiiEnvelopeRestResource.get(OrganizationDTO.class);
+
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+            OrganizationDTO updatedVendorDTO = resultEnvelope.getPayload().getData().get(0);
+
+            Assert.assertNotNull(updatedVendorDTO.getVendorProtocols());
+            Assert.assertTrue(updatedVendorDTO.getName().equals(newOrgName));
+            List<VendorProtocolDTO> updatedVendorProtocolDTOList = updatedVendorDTO
+                    .getVendorProtocols()
+                    .stream()
+                    .filter(vendorProtocolDTO -> vendorProtocolDTO.getProtocolId().equals(vendorProtocolDTOToUpdate.getProtocolId())
+                    && vendorProtocolDTOToUpdate.getOrganizationId().equals(vendorProtocolDTOToUpdate.getOrganizationId()))
+                    .collect(Collectors.toList());
+
+            Assert.assertTrue(updatedVendorProtocolDTOList.size() == 1);
+            VendorProtocolDTO updatedVendorProtocolDTO = updatedVendorProtocolDTOList.get(0);
+            Assert.assertNotNull(updatedVendorProtocolDTO);
+            Assert.assertTrue(updatedVendorProtocolDTO.getName().equals(newVendorProtocolName));
         }
     }
 
@@ -271,6 +314,8 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
     @Test
     @Override
     public void update() throws Exception {
+
+
     }
 
 
@@ -283,6 +328,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
     @Test
     @Override
     public void get() throws Exception {
+
     }
 
 

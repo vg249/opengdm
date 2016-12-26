@@ -1902,6 +1902,45 @@ public class GOBIIControllerV1 {
 
     }
 
+    @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<OrganizationDTO> updateOrReplaceVendorProtocol(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
+                                                                @PathVariable Integer protocolId,
+                                                                HttpServletRequest request,
+                                                                HttpServletResponse response) {
+
+        PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<OrganizationDTO> payloadReader = new PayloadReader<>(OrganizationDTO.class);
+            OrganizationDTO organizationDTO = payloadReader.extractSingleItem(payloadEnvelope);
+
+            OrganizationDTO protocolDTOAssociated = protocolService.updateOrReplaceVendotrToProtocol(protocolId, organizationDTO);
+
+            PayloadWriter<OrganizationDTO> payloadWriter = new PayloadWriter<>(request,
+                    OrganizationDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_ORGANIZATION),
+                    protocolDTOAssociated);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<OrganizationDTO> getVendorsForProtocol(@PathVariable Integer protocolId,

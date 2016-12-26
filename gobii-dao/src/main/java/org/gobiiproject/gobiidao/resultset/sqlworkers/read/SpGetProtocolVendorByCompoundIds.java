@@ -7,17 +7,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+/**
+ * Created by Phil on 12/26/2016.
+ */
 
 /**
  * Created by Phil on 4/11/2016.
  */
-public class SpGetVendorProtocolsForVendor implements Work {
+public class SpGetProtocolVendorByCompoundIds implements Work {
     /**
      * Created by Phil on 4/7/2016.
      */
     private Map<String, Object> parameters = null;
 
-    public SpGetVendorProtocolsForVendor(Map<String, Object> parameters) {
+    public SpGetProtocolVendorByCompoundIds(Map<String, Object> parameters) {
         this.parameters = parameters;
     }
 
@@ -31,15 +34,20 @@ public class SpGetVendorProtocolsForVendor implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select * from vendor_protocol where vendor_id= ?;";
+        String Sql = "select * \n" +
+                "from vendor_protocol \n" +
+                "where vendor_id= ? and protocol_id=?;";
 
-        PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-        Integer organizationId = (Integer) parameters.get("organizationId");
+        PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
+        Integer protocolId = (Integer) parameters.get("protocolId");
+        Integer vendorId = (Integer) parameters.get("vendorId");
 
-        preparedStatement.setInt(1, organizationId);
+        preparedStatement.setInt(1, protocolId);
+        preparedStatement.setInt(2, vendorId);
 
         resultSet = preparedStatement.executeQuery();
 
     } // execute()
 
 }
+

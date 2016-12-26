@@ -38,7 +38,7 @@ public class ProtocolServiceImpl implements ProtocolService {
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
             returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
 
-        } catch (Exception e){
+        } catch (Exception e) {
 
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
@@ -158,7 +158,7 @@ public class ProtocolServiceImpl implements ProtocolService {
     }
 
     @Override
-    public OrganizationDTO addVendotrToProtocol(Integer protocolId, OrganizationDTO organizationDTO ) throws GobiiDomainException {
+    public OrganizationDTO addVendotrToProtocol(Integer protocolId, OrganizationDTO organizationDTO) throws GobiiDomainException {
 
         OrganizationDTO returnVal;
 
@@ -178,6 +178,15 @@ public class ProtocolServiceImpl implements ProtocolService {
         return returnVal;
     }
 
+    @Override
+    public OrganizationDTO updateOrReplaceVendotrToProtocol(Integer protocolId, OrganizationDTO organizationDTO) throws GobiiDomainException {
 
-    
+        OrganizationDTO returnVal;
+
+        returnVal = dtoMapProtocol.updateOrReplaceVendotrByProtocolId(protocolId, organizationDTO);
+
+        return returnVal;
+    }
+
+
 }
