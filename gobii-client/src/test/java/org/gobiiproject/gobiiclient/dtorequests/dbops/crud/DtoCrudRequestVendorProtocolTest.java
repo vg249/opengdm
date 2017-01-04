@@ -89,12 +89,18 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetOrganizationByID.getHeader()));
             OrganizationDTO organizationDTO = resultEnvelopeForGetOrganizationByID.getPayload().getData().get(0);
 
-            // ********** PREDICT RESULTING NAME
-            String protocolName = protocolDTO.getName();
-            String organizationName = organizationDTO.getName();
-            String predictedVendorProtocolName = organizationName + "_" + protocolName;
 
+            // CREATE VENDOR-PROTOCOL BY POSTING VENDOR TO PROTOCOSL
             // ********** POST VENDOR ORGANIZATION TO PROTOCOL
+            // ********** SET VENDOR-PROTOCOL NAME
+
+            String organizationName = organizationDTO.getName();
+            String vendorProtocolName = organizationName + "_" + UUID.randomUUID().toString();
+            VendorProtocolDTO vendorProtocolDTO = new VendorProtocolDTO(organizationDTO.getOrganizationId(),
+                    protocolId,
+                    vendorProtocolName);
+            organizationDTO.getVendorProtocols().add(vendorProtocolDTO);
+
             RestUri restUriProtocoLVendor = ClientContext.getInstance(null, false)
                     .getUriFactory()
                     .childResourceByUriIdParam(ServiceRequestId.URL_PROTOCOL,
@@ -110,7 +116,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
             OrganizationDTO postPostOrganizationDTO = protocolVendorResult.getPayload().getData().get(0);
             Assert.assertTrue(postPostOrganizationDTO.getVendorProtocols().size() == 1);
             Assert.assertTrue(postPostOrganizationDTO.getVendorProtocols().get(0).getVendorProtocolId() > 0);
-            Assert.assertTrue(postPostOrganizationDTO.getVendorProtocols().get(0).getName().equals(predictedVendorProtocolName));
+            Assert.assertTrue(postPostOrganizationDTO.getVendorProtocols().get(0).getName().equals(vendorProtocolName));
 
 
             // ************ VERIFY THAT VENDOR-PROTOCOL WAS CREATED
@@ -131,7 +137,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
 
             Assert.assertTrue(nameIdDTOs
                     .stream()
-                    .filter(nameIdDTO -> nameIdDTO.getName().toLowerCase().equals(predictedVendorProtocolName))
+                    .filter(nameIdDTO -> nameIdDTO.getName().toLowerCase().equals(vendorProtocolName))
                     .count() == 1);
 
 
