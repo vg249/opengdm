@@ -197,8 +197,6 @@ public class GobiiFileReader {
 			if(dataSetId==null){
 				dataSetId=inst.getDataSetId();//Pick it up from relevant instruction
 			}
-			dstDir=new File(HelperFunctions.getDestinationFile(inst));//Intermediate file
-			if(dstDir.isFile()) dstDir=dstDir.getParentFile();
 			GobiiFile file = inst.getGobiiFile();
 			if(file==null){
 				logError("Digester","Instruction " + instructionFile + " Table " + inst.getTable() + " has bad 'file' column" );
