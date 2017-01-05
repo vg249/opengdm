@@ -143,8 +143,7 @@ public class GobiiFileReader {
 		dm.addIdentifier("Mapset",zero.getMapset());
 		dm.addIdentifier("Dataset Type",zero.getDatasetType());
 
-		File dstDir=new File(HelperFunctions.getDestinationFile(zero));//Intermediate file
-		if(!dstDir.isDirectory()) dstDir=dstDir.getParentFile();
+		File dstDir=new File(HelperFunctions.getDestinationFile(zero));//Intermediate 'file'. THIS WILL ALWAYS BE A DIRECTORY
 		dm.addPath("destination directory",dstDir.getAbsolutePath());//Convert to directory
 		dm.addPath("input directory",zero.getGobiiFile().getSource());
 
