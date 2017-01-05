@@ -30,8 +30,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -237,7 +241,6 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                 if (postedVendorDTO.getVendorProtocols().size() == vendorPkVals.size()) {
                     finalPostedVendors.add(postedVendorDTO);
                 }
-
             }
         }
 
@@ -269,6 +272,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
             Assert.assertNotNull(organizationDTOFromDedicatedUrl.getVendorProtocols());
             Assert.assertTrue(organizationDTOFromDedicatedUrl.getVendorProtocols().size() ==
                     currentOrganizationDTO.getVendorProtocols().size());
+
 
             // verify that we can update with the current organizationDTO
             String newOrgName = UUID.randomUUID().toString();
@@ -315,6 +319,53 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
             Assert.assertNotNull(updatedVendorProtocolDTO);
             Assert.assertTrue(updatedVendorProtocolDTO.getName().equals(newVendorProtocolName));
         }
+
+
+        Map<Integer, List<VendorProtocolDTO>> vendorProtocolsByProtocolid = new HashMap<>();
+        for (OrganizationDTO currentOrganizationDTO : finalPostedVendors) {
+
+            currentOrganizationDTO.getVendorProtocols().forEach(currentVendorProtocol ->
+            {
+                Integer currentProtocolId = currentVendorProtocol.getProtocolId();
+                if (!vendorProtocolsByProtocolid.containsKey(currentProtocolId)) {
+                    vendorProtocolsByProtocolid.put(currentProtocolId, new ArrayList<>());
+                }
+
+                vendorProtocolsByProtocolid.get(currentProtocolId).add(currentVendorProtocol);
+            });
+        }
+
+        // verify that we can retrieve the vendor_protocols through the protocol
+        for (Map.Entry<Integer, List<VendorProtocolDTO>> currentMapEntry : vendorProtocolsByProtocolid.entrySet()) {
+
+            Integer currentProtocolId = currentMapEntry.getKey();
+            List<VendorProtocolDTO> currentVendorProtocolList = currentMapEntry.getValue();
+
+            RestUri restUriProtocolByProtocolId = ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceColl(ServiceRequestId.URL_PROTOCOL)
+                    .addUriParam("id")
+                    .setParamValue("id", currentProtocolId.toString());
+
+            GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResourceForGetProtocolById =
+                    new GobiiEnvelopeRestResource<>(restUriProtocolByProtocolId);
+            PayloadEnvelope<ProtocolDTO> resultEnvelopeForGetProtocolByID = gobiiEnvelopeRestResourceForGetProtocolById
+                    .get(ProtocolDTO.class);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetProtocolByID.getHeader()));
+            ProtocolDTO protocolDTO = resultEnvelopeForGetProtocolByID.getPayload().getData().get(0);
+            Assert.assertTrue(currentVendorProtocolList.size() == protocolDTO.getVendorProtocols().size());
+            for (VendorProtocolDTO currentVendorProtocolDto : currentVendorProtocolList) {
+                Assert.assertTrue(
+                        1 == protocolDTO
+                                .getVendorProtocols()
+                                .stream()
+                                .filter(vp -> vp.getName().equals(currentVendorProtocolDto.getName()))
+                                .count()
+                );
+            }
+
+        }
+
     }
 
 
