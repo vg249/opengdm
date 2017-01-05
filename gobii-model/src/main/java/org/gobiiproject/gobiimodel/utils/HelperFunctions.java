@@ -45,7 +45,7 @@ public class HelperFunctions {
 			startIndex=0;
 		}
 		String from_in = in.substring(startIndex);
-		if(from_in.contains(to)){
+		if(from_in.contains(to) && !to.equals("")){ // If to is null or blank, read to the end
 			endIndex = startIndex + from_in.indexOf(to);
 		}
 		else{
