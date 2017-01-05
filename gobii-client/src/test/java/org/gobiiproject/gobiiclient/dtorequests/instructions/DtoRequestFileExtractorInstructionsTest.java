@@ -8,19 +8,26 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestConfiguration;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiimodel.types.GobiiFileType;
+import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -28,6 +35,7 @@ import java.util.stream.Collectors;
  */
 public class DtoRequestFileExtractorInstructionsTest {
 
+    private final String INSTRUCTION_FILE_EXT = ".json";
     private static UriFactory uriFactory;
 
 
@@ -48,7 +56,7 @@ public class DtoRequestFileExtractorInstructionsTest {
     public void testSendExtractorInstructionFile() throws Exception {
 
 
-        String cropTypeFromContext = ClientContext.getInstance(null,false).getCurrentClientCropType();
+        String cropTypeFromContext = ClientContext.getInstance(null, false).getCurrentClientCropType();
 
         // ************** DEFINE DTO
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
@@ -65,7 +73,7 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         // ************** DATA SET EXTRACT ONE
         GobiiDataSetExtract gobiiDataSetExtractOne = new GobiiDataSetExtract();
-        GobiiFileType DataSetExtractOneFileType = GobiiFileType.GENERIC;
+        GobiiFileType DataSetExtractOneFileType = GobiiFileType.HAPMAP;
         gobiiDataSetExtractOne.setGobiiFileType(DataSetExtractOneFileType);
         String DataSetExtractOneName = "my_foo_Dataset";
         gobiiDataSetExtractOne.setDataSetName(DataSetExtractOneName);
@@ -73,10 +81,9 @@ public class DtoRequestFileExtractorInstructionsTest {
         gobiiDataSetExtractOne.setDataSetId(1);
 
 
-
         // ************** DATA SET EXTRACT two
         GobiiDataSetExtract gobiiDataSetExtractTwo = new GobiiDataSetExtract();
-        GobiiFileType DataSetExtractFileTypeTwo = GobiiFileType.GENERIC;
+        GobiiFileType DataSetExtractFileTypeTwo = GobiiFileType.FLAPJACK;
         gobiiDataSetExtractTwo.setGobiiFileType(DataSetExtractFileTypeTwo);
         String DataSetExtractNameTwo = "my_foo_Dataset2";
         gobiiDataSetExtractTwo.setDataSetName(DataSetExtractNameTwo);
@@ -105,14 +112,14 @@ public class DtoRequestFileExtractorInstructionsTest {
         gobiiDataSetExtractOne.setDataSetName("my_foo_2Dataset");
         gobiiDataSetExtractOne.setAccolate(true);
         gobiiDataSetExtractOne.setGobiiFileType(DataSetExtractOneFileType);
-        gobiiDataSetExtractOne.setDataSetId(1);
+        gobiiDataSetExtractOne.setDataSetId(2);
 
         // column two
         gobiiDataSetExtractTwo = new GobiiDataSetExtract();
         gobiiDataSetExtractTwo.setDataSetName("my_foo_2Dataset2");
         gobiiDataSetExtractTwo.setAccolate(true);
         gobiiDataSetExtractTwo.setGobiiFileType(DataSetExtractFileTypeTwo);
-        gobiiDataSetExtractTwo.setDataSetId(1);
+        gobiiDataSetExtractTwo.setDataSetId(2);
 
         gobiiExtractorInstructionTwo.getDataSetExtracts().add(gobiiDataSetExtractOne);
         gobiiExtractorInstructionTwo.getDataSetExtracts().add(gobiiDataSetExtractTwo);
@@ -148,7 +155,7 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         ExtractorInstructionFilesDTO extractorInstructionFilesDTOretrieveResponse = resultEnvelope.getPayload().getData().get(0);
 
-        for( GobiiExtractorInstruction currentExtractorInstruction : extractorInstructionFilesDTOretrieveResponse.getGobiiExtractorInstructions()) {
+        for (GobiiExtractorInstruction currentExtractorInstruction : extractorInstructionFilesDTOretrieveResponse.getGobiiExtractorInstructions()) {
             Assert.assertTrue("The sent crop type of the retrieved crop types does not match",
                     currentExtractorInstruction.getGobiiCropType().equals(cropTypeFromContext));
         }
@@ -231,11 +238,149 @@ public class DtoRequestFileExtractorInstructionsTest {
         PayloadEnvelope<ExtractorInstructionFilesDTO> resultEnvelopeForGetStatusByFileName = gobiiEnvelopeRestResourceForGetById
                 .get(ExtractorInstructionFilesDTO.class);
 
-            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetStatusByFileName.getHeader()));
-            ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO = resultEnvelopeForGetStatusByFileName.getPayload().getData().get(0);
-            Assert.assertNotNull(resultExtractorInstructionFilesDTO.getGobiiJobStatus());
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetStatusByFileName.getHeader()));
+        ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO = resultEnvelopeForGetStatusByFileName.getPayload().getData().get(0);
+
+        //testGetExtractorInstructionStatus
+        Assert.assertTrue(doesInstructionHaveAnExtractWithStatusEqualTo(GobiiJobStatus.STARTED, resultExtractorInstructionFilesDTO));//test if status is started since file is still in directory: INSTRUCTIONS
+
+        Path extractorInProgressFilePath = Paths.get(getFilePath(GobiiFileProcessDir.EXTRACTOR_INPROGRESS) + resultExtractorInstructionFilesDTO.getJobId() + INSTRUCTION_FILE_EXT);
+        Path extractorInstructionsFilePath = Paths.get(getFilePath(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS) + resultExtractorInstructionFilesDTO.getJobId() + INSTRUCTION_FILE_EXT);
+        Path extractorDoneFilePath = Paths.get(getFilePath(GobiiFileProcessDir.EXTRACTOR_DONE) + resultExtractorInstructionFilesDTO.getJobId() + INSTRUCTION_FILE_EXT);
+
+        //Move instruction file to directory: INPROGRESS
+        Files.move(extractorInstructionsFilePath, extractorInProgressFilePath, StandardCopyOption.REPLACE_EXISTING);
+
+        //call another get and testGetExtractorInstructionStatus after moving files
+        resultEnvelopeForGetStatusByFileName = gobiiEnvelopeRestResourceForGetById.get(ExtractorInstructionFilesDTO.class);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetStatusByFileName.getHeader()));
+        resultExtractorInstructionFilesDTO = resultEnvelopeForGetStatusByFileName.getPayload().getData().get(0);
+        Assert.assertTrue(doesInstructionHaveAnExtractWithStatusEqualTo(GobiiJobStatus.IN_PROGRESS, resultExtractorInstructionFilesDTO));//test if status is inProgress since file was moved to directory: IN_PROGRESS
+
+        //Move instruction file to directory: DONE
+        Files.move(extractorInProgressFilePath, extractorDoneFilePath, StandardCopyOption.REPLACE_EXISTING);//call another get and testGetExtractorInstructionStatus after moving files
+        createFiles(resultExtractorInstructionFilesDTO);//create sampleFiles according to the instruction extractor files
+        resultEnvelopeForGetStatusByFileName = gobiiEnvelopeRestResourceForGetById.get(ExtractorInstructionFilesDTO.class);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetStatusByFileName.getHeader()));
+        resultExtractorInstructionFilesDTO = resultEnvelopeForGetStatusByFileName.getPayload().getData().get(0);
+        Assert.assertTrue(doesInstructionHaveAnExtractWithStatusEqualTo(GobiiJobStatus.COMPLETED, resultExtractorInstructionFilesDTO));//test if status is COMPLETED since file was in DONE and the files for each extract has been created
+
+        deleteFiles(resultExtractorInstructionFilesDTO);//create sampleFiles according to the instruction extractor files
+
+
+        //test if status is Failed since file was no longer in InProgress or in Instructions but the files for each extract has been deleted
+        resultEnvelopeForGetStatusByFileName = gobiiEnvelopeRestResourceForGetById.get(ExtractorInstructionFilesDTO.class);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetStatusByFileName.getHeader()));
+        resultExtractorInstructionFilesDTO = resultEnvelopeForGetStatusByFileName.getPayload().getData().get(0);
+        Assert.assertTrue(doesInstructionHaveAnExtractWithStatusEqualTo(GobiiJobStatus.FAILED, resultExtractorInstructionFilesDTO));
+    }
+
+    private void deleteFiles(ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO) throws IOException {
+        List<GobiiExtractorInstruction> returnVal = resultExtractorInstructionFilesDTO.getGobiiExtractorInstructions();
+
+        for (GobiiExtractorInstruction instruction : returnVal) {
+
+            for (GobiiDataSetExtract dataSetExtract : instruction.getDataSetExtracts()) {
+
+                String extractDestinationDirectory = dataSetExtract.getExtractDestinationDirectory();
+                List<String> dataExtractFileNames = getFileNamesFor("DS" + Integer.toString(dataSetExtract.getDataSetId()), dataSetExtract.getGobiiFileType());
+
+                for (String currentFileName : dataExtractFileNames) {
+                    String currentExtractFile = extractDestinationDirectory + currentFileName;
+                    if (new File(currentExtractFile).exists()) Files.delete(Paths.get(currentExtractFile));
+
+                } // iterate file names
+
+            } // iterate extracts
+
+        } // iterate instructions
+    }
+
+    private void createFiles(ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO) throws IOException {
+
+        List<GobiiExtractorInstruction> returnVal = resultExtractorInstructionFilesDTO.getGobiiExtractorInstructions();
+
+        for (GobiiExtractorInstruction instruction : returnVal) {
+
+            for (GobiiDataSetExtract dataSetExtract : instruction.getDataSetExtracts()) {
+
+                String extractDestinationDirectory = dataSetExtract.getExtractDestinationDirectory();
+                List<String> dataExtractFileNames = getFileNamesFor("DS" + Integer.toString(dataSetExtract.getDataSetId()), dataSetExtract.getGobiiFileType());
+
+                for (String currentFileName : dataExtractFileNames) {
+
+                    String currentExtractFile = extractDestinationDirectory + currentFileName;
+                    if (!new File(currentExtractFile).exists()) Files.createFile(Paths.get(currentExtractFile));
+
+                } // iterate extract file names
+
+            } // iterate extracts
+
+        } // iterate instructions
+    }
+
+    private String getFilePath(GobiiFileProcessDir extractorDirectory) throws Exception {
+        String returnVal;
+
+        //get intended path for the created directory
+        TestConfiguration testConfiguration = new TestConfiguration();
+        String testCrop = testConfiguration.getConfigSettings().getTestExecConfig().getTestCrop();
+        returnVal = testConfiguration.getConfigSettings().getProcessingPath(testCrop, extractorDirectory);
+
+        //check if directory exists
+        File returnValDir = new File(returnVal);
+        if (!returnValDir.exists()) {//create directory
+            returnValDir.mkdirs();
         }
 
-
+        return returnVal;
     }
+
+    private boolean doesInstructionHaveAnExtractWithStatusEqualTo(GobiiJobStatus status, ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO) {
+
+        boolean returnVal = true;
+
+        for (GobiiExtractorInstruction gobiiExtractorInstruction : resultExtractorInstructionFilesDTO.getGobiiExtractorInstructions()) {
+
+            for (GobiiDataSetExtract gobiiDataSetExtract : gobiiExtractorInstruction.getDataSetExtracts()) {
+
+                if (!gobiiDataSetExtract.getGobiiJobStatus().equals(status)) {
+
+                    returnVal = false;
+                    break;
+
+                }
+
+            } // iterate extracts
+
+        } // iterate instructions
+
+        return returnVal;
+    }
+
+    private List<String> getFileNamesFor(String fileName, GobiiFileType gobiiFileType) {
+
+        List<String> fileNames = new ArrayList<String>();
+
+        switch (gobiiFileType.toString().toLowerCase()) {
+            case "hapmap":
+                fileNames.add(fileName + "hmp.txt");
+                break;
+
+            case "flapjack":
+                fileNames.add(fileName + ".map");
+                fileNames.add(fileName + ".genotype");
+                break;
+
+            case "vcf":
+                //fileNames.add(fileName+"hmp.txt"); to be added
+                break;
+
+            default://GENERIC
+                fileNames.add(fileName + ".txt"); //to be added
+        }
+
+        return fileNames;
+    }
+}
 
