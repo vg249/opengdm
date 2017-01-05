@@ -53,6 +53,13 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
             returnVal = (List<ProtocolDTO>) dtoListQueryColl.getList(ListSqlId.QUERY_ID_PROTOCOL_ALL, null);
 
+            // yes, this is inefficient; however, at the moment we have
+            // less development time than we do vendors per protocols --
+            // in this case, the second level queries will not be a disaster
+            for(ProtocolDTO currentProtocolDTO : returnVal) {
+                this.addVendorProtocolsToProtocol(currentProtocolDTO);
+            }
+
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);
@@ -107,6 +114,7 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
             if (resultSet.next()) {
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+                this.addVendorProtocolsToProtocol(returnVal);
             }
 
         } catch (Exception e) {
@@ -176,6 +184,26 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
                 VendorProtocolDTO currentVendorProtocolDTO = new VendorProtocolDTO();
                 ResultColumnApplicator.applyColumnValues(resultSet, currentVendorProtocolDTO);
                 organizationDTO.getVendorProtocols().add(currentVendorProtocolDTO);
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+    } // addVendorProtocolsToOrganization
+
+    @Transactional
+    @Override
+    public void addVendorProtocolsToProtocol(ProtocolDTO protocolDTO) throws GobiiException {
+
+        try {
+            protocolDTO.getVendorProtocols().clear();
+            ResultSet resultSet = this.rsProtocolDao.getVendorProtocolsForProtocol(protocolDTO.getProtocolId());
+            while (resultSet.next()) {
+                VendorProtocolDTO currentVendorProtocolDTO = new VendorProtocolDTO();
+                ResultColumnApplicator.applyColumnValues(resultSet, currentVendorProtocolDTO);
+                protocolDTO.getVendorProtocols().add(currentVendorProtocolDTO);
             }
 
         } catch (Exception e) {
