@@ -30,6 +30,17 @@ public class ProtocolDTO extends DTOBase{
     private Integer status;
     private List<EntityPropertyDTO> props = new ArrayList<>();
 
+    private List<VendorProtocolDTO> vendorProtocols = new ArrayList<>();
+
+    public List<VendorProtocolDTO> getVendorProtocols() {
+        return vendorProtocols;
+    }
+
+    public void setVendorProtocols(List<VendorProtocolDTO> vendorProtocols) {
+        this.vendorProtocols = vendorProtocols;
+    }
+
+
     @Override
     public Integer getId(){ return this.protocolId; }
 

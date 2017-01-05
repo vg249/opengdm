@@ -16,6 +16,11 @@ public class VendorProtocolDTO extends DTOBase{
     public VendorProtocolDTO(){
     }
 
+    public VendorProtocolDTO(Integer organizationId, Integer protocolId, String name) {
+        this.organizationId = organizationId;
+        this.protocolId = protocolId;
+        this.name = name;
+    }
 
     private Integer vendorProtocolId = 0;
     private Integer organizationId = 0;
