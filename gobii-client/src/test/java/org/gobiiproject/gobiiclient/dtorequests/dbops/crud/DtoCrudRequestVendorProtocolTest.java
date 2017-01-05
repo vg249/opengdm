@@ -94,7 +94,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
             OrganizationDTO organizationDTO = resultEnvelopeForGetOrganizationByID.getPayload().getData().get(0);
 
 
-            // CREATE VENDOR-PROTOCOL BY POSTING VENDOR TO PROTOCOSL
+            // CREATE VENDOR-PROTOCOL BY POSTING VENDOR TO PROTOCOL
             // ********** POST VENDOR ORGANIZATION TO PROTOCOL
             // ********** SET VENDOR-PROTOCOL NAME
 
@@ -274,6 +274,8 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
                     currentOrganizationDTO.getVendorProtocols().size());
 
 
+
+            // UPDATE VENDOR-PROTOCOL
             // verify that we can update with the current organizationDTO
             String newOrgName = UUID.randomUUID().toString();
             String newVendorProtocolName = UUID.randomUUID().toString();
@@ -335,7 +337,7 @@ public class DtoCrudRequestVendorProtocolTest implements DtoCrudRequestTest {
             });
         }
 
-        // verify that we can retrieve the vendor_protocols through the protocol
+        // verify that we can retrieve the VENDOR-PROTOCOL through the protocol DTO
         for (Map.Entry<Integer, List<VendorProtocolDTO>> currentMapEntry : vendorProtocolsByProtocolid.entrySet()) {
 
             Integer currentProtocolId = currentMapEntry.getKey();
