@@ -143,7 +143,12 @@ public class GobiiFileReader {
 		dm.addIdentifier("Mapset",zero.getMapset());
 		dm.addIdentifier("Dataset Type",zero.getDatasetType());
 
-		File dstDir=new File(HelperFunctions.getDestinationFile(zero));//Intermediate 'file'. THIS WILL ALWAYS BE A DIRECTORY
+
+		String dstFilePath=HelperFunctions.getDestinationFile(zero);//Intermediate 'file'
+		File dstDir=new File(dstFilePath);
+		if(!dstDir.isDirectory()){ //Note: if dstDir is a non-existant
+			dstDir=new File(dstFilePath.substring(0, dstFilePath.lastIndexOf("/")));
+		}
 		dm.addPath("destination directory",dstDir.getAbsolutePath());//Convert to directory
 		dm.addPath("input directory",zero.getGobiiFile().getSource());
 
