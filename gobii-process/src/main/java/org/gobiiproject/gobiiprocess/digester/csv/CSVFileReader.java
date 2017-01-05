@@ -86,7 +86,7 @@ public class CSVFileReader {
 	 * @throws InterruptedException If interrupted (Signals, etc)
 	 */
 	public void processCSV(GobiiLoaderInstruction loaderInstruction) throws IOException, InterruptedException{
-		Set<String> tempFiles = new HashSet<>();//Deduplicate temp files stored multiple times
+		List<String> tempFiles = new ArrayList<>();
 		file_column_constant = new HashMap<>();
 		file_column_autoincrement= new HashMap<>();
 		try {
@@ -170,7 +170,7 @@ public class CSVFileReader {
 	        delimiterString=delimiterString+"\\n";
 	        String commandStr = "paste -d"+delimiterString+""+fileListString;//+" > "+loaderInstruction.getFile().getDestination()+" 2>>/home/jdl232/err.log";
 	       HelperFunctions.tryExec(commandStr, HelperFunctions.getDestinationFile(loaderInstruction),"err.log" );
-	        for(String filename:tempFiles){
+	        for(String filename:new HashSet<String>(tempFiles)){ //Deduplicate before calling RM
 	        	rm(filename);
 	        }
 		} catch (FileNotFoundException e) {
