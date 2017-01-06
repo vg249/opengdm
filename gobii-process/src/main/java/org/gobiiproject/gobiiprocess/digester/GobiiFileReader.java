@@ -56,6 +56,7 @@ public class GobiiFileReader {
 	private static final String	LINKAGE_GROUP_TABNAME="linkage_group";
 	private static final String GERMPLASM_PROP_TABNAME="germplasm_prop";
 	private static final String GERMPLASM_TABNAME="germplasm";
+	private static final String MARKER_TABNAME="marker";
 	private static String pathToHDF5Files;
 	private static boolean verbose;
 	private static String errorLogOverride;
@@ -214,9 +215,7 @@ public class GobiiFileReader {
 			
 			switch(inst.getGobiiFile().getGobiiFileType()){
 			case VCF:
-				VCFFileReader vcfReader=new VCFFileReader(loaderScriptPath);
-				success&=vcfReader.parseInstruction(inst,dstDir);
-				break;
+				//INTENTIONAL FALLTHROUGH
 			case GENERIC:
 				CSVFileReader reader = new CSVFileReader(dstDir.getAbsolutePath(),"/");
 				reader.processCSV(inst);
@@ -269,6 +268,13 @@ public class GobiiFileReader {
 						break;
 					case CO_DOMINANT_NON_NUCLEOTIDE:
 						//No Translation Needed. Done before GOBII
+						break;
+					case VCF:
+						File markerFile=loaderInstructionMap.get(MARKER_TABNAME);
+						String markerFilename=markerFile.getAbsolutePath();
+						String markerTmp=new File(markerFile.getParentFile(),"marker.mref").getAbsolutePath();
+						generateMarkerReference(markerFilename,markerTmp);
+						//TODO: Angel
 						break;
 					default:System.err.println("Unknown type "+dst.toString());break;
 				}
@@ -575,5 +581,16 @@ public class GobiiFileReader {
 			logError("Digester","Exception while processing data sets",e);
 			return;
 		}
+	}
+
+	/**
+	 * Generates a marker reference file from a marker file
+	 * If input is name ref alt blah blah
+	 * output is ref alt
+	 * @param markerFile marker file
+	 * @param outFile
+	 */
+	private static void generateMarkerReference(String markerFile,String outFile){
+
 	}
 }
