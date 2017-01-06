@@ -6,44 +6,14 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.gobiiproject.gobidomain.services.AnalysisService;
-import org.gobiiproject.gobidomain.services.ConfigSettingsService;
-import org.gobiiproject.gobidomain.services.ContactService;
-import org.gobiiproject.gobidomain.services.CvService;
-import org.gobiiproject.gobidomain.services.DataSetService;
-import org.gobiiproject.gobidomain.services.DisplayService;
-import org.gobiiproject.gobidomain.services.ExperimentService;
-import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
-import org.gobiiproject.gobidomain.services.LoaderFilesService;
-import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
-import org.gobiiproject.gobidomain.services.ManifestService;
-import org.gobiiproject.gobidomain.services.MapsetService;
-import org.gobiiproject.gobidomain.services.MarkerGroupService;
-import org.gobiiproject.gobidomain.services.MarkerService;
-import org.gobiiproject.gobidomain.services.NameIdListService;
-import org.gobiiproject.gobidomain.services.OrganizationService;
-import org.gobiiproject.gobidomain.services.PingService;
-import org.gobiiproject.gobidomain.services.PlatformService;
-import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobidomain.services.ReferenceService;
+import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.EntityNameConverter;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderFilePreviewDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -117,6 +87,9 @@ public class BRAPIController {
 
     @Autowired
     private ExtractorInstructionFilesService extractorInstructionFilesService = null;
+
+    @Autowired
+    private QCInstructionFilesService qcInstructionFilesService = null;
 
     @Autowired
     private LoaderFilesService loaderFilesService = null;
@@ -720,6 +693,47 @@ public class BRAPIController {
                     ServiceRequestId.URL_FILE_EXTRACTOR_STATUS,
                     extractorInstructionFilesDTO,
                     extractorInstructionFilesDTO.getJobId());
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    // *********************************************
+    // *************************** QC INSTRUCTION METHODS
+    // *********************************************
+    @RequestMapping(value = "/instructions/qualitycontrol", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<QCInstructionsDTO> createQCInstruction(@RequestBody PayloadEnvelope<QCInstructionsDTO> payloadEnvelope,
+                                                                  HttpServletRequest request,
+                                                                  HttpServletResponse response) {
+
+        PayloadEnvelope<QCInstructionsDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            PayloadReader<QCInstructionsDTO> payloadReader = new PayloadReader<>(QCInstructionsDTO.class);
+            QCInstructionsDTO qcInstructionsDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            QCInstructionsDTO qcInstructionsDTONew = qcInstructionFilesService.createInstruction(cropType, qcInstructionsDTOToCreate);
+
+
+            PayloadWriter<QCInstructionsDTO> payloadWriter = new PayloadWriter<>(request,
+                    QCInstructionsDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    ServiceRequestId.URL_FILE_QC_INSTRUCTIONS,
+                    qcInstructionsDTONew);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
