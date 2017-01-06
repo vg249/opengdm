@@ -277,7 +277,7 @@ public class GobiiFileReader {
 						String markerFilename=markerFile.getAbsolutePath();
 						String markerTmp=new File(markerFile.getParentFile(),"marker.mref").getAbsolutePath();
 						generateMarkerReference(markerFilename,markerTmp,errorPath);
-						new VCFTransformer(markerTmp,fromFile,toFile).execute();
+						new VCFTransformer(markerTmp,fromFile,toFile);
 						break;
 					default:System.err.println("Unknown type "+dst.toString());break;
 				}
