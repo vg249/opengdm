@@ -34,6 +34,7 @@ import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
+import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
@@ -252,7 +253,8 @@ public class GobiiFileReader {
 				boolean functionStripsHeader=false;
 				String fromFile=HelperFunctions.getDestinationFile(inst);
 				String toFile=HelperFunctions.getDestinationFile(inst)+".2";
-				switch(dst){		
+				boolean hasFunction=false;
+				switch(dst){
 				case NUCLEOTIDE_2_LETTER:
 						function="python "+loaderScriptPath+"etc/SNPSepRemoval.py";
 						functionStripsHeader=true;
@@ -270,23 +272,24 @@ public class GobiiFileReader {
 						//No Translation Needed. Done before GOBII
 						break;
 					case VCF:
+						hasFunction=true;
 						File markerFile=loaderInstructionMap.get(MARKER_TABNAME);
 						String markerFilename=markerFile.getAbsolutePath();
 						String markerTmp=new File(markerFile.getParentFile(),"marker.mref").getAbsolutePath();
-						generateMarkerReference(markerFilename,markerTmp);
-						//TODO: Angel
+						generateMarkerReference(markerFilename,markerTmp,errorPath);
+						new VCFTransformer(markerTmp,fromFile,toFile).execute();
 						break;
 					default:System.err.println("Unknown type "+dst.toString());break;
 				}
-				
 				if(function!=null){
+					hasFunction=true;
 					//Try running script (from -> to), then replace original file with new one.
 					success&=HelperFunctions.tryExec(function+" "+fromFile+" "+toFile,null,errorPath);
 					rm(fromFile);
 					
 				}
-				else{
-					mv(fromFile,toFile);
+				if(!hasFunction) {
+					mv(fromFile, toFile);
 				}
 				
 				//toFile now contains data, we move it back to original position with second transformation (swap)
@@ -590,7 +593,7 @@ public class GobiiFileReader {
 	 * @param markerFile marker file
 	 * @param outFile
 	 */
-	private static void generateMarkerReference(String markerFile,String outFile){
-
+	private static void generateMarkerReference(String markerFile,String outFile,String errorPath){
+		HelperFunctions.tryExec("cut -f2,3 "+markerFile,outFile,errorPath);
 	}
 }

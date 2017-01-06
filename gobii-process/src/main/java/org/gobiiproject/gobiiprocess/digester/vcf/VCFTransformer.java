@@ -28,7 +28,7 @@ public class VCFTransformer {
 	 * @param mrefFile
 	 * @param matrixFile
 	 */
-    public VCFTransformer(String mrefFile, String matrixFile) {
+    public VCFTransformer(String mrefFile, String matrixFile,String outfile) {
         try {
             Path mrefFilePath = Paths.get(mrefFile);
             Stream<String> mrefStream = Files.lines(mrefFilePath);
