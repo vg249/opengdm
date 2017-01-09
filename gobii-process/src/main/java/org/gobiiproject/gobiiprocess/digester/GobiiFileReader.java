@@ -395,7 +395,7 @@ public class GobiiFileReader {
 				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
 				int size=0;
 				switch(dst){		
-					case NUCLEOTIDE_2_LETTER: case IUPAC:
+					case NUCLEOTIDE_2_LETTER: case IUPAC:case VCF:
 						size=2;break;
 					case SSR_ALLELE_SIZE:size=8;break;
 					case CO_DOMINANT_NON_NUCLEOTIDE:
