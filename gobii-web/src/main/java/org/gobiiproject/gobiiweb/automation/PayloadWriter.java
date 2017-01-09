@@ -60,11 +60,14 @@ public class PayloadWriter<T extends DTOBase> {
 
                         case CREATE:
                             link.getMethods().add(RestMethodTypes.POST);
+                            break;
                         case READ:
                             link.getMethods().add(RestMethodTypes.GET);
+                            break;
                         case UPDATE:
                             link.getMethods().add(RestMethodTypes.PUT);
                             // add PATCH when we support that
+                            break;
                         case DELETE:
                             link.getMethods().add(RestMethodTypes.DELETE);
                     }

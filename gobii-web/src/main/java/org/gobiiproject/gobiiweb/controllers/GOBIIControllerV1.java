@@ -15,6 +15,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.container.DataSetTypeDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
@@ -116,6 +117,9 @@ public class GOBIIControllerV1 {
 
     @Autowired
     private DataSetService dataSetService = null;
+
+    @Autowired
+    private DataSetTypeService dataSetTypeService = null;
 
     @Autowired
     private PlatformService platformService = null;
@@ -567,6 +571,44 @@ public class GOBIIControllerV1 {
         return (returnVal);
 
     }
+
+    @RequestMapping(value = "/datasets/types", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<DataSetTypeDTO> getDataSetsTypes(HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope<DataSetTypeDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            List<DataSetTypeDTO> dataSetTypeDTOs = dataSetTypeService.getDataSetTypes();
+
+            PayloadWriter<DataSetTypeDTO> payloadWriter = new PayloadWriter<>(request,
+                    DataSetTypeDTO.class);
+
+
+            for (DataSetTypeDTO currentItem : dataSetTypeDTOs) {
+                payloadWriter.writeSingleItemForId(returnVal,
+                        UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DATASETTYPES),
+                        currentItem,
+                        currentItem.getDataSetTypeName().toLowerCase());
+            }
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
 
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
