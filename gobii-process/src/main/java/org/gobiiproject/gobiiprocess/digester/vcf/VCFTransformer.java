@@ -64,8 +64,8 @@ public class VCFTransformer {
 						switch (terms[k]) {
 							case "0": case "1": case "2": case "3": case "4": case "5": case "6": case "7": case "8": case "9":
 								int value=Integer.parseInt(terms[k]);
-								if(mrefLineData.length > k) {
-									throw new IOException("Referenced alternate number is greater than alt list length");
+								if(k >= mrefLineData.length) {
+									throw new IOException("Referenced alternate number is greater than alt list length: " + terms[k] + " > " + mrefLineData.length);
 								}
 								bimatrixCell = bimatrixCell + mrefLineData[value];
 								break;
