@@ -36,6 +36,7 @@ import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
 
+import static org.gobiiproject.gobiimodel.types.DataSetType.VCF;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.parseInstructionFile;
@@ -243,6 +244,9 @@ public class GobiiFileReader {
 			for(GobiiFileColumn gfc:inst.getGobiiFileColumns()){
 				if(gfc.getDataSetType()!=null){
 					dst=gfc.getDataSetType();
+					if(inst.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF)){
+						dst=VCF;
+					}
 					if(gfc.getDataSetOrientationType()!=null)dso=gfc.getDataSetOrientationType();
 					break;
 				}
@@ -594,6 +598,6 @@ public class GobiiFileReader {
 	 * @param outFile
 	 */
 	private static void generateMarkerReference(String markerFile,String outFile,String errorPath){
-		HelperFunctions.tryExec("cut -f2,3 "+markerFile,outFile,errorPath);
+		HelperFunctions.tryExec("cut -f3,4 "+markerFile,outFile,errorPath);
 	}
 }
