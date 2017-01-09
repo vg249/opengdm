@@ -40,7 +40,12 @@ public class VCFTransformer {
 			bimatrixFileBufferedWriter.newLine();
 			while (((mrefLine = mrefFileBufferedReader.readLine()) != null) &&
 				   ((matrixLine = matrixFileBufferedReader.readLine()) != null)) {
-				String[] mrefLineData = mrefLine.trim().toUpperCase().split("\\s+");
+				String[] mrefLineRawData = mrefLine.trim().toUpperCase().split("\\s+");
+				String[] mrefAltData = mrefLineRawData[1].split(",");
+				String mrefLineData[]=new String[mrefAltData.length+1];//List of 1 + alts length
+				mrefLineData[0]=mrefLineRawData[0];
+				System.arraycopy(mrefAltData,0,mrefLineData,1,mrefAltData.length);
+
 				String[] matrixLineData = matrixLine.trim().split("\\s+");
 				int columnsNumber = matrixLineData.length;
 				for (int i = 0; i < columnsNumber; i++) {
@@ -56,15 +61,13 @@ public class VCFTransformer {
 					}
 					String bimatrixCell = "";
 					for (int k = 0; k < 2; k++) {
-						if (k == 1) {
-							bimatrixCell = bimatrixCell + "/";
-						}
 						switch (terms[k]) {
-							case "0":
-								bimatrixCell = bimatrixCell + mrefLineData[0];
-								break;
-							case "1": 
-								bimatrixCell = bimatrixCell + mrefLineData[1];
+							case "0": case "1": case "2": case "3": case "4": case "5": case "6": case "7": case "8": case "9":
+								int value=Integer.parseInt(terms[k]);
+								if(mrefLineData.length > k) {
+									throw new IOException("Referenced alternate number is greater than alt list length");
+								}
+								bimatrixCell = bimatrixCell + mrefLineData[value];
 								break;
 							case ".":
 								bimatrixCell = bimatrixCell + "N";
