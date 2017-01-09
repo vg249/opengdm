@@ -34,7 +34,9 @@ import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
+import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
 
+import static org.gobiiproject.gobiimodel.types.DataSetType.VCF;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.parseInstructionFile;
@@ -56,6 +58,7 @@ public class GobiiFileReader {
 	private static final String	LINKAGE_GROUP_TABNAME="linkage_group";
 	private static final String GERMPLASM_PROP_TABNAME="germplasm_prop";
 	private static final String GERMPLASM_TABNAME="germplasm";
+	private static final String MARKER_TABNAME="marker";
 	private static String pathToHDF5Files;
 	private static boolean verbose;
 	private static String errorLogOverride;
@@ -214,9 +217,7 @@ public class GobiiFileReader {
 			
 			switch(inst.getGobiiFile().getGobiiFileType()){
 			case VCF:
-				VCFFileReader vcfReader=new VCFFileReader(loaderScriptPath);
-				success&=vcfReader.parseInstruction(inst,dstDir);
-				break;
+				//INTENTIONAL FALLTHROUGH
 			case GENERIC:
 				CSVFileReader reader = new CSVFileReader(dstDir.getAbsolutePath(),"/");
 				reader.processCSV(inst);
@@ -243,6 +244,9 @@ public class GobiiFileReader {
 			for(GobiiFileColumn gfc:inst.getGobiiFileColumns()){
 				if(gfc.getDataSetType()!=null){
 					dst=gfc.getDataSetType();
+					if(inst.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF)){
+						dst=VCF;
+					}
 					if(gfc.getDataSetOrientationType()!=null)dso=gfc.getDataSetOrientationType();
 					break;
 				}
@@ -253,7 +257,8 @@ public class GobiiFileReader {
 				boolean functionStripsHeader=false;
 				String fromFile=HelperFunctions.getDestinationFile(inst);
 				String toFile=HelperFunctions.getDestinationFile(inst)+".2";
-				switch(dst){		
+				boolean hasFunction=false;
+				switch(dst){
 				case NUCLEOTIDE_2_LETTER:
 						function="python "+loaderScriptPath+"etc/SNPSepRemoval.py";
 						functionStripsHeader=true;
@@ -270,17 +275,25 @@ public class GobiiFileReader {
 					case CO_DOMINANT_NON_NUCLEOTIDE:
 						//No Translation Needed. Done before GOBII
 						break;
+					case VCF:
+						hasFunction=true;
+						File markerFile=loaderInstructionMap.get(MARKER_TABNAME);
+						String markerFilename=markerFile.getAbsolutePath();
+						String markerTmp=new File(markerFile.getParentFile(),"marker.mref").getAbsolutePath();
+						generateMarkerReference(markerFilename,markerTmp,errorPath);
+						new VCFTransformer(markerTmp,fromFile,toFile);
+						break;
 					default:System.err.println("Unknown type "+dst.toString());break;
 				}
-				
 				if(function!=null){
+					hasFunction=true;
 					//Try running script (from -> to), then replace original file with new one.
 					success&=HelperFunctions.tryExec(function+" "+fromFile+" "+toFile,null,errorPath);
 					rm(fromFile);
 					
 				}
-				else{
-					mv(fromFile,toFile);
+				if(!hasFunction) {
+					mv(fromFile, toFile);
 				}
 				
 				//toFile now contains data, we move it back to original position with second transformation (swap)
@@ -575,5 +588,16 @@ public class GobiiFileReader {
 			logError("Digester","Exception while processing data sets",e);
 			return;
 		}
+	}
+
+	/**
+	 * Generates a marker reference file from a marker file
+	 * If input is name ref alt blah blah
+	 * output is ref alt
+	 * @param markerFile marker file
+	 * @param outFile
+	 */
+	private static void generateMarkerReference(String markerFile,String outFile,String errorPath){
+		HelperFunctions.tryExec("cut -f3,4 "+markerFile,outFile,errorPath);
 	}
 }
