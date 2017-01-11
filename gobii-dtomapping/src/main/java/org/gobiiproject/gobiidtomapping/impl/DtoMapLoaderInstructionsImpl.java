@@ -102,19 +102,19 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     );
                 }
 
-//                if (LineUtils.isNullOrEmpty(currentGobiiFile.getSource())) {
-//                    throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-//                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-//                            "User file destination is missing"
-//                    );
-//                }
-//
-//                if (LineUtils.isNullOrEmpty(currentGobiiFile.getDestination())) {
-//                    throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-//                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-//                            "User file destination is missing"
-//                    );
-//                }
+                if (LineUtils.isNullOrEmpty(currentGobiiFile.getSource())) {
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                            "User file destination is missing"
+                    );
+                }
+
+                if (LineUtils.isNullOrEmpty(currentGobiiFile.getDestination())) {
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                            "User file destination is missing"
+                    );
+                }
 
                 if (currentGobiiFile.isRequireDirectoriesToExist()) {
 

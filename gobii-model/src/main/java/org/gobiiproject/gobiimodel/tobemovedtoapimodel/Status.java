@@ -20,7 +20,7 @@ public class Status implements Serializable {
     private boolean succeeded = true;
     private ArrayList<HeaderStatusMessage> statusMessages = new ArrayList<>();
 
-    private Map<String,String> statusMessagesByCode = new HashMap<>();
+    private Map<String, String> statusMessagesByCode = new HashMap<>();
 
     @JsonIgnore
     public void addException(Exception e) {
@@ -50,7 +50,10 @@ public class Status implements Serializable {
     @JsonIgnore
     public void addStatusMessage(GobiiStatusLevel gobiiStatusLevel, GobiiValidationStatusType gobiiValidationStatusType, String message) {
 
-        succeeded = (GobiiStatusLevel.ERROR != gobiiStatusLevel);
+        succeeded = (GobiiStatusLevel.ERROR != gobiiStatusLevel)
+                && (gobiiValidationStatusType.equals(GobiiValidationStatusType.NONE)
+                || gobiiValidationStatusType.equals(GobiiValidationStatusType.UNKNOWN));
+
         statusMessages.add(new HeaderStatusMessage(gobiiStatusLevel, gobiiValidationStatusType, message));
 
         // BRAPI requires messages by "code"
@@ -59,15 +62,15 @@ public class Status implements Serializable {
         boolean addedMessage = false;
         do {
             String codeKey = keyIndex + "-" + gobiiStatusLevel.toString() + "-" + gobiiValidationStatusType.toString();
-            if(false == statusMessagesByCode.containsKey(codeKey)) {
+            if (false == statusMessagesByCode.containsKey(codeKey)) {
 
-                statusMessagesByCode.put(codeKey,message);
+                statusMessagesByCode.put(codeKey, message);
                 addedMessage = true;
             } else {
                 keyIndex++;
             }
 
-        } while( false == addedMessage);
+        } while (false == addedMessage);
 
     }
 
