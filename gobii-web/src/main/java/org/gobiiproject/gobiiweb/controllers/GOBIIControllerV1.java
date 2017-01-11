@@ -1967,6 +1967,10 @@ public class GOBIIControllerV1 {
                             .addUriParam("id"), // <-- this is the one that PayloadWriter will set based on the list
                     organizationDTOs);
 
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
