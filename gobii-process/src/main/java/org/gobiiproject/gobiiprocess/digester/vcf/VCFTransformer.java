@@ -56,7 +56,8 @@ public class VCFTransformer {
 						matrixFileBufferedReader.close();
 						bimatrixFileBufferedWriter.flush();
 						bimatrixFileBufferedWriter.close();
-						ErrorLogger.logError("VCFTransformer", "Incorrect number of alleles: " + matrixLineData[i], new Exception());
+						ErrorLogger.logError("VCFTransformer", "Incorrect number of alleles: " + matrixLineData[i]
+								+ "\n Line "+ matrixLine, new Exception());
 						return;
 					}
 					String bimatrixCell = "";
