@@ -88,9 +88,9 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             for (GobiiLoaderInstruction currentLoaderInstruction :
                     loaderInstructionFilesDTO.getGobiiLoaderInstructions()) {
 
-            if( LineUtils.isNullOrEmpty(currentLoaderInstruction.getGobiiCropType())) {
-                currentLoaderInstruction.setGobiiCropType(cropType);
-            }
+                if (LineUtils.isNullOrEmpty(currentLoaderInstruction.getGobiiCropType())) {
+                    currentLoaderInstruction.setGobiiCropType(cropType);
+                }
 
                 GobiiFile currentGobiiFile = currentLoaderInstruction.getGobiiFile();
 
@@ -170,7 +170,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             loaderInstructionsDAO.writeInstructions(instructionFileFqpn,
                     returnVal.getGobiiLoaderInstructions());
 
-        } catch(GobiiException e) {
+        } catch (GobiiException e) {
             throw e;
         } catch (Exception e) {
             throw new GobiiException(e);
@@ -187,10 +187,9 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
         try {
             ConfigSettings configSettings = new ConfigSettings();
-            String instructionFile = configSettings.getProcessingPath(cropType,GobiiFileProcessDir.LOADER_INSTRUCTIONS)
+            String instructionFile = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.LOADER_INSTRUCTIONS)
                     + instructionFileName
                     + INSTRUCTION_FILE_EXT;
-
 
 
             if (loaderInstructionsDAO.doesPathExist(instructionFile)) {
