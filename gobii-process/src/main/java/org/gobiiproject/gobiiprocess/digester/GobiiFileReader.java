@@ -1,8 +1,6 @@
 package org.gobiiproject.gobiiprocess.digester;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -597,7 +595,28 @@ public class GobiiFileReader {
 	 * @param markerFile marker file
 	 * @param outFile
 	 */
-	private static void generateMarkerReference(String markerFile,String outFile,String errorPath){
-		HelperFunctions.tryExec("cut -f3,4 "+markerFile,outFile,errorPath);
+	private static void generateMarkerReference(String markerFile,String outFile,String errorPath) throws IOException {
+		BufferedReader br=new BufferedReader(new FileReader(markerFile));
+		String[] headers = br.readLine().split("\\s+");
+		br.close();
+		String ref="ref",alt="alt";
+		int refPos=-1;
+		int altPos=-1;
+		for(int i=0;i<headers.length;i++){
+			if(headers[i].contains(ref)){
+				refPos=i+1;break;//cut is 1 based
+			}
+		}
+		for(int i=0;i<headers.length;i++){
+			if(headers[i].contains(alt)){
+				altPos=i+1;break;//cut is 1 based
+			}
+
+		}
+		if((refPos==-1)||(altPos==-1)){
+			throw new IOException("Could not find one of Ref or Alt in file: "+markerFile);
+		}
+
+		HelperFunctions.tryExec("cut -f"+refPos+","+altPos+ " "+markerFile,outFile,errorPath);
 	}
 }
