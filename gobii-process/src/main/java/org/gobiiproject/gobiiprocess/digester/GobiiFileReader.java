@@ -30,6 +30,7 @@ import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.email.DigesterMessage;
 import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiiprocess.digester.HelperFunctions.PGArray;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
@@ -316,6 +317,12 @@ public class GobiiFileReader {
 			loaderInstructionList.add(instructionName);//TODO Hack - for ordering
 			if(LINKAGE_GROUP_TABNAME.equals(instructionName)||GERMPLASM_TABNAME.equals(instructionName)||GERMPLASM_PROP_TABNAME.equals(instructionName)){
 				success&=HelperFunctions.tryExec(loaderScriptPath+"LGduplicates.py -i "+HelperFunctions.getDestinationFile(inst));
+			}
+			if(MARKER_TABNAME.equals(instructionName)){//Convert 'alts' into a jsonb array
+				String dest=HelperFunctions.getDestinationFile(inst);
+				String tmp = dest+".tmp";
+				success&=HelperFunctions.tryExec("mv "+dest+" "+tmp);
+				new PGArray(tmp,dest,"alts").process();
 			}
 		}
 		
