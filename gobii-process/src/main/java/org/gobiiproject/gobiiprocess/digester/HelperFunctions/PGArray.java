@@ -72,7 +72,7 @@ public class PGArray {
 
     private void convertToArray(String[] arr,int colIndex){
         String col = arr[colIndex];
-        String newCol = "\"{\"\"" + col.replaceAll("[^A-Za-z]", "\"\",\"\"") + "\"\"}\"";
+        String newCol = "\"{\"\"" + col.replaceAll("[^A-Za-z\\-]", "\"\",\"\"") + "\"\"}\"";
         arr[colIndex] = newCol;
     }
 }
