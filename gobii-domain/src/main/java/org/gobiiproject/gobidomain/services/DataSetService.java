@@ -1,6 +1,7 @@
 package org.gobiiproject.gobidomain.services;
 
 import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 
 import java.util.List;
@@ -13,6 +14,6 @@ public interface DataSetService {
     DataSetDTO createDataSet(DataSetDTO dataSetDTO) throws GobiiDomainException;
     DataSetDTO replaceDataSet(Integer dataSetId, DataSetDTO dataSetDTO) throws GobiiDomainException;
     List<DataSetDTO> getDataSets() throws GobiiDomainException;
-    DataSetDTO getDataSetById(Integer dataSetId);
+    DataSetDTO getDataSetById(Integer dataSetId) throws GobiiDomainException;
 
 }

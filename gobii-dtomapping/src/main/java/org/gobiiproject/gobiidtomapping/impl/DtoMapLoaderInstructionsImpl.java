@@ -181,7 +181,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
     } // writeInstructions
 
     @Override
-    public LoaderInstructionFilesDTO getInstruction(String cropType, String instructionFileName) {
+    public LoaderInstructionFilesDTO getInstruction(String cropType, String instructionFileName) throws GobiiException{
 
         LoaderInstructionFilesDTO returnVal = new LoaderInstructionFilesDTO();
 

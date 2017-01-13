@@ -22,6 +22,6 @@ public interface ExtractorInstructionsDAO {
 
     void makeDirectory(String pathName) throws GobiiDaoException;
 
-    List<GobiiExtractorInstruction> setGobiiJobStatus(boolean applyToAll, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir extractorInstructions);
+    List<GobiiExtractorInstruction> setGobiiJobStatus(boolean applyToAll, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir extractorInstructions) throws GobiiDaoException;
 
 }
