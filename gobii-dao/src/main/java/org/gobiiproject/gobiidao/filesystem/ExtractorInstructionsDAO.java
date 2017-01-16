@@ -14,7 +14,7 @@ public interface ExtractorInstructionsDAO {
     boolean writeInstructions(String instructionFileFqpn,
                               List<GobiiExtractorInstruction> instructions) throws GobiiDaoException;
 
-    List<GobiiExtractorInstruction> getInstructions(String instructionFileFqpn) throws GobiiDaoException;
+    List<GobiiExtractorInstruction> getGobiiExtractorInstructionsFromFile(String instructionFileFqpn) throws GobiiDaoException;
 
     boolean doesPathExist(String pathName) throws GobiiDaoException;
 
