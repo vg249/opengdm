@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import org.gobiiproject.gobiidao.resultset.access.RsDataSetTypeDao;
 import org.gobiiproject.gobiidao.resultset.core.listquery.ListSqlId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.dto.container.DataSetTypeDTO;
@@ -10,6 +11,8 @@ import org.gobiiproject.gobiidtomapping.DtoMapDataSetType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,9 @@ public class DtoMapDataSetTypeImpl implements DtoMapDataSetType{
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapDataSetTypeImpl.class);
 
+    @Autowired
+    private RsDataSetTypeDao rsDataSetTypeDao;
+
     @SuppressWarnings("unchecked")
     @Override
     public List<DataSetTypeDTO> getDataSetTypes() throws GobiiDtoMappingException {
@@ -29,11 +35,14 @@ public class DtoMapDataSetTypeImpl implements DtoMapDataSetType{
 
         try {
 
-            dataSetTypeNames = getDataSetTypeNames();
+            ResultSet resultSet = rsDataSetTypeDao.getDatasetTypeNames();
+
             Integer dummyId = 0;
-            for (String name : dataSetTypeNames) {
+            while (resultSet.next()) {
+
+                String newDatasetTypeName = resultSet.getString("term");
                 DataSetTypeDTO tempDataSetTypeDTO = new DataSetTypeDTO();
-                tempDataSetTypeDTO.setDataSetTypeName(name);
+                tempDataSetTypeDTO.setDataSetTypeName(newDatasetTypeName);
                 tempDataSetTypeDTO.setId(dummyId);
                 dummyId++;
 
@@ -41,24 +50,11 @@ public class DtoMapDataSetTypeImpl implements DtoMapDataSetType{
             }
 
         } catch (Exception e) {
-            LOGGER.error("Gobii Maping Error", e);
+            LOGGER.error("Gobii Mapping Error", e);
             throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
     }
-
-    public List<String> getDataSetTypeNames(){
-
-        List<String> returnVal = new ArrayList<String>();
-
-        for (DataSetType type : DataSetType.values()){
-            returnVal.add(type.toString());
-        }
-
-        return returnVal;
-
-    }
-
 
 }
