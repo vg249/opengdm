@@ -47,10 +47,10 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
 
             returnVal = spGetDatasetNamesByExperimentId.getResultSet();
 
-        } catch (Exception e) {
+        } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving dataset file names", e);
-            throw (new GobiiDaoException(e));
+            LOGGER.error("Error retrieving dataset names by experiment", e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
 
         }
 
@@ -74,10 +74,10 @@ public class RsDataSetDaoImpl implements RsDataSetDao {
 
             returnVal = spGetDatasetDetailsByExperimentId.getResultSet();
 
-        } catch (Exception e) {
+        } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving dataset details", e);
-            throw (new GobiiDaoException(e));
+            LOGGER.error("Error retrieving dataset details", e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
 
         }
 

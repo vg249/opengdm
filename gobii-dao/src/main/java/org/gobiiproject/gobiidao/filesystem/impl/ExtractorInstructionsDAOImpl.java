@@ -125,7 +125,7 @@ public class ExtractorInstructionsDAOImpl implements ExtractorInstructionsDAO {
     }
 
     @Override
-    public List<GobiiExtractorInstruction> setGobiiJobStatus(boolean applyToAll, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir gobiiFileProcessDir) {
+    public List<GobiiExtractorInstruction> setGobiiJobStatus(boolean applyToAll, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir gobiiFileProcessDir) throws GobiiDaoException{
         List<GobiiExtractorInstruction> returnVal = instructions;
 
         GobiiJobStatus gobiiJobStatus;

@@ -41,6 +41,7 @@ import org.gobiiproject.gobiibrapi.core.derived.BrapiListResult;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeList;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.json.BrapiResponseWriterJson;
+import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -197,6 +198,12 @@ public class BRAPIIControllerV1 {
             brapiResponseEnvelopeList.setData(brapiResponseCallsItems);
 
 
+        } catch (GobiiException e) {
+
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            brapiResponseEnvelopeList.getBrapiMetaData().addStatusMessage("exception", message);
+
         } catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
@@ -236,7 +243,13 @@ public class BRAPIIControllerV1 {
 
             brapiResponseEnvelopeList.setData(brapiListResult);
 
-        } catch (Exception e) {
+        } catch (GobiiException e) {
+
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            brapiResponseEnvelopeList.getBrapiMetaData().addStatusMessage("exception", message);
+
+        }catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
@@ -280,6 +293,12 @@ public class BRAPIIControllerV1 {
             responseEnvelope.setResult(brapiResponseGermplasmSearch);
 
 
+        } catch (GobiiException e) {
+
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            responseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+
         } catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
@@ -318,7 +337,13 @@ public class BRAPIIControllerV1 {
 
             responseEnvelope.setResult(brapiResponseObservationVariablesMaster);
 
-        } catch (Exception e) {
+        } catch (GobiiException e) {
+
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            responseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+
+        }catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
