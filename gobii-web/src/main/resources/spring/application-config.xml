@@ -232,6 +232,11 @@
     <bean id="DataSetService"
           class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl"/>
 
+    <!-- **** DataSetType Beans ********************************** -->
+    <bean id="rsDataSetTypeDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDataSetTypeDaoImpl"/>
+    <bean id="dtoMapDataSetType" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDataSetTypeImpl"/>
+    <bean id="DataSetTypeService" class="org.gobiiproject.gobidomain.services.impl.DataSetTypeServiceImpl"/>
+
     <!-- **** Experiments Beans *************************************** -->
     <bean id="rsExperimentDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsExperimentDaoImpl"/>
