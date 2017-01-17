@@ -10,6 +10,6 @@ import java.util.List;
  * Created by Phil on 4/12/2016.
  */
 public interface LoaderInstructionFilesService {
-    LoaderInstructionFilesDTO createInstruction(String cropType, LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws GobiiException;
+    LoaderInstructionFilesDTO createInstruction(String cropType, LoaderInstructionFilesDTO loaderInstructionFilesDTO) throws GobiiDomainException;
     LoaderInstructionFilesDTO getInstruction(String cropType, String instructionFileName) throws GobiiDomainException;
 }
