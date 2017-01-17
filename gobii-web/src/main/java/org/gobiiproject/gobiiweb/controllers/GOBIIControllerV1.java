@@ -586,12 +586,10 @@ public class GOBIIControllerV1 {
                     DataSetTypeDTO.class);
 
 
-            for (DataSetTypeDTO currentItem : dataSetTypeDTOs) {
-                payloadWriter.writeSingleItemForId(returnVal,
-                        UriFactory.resourceByUriIdParam(request.getContextPath(),
-                            ServiceRequestId.URL_DATASETTYPES),
-                        currentItem,
-                        currentItem.getDataSetTypeName().toLowerCase());
+            for (DataSetTypeDTO currentDataSetTypeDTO : dataSetTypeDTOs) {
+
+                returnVal.getPayload().getData().add(currentDataSetTypeDTO);
+
             }
 
         } catch (GobiiException e) {
