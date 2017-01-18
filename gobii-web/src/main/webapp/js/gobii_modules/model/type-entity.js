@@ -12,6 +12,7 @@ System.register([], function(exports_1, context_1) {
                 EntityType[EntityType["Experiments"] = 3] = "Experiments";
                 EntityType[EntityType["DataSets"] = 4] = "DataSets";
                 EntityType[EntityType["CvTerms"] = 5] = "CvTerms";
+                EntityType[EntityType["Mapsets"] = 6] = "Mapsets";
             })(EntityType || (EntityType = {}));
             exports_1("EntityType", EntityType);
             ;

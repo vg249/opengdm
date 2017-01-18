@@ -9,6 +9,7 @@ import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
 import {ProjectListBoxComponent} from "../views/project-list-box.component";
 import {ExperimentListBoxComponent} from "../views/experiment-list-box.component";
 import {DataSetCheckListBoxComponent} from "../views/dataset-checklist-box.component";
+import {MapsetsListBoxComponent} from "../views/mapsets-list-box.component";
 import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract";
 import {CriteriaDisplayComponent} from "../views/criteria-display.component";
 import {StatusDisplayComponent} from "../views/status-display-box.component";
@@ -40,6 +41,7 @@ import {EntityFilter} from "../model/type-entity-filter";
         ProjectListBoxComponent,
         ExperimentListBoxComponent,
         DataSetCheckListBoxComponent,
+        MapsetsListBoxComponent,
         CriteriaDisplayComponent,
         StatusDisplayComponent,
         CropsListBoxComponent,
@@ -119,6 +121,13 @@ import {EntityFilter} from "../model/type-entity-filter";
                         </dataset-checklist-box>
                         </fieldset>
                         
+                        <fieldset class="well the-fieldset">
+                        <legend class="the-legend">Mapset</legend>
+                        <mapsets-list-box [nameIdList]="mapsetNameIdList" 
+                        (onMapsetSelected)="handleMapsetSelected($event)"></mapsets-list-box>
+                        </fieldset>
+
+                        
                     </div>  <!-- outer grid column 2-->
                     <div class="col-md-4">
                          
@@ -195,6 +204,7 @@ export class ExtractorRoot {
                     scope$.messages.push("Connected to database: " + scope$.selectedServerConfig.crop);
                     scope$.initializeContactsForSumission();
                     scope$.initializeContactsForPi();
+                    scope$.initializeMapsetsForSumission();
 
                 } else {
                     scope$.serverConfigList = [new ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
@@ -429,19 +439,65 @@ export class ExtractorRoot {
         this.checkBoxEventChange = arg;
     }
 
+
+// ********************************************************************
+// ********************************************** MAPSET SELECTION
+    private mapsetNameIdList:NameId[];
+    private selectedMapsetId:string;
+    private nullMapsetName:string;
+
+    private handleMapsetSelected(arg) {
+
+        if(arg > 0) {
+            this.selectedMapsetId = arg;
+        } else {
+            this.selectedMapsetId = undefined;
+        }
+    }
+
+    private initializeMapsetsForSumission() {
+        let scope$ = this;
+        scope$.nullMapsetName = "<none>"
+        this._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+            EntityType.Mapsets)).subscribe(nameIds => {
+
+                scope$.mapsetNameIdList = [new NameId(0, scope$.nullMapsetName)]
+                if (nameIds && ( nameIds.length > 0 )) {
+                    scope$.mapsetNameIdList = scope$.mapsetNameIdList.concat(nameIds);
+                    scope$.selectedMapsetId = nameIds[0].id;
+                }
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Rettrieving mapsets: "
+                    + m.message))
+            });
+
+    }
+
+
+    // ********************************************************************
+    // ********************************************** Extract file submission
     private handleExtractSubmission() {
 
+        let scope$ = this;
         let gobiiExtractorInstructions:GobiiExtractorInstruction[] = [];
 
         let gobiiFileType:GobiiFileType = GobiiFileType[this.selectedFormatName.toUpperCase()];
         this.gobiiDatasetExtracts.forEach(e => e.setGobiiFileType(gobiiFileType));
+
+        let mapsetIds:number[] = [];
+
+        if ((scope$.selectedMapsetId !== undefined)) {
+            mapsetIds.push(Number(scope$.selectedMapsetId));
+        }
 
 
         gobiiExtractorInstructions.push(
             new GobiiExtractorInstruction(
                 this.gobiiDatasetExtracts,
                 Number(this.selectedContactIdForSubmitter),
-                null)
+                null,
+                mapsetIds)
         );
 
 
@@ -464,7 +520,7 @@ export class ExtractorRoot {
 //this.selectedServerConfig.crop
 
         let extractorInstructionFilesDTOResponse:ExtractorInstructionFilesDTO = null;
-        let scope$ = this;
+
         this._dtoRequestServiceExtractorFile.post(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
             .subscribe(extractorInstructionFilesDTO => {
                     extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
