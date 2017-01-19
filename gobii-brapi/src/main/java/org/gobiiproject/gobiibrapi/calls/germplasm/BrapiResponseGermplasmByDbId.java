@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by Phil on 12/18/2016.
  */
-public class BrapiResponseGermplasmSearch {
+public class BrapiResponseGermplasmByDbId {
 
     private String typeOfGermplasmStorageCode;
 
