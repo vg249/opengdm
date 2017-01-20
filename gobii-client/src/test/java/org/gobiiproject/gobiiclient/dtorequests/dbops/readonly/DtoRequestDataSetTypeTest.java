@@ -49,6 +49,16 @@ public class DtoRequestDataSetTypeTest {
         Assert.assertNotNull(nameIdDTOList);
         Assert.assertTrue(nameIdDTOList.size() > 0);
         Assert.assertNotNull(nameIdDTOList.get(0).getName());
+
+        Boolean testIfExisting = false;
+        for (NameIdDTO currentItem : nameIdDTOList) {
+
+            if(currentItem.getName().toLowerCase().equals("nucleotide_2_letter")) {
+                testIfExisting = true;
+            }
+        }
+
+        Assert.assertTrue(testIfExisting);
     }
 
 }
