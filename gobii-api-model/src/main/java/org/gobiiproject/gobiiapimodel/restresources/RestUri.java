@@ -29,7 +29,20 @@ public class RestUri {
 
 
     public String getResourcePath() {
-        return requestTemplate.replace(this.controllerType.toString(),"");
+
+        String returnVal;
+
+        Integer idxOfLastDelimiter = this.requestTemplate.length() - 1;
+        if (this.requestTemplate.charAt(idxOfLastDelimiter) == URL_SEPARATOR) {
+            returnVal = requestTemplate.substring(0, idxOfLastDelimiter);
+        } else {
+            returnVal = this.requestTemplate;
+        }
+
+        return RestUri.URL_SEPARATOR
+                + returnVal
+                .replace(this.controllerType.getControllerPath(), "")
+                .replace(this.cropContextRoot, "");
     }
 
     private String delimitSegment(String segment) {
@@ -49,7 +62,7 @@ public class RestUri {
     public RestUri(String cropContextRoot, ControllerType controllerType, ServiceRequestId serviceRequestId) throws Exception {
         this.controllerType = controllerType;
         this.cropContextRoot = this.delimitSegment(cropContextRoot);
-        this.requestTemplate = serviceRequestId.getRequestUrl(this.cropContextRoot,this.controllerType);
+        this.requestTemplate = serviceRequestId.getRequestUrl(this.cropContextRoot, this.controllerType);
     }
 
     public RestUri(String restUri) {
@@ -67,17 +80,17 @@ public class RestUri {
 
     public RestUri addQueryParam(String name) {
         this.addParam(ResourceParam.ResourceParamType.QueryParam, name);
-        return  this;
+        return this;
     }
 
 
     public RestUri addUriParam(String name) {
         this.addParam(ResourceParam.ResourceParamType.UriParam, name);
-        return  this;
+        return this;
     }
 
     private RestUri addParam(ResourceParam.ResourceParamType resourceParamType,
-                            String name) {
+                             String name) {
 
         if (resourceParamType.equals(ResourceParam.ResourceParamType.UriParam)) {
             this.appendPathVariable(name);
@@ -121,7 +134,6 @@ public class RestUri {
         return this;
 
     }
-
 
 
     public String makeUrl() throws Exception {
