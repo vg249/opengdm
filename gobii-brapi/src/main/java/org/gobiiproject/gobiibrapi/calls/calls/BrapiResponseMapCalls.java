@@ -1,12 +1,9 @@
 package org.gobiiproject.gobiibrapi.calls.calls;
 
-import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiListResult;
-import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeList;
-import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.types.BrapiDataTypes;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 

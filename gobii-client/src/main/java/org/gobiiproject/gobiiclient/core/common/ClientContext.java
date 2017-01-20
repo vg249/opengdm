@@ -2,7 +2,6 @@ package org.gobiiproject.gobiiclient.core.common;
 
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
@@ -329,9 +328,9 @@ public final class ClientContext {
         boolean returnVal = true;
 
         try {
-            String authUrl = ResourceBuilder.getRequestUrl(ControllerType.EXTRACTOR,
-                    this.getCurrentCropContextRoot(),
-                    ServiceRequestId.URL_AUTH);
+            String authUrl = ServiceRequestId.URL_AUTH
+                    .getRequestUrl(this.getCurrentCropContextRoot(),
+                    ControllerType.EXTRACTOR);
 
             HttpCore httpCore = new HttpCore(this.getCurrentCropDomain(),
                     this.getCurrentCropPort(),

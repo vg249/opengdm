@@ -49,9 +49,7 @@ public class RestUri {
     public RestUri(String cropContextRoot, ControllerType controllerType, ServiceRequestId serviceRequestId) throws Exception {
         this.controllerType = controllerType;
         this.cropContextRoot = this.delimitSegment(cropContextRoot);
-        this.requestTemplate = ResourceBuilder.getRequestUrl(this.controllerType,
-                this.cropContextRoot,
-                serviceRequestId);
+        this.requestTemplate = serviceRequestId.getRequestUrl(this.cropContextRoot,this.controllerType);
     }
 
     public RestUri(String restUri) {
