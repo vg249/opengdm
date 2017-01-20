@@ -52,8 +52,7 @@ public enum ServiceRequestId {
         return this.requestPath;
     }
 
-    String getRequestUrl(ControllerType controllerType,
-                         String contextRoot) throws Exception {
+    public String getRequestUrl(String contextRoot,ControllerType controllerType) throws Exception {
 
         String controllerPath = controllerType.getControllerPath();
 

@@ -175,9 +175,7 @@ public final class ClientContext {
 
         // first authenticate
         // you can't use login() from here -- it assumes that ClientContext has already been constructed
-        String authPath = ResourceBuilder.getRequestUrl(ControllerType.EXTRACTOR,
-                ServiceRequestId.URL_AUTH,
-                context);
+        String authPath = ServiceRequestId.URL_AUTH.getRequestUrl(context, ControllerType.EXTRACTOR);
         HttpCore httpCore = new HttpCore(host, port, null);
 
         SystemUsers systemUsers = new SystemUsers();
@@ -185,9 +183,7 @@ public final class ClientContext {
         returnVal.userToken = httpCore.getTokenForUser(authPath, userDetail.getUserName(), userDetail.getPassword());
 
         // now get the settings
-        String settingsPath = ResourceBuilder.getRequestUrl(ControllerType.GOBII,
-                ServiceRequestId.URL_CONFIGSETTINGS,
-                context);
+        String settingsPath = ServiceRequestId.URL_CONFIGSETTINGS.getRequestUrl(context,ControllerType.GOBII);
 
         RestUri configSettingsUri = new UriFactory(null).RestUriFromUri(settingsPath);
         HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri, returnVal.userToken);

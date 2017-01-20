@@ -14,23 +14,9 @@ public class ResourceBuilder {
                                        String cropContextRoot,
                                        ServiceRequestId requestId) throws Exception {
 
-        return ResourceBuilder.getRequestUrl(controllerType,
-                requestId,
-                cropContextRoot);
+        return requestId.getRequestUrl(cropContextRoot,controllerType);
+
     }
-
-
-    public static String getRequestUrl(ControllerType controllerType,
-                                       ServiceRequestId requestId,
-                                       String contextRoot) throws Exception {
-
-        String controllerPath = controllerType.getControllerPath();
-
-        String returnVal = contextRoot + controllerPath;
-
-        returnVal += requestId.getRequestPath();
-
-        return returnVal;
-    }
+    
 
 } // ResourceBuilder
