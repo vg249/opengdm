@@ -28,6 +28,10 @@ public class RestUri {
     private List<ResourceParam> resourceParams = new ArrayList<>();
 
 
+    public String getResourcePath() {
+        return requestTemplate.replace(this.controllerType.toString(),"");
+    }
+
     private String delimitSegment(String segment) {
 
         String returnVal = segment;
@@ -103,7 +107,7 @@ public class RestUri {
     public RestUri appendSegment(ServiceRequestId serviceRequestId) throws Exception {
 
         this.requestTemplate = this.delimitSegment(this.requestTemplate);
-        String segment = ResourceBuilder.getUrlSegment(serviceRequestId);
+        String segment = serviceRequestId.getRequestPath();
 
         this.requestTemplate += this.delimitSegment(segment);
 
@@ -119,6 +123,8 @@ public class RestUri {
         return this;
 
     }
+
+
 
     public String makeUrl() throws Exception {
 

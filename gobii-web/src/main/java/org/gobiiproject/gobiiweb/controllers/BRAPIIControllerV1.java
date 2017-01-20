@@ -187,7 +187,7 @@ public class BRAPIIControllerV1 {
                 new BrapiResponseEnvelopeList<>(ObjectUtils.Null.class, BrapiResponseCallsItem.class);
         try {
 
-            BrapiResponseMapCalls brapiResponseMapCalls = new BrapiResponseMapCalls();
+            BrapiResponseMapCalls brapiResponseMapCalls = new BrapiResponseMapCalls(request);
             BrapiListResult<BrapiResponseCallsItem> brapiResponseCallsItems = brapiResponseMapCalls
                     .getBrapiResponseListCalls();
 
