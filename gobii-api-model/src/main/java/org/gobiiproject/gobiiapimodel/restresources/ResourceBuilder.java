@@ -102,6 +102,10 @@ public class ResourceBuilder {
                 returnVal = "datasets";
                 break;
 
+            case URL_DATASETTYPES:
+                returnVal = "datasets/types";
+                break;
+
             case URL_ANALYSIS:
                 returnVal = "analysis";
                 break;

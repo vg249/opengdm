@@ -171,7 +171,7 @@ public class RsCvDaoImpl implements RsCvDao {
 
         } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error creating cv wit SQL " + e.getSQL(), e.getSQLException());
+            LOGGER.error("Error creating cv with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
         }
 

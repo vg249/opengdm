@@ -55,7 +55,7 @@ public class DataSetServiceImpl implements DataSetService {
     }
 
     @Override
-    public DataSetDTO getDataSetById(Integer dataSetId) {
+    public DataSetDTO getDataSetById(Integer dataSetId) throws GobiiDomainException{
 
         DataSetDTO returnVal;
 

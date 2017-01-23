@@ -68,6 +68,14 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
         LoaderInstructionFilesDTO returnVal = loaderInstructionFilesDTO;
 
+        if (LineUtils.isNullOrEmpty(returnVal.getInstructionFileName())) {
+            throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
+                    GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                    "The instruction file DTO is missing the instruction file name"
+            );
+        }
+
+
         try {
             ConfigSettings configSettings = new ConfigSettings();
 
@@ -85,8 +93,13 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                     + INSTRUCTION_FILE_EXT;
 
 
-            for (GobiiLoaderInstruction currentLoaderInstruction :
-                    loaderInstructionFilesDTO.getGobiiLoaderInstructions()) {
+            for (Integer currentFileIdx = 0;
+                 currentFileIdx < loaderInstructionFilesDTO.getGobiiLoaderInstructions().size();
+                 currentFileIdx++) {
+
+                GobiiLoaderInstruction currentLoaderInstruction =
+                        loaderInstructionFilesDTO.getGobiiLoaderInstructions().get(currentFileIdx);
+
 
                 if (LineUtils.isNullOrEmpty(currentLoaderInstruction.getGobiiCropType())) {
                     currentLoaderInstruction.setGobiiCropType(cropType);
@@ -95,24 +108,21 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
                 GobiiFile currentGobiiFile = currentLoaderInstruction.getGobiiFile();
 
                 // check that we have all required values
-                if (LineUtils.isNullOrEmpty(returnVal.getInstructionFileName())) {
-                    throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
-                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                            "User file destination is missing"
-                    );
-                }
-
                 if (LineUtils.isNullOrEmpty(currentGobiiFile.getSource())) {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
                             GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                            "User file destination is missing"
+                            "The file associated with instruction at index "
+                                    + currentFileIdx.toString()
+                                    + " is missing the source file path"
                     );
                 }
 
                 if (LineUtils.isNullOrEmpty(currentGobiiFile.getDestination())) {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.VALIDATION,
                             GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                            "User file destination is missing"
+                            "The file associated with instruction at index "
+                                    + currentFileIdx.toString()
+                                    + " is missing the destination file path"
                     );
                 }
 
@@ -181,7 +191,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
     } // writeInstructions
 
     @Override
-    public LoaderInstructionFilesDTO getInstruction(String cropType, String instructionFileName) {
+    public LoaderInstructionFilesDTO getInstruction(String cropType, String instructionFileName) throws GobiiDtoMappingException{
 
         LoaderInstructionFilesDTO returnVal = new LoaderInstructionFilesDTO();
 

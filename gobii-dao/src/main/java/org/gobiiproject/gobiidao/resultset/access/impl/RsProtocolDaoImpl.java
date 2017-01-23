@@ -107,10 +107,10 @@ public class RsProtocolDaoImpl implements RsProtocolDao {
 
             returnVal = spGetProtocolDetailsByProtocolId.getResultSet();
 
-        } catch (Exception e) {
+        } catch (SQLGrammarException e) {
 
-            LOGGER.error("Error retrieving protocol details", e);
-            throw (new GobiiDaoException(e));
+            LOGGER.error("Error retrieving protocol details", e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
 
         }
 
