@@ -14,4 +14,5 @@ public interface QCInstructionsDAO {
 
     void makeDirectory(String pathName) throws GobiiDaoException;
 
+    GobiiQCComplete getInstructions(String instructionFileFqpn);
 }

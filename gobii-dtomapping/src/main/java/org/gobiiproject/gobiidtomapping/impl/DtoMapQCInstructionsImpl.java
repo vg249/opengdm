@@ -7,6 +7,7 @@ import org.gobiiproject.gobiidtomapping.DtoMapQCInstructions;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.instructions.GobiiQCComplete;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -89,4 +90,66 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
         return returnVal;
 
     } // writeInstructions
+
+    @Override
+    public QCInstructionsDTO getInstruction(String cropType, String instructionFileName) {
+
+        QCInstructionsDTO returnVal = new QCInstructionsDTO();
+
+        try {
+
+            ConfigSettings configSettings = new ConfigSettings();
+
+            String instructionFileDirectory = configSettings.getProcessingPath(cropType,
+                    GobiiFileProcessDir.QC_NOTIFICATIONS);
+
+            String instructionFileFqpn = instructionFileDirectory
+                    + instructionFileName
+                    + INSTRUCTION_FILE_EXT;
+
+            if (qcInstructionsDAO.doesPathExist(instructionFileFqpn)) {
+
+
+                GobiiQCComplete gobiiQCComplete =
+                        qcInstructionsDAO
+                                .getInstructions(instructionFileFqpn);
+
+                if (null != gobiiQCComplete) {
+
+                    returnVal.setGobiiQCComplete(gobiiQCComplete);
+
+//                    returnVal.getGobiiQCComplete().setDataFileName(instructionFileName);
+
+                } else {
+
+                    throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+
+                            GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+
+                            "The instruction file exists, but could not be read: " +
+
+                                    instructionFileName);
+
+                }
+
+            } else {
+                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+
+                        GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+
+                        "The specified instruction file does not exist: " +
+
+                                instructionFileName);
+
+            } // if-else instruction file exists
+
+        } catch (Exception e) {
+
+            LOGGER.error("Gobii Maping Error", e);
+
+            System.out.println(e);
+        }
+
+        return returnVal;
+    }
 }

@@ -5,10 +5,14 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.QCInstructionsDAO;
 import org.gobiiproject.gobiimodel.dto.instructions.GobiiQCComplete;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.util.Arrays;
+import java.util.List;
 
 public class QCInstructionsDAOImpl implements QCInstructionsDAO {
 
@@ -113,6 +117,30 @@ public class QCInstructionsDAOImpl implements QCInstructionsDAO {
         } else {
             throw new GobiiDaoException("The specified path already exists: " + pathName);
         }
+    }
+
+    @Override
+    public GobiiQCComplete getInstructions(String instructionFileFqpn) {
+
+        GobiiQCComplete returnVal = null;
+
+        try {
+
+            File file = new File(instructionFileFqpn);
+
+            FileInputStream fileInputStream = new FileInputStream(file);
+
+            org.codehaus.jackson.map.ObjectMapper objectMapper = new org.codehaus.jackson.map.ObjectMapper();
+
+            returnVal = objectMapper.readValue(fileInputStream, GobiiQCComplete.class);
+
+        } catch (Exception e) {
+            String message = e.getMessage() + "; fqpn: " + instructionFileFqpn;
+            throw new GobiiDaoException(message);
+        }
+
+        return returnVal;
+
     }
 
 

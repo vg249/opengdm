@@ -58,15 +58,30 @@ public class DtoRequestFileQCInstructionsTest {
         PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
                 payloadEnvelope);
 
-        Assert.assertNotEquals(null, qcInstructionFileDTOResponseEnvelope);
+        Assert.assertNotEquals(null, qcInstructionFileDTOResponseEnvelope.getPayload().getData().get(0));
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(qcInstructionFileDTOResponseEnvelope.getHeader()));
 
         //get intended path for the created directory and check if file has been created
-        TestConfiguration testConfiguration = new TestConfiguration();
+        /*TestConfiguration testConfiguration = new TestConfiguration();
         String testCrop = testConfiguration.getConfigSettings().getTestExecConfig().getTestCrop();
         String destinationDirectory = testConfiguration.getConfigSettings().getProcessingPath(testCrop, GobiiFileProcessDir.QC_NOTIFICATIONS);
         String createdFile = destinationDirectory +  qcInstructionsDTO.getGobiiQCComplete().getDataFileName()+".json";
-        Assert.assertTrue(new File(createdFile).exists());
+        Assert.assertTrue(new File(createdFile).exists());*/
+
+        RestUri qcGetUri = ClientContext
+                .getInstance(null,false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS);
+        qcGetUri.setParamValue("id", qcInstructionsDTO.getGobiiQCComplete().getDataFileName());
+
+        RestResource<QCInstructionsDTO> restResource = new RestResource<>(qcGetUri);
+        PayloadEnvelope<QCInstructionsDTO> resultEnvelope = restResource.get(QCInstructionsDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+        Assert.assertTrue("No qc DTO received", resultEnvelope.getPayload().getData().size() > 0);
+        QCInstructionsDTO resultDTO = resultEnvelope.getPayload().getData().get(0);
+        Assert.assertNotNull(resultDTO.getGobiiQCComplete().getDataFileName());
+        Assert.assertTrue(resultDTO.getGobiiQCComplete().getDataFileName().equals(qcInstructionsDTO.getGobiiQCComplete().getDataFileName()));
 
     }
 }

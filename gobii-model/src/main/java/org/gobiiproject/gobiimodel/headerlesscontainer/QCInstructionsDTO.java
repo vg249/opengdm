@@ -14,7 +14,7 @@ public class QCInstructionsDTO extends DTOBase {
 
     @Override
     public Integer getId() {
-        return null;
+        return 1;
     }
 
     @Override

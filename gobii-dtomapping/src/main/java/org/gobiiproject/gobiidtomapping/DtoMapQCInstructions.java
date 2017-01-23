@@ -8,4 +8,6 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 public interface DtoMapQCInstructions {
 
     QCInstructionsDTO createInstructions(String cropType, QCInstructionsDTO qcInstructionsDTO)  throws GobiiException;
+
+    QCInstructionsDTO getInstruction(String cropType, String instructionFileName);
 }
