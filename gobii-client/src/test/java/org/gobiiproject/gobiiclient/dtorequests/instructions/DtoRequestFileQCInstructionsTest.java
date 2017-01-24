@@ -5,8 +5,8 @@ import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiiclient.core.ClientContext;
-import org.gobiiproject.gobiiclient.core.restmethods.RestResource;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestConfiguration;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestDtoFactory;
@@ -53,7 +53,7 @@ public class DtoRequestFileQCInstructionsTest {
         QCInstructionsDTO qcInstructionsDTO = TestDtoFactory.makePopulatedQCInstructionsDTO();
 
         PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTO, GobiiProcessType.CREATE);
-        RestResource<QCInstructionsDTO> restResourceForPost = new RestResource<>(uriFactory
+        GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<>(uriFactory
                 .resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
         PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
                 payloadEnvelope);
@@ -74,7 +74,7 @@ public class DtoRequestFileQCInstructionsTest {
                 .resourceByUriIdParam(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS);
         qcGetUri.setParamValue("id", qcInstructionsDTO.getGobiiQCComplete().getDataFileName());
 
-        RestResource<QCInstructionsDTO> restResource = new RestResource<>(qcGetUri);
+        GobiiEnvelopeRestResource<QCInstructionsDTO> restResource = new GobiiEnvelopeRestResource<>(qcGetUri);
         PayloadEnvelope<QCInstructionsDTO> resultEnvelope = restResource.get(QCInstructionsDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));

@@ -31,6 +31,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -829,7 +830,7 @@ public class GOBIIControllerV1 {
                     QCInstructionsDTO.class);
 
             payloadWriter.writeSingleItemForId(returnVal,
-                    ServiceRequestId.URL_FILE_QC_INSTRUCTIONS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),ServiceRequestId.URL_FILE_QC_INSTRUCTIONS),
                     qcInstructionsDTONew,
                     qcInstructionsDTONew.getGobiiQCComplete().getDataFileName());
 
@@ -865,7 +866,7 @@ public class GOBIIControllerV1 {
                     QCInstructionsDTO.class);
 
             payloadWriter.writeSingleItemForId(returnVal,
-                    ServiceRequestId.URL_FILE_QC_INSTRUCTIONS,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),ServiceRequestId.URL_FILE_QC_INSTRUCTIONS),
                     qcInstructionsDTONew,
                     qcInstructionsDTONew.getGobiiQCComplete().getDataFileName());
 
