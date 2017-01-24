@@ -104,6 +104,9 @@ public class GOBIIControllerV1 {
     private ExtractorInstructionFilesService extractorInstructionFilesService = null;
 
     @Autowired
+    private QCInstructionFilesService qcInstructionFilesService = null;
+
+    @Autowired
     private LoaderFilesService loaderFilesService = null;
 
     @Autowired
@@ -803,6 +806,81 @@ public class GOBIIControllerV1 {
 
     }
 
+    // *********************************************
+    // *************************** QC INSTRUCTION METHODS
+    // *********************************************
+    @RequestMapping(value = "/instructions/qualitycontrol", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<QCInstructionsDTO> createQCInstruction(@RequestBody PayloadEnvelope<QCInstructionsDTO> payloadEnvelope,
+                                                                  HttpServletRequest request,
+                                                                  HttpServletResponse response) {
+
+        PayloadEnvelope<QCInstructionsDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            PayloadReader<QCInstructionsDTO> payloadReader = new PayloadReader<>(QCInstructionsDTO.class);
+            QCInstructionsDTO qcInstructionsDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            QCInstructionsDTO qcInstructionsDTONew = qcInstructionFilesService.createInstruction(cropType, qcInstructionsDTOToCreate);
+
+
+            PayloadWriter<QCInstructionsDTO> payloadWriter = new PayloadWriter<>(request,
+                    QCInstructionsDTO.class);
+
+            payloadWriter.writeSingleItemForId(returnVal,
+                    ServiceRequestId.URL_FILE_QC_INSTRUCTIONS,
+                    qcInstructionsDTONew,
+                    qcInstructionsDTONew.getGobiiQCComplete().getDataFileName());
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+    @RequestMapping(value = "/instructions/qualitycontrol/{dataFileName}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<QCInstructionsDTO> getQCInstruction(@PathVariable("dataFileName") String dataFileName,
+                                                                           HttpServletRequest request,
+                                                                           HttpServletResponse response) {
+
+        PayloadEnvelope<QCInstructionsDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            QCInstructionsDTO qcInstructionsDTONew = qcInstructionFilesService.getInstruction(cropType, dataFileName);
+
+            PayloadWriter<QCInstructionsDTO> payloadWriter = new PayloadWriter<>(request,
+                    QCInstructionsDTO.class);
+
+            payloadWriter.writeSingleItemForId(returnVal,
+                    ServiceRequestId.URL_FILE_QC_INSTRUCTIONS,
+                    qcInstructionsDTONew,
+                    qcInstructionsDTONew.getGobiiQCComplete().getDataFileName());
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
     // *********************************************
     // *************************** MARKER METHODS
