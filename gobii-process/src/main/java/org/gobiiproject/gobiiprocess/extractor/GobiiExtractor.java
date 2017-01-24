@@ -117,6 +117,21 @@ public class GobiiExtractor {
 				return;
 			}
 			if(pathToHDF5Files==null)pathToHDF5Files=cropPath.toString()+"/hdf5/";
+
+
+			Integer mapId;
+			List<Integer> mapIds=inst.getMapsetIds();
+			if(mapIds.isEmpty() || mapIds.get(0).equals(null)){
+				mapId=null;
+			}else if(mapIds.size()>1){
+				logError("Extraction Instruction","Too many map IDs for extractor. Expected one, recieved "+mapIds.size());
+				mapId=null;
+			}
+			else{
+				mapId=mapIds.get(0);
+			}
+
+			
 			for(GobiiDataSetExtract extract:inst.getDataSetExtracts()){
 				String extractDir=extract.getExtractDestinationDirectory();
 				tryExec("rm -f "+extractDir+"*");
@@ -137,6 +152,7 @@ public class GobiiExtractor {
 						" -m " + markerFile +
 						" -s " + sampleFile +
 						" -p " + projectFile +
+						(mapId==null?"":(" -M "+mapId))+
 						" -d " + extract.getDataSetId() +
 						" -l -v ";
 				String errorFile=getLogName(extract,cropConfig,extract.getDataSetId());
