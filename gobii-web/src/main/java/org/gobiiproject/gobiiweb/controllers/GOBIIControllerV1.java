@@ -9,13 +9,11 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.EntityNameConverter;
-import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.container.DataSetTypeDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
@@ -121,9 +119,6 @@ public class GOBIIControllerV1 {
 
     @Autowired
     private DataSetService dataSetService = null;
-
-    @Autowired
-    private DataSetTypeService dataSetTypeService = null;
 
     @Autowired
     private PlatformService platformService = null;
@@ -578,24 +573,23 @@ public class GOBIIControllerV1 {
 
     @RequestMapping(value = "/datasets/types", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<DataSetTypeDTO> getDataSetsTypes(HttpServletRequest request,
+    public PayloadEnvelope<NameIdDTO> getDataSetsTypes(HttpServletRequest request,
                                                        HttpServletResponse response) {
 
-        PayloadEnvelope<DataSetTypeDTO> returnVal = new PayloadEnvelope<>();
+        PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            List<DataSetTypeDTO> dataSetTypeDTOs = dataSetTypeService.getDataSetTypes();
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.CVTERMS;
+            GobiiFilterType gobiiFilterType = GobiiFilterType.BYTYPENAME;
 
-            PayloadWriter<DataSetTypeDTO> payloadWriter = new PayloadWriter<>(request,
-                    DataSetTypeDTO.class);
+            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, "dataset_type");
 
+            List<NameIdDTO> nameIdDTOList = nameIdListService.getNameIdList(dtoMapNameIdParams);
 
-            for (DataSetTypeDTO currentDataSetTypeDTO : dataSetTypeDTOs) {
+            for (NameIdDTO currentNameIdDTO : nameIdDTOList) {
 
-                returnVal.getPayload().getData().add(currentDataSetTypeDTO);
-
+                returnVal.getPayload().getData().add(currentNameIdDTO);
             }
-
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {

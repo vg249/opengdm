@@ -1,7 +1,5 @@
 package org.gobiiproject.gobiiclient.dtorequests.dbops.readonly;
 
-import org.gobiiproject.gobiiapimodel.hateos.Link;
-import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
@@ -9,7 +7,7 @@ import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
-import org.gobiiproject.gobiimodel.dto.container.DataSetTypeDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -42,15 +40,25 @@ public class DtoRequestDataSetTypeTest {
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_DATASETTYPES);
 
-        GobiiEnvelopeRestResource<DataSetTypeDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
-        PayloadEnvelope<DataSetTypeDTO> resultEnvelope = gobiiEnvelopeRestResource
-                .get(DataSetTypeDTO.class);
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
+        PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .get(NameIdDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
-        List<DataSetTypeDTO> dataSetTypeDTOList = resultEnvelope.getPayload().getData();
-        Assert.assertNotNull(dataSetTypeDTOList);
-        Assert.assertTrue(dataSetTypeDTOList.size() > 0);
-        Assert.assertNotNull(dataSetTypeDTOList.get(0).getDataSetTypeName());
+        List<NameIdDTO> nameIdDTOList = resultEnvelope.getPayload().getData();
+        Assert.assertNotNull(nameIdDTOList);
+        Assert.assertTrue(nameIdDTOList.size() > 0);
+        Assert.assertNotNull(nameIdDTOList.get(0).getName());
+
+        Boolean testIfExisting = false;
+        for (NameIdDTO currentItem : nameIdDTOList) {
+
+            if(currentItem.getName().toLowerCase().equals("nucleotide_2_letter")) {
+                testIfExisting = true;
+            }
+        }
+
+        Assert.assertTrue(testIfExisting);
     }
 
 }
