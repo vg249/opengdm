@@ -9,7 +9,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.EntityNameConverter;
-import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
@@ -29,7 +28,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
-import org.gobiiproject.gobiimodel.dto.container.MapsetDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
 import org.gobiiproject.gobiimodel.dto.container.PingDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
@@ -2106,4 +2105,149 @@ public class GOBIIControllerV1 {
     }
 
 
-}// BRAPIController
+    @RequestMapping(value = "/mapsets", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<MapsetDTO> createMapset(@RequestBody PayloadEnvelope<MapsetDTO> payloadEnvelope,
+                                                   HttpServletRequest request,
+                                                   HttpServletResponse response) {
+
+        PayloadEnvelope<MapsetDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<MapsetDTO> payloadReader = new PayloadReader<>(MapsetDTO.class);
+            MapsetDTO mapsetDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            MapsetDTO mapsetDTONew = mapsetService.createMapset(mapsetDTOToCreate);
+
+            PayloadWriter<MapsetDTO> payloadWriter = new PayloadWriter<>(request,
+                    MapsetDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MAPSET),
+                    mapsetDTONew);
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/mapsets/{mapsetId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<MapsetDTO> replaceMapset(@RequestBody PayloadEnvelope<MapsetDTO> payloadEnvelope,
+                                                    @PathVariable Integer mapsetId,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<MapsetDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<MapsetDTO> payloadReader = new PayloadReader<>(MapsetDTO.class);
+            MapsetDTO mapsetDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            MapsetDTO mapsetDTOReplaced = mapsetService.replaceMapset(mapsetId, mapsetDTOToReplace);
+
+            PayloadWriter<MapsetDTO> payloadWriter = new PayloadWriter<>(request,
+                    MapsetDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MAPSET),
+                    mapsetDTOReplaced);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/mapsets", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<MapsetDTO> getMapsets(HttpServletRequest request,
+                                                 HttpServletResponse response) {
+
+        PayloadEnvelope<MapsetDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            List<MapsetDTO> mapsetDTOs = mapsetService.getMapsets();
+
+            PayloadWriter<MapsetDTO> payloadWriter = new PayloadWriter<>(request,
+                    MapsetDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MAPSET),
+                    mapsetDTOs);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/mapsets/{mapsetId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<MapsetDTO> getMapsetById(@PathVariable Integer mapsetId,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<MapsetDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            MapsetDTO mapsetDTO = mapsetService.getMapsetById(mapsetId);
+
+            PayloadWriter<MapsetDTO> payloadWriter = new PayloadWriter<>(request,
+                    MapsetDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MAPSET),
+                    mapsetDTO);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+
+}// GOBIIController

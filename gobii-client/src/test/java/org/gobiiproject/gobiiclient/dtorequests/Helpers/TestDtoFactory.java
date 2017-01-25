@@ -4,15 +4,9 @@ import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestExperim
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestOrganizationTest;
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestPlatformTest;
 import org.gobiiproject.gobiimodel.dto.container.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 
 import java.sql.Timestamp;
@@ -196,7 +190,7 @@ public class TestDtoFactory {
                                                    Integer uniqueStem,
                                                    EntityParamValues entityParamValues) {
 
-        MapsetDTO returnVal = new MapsetDTO(gobiiProcessType);
+        MapsetDTO returnVal = new MapsetDTO();
 
         String uniqueStemString = uniqueStem.toString();
         // set the plain properties

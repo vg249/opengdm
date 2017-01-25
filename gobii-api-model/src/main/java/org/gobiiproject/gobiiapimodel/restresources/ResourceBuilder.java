@@ -127,7 +127,7 @@ public class ResourceBuilder {
                 break;
 
             case URL_MAPSET:
-                returnVal = "mapset";
+                returnVal = "mapsets";
                 break;
 
             case URL_CONFIGSETTINGS:

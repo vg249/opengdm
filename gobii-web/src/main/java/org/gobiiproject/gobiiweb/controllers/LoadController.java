@@ -219,23 +219,4 @@ public class LoadController {
 
     }
 
-    @RequestMapping(value = "/mapset", method = RequestMethod.POST)
-    @ResponseBody
-    public MapsetDTO processMapset(@RequestBody MapsetDTO MapsetDTO) {
-
-        MapsetDTO returnVal = new MapsetDTO();
-
-        try {
-            returnVal = mapsetService.processMapset(MapsetDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
-
-
 }// LoadController
