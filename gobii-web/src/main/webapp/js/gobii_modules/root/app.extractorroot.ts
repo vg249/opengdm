@@ -2,6 +2,7 @@
 
 import {Component} from "@angular/core";
 import {HTTP_PROVIDERS} from "@angular/http";
+import {ExportTypeComponent} from "../views/export-type.component";
 import {ExportFormatComponent} from "../views/export-format.component";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {AuthenticationService} from "../services/core/authentication.service";
@@ -45,7 +46,8 @@ import {EntityFilter} from "../model/type-entity-filter";
         CriteriaDisplayComponent,
         StatusDisplayComponent,
         CropsListBoxComponent,
-        UsersListBoxComponent],
+        UsersListBoxComponent,
+        ExportTypeComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -56,7 +58,9 @@ import {EntityFilter} from "../model/type-entity-filter";
         <div class = "panel panel-default">
         
            <div class = "panel-heading">
-              <h1 class = "panel-title">GOBii Extractor</h1>
+                <img src="images/gobii_logo.png" alt="GOBii Project"/>
+                <export-type
+                (onExportTypeSelected)="handleExportTypeSelected($event)"></export-type>
            </div>
            
             <div class="container-fluid">
@@ -234,6 +238,15 @@ export class ExtractorRoot {
         window.location.href = newDestination;
     } // handleServerSelected()
 
+
+
+// ********************************************************************
+// ********************************************** EXPORT TYPE SELECTION
+
+    private selectedExportType:string;
+    private handleExportTypeSelected(arg) {
+        this.selectedExportType = arg;
+    }
 
 // ********************************************************************
 // ********************************************** SUBMISSION-USER SELECTION
@@ -448,7 +461,7 @@ export class ExtractorRoot {
 
     private handleMapsetSelected(arg) {
 
-        if(arg > 0) {
+        if (arg > 0) {
             this.selectedMapsetId = arg;
         } else {
             this.selectedMapsetId = undefined;
