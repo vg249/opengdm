@@ -4,12 +4,10 @@ import {Component, OnInit, EventEmitter} from '@angular/core';
 @Component({
     selector: 'export-type',
     outputs: ['onExportTypeSelected'],
-    template: `<fieldset class="well .form-group">
-			    <legend class="the-legend">Export By</legend>
+    template: `<label class="the-label">Export By:&nbsp;</label>
                   <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="byDataSet" checked="checked">Data Set&nbsp;
                   <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="bySample">Sample&nbsp;
-                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="byMarker" >Marker&nbsp;
-			</fieldset>` // end template
+                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="byMarker" >Marker&nbsp;` // end template
 })
 
 export class ExportTypeComponent implements OnInit {
@@ -26,16 +24,10 @@ export class ExportTypeComponent implements OnInit {
 
             this.onExportTypeSelected.emit(arg.srcElement.value)
         }
-        let foo = arg;
     }
 
 
     ngOnInit() {
-        /*
-         let id = +this._routeParams.get('id');
-         this._heroService.getHero(id)
-         .then(hero => this.hero = hero);
-         */
     }
 
 }

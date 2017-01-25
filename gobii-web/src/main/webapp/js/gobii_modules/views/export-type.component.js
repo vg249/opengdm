@@ -26,20 +26,14 @@ System.register(['@angular/core'], function(exports_1, context_1) {
                     if (arg.srcElement.checked) {
                         this.onExportTypeSelected.emit(arg.srcElement.value);
                     }
-                    var foo = arg;
                 };
                 ExportTypeComponent.prototype.ngOnInit = function () {
-                    /*
-                     let id = +this._routeParams.get('id');
-                     this._heroService.getHero(id)
-                     .then(hero => this.hero = hero);
-                     */
                 };
                 ExportTypeComponent = __decorate([
                     core_1.Component({
                         selector: 'export-type',
                         outputs: ['onExportTypeSelected'],
-                        template: "<fieldset class=\"well .form-group\">\n\t\t\t    <legend class=\"the-legend\">Export By</legend>\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"byDataSet\" checked=\"checked\">Data Set&nbsp;\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"bySample\">Sample&nbsp;\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"byMarker\" >Marker&nbsp;\n\t\t\t</fieldset>" // end template
+                        template: "<label class=\"the-label\">Export By:&nbsp;</label>\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"byDataSet\" checked=\"checked\">Data Set&nbsp;\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"bySample\">Sample&nbsp;\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"byMarker\" >Marker&nbsp;" // end template
                     }), 
                     __metadata('design:paramtypes', [])
                 ], ExportTypeComponent);

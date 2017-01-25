@@ -36,7 +36,7 @@ System.register(["@angular/core"], function(exports_1, context_1) {
                         selector: 'crops-list-box',
                         inputs: ['serverConfigList', 'selectedServerConfig'],
                         outputs: ['onServerSelected'],
-                        template: "<select name=\"serverConfigs\" (change)=\"handleServerSelected($event)\">\n\t\t\t<option *ngFor=\"let serverConfig of serverConfigList\" \n                    value={{serverConfig.domain}}\n                    [attr.selected]=\"selectedServerConfig.crop\n                    === serverConfig.crop ? true : null\">\n                    {{serverConfig.crop}}\n\t\t\t</option>\n\t\t</select>\n" // end template
+                        template: "<label class=\"the-label\">Crop:&nbsp;</label>\n                        <select name=\"serverConfigs\" (change)=\"handleServerSelected($event)\">\n                                    <option *ngFor=\"let serverConfig of serverConfigList\" \n                                            value={{serverConfig.domain}}\n                                            [attr.selected]=\"selectedServerConfig.crop\n                                            === serverConfig.crop ? true : null\">\n                                            {{serverConfig.crop}}\n                                    </option>\n                                </select>" // end template
                     }), 
                     __metadata('design:paramtypes', [])
                 ], CropsListBoxComponent);

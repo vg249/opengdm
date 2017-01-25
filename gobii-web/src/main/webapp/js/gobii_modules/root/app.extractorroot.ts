@@ -59,8 +59,21 @@ import {EntityFilter} from "../model/type-entity-filter";
         
            <div class = "panel-heading">
                 <img src="images/gobii_logo.png" alt="GOBii Project"/>
-                <export-type
-                (onExportTypeSelected)="handleExportTypeSelected($event)"></export-type>
+
+                <fieldset class="well the-fieldset">
+                    <div class="col-md-2">
+                        <crops-list-box
+                            [serverConfigList]="serverConfigList"
+                            [selectedServerConfig]="selectedServerConfig"
+                            (onServerSelected)="handleServerSelected($event)"></crops-list-box>
+                    </div>
+                    
+                    <div class="col-md-3">
+                       <export-type
+                        (onExportTypeSelected)="handleExportTypeSelected($event)"></export-type>
+                     </div>
+                     
+                </fieldset>
            </div>
            
             <div class="container-fluid">
@@ -68,14 +81,6 @@ import {EntityFilter} from "../model/type-entity-filter";
                 <div class="row">
                 
                     <div class="col-md-4">
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Crop</legend>
-                        <crops-list-box
-                            [serverConfigList]="serverConfigList"
-                            [selectedServerConfig]="selectedServerConfig"
-                            (onServerSelected)="handleServerSelected($event)"></crops-list-box>
-                        </fieldset>
-                        
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Submit As</legend>
                         <users-list-box
