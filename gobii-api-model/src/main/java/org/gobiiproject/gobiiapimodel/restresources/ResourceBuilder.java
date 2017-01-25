@@ -70,6 +70,9 @@ public class ResourceBuilder {
                 returnVal = "instructions/extractor/status";
                 break;
 
+            case URL_FILE_QC_INSTRUCTIONS:
+                returnVal = "instructions/qualitycontrol";
+                break;
             case URL_DISPLAY:
                 returnVal = "display";
                 break;
