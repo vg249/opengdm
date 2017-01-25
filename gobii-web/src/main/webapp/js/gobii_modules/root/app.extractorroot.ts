@@ -93,37 +93,48 @@ import {EntityFilter} from "../model/type-entity-filter";
                         -->
                         
                      <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Principal Investigator</legend>
-                        <contacts-list-box [nameIdList]="contactNameIdListForPi" (onContactSelected)="handleContactForPiSelected($event)"></contacts-list-box>
-                        </fieldset>
+                        <legend class="the-legend">Filters</legend><BR>
                         
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Project</legend>
-                        <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi"
-                            [nameIdList]="projectNameIdList"
-                            [nameIdListPIs]="contactNameIdListForPi"
-                            (onProjectSelected)="handleProjectSelected($event)"
-                            (onAddMessage)="handleAddMessage($event)"></project-list-box>
-                        </fieldset>
                         
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Experiment</legend>
-                        <experiment-list-box [projectId] = "selectedProjectId"
-                            [nameIdList] = "experimentNameIdList"
-                            (onExperimentSelected)="handleExperimentSelected($event)"
-                            (onAddMessage)="handleAddMessage($event)"></experiment-list-box>
-                        </fieldset>
+                        <div *ngIf="displaySelectorPi">
+                            <label class="the-label">Principle Investigator:</label><BR>
+                            <contacts-list-box [nameIdList]="contactNameIdListForPi" (onContactSelected)="handleContactForPiSelected($event)"></contacts-list-box>
+                        </div>
                         
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Data Sets</legend>
-                        <dataset-checklist-box
-                            [checkBoxEventChange] = "checkBoxEventChange"
-                            [experimentId] = "selectedExperimentId" 
-                            (onItemChecked)="handleCheckedDataSetItem($event)"
-                            (onAddMessage) = "handleAddMessage($event)">
-                        </dataset-checklist-box>
-                        </fieldset>
+                        <div *ngIf="displaySelectorProject">
+                            <BR>
+                            <BR>
+                            <label class="the-label">Project:</label><BR>
+                            <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi"
+                                [nameIdList]="projectNameIdList"
+                                [nameIdListPIs]="contactNameIdListForPi"
+                                (onProjectSelected)="handleProjectSelected($event)"
+                                (onAddMessage)="handleAddMessage($event)"></project-list-box>
+                        </div>
                         
+                        <div *ngIf="displaySelectorExperiment">
+                            <BR>
+                            <BR>
+                            <label class="the-label">Experiment:</label><BR>
+                            <experiment-list-box [projectId] = "selectedProjectId"
+                                [nameIdList] = "experimentNameIdList"
+                                (onExperimentSelected)="handleExperimentSelected($event)"
+                                (onAddMessage)="handleAddMessage($event)"></experiment-list-box>
+                        </div>
+
+                        <div *ngIf="displayAvailableDatasets">
+                            <BR>
+                            <BR>
+                            <label class="the-label">Data Sets</label><BR>
+                            <dataset-checklist-box
+                                [checkBoxEventChange] = "checkBoxEventChange"
+                                [experimentId] = "selectedExperimentId" 
+                                (onItemChecked)="handleCheckedDataSetItem($event)"
+                                (onAddMessage) = "handleAddMessage($event)">
+                            </dataset-checklist-box>
+                        </div>
+                    </fieldset>
+                       
                        
                     </div>  <!-- outer grid column 1-->
                 
@@ -253,13 +264,53 @@ export class ExtractorRoot {
     } // handleServerSelected()
 
 
-
 // ********************************************************************
-// ********************************************** EXPORT TYPE SELECTION
+// ********************************************** EXPORT TYPE SELECTION AND FLAGS
+
+
+    private displayAvailableDatasets:boolean = true;
+    private displaySelectorPi:boolean = true;
+    private displaySelectorProject:boolean = true;
+    private displaySelectorExperiment:boolean = true;
+    private displaySelectorDataType:boolean = false;
+    private displaySelectorPlatform:boolean = false;
 
     private selectedExportType:string;
+
     private handleExportTypeSelected(arg) {
         this.selectedExportType = arg;
+
+        if (this.selectedExportType === "byDataSet") {
+
+            this.displaySelectorPi = true;
+            this.displaySelectorProject = true;
+            this.displaySelectorExperiment = true;
+            this.displayAvailableDatasets = true;
+
+            this.displaySelectorDataType = false;
+            this.displaySelectorPlatform = false;
+
+        } else if (this.selectedExportType === "bySample") {
+
+            this.displaySelectorPi = true;
+            this.displaySelectorProject = true;
+            this.displaySelectorDataType = true;
+            this.displaySelectorPlatform = true;
+
+            this.displaySelectorExperiment = false;
+            this.displayAvailableDatasets = false;
+
+        } else if (this.selectedExportType === "byMarker") {
+
+            this.displaySelectorDataType = true;
+            this.displaySelectorPlatform = true;
+
+            this.displaySelectorPi = false;
+            this.displaySelectorProject = false;
+            this.displaySelectorExperiment = false;
+            this.displayAvailableDatasets = false;
+
+        }
     }
 
 // ********************************************************************
