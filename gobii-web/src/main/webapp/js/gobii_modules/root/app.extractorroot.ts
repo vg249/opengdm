@@ -111,6 +111,11 @@ import {EntityFilter} from "../model/type-entity-filter";
                                 (onProjectSelected)="handleProjectSelected($event)"
                                 (onAddMessage)="handleAddMessage($event)"></project-list-box>
                         </div>
+
+                        <div *ngIf="displaySelectorDataType">
+                        <p>DATA TYPE SELECTOR</p>
+                        </div>
+
                         
                         <div *ngIf="displaySelectorExperiment">
                             <BR>
@@ -121,6 +126,11 @@ import {EntityFilter} from "../model/type-entity-filter";
                                 (onExperimentSelected)="handleExperimentSelected($event)"
                                 (onAddMessage)="handleAddMessage($event)"></experiment-list-box>
                         </div>
+
+                        <div *ngIf="displaySelectorPlatform">
+                            <p>PLATFORM SELECTOR</p>
+                        </div>
+
 
                         <div *ngIf="displayAvailableDatasets">
                             <BR>
