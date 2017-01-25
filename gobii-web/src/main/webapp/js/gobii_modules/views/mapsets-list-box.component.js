@@ -33,7 +33,7 @@ System.register(["@angular/core"], function(exports_1, context_1) {
                         selector: 'mapsets-list-box',
                         outputs: ['onMapsetSelected'],
                         inputs: ['nameIdList'],
-                        template: "<select name=\"mapsets\" (change)=\"handleMapsetSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
+                        template: "\n            <label class=\"the-label\">Add Mapset Info</label><BR>\n            <select name=\"mapsets\" (change)=\"handleMapsetSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                     }), 
                     __metadata('design:paramtypes', [])
                 ], MapsetsListBoxComponent);

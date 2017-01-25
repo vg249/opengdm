@@ -81,6 +81,8 @@ import {EntityFilter} from "../model/type-entity-filter";
                 <div class="row">
                 
                     <div class="col-md-4">
+                    
+                    <!--
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Submit As</legend>
                         <users-list-box
@@ -88,17 +90,9 @@ import {EntityFilter} from "../model/type-entity-filter";
                             (onUserSelected)="handleContactForSubmissionSelected($event)">
                         </users-list-box>
                         </fieldset>
+                        -->
                         
-                        <div class="col-md-12">
-                            <export-format (onFormatSelected)="handleFormatSelected($event)"></export-format>
-                        </div>
-                       
-                    </div>  <!-- outer grid column 1-->
-                
-                
-                
-                    <div class="col-md-4"> 
-                        <fieldset class="well the-fieldset">
+                     <fieldset class="well the-fieldset">
                         <legend class="the-legend">Principal Investigator</legend>
                         <contacts-list-box [nameIdList]="contactNameIdListForPi" (onContactSelected)="handleContactForPiSelected($event)"></contacts-list-box>
                         </fieldset>
@@ -130,29 +124,44 @@ import {EntityFilter} from "../model/type-entity-filter";
                         </dataset-checklist-box>
                         </fieldset>
                         
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Mapset</legend>
-                        <mapsets-list-box [nameIdList]="mapsetNameIdList" 
-                        (onMapsetSelected)="handleMapsetSelected($event)"></mapsets-list-box>
-                        </fieldset>
-
-                        
-                    </div>  <!-- outer grid column 2-->
-                    <div class="col-md-4">
-                         
-                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Extract</legend>
+                       
+                    </div>  <!-- outer grid column 1-->
+                
+                
+                
+                    <div class="col-md-4"> 
+                               <fieldset class="well the-fieldset" style="vertical-align: bottom;">
+                                <legend class="the-legend">Included Datasets</legend>
                                 <criteria-display 
                                     [dataSetCheckBoxEvents] = "dataSetCheckBoxEvents"
                                     (onItemUnChecked) = "handleExtractDataSetUnchecked($event)"></criteria-display>
                             </fieldset>
+
+                        
+                    </div>  <!-- outer grid column 2-->
+                    
+                    
+                    <div class="col-md-4">
+                         
                             
-                            <form>
-                                <input type="button" 
-                                value="Submit"
-                                 [disabled]="(gobiiDatasetExtracts.length === 0)"
-                                (click)="handleExtractSubmission()" >
-                            </form>
+                    <form>
+			           <fieldset class="well the-fieldset">
+                			<legend class="the-legend">Export</legend>
+			           
+                            <export-format (onFormatSelected)="handleFormatSelected($event)"></export-format>
+                            <BR>
+                       
+                            <mapsets-list-box [nameIdList]="mapsetNameIdList" 
+                                (onMapsetSelected)="handleMapsetSelected($event)"></mapsets-list-box>
+                            <BR>
+                            <BR>
+                   
+                            <input type="button" 
+                            value="Submit"
+                             [disabled]="(gobiiDatasetExtracts.length === 0)"
+                            (click)="handleExtractSubmission()" >
+            			</fieldset>
+                    </form>
                             
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Status</legend>
