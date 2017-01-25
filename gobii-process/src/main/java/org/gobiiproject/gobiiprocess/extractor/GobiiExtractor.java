@@ -152,7 +152,7 @@ public class GobiiExtractor {
 						" -m " + markerFile +
 						" -s " + sampleFile +
 						" -p " + projectFile +
-						(mapId==null?"":(" -M "+mapId))+
+						(mapId==null?"":(" -D "+mapId))+
 						" -d " + extract.getDataSetId() +
 						" -l -v ";
 				String errorFile=getLogName(extract,cropConfig,extract.getDataSetId());
