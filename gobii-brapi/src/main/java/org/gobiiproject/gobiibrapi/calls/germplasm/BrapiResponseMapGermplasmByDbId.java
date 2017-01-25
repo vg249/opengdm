@@ -3,11 +3,11 @@ package org.gobiiproject.gobiibrapi.calls.germplasm;
 /**
  * Created by Phil on 12/18/2016.
  */
-public class BrapiResponseMapGermplasmSearch {
+public class BrapiResponseMapGermplasmByDbId {
 
 
-    public BrapiResponseGermplasmSearch getGermplasmByDbid(Integer studyDbId ) throws Exception {
-        BrapiResponseGermplasmSearch returnVal = new BrapiResponseGermplasmSearch();
+    public BrapiResponseGermplasmByDbId getGermplasmByDbid(Integer studyDbId ) throws Exception {
+        BrapiResponseGermplasmByDbId returnVal = new BrapiResponseGermplasmByDbId();
 
         returnVal.setGermplasmDbId(studyDbId.toString());
         returnVal.setGermplasmName("test_germplasm_name");

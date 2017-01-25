@@ -170,6 +170,14 @@
             <version>${gson.version}</version>
         </dependency>
 
+        <!-- servlet container provided dependencies -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <version>7.0.30</version>
+            <scope>provided</scope>
+        </dependency>
+
 
     </dependencies>
 
