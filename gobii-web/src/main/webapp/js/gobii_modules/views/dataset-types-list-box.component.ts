@@ -1,13 +1,13 @@
-//import {RouteParams} from '@angular/router-deprecated';
+
 import {Component, OnInit, EventEmitter} from "@angular/core";
 import {NameId} from "../model/name-id";
 
 
 @Component({
-    selector: 'contacts-list-box',
-    outputs: ['onContactSelected'],
+    selector: 'dataset-types-list-box',
+    outputs: ['onDatasetTypeSelected'],
     inputs: ['nameIdList'],
-    template: `<select name="principleInvestigators" (change)="handleContactSelected($event)" >
+    template: `<select name="datasetTypes" (change)="handleDatasetTypeSelected($event)" >
 			<option *ngFor="let nameId of nameIdList " 
 				value={{nameId.id}}>{{nameId.name}}</option>
 		</select>
@@ -15,16 +15,16 @@ import {NameId} from "../model/name-id";
 
 })
 
-export class ContactsListBoxComponent implements OnInit {
+export class DatasetTypeListBoxComponent implements OnInit {
 
 
     // useg
     private nameIdList:NameId[];
 
-    private onContactSelected:EventEmitter<string> = new EventEmitter();
+    private onDatasetTypeSelected:EventEmitter<string> = new EventEmitter();
 
-    private handleContactSelected(arg) {
-        this.onContactSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
+    private handleDatasetTypeSelected(arg) {
+        this.onDatasetTypeSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
     }
 
     constructor() {

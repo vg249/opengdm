@@ -7,6 +7,7 @@ import {ExportFormatComponent} from "../views/export-format.component";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {AuthenticationService} from "../services/core/authentication.service";
 import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
+import {DatasetTypeListBoxComponent} from "../views/dataset-types-list-box.component";
 import {ProjectListBoxComponent} from "../views/project-list-box.component";
 import {ExperimentListBoxComponent} from "../views/experiment-list-box.component";
 import {DataSetCheckListBoxComponent} from "../views/dataset-checklist-box.component";
@@ -47,7 +48,8 @@ import {EntityFilter} from "../model/type-entity-filter";
         StatusDisplayComponent,
         CropsListBoxComponent,
         UsersListBoxComponent,
-        ExportTypeComponent],
+        ExportTypeComponent,
+        DatasetTypeListBoxComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -113,7 +115,10 @@ import {EntityFilter} from "../model/type-entity-filter";
                         </div>
 
                         <div *ngIf="displaySelectorDataType">
-                        <p>DATA TYPE SELECTOR</p>
+                            <BR>
+                            <BR>
+                            <label class="the-label">Dataset Types:</label><BR>
+                            <dataset-types-list-box [nameIdList]="datasetTypeNameIdList" (onDatasetTypeSelected)="handleDatasetTypeSelected($event)"></dataset-types-list-box>
                         </div>
 
                         
@@ -302,6 +307,8 @@ export class ExtractorRoot {
 
         } else if (this.selectedExportType === "bySample") {
 
+            this.initializeDatasetTypes();
+
             this.displaySelectorPi = true;
             this.displaySelectorProject = true;
             this.displaySelectorDataType = true;
@@ -311,6 +318,8 @@ export class ExtractorRoot {
             this.displayAvailableDatasets = false;
 
         } else if (this.selectedExportType === "byMarker") {
+
+            this.initializeDatasetTypes();
 
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
@@ -470,6 +479,35 @@ export class ExtractorRoot {
         }
 
     }
+
+// ********************************************************************
+// ********************************************** DATASET TYPE SELECTION
+private datasetTypeNameIdList:NameId[];
+private selectedDatasetTypeId:string;
+
+private handleDatasetTypeSelected(arg) {
+    this.selectedDatasetTypeId = arg;
+}
+
+private initializeDatasetTypes() {
+    let scope$ = this;
+    scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+        EntityType.CvTerms,
+        EntityFilter.BYTYPENAME,
+        "dataset_type")).subscribe(nameIds => {
+
+            if (nameIds && ( nameIds.length > 0 )) {
+                scope$.datasetTypeNameIdList = nameIds;
+                scope$.selectedDatasetTypeId = scope$.datasetTypeNameIdList[0].id;
+            } else {
+                scope$.datasetTypeNameIdList = [new NameId(0, "ERROR NO DATASET TYPES")];
+            }
+        },
+        dtoHeaderResponse => {
+            dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving DatasetTypes: "
+                + m.message))
+        });
+}
 
 
 // ********************************************************************
