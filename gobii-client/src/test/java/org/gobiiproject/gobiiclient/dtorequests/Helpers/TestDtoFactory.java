@@ -111,7 +111,7 @@ public class TestDtoFactory {
     public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
                                            Integer uniqueStem) {
 
-        CvDTO returnVal = new CvDTO(gobiiProcessType);
+        CvDTO returnVal = new CvDTO();
         returnVal.setGroupId(1);
         returnVal.setTerm(UUID.randomUUID().toString());
         returnVal.setDefinition(uniqueStem + "dummy definition");

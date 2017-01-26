@@ -14,6 +14,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetTypeDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
@@ -453,6 +454,152 @@ public class GOBIIControllerV1 {
 
     }
 
+    // *********************************************
+    // *************************** CV METHODS
+    // *********************************************
+    @RequestMapping(value ="/cvs", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<CvDTO> createCv(@RequestBody PayloadEnvelope<CvDTO> payloadEnvelope,
+                                           HttpServletRequest request,
+                                           HttpServletResponse response) {
+
+        PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<CvDTO> payloadReader = new PayloadReader<>(CvDTO.class);
+            CvDTO cvDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            CvDTO cvDTONew = cvService.createCv(cvDTOToCreate);
+
+            PayloadWriter<CvDTO> payloadWriter = new PayloadWriter<>(request,
+                    CvDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_CV),
+                    cvDTONew);
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+
+    @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<CvDTO> replaceCv(@RequestBody PayloadEnvelope<CvDTO> payloadEnvelope,
+                                                @PathVariable Integer cvId,
+                                                HttpServletRequest request,
+                                                HttpServletResponse response) {
+
+        PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<CvDTO> payloadReader = new PayloadReader<>(CvDTO.class);
+            CvDTO cvDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            CvDTO cvDTOReplaced = cvService.replaceCv(cvId, cvDTOToReplace);
+
+            PayloadWriter<CvDTO> payloadWriter = new PayloadWriter<>(request,
+                    CvDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_CV),
+                    cvDTOReplaced);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/cvs", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<CvDTO> getCvs(HttpServletRequest request,
+                                                 HttpServletResponse response) {
+
+        PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            List<CvDTO> cvDTOs = cvService.getCvs();
+
+            PayloadWriter<CvDTO> payloadWriter = new PayloadWriter<>(request,
+                    CvDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_CV),
+                    cvDTOs);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<CvDTO> getCvById(@PathVariable Integer cvId,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            CvDTO cvDTO = cvService.getCvById(cvId);
+
+            PayloadWriter<CvDTO> payloadWriter = new PayloadWriter<>(request,
+                    CvDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_CV),
+                    cvDTO);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
     // *********************************************
     // *************************** DATASET METHODS

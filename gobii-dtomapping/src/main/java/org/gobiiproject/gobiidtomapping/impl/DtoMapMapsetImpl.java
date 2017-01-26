@@ -65,7 +65,7 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
                 returnVal.add(currentMapsetDTO);
             }
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             LOGGER.error("Gobii Mapping Error", e);
             throw new GobiiDtoMappingException(e);
         }

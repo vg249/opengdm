@@ -7,6 +7,7 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiimodel.dto.container.*;
+import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -93,24 +94,6 @@ public class LoadController {
         return (returnVal);
 
     }//getByContentType()
-
-
-    @RequestMapping(value = "/cv", method = RequestMethod.POST)
-    @ResponseBody
-    public CvDTO getPingResponse(@RequestBody CvDTO CvDTO) {
-
-    	CvDTO returnVal = new CvDTO();
-
-        try {
-            returnVal = cvService.procesCv(CvDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-        return (returnVal);
-
-    }
 
 
     @RequestMapping(value = "/reference", method = RequestMethod.POST)

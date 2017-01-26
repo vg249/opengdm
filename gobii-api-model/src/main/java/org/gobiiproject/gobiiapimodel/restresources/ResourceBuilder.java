@@ -75,7 +75,7 @@ public class ResourceBuilder {
                 break;
 
             case URL_CV:
-                returnVal = "cv";
+                returnVal = "cvs";
                 break;
 
             case URL_CONTACTS:

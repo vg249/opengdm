@@ -5,14 +5,15 @@ import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapCv;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
-import org.gobiiproject.gobiimodel.dto.container.CvDTO;
-import org.gobiiproject.gobiimodel.entity.CvItem;
+import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,43 +28,44 @@ public class DtoMapCvImpl implements DtoMapCv {
     private RsCvDao rsCvDao = null;
 
     @Override
-    public CvDTO getCvDetails(CvDTO cvDTO) throws GobiiDtoMappingException {
+    public List<CvDTO> getCvs() throws GobiiDtoMappingException {
+
+        List<CvDTO> returnVal = new ArrayList<>();
+
+        try {
+            ResultSet resultSet = rsCvDao.getCvNames();
+            while (resultSet.next()) {
+                CvDTO currentCvDTO = new CvDTO();
+                currentCvDTO.setTerm(resultSet.getString("term"));
+                currentCvDTO.setCvId(resultSet.getInt("cv_id"));
+                returnVal.add(currentCvDTO);
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Gobii Mapping error" ,e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    }
+
+    @Override
+    public CvDTO getCvDetails(Integer cvId) throws GobiiDtoMappingException {
 
         CvDTO returnVal = new CvDTO();
 
         try {
 
-            ResultSet resultSet = rsCvDao.getDetailsForCvId(cvDTO.getCvId());
+            ResultSet resultSet = rsCvDao.getDetailsForCvId(cvId);
 
             if (resultSet.next()) {
                 // apply cv values
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+
             }
 
-            if (cvDTO.isIncludeDetailsList()) {
-                ResultSet cvItemsResultSet = rsCvDao.getAllCvItems();
-                String currentGroupName = "";
-                while (cvItemsResultSet.next()) {
-
-                    String newGroupName = cvItemsResultSet.getString("group");
-
-                    if (!currentGroupName.equals(newGroupName)) {
-                        currentGroupName = newGroupName; //set Group name if first Group name frm query
-                        returnVal.getGroupCvItems().put(currentGroupName, new ArrayList<>());
-                    }
-
-                    CvItem currentGroupCvItem = new CvItem();
-                    currentGroupCvItem.setCvId(cvItemsResultSet.getInt("cv_id"));
-                    currentGroupCvItem.setRank(cvItemsResultSet.getInt("rank"));
-                    currentGroupCvItem.setTerm(cvItemsResultSet.getString("term"));
-                    currentGroupCvItem.setDefinition(cvItemsResultSet.getString("definition"));
-                    returnVal.getGroupCvItems().get(currentGroupName).add(currentGroupCvItem);
-
-                }
-            }
-        } catch (Exception e) {
-            returnVal.getStatus().addException(e);
-            LOGGER.error("Gobii Maping Error", e);
+        } catch (SQLException e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
 
@@ -77,33 +79,32 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         try {
 
-            returnVal.setEntityStatus(1);
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             Integer cvId = rsCvDao.createCv(parameters);
             returnVal.setCvId(cvId);
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
     }
 
     @Override
-    public CvDTO updateCv(CvDTO cvDTO) throws GobiiDtoMappingException {
+    public CvDTO replaceCv(Integer cvId, CvDTO cvDTO) throws GobiiDtoMappingException {
 
         CvDTO returnVal = cvDTO;
 
         try {
 
-            returnVal.setEntityStatus(1);
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            parameters.put("cvId", cvId);
             rsCvDao.updateCv(parameters);
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
@@ -121,8 +122,8 @@ public class DtoMapCvImpl implements DtoMapCv {
             rsCvDao.deleteCv(parameters);
 
         } catch (Exception e) {
-            returnVal.getStatus().addException(e);
             LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;
