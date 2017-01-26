@@ -14,6 +14,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ReferenceDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetTypeDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
@@ -2251,6 +2252,9 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
+    // *********************************************
+    // *************************** MAPSETS METHODS
+    // *********************************************
 
     @RequestMapping(value = "/mapsets", method = RequestMethod.POST)
     @ResponseBody
@@ -2395,6 +2399,151 @@ public class GOBIIControllerV1 {
 
     }
 
+    // *********************************************
+    // *************************** REFERENCE METHODS
+    // *********************************************
 
+    @RequestMapping(value = "/references", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<ReferenceDTO> createReference(@RequestBody PayloadEnvelope<ReferenceDTO> payloadEnvelope,
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response) {
+
+        PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<ReferenceDTO> payloadReader = new PayloadReader<>(ReferenceDTO.class);
+            ReferenceDTO referenceDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            ReferenceDTO referenceDTONew = referenceService.createReference(referenceDTOToCreate);
+
+            PayloadWriter<ReferenceDTO> payloadWriter = new PayloadWriter<>(request,
+                    ReferenceDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_REFERENCE),
+                    referenceDTONew);
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/references/{referenceId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<ReferenceDTO> replaceReference(@RequestBody PayloadEnvelope<ReferenceDTO> payloadEnvelope,
+                                                    @PathVariable Integer referenceId,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<ReferenceDTO> payloadReader = new PayloadReader<>(ReferenceDTO.class);
+            ReferenceDTO referenceDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            ReferenceDTO referenceDTOReplaced = referenceService.replaceReference(referenceId, referenceDTOToReplace);
+
+            PayloadWriter<ReferenceDTO> payloadWriter = new PayloadWriter<>(request,
+                    ReferenceDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_REFERENCE),
+                    referenceDTOReplaced);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/references", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ReferenceDTO> getReferences(HttpServletRequest request,
+                                                 HttpServletResponse response) {
+
+        PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            List<ReferenceDTO> referenceDTOS = referenceService.getReferences();
+
+            PayloadWriter<ReferenceDTO> payloadWriter = new PayloadWriter<>(request,
+                    ReferenceDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_REFERENCE),
+                    referenceDTOS);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/references/{referenceId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ReferenceDTO> getReferenceById(@PathVariable Integer referenceId,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            ReferenceDTO referenceDTO = referenceService.getReferenceById(referenceId);
+
+            PayloadWriter<ReferenceDTO> payloadWriter = new PayloadWriter<>(request,
+                    ReferenceDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_REFERENCE),
+                    referenceDTO);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
 }// GOBIIController

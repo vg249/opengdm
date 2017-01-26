@@ -214,7 +214,7 @@ public class TestDtoFactory {
     public static ReferenceDTO makePopulatedReferenceDTO(GobiiProcessType gobiiProcessType,
                                                          Integer uniqueStem) {
 
-        ReferenceDTO returnVal = new ReferenceDTO(gobiiProcessType);
+        ReferenceDTO returnVal = new ReferenceDTO();
 
         String uniqueStemString = uniqueStem.toString();
         returnVal.setName(uniqueStem + ": reference");

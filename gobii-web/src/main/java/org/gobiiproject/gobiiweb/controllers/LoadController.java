@@ -7,7 +7,7 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiimodel.dto.container.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ReferenceDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -94,24 +94,6 @@ public class LoadController {
         return (returnVal);
 
     }//getByContentType()
-
-
-    @RequestMapping(value = "/reference", method = RequestMethod.POST)
-    @ResponseBody
-    public ReferenceDTO processReference(@RequestBody ReferenceDTO referenceDTO) {
-
-        ReferenceDTO returnVal = new ReferenceDTO();
-        //PingDTO pingDTORequest = new PingDTO();
-        try {
-            returnVal = referenceService.processReference(referenceDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-        return (returnVal);
-
-    }//processReference
 
 
     @RequestMapping(value = "/manifest", method = RequestMethod.POST)
