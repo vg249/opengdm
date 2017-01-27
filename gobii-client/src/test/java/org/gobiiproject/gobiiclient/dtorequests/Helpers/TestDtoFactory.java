@@ -273,7 +273,7 @@ public class TestDtoFactory {
     public static ManifestDTO makePopulatedManifestDTO(GobiiProcessType gobiiProcessType,
                                                        Integer uniqueStem) {
 
-        ManifestDTO returnVal = new ManifestDTO(gobiiProcessType);
+        ManifestDTO returnVal = new ManifestDTO();
 
         String uniqueStemString = uniqueStem.toString();
         returnVal.setName(uniqueStem + ": reference");

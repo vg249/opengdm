@@ -7,7 +7,7 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiimodel.dto.container.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ReferenceDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ManifestDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -95,22 +95,6 @@ public class LoadController {
 
     }//getByContentType()
 
-
-    @RequestMapping(value = "/manifest", method = RequestMethod.POST)
-    @ResponseBody
-    public ManifestDTO process(@RequestBody ManifestDTO manifestDTO) {
-
-        ManifestDTO returnVal = new ManifestDTO();
-        try {
-            returnVal = manifestService.process(manifestDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-        return (returnVal);
-
-    }//processManifest
 
     @RequestMapping(value = "/display", method = RequestMethod.POST)
     @ResponseBody

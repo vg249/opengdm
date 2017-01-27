@@ -115,7 +115,7 @@ public class ResourceBuilder {
                 break;
 
             case URL_MANIFEST:
-                returnVal = "manifest";
+                returnVal = "manifests";
                 break;
 
             case URL_ORGANIZATION:

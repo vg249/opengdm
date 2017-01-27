@@ -14,6 +14,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ManifestDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ReferenceDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
 import org.gobiiproject.gobiimodel.dto.container.DataSetTypeDTO;
@@ -950,6 +951,151 @@ public class GOBIIControllerV1 {
 
     }
 
+    // *********************************************
+    // *************************** MANIFEST METHODS
+    // *********************************************
+    @RequestMapping(value = "/manifests", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<ManifestDTO> createManifest(@RequestBody PayloadEnvelope<ManifestDTO> payloadEnvelope,
+                                                        HttpServletRequest request,
+                                                        HttpServletResponse response) {
+
+        PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<ManifestDTO> payloadReader = new PayloadReader<>(ManifestDTO.class);
+            ManifestDTO manifestDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            ManifestDTO manifestDTONew = manifestService.createManifest(manifestDTOToCreate);
+
+            PayloadWriter<ManifestDTO> payloadWriter = new PayloadWriter<>(request,
+                    ManifestDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MANIFEST),
+                    manifestDTONew);
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/manifests/{manifestId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<ManifestDTO> replaceManifest(@RequestBody PayloadEnvelope<ManifestDTO> payloadEnvelope,
+                                                          @PathVariable Integer manifestId,
+                                                          HttpServletRequest request,
+                                                          HttpServletResponse response) {
+
+        PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<ManifestDTO> payloadReader = new PayloadReader<>(ManifestDTO.class);
+            ManifestDTO manifestDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            ManifestDTO manifestDTOReplaced = manifestService.replaceManifest(manifestId, manifestDTOToReplace);
+
+            PayloadWriter<ManifestDTO> payloadWriter = new PayloadWriter<>(request,
+                    ManifestDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MANIFEST),
+                    manifestDTOReplaced);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/manifests", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ManifestDTO> getManifests(HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            List<ManifestDTO> manifestDTOS = manifestService.getManifests();
+
+            PayloadWriter<ManifestDTO> payloadWriter = new PayloadWriter<>(request,
+                    ManifestDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MANIFEST),
+                    manifestDTOS);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/manifests/{manifestId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ManifestDTO> getManifestById(@PathVariable Integer manifestId,
+                                                          HttpServletRequest request,
+                                                          HttpServletResponse response) {
+
+        PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            ManifestDTO manifestDTO = manifestService.getManifestById(manifestId);
+
+            PayloadWriter<ManifestDTO> payloadWriter = new PayloadWriter<>(request,
+                    ManifestDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MANIFEST),
+                    manifestDTO);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
     // *********************************************
     // *************************** MARKER METHODS
