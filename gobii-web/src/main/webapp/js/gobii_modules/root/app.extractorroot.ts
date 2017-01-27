@@ -167,13 +167,26 @@ import {CheckListBoxComponent} from "../views/checklist-box.component";
                 
                 
                     <div class="col-md-4"> 
-                               <fieldset class="well the-fieldset" style="vertical-align: bottom;">
+                        <div *ngIf="displayIncludedDatasetsGrid">
+                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Datasets</legend>
                                 <criteria-display 
                                     [dataSetCheckBoxEvents] = "dataSetCheckBoxEvents"
                                     (onItemUnChecked) = "handleExtractDataSetUnchecked($event)"></criteria-display>
                             </fieldset>
-
+                        </div>
+                        
+                        <div *ngIf="displaySampleListTypeSelector">
+                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
+                                <legend class="the-legend">Included Samples</legend>
+                            </fieldset>
+                        </div>
+                        
+                        <div *ngIf="displaySampleMarkerBox">
+                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
+                                <legend class="the-legend">Included Markers</legend>
+                            </fieldset>
+                        </div>
                         
                     </div>  <!-- outer grid column 2-->
                     
@@ -300,6 +313,10 @@ export class ExtractorRoot {
     private displaySelectorExperiment:boolean = true;
     private displaySelectorDataType:boolean = false;
     private displaySelectorPlatform:boolean = false;
+    private displayIncludedDatasetsGrid:boolean = true;
+    private displaySampleListTypeSelector:boolean = false;
+    private displaySampleMarkerBox:boolean = false;
+
 
     private selectedExportType:string;
 
@@ -312,9 +329,13 @@ export class ExtractorRoot {
             this.displaySelectorProject = true;
             this.displaySelectorExperiment = true;
             this.displayAvailableDatasets = true;
+            this.displayIncludedDatasetsGrid = true;
 
             this.displaySelectorDataType = false;
             this.displaySelectorPlatform = false;
+            this.displaySampleListTypeSelector = false;
+            this.displaySampleMarkerBox = false;
+
 
         } else if (this.selectedExportType === "bySample") {
 
@@ -325,9 +346,13 @@ export class ExtractorRoot {
             this.displaySelectorProject = true;
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
+            this.displaySampleListTypeSelector = true;
 
             this.displaySelectorExperiment = false;
             this.displayAvailableDatasets = false;
+            this.displayIncludedDatasetsGrid = false;
+            this.displaySampleMarkerBox = false;
+
 
         } else if (this.selectedExportType === "byMarker") {
 
@@ -336,11 +361,15 @@ export class ExtractorRoot {
 
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
+            this.displaySampleMarkerBox = true;
 
             this.displaySelectorPi = false;
             this.displaySelectorProject = false;
             this.displaySelectorExperiment = false;
             this.displayAvailableDatasets = false;
+            this.displayIncludedDatasetsGrid = false;
+            this.displaySampleListTypeSelector = false;
+
 
         }
     }
@@ -495,32 +524,32 @@ export class ExtractorRoot {
 
 // ********************************************************************
 // ********************************************** DATASET TYPE SELECTION
-private datasetTypeNameIdList:NameId[];
-private selectedDatasetTypeId:string;
+    private datasetTypeNameIdList:NameId[];
+    private selectedDatasetTypeId:string;
 
-private handleDatasetTypeSelected(arg) {
-    this.selectedDatasetTypeId = arg;
-}
+    private handleDatasetTypeSelected(arg) {
+        this.selectedDatasetTypeId = arg;
+    }
 
-private initializeDatasetTypes() {
-    let scope$ = this;
-    scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
-        EntityType.CvTerms,
-        EntityFilter.BYTYPENAME,
-        "dataset_type")).subscribe(nameIds => {
+    private initializeDatasetTypes() {
+        let scope$ = this;
+        scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+            EntityType.CvTerms,
+            EntityFilter.BYTYPENAME,
+            "dataset_type")).subscribe(nameIds => {
 
-            if (nameIds && ( nameIds.length > 0 )) {
-                scope$.datasetTypeNameIdList = nameIds;
-                scope$.selectedDatasetTypeId = scope$.datasetTypeNameIdList[0].id;
-            } else {
-                scope$.datasetTypeNameIdList = [new NameId(0, "ERROR NO DATASET TYPES")];
-            }
-        },
-        dtoHeaderResponse => {
-            dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving DatasetTypes: "
-                + m.message))
-        });
-}
+                if (nameIds && ( nameIds.length > 0 )) {
+                    scope$.datasetTypeNameIdList = nameIds;
+                    scope$.selectedDatasetTypeId = scope$.datasetTypeNameIdList[0].id;
+                } else {
+                    scope$.datasetTypeNameIdList = [new NameId(0, "ERROR NO DATASET TYPES")];
+                }
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving DatasetTypes: "
+                    + m.message))
+            });
+    }
 
 // ********************************************************************
 // ********************************************** PLATFORM SELECTION
@@ -557,7 +586,7 @@ private initializeDatasetTypes() {
                     + m.message))
             });
     }
-    
+
 // ********************************************************************
 // ********************************************** DATASET ID
     private displayDataSetDetail:boolean = false;
