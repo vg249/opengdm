@@ -30,6 +30,7 @@ import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
 import * as EntityFilters from "../model/type-entity-filter";
 import {EntityFilter} from "../model/type-entity-filter";
+import {CheckListBoxComponent} from "../views/checklist-box.component";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -49,7 +50,8 @@ import {EntityFilter} from "../model/type-entity-filter";
         CropsListBoxComponent,
         UsersListBoxComponent,
         ExportTypeComponent,
-        DatasetTypeListBoxComponent],
+        DatasetTypeListBoxComponent,
+        CheckListBoxComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -133,8 +135,17 @@ import {EntityFilter} from "../model/type-entity-filter";
                         </div>
 
                         <div *ngIf="displaySelectorPlatform">
-                            <p>PLATFORM SELECTOR</p>
-                        </div>
+                            <BR>
+                            <BR>
+                            <label class="the-label">Platforms:</label><BR>
+                            <checklist-box
+                                [checkBoxEventChange] = "platformCheckBoxEventChange"
+                                [nameIdList] = "platformsNameIdList"
+                                (onItemSelected)="handlePlatformSelected($event)"
+                                (onItemChecked)="handlePlatformChecked($event)"
+                                (onAddMessage) = "handleAddMessage($event)">
+                            </checklist-box>
+                         </div>
 
 
                         <div *ngIf="displayAvailableDatasets">
@@ -308,6 +319,7 @@ export class ExtractorRoot {
         } else if (this.selectedExportType === "bySample") {
 
             this.initializeDatasetTypes();
+            this.initializePlatforms();
 
             this.displaySelectorPi = true;
             this.displaySelectorProject = true;
@@ -320,6 +332,7 @@ export class ExtractorRoot {
         } else if (this.selectedExportType === "byMarker") {
 
             this.initializeDatasetTypes();
+            this.initializePlatforms();
 
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
@@ -509,7 +522,42 @@ private initializeDatasetTypes() {
         });
 }
 
+// ********************************************************************
+// ********************************************** PLATFORM SELECTION
+    private platformsNameIdList:NameId[];
+    private selectedPlatformId:string;
+    private checkedPlatformId:string;
 
+    private handlePlatformSelected(arg) {
+        this.selectedPlatformId = arg.id;
+    }
+
+    private handlePlatformChecked(arg) {
+        this.checkedPlatformId = arg.id;
+    }
+
+    private platformCheckBoxEventChange:CheckBoxEvent;
+
+
+    private initializePlatforms() {
+        let scope$ = this;
+        scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+            EntityType.Platforms,
+            EntityFilter.NONE)).subscribe(nameIds => {
+
+                if (nameIds && ( nameIds.length > 0 )) {
+                    scope$.platformsNameIdList = nameIds;
+                    scope$.selectedPlatformId = scope$.platformsNameIdList[0].id;
+                } else {
+                    scope$.platformsNameIdList = [new NameId(0, "ERROR NO PLATFORMS")];
+                }
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving PlatformTypes: "
+                    + m.message))
+            });
+    }
+    
 // ********************************************************************
 // ********************************************** DATASET ID
     private displayDataSetDetail:boolean = false;
