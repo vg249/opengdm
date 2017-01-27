@@ -56,7 +56,8 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     }
                     arg.currentTarget.style = "background-color:#b3d9ff";
                     this.previousSelectedItem = arg.currentTarget;
-                    this.onItemSelected.emit(arg);
+                    var checkBoxEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.READ, arg.currentTarget.children[0].value, arg.currentTarget.children[0].name, false);
+                    this.onItemSelected.emit(checkBoxEvent);
                 };
                 CheckListBoxComponent.prototype.setList = function (nameIdList) {
                     // we can get this event whenver the item is clicked, not necessarily when the checkbox

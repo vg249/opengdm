@@ -8,7 +8,7 @@ import {CheckBoxEvent} from "../model/event-checkbox";
 
 @Component({
     selector: 'checklist-box',
-    inputs: ['checkBoxEventChange','nameIdList'],
+    inputs: ['checkBoxEventChange', 'nameIdList'],
     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage'],
     template: `<form>
                     <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
@@ -67,7 +67,13 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
         }
         arg.currentTarget.style = "background-color:#b3d9ff";
         this.previousSelectedItem = arg.currentTarget;
-        this.onItemSelected.emit(arg);
+
+        let checkBoxEvent:CheckBoxEvent = new CheckBoxEvent(ProcessType.READ,
+            arg.currentTarget.children[0].value,
+            arg.currentTarget.children[0].name,
+            false);
+
+        this.onItemSelected.emit(checkBoxEvent);
 
     }
 
@@ -98,7 +104,6 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
     } // setList()
 
 
-
     ngOnInit():any {
 
     }
@@ -123,7 +128,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
                     itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
                 }
             }
-        } else if(changes['nameIdList'] && changes['nameIdList'].currentValue) {
+        } else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
 
             this.setList(changes['nameIdList'].currentValue);
 

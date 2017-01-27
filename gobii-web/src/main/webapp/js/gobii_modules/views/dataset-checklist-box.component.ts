@@ -83,7 +83,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     }
 
     private handleItemSelected(arg) {
-        let selectedDataSetId:number = Number(arg.currentTarget.children[0].value);
+        let selectedDataSetId:number = Number(arg.id);
         this.setDatasetDetails(selectedDataSetId);
     }
 
