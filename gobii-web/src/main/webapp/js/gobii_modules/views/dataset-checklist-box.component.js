@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../services/app/dto-request-item-nameids", "../model/type-process", "../model/type-entity", "../model/event-checkbox", "../services/app/dto-request-item-dataset", "../services/app/dto-request-item-analysis", "../model/type-entity-filter"], function(exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../services/app/dto-request-item-nameids", "../model/type-entity", "../services/app/dto-request-item-dataset", "../services/app/dto-request-item-analysis", "../model/type-entity-filter", "../views/checklist-box.component"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, name_id_1, dto_request_service_1, dto_request_item_nameids_1, type_process_1, type_entity_1, event_checkbox_1, dto_request_item_dataset_1, dto_request_item_analysis_1, type_entity_filter_1;
+    var core_1, name_id_1, dto_request_service_1, dto_request_item_nameids_1, type_entity_1, dto_request_item_dataset_1, dto_request_item_analysis_1, type_entity_filter_1, checklist_box_component_1;
     var DataSetCheckListBoxComponent;
     return {
         setters:[
@@ -26,14 +26,8 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             function (dto_request_item_nameids_1_1) {
                 dto_request_item_nameids_1 = dto_request_item_nameids_1_1;
             },
-            function (type_process_1_1) {
-                type_process_1 = type_process_1_1;
-            },
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
-            },
-            function (event_checkbox_1_1) {
-                event_checkbox_1 = event_checkbox_1_1;
             },
             function (dto_request_item_dataset_1_1) {
                 dto_request_item_dataset_1 = dto_request_item_dataset_1_1;
@@ -43,6 +37,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             },
             function (type_entity_filter_1_1) {
                 type_entity_filter_1 = type_entity_filter_1_1;
+            },
+            function (checklist_box_component_1_1) {
+                checklist_box_component_1 = checklist_box_component_1_1;
             }],
         execute: function() {
             DataSetCheckListBoxComponent = (function () {
@@ -57,44 +54,38 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this.analysisTypes = [];
                 } // ctor
                 DataSetCheckListBoxComponent.prototype.handleItemChecked = function (arg) {
-                    var itemToChange = this.checkBoxEvents.filter(function (e) {
-                        return e.id == arg.currentTarget.value;
-                    })[0];
-                    //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
-                    itemToChange.processType = arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE;
-                    itemToChange.checked = arg.currentTarget.checked;
-                    this.onItemChecked.emit(itemToChange);
+                    this.onItemChecked.emit(arg);
                 }; // handleItemChecked()
                 DataSetCheckListBoxComponent.prototype.handleAddMessage = function (arg) {
                     this.onAddMessage.emit(arg);
                 };
                 DataSetCheckListBoxComponent.prototype.handleItemSelected = function (arg) {
                     var selectedDataSetId = Number(arg.currentTarget.children[0].value);
-                    if (this.previousSelectedItem) {
-                        this.previousSelectedItem.style = "";
-                    }
-                    arg.currentTarget.style = "background-color:#b3d9ff";
-                    this.previousSelectedItem = arg.currentTarget;
                     this.setDatasetDetails(selectedDataSetId);
                 };
                 DataSetCheckListBoxComponent.prototype.setList = function () {
                     // we can get this event whenver the item is clicked, not necessarily when the checkbox
                     var scope$ = this;
-                    scope$.nameIdList = [];
+                    scope$.dataSetsNameIdList = [];
                     scope$.checkBoxEvents = [];
                     scope$.setDatasetDetails(undefined);
                     if (scope$.experimentId) {
                         this._dtoRequestServiceNameId.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.DataSets, type_entity_filter_1.EntityFilter.BYTYPEID, this.experimentId)).subscribe(function (nameIds) {
                             if (nameIds && (nameIds.length > 0)) {
-                                scope$.nameIdList = nameIds;
-                                scope$.checkBoxEvents = [];
-                                scope$.nameIdList.forEach(function (n) {
-                                    scope$.checkBoxEvents.push(new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.CREATE, n.id, n.name, false));
-                                });
-                                scope$.setDatasetDetails(scope$.nameIdList[0].id);
+                                scope$.dataSetsNameIdList = nameIds;
+                                // scope$.checkBoxEvents = [];
+                                // scope$.dataSetsNameIdList.forEach(n => {
+                                //     scope$.checkBoxEvents.push(new CheckBoxEvent(
+                                //         ProcessType.CREATE,
+                                //         n.id,
+                                //         n.name,
+                                //         false
+                                //     ));
+                                // });
+                                scope$.setDatasetDetails(scope$.dataSetsNameIdList[0].id);
                             }
                             else {
-                                scope$.nameIdList = [new name_id_1.NameId(0, "<none>")];
+                                scope$.dataSetsNameIdList = [new name_id_1.NameId(0, "<none>")];
                                 scope$.setDatasetDetails(undefined);
                             }
                         }, function (dtoHeaderResponse) {
@@ -164,26 +155,14 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         this.experimentId = changes['experimentId'].currentValue;
                         this.setList();
                     }
-                    if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
-                        this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
-                        if (this.itemChangedEvent) {
-                            var itemToChange = this.checkBoxEvents.filter(function (e) {
-                                return e.id == changes['checkBoxEventChange'].currentValue.id;
-                            })[0];
-                            //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
-                            if (itemToChange) {
-                                itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
-                                itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
-                            }
-                        }
-                    }
                 };
                 DataSetCheckListBoxComponent = __decorate([
                     core_1.Component({
                         selector: 'dataset-checklist-box',
+                        directives: [checklist_box_component_1.CheckListBoxComponent],
                         inputs: ['experimentId', 'checkBoxEventChange'],
                         outputs: ['onItemChecked', 'onAddMessage'],
-                        template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let checkBoxEvent of checkBoxEvents\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                [checked]=\"checkBoxEvent.checked\"\n                                value={{checkBoxEvent.id}} \n                                name=\"{{checkBoxEvent.name}}\">&nbsp;{{checkBoxEvent.name}}\n                        </div>            \n                    </div>\n                </form>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        <b>Name:</b> {{dataSet.name}}<BR>\n                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>\n                        <b>Data File:</b> {{dataSet.dataFile}}<BR>\n                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>\n                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                            <b>Analyses:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                    </ul>\n                        </div>\n                        <div *ngIf=\"analysisTypes && (analysisTypes.length > 0)\">\n                            <b>Analysis Types:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisType of analysisTypes\" >{{analysisType}}</li>\n                                    </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
+                        template: "<checklist-box\n                    [checkBoxEventChange] = \"checkBoxEventChange\"\n                    [nameIdList] = \"dataSetsNameIdList\"\n                    (onItemSelected)=\"handleItemSelected($event)\"\n                    (onItemChecked)=\"handleItemChecked($event)\"\n                    (onAddMessage) = \"handleAddMessage($event)\">\n                </checklist-box>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        <b>Name:</b> {{dataSet.name}}<BR>\n                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>\n                        <b>Data File:</b> {{dataSet.dataFile}}<BR>\n                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>\n                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                            <b>Analyses:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                    </ul>\n                        </div>\n                        <div *ngIf=\"analysisTypes && (analysisTypes.length > 0)\">\n                            <b>Analysis Types:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisType of analysisTypes\" >{{analysisType}}</li>\n                                    </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
                     }), 
                     __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService])
                 ], DataSetCheckListBoxComponent);
