@@ -14,6 +14,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.headerlesscontainer.DisplayDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ManifestDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ReferenceDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
@@ -790,6 +791,152 @@ public class GOBIIControllerV1 {
 
     }
 
+    // *********************************************
+    // *************************** DISPLAY METHODS
+    // *********************************************
+    @RequestMapping(value ="/displays", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<DisplayDTO> createDisplay(@RequestBody PayloadEnvelope<DisplayDTO> payloadEnvelope,
+                                                HttpServletRequest request,
+                                                HttpServletResponse response) {
+
+        PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<DisplayDTO> payloadReader = new PayloadReader<>(DisplayDTO.class);
+            DisplayDTO displayDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            DisplayDTO displayDTONew = displayService.createDisplay(displayDTOToCreate);
+
+            PayloadWriter<DisplayDTO> payloadWriter = new PayloadWriter<>(request,
+                    DisplayDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DISPLAY),
+                    displayDTONew);
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+
+    @RequestMapping(value = "/displays/{displayId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<DisplayDTO> replaceDisplay(@RequestBody PayloadEnvelope<DisplayDTO> payloadEnvelope,
+                                            @PathVariable Integer displayId,
+                                            HttpServletRequest request,
+                                            HttpServletResponse response) {
+
+        PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<DisplayDTO> payloadReader = new PayloadReader<>(DisplayDTO.class);
+            DisplayDTO displayDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            DisplayDTO displayDTOReplaced = displayService.replaceDisplay(displayId, displayDTOToReplace);
+
+            PayloadWriter<DisplayDTO> payloadWriter = new PayloadWriter<>(request,
+                    DisplayDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DISPLAY),
+                    displayDTOReplaced);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/displays", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<DisplayDTO> getDisplays(HttpServletRequest request,
+                                         HttpServletResponse response) {
+
+        PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            List<DisplayDTO> displayDTOS = displayService.getDisplays();
+
+            PayloadWriter<DisplayDTO> payloadWriter = new PayloadWriter<>(request,
+                    DisplayDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DISPLAY),
+                    displayDTOS);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/displays/{displayId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<DisplayDTO> getDisplayById(@PathVariable Integer displayId,
+                                            HttpServletRequest request,
+                                            HttpServletResponse response) {
+
+        PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            DisplayDTO displayDTO = displayService.getDisplayById(displayId);
+
+            PayloadWriter<DisplayDTO> payloadWriter = new PayloadWriter<>(request,
+                    DisplayDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DISPLAY),
+                    displayDTO);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
     // *********************************************
     // *************************** LOADER INSTRUCTION METHODS

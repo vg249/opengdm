@@ -13,7 +13,6 @@ public interface DtoMapManifest {
 
     ManifestDTO getManifestDetails(Integer manifestId) throws GobiiDtoMappingException;
     ManifestDTO createManifest(ManifestDTO manifestDTO) throws GobiiDtoMappingException;
-
     ManifestDTO replaceManifest(Integer manifestId, ManifestDTO manifestDTO) throws GobiiDtoMappingException;
     List<ManifestDTO> getManifests() throws GobiiDtoMappingException;
 

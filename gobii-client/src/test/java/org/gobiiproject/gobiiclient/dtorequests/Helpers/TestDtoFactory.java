@@ -125,7 +125,7 @@ public class TestDtoFactory {
     public static DisplayDTO makePopulatedDisplayDTO(GobiiProcessType gobiiProcessType,
                                                      Integer uniqueStem) {
 
-        DisplayDTO returnVal = new DisplayDTO(gobiiProcessType);
+        DisplayDTO returnVal = new DisplayDTO();
         returnVal.setColumnName(uniqueStem + "dummy column");
         returnVal.setCreatedBy(1);
         returnVal.setDisplayName(uniqueStem + "dummyDisplay");
