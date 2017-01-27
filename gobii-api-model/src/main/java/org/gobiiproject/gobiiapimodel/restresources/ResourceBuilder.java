@@ -107,7 +107,7 @@ public class ResourceBuilder {
                 break;
 
             case URL_ANALYSIS:
-                returnVal = "analysis";
+                returnVal = "analyses";
                 break;
 
             case URL_MARKERGROUP:

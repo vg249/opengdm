@@ -7,7 +7,7 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiimodel.dto.container.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DisplayDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -95,42 +95,6 @@ public class LoadController {
 
     }//getByContentType()
 
-
-//    @RequestMapping(value = "/dataset", method = RequestMethod.POST)
-//    @ResponseBody
-//    public DataSetDTO processDataset(@RequestBody DataSetDTO dataSetDTO) {
-//
-//        DataSetDTO returnVal = new DataSetDTO();
-//
-//        try {
-//            returnVal = dataSetService.processDataSet(dataSetDTO);
-//        } catch (Exception e) {
-//
-//            returnVal.getStatus().addException(e);
-//            LOGGER.error(e.getMessage());
-//        }
-//
-//        return (returnVal);
-//
-//    }
-
-    @RequestMapping(value = "/analysis", method = RequestMethod.POST)
-    @ResponseBody
-    public AnalysisDTO processAnalysis(@RequestBody AnalysisDTO analysisDTO) {
-
-        AnalysisDTO returnVal = new AnalysisDTO();
-
-        try {
-            returnVal = analysisService.getAnalysisDetails(analysisDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
 
     @RequestMapping(value = "/markergroup", method = RequestMethod.POST)
     @ResponseBody

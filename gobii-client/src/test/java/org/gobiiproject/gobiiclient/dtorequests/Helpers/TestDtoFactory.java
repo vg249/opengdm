@@ -46,7 +46,7 @@ public class TestDtoFactory {
                                                        Integer uniqueStem,
                                                        EntityParamValues entityParamValues) {
 
-        AnalysisDTO returnVal = new AnalysisDTO(gobiiProcessType);
+        AnalysisDTO returnVal = new AnalysisDTO();
 
         returnVal.setAnalysisName(uniqueStem + ": analysis");
         returnVal.setTimeExecuted(new Date());

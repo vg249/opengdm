@@ -13,7 +13,6 @@ public interface DtoMapMapset {
     List<MapsetDTO> getAllMapsetNames() throws GobiiDtoMappingException;
     MapsetDTO getMapsetDetails(Integer mapsetId) throws GobiiDtoMappingException;
     MapsetDTO createMapset(MapsetDTO mapsetDTO) throws GobiiDtoMappingException;
-
     MapsetDTO replaceMapset(Integer mapsetId, MapsetDTO mapsetDTO) throws GobiiDtoMappingException;
     List<MapsetDTO> getMapsets() throws GobiiDtoMappingException;
 }

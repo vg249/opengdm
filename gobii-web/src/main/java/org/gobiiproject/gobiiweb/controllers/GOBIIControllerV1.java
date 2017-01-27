@@ -14,6 +14,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DisplayDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ManifestDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ReferenceDTO;
@@ -221,6 +222,154 @@ public class GOBIIControllerV1 {
         return (returnVal);
 
     }
+
+    // *********************************************
+    // *************************** ANALYSIS METHODS
+    // *********************************************
+    @RequestMapping(value ="/analyses", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<AnalysisDTO> createAnalysis(@RequestBody PayloadEnvelope<AnalysisDTO> payloadEnvelope,
+                                                 HttpServletRequest request,
+                                                 HttpServletResponse response) {
+
+        PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<AnalysisDTO> payloadReader = new PayloadReader<>(AnalysisDTO.class);
+            AnalysisDTO analysisDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            AnalysisDTO analysisDTONew = analysisService.createAnalysis(analysisDTOToCreate);
+
+            PayloadWriter<AnalysisDTO> payloadWriter = new PayloadWriter<>(request,
+                    AnalysisDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_ANALYSIS),
+                    analysisDTONew);
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+
+    @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<AnalysisDTO> replaceAnalysis(@RequestBody PayloadEnvelope<AnalysisDTO> payloadEnvelope,
+                                            @PathVariable Integer analysisId,
+                                            HttpServletRequest request,
+                                            HttpServletResponse response) {
+
+        PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<AnalysisDTO> payloadReader = new PayloadReader<>(AnalysisDTO.class);
+            AnalysisDTO analysisDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            AnalysisDTO analysisDTOReplaced = analysisService.replaceAnalysis(analysisId, analysisDTOToReplace);
+
+            PayloadWriter<AnalysisDTO> payloadWriter = new PayloadWriter<>(request,
+                    AnalysisDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_ANALYSIS),
+                    analysisDTOReplaced);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/analyses", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<AnalysisDTO> getAnalyses(HttpServletRequest request,
+                                         HttpServletResponse response) {
+
+        PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            List<AnalysisDTO> analysisDTOs = analysisService.getAnalyses();
+
+            PayloadWriter<AnalysisDTO> payloadWriter = new PayloadWriter<>(request,
+                    AnalysisDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_ANALYSIS),
+                    analysisDTOs);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<AnalysisDTO> getAnalysisById(@PathVariable Integer analysisId,
+                                            HttpServletRequest request,
+                                            HttpServletResponse response) {
+
+        PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            AnalysisDTO analysisDTO = analysisService.getAnalysisById(analysisId);
+
+            PayloadWriter<AnalysisDTO> payloadWriter = new PayloadWriter<>(request,
+                    AnalysisDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_ANALYSIS),
+                    analysisDTO);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
 
 
     // *********************************************
