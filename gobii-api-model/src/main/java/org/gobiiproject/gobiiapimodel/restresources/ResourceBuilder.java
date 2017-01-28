@@ -111,7 +111,7 @@ public class ResourceBuilder {
                 break;
 
             case URL_MARKERGROUP:
-                returnVal = "markergroup";
+                returnVal = "markergroups";
                 break;
 
             case URL_MANIFEST:

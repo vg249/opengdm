@@ -7,7 +7,7 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiimodel.dto.container.*;
-import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -95,23 +95,5 @@ public class LoadController {
 
     }//getByContentType()
 
-
-    @RequestMapping(value = "/markergroup", method = RequestMethod.POST)
-    @ResponseBody
-    public MarkerGroupDTO process(@RequestBody MarkerGroupDTO markerGroupDTO) {
-
-        MarkerGroupDTO returnVal = new MarkerGroupDTO();
-
-        try {
-            returnVal = markerGroupService.process(markerGroupDTO);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
 
 }// LoadController

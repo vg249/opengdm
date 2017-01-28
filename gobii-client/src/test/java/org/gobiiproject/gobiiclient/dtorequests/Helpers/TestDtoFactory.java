@@ -338,7 +338,7 @@ public class TestDtoFactory {
                                                              Integer uniqueStem,
                                                              List<MarkerGroupMarkerDTO> markerGroupMarkers) {
 
-        MarkerGroupDTO returnVal = new MarkerGroupDTO(gobiiProcessType);
+        MarkerGroupDTO returnVal = new MarkerGroupDTO();
 
         returnVal.setMarkers(markerGroupMarkers);
         returnVal.setStatusId(1);

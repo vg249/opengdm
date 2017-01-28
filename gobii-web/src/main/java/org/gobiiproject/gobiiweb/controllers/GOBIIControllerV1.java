@@ -14,6 +14,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DisplayDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ManifestDTO;
@@ -2825,6 +2826,153 @@ public class GOBIIControllerV1 {
                     UriFactory.resourceByUriIdParam(request.getContextPath(),
                             ServiceRequestId.URL_MAPSET),
                     mapsetDTO);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    // *********************************************
+    // *************************** MARKERGROUP METHODS
+    // *********************************************
+
+    @RequestMapping(value = "/markergroups", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<MarkerGroupDTO> createMarkerGroup(@RequestBody PayloadEnvelope<MarkerGroupDTO> payloadEnvelope,
+                                                        HttpServletRequest request,
+                                                        HttpServletResponse response) {
+
+        PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<MarkerGroupDTO> payloadReader = new PayloadReader<>(MarkerGroupDTO.class);
+            MarkerGroupDTO markerGroupDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            MarkerGroupDTO markerGroupDTONew = markerGroupService.createMarkerGroup(markerGroupDTOToCreate);
+
+            PayloadWriter<MarkerGroupDTO> payloadWriter = new PayloadWriter<>(request,
+                    MarkerGroupDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MARKERGROUP),
+                    markerGroupDTONew);
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+            LOGGER.error(e.getMessage());
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/markergroups/{markerGroupId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<MarkerGroupDTO> replaceMarkerGroup(@RequestBody PayloadEnvelope<MarkerGroupDTO> payloadEnvelope,
+                                                    @PathVariable Integer markerGroupId,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<MarkerGroupDTO> payloadReader = new PayloadReader<>(MarkerGroupDTO.class);
+            MarkerGroupDTO markerGroupDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            MarkerGroupDTO markerGroupDTOReplaced = markerGroupService.replaceMarkerGroup(markerGroupId, markerGroupDTOToReplace);
+
+            PayloadWriter<MarkerGroupDTO> payloadWriter = new PayloadWriter<>(request,
+                    MarkerGroupDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MARKERGROUP),
+                    markerGroupDTOReplaced);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/markergroups", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<MarkerGroupDTO> getMarkerGroups(HttpServletRequest request,
+                                                 HttpServletResponse response) {
+
+        PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            List<MarkerGroupDTO> markerGroupDTOs = markerGroupService.getMarkerGroups();
+
+            PayloadWriter<MarkerGroupDTO> payloadWriter = new PayloadWriter<>(request,
+                    MarkerGroupDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MARKERGROUP),
+                    markerGroupDTOs);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/markergroups/{markerGroupId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<MarkerGroupDTO> getMarkerGroupById(@PathVariable Integer markerGroupId,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
+
+        PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            MarkerGroupDTO markerGroupDTO = markerGroupService.getMarkerGroupById(markerGroupId);
+
+            PayloadWriter<MarkerGroupDTO> payloadWriter = new PayloadWriter<>(request,
+                    MarkerGroupDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MARKERGROUP),
+                    markerGroupDTO);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
