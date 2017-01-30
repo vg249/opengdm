@@ -31,6 +31,7 @@ import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serv
 import * as EntityFilters from "../model/type-entity-filter";
 import {EntityFilter} from "../model/type-entity-filter";
 import {CheckListBoxComponent} from "../views/checklist-box.component";
+import {SampleMarkerBoxComponent} from "../views/sample-marker-box.component";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -51,7 +52,8 @@ import {CheckListBoxComponent} from "../views/checklist-box.component";
         UsersListBoxComponent,
         ExportTypeComponent,
         DatasetTypeListBoxComponent,
-        CheckListBoxComponent],
+        CheckListBoxComponent,
+        SampleMarkerBoxComponent],
     styleUrls: ['/extractor-ui.css'],
     providers: [
         HTTP_PROVIDERS,
@@ -179,6 +181,7 @@ import {CheckListBoxComponent} from "../views/checklist-box.component";
                         <div *ngIf="displaySampleListTypeSelector">
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Samples</legend>
+                                <sample-marker-box></sample-marker-box>
                             </fieldset>
                         </div>
                         
