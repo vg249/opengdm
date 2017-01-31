@@ -213,6 +213,15 @@
     <bean id="ExtractorInstructionFilesService"
           class="org.gobiiproject.gobidomain.services.impl.ExtractorInstructionFileServiceImpl"/>
 
+
+    <!-- **** QC Check Beans *************************************** -->
+    <bean id="qcInstructionsDAO"
+          class="org.gobiiproject.gobiidao.filesystem.impl.QCInstructionsDAOImpl"/>
+    <bean id="dtoMapQCInstructions"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapQCInstructionsImpl"/>
+    <bean id="QCInstuctionFilesService"
+          class="org.gobiiproject.gobidomain.services.impl.QCInstructionFilesServiceImpl"/>
+
     <!-- **** Contact Beans *************************************** -->
     <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.impl.DtoMapContactImpl"/>
     <bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl"/>
@@ -231,11 +240,6 @@
     <bean id="dtoMapDataSet" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDataSetImpl"/>
     <bean id="DataSetService"
           class="org.gobiiproject.gobidomain.services.impl.DataSetServiceImpl"/>
-
-    <!-- **** DataSetType Beans ********************************** -->
-    <bean id="rsDataSetTypeDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsDataSetTypeDaoImpl"/>
-    <bean id="dtoMapDataSetType" class="org.gobiiproject.gobiidtomapping.impl.DtoMapDataSetTypeImpl"/>
-    <bean id="DataSetTypeService" class="org.gobiiproject.gobidomain.services.impl.DataSetTypeServiceImpl"/>
 
     <!-- **** Experiments Beans *************************************** -->
     <bean id="rsExperimentDao"

@@ -1,10 +1,10 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
-import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestExperimentTest;
-import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestOrganizationTest;
-import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestPlatformTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.*;
 import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
+import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -360,5 +360,20 @@ public class TestDtoFactory {
         return returnVal;
 
     }
+    public static QCInstructionsDTO makePopulatedQCInstructionsDTO() throws Exception {
 
+        QCInstructionsDTO returnVal = new QCInstructionsDTO();
+        Integer contactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class,
+                GobiiEntityNameType.CONTACTS);
+        Integer datasetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getAPkVal(DtoCrudRequestDataSetTest.class,
+                GobiiEntityNameType.DATASETS);
+                returnVal.getGobiiQCComplete().setContactId(contactId);
+        returnVal.getGobiiQCComplete().setDatasetId(datasetId);
+        returnVal.getGobiiQCComplete().setDataFileDirectory("E:/Gobii/dummyPath");
+        returnVal.getGobiiQCComplete().setDataFileName(getFolderNameWithTimestamp("qcDataFile"));
+        returnVal.getGobiiQCComplete().setQualityFileName("qualityFileName");
+
+        return returnVal;
+
+    }
 }

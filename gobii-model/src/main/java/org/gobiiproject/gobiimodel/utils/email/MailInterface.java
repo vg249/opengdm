@@ -30,34 +30,6 @@ public class MailInterface {
 	private String protocol;
 	private MailMessage message = new MailMessage();
 	
-	public static void main(String[] args) throws Exception{
-
-		//sample use
-		ConfigSettings config = new ConfigSettings(){
-			public String getEmailSvrDomain(){
-				return "smtp.gmail.com";
-			}
-			public Integer getEmailServerPort(){
-				return 587;
-			}
-			public String getEmailSvrUser(){
-				return "gobii.jira@gmail.com";
-			}
-			public String getEmailSvrPassword(){
-				return Decrypter.decrypt("sbNsrsFG5BA0gRXXY9WX2A==",null);
-			}
-			public String getEmailSvrType(){
-				return "SMTPS";
-			}
-		};
-		MailInterface outgoingMail = new MailInterface(config);
-		MailMessage message = outgoingMail.newMessage();
-		message.setUser("jdl232@cornell.edu");
-		message.setSubject("Data Extraction complete");
-		message.setBody("lorem ipsum asaga");
-		outgoingMail.send(message);
-	}
-	
 	
 	public MailInterface(ConfigSettings config){
 		host = config.getEmailSvrDomain();

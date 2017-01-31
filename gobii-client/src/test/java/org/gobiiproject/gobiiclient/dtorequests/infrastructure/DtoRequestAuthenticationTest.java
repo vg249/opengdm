@@ -10,7 +10,6 @@ import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
-import org.gobiiproject.gobiiapimodel.restresources.ResourceBuilder;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.gobii.dtopost.DtoRequestProcessor;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
@@ -68,9 +67,8 @@ public class DtoRequestAuthenticationTest {
         analysisDTORequest.setAnalysisId(1);
 
 
-        String url = ResourceBuilder.getRequestUrl(ControllerType.LOADER,
-                ClientContext.getInstance(null, false).getCurrentCropContextRoot(),
-                ServiceRequestId.URL_ANALYSIS);
+        String url = ServiceRequestId.URL_ANALYSIS.getRequestUrl(ClientContext.getInstance(null, false).getCurrentCropContextRoot(),
+                ControllerType.LOADER);
 
 //        DtoRequestProcessor<AnalysisDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
 
