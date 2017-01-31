@@ -68,7 +68,7 @@ public class DtoRequestAuthenticationTest {
 
 
         String url = ServiceRequestId.URL_ANALYSIS.getRequestUrl(ClientContext.getInstance(null, false).getCurrentCropContextRoot(),
-                ControllerType.LOADER);
+                ControllerType.GOBII);
 
 //        DtoRequestProcessor<AnalysisDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
 
