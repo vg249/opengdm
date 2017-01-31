@@ -7,11 +7,8 @@ package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.*;
 

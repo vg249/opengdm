@@ -15,7 +15,7 @@ import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupMarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;

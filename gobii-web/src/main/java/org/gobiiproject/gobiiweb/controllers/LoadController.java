@@ -6,7 +6,7 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.*;
-import org.gobiiproject.gobiimodel.dto.container.*;
+
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;

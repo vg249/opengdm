@@ -8,7 +8,7 @@ import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
 import org.gobiiproject.gobiidtomapping.DtoMapMarkerGroup;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.dto.container.MarkerGroupMarkerDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupMarkerDTO;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
