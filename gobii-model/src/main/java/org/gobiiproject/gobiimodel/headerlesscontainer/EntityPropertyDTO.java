@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 /**
  * Created by Phil on 4/14/2016.

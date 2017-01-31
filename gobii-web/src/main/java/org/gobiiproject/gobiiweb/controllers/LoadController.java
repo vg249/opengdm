@@ -58,25 +58,7 @@ public class LoadController {
     @Autowired
     private ConfigSettingsService configSettingsService;
 
-    @RequestMapping(value = "/ping", method = RequestMethod.POST)
-    @ResponseBody
-    public PingDTO getPingResponse(@RequestBody PingDTO pingDTORequest) {
 
-        PingDTO returnVal = new PingDTO();
-
-        try {
-            returnVal = pingService.getPings(pingDTORequest);
-            String newResponseString = LineUtils.wrapLine("Loader controller responded");
-            returnVal.getPingResponses().add(newResponseString);
-        } catch (Exception e) {
-
-            returnVal.getStatus().addException(e);
-            LOGGER.error(e.getMessage());
-        }
-
-        return (returnVal);
-
-    }
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseBody

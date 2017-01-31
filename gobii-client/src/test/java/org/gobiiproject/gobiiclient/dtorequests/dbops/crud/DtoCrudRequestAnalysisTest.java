@@ -121,8 +121,10 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
         GobiiEnvelopeRestResource<AnalysisDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(ServiceRequestId.URL_ANALYSIS));
+
         PayloadEnvelope<AnalysisDTO> analysisDTOResponseEnvelope = gobiiEnvelopeRestResource.post(AnalysisDTO.class,
                 payloadEnvelope);
+
         AnalysisDTO analysisDTOResponse = analysisDTOResponseEnvelope.getPayload().getData().get(0);
 
         Assert.assertNotEquals(null, analysisDTOResponse);

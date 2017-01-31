@@ -7,8 +7,7 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
 import org.gobiiproject.gobidomain.services.PingService;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PingDTO;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

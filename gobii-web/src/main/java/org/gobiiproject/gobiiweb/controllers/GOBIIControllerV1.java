@@ -34,7 +34,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PingDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
@@ -140,17 +140,26 @@ public class GOBIIControllerV1 {
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
-    public PingDTO getPingResponse(@RequestBody PingDTO pingDTORequest) {
+    public PayloadEnvelope<PingDTO> getPingResponse(@RequestBody PayloadEnvelope<PingDTO> pingDTOPayloadEnvelope) {
 
-        PingDTO returnVal = new PingDTO();
+        PayloadEnvelope<PingDTO> returnVal = new PayloadEnvelope<PingDTO>();
 
         try {
-            returnVal = pingService.getPings(pingDTORequest);
+
+            PayloadReader<PingDTO> payloadReader = new PayloadReader<>(PingDTO.class);
+            PingDTO pingDTORequest = payloadReader.extractSingleItem(pingDTOPayloadEnvelope);
+
+            PingDTO pingDTOResponse = pingService.getPings(pingDTORequest);
             String newResponseString = LineUtils.wrapLine("Loader controller responded");
-            returnVal.getPingResponses().add(newResponseString);
+            pingDTOResponse.getPingResponses().add(newResponseString);
+            returnVal.getPayload().getData().add(pingDTOResponse);
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
         } catch (Exception e) {
 
-            returnVal.getStatus().addException(e);
+            returnVal.getHeader().getStatus().addException(e);
             LOGGER.error(e.getMessage());
         }
 
@@ -227,11 +236,11 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** ANALYSIS METHODS
     // *********************************************
-    @RequestMapping(value ="/analyses", method = RequestMethod.POST)
+    @RequestMapping(value = "/analyses", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> createAnalysis(@RequestBody PayloadEnvelope<AnalysisDTO> payloadEnvelope,
-                                                 HttpServletRequest request,
-                                                 HttpServletResponse response) {
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
 
         PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
 
@@ -268,9 +277,9 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> replaceAnalysis(@RequestBody PayloadEnvelope<AnalysisDTO> payloadEnvelope,
-                                            @PathVariable Integer analysisId,
-                                            HttpServletRequest request,
-                                            HttpServletResponse response) {
+                                                        @PathVariable Integer analysisId,
+                                                        HttpServletRequest request,
+                                                        HttpServletResponse response) {
 
         PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
 
@@ -306,7 +315,7 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/analyses", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> getAnalyses(HttpServletRequest request,
-                                         HttpServletResponse response) {
+                                                    HttpServletResponse response) {
 
         PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
 
@@ -339,8 +348,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/analyses/{analysisId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<AnalysisDTO> getAnalysisById(@PathVariable Integer analysisId,
-                                            HttpServletRequest request,
-                                            HttpServletResponse response) {
+                                                        HttpServletRequest request,
+                                                        HttpServletResponse response) {
 
         PayloadEnvelope<AnalysisDTO> returnVal = new PayloadEnvelope<>();
 
@@ -370,7 +379,6 @@ public class GOBIIControllerV1 {
         return (returnVal);
 
     }
-
 
 
     // *********************************************
@@ -610,7 +618,7 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** CV METHODS
     // *********************************************
-    @RequestMapping(value ="/cvs", method = RequestMethod.POST)
+    @RequestMapping(value = "/cvs", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<CvDTO> createCv(@RequestBody PayloadEnvelope<CvDTO> payloadEnvelope,
                                            HttpServletRequest request,
@@ -651,9 +659,9 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<CvDTO> replaceCv(@RequestBody PayloadEnvelope<CvDTO> payloadEnvelope,
-                                                @PathVariable Integer cvId,
-                                                HttpServletRequest request,
-                                                HttpServletResponse response) {
+                                            @PathVariable Integer cvId,
+                                            HttpServletRequest request,
+                                            HttpServletResponse response) {
 
         PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
 
@@ -689,7 +697,7 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/cvs", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<CvDTO> getCvs(HttpServletRequest request,
-                                                 HttpServletResponse response) {
+                                         HttpServletResponse response) {
 
         PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
 
@@ -722,8 +730,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<CvDTO> getCvById(@PathVariable Integer cvId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+                                            HttpServletRequest request,
+                                            HttpServletResponse response) {
 
         PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
 
@@ -943,11 +951,11 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** DISPLAY METHODS
     // *********************************************
-    @RequestMapping(value ="/displays", method = RequestMethod.POST)
+    @RequestMapping(value = "/displays", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<DisplayDTO> createDisplay(@RequestBody PayloadEnvelope<DisplayDTO> payloadEnvelope,
-                                                HttpServletRequest request,
-                                                HttpServletResponse response) {
+                                                     HttpServletRequest request,
+                                                     HttpServletResponse response) {
 
         PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
 
@@ -984,9 +992,9 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/displays/{displayId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<DisplayDTO> replaceDisplay(@RequestBody PayloadEnvelope<DisplayDTO> payloadEnvelope,
-                                            @PathVariable Integer displayId,
-                                            HttpServletRequest request,
-                                            HttpServletResponse response) {
+                                                      @PathVariable Integer displayId,
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response) {
 
         PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1022,7 +1030,7 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/displays", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<DisplayDTO> getDisplays(HttpServletRequest request,
-                                         HttpServletResponse response) {
+                                                   HttpServletResponse response) {
 
         PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1055,8 +1063,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/displays/{displayId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<DisplayDTO> getDisplayById(@PathVariable Integer displayId,
-                                            HttpServletRequest request,
-                                            HttpServletResponse response) {
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response) {
 
         PayloadEnvelope<DisplayDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1253,8 +1261,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/manifests", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<ManifestDTO> createManifest(@RequestBody PayloadEnvelope<ManifestDTO> payloadEnvelope,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
 
         PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1290,9 +1298,9 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/manifests/{manifestId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<ManifestDTO> replaceManifest(@RequestBody PayloadEnvelope<ManifestDTO> payloadEnvelope,
-                                                          @PathVariable Integer manifestId,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
+                                                        @PathVariable Integer manifestId,
+                                                        HttpServletRequest request,
+                                                        HttpServletResponse response) {
 
         PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1324,6 +1332,7 @@ public class GOBIIControllerV1 {
 
         return (returnVal);
     }
+
     // *********************************************
     // *************************** QC INSTRUCTION METHODS
     // *********************************************
@@ -1347,7 +1356,7 @@ public class GOBIIControllerV1 {
                     QCInstructionsDTO.class);
 
             payloadWriter.writeSingleItemForId(returnVal,
-                    UriFactory.resourceByUriIdParam(request.getContextPath(),ServiceRequestId.URL_FILE_QC_INSTRUCTIONS),
+                    UriFactory.resourceByUriIdParam(request.getContextPath(), ServiceRequestId.URL_FILE_QC_INSTRUCTIONS),
                     qcInstructionsDTONew,
                     qcInstructionsDTONew.getGobiiQCComplete().getDataFileName());
 
@@ -1370,8 +1379,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/instructions/qualitycontrol/{dataFileName}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<QCInstructionsDTO> getQCInstruction(@PathVariable("dataFileName") String dataFileName,
-                                                                           HttpServletRequest request,
-                                                                           HttpServletResponse response) {
+                                                               HttpServletRequest request,
+                                                               HttpServletResponse response) {
 
         PayloadEnvelope<QCInstructionsDTO> returnVal = new PayloadEnvelope<>();
         try {
@@ -1383,7 +1392,7 @@ public class GOBIIControllerV1 {
                     QCInstructionsDTO.class);
 
             payloadWriter.writeSingleItemForId(returnVal,
-                    UriFactory.resourceByUriIdParam(request.getContextPath(),ServiceRequestId.URL_FILE_QC_INSTRUCTIONS),
+                    UriFactory.resourceByUriIdParam(request.getContextPath(), ServiceRequestId.URL_FILE_QC_INSTRUCTIONS),
                     qcInstructionsDTONew,
                     qcInstructionsDTONew.getGobiiQCComplete().getDataFileName());
 
@@ -1404,7 +1413,7 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/manifests", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ManifestDTO> getManifests(HttpServletRequest request,
-                                                       HttpServletResponse response) {
+                                                     HttpServletResponse response) {
 
         PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
 
@@ -1437,8 +1446,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/manifests/{manifestId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ManifestDTO> getManifestById(@PathVariable Integer manifestId,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
+                                                        HttpServletRequest request,
+                                                        HttpServletResponse response) {
 
         PayloadEnvelope<ManifestDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2610,9 +2619,9 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/protocols/{protocolId:[\\d]+}/vendors", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<OrganizationDTO> updateOrReplaceVendorProtocol(@RequestBody PayloadEnvelope<OrganizationDTO> payloadEnvelope,
-                                                                @PathVariable Integer protocolId,
-                                                                HttpServletRequest request,
-                                                                HttpServletResponse response) {
+                                                                          @PathVariable Integer protocolId,
+                                                                          HttpServletRequest request,
+                                                                          HttpServletResponse response) {
 
         PayloadEnvelope<OrganizationDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2924,8 +2933,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/markergroups", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<MarkerGroupDTO> createMarkerGroup(@RequestBody PayloadEnvelope<MarkerGroupDTO> payloadEnvelope,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response) {
+                                                             HttpServletRequest request,
+                                                             HttpServletResponse response) {
 
         PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2961,9 +2970,9 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/markergroups/{markerGroupId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<MarkerGroupDTO> replaceMarkerGroup(@RequestBody PayloadEnvelope<MarkerGroupDTO> payloadEnvelope,
-                                                    @PathVariable Integer markerGroupId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+                                                              @PathVariable Integer markerGroupId,
+                                                              HttpServletRequest request,
+                                                              HttpServletResponse response) {
 
         PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -2999,7 +3008,7 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/markergroups", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MarkerGroupDTO> getMarkerGroups(HttpServletRequest request,
-                                                 HttpServletResponse response) {
+                                                           HttpServletResponse response) {
 
         PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3032,8 +3041,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/markergroups/{markerGroupId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<MarkerGroupDTO> getMarkerGroupById(@PathVariable Integer markerGroupId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+                                                              HttpServletRequest request,
+                                                              HttpServletResponse response) {
 
         PayloadEnvelope<MarkerGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3071,8 +3080,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/references", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<ReferenceDTO> createReference(@RequestBody PayloadEnvelope<ReferenceDTO> payloadEnvelope,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response) {
+                                                         HttpServletRequest request,
+                                                         HttpServletResponse response) {
 
         PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3108,9 +3117,9 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/references/{referenceId:[\\d]+}", method = RequestMethod.PUT)
     @ResponseBody
     public PayloadEnvelope<ReferenceDTO> replaceReference(@RequestBody PayloadEnvelope<ReferenceDTO> payloadEnvelope,
-                                                    @PathVariable Integer referenceId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+                                                          @PathVariable Integer referenceId,
+                                                          HttpServletRequest request,
+                                                          HttpServletResponse response) {
 
         PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3146,7 +3155,7 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/references", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ReferenceDTO> getReferences(HttpServletRequest request,
-                                                 HttpServletResponse response) {
+                                                       HttpServletResponse response) {
 
         PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
 
@@ -3179,8 +3188,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/references/{referenceId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ReferenceDTO> getReferenceById(@PathVariable Integer referenceId,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) {
+                                                          HttpServletRequest request,
+                                                          HttpServletResponse response) {
 
         PayloadEnvelope<ReferenceDTO> returnVal = new PayloadEnvelope<>();
 

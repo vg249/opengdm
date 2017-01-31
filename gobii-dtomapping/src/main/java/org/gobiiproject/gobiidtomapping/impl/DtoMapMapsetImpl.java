@@ -8,7 +8,7 @@ import org.gobiiproject.gobiidtomapping.DtoMapMapset;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.core.EntityProperties;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
-import org.gobiiproject.gobiimodel.dto.container.EntityPropertyDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.EntityPropertyDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

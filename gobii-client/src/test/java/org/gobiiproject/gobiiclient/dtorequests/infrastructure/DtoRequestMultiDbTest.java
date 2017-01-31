@@ -10,13 +10,12 @@ import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiiclient.dtorequests.DtoRequestPing;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.*;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
-import org.gobiiproject.gobiimodel.dto.container.PingDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.PingDTO;
 
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
@@ -77,11 +76,21 @@ public class DtoRequestMultiDbTest {
             String currentCropType = currentServerConfig.getGobiiCropType();
             Assert.assertTrue(Authenticator.authenticate(currentCropType));
 
-            DtoRequestPing currentDtoRequestPing = new DtoRequestPing();
-            PingDTO currentPingDTOResponse = currentDtoRequestPing.process(pingDTORequest);
-            Assert.assertFalse("Ping failed for crop " + currentCropType.toString(),
-                    TestUtils.checkAndPrintHeaderMessages(currentPingDTOResponse)
-            );
+
+            //DtoRequestPing dtoRequestPing = new DtoRequestPing();
+            GobiiEnvelopeRestResource<PingDTO> gobiiEnvelopeRestResourcePingDTO = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceColl(ServiceRequestId.URL_PING));
+
+            PayloadEnvelope<PingDTO> resultEnvelopePing = gobiiEnvelopeRestResourcePingDTO.post(PingDTO.class,
+                    new PayloadEnvelope<>(pingDTORequest, GobiiProcessType.CREATE));
+            //PayloadEnvelope<ContactDTO> resultEnvelopeNewContact = dtoRequestContact.process(new PayloadEnvelope<>(newContactDto, GobiiProcessType.CREATE));
+
+            Assert.assertNotNull(resultEnvelopePing);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopePing.getHeader()));
+            Assert.assertTrue(resultEnvelopePing.getPayload().getData().size() > 0);
+            PingDTO currentPingDTOResponse = resultEnvelopePing.getPayload().getData().get(0);
+
 
             Assert.assertNotNull("The ping response does not contain the db url for crop "
                     + currentPingDTOResponse.getDbMetaData());
