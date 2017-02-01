@@ -121,6 +121,9 @@ public class GOBIIControllerV1 {
     private CvService cvService = null;
 
     @Autowired
+    private CvGroupService cvGroupService = null;
+
+    @Autowired
     private MarkerService markerService = null;
 
     @Autowired
@@ -761,6 +764,74 @@ public class GOBIIControllerV1 {
         return (returnVal);
 
     }
+
+//    @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.DELETE)
+//    @ResponseBody
+//    public PayloadEnvelope<CvDTO> deleteCv(@PathVariable Integer cvId,
+//                                           HttpServletRequest request,
+//                                           HttpServletResponse response) {
+//
+//        PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
+//
+//        try {
+//
+//
+//        } catch (GobiiException e) {
+//
+//        } catch (Exception e) {
+//
+//
+//        }
+//
+//
+//
+//    }
+
+
+
+    // *********************************************
+    // *************************** CVGROUP METHODS
+    // *********************************************
+    @RequestMapping(value = "/cvgroups/{cvGroupId}/cvs", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<CvDTO> getCvsForCvGroup(@PathVariable Integer cvGroupId,
+                                                   HttpServletRequest request,
+                                                   HttpServletResponse response) {
+
+        PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            List<CvDTO> cvDTOS = cvGroupService.getCvsForGroup(cvGroupId);
+
+            PayloadWriter<CvDTO> payloadWriter = new PayloadWriter<>(request,
+                    CvDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceColl(request.getContextPath(),
+                            ServiceRequestId.URL_CV)
+                            .addUriParam("id"),
+                    cvDTOS);
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+
 
     // *********************************************
     // *************************** DATASET METHODS

@@ -18,8 +18,6 @@ public class CvDTO extends DTOBase {
 
 	public CvDTO() {}
 
-	boolean includeDetailsList = false;
-
 	private Integer cv_id;
 	private Integer groupId;
 	private Integer xrefId;
@@ -28,14 +26,6 @@ public class CvDTO extends DTOBase {
 	private String abbreviation;
 	private String definition;
 	private Integer rank;
-
-	public boolean isIncludeDetailsList() {
-		return includeDetailsList;
-	}
-
-	public void setIncludeDetailsList(boolean includeDetailsList) {
-		this.includeDetailsList = includeDetailsList;
-	}
 
 	@Override
     public Integer getId() {

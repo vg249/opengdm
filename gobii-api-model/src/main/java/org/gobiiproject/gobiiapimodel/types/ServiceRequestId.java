@@ -16,6 +16,7 @@ public enum ServiceRequestId {
     URL_FILE_EXTRACTOR_STATUS("instructions/extractor/status"),
     URL_DISPLAY("displays"),
     URL_CV("cvs"),
+    URL_CVGROUP("cvgroups"),
     URL_CONTACTS("contacts"),
     URL_CONTACT_SEARCH("contact-search"),
     URL_ORGANIZATION_SEARCH("organization-search"),
