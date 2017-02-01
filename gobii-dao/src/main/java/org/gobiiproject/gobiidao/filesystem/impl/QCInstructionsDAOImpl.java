@@ -6,6 +6,7 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.QCInstructionsDAO;
 import org.gobiiproject.gobiimodel.dto.instructions.GobiiQCComplete;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,7 +21,7 @@ public class QCInstructionsDAOImpl implements QCInstructionsDAO {
 
     @Override
     public boolean writeInstructions(String instructionFileFqpn,
-                                     GobiiQCComplete qcInstructions) throws GobiiDaoException {
+                                     QCInstructionsDTO qcInstructions) throws GobiiDaoException {
 
         boolean returnVal = false;
 
@@ -120,9 +121,9 @@ public class QCInstructionsDAOImpl implements QCInstructionsDAO {
     }
 
     @Override
-    public GobiiQCComplete getInstructions(String instructionFileFqpn) {
+    public QCInstructionsDTO getInstructions(String instructionFileFqpn) {
 
-        GobiiQCComplete returnVal = null;
+        QCInstructionsDTO returnVal = null;
 
         try {
 
@@ -132,7 +133,7 @@ public class QCInstructionsDAOImpl implements QCInstructionsDAO {
 
             org.codehaus.jackson.map.ObjectMapper objectMapper = new org.codehaus.jackson.map.ObjectMapper();
 
-            returnVal = objectMapper.readValue(fileInputStream, GobiiQCComplete.class);
+            returnVal = objectMapper.readValue(fileInputStream, QCInstructionsDTO.class);
 
         } catch (Exception e) {
             String message = e.getMessage() + "; fqpn: " + instructionFileFqpn;
