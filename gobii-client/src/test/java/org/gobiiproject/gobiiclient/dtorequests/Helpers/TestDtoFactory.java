@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.*;
-import org.gobiiproject.gobiimodel.dto.container.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
@@ -46,7 +45,7 @@ public class TestDtoFactory {
                                                        Integer uniqueStem,
                                                        EntityParamValues entityParamValues) {
 
-        AnalysisDTO returnVal = new AnalysisDTO(gobiiProcessType);
+        AnalysisDTO returnVal = new AnalysisDTO();
 
         returnVal.setAnalysisName(uniqueStem + ": analysis");
         returnVal.setTimeExecuted(new Date());
@@ -111,7 +110,7 @@ public class TestDtoFactory {
     public static CvDTO makePopulatedCvDTO(GobiiProcessType gobiiProcessType,
                                            Integer uniqueStem) {
 
-        CvDTO returnVal = new CvDTO(gobiiProcessType);
+        CvDTO returnVal = new CvDTO();
         returnVal.setGroupId(1);
         returnVal.setTerm(UUID.randomUUID().toString());
         returnVal.setDefinition(uniqueStem + "dummy definition");
@@ -125,7 +124,7 @@ public class TestDtoFactory {
     public static DisplayDTO makePopulatedDisplayDTO(GobiiProcessType gobiiProcessType,
                                                      Integer uniqueStem) {
 
-        DisplayDTO returnVal = new DisplayDTO(gobiiProcessType);
+        DisplayDTO returnVal = new DisplayDTO();
         returnVal.setColumnName(uniqueStem + "dummy column");
         returnVal.setCreatedBy(1);
         returnVal.setDisplayName(uniqueStem + "dummyDisplay");
@@ -190,7 +189,7 @@ public class TestDtoFactory {
                                                    Integer uniqueStem,
                                                    EntityParamValues entityParamValues) {
 
-        MapsetDTO returnVal = new MapsetDTO(gobiiProcessType);
+        MapsetDTO returnVal = new MapsetDTO();
 
         String uniqueStemString = uniqueStem.toString();
         // set the plain properties
@@ -214,7 +213,7 @@ public class TestDtoFactory {
     public static ReferenceDTO makePopulatedReferenceDTO(GobiiProcessType gobiiProcessType,
                                                          Integer uniqueStem) {
 
-        ReferenceDTO returnVal = new ReferenceDTO(gobiiProcessType);
+        ReferenceDTO returnVal = new ReferenceDTO();
 
         String uniqueStemString = uniqueStem.toString();
         returnVal.setName(uniqueStem + ": reference");
@@ -273,7 +272,7 @@ public class TestDtoFactory {
     public static ManifestDTO makePopulatedManifestDTO(GobiiProcessType gobiiProcessType,
                                                        Integer uniqueStem) {
 
-        ManifestDTO returnVal = new ManifestDTO(gobiiProcessType);
+        ManifestDTO returnVal = new ManifestDTO();
 
         String uniqueStemString = uniqueStem.toString();
         returnVal.setName(uniqueStem + ": reference");
@@ -338,7 +337,7 @@ public class TestDtoFactory {
                                                              Integer uniqueStem,
                                                              List<MarkerGroupMarkerDTO> markerGroupMarkers) {
 
-        MarkerGroupDTO returnVal = new MarkerGroupDTO(gobiiProcessType);
+        MarkerGroupDTO returnVal = new MarkerGroupDTO();
 
         returnVal.setMarkers(markerGroupMarkers);
         returnVal.setStatusId(1);
