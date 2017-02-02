@@ -94,26 +94,23 @@ public class CvServiceImpl implements CvService {
 	}
 
 	@Override
-	public CvDTO deleteCv(Integer cvId, CvDTO cvDTO) throws GobiiDomainException {
+	public CvDTO deleteCv(Integer cvId) throws GobiiDomainException {
 
 		CvDTO returnVal;
 
 		try {
 
-			if(null == cvDTO.getCvId() ||
-					cvDTO.getCvId().equals(cvId)) {
 
 				CvDTO existingCvDTO = dtoMapCv.getCvDetails(cvId);
 
-				if(null == existingCvDTO.getCvId() && existingCvDTO.getCvId().equals(cvId)) {
-
+				if(null != existingCvDTO.getCvId() && existingCvDTO.getCvId().equals(cvId)) {
                     returnVal = dtoMapCv.deleteCv(existingCvDTO);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
                     returnVal.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
 
 				} else {
-
+					returnVal = null;
 					throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
 							GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
 							"The specified cvId ("
@@ -122,17 +119,6 @@ public class CvServiceImpl implements CvService {
 
 				}
 
-			} else {
-
-				throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
-						GobiiValidationStatusType.BAD_REQUEST,
-						"The cvId specified in the dto ("
-								+ cvDTO.getCvId()
-								+ ") does not match the cvId passed as a parameter "
-								+ "("
-								+ cvId
-								+ ")");
-			}
 
 
 		} catch (Exception e) {

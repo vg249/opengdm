@@ -133,8 +133,7 @@ public class GobiiEnvelopeRestResource<T> {
 
     }
 
-    public PayloadEnvelope<T> delete(Class<T> dtoType,
-                                     PayloadEnvelope<T> requestPayload) throws Exception {
+    public PayloadEnvelope<T> delete(Class<T> dtoType) throws Exception {
 
         PayloadEnvelope<T> returnVal;
 

@@ -215,13 +215,9 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
         CvDTO cvDTOReceived = resultEnvelopeForGetById.getPayload().getData().get(0);
 
-        String newName = UUID.randomUUID().toString();
-        cvDTOReceived.setTerm(newName);
-
         restResourceForGetById.setParamValue("id", cvDTOReceived.getCvId().toString());
 
-        PayloadEnvelope<CvDTO> cvDTOResponseEnvelopeDelete = restResourceForGetById.delete(CvDTO.class,
-                new PayloadEnvelope<>(cvDTOReceived, GobiiProcessType.DELETE));
+        PayloadEnvelope<CvDTO> cvDTOResponseEnvelopeDelete = restResourceForGetById.delete(CvDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResponseEnvelopeDelete.getHeader()));
 
@@ -231,7 +227,7 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
         RestUri restUriCvForGetByIdDeleted = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CV);
-        restUriCvForGetById.setParamValue("id", newCvId.toString());
+        restUriCvForGetByIdDeleted.setParamValue("id", newCvId.toString());
         GobiiEnvelopeRestResource<CvDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriCvForGetByIdDeleted);
         PayloadEnvelope<CvDTO> resultEnvelopeForGetByIdDeleted = gobiiEnvelopeRestResourceForGetById
                 .get(CvDTO.class);

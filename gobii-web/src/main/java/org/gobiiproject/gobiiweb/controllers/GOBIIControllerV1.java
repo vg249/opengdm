@@ -767,8 +767,7 @@ public class GOBIIControllerV1 {
 
     @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.DELETE)
     @ResponseBody
-    public PayloadEnvelope<CvDTO> deleteCv(@RequestBody PayloadEnvelope<CvDTO> payloadEnvelope,
-                                           @PathVariable Integer cvId,
+    public PayloadEnvelope<CvDTO> deleteCv(@PathVariable Integer cvId,
                                            HttpServletRequest request,
                                            HttpServletResponse response) {
 
@@ -777,9 +776,8 @@ public class GOBIIControllerV1 {
         try {
 
             PayloadReader<CvDTO> payloadReader = new PayloadReader<>(CvDTO.class);
-            CvDTO cvDTOToDelete = payloadReader.extractSingleItem(payloadEnvelope);
 
-            CvDTO cvDTODeleted = cvService.deleteCv(cvId, cvDTOToDelete);
+            CvDTO cvDTODeleted = cvService.deleteCv(cvId);
 
             PayloadWriter<CvDTO> payloadWriter = new PayloadWriter<>(request,
                     CvDTO.class);
