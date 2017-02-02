@@ -765,27 +765,48 @@ public class GOBIIControllerV1 {
 
     }
 
-//    @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.DELETE)
-//    @ResponseBody
-//    public PayloadEnvelope<CvDTO> deleteCv(@PathVariable Integer cvId,
-//                                           HttpServletRequest request,
-//                                           HttpServletResponse response) {
-//
-//        PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
-//
-//        try {
-//
-//
-//        } catch (GobiiException e) {
-//
-//        } catch (Exception e) {
-//
-//
-//        }
-//
-//
-//
-//    }
+    @RequestMapping(value = "/cvs/{cvId:[\\d]+}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public PayloadEnvelope<CvDTO> deleteCv(@RequestBody PayloadEnvelope<CvDTO> payloadEnvelope,
+                                           @PathVariable Integer cvId,
+                                           HttpServletRequest request,
+                                           HttpServletResponse response) {
+
+        PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            PayloadReader<CvDTO> payloadReader = new PayloadReader<>(CvDTO.class);
+            CvDTO cvDTOToDelete = payloadReader.extractSingleItem(payloadEnvelope);
+
+            CvDTO cvDTODeleted = cvService.deleteCv(cvId, cvDTOToDelete);
+
+            PayloadWriter<CvDTO> payloadWriter = new PayloadWriter<>(request,
+                    CvDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_CV),
+                    cvDTODeleted);
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
 
 

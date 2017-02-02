@@ -34,6 +34,7 @@ public class CvServiceImpl implements CvService {
 			// When we have roles and permissions, this will be set programmatically
 			returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
 			returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            returnVal.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
 		} catch (Exception e) {
 
 			LOGGER.error("Gobii service error", e);
@@ -59,6 +60,7 @@ public class CvServiceImpl implements CvService {
 					returnVal = dtoMapCv.replaceCv(cvId, cvDTO);
 					returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
 					returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
 
 				} else {
 
@@ -92,6 +94,59 @@ public class CvServiceImpl implements CvService {
 	}
 
 	@Override
+	public CvDTO deleteCv(Integer cvId, CvDTO cvDTO) throws GobiiDomainException {
+
+		CvDTO returnVal;
+
+		try {
+
+			if(null == cvDTO.getCvId() ||
+					cvDTO.getCvId().equals(cvId)) {
+
+				CvDTO existingCvDTO = dtoMapCv.getCvDetails(cvId);
+
+				if(null == existingCvDTO.getCvId() && existingCvDTO.getCvId().equals(cvId)) {
+
+                    returnVal = dtoMapCv.deleteCv(existingCvDTO);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
+
+				} else {
+
+					throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
+							GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
+							"The specified cvId ("
+									+ cvId
+									+ ") does not match an existing cv.");
+
+				}
+
+			} else {
+
+				throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
+						GobiiValidationStatusType.BAD_REQUEST,
+						"The cvId specified in the dto ("
+								+ cvDTO.getCvId()
+								+ ") does not match the cvId passed as a parameter "
+								+ "("
+								+ cvId
+								+ ")");
+			}
+
+
+		} catch (Exception e) {
+
+			LOGGER.error("Gobii service error", e);
+			throw new GobiiDomainException(e);
+
+		}
+
+		return returnVal;
+
+	}
+
+	@Override
 	public List<CvDTO> getCvs() throws GobiiDomainException {
 
 		List<CvDTO> returnVal;
@@ -100,6 +155,7 @@ public class CvServiceImpl implements CvService {
 		for(CvDTO currentCvDTO : returnVal) {
 			currentCvDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
 			currentCvDTO.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+            currentCvDTO.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
 		}
 
 		if(null == returnVal) {
@@ -117,6 +173,7 @@ public class CvServiceImpl implements CvService {
         returnVal = dtoMapCv.getCvDetails(cvId);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
         returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+        returnVal.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
 
         if (null == returnVal) {
             throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,

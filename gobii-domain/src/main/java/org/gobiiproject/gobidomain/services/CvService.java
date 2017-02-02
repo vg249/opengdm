@@ -17,6 +17,7 @@ import java.util.List;
 public interface CvService {
     CvDTO createCv(CvDTO cvDTO) throws GobiiDomainException;
     CvDTO replaceCv(Integer cvId, CvDTO cvDTO) throws GobiiDomainException;
+    CvDTO deleteCv(Integer cvId, CvDTO cvDTO) throws GobiiDomainException;
     CvDTO getCvById(Integer cvId) throws GobiiDomainException;
     List<CvDTO> getCvs() throws GobiiDomainException;
 }

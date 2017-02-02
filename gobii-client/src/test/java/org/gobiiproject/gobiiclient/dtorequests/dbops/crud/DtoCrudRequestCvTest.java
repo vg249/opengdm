@@ -182,6 +182,63 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
     }
 
     @Test
+    public void delete() throws Exception {
+
+        // create a new cv for our test
+        CvDTO newCvDto = TestDtoFactory
+                .makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
+
+        PayloadEnvelope<CvDTO> payloadEnvelope = new PayloadEnvelope<>(newCvDto, GobiiProcessType.CREATE);
+
+        GobiiEnvelopeRestResource<CvDTO> restResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_CV));
+
+        PayloadEnvelope<CvDTO> protocolDTOResponseEnvelope = restResource.post(CvDTO.class,
+                payloadEnvelope);
+
+        CvDTO newCvDTOResponse = protocolDTOResponseEnvelope.getPayload().getData().get(0);
+
+        // re-retrieve the cv we just created so we start with a fresh READ mode too
+
+        RestUri restUriCvForGetById = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_CV);
+
+        restUriCvForGetById.setParamValue("id", newCvDTOResponse.getCvId().toString());
+        GobiiEnvelopeRestResource<CvDTO> restResourceForGetById = new GobiiEnvelopeRestResource<>(restUriCvForGetById);
+        PayloadEnvelope<CvDTO> resultEnvelopeForGetById = restResourceForGetById
+                .get(CvDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
+        CvDTO cvDTOReceived = resultEnvelopeForGetById.getPayload().getData().get(0);
+
+        String newName = UUID.randomUUID().toString();
+        cvDTOReceived.setTerm(newName);
+
+        restResourceForGetById.setParamValue("id", cvDTOReceived.getCvId().toString());
+
+        PayloadEnvelope<CvDTO> cvDTOResponseEnvelopeDelete = restResourceForGetById.put(CvDTO.class,
+                new PayloadEnvelope<>(cvDTOReceived, GobiiProcessType.DELETE));
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResponseEnvelopeDelete.getHeader()));
+
+        CvDTO cvDTORequest = cvDTOResponseEnvelopeDelete.getPayload().getData().get(0);
+
+
+        restUriCvForGetById.setParamValue("id", cvDTORequest.getCvId().toString());
+        resultEnvelopeForGetById = restResourceForGetById
+                .get(CvDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
+
+        CvDTO dtoRequestCvReRetrieved = resultEnvelopeForGetById.getPayload().getData().get(0);
+
+
+
+    }
+
+    @Test
     @Override
     public void getList() throws Exception {
 
