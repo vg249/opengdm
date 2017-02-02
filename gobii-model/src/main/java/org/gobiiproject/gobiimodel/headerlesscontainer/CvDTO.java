@@ -129,13 +129,4 @@ public class CvDTO extends DTOBase {
 		this.entityStatus = entityStatus;
 	}
 
-	Map<String,List<CvItem>> groupCvItems = new HashMap<>();
-
-	public Map<String, List<CvItem>> getGroupCvItems() {
-		return groupCvItems;
-	}
-
-	public void setGroupCvItems(Map<String, List<CvItem>> groupCvItems) {
-		this.groupCvItems = groupCvItems;
-	}
 }
