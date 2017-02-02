@@ -139,7 +139,8 @@ public class GobiiExtractor {
 				//TODO: Fix underlying permissions issues
 				//tryExec("chmod -R 777 " +extractDir.substring(0, extractDir.lastIndexOf('/')));
 				String markerFile=extractDir+"marker.file";
-				String extendedMarkerFile=extractDir+"marker.file.ext";
+				String extendedMarkerFile=markerFile+".ext";
+				String mapsetFile=extractDir+"mapset.file";
 				String markerPosFile=markerFile+".pos";
 				String sampleFile=extractDir+"sample.file";
 				String projectFile=extractDir+"project.file";
@@ -153,7 +154,7 @@ public class GobiiExtractor {
 				String gobiiMDE = "python "+ mdePath+
 						" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
 						" -m " + markerFile +
-						" -b " + extendedMarkerFile +
+						" -b " + mapsetFile +
 						" -s " + sampleFile +
 						" -p " + projectFile +
 						(mapId==null?"":(" -D "+mapId))+
@@ -220,6 +221,7 @@ public class GobiiExtractor {
 				}
 				rmIfExist(markerPosFile);
 				rmIfExist(extendedMarkerFile);
+				rmIfExist(mapsetFile);
 				ErrorLogger.logDebug("Extractor","DataSet "+dataSetId+" Created");
 			}
 			HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
