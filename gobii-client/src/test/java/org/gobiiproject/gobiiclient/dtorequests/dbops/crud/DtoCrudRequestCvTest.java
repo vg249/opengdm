@@ -233,8 +233,8 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
                 .get(CvDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByIdDeleted.getHeader()));
-        Assert.assertNull(resultEnvelopeForGetByIdDeleted.getPayload().getData());
-//        Assert.assertNotNull(cvDTO.getTerm());
+        Integer responseSize = resultEnvelopeForGetByIdDeleted.getPayload().getData().size();
+        Assert.assertTrue(responseSize <= 0);
 
 
     }
