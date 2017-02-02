@@ -121,6 +121,14 @@ public class DtoMapCvImpl implements DtoMapCv {
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             rsCvDao.deleteCv(parameters);
 
+            returnVal.setCvId(-1);
+            returnVal.setGroupId(null);
+            returnVal.setXrefId(null);
+            returnVal.setTerm(null);
+            returnVal.setAbbreviation(null);
+            returnVal.setDefinition(null);
+            returnVal.setRank(null);
+
         } catch (Exception e) {
             LOGGER.error("Gobii Maping Error", e);
             throw new GobiiDtoMappingException(e);

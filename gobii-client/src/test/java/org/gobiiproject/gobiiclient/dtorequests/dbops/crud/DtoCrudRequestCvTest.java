@@ -199,6 +199,8 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
 
         CvDTO newCvDTOResponse = protocolDTOResponseEnvelope.getPayload().getData().get(0);
 
+        Integer newCvId = newCvDTOResponse.getCvId();
+
         // re-retrieve the cv we just created so we start with a fresh READ mode too
 
         RestUri restUriCvForGetById = ClientContext.getInstance(null, false)
@@ -218,22 +220,25 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
 
         restResourceForGetById.setParamValue("id", cvDTOReceived.getCvId().toString());
 
-        PayloadEnvelope<CvDTO> cvDTOResponseEnvelopeDelete = restResourceForGetById.put(CvDTO.class,
+        PayloadEnvelope<CvDTO> cvDTOResponseEnvelopeDelete = restResourceForGetById.delete(CvDTO.class,
                 new PayloadEnvelope<>(cvDTOReceived, GobiiProcessType.DELETE));
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResponseEnvelopeDelete.getHeader()));
 
-        CvDTO cvDTORequest = cvDTOResponseEnvelopeDelete.getPayload().getData().get(0);
 
+        // check if cv has been deleted
 
-        restUriCvForGetById.setParamValue("id", cvDTORequest.getCvId().toString());
-        resultEnvelopeForGetById = restResourceForGetById
+        RestUri restUriCvForGetByIdDeleted = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_CV);
+        restUriCvForGetById.setParamValue("id", newCvId.toString());
+        GobiiEnvelopeRestResource<CvDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriCvForGetByIdDeleted);
+        PayloadEnvelope<CvDTO> resultEnvelopeForGetByIdDeleted = gobiiEnvelopeRestResourceForGetById
                 .get(CvDTO.class);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
-
-        CvDTO dtoRequestCvReRetrieved = resultEnvelopeForGetById.getPayload().getData().get(0);
-
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByIdDeleted.getHeader()));
+        Assert.assertNull(resultEnvelopeForGetByIdDeleted.getPayload().getData());
+//        Assert.assertNotNull(cvDTO.getTerm());
 
 
     }
