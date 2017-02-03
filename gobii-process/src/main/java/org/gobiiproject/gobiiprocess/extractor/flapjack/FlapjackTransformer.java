@@ -29,7 +29,7 @@ public class FlapjackTransformer {
 			HelperFunctions.tryExec("tail -n +2 "+chrLengthFile, tempDir+"map.chrLengths",
 					errorFile);
 		}
-		HelperFunctions.tryExec("cut -f1,23,26 "+markerFile,tempDir+"tmp",errorFile);//Marker Name, Linkage Group Name, Marker Linkage Group Start
+		HelperFunctions.tryExec("cut -f1,28,31 "+markerFile,tempDir+"tmp",errorFile);//Marker Name, Linkage Group Name, Marker Linkage Group Start
 		HelperFunctions.tryExec("tail -n +2 "+tempDir+"tmp",tempDir+"map.body",errorFile);
 		rm(tempDir+"tmp");
 		
