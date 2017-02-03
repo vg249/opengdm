@@ -1448,7 +1448,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForId(returnVal,
                     UriFactory.resourceByUriIdParam(request.getContextPath(), ServiceRequestId.URL_FILE_QC_INSTRUCTIONS),
                     qcInstructionsDTONew,
-                    qcInstructionsDTONew.getGobiiQCComplete().getDataFileName());
+                    qcInstructionsDTONew.getDataFileName());
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -1484,7 +1484,7 @@ public class GOBIIControllerV1 {
             payloadWriter.writeSingleItemForId(returnVal,
                     UriFactory.resourceByUriIdParam(request.getContextPath(), ServiceRequestId.URL_FILE_QC_INSTRUCTIONS),
                     qcInstructionsDTONew,
-                    qcInstructionsDTONew.getGobiiQCComplete().getDataFileName());
+                    qcInstructionsDTONew.getDataFileName());
 
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);

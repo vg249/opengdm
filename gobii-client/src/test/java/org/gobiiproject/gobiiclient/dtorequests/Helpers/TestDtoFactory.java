@@ -366,11 +366,11 @@ public class TestDtoFactory {
                 GobiiEntityNameType.CONTACTS);
         Integer datasetId = (new GlobalPkColl<DtoCrudRequestDataSetTest>()).getAPkVal(DtoCrudRequestDataSetTest.class,
                 GobiiEntityNameType.DATASETS);
-                returnVal.getGobiiQCComplete().setContactId(contactId);
-        returnVal.getGobiiQCComplete().setDatasetId(datasetId);
-        returnVal.getGobiiQCComplete().setDataFileDirectory("E:/Gobii/dummyPath");
-        returnVal.getGobiiQCComplete().setDataFileName(getFolderNameWithTimestamp("qcDataFile"));
-        returnVal.getGobiiQCComplete().setQualityFileName("qualityFileName");
+                returnVal.setContactId(contactId);
+        returnVal.setDatasetId(datasetId);
+        returnVal.setDataFileDirectory("E:/Gobii/dummyPath");
+        returnVal.setDataFileName(getFolderNameWithTimestamp("qcDataFile"));
+        returnVal.setQualityFileName("qualityFileName");
 
         return returnVal;
 
