@@ -23,6 +23,7 @@ import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -47,6 +48,7 @@ public class DtoRequestFileQCInstructionsTest {
     }
 
 
+    @Ignore
     @Test
     public void create() throws Exception {
 
