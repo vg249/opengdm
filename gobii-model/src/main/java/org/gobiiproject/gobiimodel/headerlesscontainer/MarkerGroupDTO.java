@@ -3,27 +3,20 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.*;
 
-public class MarkerGroupDTO extends Header {
+public class MarkerGroupDTO extends DTOBase {
 
 
     public MarkerGroupDTO() {
     }
-
-    public MarkerGroupDTO(GobiiProcessType gobiiProcessType) {
-        super(gobiiProcessType);
-    }
-
 
     private Integer markerGroupId;
     private String name;
@@ -36,6 +29,16 @@ public class MarkerGroupDTO extends Header {
     private Date modifiedDate;
     private Integer statusId;
 
+
+    @Override
+    public Integer getId() {
+        return this.markerGroupId;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.markerGroupId = id;
+    }
 
     @GobiiEntityParam(paramName = "markerGroupId")
     public Integer getMarkerGroupId() {

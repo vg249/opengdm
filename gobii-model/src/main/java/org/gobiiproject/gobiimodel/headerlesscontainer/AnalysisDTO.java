@@ -1,10 +1,8 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,14 +10,11 @@ import java.util.List;
 
 /**
  * Created by Phil on 4/21/2016.
+ * Modified by Yanii on 1/27/2017
  */
-public class AnalysisDTO extends Header {
+public class AnalysisDTO extends DTOBase {
 
     public AnalysisDTO() {
-    }
-
-    public AnalysisDTO(GobiiProcessType gobiiProcessType) {
-        super(gobiiProcessType);
     }
 
     private Integer analysisId;
@@ -41,6 +36,16 @@ public class AnalysisDTO extends Header {
     private Date modifiedDate;
 
     private List<EntityPropertyDTO> parameters = new ArrayList<>();
+
+    @Override
+    public Integer getId() {
+        return this.analysisId;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.analysisId = id;
+    }
 
     @GobiiEntityParam(paramName = "analysisId")
     public Integer getAnalysisId() {

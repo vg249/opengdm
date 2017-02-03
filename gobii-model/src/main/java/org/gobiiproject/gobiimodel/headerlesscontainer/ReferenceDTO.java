@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
@@ -10,14 +10,11 @@ import java.util.Date;
 
 /**
  * Created by Angel on 5/6/2016.
+ * Modified by Yanii on 1/26/2017
  */
-public class ReferenceDTO extends Header {
+public class ReferenceDTO extends DTOBase {
 
     public ReferenceDTO() {}
-
-    public ReferenceDTO(GobiiProcessType gobiiProcessType) {
-        super(gobiiProcessType);
-    }
 
     // we are waiting until we a have a view to retirn
     // properties for that property: we don't know how to represent them yet
@@ -31,6 +28,16 @@ public class ReferenceDTO extends Header {
     private Date createdDate;
     private Integer modifiedBy;
     private Date modifiedDate;
+
+    @Override
+    public Integer getId() {
+        return this.referenceId;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.referenceId = id;
+    }
 
     @GobiiEntityParam(paramName = "referenceId")
     public Integer getReferenceId() {return referenceId;}

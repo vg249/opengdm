@@ -1,9 +1,7 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,13 +11,9 @@ import java.util.List;
  * Created by Angel on 4/13/2016.
  * Modified by AVB on 9/30/2016.
  */
-public class MapsetDTO extends Header {
+public class MapsetDTO extends DTOBase {
 
 	public MapsetDTO() {
-	}
-
-	public MapsetDTO(GobiiProcessType gobiiProcessType) {
-		super(gobiiProcessType);
 	}
 
 	private Integer mapsetId;
@@ -34,6 +28,16 @@ public class MapsetDTO extends Header {
 	private Date modifiedDate;
 	private Integer statusId;
     private List<EntityPropertyDTO> properties = new ArrayList<>();
+
+    @Override
+	public Integer getId() {
+    	return this.mapsetId;
+	}
+
+	@Override
+	public void setId(Integer id) {
+    	this.mapsetId = id;
+	}
 
 	@GobiiEntityParam(paramName = "mapsetId")
 	public Integer getMapsetId() {

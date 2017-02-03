@@ -174,7 +174,7 @@ public final class ClientContext {
 
         // first authenticate
         // you can't use login() from here -- it assumes that ClientContext has already been constructed
-        String authPath = ServiceRequestId.URL_AUTH.getRequestUrl(context, ControllerType.EXTRACTOR);
+        String authPath = ServiceRequestId.URL_AUTH.getRequestUrl(context, ControllerType.GOBII);
         HttpCore httpCore = new HttpCore(host, port, null);
 
         SystemUsers systemUsers = new SystemUsers();
@@ -330,7 +330,7 @@ public final class ClientContext {
         try {
             String authUrl = ServiceRequestId.URL_AUTH
                     .getRequestUrl(this.getCurrentCropContextRoot(),
-                    ControllerType.EXTRACTOR);
+                    ControllerType.GOBII);
 
             HttpCore httpCore = new HttpCore(this.getCurrentCropDomain(),
                     this.getCurrentCropPort(),

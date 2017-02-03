@@ -124,7 +124,7 @@ public class GobiiExtractor {
 				//tryExec("chmod -R 777 " +extractDir.substring(0, extractDir.lastIndexOf('/')));
 				String markerFile=extractDir+"marker.file";
 				String sampleFile=extractDir+"sample.file";
-				String projectFile=extractDir+"project.file";
+				String projectFile=extractDir+"summary.file";
 				String chrLengthFile = new StringBuilder(extractDir).append("marker.file.chr").toString();
 				Path mdePath = FileSystems.getDefault().getPath(new StringBuilder(extractorScriptPath).append("postgres/gobii_mde/gobii_mde.py").toString());
 				if (!(mdePath.toFile().exists() &&

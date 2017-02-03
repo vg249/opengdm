@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
@@ -11,14 +11,11 @@ import java.util.Date;
 
 /**
  * Created by Angel on 5/6/2016.
+ * Modified by Yanii on 1/27/2017.
  */
-public class ManifestDTO extends Header {
+public class ManifestDTO extends DTOBase {
 
     public ManifestDTO() {}
-
-    public ManifestDTO(GobiiProcessType gobiiProcessType) {
-        super(gobiiProcessType);
-    }
 
     // we are waiting until we a have a view to retirn
     // properties for that property: we don't know how to represent them yet
@@ -30,6 +27,16 @@ public class ManifestDTO extends Header {
     private Date createdDate;
     private Integer modifiedBy;
     private Date modifiedDate;
+
+    @Override
+    public Integer getId() {
+        return this.manifestId;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.manifestId = id;
+    }
 
     @GobiiEntityParam(paramName = "manifestId")
     public Integer getManifestId() {return manifestId;}

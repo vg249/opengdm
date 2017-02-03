@@ -72,7 +72,7 @@ public class DtoRequestFileQCInstructionsTest {
                 .getInstance(null,false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS);
-        qcGetUri.setParamValue("id", qcInstructionsDTO.getGobiiQCComplete().getDataFileName());
+        qcGetUri.setParamValue("id", qcInstructionsDTO.getDataFileName());
 
         GobiiEnvelopeRestResource<QCInstructionsDTO> restResource = new GobiiEnvelopeRestResource<>(qcGetUri);
         PayloadEnvelope<QCInstructionsDTO> resultEnvelope = restResource.get(QCInstructionsDTO.class);
@@ -80,8 +80,8 @@ public class DtoRequestFileQCInstructionsTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertTrue("No qc DTO received", resultEnvelope.getPayload().getData().size() > 0);
         QCInstructionsDTO resultDTO = resultEnvelope.getPayload().getData().get(0);
-        Assert.assertNotNull(resultDTO.getGobiiQCComplete().getDataFileName());
-        Assert.assertTrue(resultDTO.getGobiiQCComplete().getDataFileName().equals(qcInstructionsDTO.getGobiiQCComplete().getDataFileName()));
+        Assert.assertNotNull(resultDTO.getDataFileName());
+        Assert.assertTrue(resultDTO.getDataFileName().equals(qcInstructionsDTO.getDataFileName()));
 
     }
 }
