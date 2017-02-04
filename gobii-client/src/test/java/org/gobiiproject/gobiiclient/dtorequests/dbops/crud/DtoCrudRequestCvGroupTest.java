@@ -36,11 +36,8 @@ public class DtoCrudRequestCvGroupTest implements DtoCrudRequestTest {
 
     @Test
     public void getCvByGroupId() throws Exception {
-//
-//        Integer cvGroupId = (new GlobalPkColl<DtoCrudRequestCvGroupTest>()
-//                .getAPkVal(DtoCrudRequestCvGroupTest.class, GobiiEntityNameType.CVGROUPS));
 
-        Integer cvGroupId = 1;
+        Integer cvGroupId = 9; //platform_type
 
         RestUri restUriCvGroup = ClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -62,6 +59,16 @@ public class DtoCrudRequestCvGroupTest implements DtoCrudRequestTest {
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
         Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == cvDTOList.size());
 
+        Boolean testIfExisting = false;
+
+        for(CvDTO currentCvDTO : cvDTOList) {
+
+            if(currentCvDTO.getTerm().toLowerCase().equals("gbs")) {
+                testIfExisting = true;
+            }
+        }
+
+        Assert.assertTrue(testIfExisting);
     }
 
     public void testEmptyResult() {}
