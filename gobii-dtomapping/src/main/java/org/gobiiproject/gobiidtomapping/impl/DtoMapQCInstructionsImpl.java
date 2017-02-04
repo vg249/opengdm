@@ -70,7 +70,7 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
 
             if (!qcInstructionsDAO.doesPathExist(instructionFileFqpn)) {
 
-                if(qcInstructionsDTO.getGobiiJobStatus().toString() == "STARTED") {
+                if(qcInstructionsDTO.getGobiiJobStatus().equals(GobiiJobStatus.STARTED)) {
 
                     // call the KDCompute Service here
                     // boolean isCallSuccessful;
@@ -92,7 +92,7 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
 
                     mailInterface.send(qcMessage);
 
-                } else if(qcInstructionsDTO.getGobiiJobStatus().toString() == "COMPLETED") {
+                } else if(qcInstructionsDTO.getGobiiJobStatus().equals(GobiiJobStatus.COMPLETED)) {
 
                     qcInstructionsDAO.writeInstructions(instructionFileFqpn,
                             qcInstructionsDTO);
