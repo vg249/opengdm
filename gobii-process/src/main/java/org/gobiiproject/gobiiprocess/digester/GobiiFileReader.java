@@ -621,7 +621,7 @@ public class GobiiFileReader {
 
 		}
 		if((refPos==-1)||(altPos==-1)){
-			throw new IOException("Could not find one of Ref or Alt in file: "+markerFile);
+			ErrorLogger.logError("GobiiFileReader","Could not find one of Ref or Alt in file: "+markerFile);
 		}
 
 		HelperFunctions.tryExec("cut -f"+refPos+","+altPos+ " "+markerFile,outFile,errorPath);
