@@ -103,23 +103,8 @@ public class CvServiceImpl implements CvService {
 
 				CvDTO existingCvDTO = dtoMapCv.getCvDetails(cvId);
 
-				if(null != existingCvDTO.getCvId() && existingCvDTO.getCvId().equals(cvId)) {
-                    returnVal = dtoMapCv.deleteCv(existingCvDTO);
-                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
-
-				} else {
-					returnVal = null;
-					throw new GobiiDomainException(GobiiStatusLevel.VALIDATION,
-							GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
-							"The specified cvId ("
-									+ cvId
-									+ ") does not match an existing cv.");
-
-				}
-
-
+				returnVal = dtoMapCv.deleteCv(existingCvDTO);
+				returnVal.getAllowedProcessTypes().add(GobiiProcessType.NONE);
 
 		} catch (Exception e) {
 

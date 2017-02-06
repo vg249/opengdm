@@ -38,12 +38,8 @@ public class DtoMapCvGroupImpl implements DtoMapCvGroup {
             while (resultSet.next()) {
 
                 CvDTO currentCvDTO = new CvDTO();
-                currentCvDTO.setCvId(resultSet.getInt("cv_id"));
-                currentCvDTO.setGroup(resultSet.getInt("group"));
-                currentCvDTO.setGroupId(resultSet.getInt("group"));
-                currentCvDTO.setTerm(resultSet.getString("term"));
-                currentCvDTO.setDefinition(resultSet.getString("definition"));
-                currentCvDTO.setRank(resultSet.getInt("rank"));
+
+                ResultColumnApplicator.applyColumnValues(resultSet, currentCvDTO);
                 returnVal.add(currentCvDTO);
 
             }

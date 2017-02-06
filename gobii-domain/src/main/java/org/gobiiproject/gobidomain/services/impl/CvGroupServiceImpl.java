@@ -3,6 +3,7 @@ package org.gobiiproject.gobidomain.services.impl;
 import org.gobiiproject.gobiidtomapping.DtoMapCvGroup;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.gobiiproject.gobidomain.services.CvGroupService;
@@ -26,6 +27,11 @@ public class CvGroupServiceImpl implements CvGroupService {
         List<CvDTO> returnVal;
 
         returnVal = dtoMapCvGroup.getCvsForGroup(groupId);
+
+        for (CvDTO currentCvDTO : returnVal) {
+
+            currentCvDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+        }
 
         return returnVal;
 
