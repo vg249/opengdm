@@ -4,8 +4,6 @@ package org.gobiiproject.gobiiapimodel.types;
  * Created by Phil on 5/13/2016.
  */
 public enum ControllerType {
-    LOADER("load/"),
-    EXTRACTOR("extract/"),
     GOBII("gobii/v1/"),
     BRAPI("brapi/v1/");
 
@@ -18,3 +16,5 @@ public enum ControllerType {
         return this.controllerPath;
     }
 }
+
+

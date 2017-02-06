@@ -2,11 +2,12 @@ package org.gobiiproject.gobiidao.filesystem;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiimodel.dto.instructions.GobiiQCComplete;
+import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 
 public interface QCInstructionsDAO {
 
     boolean writeInstructions(String instructionFileFqpn,
-                              GobiiQCComplete instructions) throws GobiiDaoException;
+                              QCInstructionsDTO instructions) throws GobiiDaoException;
 
     boolean doesPathExist(String pathName) throws GobiiDaoException;
 
@@ -14,5 +15,5 @@ public interface QCInstructionsDAO {
 
     void makeDirectory(String pathName) throws GobiiDaoException;
 
-    GobiiQCComplete getInstructions(String instructionFileFqpn);
+    QCInstructionsDTO getInstructions(String instructionFileFqpn);
 }

@@ -3,16 +3,29 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 
+import org.gobiiproject.gobiimodel.headerlesscontainer.DTOBase;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 
 import java.util.*;
 
-public class PingDTO extends Header {
+public class PingDTO extends DTOBase {
 
     public PingDTO() {
+    }
+
+
+    private Integer ping_id = 0;
+    @Override
+    public Integer getId() {
+        return this.ping_id;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.ping_id = id;
     }
 
     private List<String> pingRequests = new ArrayList<>();

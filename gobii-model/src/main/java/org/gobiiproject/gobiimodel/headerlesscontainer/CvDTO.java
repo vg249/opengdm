@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
@@ -12,16 +12,11 @@ import java.util.Map;
 
 /**
  * Created by Angel on 4/29/2016.
+ * Modified by Yanii on 1/25/2016
  */
-public class CvDTO extends Header {
+public class CvDTO extends DTOBase {
 
 	public CvDTO() {}
-
-	public CvDTO(GobiiProcessType gobiiProcessType) {
-		super(gobiiProcessType);
-	}
-
-	boolean includeDetailsList = false;
 
 	private Integer cv_id;
 	private Integer groupId;
@@ -32,13 +27,15 @@ public class CvDTO extends Header {
 	private String definition;
 	private Integer rank;
 
-	public boolean isIncludeDetailsList() {
-		return includeDetailsList;
-	}
+	@Override
+    public Integer getId() {
+	    return this.cv_id;
+    }
 
-	public void setIncludeDetailsList(boolean includeDetailsList) {
-		this.includeDetailsList = includeDetailsList;
-	}
+    @Override
+    public void setId(Integer id) {
+	    this.cv_id = id;
+    }
 
 	@GobiiEntityParam(paramName = "cvId")
 	public Integer getCvId() {
@@ -132,13 +129,4 @@ public class CvDTO extends Header {
 		this.entityStatus = entityStatus;
 	}
 
-	Map<String,List<CvItem>> groupCvItems = new HashMap<>();
-
-	public Map<String, List<CvItem>> getGroupCvItems() {
-		return groupCvItems;
-	}
-
-	public void setGroupCvItems(Map<String, List<CvItem>> groupCvItems) {
-		this.groupCvItems = groupCvItems;
-	}
 }

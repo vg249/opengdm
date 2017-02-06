@@ -3,21 +3,32 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 
+import org.gobiiproject.gobiimodel.headerlesscontainer.DTOBase;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 
-public class MarkerGroupMarkerDTO extends Header {
+public class MarkerGroupMarkerDTO  {
 
 
     public MarkerGroupMarkerDTO() {
     }
 
     public MarkerGroupMarkerDTO(GobiiProcessType gobiiProcessType) {
-        super(gobiiProcessType);
+
+        this.gobiiProcessType = gobiiProcessType;
+    }
+    private GobiiProcessType gobiiProcessType = GobiiProcessType.READ;
+
+    public GobiiProcessType getGobiiProcessType() {
+        return gobiiProcessType;
+    }
+
+    public void setGobiiProcessType(GobiiProcessType gobiiProcessType) {
+        this.gobiiProcessType = gobiiProcessType;
     }
 
     boolean markerExists = true;

@@ -300,6 +300,11 @@
     <bean id="dtoMapCv" class="org.gobiiproject.gobiidtomapping.impl.DtoMapCvImpl"/>
     <bean id="CvService" class="org.gobiiproject.gobidomain.services.impl.CvServiceImpl"/>
 
+    <!-- *** CvGroup Beans ******************************************* -->
+    <bean id="rsCvGroupDao" class="org.gobiiproject.gobiidao.resultset.access.impl.RsCvGroupDaoImpl"/>
+    <bean id="dtoMapCvGroup" class="org.gobiiproject.gobiidtomapping.impl.DtoMapCvGroupImpl"/>
+    <bean id="CvGroupService" class="org.gobiiproject.gobidomain.services.impl.CvGroupServiceImpl"/>
+
     <!-- **** MarkerGroup Beans *************************************** -->
     <bean id="rsMarkerGroupDao"
           class="org.gobiiproject.gobiidao.resultset.access.impl.RsMarkerGroupDaoImpl"/>

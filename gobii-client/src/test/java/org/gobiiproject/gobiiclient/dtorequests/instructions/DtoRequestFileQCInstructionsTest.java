@@ -15,14 +15,12 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtrac
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.GobiiFileType;
-import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -47,10 +45,13 @@ public class DtoRequestFileQCInstructionsTest {
     }
 
 
+    //@Ignore
     @Test
     public void create() throws Exception {
 
         QCInstructionsDTO qcInstructionsDTO = TestDtoFactory.makePopulatedQCInstructionsDTO();
+
+        qcInstructionsDTO.setGobiiJobStatus(GobiiJobStatus.COMPLETED); // set qc job status to completed, to write instructions
 
         PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<>(uriFactory
@@ -72,7 +73,7 @@ public class DtoRequestFileQCInstructionsTest {
                 .getInstance(null,false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS);
-        qcGetUri.setParamValue("id", qcInstructionsDTO.getGobiiQCComplete().getDataFileName());
+        qcGetUri.setParamValue("id", qcInstructionsDTO.getDataFileName());
 
         GobiiEnvelopeRestResource<QCInstructionsDTO> restResource = new GobiiEnvelopeRestResource<>(qcGetUri);
         PayloadEnvelope<QCInstructionsDTO> resultEnvelope = restResource.get(QCInstructionsDTO.class);
@@ -80,8 +81,8 @@ public class DtoRequestFileQCInstructionsTest {
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
         Assert.assertTrue("No qc DTO received", resultEnvelope.getPayload().getData().size() > 0);
         QCInstructionsDTO resultDTO = resultEnvelope.getPayload().getData().get(0);
-        Assert.assertNotNull(resultDTO.getGobiiQCComplete().getDataFileName());
-        Assert.assertTrue(resultDTO.getGobiiQCComplete().getDataFileName().equals(qcInstructionsDTO.getGobiiQCComplete().getDataFileName()));
+        Assert.assertNotNull(resultDTO.getDataFileName());
+        Assert.assertTrue(resultDTO.getDataFileName().equals(qcInstructionsDTO.getDataFileName()));
 
     }
 }

@@ -14,7 +14,8 @@ import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
+import org.gobiiproject.gobiimodel.utils.email.MailInterface;
+import org.gobiiproject.gobiimodel.utils.email.QCMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,13 +64,47 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
             createDirectories(instructionFileDirectory);
 
             String instructionFileFqpn = instructionFileDirectory
-                    + qcInstructionsDTO.getGobiiQCComplete().getDataFileName()
+                    + qcInstructionsDTO.getDataFileName()
                     + INSTRUCTION_FILE_EXT;
 
 
             if (!qcInstructionsDAO.doesPathExist(instructionFileFqpn)) {
-                qcInstructionsDAO.writeInstructions(instructionFileFqpn,
-                        qcInstructionsDTO.getGobiiQCComplete());
+
+                if(qcInstructionsDTO.getGobiiJobStatus().equals(GobiiJobStatus.STARTED)) {
+
+                    // call the KDCompute Service here
+                    // boolean isCallSuccessful;
+                    // isCallSuccessful = KDStartService();
+
+                    boolean isCallSuccessful = true;
+
+                    QCMessage qcMessage = new QCMessage();
+
+                    MailInterface mailInterface = new MailInterface(configSettings);
+
+                    if(isCallSuccessful) {
+
+                        qcMessage.setBody("Quality job has started.");
+                    } else {
+
+                        qcMessage.setBody("Quality job failed.");
+                    }
+
+                    mailInterface.send(qcMessage);
+
+                } else if(qcInstructionsDTO.getGobiiJobStatus().equals(GobiiJobStatus.COMPLETED)) {
+
+                    qcInstructionsDAO.writeInstructions(instructionFileFqpn,
+                            qcInstructionsDTO);
+
+                    QCMessage qcMessage = new QCMessage();
+                    MailInterface mailInterface = new MailInterface(configSettings);
+
+                    qcMessage.setBody(qcInstructionsDTO.getGobiiJobStatus().toString());
+                    mailInterface.send(qcMessage);
+
+                }
+
 
             } else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
@@ -109,14 +144,9 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
 
             if (qcInstructionsDAO.doesPathExist(instructionFileFqpn)) {
 
+                returnVal = qcInstructionsDAO.getInstructions(instructionFileFqpn);
 
-                GobiiQCComplete gobiiQCComplete =
-                        qcInstructionsDAO
-                                .getInstructions(instructionFileFqpn);
-
-                if (null != gobiiQCComplete) {
-
-                    returnVal.setGobiiQCComplete(gobiiQCComplete);
+                if (null != returnVal) {
 
 //                    returnVal.getGobiiQCComplete().setDataFileName(instructionFileName);
 

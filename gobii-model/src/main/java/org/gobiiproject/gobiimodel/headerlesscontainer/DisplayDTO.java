@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.dto.container;
+package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
@@ -13,14 +13,11 @@ import java.util.Map;
 
 /**
  * Created by Phil on 4/6/2016.
+ * Modified by Yanii on 1/27/2017
  */
-public class DisplayDTO extends Header {
+public class DisplayDTO extends DTOBase {
 
 	public DisplayDTO() {}
-
-	public DisplayDTO(GobiiProcessType gobiiProcessType) {
-		super(gobiiProcessType);
-	}
 
 	boolean includeDetailsList = false;
 
@@ -41,6 +38,16 @@ public class DisplayDTO extends Header {
 
 	public void setIncludeDetailsList(boolean includeDetailsList) {
 		this.includeDetailsList = includeDetailsList;
+	}
+
+	@Override
+	public Integer getId() {
+		return this.displayId;
+	}
+
+	@Override
+	public void setId(Integer id) {
+		this.displayId = id;
 	}
 
 	@GobiiEntityParam(paramName = "displayId")
