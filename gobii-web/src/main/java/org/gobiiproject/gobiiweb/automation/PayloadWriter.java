@@ -4,6 +4,7 @@ import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DTOBase;
@@ -14,6 +15,7 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by Phil on 9/25/2016.
@@ -73,6 +75,15 @@ public class PayloadWriter<T extends DTOBase> {
                     }
                 }
 
+
+                Properties properties = new Properties();
+                properties.load(this.getClass().getClassLoader().getResourceAsStream("gobii_web_props.properties"));
+                String version = properties.getProperty("gobii_version").toString();
+
+                Header header = payloadEnvelope.getHeader();
+                header.setGobiiVersion(version);
+
+                payloadEnvelope.setHeader(header);
                 payloadEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().add(link);
 
 
