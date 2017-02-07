@@ -3,6 +3,7 @@ package org.gobiiproject.gobiimodel.utils;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
@@ -15,6 +16,13 @@ public class FileSystemInterface {
 	 */
 	public static void rm(String file){
 		HelperFunctions.tryExec("rm "+file);
+	}
+
+	public static void rmIfExist(String file){
+		File f=new File(file);
+		if(f.exists()){
+			f.delete();
+		}
 	}
 	/**
 	 * As unix MV command.

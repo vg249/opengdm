@@ -3,6 +3,7 @@ Contacts,
 Projects,
 Experiments,
 DataSets,
-CvTerms}
+CvTerms,
+Mapsets}
 ;
 
