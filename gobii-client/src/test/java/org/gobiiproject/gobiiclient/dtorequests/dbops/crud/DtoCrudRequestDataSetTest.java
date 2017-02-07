@@ -439,4 +439,36 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         }
 
     }
+
+    @Test
+    public void getDataSetsByTypeId() throws Exception {
+
+        // use 93, since this is the test value for creating a dataset
+        Integer type_id = 93;
+
+        RestUri restUriDataSets = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_DATASETTYPES)
+                .addUriParam("id")
+                .setParamValue("id", type_id.toString());
+
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriDataSets);
+        PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResource
+                .get(DataSetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+        List<DataSetDTO> dataSetDTOList = resultEnvelope.getPayload().getData();
+
+        Assert.assertNotNull(dataSetDTOList);
+        Assert.assertTrue(dataSetDTOList.size() >= 0);
+
+        if(dataSetDTOList.size() > 0) {
+            Assert.assertNotNull(dataSetDTOList.get(0).getName());
+        }
+
+        LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
+        Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == dataSetDTOList.size());
+
+    }
 }

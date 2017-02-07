@@ -969,41 +969,6 @@ public class GOBIIControllerV1 {
 
     }
 
-    @RequestMapping(value = "/datasets/types", method = RequestMethod.GET)
-    @ResponseBody
-    public PayloadEnvelope<NameIdDTO> getDataSetsTypes(HttpServletRequest request,
-                                                       HttpServletResponse response) {
-
-        PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
-        try {
-
-            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.CVTERMS;
-            GobiiFilterType gobiiFilterType = GobiiFilterType.BYTYPENAME;
-
-            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, "dataset_type");
-
-            List<NameIdDTO> nameIdDTOList = nameIdListService.getNameIdList(dtoMapNameIdParams);
-
-            for (NameIdDTO currentNameIdDTO : nameIdDTOList) {
-
-                returnVal.getPayload().getData().add(currentNameIdDTO);
-            }
-        } catch (GobiiException e) {
-            returnVal.getHeader().getStatus().addException(e);
-        } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
-        }
-
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-                response,
-                HttpStatus.CREATED,
-                HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return (returnVal);
-
-    }
-
-
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<DataSetDTO> getDataSetsById(@PathVariable Integer dataSetId,
@@ -1027,6 +992,87 @@ public class GOBIIControllerV1 {
             returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+    @RequestMapping(value = "/datasets/types", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<NameIdDTO> getDataSetsTypes(HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.CVTERMS;
+            GobiiFilterType gobiiFilterType = GobiiFilterType.BYTYPENAME;
+
+            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, "dataset_type");
+
+            List<NameIdDTO> nameIdDTOList = nameIdListService.getNameIdList(dtoMapNameIdParams);
+
+            PayloadWriter<NameIdDTO> payloadWriter = new PayloadWriter<>(request,
+                    NameIdDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DATASETTYPES),
+                    nameIdDTOList);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+    @RequestMapping(value = "/datasets/types/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<DataSetDTO> getDataSetsByTypeId(@PathVariable Integer id,
+                                                           HttpServletRequest request,
+                                                           HttpServletResponse response) {
+
+        PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            List<DataSetDTO> dataSetDTOS = dataSetService.getDataSetsByTypeId(id);
+
+            PayloadWriter<DataSetDTO> payloadWriter = new PayloadWriter<>(request,
+                    DataSetDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DATASETS),
+                    dataSetDTOS);
+
+
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
         }
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
@@ -2037,9 +2083,14 @@ public class GOBIIControllerV1 {
         try {
 
             List<MapsetDTO> mapsetDTOs = mapsetService.getAllMapsetNames();
-            for (MapsetDTO currentMapsetDTO : mapsetDTOs) {
-                returnVal.getPayload().getData().add(currentMapsetDTO);
-            }
+
+            PayloadWriter<MapsetDTO> payloadWriter = new PayloadWriter<>(request,
+                    MapsetDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MAPSET),
+                    mapsetDTOs);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
