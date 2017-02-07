@@ -1,6 +1,5 @@
-System.register(["@angular/core", "../model/event-checkbox", "../model/type-process"], function(exports_1, context_1) {
+System.register(["@angular/core", "../model/event-checkbox", "../model/type-process"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,10 +9,10 @@ System.register(["@angular/core", "../model/event-checkbox", "../model/type-proc
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, event_checkbox_1, type_process_1;
-    var CriteriaDisplayComponent;
+    var __moduleName = context_1 && context_1.id;
+    var core_1, event_checkbox_1, type_process_1, CriteriaDisplayComponent;
     return {
-        setters:[
+        setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
@@ -22,8 +21,9 @@ System.register(["@angular/core", "../model/event-checkbox", "../model/type-proc
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             CriteriaDisplayComponent = (function () {
                 function CriteriaDisplayComponent() {
                     // useg
@@ -59,19 +59,19 @@ System.register(["@angular/core", "../model/event-checkbox", "../model/type-proc
                 CriteriaDisplayComponent.prototype.ngOnChanges = function (changes) {
                     this.dataSetCheckBoxEvents = changes['dataSetCheckBoxEvents'].currentValue;
                 };
-                CriteriaDisplayComponent = __decorate([
-                    core_1.Component({
-                        selector: 'criteria-display',
-                        inputs: ['dataSetCheckBoxEvents'],
-                        outputs: ['onItemUnChecked', 'onItemSelected'],
-                        template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let dataSetCheckBoxEvent of dataSetCheckBoxEvents\"\n                                (click)=handleItemSelected($event)\n                                (hover)=handleItemHover($event)>\n                                <input  type=\"checkbox\"\n                                    (click)=handleItemUnChecked($event)\n                                    value={{dataSetCheckBoxEvent.id}}\n                                    name=\"{{dataSetCheckBoxEvent.name}}\"\n                                    checked>&nbsp;{{dataSetCheckBoxEvent.name}}\n                        </div>\n                    </div>\n                </form>"
-                    }), 
-                    __metadata('design:paramtypes', [])
-                ], CriteriaDisplayComponent);
                 return CriteriaDisplayComponent;
             }());
+            CriteriaDisplayComponent = __decorate([
+                core_1.Component({
+                    selector: 'criteria-display',
+                    inputs: ['dataSetCheckBoxEvents'],
+                    outputs: ['onItemUnChecked', 'onItemSelected'],
+                    template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let dataSetCheckBoxEvent of dataSetCheckBoxEvents\"\n                                (click)=handleItemSelected($event)\n                                (hover)=handleItemHover($event)>\n                                <input  type=\"checkbox\"\n                                    (click)=handleItemUnChecked($event)\n                                    value={{dataSetCheckBoxEvent.id}}\n                                    name=\"{{dataSetCheckBoxEvent.name}}\"\n                                    checked>&nbsp;{{dataSetCheckBoxEvent.name}}\n                        </div>\n                    </div>\n                </form>"
+                }),
+                __metadata("design:paramtypes", [])
+            ], CriteriaDisplayComponent);
             exports_1("CriteriaDisplayComponent", CriteriaDisplayComponent);
         }
-    }
+    };
 });
 //# sourceMappingURL=criteria-display.component.js.map

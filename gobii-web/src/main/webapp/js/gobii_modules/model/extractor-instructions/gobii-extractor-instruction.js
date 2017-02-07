@@ -1,14 +1,14 @@
-System.register(["./data-set-extract"], function(exports_1, context_1) {
+System.register(["./data-set-extract"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var data_set_extract_1;
-    var GobiiExtractorInstruction;
+    var data_set_extract_1, GobiiExtractorInstruction;
     return {
-        setters:[
+        setters: [
             function (data_set_extract_1_1) {
                 data_set_extract_1 = data_set_extract_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             GobiiExtractorInstruction = (function () {
                 function GobiiExtractorInstruction(dataSetExtracts, contactId, contactEmail, mapsetIds) {
                     this.dataSetExtracts = dataSetExtracts;
@@ -62,6 +62,6 @@ System.register(["./data-set-extract"], function(exports_1, context_1) {
             }());
             exports_1("GobiiExtractorInstruction", GobiiExtractorInstruction);
         }
-    }
+    };
 });
 //# sourceMappingURL=gobii-extractor-instruction.js.map

@@ -1,7 +1,8 @@
 ///<reference path="../../../../../../typings/index.d.ts"/>
-
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import {Component} from "@angular/core";
-import {HTTP_PROVIDERS} from "@angular/http";
+import {HttpModule} from "@angular/http";
 import {ExportTypeComponent} from "../views/export-type.component";
 import {ExportFormatComponent} from "../views/export-format.component";
 import {DtoRequestService} from "../services/core/dto-request.service";
@@ -32,34 +33,18 @@ import * as EntityFilters from "../model/type-entity-filter";
 import {EntityFilter} from "../model/type-entity-filter";
 import {CheckListBoxComponent} from "../views/checklist-box.component";
 import {SampleMarkerBoxComponent} from "../views/sample-marker-box.component";
+import {FileDropDirective, FileSelectDirective} from "ng2-file-upload";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
 
 
+
+
 @Component({
     selector: 'extractor-root',
-    directives: [ExportFormatComponent,
-        ContactsListBoxComponent,
-        ProjectListBoxComponent,
-        ExperimentListBoxComponent,
-        DataSetCheckListBoxComponent,
-        MapsetsListBoxComponent,
-        CriteriaDisplayComponent,
-        StatusDisplayComponent,
-        CropsListBoxComponent,
-        UsersListBoxComponent,
-        ExportTypeComponent,
-        DatasetTypeListBoxComponent,
-        CheckListBoxComponent,
-        SampleMarkerBoxComponent],
     styleUrls: ['/extractor-ui.css'],
-    providers: [
-        HTTP_PROVIDERS,
-        AuthenticationService,
-        DtoRequestService
-    ],
     template: `
         <div class = "panel panel-default">
         

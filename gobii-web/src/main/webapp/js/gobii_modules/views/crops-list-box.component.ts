@@ -1,4 +1,3 @@
-//import {RouteParams} from '@angular/router-deprecated';
 import {Component, OnInit, EventEmitter, SimpleChange} from "@angular/core";
 import {ServerConfig} from "../model/server-config";
 

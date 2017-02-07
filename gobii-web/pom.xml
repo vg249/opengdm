@@ -426,6 +426,8 @@
                                         <include>reflect-metadata/Reflect.js</include>
                                         <include>rxjs/bundles/Rx.js</include>
                                         <include>rxjs/**</include>
+                                        <include>ng2-uploader/**</include>
+                                        <include>ng2-file-upload/**</include>
 
 
                                         <!-- ***** GROUP 2: angular files from beta 2 that we probably don't want-->
@@ -435,13 +437,24 @@
                                         <!--<include>angular2/bundles/angular2-polyfills.js</include>-->
                                         <!--<include>angular2/bundles/http.dev.js</include>-->
 
+                                        <!-- ***** GROUP 2: angular bundle files-->
+                                        <include>@angular/core/bundles/core.umd.js</include>
+                                        <include>@angular/common/bundles/common.umd.js</include>
+                                        <include>@angular/compiler/bundles/compiler.umd.js</include>
+                                        <include>@angular/router/bundles/router.umd.js</include>
+                                        <include>@angular/http/bundles/http.umd.js</include>
+                                        <include>@angular/platform-browser/bundles/platform-browser.umd.js</include>
+                                        <include>@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js</include>
+
+
+
 
                                         <!-- ***** GROUP 3: angular index.js files-->
                                         <include>@angular/core/index.js</include>
                                         <include>@angular/common/index.js</include>
                                         <include>@angular/compiler/index.js</include>
                                         <include>@angular/router/index.js</include>
-                                        <include>@angular/router-deprecated/index.js</include>
+                                        <!--<include>@angular/router-deprecated/index.js</include>-->
                                         <include>@angular/http/index.js</include>
                                         <include>@angular/platform-browser/index.js</include>
                                         <include>@angular/platform-browser-dynamic/index.js</include>

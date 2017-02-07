@@ -27,7 +27,7 @@ export class DtoRequestItemNameIds implements DtoRequestItem<NameId[]> {
 
         let returnVal:string = baseUrl + "/" + EntityType[this.entityType].toLowerCase();
 
-        if (this.entityFilter && (EntityFilter.NONE != this.entityFilter)) {
+        if (this.entityFilter && (EntityFilter.NONE.valueOf() !== this.entityFilter)) {
             returnVal += "?"
                 + "filterType=" + EntityFilter[this.entityFilter].toLowerCase()
                 + "&"

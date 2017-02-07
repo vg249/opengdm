@@ -1,6 +1,5 @@
-System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../services/app/dto-request-item-nameids", "../model/type-entity", "../services/app/dto-request-item-dataset", "../services/app/dto-request-item-analysis", "../model/type-entity-filter", "../views/checklist-box.component"], function(exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../services/app/dto-request-item-nameids", "../model/type-entity", "../services/app/dto-request-item-dataset", "../services/app/dto-request-item-analysis", "../model/type-entity-filter"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,10 +9,10 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, name_id_1, dto_request_service_1, dto_request_item_nameids_1, type_entity_1, dto_request_item_dataset_1, dto_request_item_analysis_1, type_entity_filter_1, checklist_box_component_1;
-    var DataSetCheckListBoxComponent;
+    var __moduleName = context_1 && context_1.id;
+    var core_1, name_id_1, dto_request_service_1, dto_request_item_nameids_1, type_entity_1, dto_request_item_dataset_1, dto_request_item_analysis_1, type_entity_filter_1, DataSetCheckListBoxComponent;
     return {
-        setters:[
+        setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
@@ -37,11 +36,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             },
             function (type_entity_filter_1_1) {
                 type_entity_filter_1 = type_entity_filter_1_1;
-            },
-            function (checklist_box_component_1_1) {
-                checklist_box_component_1 = checklist_box_component_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             DataSetCheckListBoxComponent = (function () {
                 function DataSetCheckListBoxComponent(_dtoRequestServiceNameId, _dtoRequestServiceDataSetDetail, _dtoRequestServiceAnalysisDetail) {
                     this._dtoRequestServiceNameId = _dtoRequestServiceNameId;
@@ -156,20 +153,21 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         this.setList();
                     }
                 };
-                DataSetCheckListBoxComponent = __decorate([
-                    core_1.Component({
-                        selector: 'dataset-checklist-box',
-                        directives: [checklist_box_component_1.CheckListBoxComponent],
-                        inputs: ['experimentId', 'checkBoxEventChange'],
-                        outputs: ['onItemChecked', 'onAddMessage'],
-                        template: "<checklist-box\n                    [checkBoxEventChange] = \"checkBoxEventChange\"\n                    [nameIdList] = \"dataSetsNameIdList\"\n                    (onItemSelected)=\"handleItemSelected($event)\"\n                    (onItemChecked)=\"handleItemChecked($event)\"\n                    (onAddMessage) = \"handleAddMessage($event)\">\n                </checklist-box>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        <b>Name:</b> {{dataSet.name}}<BR>\n                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>\n                        <b>Data File:</b> {{dataSet.dataFile}}<BR>\n                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>\n                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                            <b>Analyses:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                    </ul>\n                        </div>\n                        <div *ngIf=\"analysisTypes && (analysisTypes.length > 0)\">\n                            <b>Analysis Types:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisType of analysisTypes\" >{{analysisType}}</li>\n                                    </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
-                    }), 
-                    __metadata('design:paramtypes', [dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService, dto_request_service_1.DtoRequestService])
-                ], DataSetCheckListBoxComponent);
                 return DataSetCheckListBoxComponent;
             }());
+            DataSetCheckListBoxComponent = __decorate([
+                core_1.Component({
+                    selector: 'dataset-checklist-box',
+                    inputs: ['experimentId', 'checkBoxEventChange'],
+                    outputs: ['onItemChecked', 'onAddMessage'],
+                    template: "<checklist-box\n                    [checkBoxEventChange] = \"checkBoxEventChange\"\n                    [nameIdList] = \"dataSetsNameIdList\"\n                    (onItemSelected)=\"handleItemSelected($event)\"\n                    (onItemChecked)=\"handleItemChecked($event)\"\n                    (onAddMessage) = \"handleAddMessage($event)\">\n                </checklist-box>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        <b>Name:</b> {{dataSet.name}}<BR>\n                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>\n                        <b>Data File:</b> {{dataSet.dataFile}}<BR>\n                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>\n                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                            <b>Analyses:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                    </ul>\n                        </div>\n                        <div *ngIf=\"analysisTypes && (analysisTypes.length > 0)\">\n                            <b>Analysis Types:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisType of analysisTypes\" >{{analysisType}}</li>\n                                    </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
+                }),
+                __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService,
+                    dto_request_service_1.DtoRequestService,
+                    dto_request_service_1.DtoRequestService])
+            ], DataSetCheckListBoxComponent);
             exports_1("DataSetCheckListBoxComponent", DataSetCheckListBoxComponent);
         }
-    }
+    };
 });
 //# sourceMappingURL=dataset-checklist-box.component.js.map
