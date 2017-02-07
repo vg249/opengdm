@@ -9,6 +9,7 @@ import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.VendorProtocolDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
@@ -161,6 +162,22 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
         ProtocolDTO protocolDTO = resultEnvelopeForGetByID.getPayload().getData().get(0);
         Assert.assertTrue(protocolDTO.getProtocolId() > 0);
         Assert.assertNotNull(protocolDTO.getName());
+
+        //get VendorProtocolDetailss
+
+        RestUri restUriVendorProtocols = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_VENDOR_PROTOCOLS);
+        restUriVendorProtocols.setParamValue("id", "1");
+        GobiiEnvelopeRestResource<VendorProtocolDTO> restResourceForVendorProtocol = new GobiiEnvelopeRestResource<>(restUriVendorProtocols);
+        PayloadEnvelope<VendorProtocolDTO> resultEnvelopeForVendorProtocol = restResourceForVendorProtocol
+                .get(VendorProtocolDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForVendorProtocol.getHeader()));
+        List<VendorProtocolDTO> vendorProtocolDTOList = resultEnvelopeForVendorProtocol.getPayload().getData();
+        Assert.assertNotNull(vendorProtocolDTOList);
+        Assert.assertTrue(vendorProtocolDTOList.size() > 0);
+        Assert.assertNotNull(vendorProtocolDTOList.get(0).getName());
     }
 
 

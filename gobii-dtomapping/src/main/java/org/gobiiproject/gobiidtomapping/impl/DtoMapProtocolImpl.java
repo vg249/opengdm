@@ -215,6 +215,29 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
     @Transactional
     @Override
+    public VendorProtocolDTO getVendorProtocolDetailsByVendorProtocolId(Integer vendorProtocolId) throws GobiiException {
+        VendorProtocolDTO returnVal = new VendorProtocolDTO();
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("vendorProtocolId", vendorProtocolId);
+
+
+            ResultSet resultSet = this.rsProtocolDao.getVendorProtocolForVendorProtoclId(vendorProtocolId);
+            if (resultSet.next()) {
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+    } // addVendorProtocolsToOrganization
+
+    @Transactional
+    @Override
     public OrganizationDTO addVendotrToProtocol(Integer protocolId, OrganizationDTO organizationDTO) throws GobiiDtoMappingException {
 
         OrganizationDTO returnVal = organizationDTO;
