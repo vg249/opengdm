@@ -1,9 +1,14 @@
 import {Component, OnInit, SimpleChange, EventEmitter} from "@angular/core";
-import { FileSelectDirective,
+import {
+    FileSelectDirective,
     FileDropDirective,
-    FileUploader } from 'ng2-file-upload';
+    FileUploader, FileUploaderOptions, Headers
+} from 'ng2-file-upload';
+import {AuthenticationService} from "../services/core/authentication.service";
+import {HeaderNames} from "../model/header-names";
+import {Header} from "../model/payload/header";
 
-const URL = 'https://evening-anchorage-3159.herokuapp.com/api/';
+const URL = 'gobii/v1/uploadfile';
 
 @Component({
     selector: 'sample-marker-box',
@@ -132,23 +137,44 @@ const URL = 'https://evening-anchorage-3159.herokuapp.com/api/';
 
 export class SampleMarkerBoxComponent implements OnInit {
 
-    public uploader:FileUploader = new FileUploader({url: URL});
-    public hasBaseDropZoneOver:boolean = false;
-    public hasAnotherDropZoneOver:boolean = false;
 
-    public fileOverBase(e:any):void {
-        this.hasBaseDropZoneOver = e;
-    }
+    constructor(private _authenticationService: AuthenticationService) {
 
-    public fileOverAnother(e:any):void {
-        this.hasAnotherDropZoneOver = e;
-    }
+        let fileUploaderOptions: FileUploaderOptions = {}
+        fileUploaderOptions.url = URL;
+        fileUploaderOptions.headers = [];
 
-    constructor() {
+        let authHeader: Headers = {name: '', value: ''};
+        authHeader.name = HeaderNames.headerToken;
+
+        _authenticationService
+            .getToken()
+            .subscribe(token => {
+                authHeader.value = token;
+            });
+
+        fileUploaderOptions.headers.push(authHeader);
+
+        this.uploader = new FileUploader(fileUploaderOptions);
+
     } // ctor
 
 
-    ngOnInit():any {
+    public uploader: FileUploader;
+
+    public hasBaseDropZoneOver: boolean = false;
+    public hasAnotherDropZoneOver: boolean = false;
+
+    public fileOverBase(e: any): void {
+        this.hasBaseDropZoneOver = e;
+    }
+
+    public fileOverAnother(e: any): void {
+        this.hasAnotherDropZoneOver = e;
+    }
+
+
+    ngOnInit(): any {
         return null;
     }
 
