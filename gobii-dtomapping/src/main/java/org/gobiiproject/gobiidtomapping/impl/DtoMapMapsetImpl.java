@@ -39,7 +39,8 @@ public class DtoMapMapsetImpl implements DtoMapMapset {
             ResultSet resultSet = rsMapsetDao.getAllMapsetNames();
             while (resultSet.next()) {
                 MapsetDTO currentMapsetDTO = new MapsetDTO();
-                ResultColumnApplicator.applyColumnValues(resultSet, currentMapsetDTO);
+                currentMapsetDTO.setName(resultSet.getString("name"));
+                currentMapsetDTO.setMapsetId(resultSet.getInt("mapset_id"));
                 returnVal.add(currentMapsetDTO);
             }
         } catch (Exception e) {
