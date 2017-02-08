@@ -163,21 +163,23 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
         Assert.assertTrue(protocolDTO.getProtocolId() > 0);
         Assert.assertNotNull(protocolDTO.getName());
 
-        //get VendorProtocolDetailss
+        //get ProtocolDetails By ExperimentId
 
-        RestUri restUriVendorProtocols = ClientContext.getInstance(null, false)
+        RestUri restUriProtocolsForGetDetailsByExperimentId = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_VENDOR_PROTOCOLS);
-        restUriVendorProtocols.setParamValue("id", "1");
-        GobiiEnvelopeRestResource<VendorProtocolDTO> restResourceForVendorProtocol = new GobiiEnvelopeRestResource<>(restUriVendorProtocols);
-        PayloadEnvelope<VendorProtocolDTO> resultEnvelopeForVendorProtocol = restResourceForVendorProtocol
-                .get(VendorProtocolDTO.class);
+                .resourceColl(ServiceRequestId.URL_EXPERIMENTS)
+                .addUriParam("experimentId")
+                .setParamValue("experimentId", "1")
+                .appendSegment(ServiceRequestId.URL_PROTOCOL);
+        GobiiEnvelopeRestResource<ProtocolDTO> restResourceProtocolForGetDetailsByExperimentId = new GobiiEnvelopeRestResource<>(restUriProtocolsForGetDetailsByExperimentId);
+        PayloadEnvelope<ProtocolDTO> resultEnvelopeForGetDetailsByExperimentId = restResourceProtocolForGetDetailsByExperimentId
+                .get(ProtocolDTO.class);
 
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForVendorProtocol.getHeader()));
-        List<VendorProtocolDTO> vendorProtocolDTOList = resultEnvelopeForVendorProtocol.getPayload().getData();
-        Assert.assertNotNull(vendorProtocolDTOList);
-        Assert.assertTrue(vendorProtocolDTOList.size() > 0);
-        Assert.assertNotNull(vendorProtocolDTOList.get(0).getName());
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetDetailsByExperimentId.getHeader()));
+        List<ProtocolDTO> protocolDTOByExperimentId = resultEnvelopeForGetDetailsByExperimentId.getPayload().getData();
+        Assert.assertNotNull(protocolDTOByExperimentId);
+        Assert.assertTrue(protocolDTOByExperimentId.size() > 0);
+        Assert.assertNotNull(protocolDTOByExperimentId.get(0).getName());
     }
 
 

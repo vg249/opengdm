@@ -105,6 +105,33 @@ public class RsProtocolDaoImpl implements RsProtocolDao {
         return returnVal;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getProtocolDetailsByExperimentId(Integer experimentId) throws GobiiDaoException {
+
+        ResultSet returnVal = null;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("experimentId", experimentId);
+
+            SpGetProtocolDetailsByExperimentId spGetProtocolDetailsByExperimentId = new SpGetProtocolDetailsByExperimentId(parameters);
+
+            storedProcExec.doWithConnection(spGetProtocolDetailsByExperimentId);
+
+            returnVal = spGetProtocolDetailsByExperimentId.getResultSet();
+
+        } catch (SQLGrammarException e) {
+
+            LOGGER.error("Error retrieving protocol details by experiment Id", e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+
+        }
+
+        return returnVal;
+    }
+
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
@@ -366,7 +393,7 @@ public class RsProtocolDaoImpl implements RsProtocolDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public ResultSet getVendorProtocolForVendorProtoclId(Integer vendorProtocolId) throws GobiiDaoException {
+    public ResultSet getVendorProtocolForVendorProtocolId(Integer vendorProtocolId) throws GobiiDaoException {
 
         ResultSet returnVal;
 

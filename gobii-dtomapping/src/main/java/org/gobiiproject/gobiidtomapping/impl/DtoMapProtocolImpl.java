@@ -215,15 +215,15 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
 
     @Transactional
     @Override
-    public VendorProtocolDTO getVendorProtocolDetailsByVendorProtocolId(Integer vendorProtocolId) throws GobiiException {
-        VendorProtocolDTO returnVal = new VendorProtocolDTO();
+    public ProtocolDTO getProtocolsByExperimentId(Integer experimentId) throws GobiiException {
+        ProtocolDTO returnVal = new ProtocolDTO();
         try {
 
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("vendorProtocolId", vendorProtocolId);
+            parameters.put("experimentId", experimentId);
 
 
-            ResultSet resultSet = this.rsProtocolDao.getVendorProtocolForVendorProtoclId(vendorProtocolId);
+            ResultSet resultSet = this.rsProtocolDao.getProtocolDetailsByExperimentId(experimentId);
             if (resultSet.next()) {
                 ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
             }
@@ -234,7 +234,7 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
         }
 
         return returnVal;
-    } // addVendorProtocolsToOrganization
+    } // getProtocolDetailsByExperimentId
 
     @Transactional
     @Override
@@ -365,7 +365,7 @@ public class DtoMapProtocolImpl implements DtoMapProtocol {
                 }
 
                 ResultSet resultSet =
-                        this.rsProtocolDao.getVendorProtocolForVendorProtoclId(currentVendorProtocolDTO
+                        this.rsProtocolDao.getVendorProtocolForVendorProtocolId(currentVendorProtocolDTO
                                 .getVendorProtocolId());
                 if (resultSet.next()) {
                     VendorProtocolDTO vendorProtocolDTOFromDb = new VendorProtocolDTO();

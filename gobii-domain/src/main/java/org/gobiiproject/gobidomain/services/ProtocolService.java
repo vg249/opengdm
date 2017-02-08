@@ -28,5 +28,5 @@ public interface ProtocolService {
 
     List<OrganizationDTO> getVendorsForProtocolByProtocolId(Integer protocolId) throws GobiiDaoException;
 
-    VendorProtocolDTO getVendorProtocolDetailsByVendorProtocolId(Integer vendorProtocolId) throws GobiiDomainException;
+    ProtocolDTO getProtocolsByExperimentId(Integer experimentId) throws GobiiDomainException;
 }

@@ -180,11 +180,11 @@ public class ProtocolServiceImpl implements ProtocolService {
     }
 
     @Override
-    public VendorProtocolDTO getVendorProtocolDetailsByVendorProtocolId(Integer vendorProtocolId) throws GobiiDaoException {
+    public ProtocolDTO getProtocolsByExperimentId(Integer experimentId) throws GobiiDaoException {
 
-        VendorProtocolDTO returnVal;
+        ProtocolDTO returnVal;
 
-        returnVal = dtoMapProtocol.getVendorProtocolDetailsByVendorProtocolId(vendorProtocolId);
+        returnVal = dtoMapProtocol.getProtocolsByExperimentId(experimentId);
 
         return returnVal;
     }

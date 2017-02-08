@@ -2767,24 +2767,28 @@ public class GOBIIControllerV1 {
 
     }
 
-    @RequestMapping(value = "/vendorprotocols/{vendorProtocolId:[\\d]+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/experiments/{experimentId:[\\d]+}/protocols", method = RequestMethod.GET)
     @ResponseBody
-    public PayloadEnvelope<VendorProtocolDTO> getVendorProtocols(@PathVariable Integer vendorProtocolId,
-                                                                 HttpServletRequest request,
-                                                                 HttpServletResponse response) {
+    public PayloadEnvelope<ProtocolDTO> getProtocolByExperimentId(@PathVariable Integer experimentId,
+                                                                  HttpServletRequest request,
+                                                                  HttpServletResponse response) {
 
-        PayloadEnvelope<VendorProtocolDTO> returnVal = new PayloadEnvelope<>();
+        PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            VendorProtocolDTO vendorProtocolDTOs = protocolService.getVendorProtocolDetailsByVendorProtocolId(vendorProtocolId);
+            ProtocolDTO protocolDTO = protocolService.getProtocolsByExperimentId(experimentId);
 
-            PayloadWriter<VendorProtocolDTO> payloadWriter = new PayloadWriter<>(request,
-                    VendorProtocolDTO.class);
+            PayloadWriter<ProtocolDTO> payloadWriter = new PayloadWriter<>(request,
+                    ProtocolDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    UriFactory.resourceByUriIdParam(request.getContextPath(),
-                            ServiceRequestId.URL_VENDOR_PROTOCOLS),
-                    vendorProtocolDTOs);
+                    UriFactory.resourceColl(request.getContextPath(),
+                            ServiceRequestId.URL_EXPERIMENTS)
+                            .addUriParam("experimentId")
+                            .setParamValue("experimentId", experimentId.toString())
+                            .appendSegment(ServiceRequestId.URL_PROTOCOL)
+                            .addUriParam("id"),
+                    protocolDTO);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);

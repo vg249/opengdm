@@ -41,7 +41,6 @@ public enum ServiceRequestId {
     URL_OBSERVATION_VARIABLES("observationVariables"),
     URL_PROTOCOL("protocols"),
     URL_VENDORS("vendors"),
-    URL_VENDOR_PROTOCOLS("vendorprotocols"),
     URL_FILE_QC_INSTRUCTIONS("/instructions/qualitycontrol") ;
 
 
