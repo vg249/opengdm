@@ -56,6 +56,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -65,6 +66,7 @@ import java.io.FileOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 
 
@@ -3318,10 +3320,16 @@ public class GOBIIControllerV1 {
     // *************************** FILE UPLOAD
     // *********************************************
     @RequestMapping(value = "/uploadfile", method = RequestMethod.POST)
-    public  @ResponseBody
-    String uploadFileHandler(@RequestParam("file") MultipartFile file) {
+    public
+    @ResponseBody
+    String uploadFileHandler(@RequestParam("file") MultipartFile file,
+                             HttpServletRequest request,
+                             HttpServletResponse response) {
 
         String name = file.getName();
+
+
+        Enumeration<String> headers = request.getHeaders("Content-Disposition");
 
         if (!file.isEmpty()) {
             try {

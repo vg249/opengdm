@@ -6,8 +6,8 @@ import {Component, OnInit, EventEmitter} from '@angular/core';
     outputs: ['onExportTypeSelected'],
     template: `<label class="the-label">Export By:&nbsp;</label>
                   <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="byDataSet" checked="checked">Data Set&nbsp;
-                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="bySample">Sample&nbsp;
-                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="byMarker" >Marker&nbsp;` // end template
+                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="bySample" disabled="false">Sample&nbsp;
+                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="byMarker" disabled="false">Marker&nbsp;` // end template
 })
 
 export class ExportTypeComponent implements OnInit {
@@ -17,7 +17,7 @@ export class ExportTypeComponent implements OnInit {
     ) {
     } // ctor
 
-    private onExportTypeSelected:EventEmitter<string> = new EventEmitter();
+    private onExportTypeSelected: EventEmitter<string> = new EventEmitter();
 
     private handleExportTypeSelected(arg) {
         if (arg.srcElement.checked) {

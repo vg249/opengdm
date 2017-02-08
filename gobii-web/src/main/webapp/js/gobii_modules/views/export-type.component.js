@@ -35,7 +35,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 core_1.Component({
                     selector: 'export-type',
                     outputs: ['onExportTypeSelected'],
-                    template: "<label class=\"the-label\">Export By:&nbsp;</label>\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"byDataSet\" checked=\"checked\">Data Set&nbsp;\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"bySample\">Sample&nbsp;\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"byMarker\" >Marker&nbsp;" // end template
+                    template: "<label class=\"the-label\">Export By:&nbsp;</label>\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"byDataSet\" checked=\"checked\">Data Set&nbsp;\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"bySample\" disabled=\"false\">Sample&nbsp;\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"byMarker\" disabled=\"false\">Marker&nbsp;" // end template
                 }),
                 __metadata("design:paramtypes", [])
             ], ExportTypeComponent);
