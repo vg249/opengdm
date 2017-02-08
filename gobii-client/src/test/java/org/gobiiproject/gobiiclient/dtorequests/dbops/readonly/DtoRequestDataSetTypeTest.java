@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by VCalaminos on 2017-01-05.
  */
-@Ignore
+
 public class DtoRequestDataSetTypeTest {
 
     @BeforeClass
