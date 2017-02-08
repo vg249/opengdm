@@ -37,6 +37,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+@Ignore
 public class DtoRequestNameIdListTest {
 
     @BeforeClass
