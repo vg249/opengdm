@@ -4,6 +4,7 @@ Projects,
 Experiments,
 DataSets,
 CvTerms,
-Mapsets}
+Mapsets,
+Platforms}
 ;
 

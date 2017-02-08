@@ -1,17 +1,17 @@
-System.register(["../dto-header-auth", "./status"], function(exports_1, context_1) {
+System.register(["../dto-header-auth", "./status"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var dto_header_auth_1, status_1;
-    var Header;
+    var dto_header_auth_1, status_1, Header;
     return {
-        setters:[
+        setters: [
             function (dto_header_auth_1_1) {
                 dto_header_auth_1 = dto_header_auth_1_1;
             },
             function (status_1_1) {
                 status_1 = status_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             Header = (function () {
                 function Header(cropType, dtoHeaderAuth, status) {
                     this.cropType = cropType;
@@ -28,6 +28,6 @@ System.register(["../dto-header-auth", "./status"], function(exports_1, context_
             }());
             exports_1("Header", Header);
         }
-    }
+    };
 });
 //# sourceMappingURL=header.js.map

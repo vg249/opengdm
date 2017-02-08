@@ -1,11 +1,14 @@
 ///<reference path="../../../../../../typings/index.d.ts"/>
-
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import {Component} from "@angular/core";
-import {HTTP_PROVIDERS} from "@angular/http";
+import {HttpModule} from "@angular/http";
+import {ExportTypeComponent} from "../views/export-type.component";
 import {ExportFormatComponent} from "../views/export-format.component";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {AuthenticationService} from "../services/core/authentication.service";
 import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
+import {DatasetTypeListBoxComponent} from "../views/dataset-types-list-box.component";
 import {ProjectListBoxComponent} from "../views/project-list-box.component";
 import {ExperimentListBoxComponent} from "../views/experiment-list-box.component";
 import {DataSetCheckListBoxComponent} from "../views/dataset-checklist-box.component";
@@ -28,35 +31,40 @@ import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
 import * as EntityFilters from "../model/type-entity-filter";
 import {EntityFilter} from "../model/type-entity-filter";
+import {CheckListBoxComponent} from "../views/checklist-box.component";
+import {SampleMarkerBoxComponent} from "../views/sample-marker-box.component";
+import {FileDropDirective, FileSelectDirective} from "ng2-file-upload";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
 
 
+
+
 @Component({
     selector: 'extractor-root',
-    directives: [ExportFormatComponent,
-        ContactsListBoxComponent,
-        ProjectListBoxComponent,
-        ExperimentListBoxComponent,
-        DataSetCheckListBoxComponent,
-        MapsetsListBoxComponent,
-        CriteriaDisplayComponent,
-        StatusDisplayComponent,
-        CropsListBoxComponent,
-        UsersListBoxComponent],
     styleUrls: ['/extractor-ui.css'],
-    providers: [
-        HTTP_PROVIDERS,
-        AuthenticationService,
-        DtoRequestService
-    ],
     template: `
         <div class = "panel panel-default">
         
            <div class = "panel-heading">
-              <h1 class = "panel-title">GOBii Extractor</h1>
+                <img src="images/gobii_logo.png" alt="GOBii Project"/>
+
+                <fieldset class="well the-fieldset">
+                    <div class="col-md-2">
+                        <crops-list-box
+                            [serverConfigList]="serverConfigList"
+                            [selectedServerConfig]="selectedServerConfig"
+                            (onServerSelected)="handleServerSelected($event)"></crops-list-box>
+                    </div>
+                    
+                    <div class="col-md-3">
+                       <export-type
+                        (onExportTypeSelected)="handleExportTypeSelected($event)"></export-type>
+                     </div>
+                     
+                </fieldset>
            </div>
            
             <div class="container-fluid">
@@ -64,14 +72,8 @@ import {EntityFilter} from "../model/type-entity-filter";
                 <div class="row">
                 
                     <div class="col-md-4">
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Crop</legend>
-                        <crops-list-box
-                            [serverConfigList]="serverConfigList"
-                            [selectedServerConfig]="selectedServerConfig"
-                            (onServerSelected)="handleServerSelected($event)"></crops-list-box>
-                        </fieldset>
-                        
+                    
+                    <!--
                         <fieldset class="well the-fieldset">
                         <legend class="the-legend">Submit As</legend>
                         <users-list-box
@@ -79,71 +81,125 @@ import {EntityFilter} from "../model/type-entity-filter";
                             (onUserSelected)="handleContactForSubmissionSelected($event)">
                         </users-list-box>
                         </fieldset>
+                        -->
                         
-                        <div class="col-md-12">
-                            <export-format (onFormatSelected)="handleFormatSelected($event)"></export-format>
+                     <fieldset class="well the-fieldset">
+                        <legend class="the-legend">Filters</legend><BR>
+                        
+                        
+                        <div *ngIf="displaySelectorPi">
+                            <label class="the-label">Principle Investigator:</label><BR>
+                            <contacts-list-box [nameIdList]="contactNameIdListForPi" (onContactSelected)="handleContactForPiSelected($event)"></contacts-list-box>
                         </div>
+                        
+                        <div *ngIf="displaySelectorProject">
+                            <BR>
+                            <BR>
+                            <label class="the-label">Project:</label><BR>
+                            <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi"
+                                [nameIdList]="projectNameIdList"
+                                [nameIdListPIs]="contactNameIdListForPi"
+                                (onProjectSelected)="handleProjectSelected($event)"
+                                (onAddMessage)="handleAddMessage($event)"></project-list-box>
+                        </div>
+
+                        <div *ngIf="displaySelectorDataType">
+                            <BR>
+                            <BR>
+                            <label class="the-label">Dataset Types:</label><BR>
+                            <dataset-types-list-box [nameIdList]="datasetTypeNameIdList" (onDatasetTypeSelected)="handleDatasetTypeSelected($event)"></dataset-types-list-box>
+                        </div>
+
+                        
+                        <div *ngIf="displaySelectorExperiment">
+                            <BR>
+                            <BR>
+                            <label class="the-label">Experiment:</label><BR>
+                            <experiment-list-box [projectId] = "selectedProjectId"
+                                [nameIdList] = "experimentNameIdList"
+                                (onExperimentSelected)="handleExperimentSelected($event)"
+                                (onAddMessage)="handleAddMessage($event)"></experiment-list-box>
+                        </div>
+
+                        <div *ngIf="displaySelectorPlatform">
+                            <BR>
+                            <BR>
+                            <label class="the-label">Platforms:</label><BR>
+                            <checklist-box
+                                [checkBoxEventChange] = "platformCheckBoxEventChange"
+                                [nameIdList] = "platformsNameIdList"
+                                (onItemSelected)="handlePlatformSelected($event)"
+                                (onItemChecked)="handlePlatformChecked($event)"
+                                (onAddMessage) = "handleAddMessage($event)">
+                            </checklist-box>
+                         </div>
+
+
+                        <div *ngIf="displayAvailableDatasets">
+                            <BR>
+                            <BR>
+                            <label class="the-label">Data Sets</label><BR>
+                            <dataset-checklist-box
+                                [checkBoxEventChange] = "checkBoxEventChange"
+                                [experimentId] = "selectedExperimentId" 
+                                (onItemChecked)="handleCheckedDataSetItem($event)"
+                                (onAddMessage) = "handleAddMessage($event)">
+                            </dataset-checklist-box>
+                        </div>
+                    </fieldset>
+                       
                        
                     </div>  <!-- outer grid column 1-->
                 
                 
                 
                     <div class="col-md-4"> 
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Principal Investigator</legend>
-                        <contacts-list-box [nameIdList]="contactNameIdListForPi" (onContactSelected)="handleContactForPiSelected($event)"></contacts-list-box>
-                        </fieldset>
-                        
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Project</legend>
-                        <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi"
-                            [nameIdList]="projectNameIdList"
-                            [nameIdListPIs]="contactNameIdListForPi"
-                            (onProjectSelected)="handleProjectSelected($event)"
-                            (onAddMessage)="handleAddMessage($event)"></project-list-box>
-                        </fieldset>
-                        
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Experiment</legend>
-                        <experiment-list-box [projectId] = "selectedProjectId"
-                            [nameIdList] = "experimentNameIdList"
-                            (onExperimentSelected)="handleExperimentSelected($event)"
-                            (onAddMessage)="handleAddMessage($event)"></experiment-list-box>
-                        </fieldset>
-                        
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Data Sets</legend>
-                        <dataset-checklist-box
-                            [checkBoxEventChange] = "checkBoxEventChange"
-                            [experimentId] = "selectedExperimentId" 
-                            (onItemChecked)="handleCheckedDataSetItem($event)"
-                            (onAddMessage) = "handleAddMessage($event)">
-                        </dataset-checklist-box>
-                        </fieldset>
-                        
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Mapset</legend>
-                        <mapsets-list-box [nameIdList]="mapsetNameIdList" 
-                        (onMapsetSelected)="handleMapsetSelected($event)"></mapsets-list-box>
-                        </fieldset>
-
-                        
-                    </div>  <!-- outer grid column 2-->
-                    <div class="col-md-4">
-                         
+                        <div *ngIf="displayIncludedDatasetsGrid">
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Extract</legend>
+                                <legend class="the-legend">Included Datasets</legend>
                                 <criteria-display 
                                     [dataSetCheckBoxEvents] = "dataSetCheckBoxEvents"
                                     (onItemUnChecked) = "handleExtractDataSetUnchecked($event)"></criteria-display>
                             </fieldset>
+                        </div>
+                        
+                        <div *ngIf="displaySampleListTypeSelector">
+                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
+                                <legend class="the-legend">Included Samples</legend>
+                                <sample-marker-box></sample-marker-box>
+                            </fieldset>
+                        </div>
+                        
+                        <div *ngIf="displaySampleMarkerBox">
+                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
+                                <legend class="the-legend">Included Markers</legend>
+                            </fieldset>
+                        </div>
+                        
+                    </div>  <!-- outer grid column 2-->
+                    
+                    
+                    <div class="col-md-4">
+                         
                             
-                            <form>
-                                <input type="button" 
-                                value="Submit"
-                                 [disabled]="(gobiiDatasetExtracts.length === 0)"
-                                (click)="handleExtractSubmission()" >
-                            </form>
+                    <form>
+			           <fieldset class="well the-fieldset">
+                			<legend class="the-legend">Export</legend>
+			           
+                            <export-format (onFormatSelected)="handleFormatSelected($event)"></export-format>
+                            <BR>
+                       
+                            <mapsets-list-box [nameIdList]="mapsetNameIdList" 
+                                (onMapsetSelected)="handleMapsetSelected($event)"></mapsets-list-box>
+                            <BR>
+                            <BR>
+                   
+                            <input type="button" 
+                            value="Submit"
+                             [disabled]="(gobiiDatasetExtracts.length === 0)"
+                            (click)="handleExtractSubmission()" >
+            			</fieldset>
+                    </form>
                             
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Status</legend>
@@ -234,6 +290,77 @@ export class ExtractorRoot {
         window.location.href = newDestination;
     } // handleServerSelected()
 
+
+// ********************************************************************
+// ********************************************** EXPORT TYPE SELECTION AND FLAGS
+
+
+    private displayAvailableDatasets:boolean = true;
+    private displaySelectorPi:boolean = true;
+    private displaySelectorProject:boolean = true;
+    private displaySelectorExperiment:boolean = true;
+    private displaySelectorDataType:boolean = false;
+    private displaySelectorPlatform:boolean = false;
+    private displayIncludedDatasetsGrid:boolean = true;
+    private displaySampleListTypeSelector:boolean = false;
+    private displaySampleMarkerBox:boolean = false;
+
+
+    private selectedExportType:string;
+
+    private handleExportTypeSelected(arg) {
+        this.selectedExportType = arg;
+
+        if (this.selectedExportType === "byDataSet") {
+
+            this.displaySelectorPi = true;
+            this.displaySelectorProject = true;
+            this.displaySelectorExperiment = true;
+            this.displayAvailableDatasets = true;
+            this.displayIncludedDatasetsGrid = true;
+
+            this.displaySelectorDataType = false;
+            this.displaySelectorPlatform = false;
+            this.displaySampleListTypeSelector = false;
+            this.displaySampleMarkerBox = false;
+
+
+        } else if (this.selectedExportType === "bySample") {
+
+            this.initializeDatasetTypes();
+            this.initializePlatforms();
+
+            this.displaySelectorPi = true;
+            this.displaySelectorProject = true;
+            this.displaySelectorDataType = true;
+            this.displaySelectorPlatform = true;
+            this.displaySampleListTypeSelector = true;
+
+            this.displaySelectorExperiment = false;
+            this.displayAvailableDatasets = false;
+            this.displayIncludedDatasetsGrid = false;
+            this.displaySampleMarkerBox = false;
+
+
+        } else if (this.selectedExportType === "byMarker") {
+
+            this.initializeDatasetTypes();
+            this.initializePlatforms();
+
+            this.displaySelectorDataType = true;
+            this.displaySelectorPlatform = true;
+            this.displaySampleMarkerBox = true;
+
+            this.displaySelectorPi = false;
+            this.displaySelectorProject = false;
+            this.displaySelectorExperiment = false;
+            this.displayAvailableDatasets = false;
+            this.displayIncludedDatasetsGrid = false;
+            this.displaySampleListTypeSelector = false;
+
+
+        }
+    }
 
 // ********************************************************************
 // ********************************************** SUBMISSION-USER SELECTION
@@ -383,6 +510,70 @@ export class ExtractorRoot {
 
     }
 
+// ********************************************************************
+// ********************************************** DATASET TYPE SELECTION
+    private datasetTypeNameIdList:NameId[];
+    private selectedDatasetTypeId:string;
+
+    private handleDatasetTypeSelected(arg) {
+        this.selectedDatasetTypeId = arg;
+    }
+
+    private initializeDatasetTypes() {
+        let scope$ = this;
+        scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+            EntityType.CvTerms,
+            EntityFilter.BYTYPENAME,
+            "dataset_type")).subscribe(nameIds => {
+
+                if (nameIds && ( nameIds.length > 0 )) {
+                    scope$.datasetTypeNameIdList = nameIds;
+                    scope$.selectedDatasetTypeId = scope$.datasetTypeNameIdList[0].id;
+                } else {
+                    scope$.datasetTypeNameIdList = [new NameId(0, "ERROR NO DATASET TYPES")];
+                }
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving DatasetTypes: "
+                    + m.message))
+            });
+    }
+
+// ********************************************************************
+// ********************************************** PLATFORM SELECTION
+    private platformsNameIdList:NameId[];
+    private selectedPlatformId:string;
+    private checkedPlatformId:string;
+
+    private handlePlatformSelected(arg) {
+        this.selectedPlatformId = arg.id;
+    }
+
+    private handlePlatformChecked(arg) {
+        this.checkedPlatformId = arg.id;
+    }
+
+    private platformCheckBoxEventChange:CheckBoxEvent;
+
+
+    private initializePlatforms() {
+        let scope$ = this;
+        scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+            EntityType.Platforms,
+            EntityFilter.NONE)).subscribe(nameIds => {
+
+                if (nameIds && ( nameIds.length > 0 )) {
+                    scope$.platformsNameIdList = nameIds;
+                    scope$.selectedPlatformId = scope$.platformsNameIdList[0].id;
+                } else {
+                    scope$.platformsNameIdList = [new NameId(0, "ERROR NO PLATFORMS")];
+                }
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving PlatformTypes: "
+                    + m.message))
+            });
+    }
 
 // ********************************************************************
 // ********************************************** DATASET ID
@@ -448,7 +639,7 @@ export class ExtractorRoot {
 
     private handleMapsetSelected(arg) {
 
-        if(arg > 0) {
+        if (arg > 0) {
             this.selectedMapsetId = arg;
         } else {
             this.selectedMapsetId = undefined;

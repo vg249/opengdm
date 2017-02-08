@@ -6,7 +6,9 @@ import {NameId} from "../model/name-id";
     selector: 'mapsets-list-box',
     outputs: ['onMapsetSelected'],
     inputs: ['nameIdList'],
-    template: `<select name="mapsets" (change)="handleMapsetSelected($event)" >
+    template: `
+            <label class="the-label">Add Mapset Info</label><BR>
+            <select name="mapsets" (change)="handleMapsetSelected($event)" >
 			<option *ngFor="let nameId of nameIdList " 
 				value={{nameId.id}}>{{nameId.name}}</option>
 		</select>

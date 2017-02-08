@@ -1,10 +1,10 @@
-System.register([], function(exports_1, context_1) {
+System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var GobiiDataSetExtract;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             GobiiDataSetExtract = (function () {
                 function GobiiDataSetExtract(gobiiFileType, accolate, dataSetId, dataSetName, extractDestinationDirectory) {
                     this.gobiiFileType = gobiiFileType;
@@ -64,6 +64,6 @@ System.register([], function(exports_1, context_1) {
             }());
             exports_1("GobiiDataSetExtract", GobiiDataSetExtract);
         }
-    }
+    };
 });
 //# sourceMappingURL=data-set-extract.js.map

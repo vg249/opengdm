@@ -1,6 +1,5 @@
-System.register(["@angular/core", "../../model/http-values", "@angular/http", "./authentication.service", "../../model/dto-header-response", "../../model/payload/payload-envelope", "rxjs/Observable", "rxjs/add/operator/map"], function(exports_1, context_1) {
+System.register(["@angular/core", "../../model/http-values", "@angular/http", "./authentication.service", "../../model/dto-header-response", "../../model/payload/payload-envelope", "rxjs/Observable", "rxjs/add/operator/map"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,10 +9,10 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_values_1, http_1, authentication_service_1, dto_header_response_1, payload_envelope_1, Observable_1;
-    var DtoRequestService;
+    var __moduleName = context_1 && context_1.id;
+    var core_1, http_values_1, http_1, authentication_service_1, dto_header_response_1, payload_envelope_1, Observable_1, DtoRequestService;
     return {
-        setters:[
+        setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
@@ -35,8 +34,10 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
             },
-            function (_1) {}],
-        execute: function() {
+            function (_1) {
+            }
+        ],
+        execute: function () {
             DtoRequestService = (function () {
                 function DtoRequestService(_http, _authenticationService) {
                     this._http = _http;
@@ -120,14 +121,15 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                         }); // subscribe get authentication token
                     }); // observable
                 };
-                DtoRequestService = __decorate([
-                    core_1.Injectable(), 
-                    __metadata('design:paramtypes', [http_1.Http, authentication_service_1.AuthenticationService])
-                ], DtoRequestService);
                 return DtoRequestService;
             }());
+            DtoRequestService = __decorate([
+                core_1.Injectable(),
+                __metadata("design:paramtypes", [http_1.Http,
+                    authentication_service_1.AuthenticationService])
+            ], DtoRequestService);
             exports_1("DtoRequestService", DtoRequestService);
         }
-    }
+    };
 });
 //# sourceMappingURL=dto-request.service.js.map
