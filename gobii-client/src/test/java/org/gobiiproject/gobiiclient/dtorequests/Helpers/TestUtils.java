@@ -24,10 +24,10 @@ public class TestUtils {
 
         boolean returnVal = false;
 
-        if (LineUtils.isNullOrEmpty(header.getGobiiVersion())) {
-            returnVal = true;
-            System.out.print("Response does not indicate the gobii web services version");
-        }
+//        if (LineUtils.isNullOrEmpty(header.getGobiiVersion())) {
+//            returnVal = true;
+//            System.out.println("Response does not indicate the gobii web services version");
+//        }
 
 
         if (!header.getStatus().isSucceeded() ||
