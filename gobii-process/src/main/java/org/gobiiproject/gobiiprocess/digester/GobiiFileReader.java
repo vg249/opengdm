@@ -348,25 +348,7 @@ public class GobiiFileReader {
 					ErrorLogger.logInfo("Digester","Running IFL: "+pathToIFL+connectionString+inputFile+outputFile);
 					//Lines affected returned by method call
 					int fileLines=HelperFunctions.iExec(pathToIFL+connectionString+inputFile+outputFile,errorPath);
-
-					//Default to 'we had an error'
-					String totalLinesVal="error";
-					String linesLoadedVal="error";
-					String duplicateLinesVal="error";
-					//If total lines/file lines less than 0, something's wrong. Also if total lines is < changed, something's wrong.
-					if((totalLines>0) && (fileLines >=0) &&(totalLines>fileLines)){
-						if(fileLines>0){
-							loadedData=true;
-						}
-						totalLinesVal=(totalLines-1)+"";
-						linesLoadedVal=(fileLines)+"";//Header
-						duplicateLinesVal=((totalLines-1)-fileLines)+"";
-					}
-					else{
-						ErrorLogger.logDebug("FileReader","Failed lines check with total lines:"+totalLines+" and loaded lines:"+fileLines);
-					}
-					dm.addEntry(key,totalLinesVal,linesLoadedVal,duplicateLinesVal);
-
+					loadedData|=calculateLinesLoaded(dm, key, totalLines, fileLines);
 				}
 			}
 			if(!loadedData)ErrorLogger.logError("FileReader","No Data Loaded, may be duplicates?");
@@ -431,6 +413,31 @@ public class GobiiFileReader {
 			ErrorLogger.logError("MailInterface","Error Sending Mail",e);
 		}
 		HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+	}
+
+	private static boolean calculateLinesLoaded(DigesterMessage dm, String key, int totalLines, int fileLines) {
+		boolean loadedData=false;
+		//Default to 'we had an error'
+		String totalLinesVal="error";
+		String linesLoadedVal="error";
+		String duplicateLinesVal="error";
+
+		if(key.contains("_prop") && (fileLines >= 0) && (totalLines>0)){
+			totalLinesVal=(totalLines-1)+"";
+			linesLoadedVal=(fileLines)+"";//Header
+			duplicateLinesVal="";//Intentionally blank. Properties can have more or less loaded than total.
+		}
+		//If total lines/file lines less than 0, something's wrong. Also if total lines is < changed, something's wrong.
+		else if((totalLines>0) && (fileLines >=0) &&(totalLines>fileLines)){
+            totalLinesVal=(totalLines-1)+"";
+            linesLoadedVal=(fileLines)+"";//Header
+            duplicateLinesVal=((totalLines-1)-fileLines)+"";
+        }
+        else{
+            ErrorLogger.logDebug("FileReader","Failed lines check with total lines:"+totalLines+" and loaded lines:"+fileLines);
+        }
+		dm.addEntry(key,totalLinesVal,linesLoadedVal,duplicateLinesVal);
+		return fileLines > 0;
 	}
 
 	/**
