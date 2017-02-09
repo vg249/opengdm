@@ -14,28 +14,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DisplayDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ManifestDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ReferenceDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderFilePreviewDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PingDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -2839,6 +2818,44 @@ public class GOBIIControllerV1 {
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
                 response,
                 HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/experiments/{experimentId:[\\d]+}/protocols", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ProtocolDTO> getProtocolByExperimentId(@PathVariable Integer experimentId,
+                                                                  HttpServletRequest request,
+                                                                  HttpServletResponse response) {
+
+        PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            ProtocolDTO protocolDTO = protocolService.getProtocolsByExperimentId(experimentId);
+
+            PayloadWriter<ProtocolDTO> payloadWriter = new PayloadWriter<>(request,
+                    ProtocolDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceColl(request.getContextPath(),
+                            ServiceRequestId.URL_EXPERIMENTS)
+                            .addUriParam("experimentId")
+                            .setParamValue("experimentId", experimentId.toString())
+                            .appendSegment(ServiceRequestId.URL_PROTOCOL)
+                            .addUriParam("id"),
+                    protocolDTO);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
         return (returnVal);
