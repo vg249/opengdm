@@ -111,7 +111,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         RestUri namesUri = ClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
-        namesUri.setParamValue("filterValue", "analyis_type");
+        namesUri.setParamValue("filterValue", "analysis_type");
 
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForAnalysisTerms = new GobiiEnvelopeRestResource<>(namesUri);
         PayloadEnvelope<NameIdDTO> resultEnvelopeAnalysis = gobiiEnvelopeRestResourceForAnalysisTerms
@@ -234,7 +234,7 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
         RestUri namesUri = ClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
-        namesUri.setParamValue("filterValue", "analyis_type");
+        namesUri.setParamValue("filterValue", "analysis_type");
 
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForAnalysisTerms = new GobiiEnvelopeRestResource<>(namesUri);
         PayloadEnvelope<NameIdDTO> resultEnvelopeAnalysis = gobiiEnvelopeRestResourceForAnalysisTerms
@@ -443,8 +443,20 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
     @Test
     public void getDataSetsByTypeId() throws Exception {
 
-        // use 93, since this is the test value for creating a dataset
-        Integer type_id = 93;
+        Integer dataSetid = (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+
+        RestUri projectsUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
+        projectsUri.setParamValue("id", dataSetid.toString());
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForDataSet = new GobiiEnvelopeRestResource<>(projectsUri);
+        PayloadEnvelope<DataSetDTO> resultEnvelopeDataSet = gobiiEnvelopeRestResourceForDataSet
+                .get(DataSetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeDataSet.getHeader()));
+        DataSetDTO dataSetDTOResponse = resultEnvelopeDataSet.getPayload().getData().get(0);
+
+        Integer type_id = dataSetDTOResponse.getTypeId();
 
         RestUri restUriDataSets = ClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -469,6 +481,34 @@ public class DtoCrudRequestDataSetTest implements DtoCrudRequestTest {
 
         LinkCollection linkCollection = resultEnvelope.getPayload().getLinkCollection();
         Assert.assertTrue(linkCollection.getLinksPerDataItem().size() == dataSetDTOList.size());
+
+        List<Integer> itemsToTest = new ArrayList<>();
+        if (dataSetDTOList.size() > 50) {
+            itemsToTest = TestUtils.makeListOfIntegersInRange(10, dataSetDTOList.size());
+
+        } else {
+            for (int idx = 0; idx < dataSetDTOList.size(); idx++) {
+                itemsToTest.add(idx);
+            }
+        }
+
+        for (Integer currentIdx : itemsToTest) {
+            DataSetDTO currentDatasetDto = dataSetDTOList.get(currentIdx);
+
+            Link currentLink = linkCollection.getLinksPerDataItem().get(currentIdx);
+
+            RestUri restUriDForGetById = ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .RestUriFromUri(currentLink.getHref());
+            GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriDForGetById);
+            PayloadEnvelope<DataSetDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
+                    .get(DataSetDTO.class);
+            Assert.assertNotNull(resultEnvelopeForGetByID);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
+            DataSetDTO dataDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
+            Assert.assertTrue(currentDatasetDto.getName().equals(dataDTOFromLink.getName()));
+            Assert.assertTrue(currentDatasetDto.getDataSetId().equals(dataDTOFromLink.getDataSetId()));
+        }
 
     }
 }

@@ -26,11 +26,19 @@ public class PayloadWriter<T extends DTOBase> {
 
     private final Class<T> dtoType;
     private HttpServletRequest httpServletRequest;
+    private String gobiiWebVersion;
 
     public PayloadWriter(HttpServletRequest httpServletRequest,
-                         Class<T> dtoType) {
+                         Class<T> dtoType) throws Exception{
         this.dtoType = dtoType;
         this.httpServletRequest = httpServletRequest;
+
+
+        Properties properties = new Properties();
+        properties.load(this.getClass().getClassLoader().getResourceAsStream("gobii_web_props.properties"));
+        String version = properties.getProperty("gobii_version").toString();
+
+        this.gobiiWebVersion = version;
     }
 
     public void writeSingleItemForId(PayloadEnvelope<T> payloadEnvelope,
@@ -76,14 +84,7 @@ public class PayloadWriter<T extends DTOBase> {
                 }
 
 
-                Properties properties = new Properties();
-                properties.load(this.getClass().getClassLoader().getResourceAsStream("gobii_web_props.properties"));
-                String version = properties.getProperty("gobii_version").toString();
-
-                Header header = payloadEnvelope.getHeader();
-                header.setGobiiVersion(version);
-
-                payloadEnvelope.setHeader(header);
+                payloadEnvelope.getHeader().setGobiiVersion(this.gobiiWebVersion);
                 payloadEnvelope.getPayload().getLinkCollection().getLinksPerDataItem().add(link);
 
 
@@ -112,6 +113,9 @@ public class PayloadWriter<T extends DTOBase> {
                     id);
         }
 
+
+        payloadEnvelope.getHeader().setGobiiVersion(this.gobiiWebVersion);
+
     }
 
     public void writeList(PayloadEnvelope<T> payloadEnvelope,
@@ -121,5 +125,8 @@ public class PayloadWriter<T extends DTOBase> {
         for (T currentItem : itemsToWrite) {
             this.writeSingleItemForDefaultId(payloadEnvelope, restUri, currentItem);
         }
+
+
+        payloadEnvelope.getHeader().setGobiiVersion(this.gobiiWebVersion);
     }
 }
