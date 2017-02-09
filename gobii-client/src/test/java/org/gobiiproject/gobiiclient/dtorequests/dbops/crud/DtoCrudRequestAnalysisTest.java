@@ -101,7 +101,7 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
         RestUri namesUri = ClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
-        namesUri.setParamValue("filterValue", "analyis_type");
+        namesUri.setParamValue("filterValue", "analysis_type");
 
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForAnalysisTerms = new GobiiEnvelopeRestResource<>(namesUri);
         PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResourceForAnalysisTerms
@@ -155,7 +155,7 @@ public class DtoCrudRequestAnalysisTest implements DtoCrudRequestTest {
         RestUri namesUri = ClientContext.getInstance(null, false).getUriFactory().nameIdListByQueryParams();
         namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
         namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString()));
-        namesUri.setParamValue("filterValue", "analyis_type");
+        namesUri.setParamValue("filterValue", "analysis_type");
 
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResourceForAnalysisTerms = new GobiiEnvelopeRestResource<>(namesUri);
         PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResourceForAnalysisTerms
