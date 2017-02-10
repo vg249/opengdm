@@ -24,16 +24,11 @@ const URL = 'gobii/v1/uploadfile';
 
 <div class="container">
 
-    <div class="navbar navbar-default">
-        <div class="navbar-header">
-            <a class="navbar-brand" href>Angular2 File Upload</a>
-        </div>
-    </div>
-
     <div class="row">
 
         <div class="col-md-3">
 
+            <!-- DROP ZONES AND MULTI-FILE SELECT, UNUSED FOR NOW ====================== 
             <h3>Select files</h3>
 
             <div ng2FileDrop
@@ -54,13 +49,22 @@ const URL = 'gobii/v1/uploadfile';
 
             Multiple
             <input type="file" ng2FileSelect [uploader]="uploader" multiple  /><br/>
+            ================================================================================ -->
 
-            Single
+            
             <input type="file" ng2FileSelect [uploader]="uploader" />
+            <!--  IF YOU REINSTATE THE QUEUES BELOW THIS BUTTON WILL BE SUPERFLUOUS -->
+            <button type="button" class="btn btn-success btn-s"
+                        (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+                    <span class="glyphicon glyphicon-upload"></span> Upload
+            </button>
+
         </div>
 
         <div class="col-md-9" style="margin-bottom: 40px">
 
+
+            <!-- UPLOAD QUEUE UNUSED FOR NOW =========================================================
             <h3>Upload queue</h3>
             <p>Queue length: {{ uploader?.queue?.length }}</p>
 
@@ -126,6 +130,8 @@ const URL = 'gobii/v1/uploadfile';
                     <span class="glyphicon glyphicon-trash"></span> Remove all
                 </button>
             </div>
+            == UPLOAD QUEUE UNUSED FOR NOW ========================================================= -->
+
 
         </div>
 

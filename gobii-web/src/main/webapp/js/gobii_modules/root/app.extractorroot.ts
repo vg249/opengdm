@@ -173,6 +173,7 @@ import {FileDropDirective, FileSelectDirective} from "ng2-file-upload";
                         <div *ngIf="displaySampleMarkerBox">
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Markers</legend>
+                                <sample-marker-box></sample-marker-box>
                             </fieldset>
                         </div>
                         
