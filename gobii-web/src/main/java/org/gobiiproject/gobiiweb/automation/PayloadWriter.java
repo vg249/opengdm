@@ -33,12 +33,7 @@ public class PayloadWriter<T extends DTOBase> {
         this.dtoType = dtoType;
         this.httpServletRequest = httpServletRequest;
 
-
-        Properties properties = new Properties();
-        properties.load(this.getClass().getClassLoader().getResourceAsStream("gobii_web_props.properties"));
-        String version = properties.getProperty("gobii_version").toString();
-
-        this.gobiiWebVersion = version;
+        this.gobiiWebVersion = GobiiVersionInfo.getVersion();
     }
 
     public void writeSingleItemForId(PayloadEnvelope<T> payloadEnvelope,
