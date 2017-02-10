@@ -2839,12 +2839,8 @@ public class GOBIIControllerV1 {
                     ProtocolDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    UriFactory.resourceColl(request.getContextPath(),
-                            ServiceRequestId.URL_EXPERIMENTS)
-                            .addUriParam("experimentId")
-                            .setParamValue("experimentId", experimentId.toString())
-                            .appendSegment(ServiceRequestId.URL_PROTOCOL)
-                            .addUriParam("id"),
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PROTOCOL),
                     protocolDTO);
 
         } catch (GobiiException e) {
