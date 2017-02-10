@@ -1,80 +1,166 @@
 import {GobiiFileType} from "../type-gobii-file"
+import {GobiiExtractFilterType} from "../type-extractor-filter";
+import {GobiiSampleListType} from "../type-extractor-sample-list";
 
 export class GobiiDataSetExtract {
 
-    constructor(private gobiiFileType:GobiiFileType,
-                private accolate:boolean,
-                private dataSetId:number,
-                private dataSetName:string,
-                private extractDestinationDirectory:string) {
+    public constructor(public _gobiiFileType: GobiiFileType,
+                       public _accolate: boolean,
+                       public _dataSetId: number,
+                       public _dataSetName: string,
+                       public _extractDestinationDirectory: string,
+                       public _gobiiExtractFilterType: GobiiExtractFilterType,
+                       public _markerList: string[],
+                       public _sampleList: string[],
+                       public _listFileName: string,
+                       public _gobiiSampleListType: GobiiSampleListType,
+                       public _gobiiDatasetType: string,
+                       public _platformIds: number[]) {
 
-        this.setGobiiFileType(gobiiFileType);
-        this.setAccolate(accolate);
-        this.setDataSetName(dataSetName);
-        this.setDataSetId(dataSetId);
+        // this.setGobiiFileType(_gobiiFileType);
+        // this.setAccolate(_accolate);
+        // this.setDataSetId(_dataSetId);
+        // this.setDataSetName(_dataSetName);
+        // this.setExtractDestinationDirectory(_extractDestinationDirectory);
+        // this.setGobiiFileType(_gobiiExtractFilterType);
+        //
 
     } // ctor 
 
-    public getGobiiFileType():GobiiFileType {
-        return this.gobiiFileType;
+
+    public getgobiiFileType(): GobiiFileType {
+        return this._gobiiFileType;
     }
 
-    public  setGobiiFileType(gobiiFileType:GobiiFileType):void {
-        this.gobiiFileType = gobiiFileType;
+    public setgobiiFileType(value: GobiiFileType) {
+        this._gobiiFileType = value;
     }
 
-    public isAccolate():boolean {
-        return this.accolate;
+    public getaccolate(): boolean {
+        return this._accolate;
     }
 
-    public setAccolate(accolate:boolean):void {
-        this.accolate = accolate;
+    public setaccolate(value: boolean) {
+        this._accolate = value;
     }
 
-    public getDataSetName():string {
-        return this.dataSetName;
+    public getdataSetId(): number {
+        return this._dataSetId;
     }
 
-    public setDataSetName(dataSetName:string):void {
-        this.dataSetName = dataSetName;
+    public setdataSetId(value: number) {
+        this._dataSetId = value;
     }
 
-    public getDataSetId():number {
-        return this.dataSetId;
+    public getdataSetName(): string {
+        return this._dataSetName;
     }
 
-    public setDataSetId(dataSetId:number):void {
-        this.dataSetId = dataSetId;
+    public setdataSetName(value: string) {
+        this._dataSetName = value;
     }
 
-    public getExtractDestinationDirectory(): string {
-        return this.extractDestinationDirectory;
+    public getextractDestinationDirectory(): string {
+        return this._extractDestinationDirectory;
     }
 
-    public sgetExtractDestinationDirectory(extractDestinationDirectory:string ){
-        this.extractDestinationDirectory = extractDestinationDirectory;
+    public setextractDestinationDirectory(value: string) {
+        this._extractDestinationDirectory = value;
     }
 
-    public getJson():any {
+    public getgobiiExtractFilterType(): GobiiExtractFilterType {
+        return this._gobiiExtractFilterType;
+    }
 
-        let returnVal:any = {};
+    public setgobiiExtractFilterType(value: GobiiExtractFilterType) {
+        this._gobiiExtractFilterType = value;
+    }
 
-        returnVal.gobiiFileType = this.gobiiFileType;
-        returnVal.accolate = this.accolate;
-        returnVal.dataSetName = this.dataSetName;
-        returnVal.dataSetId = this.dataSetId;
-        returnVal.extractDestinationDirectory = this.extractDestinationDirectory;
+    public getmarkerList(): string[] {
+        return this._markerList;
+    }
+
+    public setmarkerList(value: string[]) {
+        this._markerList = value;
+    }
+
+    public getsampleList(): string[] {
+        return this._sampleList;
+    }
+
+    public setsampleList(value: string[]) {
+        this._sampleList = value;
+    }
+
+    public getlistFileName(): string {
+        return this._listFileName;
+    }
+
+    public setlistFileName(value: string) {
+        this._listFileName = value;
+    }
+
+    public getgobiiSampleListType(): GobiiSampleListType {
+        return this._gobiiSampleListType;
+    }
+
+    public setgobiiSampleListType(value: GobiiSampleListType) {
+        this._gobiiSampleListType = value;
+    }
+
+    public getgobiiDatasetType(): string {
+        return this._gobiiDatasetType;
+    }
+
+    public setgobiiDatasetType(value: string) {
+        this._gobiiDatasetType = value;
+    }
+
+    public getplatformIds(): number[] {
+        return this._platformIds;
+    }
+
+    public setplatformIds(value: number[]) {
+        this._platformIds = value;
+    }
+
+
+    public getJson(): any {
+
+        let returnVal: any = {};
+
+        returnVal._gobiiFileType = this._gobiiFileType;
+        returnVal._accolate = this._accolate;
+        returnVal._dataSetId = this._dataSetId;
+        returnVal._dataSetName = this._dataSetName;
+        returnVal._extractDestinationDirectory = this._extractDestinationDirectory;
+        returnVal._gobiiExtractFilterType = this._gobiiExtractFilterType;
+        returnVal._markerList = this._markerList;
+        returnVal._sampleList = this._sampleList;
+        returnVal._listFileName = this._listFileName;
+        returnVal._gobiiSampleListType = this._gobiiSampleListType;
+        returnVal._gobiiDatasetType = this._gobiiDatasetType;
+        returnVal._platformIds = this._platformIds;
 
         return returnVal;
     }
 
-    public static fromJson(json:any):GobiiDataSetExtract {
+    public static fromJson(json: any): GobiiDataSetExtract {
 
-        let returnVal:GobiiDataSetExtract = new GobiiDataSetExtract(json.gobiiFileType,
-            json.accolate,
-            json.dataSetId,
-            json.dataSetName,
-            json.extractDestinationDirectory);
+        let returnVal: GobiiDataSetExtract =
+            new GobiiDataSetExtract(
+                json._gobiiFileType,
+                json._accolate,
+                json._dataSetId,
+                json._dataSetName,
+                json._extractDestinationDirectory,
+                json._gobiiExtractFilterType,
+                json._markerList,
+                json._sampleList,
+                json._listFileName,
+                json._gobiiSampleListType,
+                json._gobiiDatasetType,
+                json._platformIds);
 
         return returnVal;
     }
