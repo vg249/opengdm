@@ -34,6 +34,7 @@ import {EntityFilter} from "../model/type-entity-filter";
 import {CheckListBoxComponent} from "../views/checklist-box.component";
 import {SampleMarkerBoxComponent} from "../views/sample-marker-box.component";
 import {FileDropDirective, FileSelectDirective} from "ng2-file-upload";
+import {SampleMarkerList} from "../model/sample-marker-list";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -166,14 +167,18 @@ import {FileDropDirective, FileSelectDirective} from "ng2-file-upload";
                         <div *ngIf="displaySampleListTypeSelector">
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Samples</legend>
-                                <sample-marker-box></sample-marker-box>
+                                <sample-marker-box 
+                                    (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)">
+                                </sample-marker-box>
                             </fieldset>
                         </div>
                         
                         <div *ngIf="displaySampleMarkerBox">
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Markers</legend>
-                                <sample-marker-box></sample-marker-box>
+                                <sample-marker-box 
+                                    (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)">
+                                </sample-marker-box>
                             </fieldset>
                         </div>
                         
@@ -665,6 +670,17 @@ export class ExtractorRoot {
             });
 
     }
+
+
+// ********************************************************************
+// ********************************************** MARKER/SAMPLE selection
+    private sampleMarkerList:SampleMarkerList;
+    private handleSampleMarkerListComplete(arg:SampleMarkerList) {
+
+        this.sampleMarkerList = arg;
+
+    }
+
 
 
     // ********************************************************************
