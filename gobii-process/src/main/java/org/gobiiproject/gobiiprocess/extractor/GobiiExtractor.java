@@ -1,9 +1,6 @@
 package org.gobiiproject.gobiiprocess.extractor;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -132,7 +129,6 @@ public class GobiiExtractor {
 				mapId=mapIds.get(0);
 			}
 
-			
 			for(GobiiDataSetExtract extract:inst.getDataSetExtracts()){
 				String extractDir=extract.getExtractDestinationDirectory();
 				tryExec("rm -f "+extractDir+"*");
@@ -168,50 +164,17 @@ public class GobiiExtractor {
 
 				//HDF5
 				String tempFolder=extractDir;
-				String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
-				String hdf5Extractor=pathToHDF5+"dumpdataset";
-				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
-				// %s <orientation> <HDF5 file> <output file>
-				boolean markerFast=false;
-				if(extract.getGobiiFileType()==GobiiFileType.HAPMAP)markerFast=true;
-				String ordering="samples-fast";
-				if(markerFast)ordering="markers-fast";
-				ErrorLogger.logDebug("Extractor","HDF5 Ordering is "+ordering);
-				ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
-				HelperFunctions.tryExec(hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile,null,errorFile);
-				success&=ErrorLogger.success();
-				ErrorLogger.logDebug("Extractor",(success?"Success ":"Failure " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile));
+				String genoFile = getHDF5genotype(extract.getGobiiFileType(), errorFile, dataSetId, tempFolder);
 				
 				switch(extract.getGobiiFileType()){
 
 				case FLAPJACK:
-					String genoOutFile=extractDir+"DS"+dataSetId+".genotype";
-					String mapOutFile=extractDir+"DS"+dataSetId+".map";
-					lastErrorFile=errorFile;
-					//Always regenerate requests - may have different parameters
-					FlapjackTransformer.generateMapFile(extendedMarkerFile, sampleFile, chrLengthFile, dataSetId, tempFolder, mapOutFile, errorFile);
-					HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
-					FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
+					String genoOutFile = flapjackExtract(success, configuration, inst, extract, extractDir, markerFile, extendedMarkerFile, sampleFile, chrLengthFile, errorFile, dataSetId, tempFolder, genoFile);
 					HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 					break;
 				
 				case HAPMAP:
-					String hapmapOutFile = extractDir+"DS"+dataSetId+".hmp.txt";
-					try{
-						System.out.println("Executing HapMap creation");
-						String hapmapTransform="python "+extractorScriptPath+"HapmapExtractor.py"+
-								" -k "+extendedMarkerFile+
-								" -s "+sampleFile+
-								" -p "+projectFile+
-								" -m "+genoFile+ 
-								" -o "+hapmapOutFile;
-						//HapmapTransformer.generateFile(markerFile,sampleFile,projectFile,tempFolder,hapmapOutFile,errorFile);
-						HelperFunctions.tryExec(hapmapTransform, null, errorFile);
-						rm(genoFile);
-						rmIfExist(chrLengthFile);
-					}catch(Exception e){
-						ErrorLogger.logError("Extractor","Exception in HapMap creation",e);
-					}
+					String hapmapOutFile = hapmapExtract(extractorScriptPath, extractDir, extendedMarkerFile, sampleFile, projectFile, chrLengthFile, errorFile, dataSetId, genoFile);
 					HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
 					break;
 
@@ -226,6 +189,81 @@ public class GobiiExtractor {
 			}
 			HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 		}
+	}
+
+	private static String getHDF5Genotype(GobiiFileType fileType, String errorFile, Integer dataSetId, String tempFolder) {
+		return getHDF5genotype(fileType,errorFile,dataSetId,tempFolder,null);
+	}
+	private static String getHDF5GenoFromMarkerList(GobiiFileType fileType, String errorFile, String tempFolder,String posFile) throws FileNotFoundException{
+		BufferedReader br=new BufferedReader(new FileReader(posFile));
+		try{
+		br.readLine();//header
+		while(br.ready()) {
+			String[] line = br.readLine().split("\t");
+
+			getHDF5Genotype(fileType,errorFile,Integer.parseInt(line[0]),tempFolder,line[1]);
+		}
+		}catch(IOException e) {
+			ErrorLogger.logError("GobiiExtractor", "MarkerList reading failed", e);
+		}
+		String genoFile="markerList.genotype";
+
+
+		return genoFile;
+	}
+		private static String getHDF5Genotype( GobiiFileType fileType, String errorFile, Integer dataSetId, String tempFolder, String markerList) {
+		String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
+
+		String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
+		// %s <orientation> <HDF5 file> <output file>
+		boolean markerFast=false;
+		if(fileType == GobiiFileType.HAPMAP)markerFast=true;
+		String ordering="samples-fast";
+		if(markerFast)ordering="markers-fast";
+		ErrorLogger.logDebug("Extractor","HDF5 Ordering is "+ordering);
+		if(markerList!=null) {
+			String hdf5Extractor=pathToHDF5+"fetchmarkerlist";
+			ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
+			HelperFunctions.tryExec(hdf5Extractor + " " + ordering + " " + HDF5File + " " + genoFile, null, errorFile);
+		}
+		else {
+			String hdf5Extractor=pathToHDF5+"dumpdataset";
+			ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
+			HelperFunctions.tryExec(hdf5Extractor + " " + ordering + " " + HDF5File + " " + genoFile, null, errorFile);
+		}
+		ErrorLogger.logDebug("Extractor",(ErrorLogger.success()?"Success ":"Failure " +"Extracting with "+ordering+" "+HDF5File+" "+genoFile));
+		return genoFile;
+	}
+
+	private static String flapjackExtract(boolean success, ConfigSettings configuration, GobiiExtractorInstruction inst, GobiiDataSetExtract extract, String extractDir, String markerFile, String extendedMarkerFile, String sampleFile, String chrLengthFile, String errorFile, Integer dataSetId, String tempFolder, String genoFile) {
+		String genoOutFile=extractDir+"DS"+dataSetId+".genotype";
+		String mapOutFile=extractDir+"DS"+dataSetId+".map";
+		lastErrorFile=errorFile;
+		//Always regenerate requests - may have different parameters
+		FlapjackTransformer.generateMapFile(extendedMarkerFile, sampleFile, chrLengthFile, dataSetId, tempFolder, mapOutFile, errorFile);
+		HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&& ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+		FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
+		return genoOutFile;
+	}
+
+	private static String hapmapExtract(String extractorScriptPath, String extractDir, String extendedMarkerFile, String sampleFile, String projectFile, String chrLengthFile, String errorFile, Integer dataSetId, String genoFile) {
+		String hapmapOutFile = extractDir+"DS"+dataSetId+".hmp.txt";
+		try{
+            System.out.println("Executing HapMap creation");
+            String hapmapTransform="python "+extractorScriptPath+"HapmapExtractor.py"+
+                    " -k "+extendedMarkerFile+
+                    " -s "+sampleFile+
+                    " -p "+projectFile+
+                    " -m "+genoFile+
+                    " -o "+hapmapOutFile;
+            //HapmapTransformer.generateFile(markerFile,sampleFile,projectFile,tempFolder,hapmapOutFile,errorFile);
+            HelperFunctions.tryExec(hapmapTransform, null, errorFile);
+            rm(genoFile);
+            rmIfExist(chrLengthFile);
+        }catch(Exception e){
+            ErrorLogger.logError("Extractor","Exception in HapMap creation",e);
+        }
+		return hapmapOutFile;
 	}
 
 	public static List<GobiiExtractorInstruction> parseExtractorInstructionFile(String filename){
