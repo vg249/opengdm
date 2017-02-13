@@ -22,6 +22,7 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ControllerUtils;
+import org.gobiiproject.gobiiweb.automation.GobiiVersionInfo;
 import org.gobiiproject.gobiiweb.automation.PayloadReader;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,6 +143,10 @@ public class GOBIIControllerV1 {
             PingDTO pingDTOResponse = pingService.getPings(pingDTORequest);
             String newResponseString = LineUtils.wrapLine("Loader controller responded");
             pingDTOResponse.getPingResponses().add(newResponseString);
+
+            // add gobii version
+            returnVal.getHeader().setGobiiVersion(GobiiVersionInfo.getVersion());
+
             returnVal.getPayload().getData().add(pingDTOResponse);
         } catch (GobiiException e) {
 
@@ -2839,12 +2844,8 @@ public class GOBIIControllerV1 {
                     ProtocolDTO.class);
 
             payloadWriter.writeSingleItemForDefaultId(returnVal,
-                    UriFactory.resourceColl(request.getContextPath(),
-                            ServiceRequestId.URL_EXPERIMENTS)
-                            .addUriParam("experimentId")
-                            .setParamValue("experimentId", experimentId.toString())
-                            .appendSegment(ServiceRequestId.URL_PROTOCOL)
-                            .addUriParam("id"),
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PROTOCOL),
                     protocolDTO);
 
         } catch (GobiiException e) {
