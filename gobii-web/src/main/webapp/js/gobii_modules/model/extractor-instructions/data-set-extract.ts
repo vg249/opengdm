@@ -4,124 +4,124 @@ import {GobiiSampleListType} from "../type-extractor-sample-list";
 
 export class GobiiDataSetExtract {
 
-    public constructor(public _gobiiFileType: GobiiFileType,
-                       public _accolate: boolean,
-                       public _dataSetId: number,
-                       public _dataSetName: string,
-                       public _extractDestinationDirectory: string,
-                       public _gobiiExtractFilterType: GobiiExtractFilterType,
-                       public _markerList: string[],
-                       public _sampleList: string[],
-                       public _listFileName: string,
-                       public _gobiiSampleListType: GobiiSampleListType,
-                       public _gobiiDatasetType: string,
-                       public _platformIds: number[]) {
+    public constructor(public gobiiFileType: GobiiFileType,
+                       public accolate: boolean,
+                       public dataSetId: number,
+                       public dataSetName: string,
+                       public extractDestinationDirectory: string,
+                       public gobiiExtractFilterType: GobiiExtractFilterType,
+                       public markerList: string[],
+                       public sampleList: string[],
+                       public listFileName: string,
+                       public gobiiSampleListType: GobiiSampleListType,
+                       public gobiiDatasetType: string,
+                       public platformIds: number[]) {
 
-        // this.setGobiiFileType(_gobiiFileType);
-        // this.setAccolate(_accolate);
-        // this.setDataSetId(_dataSetId);
-        // this.setDataSetName(_dataSetName);
-        // this.setExtractDestinationDirectory(_extractDestinationDirectory);
-        // this.setGobiiFileType(_gobiiExtractFilterType);
+        // this.setGobiiFileType(gobiiFileType);
+        // this.setAccolate(accolate);
+        // this.setDataSetId(dataSetId);
+        // this.setDataSetName(dataSetName);
+        // this.setExtractDestinationDirectory(extractDestinationDirectory);
+        // this.setGobiiFileType(gobiiExtractFilterType);
         //
 
     } // ctor 
 
 
     public getgobiiFileType(): GobiiFileType {
-        return this._gobiiFileType;
+        return this.gobiiFileType;
     }
 
     public setgobiiFileType(value: GobiiFileType) {
-        this._gobiiFileType = value;
+        this.gobiiFileType = value;
     }
 
     public getaccolate(): boolean {
-        return this._accolate;
+        return this.accolate;
     }
 
     public setaccolate(value: boolean) {
-        this._accolate = value;
+        this.accolate = value;
     }
 
     public getdataSetId(): number {
-        return this._dataSetId;
+        return this.dataSetId;
     }
 
     public setdataSetId(value: number) {
-        this._dataSetId = value;
+        this.dataSetId = value;
     }
 
     public getdataSetName(): string {
-        return this._dataSetName;
+        return this.dataSetName;
     }
 
     public setdataSetName(value: string) {
-        this._dataSetName = value;
+        this.dataSetName = value;
     }
 
     public getextractDestinationDirectory(): string {
-        return this._extractDestinationDirectory;
+        return this.extractDestinationDirectory;
     }
 
     public setextractDestinationDirectory(value: string) {
-        this._extractDestinationDirectory = value;
+        this.extractDestinationDirectory = value;
     }
 
     public getgobiiExtractFilterType(): GobiiExtractFilterType {
-        return this._gobiiExtractFilterType;
+        return this.gobiiExtractFilterType;
     }
 
     public setgobiiExtractFilterType(value: GobiiExtractFilterType) {
-        this._gobiiExtractFilterType = value;
+        this.gobiiExtractFilterType = value;
     }
 
     public getmarkerList(): string[] {
-        return this._markerList;
+        return this.markerList;
     }
 
     public setmarkerList(value: string[]) {
-        this._markerList = value;
+        this.markerList = value;
     }
 
     public getsampleList(): string[] {
-        return this._sampleList;
+        return this.sampleList;
     }
 
     public setsampleList(value: string[]) {
-        this._sampleList = value;
+        this.sampleList = value;
     }
 
     public getlistFileName(): string {
-        return this._listFileName;
+        return this.listFileName;
     }
 
     public setlistFileName(value: string) {
-        this._listFileName = value;
+        this.listFileName = value;
     }
 
     public getgobiiSampleListType(): GobiiSampleListType {
-        return this._gobiiSampleListType;
+        return this.gobiiSampleListType;
     }
 
     public setgobiiSampleListType(value: GobiiSampleListType) {
-        this._gobiiSampleListType = value;
+        this.gobiiSampleListType = value;
     }
 
     public getgobiiDatasetType(): string {
-        return this._gobiiDatasetType;
+        return this.gobiiDatasetType;
     }
 
     public setgobiiDatasetType(value: string) {
-        this._gobiiDatasetType = value;
+        this.gobiiDatasetType = value;
     }
 
     public getplatformIds(): number[] {
-        return this._platformIds;
+        return this.platformIds;
     }
 
     public setplatformIds(value: number[]) {
-        this._platformIds = value;
+        this.platformIds = value;
     }
 
 
@@ -129,18 +129,18 @@ export class GobiiDataSetExtract {
 
         let returnVal: any = {};
 
-        returnVal._gobiiFileType = this._gobiiFileType;
-        returnVal._accolate = this._accolate;
-        returnVal._dataSetId = this._dataSetId;
-        returnVal._dataSetName = this._dataSetName;
-        returnVal._extractDestinationDirectory = this._extractDestinationDirectory;
-        returnVal._gobiiExtractFilterType = this._gobiiExtractFilterType;
-        returnVal._markerList = this._markerList;
-        returnVal._sampleList = this._sampleList;
-        returnVal._listFileName = this._listFileName;
-        returnVal._gobiiSampleListType = this._gobiiSampleListType;
-        returnVal._gobiiDatasetType = this._gobiiDatasetType;
-        returnVal._platformIds = this._platformIds;
+        returnVal.gobiiFileType = this.gobiiFileType;
+        returnVal.accolate = this.accolate;
+        returnVal.dataSetId = this.dataSetId;
+        returnVal.dataSetName = this.dataSetName;
+        returnVal.extractDestinationDirectory = this.extractDestinationDirectory;
+        returnVal.gobiiExtractFilterType = this.gobiiExtractFilterType;
+        returnVal.markerList = this.markerList;
+        returnVal.sampleList = this.sampleList;
+        returnVal.listFileName = this.listFileName;
+        returnVal.gobiiSampleListType = this.gobiiSampleListType;
+        returnVal.gobiiDatasetType = this.gobiiDatasetType;
+        returnVal.platformIds = this.platformIds;
 
         return returnVal;
     }
@@ -149,18 +149,18 @@ export class GobiiDataSetExtract {
 
         let returnVal: GobiiDataSetExtract =
             new GobiiDataSetExtract(
-                json._gobiiFileType,
-                json._accolate,
-                json._dataSetId,
-                json._dataSetName,
-                json._extractDestinationDirectory,
-                json._gobiiExtractFilterType,
-                json._markerList,
-                json._sampleList,
-                json._listFileName,
-                json._gobiiSampleListType,
-                json._gobiiDatasetType,
-                json._platformIds);
+                json.gobiiFileType,
+                json.accolate,
+                json.dataSetId,
+                json.dataSetName,
+                json.extractDestinationDirectory,
+                json.gobiiExtractFilterType,
+                json.markerList,
+                json.sampleList,
+                json.listFileName,
+                json.gobiiSampleListType,
+                json.gobiiDatasetType,
+                json.platformIds);
 
         return returnVal;
     }

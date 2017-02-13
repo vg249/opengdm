@@ -6,117 +6,117 @@ System.register([], function (exports_1, context_1) {
         setters: [],
         execute: function () {
             GobiiDataSetExtract = (function () {
-                function GobiiDataSetExtract(_gobiiFileType, _accolate, _dataSetId, _dataSetName, _extractDestinationDirectory, _gobiiExtractFilterType, _markerList, _sampleList, _listFileName, _gobiiSampleListType, _gobiiDatasetType, _platformIds) {
-                    // this.setGobiiFileType(_gobiiFileType);
-                    // this.setAccolate(_accolate);
-                    // this.setDataSetId(_dataSetId);
-                    // this.setDataSetName(_dataSetName);
-                    // this.setExtractDestinationDirectory(_extractDestinationDirectory);
-                    // this.setGobiiFileType(_gobiiExtractFilterType);
+                function GobiiDataSetExtract(gobiiFileType, accolate, dataSetId, dataSetName, extractDestinationDirectory, gobiiExtractFilterType, markerList, sampleList, listFileName, gobiiSampleListType, gobiiDatasetType, platformIds) {
+                    // this.setGobiiFileType(gobiiFileType);
+                    // this.setAccolate(accolate);
+                    // this.setDataSetId(dataSetId);
+                    // this.setDataSetName(dataSetName);
+                    // this.setExtractDestinationDirectory(extractDestinationDirectory);
+                    // this.setGobiiFileType(gobiiExtractFilterType);
                     //
-                    this._gobiiFileType = _gobiiFileType;
-                    this._accolate = _accolate;
-                    this._dataSetId = _dataSetId;
-                    this._dataSetName = _dataSetName;
-                    this._extractDestinationDirectory = _extractDestinationDirectory;
-                    this._gobiiExtractFilterType = _gobiiExtractFilterType;
-                    this._markerList = _markerList;
-                    this._sampleList = _sampleList;
-                    this._listFileName = _listFileName;
-                    this._gobiiSampleListType = _gobiiSampleListType;
-                    this._gobiiDatasetType = _gobiiDatasetType;
-                    this._platformIds = _platformIds;
+                    this.gobiiFileType = gobiiFileType;
+                    this.accolate = accolate;
+                    this.dataSetId = dataSetId;
+                    this.dataSetName = dataSetName;
+                    this.extractDestinationDirectory = extractDestinationDirectory;
+                    this.gobiiExtractFilterType = gobiiExtractFilterType;
+                    this.markerList = markerList;
+                    this.sampleList = sampleList;
+                    this.listFileName = listFileName;
+                    this.gobiiSampleListType = gobiiSampleListType;
+                    this.gobiiDatasetType = gobiiDatasetType;
+                    this.platformIds = platformIds;
                 } // ctor 
                 GobiiDataSetExtract.prototype.getgobiiFileType = function () {
-                    return this._gobiiFileType;
+                    return this.gobiiFileType;
                 };
                 GobiiDataSetExtract.prototype.setgobiiFileType = function (value) {
-                    this._gobiiFileType = value;
+                    this.gobiiFileType = value;
                 };
                 GobiiDataSetExtract.prototype.getaccolate = function () {
-                    return this._accolate;
+                    return this.accolate;
                 };
                 GobiiDataSetExtract.prototype.setaccolate = function (value) {
-                    this._accolate = value;
+                    this.accolate = value;
                 };
                 GobiiDataSetExtract.prototype.getdataSetId = function () {
-                    return this._dataSetId;
+                    return this.dataSetId;
                 };
                 GobiiDataSetExtract.prototype.setdataSetId = function (value) {
-                    this._dataSetId = value;
+                    this.dataSetId = value;
                 };
                 GobiiDataSetExtract.prototype.getdataSetName = function () {
-                    return this._dataSetName;
+                    return this.dataSetName;
                 };
                 GobiiDataSetExtract.prototype.setdataSetName = function (value) {
-                    this._dataSetName = value;
+                    this.dataSetName = value;
                 };
                 GobiiDataSetExtract.prototype.getextractDestinationDirectory = function () {
-                    return this._extractDestinationDirectory;
+                    return this.extractDestinationDirectory;
                 };
                 GobiiDataSetExtract.prototype.setextractDestinationDirectory = function (value) {
-                    this._extractDestinationDirectory = value;
+                    this.extractDestinationDirectory = value;
                 };
                 GobiiDataSetExtract.prototype.getgobiiExtractFilterType = function () {
-                    return this._gobiiExtractFilterType;
+                    return this.gobiiExtractFilterType;
                 };
                 GobiiDataSetExtract.prototype.setgobiiExtractFilterType = function (value) {
-                    this._gobiiExtractFilterType = value;
+                    this.gobiiExtractFilterType = value;
                 };
                 GobiiDataSetExtract.prototype.getmarkerList = function () {
-                    return this._markerList;
+                    return this.markerList;
                 };
                 GobiiDataSetExtract.prototype.setmarkerList = function (value) {
-                    this._markerList = value;
+                    this.markerList = value;
                 };
                 GobiiDataSetExtract.prototype.getsampleList = function () {
-                    return this._sampleList;
+                    return this.sampleList;
                 };
                 GobiiDataSetExtract.prototype.setsampleList = function (value) {
-                    this._sampleList = value;
+                    this.sampleList = value;
                 };
                 GobiiDataSetExtract.prototype.getlistFileName = function () {
-                    return this._listFileName;
+                    return this.listFileName;
                 };
                 GobiiDataSetExtract.prototype.setlistFileName = function (value) {
-                    this._listFileName = value;
+                    this.listFileName = value;
                 };
                 GobiiDataSetExtract.prototype.getgobiiSampleListType = function () {
-                    return this._gobiiSampleListType;
+                    return this.gobiiSampleListType;
                 };
                 GobiiDataSetExtract.prototype.setgobiiSampleListType = function (value) {
-                    this._gobiiSampleListType = value;
+                    this.gobiiSampleListType = value;
                 };
                 GobiiDataSetExtract.prototype.getgobiiDatasetType = function () {
-                    return this._gobiiDatasetType;
+                    return this.gobiiDatasetType;
                 };
                 GobiiDataSetExtract.prototype.setgobiiDatasetType = function (value) {
-                    this._gobiiDatasetType = value;
+                    this.gobiiDatasetType = value;
                 };
                 GobiiDataSetExtract.prototype.getplatformIds = function () {
-                    return this._platformIds;
+                    return this.platformIds;
                 };
                 GobiiDataSetExtract.prototype.setplatformIds = function (value) {
-                    this._platformIds = value;
+                    this.platformIds = value;
                 };
                 GobiiDataSetExtract.prototype.getJson = function () {
                     var returnVal = {};
-                    returnVal._gobiiFileType = this._gobiiFileType;
-                    returnVal._accolate = this._accolate;
-                    returnVal._dataSetId = this._dataSetId;
-                    returnVal._dataSetName = this._dataSetName;
-                    returnVal._extractDestinationDirectory = this._extractDestinationDirectory;
-                    returnVal._gobiiExtractFilterType = this._gobiiExtractFilterType;
-                    returnVal._markerList = this._markerList;
-                    returnVal._sampleList = this._sampleList;
-                    returnVal._listFileName = this._listFileName;
-                    returnVal._gobiiSampleListType = this._gobiiSampleListType;
-                    returnVal._gobiiDatasetType = this._gobiiDatasetType;
-                    returnVal._platformIds = this._platformIds;
+                    returnVal.gobiiFileType = this.gobiiFileType;
+                    returnVal.accolate = this.accolate;
+                    returnVal.dataSetId = this.dataSetId;
+                    returnVal.dataSetName = this.dataSetName;
+                    returnVal.extractDestinationDirectory = this.extractDestinationDirectory;
+                    returnVal.gobiiExtractFilterType = this.gobiiExtractFilterType;
+                    returnVal.markerList = this.markerList;
+                    returnVal.sampleList = this.sampleList;
+                    returnVal.listFileName = this.listFileName;
+                    returnVal.gobiiSampleListType = this.gobiiSampleListType;
+                    returnVal.gobiiDatasetType = this.gobiiDatasetType;
+                    returnVal.platformIds = this.platformIds;
                     return returnVal;
                 };
                 GobiiDataSetExtract.fromJson = function (json) {
-                    var returnVal = new GobiiDataSetExtract(json._gobiiFileType, json._accolate, json._dataSetId, json._dataSetName, json._extractDestinationDirectory, json._gobiiExtractFilterType, json._markerList, json._sampleList, json._listFileName, json._gobiiSampleListType, json._gobiiDatasetType, json._platformIds);
+                    var returnVal = new GobiiDataSetExtract(json.gobiiFileType, json.accolate, json.dataSetId, json.dataSetName, json.extractDestinationDirectory, json.gobiiExtractFilterType, json.markerList, json.sampleList, json.listFileName, json.gobiiSampleListType, json.gobiiDatasetType, json.platformIds);
                     return returnVal;
                 };
                 return GobiiDataSetExtract;

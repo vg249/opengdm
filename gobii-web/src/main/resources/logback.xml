@@ -39,7 +39,7 @@ DEBUG includes itself and all others down, but not TRACE-->
     </logger>
 
     <logger name="org.springframework.web.method.HandlerMethod">
-        <level value="ERROR"/>
+        <level value="TRACE"/>
     </logger>
 
     <root level="ERROR">

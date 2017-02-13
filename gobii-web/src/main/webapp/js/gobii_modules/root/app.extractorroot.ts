@@ -314,7 +314,7 @@ export class ExtractorRoot {
 
     private selectedExportType: GobiiExtractFilterType;
 
-    private handleExportTypeSelected(arg:GobiiExtractFilterType) {
+    private handleExportTypeSelected(arg: GobiiExtractFilterType) {
         this.selectedExportType = arg;
 
         if (this.selectedExportType === GobiiExtractFilterType.WHOLE_DATASET) {
@@ -590,40 +590,34 @@ export class ExtractorRoot {
     }
 
 
+    private makeDatasetExtract() {
+
+        this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(GobiiFileType.GENERIC,
+            false,
+            Number(this.selectedDatasetId),
+            this.selectedDatasetName,
+            null,
+            this.selectedExportType,
+            this.markerList,
+            this.sampleList,
+            this.uploadFileName,
+            GobiiSampleListType.DNA_SAMPLE,
+            null,
+            null));
+
+    }
+
+
+    private selectedDatasetId: string;
+    private selectedDatasetName: string;
+
     private handleCheckedDataSetItem(arg: CheckBoxEvent) {
 
+        this.selectedDatasetId = arg.id;
 
         if (ProcessType.CREATE == arg.processType) {
 
-            let markerList: string[] = null;
-            let sampleList: string[] = null;
-            let uploadFileName: string = null;
-
-            if (this.sampleMarkerList.isArray) {
-                if (this.selectedExportType === GobiiExtractFilterType.BY_SAMPLE) {
-                    sampleList = this.sampleMarkerList.items;
-
-                } else if (this.selectedExportType === GobiiExtractFilterType.BY_MARKER) {
-                    markerList = this.sampleMarkerList.items;
-                }
-            } else {
-                uploadFileName = this.sampleMarkerList.uploadFileName;
-            }
-
-
-            this.dataSetCheckBoxEvents.push(arg);
-            this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(GobiiFileType.GENERIC,
-                false,
-                Number(arg.id),
-                arg.name,
-                null,
-                this.selectedExportType,
-                markerList,
-                sampleList,
-                uploadFileName,
-                GobiiSampleListType.DNA_SAMPLE,
-                null,
-                null));
+            this.makeDatasetExtract();
 
         } else {
 
@@ -636,6 +630,8 @@ export class ExtractorRoot {
                         return item.getdataSetId() != Number(arg.id)
                     });
         } // if-else we're adding
+
+
     }
 
     private checkBoxEventChange: CheckBoxEvent;
@@ -645,6 +641,7 @@ export class ExtractorRoot {
         // this.changeTrigger++;
         // this.dataSetIdToUncheck = Number(arg.id);
 
+        this.dataSetCheckBoxEvents.push(arg);
         let dataSetExtractsToRemove: GobiiDataSetExtract[] = this.gobiiDatasetExtracts
             .filter(e => {
                 return e.getdataSetId() === Number(arg.id)
@@ -697,12 +694,27 @@ export class ExtractorRoot {
 
 // ********************************************************************
 // ********************************************** MARKER/SAMPLE selection
-    private sampleMarkerList: SampleMarkerList;
+    private markerList: string[] = null;
+    private sampleList: string[] = null;
+    private uploadFileName: string = null;
 
     private handleSampleMarkerListComplete(arg: SampleMarkerList) {
 
-        this.sampleMarkerList = arg;
+        let sampleMarkerList: SampleMarkerList = arg;
 
+
+        if (sampleMarkerList.isArray) {
+            if (this.selectedExportType === GobiiExtractFilterType.BY_SAMPLE) {
+                this.sampleList = sampleMarkerList.items;
+
+            } else if (this.selectedExportType === GobiiExtractFilterType.BY_MARKER) {
+                this.markerList = sampleMarkerList.items;
+            }
+        } else {
+            this.uploadFileName = sampleMarkerList.uploadFileName;
+        }
+
+        this.makeDatasetExtract();
     }
 
 

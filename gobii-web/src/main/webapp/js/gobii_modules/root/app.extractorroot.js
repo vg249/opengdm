@@ -93,6 +93,11 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     // ********************************************** DATASET ID
                     this.displayDataSetDetail = false;
                     this.changeTrigger = 0;
+                    // ********************************************************************
+                    // ********************************************** MARKER/SAMPLE selection
+                    this.markerList = null;
+                    this.sampleList = null;
+                    this.uploadFileName = null;
                 }
                 ExtractorRoot.prototype.initializeServerConfigs = function () {
                     var _this = this;
@@ -311,24 +316,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleAddMessage = function (arg) {
                     this.messages.push(arg);
                 };
+                ExtractorRoot.prototype.makeDatasetExtract = function () {
+                    this.gobiiDatasetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(type_gobii_file_1.GobiiFileType.GENERIC, false, Number(this.selectedDatasetId), this.selectedDatasetName, null, this.selectedExportType, this.markerList, this.sampleList, this.uploadFileName, type_extractor_sample_list_1.GobiiSampleListType.DNA_SAMPLE, null, null));
+                };
                 ExtractorRoot.prototype.handleCheckedDataSetItem = function (arg) {
+                    this.selectedDatasetId = arg.id;
                     if (type_process_1.ProcessType.CREATE == arg.processType) {
-                        var markerList = null;
-                        var sampleList = null;
-                        var uploadFileName = null;
-                        if (this.sampleMarkerList.isArray) {
-                            if (this.selectedExportType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
-                                sampleList = this.sampleMarkerList.items;
-                            }
-                            else if (this.selectedExportType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
-                                markerList = this.sampleMarkerList.items;
-                            }
-                        }
-                        else {
-                            uploadFileName = this.sampleMarkerList.uploadFileName;
-                        }
-                        this.dataSetCheckBoxEvents.push(arg);
-                        this.gobiiDatasetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(type_gobii_file_1.GobiiFileType.GENERIC, false, Number(arg.id), arg.name, null, this.selectedExportType, markerList, sampleList, uploadFileName, type_extractor_sample_list_1.GobiiSampleListType.DNA_SAMPLE, null, null));
+                        this.makeDatasetExtract();
                     }
                     else {
                         var indexOfEventToRemove = this.dataSetCheckBoxEvents.indexOf(arg);
@@ -343,6 +337,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleExtractDataSetUnchecked = function (arg) {
                     // this.changeTrigger++;
                     // this.dataSetIdToUncheck = Number(arg.id);
+                    this.dataSetCheckBoxEvents.push(arg);
                     var dataSetExtractsToRemove = this.gobiiDatasetExtracts
                         .filter(function (e) {
                         return e.getdataSetId() === Number(arg.id);
@@ -376,7 +371,19 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     });
                 };
                 ExtractorRoot.prototype.handleSampleMarkerListComplete = function (arg) {
-                    this.sampleMarkerList = arg;
+                    var sampleMarkerList = arg;
+                    if (sampleMarkerList.isArray) {
+                        if (this.selectedExportType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
+                            this.sampleList = sampleMarkerList.items;
+                        }
+                        else if (this.selectedExportType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
+                            this.markerList = sampleMarkerList.items;
+                        }
+                    }
+                    else {
+                        this.uploadFileName = sampleMarkerList.uploadFileName;
+                    }
+                    this.makeDatasetExtract();
                 };
                 // ********************************************************************
                 // ********************************************** Extract file submission
