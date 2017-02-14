@@ -1,4 +1,4 @@
-System.register(["@angular/core"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extractor-filter"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,11 +10,14 @@ System.register(["@angular/core"], function (exports_1, context_1) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, ExportTypeComponent;
+    var core_1, type_extractor_filter_1, ExportTypeComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (type_extractor_filter_1_1) {
+                type_extractor_filter_1 = type_extractor_filter_1_1;
             }
         ],
         execute: function () {
@@ -24,7 +27,9 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 } // ctor
                 ExportTypeComponent.prototype.handleExportTypeSelected = function (arg) {
                     if (arg.srcElement.checked) {
-                        this.onExportTypeSelected.emit(arg.srcElement.value);
+                        var radioValue = arg.srcElement.value;
+                        var entityFilter = type_extractor_filter_1.GobiiExtractFilterType[radioValue];
+                        this.onExportTypeSelected.emit(entityFilter);
                     }
                 };
                 ExportTypeComponent.prototype.ngOnInit = function () {
@@ -35,7 +40,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 core_1.Component({
                     selector: 'export-type',
                     outputs: ['onExportTypeSelected'],
-                    template: "<label class=\"the-label\">Export By:&nbsp;</label>\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"byDataSet\" checked=\"checked\">Data Set&nbsp;\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"bySample\" >Sample&nbsp;\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"byMarker\" >Marker&nbsp;" // end template
+                    template: "<label class=\"the-label\">Export By:&nbsp;</label>\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"WHOLE_DATASET\" checked=\"checked\">Data Set&nbsp;\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"BY_SAMPLE\">Sample&nbsp;\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"BY_MARKER\">Marker&nbsp;" // end template
                 }),
                 __metadata("design:paramtypes", [])
             ], ExportTypeComponent);

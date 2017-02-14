@@ -1,6 +1,6 @@
 ///<reference path="../../../../../../typings/index.d.ts"/>
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
 import {Component} from "@angular/core";
 import {HttpModule} from "@angular/http";
 import {ExportTypeComponent} from "../views/export-type.component";
@@ -34,12 +34,13 @@ import {EntityFilter} from "../model/type-entity-filter";
 import {CheckListBoxComponent} from "../views/checklist-box.component";
 import {SampleMarkerBoxComponent} from "../views/sample-marker-box.component";
 import {FileDropDirective, FileSelectDirective} from "ng2-file-upload";
+import {SampleMarkerList} from "../model/sample-marker-list";
+import {GobiiExtractFilterType} from "../model/type-extractor-filter";
+import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 // GOBii Imports
-
-
 
 
 @Component({
@@ -166,13 +167,18 @@ import {FileDropDirective, FileSelectDirective} from "ng2-file-upload";
                         <div *ngIf="displaySampleListTypeSelector">
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Samples</legend>
-                                <sample-marker-box></sample-marker-box>
+                                <sample-marker-box 
+                                    (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)">
+                                </sample-marker-box>
                             </fieldset>
                         </div>
                         
                         <div *ngIf="displaySampleMarkerBox">
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Markers</legend>
+                                <sample-marker-box 
+                                    (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)">
+                                </sample-marker-box>
                             </fieldset>
                         </div>
                         
@@ -224,21 +230,21 @@ export class ExtractorRoot {
     title = 'Gobii Web';
 
 
-    private dataSetCheckBoxEvents:CheckBoxEvent[] = [];
-    private gobiiDatasetExtracts:GobiiDataSetExtract[] = [];
-    private messages:string[] = [];
+    private dataSetCheckBoxEvents: CheckBoxEvent[] = [];
+    private gobiiDatasetExtracts: GobiiDataSetExtract[] = [];
+    private messages: string[] = [];
 
 
-    constructor(private _dtoRequestServiceExtractorFile:DtoRequestService<ExtractorInstructionFilesDTO>,
-                private _dtoRequestServiceNameIds:DtoRequestService<NameId[]>,
-                private _dtoRequestServiceServerConfigs:DtoRequestService<ServerConfig[]>) {
+    constructor(private _dtoRequestServiceExtractorFile: DtoRequestService<ExtractorInstructionFilesDTO>,
+                private _dtoRequestServiceNameIds: DtoRequestService<NameId[]>,
+                private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>) {
 
     }
 
     // ****************************************************************
     // ********************************************** SERVER SELECTION
-    private selectedServerConfig:ServerConfig;
-    private serverConfigList:ServerConfig[];
+    private selectedServerConfig: ServerConfig;
+    private serverConfigList: ServerConfig[];
 
     private initializeServerConfigs() {
         let scope$ = this;
@@ -247,7 +253,7 @@ export class ExtractorRoot {
                 if (serverConfigs && ( serverConfigs.length > 0 )) {
                     scope$.serverConfigList = serverConfigs;
 
-                    let serverCrop:String =
+                    let serverCrop: String =
                         this._dtoRequestServiceServerConfigs.getGobiiCropType();
 
                     scope$.selectedServerConfig =
@@ -279,7 +285,7 @@ export class ExtractorRoot {
         // this._dtoRequestServiceNameIds
         //     .setCropType(GobiiCropType[this.selectedServerConfig.crop]);
         let currentPath = window.location.pathname;
-        let currentPage:string = currentPath.substr(currentPath.lastIndexOf('/') + 1, currentPath.length);
+        let currentPage: string = currentPath.substr(currentPath.lastIndexOf('/') + 1, currentPath.length);
         let newDestination = "http://"
             + this.selectedServerConfig.domain
             + ":"
@@ -295,23 +301,23 @@ export class ExtractorRoot {
 // ********************************************** EXPORT TYPE SELECTION AND FLAGS
 
 
-    private displayAvailableDatasets:boolean = true;
-    private displaySelectorPi:boolean = true;
-    private displaySelectorProject:boolean = true;
-    private displaySelectorExperiment:boolean = true;
-    private displaySelectorDataType:boolean = false;
-    private displaySelectorPlatform:boolean = false;
-    private displayIncludedDatasetsGrid:boolean = true;
-    private displaySampleListTypeSelector:boolean = false;
-    private displaySampleMarkerBox:boolean = false;
+    private displayAvailableDatasets: boolean = true;
+    private displaySelectorPi: boolean = true;
+    private displaySelectorProject: boolean = true;
+    private displaySelectorExperiment: boolean = true;
+    private displaySelectorDataType: boolean = false;
+    private displaySelectorPlatform: boolean = false;
+    private displayIncludedDatasetsGrid: boolean = true;
+    private displaySampleListTypeSelector: boolean = false;
+    private displaySampleMarkerBox: boolean = false;
 
 
-    private selectedExportType:string;
+    private selectedExportType: GobiiExtractFilterType;
 
-    private handleExportTypeSelected(arg) {
+    private handleExportTypeSelected(arg: GobiiExtractFilterType) {
         this.selectedExportType = arg;
 
-        if (this.selectedExportType === "byDataSet") {
+        if (this.selectedExportType === GobiiExtractFilterType.WHOLE_DATASET) {
 
             this.displaySelectorPi = true;
             this.displaySelectorProject = true;
@@ -325,7 +331,7 @@ export class ExtractorRoot {
             this.displaySampleMarkerBox = false;
 
 
-        } else if (this.selectedExportType === "bySample") {
+        } else if (this.selectedExportType === GobiiExtractFilterType.BY_SAMPLE) {
 
             this.initializeDatasetTypes();
             this.initializePlatforms();
@@ -342,7 +348,7 @@ export class ExtractorRoot {
             this.displaySampleMarkerBox = false;
 
 
-        } else if (this.selectedExportType === "byMarker") {
+        } else if (this.selectedExportType === GobiiExtractFilterType.BY_MARKER) {
 
             this.initializeDatasetTypes();
             this.initializePlatforms();
@@ -358,14 +364,13 @@ export class ExtractorRoot {
             this.displayIncludedDatasetsGrid = false;
             this.displaySampleListTypeSelector = false;
 
-
         }
     }
 
 // ********************************************************************
 // ********************************************** SUBMISSION-USER SELECTION
-    private contactNameIdListForSubmitter:NameId[];
-    private selectedContactIdForSubmitter:string;
+    private contactNameIdListForSubmitter: NameId[];
+    private selectedContactIdForSubmitter: string;
 
     private handleContactForSubmissionSelected(arg) {
         this.selectedContactIdForSubmitter = arg;
@@ -392,8 +397,8 @@ export class ExtractorRoot {
 
 // ********************************************************************
 // ********************************************** PI USER SELECTION
-    private contactNameIdListForPi:NameId[];
-    private selectedContactIdForPi:string;
+    private contactNameIdListForPi: NameId[];
+    private selectedContactIdForPi: string;
 
     private handleContactForPiSelected(arg) {
         this.selectedContactIdForPi = arg;
@@ -425,7 +430,7 @@ export class ExtractorRoot {
 
 // ********************************************************************
 // ********************************************** HAPMAP SELECTION
-    private selectedFormatName:string = "Hapmap";
+    private selectedFormatName: string = "Hapmap";
 
     private handleFormatSelected(arg) {
         this.selectedFormatName = arg;
@@ -434,8 +439,8 @@ export class ExtractorRoot {
 
 // ********************************************************************
 // ********************************************** PROJECT ID
-    private projectNameIdList:NameId[];
-    private selectedProjectId:string;
+    private projectNameIdList: NameId[];
+    private selectedProjectId: string;
 
     private handleProjectSelected(arg) {
         this.selectedProjectId = arg;
@@ -469,11 +474,11 @@ export class ExtractorRoot {
 
 // ********************************************************************
 // ********************************************** EXPERIMENT ID
-    private displayExperimentDetail:boolean = false;
+    private displayExperimentDetail: boolean = false;
 
-    private experimentNameIdList:NameId[];
-    private selectedExperimentId:string;
-    private selectedExperimentDetailId:string;
+    private experimentNameIdList: NameId[];
+    private selectedExperimentId: string;
+    private selectedExperimentDetailId: string;
 
     private handleExperimentSelected(arg) {
         this.selectedExperimentId = arg;
@@ -512,8 +517,8 @@ export class ExtractorRoot {
 
 // ********************************************************************
 // ********************************************** DATASET TYPE SELECTION
-    private datasetTypeNameIdList:NameId[];
-    private selectedDatasetTypeId:string;
+    private datasetTypeNameIdList: NameId[];
+    private selectedDatasetTypeId: string;
 
     private handleDatasetTypeSelected(arg) {
         this.selectedDatasetTypeId = arg;
@@ -541,9 +546,9 @@ export class ExtractorRoot {
 
 // ********************************************************************
 // ********************************************** PLATFORM SELECTION
-    private platformsNameIdList:NameId[];
-    private selectedPlatformId:string;
-    private checkedPlatformId:string;
+    private platformsNameIdList: NameId[];
+    private selectedPlatformId: string;
+    private checkedPlatformId: string;
 
     private handlePlatformSelected(arg) {
         this.selectedPlatformId = arg.id;
@@ -553,7 +558,7 @@ export class ExtractorRoot {
         this.checkedPlatformId = arg.id;
     }
 
-    private platformCheckBoxEventChange:CheckBoxEvent;
+    private platformCheckBoxEventChange: CheckBoxEvent;
 
 
     private initializePlatforms() {
@@ -577,48 +582,69 @@ export class ExtractorRoot {
 
 // ********************************************************************
 // ********************************************** DATASET ID
-    private displayDataSetDetail:boolean = false;
-    private dataSetIdToUncheck:number;
+    private displayDataSetDetail: boolean = false;
+    private dataSetIdToUncheck: number;
 
     private handleAddMessage(arg) {
         this.messages.push(arg);
     }
 
 
-    private handleCheckedDataSetItem(arg:CheckBoxEvent) {
+    private makeDatasetExtract() {
 
+        this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(GobiiFileType.GENERIC,
+            false,
+            Number(this.selectedDatasetId),
+            this.selectedDatasetName,
+            null,
+            this.selectedExportType,
+            this.markerList,
+            this.sampleList,
+            this.uploadFileName,
+            GobiiSampleListType.DNA_SAMPLE,
+            null,
+            null));
+
+    }
+
+
+    private selectedDatasetId: string;
+    private selectedDatasetName: string;
+
+    private handleCheckedDataSetItem(arg: CheckBoxEvent) {
+
+        this.selectedDatasetId = arg.id;
 
         if (ProcessType.CREATE == arg.processType) {
-            this.dataSetCheckBoxEvents.push(arg);
-            this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(GobiiFileType.GENERIC,
-                false,
-                Number(arg.id),
-                arg.name,
-                null));
+
+            this.makeDatasetExtract();
 
         } else {
 
-            let indexOfEventToRemove:number = this.dataSetCheckBoxEvents.indexOf(arg);
+            let indexOfEventToRemove: number = this.dataSetCheckBoxEvents.indexOf(arg);
             this.dataSetCheckBoxEvents.splice(indexOfEventToRemove, 1);
 
             this.gobiiDatasetExtracts =
                 this.gobiiDatasetExtracts
-                    .filter((item:GobiiDataSetExtract) => {
-                        return item.getDataSetId() != Number(arg.id)
+                    .filter((item: GobiiDataSetExtract) => {
+                        return item.getdataSetId() != Number(arg.id)
                     });
         } // if-else we're adding
+
+
     }
 
-    private checkBoxEventChange:CheckBoxEvent;
-    private changeTrigger:number = 0;
+    private checkBoxEventChange: CheckBoxEvent;
+    private changeTrigger: number = 0;
 
-    private handleExtractDataSetUnchecked(arg:CheckBoxEvent) {
+    private handleExtractDataSetUnchecked(arg: CheckBoxEvent) {
         // this.changeTrigger++;
         // this.dataSetIdToUncheck = Number(arg.id);
 
-        let dataSetExtractsToRemove:GobiiDataSetExtract[] = this.gobiiDatasetExtracts
+        this.dataSetCheckBoxEvents.push(arg);
+        let dataSetExtractsToRemove: GobiiDataSetExtract[] = this.gobiiDatasetExtracts
             .filter(e => {
-                return e.getDataSetId() === Number(arg.id)
+                return e.getdataSetId() === Number(arg.id)
             });
 
         if (dataSetExtractsToRemove.length > 0) {
@@ -633,9 +659,9 @@ export class ExtractorRoot {
 
 // ********************************************************************
 // ********************************************** MAPSET SELECTION
-    private mapsetNameIdList:NameId[];
-    private selectedMapsetId:string;
-    private nullMapsetName:string;
+    private mapsetNameIdList: NameId[];
+    private selectedMapsetId: string;
+    private nullMapsetName: string;
 
     private handleMapsetSelected(arg) {
 
@@ -666,17 +692,43 @@ export class ExtractorRoot {
     }
 
 
+// ********************************************************************
+// ********************************************** MARKER/SAMPLE selection
+    private markerList: string[] = null;
+    private sampleList: string[] = null;
+    private uploadFileName: string = null;
+
+    private handleSampleMarkerListComplete(arg: SampleMarkerList) {
+
+        let sampleMarkerList: SampleMarkerList = arg;
+
+
+        if (sampleMarkerList.isArray) {
+            if (this.selectedExportType === GobiiExtractFilterType.BY_SAMPLE) {
+                this.sampleList = sampleMarkerList.items;
+
+            } else if (this.selectedExportType === GobiiExtractFilterType.BY_MARKER) {
+                this.markerList = sampleMarkerList.items;
+            }
+        } else {
+            this.uploadFileName = sampleMarkerList.uploadFileName;
+        }
+
+        this.makeDatasetExtract();
+    }
+
+
     // ********************************************************************
     // ********************************************** Extract file submission
     private handleExtractSubmission() {
 
         let scope$ = this;
-        let gobiiExtractorInstructions:GobiiExtractorInstruction[] = [];
+        let gobiiExtractorInstructions: GobiiExtractorInstruction[] = [];
 
-        let gobiiFileType:GobiiFileType = GobiiFileType[this.selectedFormatName.toUpperCase()];
-        this.gobiiDatasetExtracts.forEach(e => e.setGobiiFileType(gobiiFileType));
+        let gobiiFileType: GobiiFileType = GobiiFileType[this.selectedFormatName.toUpperCase()];
+        this.gobiiDatasetExtracts.forEach(e => e.setgobiiFileType(gobiiFileType));
 
-        let mapsetIds:number[] = [];
+        let mapsetIds: number[] = [];
 
         if ((scope$.selectedMapsetId !== undefined)) {
             mapsetIds.push(Number(scope$.selectedMapsetId));
@@ -692,8 +744,8 @@ export class ExtractorRoot {
         );
 
 
-        let date:Date = new Date();
-        let fileName:string = "extractor_"
+        let date: Date = new Date();
+        let fileName: string = "extractor_"
             + date.getFullYear()
             + "_"
             + (date.getMonth() + 1)
@@ -705,12 +757,12 @@ export class ExtractorRoot {
             + date.getMinutes()
             + "_"
             + date.getSeconds();
-        let extractorInstructionFilesDTORequest:ExtractorInstructionFilesDTO =
+        let extractorInstructionFilesDTORequest: ExtractorInstructionFilesDTO =
             new ExtractorInstructionFilesDTO(gobiiExtractorInstructions,
                 fileName);
 //this.selectedServerConfig.crop
 
-        let extractorInstructionFilesDTOResponse:ExtractorInstructionFilesDTO = null;
+        let extractorInstructionFilesDTOResponse: ExtractorInstructionFilesDTO = null;
 
         this._dtoRequestServiceExtractorFile.post(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
             .subscribe(extractorInstructionFilesDTO => {
@@ -725,7 +777,7 @@ export class ExtractorRoot {
 
     }
 
-    ngOnInit():any {
+    ngOnInit(): any {
 
         this.initializeServerConfigs();
 
