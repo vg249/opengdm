@@ -14,28 +14,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DisplayDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ManifestDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ReferenceDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderFilePreviewDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ProjectDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PlatformDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.MapsetDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.PingDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -43,6 +22,7 @@ import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.ControllerUtils;
+import org.gobiiproject.gobiiweb.automation.GobiiVersionInfo;
 import org.gobiiproject.gobiiweb.automation.PayloadReader;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +35,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 
 
@@ -155,6 +143,10 @@ public class GOBIIControllerV1 {
             PingDTO pingDTOResponse = pingService.getPings(pingDTORequest);
             String newResponseString = LineUtils.wrapLine("Loader controller responded");
             pingDTOResponse.getPingResponses().add(newResponseString);
+
+            // add gobii version
+            returnVal.getHeader().setGobiiVersion(GobiiVersionInfo.getVersion());
+
             returnVal.getPayload().getData().add(pingDTOResponse);
         } catch (GobiiException e) {
 
@@ -807,7 +799,6 @@ public class GOBIIControllerV1 {
     }
 
 
-
     // *********************************************
     // *************************** CVGROUP METHODS
     // *********************************************
@@ -849,7 +840,6 @@ public class GOBIIControllerV1 {
 
         return (returnVal);
     }
-
 
 
     // *********************************************
@@ -969,41 +959,6 @@ public class GOBIIControllerV1 {
 
     }
 
-    @RequestMapping(value = "/datasets/types", method = RequestMethod.GET)
-    @ResponseBody
-    public PayloadEnvelope<NameIdDTO> getDataSetsTypes(HttpServletRequest request,
-                                                       HttpServletResponse response) {
-
-        PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
-        try {
-
-            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.CVTERMS;
-            GobiiFilterType gobiiFilterType = GobiiFilterType.BYTYPENAME;
-
-            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, "dataset_type");
-
-            List<NameIdDTO> nameIdDTOList = nameIdListService.getNameIdList(dtoMapNameIdParams);
-
-            for (NameIdDTO currentNameIdDTO : nameIdDTOList) {
-
-                returnVal.getPayload().getData().add(currentNameIdDTO);
-            }
-        } catch (GobiiException e) {
-            returnVal.getHeader().getStatus().addException(e);
-        } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
-        }
-
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-                response,
-                HttpStatus.CREATED,
-                HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return (returnVal);
-
-    }
-
-
     @RequestMapping(value = "/datasets/{dataSetId:[\\d]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<DataSetDTO> getDataSetsById(@PathVariable Integer dataSetId,
@@ -1027,6 +982,87 @@ public class GOBIIControllerV1 {
             returnVal.getHeader().getStatus().addException(e);
         } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+    @RequestMapping(value = "/datasets/types", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<NameIdDTO> getDataSetsTypes(HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope<NameIdDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            GobiiEntityNameType gobiiEntityNameType = GobiiEntityNameType.CVTERMS;
+            GobiiFilterType gobiiFilterType = GobiiFilterType.BYTYPENAME;
+
+            DtoMapNameIdParams dtoMapNameIdParams = new DtoMapNameIdParams(gobiiEntityNameType, gobiiFilterType, "dataset_type");
+
+            List<NameIdDTO> nameIdDTOList = nameIdListService.getNameIdList(dtoMapNameIdParams);
+
+            PayloadWriter<NameIdDTO> payloadWriter = new PayloadWriter<>(request,
+                    NameIdDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DATASETTYPES),
+                    nameIdDTOList);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+    @RequestMapping(value = "/datasets/types/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<DataSetDTO> getDataSetsByTypeId(@PathVariable Integer id,
+                                                           HttpServletRequest request,
+                                                           HttpServletResponse response) {
+
+        PayloadEnvelope<DataSetDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            List<DataSetDTO> dataSetDTOS = dataSetService.getDataSetsByTypeId(id);
+
+            PayloadWriter<DataSetDTO> payloadWriter = new PayloadWriter<>(request,
+                    DataSetDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_DATASETS),
+                    dataSetDTOS);
+
+
+
+        } catch (GobiiException e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
+        } catch (Exception e) {
+
+            returnVal.getHeader().getStatus().addException(e);
+
         }
 
         ControllerUtils.setHeaderResponse(returnVal.getHeader(),
@@ -2037,9 +2073,14 @@ public class GOBIIControllerV1 {
         try {
 
             List<MapsetDTO> mapsetDTOs = mapsetService.getAllMapsetNames();
-            for (MapsetDTO currentMapsetDTO : mapsetDTOs) {
-                returnVal.getPayload().getData().add(currentMapsetDTO);
-            }
+
+            PayloadWriter<MapsetDTO> payloadWriter = new PayloadWriter<>(request,
+                    MapsetDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_MAPSET),
+                    mapsetDTOs);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -2788,6 +2829,40 @@ public class GOBIIControllerV1 {
 
     }
 
+    @RequestMapping(value = "/experiments/{experimentId:[\\d]+}/protocols", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<ProtocolDTO> getProtocolByExperimentId(@PathVariable Integer experimentId,
+                                                                  HttpServletRequest request,
+                                                                  HttpServletResponse response) {
+
+        PayloadEnvelope<ProtocolDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            ProtocolDTO protocolDTO = protocolService.getProtocolsByExperimentId(experimentId);
+
+            PayloadWriter<ProtocolDTO> payloadWriter = new PayloadWriter<>(request,
+                    ProtocolDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_PROTOCOL),
+                    protocolDTO);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
     // *********************************************
     // *************************** FILE PREVIEW METHODS
     // *********************************************
@@ -3309,5 +3384,97 @@ public class GOBIIControllerV1 {
         return (returnVal);
 
     }
+
+    // *********************************************
+    // *************************** FILE UPLOAD
+    // *********************************************
+    @RequestMapping(value = "/uploadfile", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    String uploadFileHandler(@RequestParam("file") MultipartFile file,
+                             HttpServletRequest request,
+                             HttpServletResponse response) {
+
+        String name = file.getName();
+
+
+        Enumeration<String> headers = request.getHeaders("Content-Disposition");
+
+        if (!file.isEmpty()) {
+            try {
+
+                byte[] bytes = file.getBytes();
+
+                // Creating the directory to store file
+                String rootPath = System.getProperty("catalina.home");
+                File dir = new File(rootPath + File.separator + "tmpFiles");
+                if (!dir.exists())
+                    dir.mkdirs();
+
+                // Create the file on server
+                File serverFile = new File(dir.getAbsolutePath()
+                        + File.separator + name);
+                BufferedOutputStream stream = new BufferedOutputStream(
+                        new FileOutputStream(serverFile));
+                stream.write(bytes);
+                stream.close();
+
+//                logger.info("Server File Location="
+//                        + serverFile.getAbsolutePath());
+
+                return "You successfully uploaded file=" + name;
+            } catch (Exception e) {
+                return "You failed to upload " + name + " => " + e.getMessage();
+            }
+        } else {
+            return "You failed to upload because the file was empty.";
+        }
+    }
+
+    /**
+     * Upload multiple file using Spring Controller
+     */
+    @RequestMapping(value = "/uploadMultipleFile", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    String uploadMultipleFileHandler(@RequestParam("name") String[] names,
+                                     @RequestParam("file") MultipartFile[] files) {
+
+        if (files.length != names.length)
+            return "Mandatory information missing";
+
+        String message = "";
+        for (int i = 0; i < files.length; i++) {
+            MultipartFile file = files[i];
+            String name = names[i];
+            try {
+                byte[] bytes = file.getBytes();
+
+                // Creating the directory to store file
+                String rootPath = System.getProperty("catalina.home");
+                File dir = new File(rootPath + File.separator + "tmpFiles");
+                if (!dir.exists())
+                    dir.mkdirs();
+
+                // Create the file on server
+                File serverFile = new File(dir.getAbsolutePath()
+                        + File.separator + name);
+                BufferedOutputStream stream = new BufferedOutputStream(
+                        new FileOutputStream(serverFile));
+                stream.write(bytes);
+                stream.close();
+
+//                logger.info("Server File Location="
+//                        + serverFile.getAbsolutePath());
+
+                message = message + "You successfully uploaded file=" + name
+                        + "<br />";
+            } catch (Exception e) {
+                return "You failed to upload " + name + " => " + e.getMessage();
+            }
+        }
+        return message;
+    }
+
 
 }// GOBIIController

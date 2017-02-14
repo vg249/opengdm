@@ -666,7 +666,14 @@
             secured-annotations="enabled" pre-post-annotations="enabled"/>
 
 
-    <!--<bean id="userContextLoader" class="org.advocacydb.web.sec.UserContextLoader"> -->
-    <!--</bean> -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- setting maximum upload size -->
+        <property name="maxUploadSize" value="52428800"/>
+        <property name="maxInMemorySize" value="52428800"/>
+        <property name="resolveLazily" value="false" />
+        <property name="defaultEncoding" value="utf-8" />
+    </bean>
+
 
 </beans>

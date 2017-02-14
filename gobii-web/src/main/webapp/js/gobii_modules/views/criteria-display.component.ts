@@ -1,4 +1,3 @@
-//import {RouteParams} from '@angular/router-deprecated';
 import {Component, OnInit, SimpleChange, EventEmitter} from "@angular/core";
 import {CheckBoxEvent} from "../model/event-checkbox";
 import {ProcessType} from "../model/type-process";

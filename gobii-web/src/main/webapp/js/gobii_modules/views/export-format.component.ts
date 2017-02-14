@@ -1,4 +1,3 @@
-import {RouteParams} from '@angular/router-deprecated';
 import {Component, OnInit,EventEmitter} from '@angular/core';
 
 
@@ -9,17 +8,10 @@ import {Component, OnInit,EventEmitter} from '@angular/core';
     //directives: [RADIO_GROUP_DIRECTIVES]
 //  directives: [Alert]
     template: `
-		<form>
-			<fieldset class="well the-fieldset">
-			<legend class="the-legend">Export Format</legend>
-              <input type="radio" (change)="handleContactSelected($event)" name="format" value="Hapmap" checked="checked">Hapmap<br>
-              <input type="radio" (change)="handleContactSelected($event)" name="format" value="FlapJack">FlapJack<br>
-              <input type="radio" (change)="handleContactSelected($event)" name="format" value="VCF" disabled="true">VCF<br>
-              <input type="radio" (change)="handleContactSelected($event)" name="format" value="HDF5" disabled="true">HDF5<br>
-              <input type="radio" (change)="handleContactSelected($event)" name="format" value="PLINK CSV" disabled="true">PLINK CSV<br>
-			</fieldset>
-			
-		</form>
+    		  <label class="the-label">Select Format:</label><BR>
+              &nbsp;&nbsp;&nbsp;<input type="radio" (change)="handleContactSelected($event)" name="format" value="Hapmap" checked="checked">Hapmap<br>
+              &nbsp;&nbsp;&nbsp;<input type="radio" (change)="handleContactSelected($event)" name="format" value="FlapJack">FlapJack<br>
+              &nbsp;&nbsp;&nbsp;<input type="radio" (change)="handleContactSelected($event)" name="format" value="MetaDataOnly">Dataset Metadata Only<br>
 	` // end template
 })
 

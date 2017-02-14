@@ -1,10 +1,10 @@
-System.register([], function(exports_1, context_1) {
+System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var CheckBoxEvent;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {
             CheckBoxEvent = (function () {
                 function CheckBoxEvent(processType, id, name, checked) {
                     this.processType = processType;
@@ -16,9 +16,9 @@ System.register([], function(exports_1, context_1) {
                     this.name = name;
                 }
                 return CheckBoxEvent;
-            }());
-            exports_1("CheckBoxEvent", CheckBoxEvent); // CheckBoxEvent()
+            }()); // CheckBoxEvent()
+            exports_1("CheckBoxEvent", CheckBoxEvent);
         }
-    }
+    };
 });
 //# sourceMappingURL=event-checkbox.js.map
