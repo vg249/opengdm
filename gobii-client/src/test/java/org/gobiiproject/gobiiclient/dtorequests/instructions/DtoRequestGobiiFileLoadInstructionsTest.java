@@ -22,6 +22,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ProtocolDTO;
 import org.gobiiproject.gobiimodel.types.*;
 
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -505,7 +506,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         Integer experimentId = dataSetDTOResponse.getExperimentId();
 
-        /*** InstructionTwo START - Test for wrong platformId for given experiment. Valid experimentId will be used here ***/
+        /*** InstructionTwo START - Test for wrong projectId for given experiment. Valid experimentId will be used here ***/
         GobiiLoaderInstruction gobiiLoaderInstructionTwo = new GobiiLoaderInstruction();
 
         String instructionTwoTableName = "test_table2";
@@ -663,5 +664,124 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
     }
+
+    @Test
+    public void testInvalidPlatformForExperiment () throws Exception {
+
+
+        LoaderInstructionFilesDTO loaderInstructionFilesDTOToSend = new LoaderInstructionFilesDTO();
+
+        String instructionFileName = "testapp_" + DateUtils.makeDateIdString();
+
+        String digesterInputDirectory = ClientContext
+                .getInstance(null, false)
+                .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS);
+
+        String digesterOutputDirectory =
+                ClientContext.getInstance(null, false)
+                        .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
+
+        loaderInstructionFilesDTOToSend.setInstructionFileName(instructionFileName);
+
+        String gobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
+
+        //get existing dataset
+        Integer dataSetId =  (new GlobalPkColl<DtoCrudRequestDataSetTest>().getAPkVal(DtoCrudRequestDataSetTest.class, GobiiEntityNameType.DATASETS));
+
+        RestUri datasetsUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
+        datasetsUri.setParamValue("id", dataSetId.toString());
+
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(datasetsUri);
+        PayloadEnvelope<DataSetDTO> resultEnvelopeDataSet = gobiiEnvelopeRestResourceDataSet.get(DataSetDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeDataSet.getHeader()));
+        DataSetDTO dataSetDTOResponse = resultEnvelopeDataSet.getPayload().getData().get(0);
+
+        Integer experimentId = dataSetDTOResponse.getExperimentId();
+
+        /*** InstructionTwo START - Test for wrong platformId for given experiment. Valid experimentId will be used here ***/
+        GobiiLoaderInstruction gobiiLoaderInstructionTwo = new GobiiLoaderInstruction();
+
+        String instructionTwoTableName = "test_table2";
+
+        //get experimentDTO
+        RestUri experimentsUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_EXPERIMENTS);
+        experimentsUri.setParamValue("id", experimentId.toString());
+
+        GobiiEnvelopeRestResource<ExperimentDTO> gobiiEnvelopeRestResourceExperiment = new GobiiEnvelopeRestResource<>(experimentsUri);
+        PayloadEnvelope<ExperimentDTO> resultEnvelopeExperiment = gobiiEnvelopeRestResourceExperiment.get(ExperimentDTO.class);
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeExperiment.getHeader()));
+        ExperimentDTO experimentDTOResponse = resultEnvelopeExperiment.getPayload().getData().get(0);
+
+
+        //get protocolDTO
+        RestUri protocolUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_EXPERIMENTS)
+                .setParamValue("id", experimentDTOResponse.getId().toString())
+                .appendSegment(ServiceRequestId.URL_PROTOCOL);
+
+        GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResourceProtocol = new GobiiEnvelopeRestResource<>(protocolUri);
+        PayloadEnvelope<ProtocolDTO> resultEnvelopeProtocol = gobiiEnvelopeRestResourceProtocol.get(ProtocolDTO.class);
+
+
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeProtocol.getHeader()));
+        ProtocolDTO protocolDTOResponse = resultEnvelopeProtocol.getPayload().getData().get(0);
+
+        Integer platformId = protocolDTOResponse.getPlatformId();
+
+        //invalid platformId
+        Integer invalidPlatformId = platformId + 1;
+
+        gobiiLoaderInstructionTwo.setTable(instructionTwoTableName);
+        gobiiLoaderInstructionTwo.setGobiiCropType(gobiiCropType);
+        gobiiLoaderInstructionTwo.getExperiment().setId(experimentId);
+        gobiiLoaderInstructionTwo.getExperiment().setName(experimentDTOResponse.getExperimentName());
+        gobiiLoaderInstructionTwo.getPlatform().setId(invalidPlatformId);
+
+        // column one
+        String instructionTwoColumnOneName = "test2_column_one";
+        DataSetType dataSetTypeTwoColumnOne = DataSetType.IUPAC;
+        GobiiFileColumn gobiiFileTwoColumnOne = new GobiiFileColumn()
+                .setGobiiColumnType(GobiiColumnType.CONSTANT)
+                .setConstantValue("test2")
+                .setName(instructionTwoColumnOneName)
+                .setDataSetType(dataSetTypeTwoColumnOne)
+                .setDataSetOrientationType(DataSetOrientationType.MARKER_FAST);
+
+        gobiiLoaderInstructionTwo.getGobiiFileColumns().add(gobiiFileTwoColumnOne);
+
+        // gobiifile config
+        String testSourceTwoDirName = digesterInputDirectory + "file_two_dir";
+        String testDestinationTwoDirName = digesterOutputDirectory + "file_two_dir";
+        gobiiLoaderInstructionTwo.getGobiiFile().setDelimiter(",")
+                .setSource("c://your-dr")
+                .setDestination("c://mydir")
+                .setGobiiFileType(GobiiFileType.GENERIC)
+                .setSource(testSourceTwoDirName)
+                .setDestination(testDestinationTwoDirName);
+
+        loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions()
+                .add(gobiiLoaderInstructionTwo);
+
+        /***** InstructionTwo END *****/
+
+        PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
+        GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResourceForInstruction = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory
+                .resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+
+        PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForInstruction.post(LoaderInstructionFilesDTO.class,
+                payloadEnvelope);
+
+        Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
+        Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
+
+    }
+
 
 }
