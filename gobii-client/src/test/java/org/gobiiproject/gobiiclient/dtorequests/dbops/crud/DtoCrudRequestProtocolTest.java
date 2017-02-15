@@ -237,13 +237,12 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
 
 
         //get ProtocolDetails By ExperimentId
-
         RestUri restUriProtocolsForGetDetailsByExperimentId = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(ServiceRequestId.URL_EXPERIMENTS)
-                .addUriParam("experimentId")
-                .setParamValue("experimentId", "1")
+                .resourceByUriIdParam(ServiceRequestId.URL_EXPERIMENTS)
+                .setParamValue("id", "1")
                 .appendSegment(ServiceRequestId.URL_PROTOCOL);
+
         GobiiEnvelopeRestResource<ProtocolDTO> restResourceProtocolForGetDetailsByExperimentId = new GobiiEnvelopeRestResource<>(restUriProtocolsForGetDetailsByExperimentId);
         PayloadEnvelope<ProtocolDTO> resultEnvelopeForGetDetailsByExperimentId = restResourceProtocolForGetDetailsByExperimentId
                 .get(ProtocolDTO.class);
@@ -269,9 +268,8 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
         Assert.assertNotNull(resultEnvelopeForGetByID);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByID.getHeader()));
         ProtocolDTO protocolDTOFromLink = resultEnvelopeForGetByID.getPayload().getData().get(0);
-        Assert.assertTrue(protocolDTOFromLink.getName().equals(protocolDTOFromLink.getName()));
-        Assert.assertTrue(protocolDTOFromLink.getProtocolId().equals(protocolDTOFromLink.getProtocolId()));
-
+        Assert.assertTrue(protocolDTOFromLink.getName().equals(protocolDTOByExperimentId.get(0).getName()));
+        Assert.assertTrue(protocolDTOFromLink.getProtocolId().equals(protocolDTOByExperimentId.get(0).getProtocolId()));
     }
 
 }
