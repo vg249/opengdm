@@ -183,7 +183,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                         if(!experimentDTO.getProjectId().equals(currentLoaderInstruction.getProject().getId())){
 
-                            throw new GobiiDtoMappingException("The specified project in the experiment is incorrect.");
+                            throw new GobiiDtoMappingException("The specified project in the experiment is incorrect");
 
                         }
 
@@ -194,7 +194,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                         if(!dataSetDTO.getTypeId().equals(currentLoaderInstruction.getDatasetType().getId())){
 
-                            throw new GobiiDtoMappingException("The specified data type in the dataset is incorrect.");
+                            throw new GobiiDtoMappingException("The specified data type in the dataset is incorrect");
 
                         }
 
@@ -221,7 +221,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
                                  if(!loaderPlatformId.equals(protocolDTO.getPlatformId())){
 
-                                     throw new GobiiDtoMappingException("The specified platform in the experiment is incorrect.");
+                                     throw new GobiiDtoMappingException("The specified platform in the experiment is incorrect");
 
                                  }
 

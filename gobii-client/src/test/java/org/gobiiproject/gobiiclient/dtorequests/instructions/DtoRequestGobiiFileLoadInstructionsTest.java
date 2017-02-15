@@ -468,6 +468,14 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
         Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
+        Assert.assertTrue("The error message should say that the experiment is invalid for the given dataset",
+                loaderInstructionFileDTOResponseEnvelope.getHeader()
+                .getStatus()
+                .getStatusMessages()
+                .stream()
+                .filter(m -> m.getMessage().toLowerCase().contains("the specified experiment in the dataset is incorrect"))
+                .count()
+                > 0);
     }
 
     @Test
@@ -574,6 +582,16 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
         Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
+
+        Assert.assertTrue("The error message should say that the project is invalid for the given experiment",
+            loaderInstructionFileDTOResponseEnvelope.getHeader()
+                    .getStatus()
+                    .getStatusMessages()
+                    .stream()
+                    .filter(m -> m.getMessage().toLowerCase().contains("the specified project in the experiment is incorrect"))
+                    .count()
+                    > 0);
+
     }
 
     @Test
@@ -662,6 +680,16 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
         Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
+
+        Assert.assertTrue("The error message should say that the data type is invalid for the given dataset",
+            loaderInstructionFileDTOResponseEnvelope.getHeader()
+                    .getStatus()
+                    .getStatusMessages()
+                    .stream()
+                    .filter(m -> m.getMessage().toLowerCase().contains("the specified data type in the dataset is incorrect"))
+                    .count()
+                    > 0);
+
 
     }
 
@@ -780,6 +808,16 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
         Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
+
+
+        Assert.assertTrue("The error message should say that the platform is invalid for the given experiment",
+            loaderInstructionFileDTOResponseEnvelope.getHeader()
+                    .getStatus()
+                    .getStatusMessages()
+                    .stream()
+                    .filter(m -> m.getMessage().toLowerCase().contains("the specified platform in the experiment is incorrect"))
+                    .count()
+                    > 0);
 
     }
 
