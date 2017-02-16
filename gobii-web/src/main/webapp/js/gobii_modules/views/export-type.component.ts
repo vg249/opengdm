@@ -1,13 +1,15 @@
 import {Component, OnInit, EventEmitter} from '@angular/core';
+import {EntityFilter} from "../model/type-entity-filter";
+import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 
 
 @Component({
     selector: 'export-type',
     outputs: ['onExportTypeSelected'],
     template: `<label class="the-label">Export By:&nbsp;</label>
-                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="byDataSet" checked="checked">Data Set&nbsp;
-                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="bySample" disabled="false">Sample&nbsp;
-                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="byMarker" disabled="false">Marker&nbsp;` // end template
+                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="WHOLE_DATASET" checked="checked">Data Set&nbsp;
+                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="BY_SAMPLE" disabled>Sample&nbsp;
+                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="BY_MARKER">Marker&nbsp;` // end template
 })
 
 export class ExportTypeComponent implements OnInit {
@@ -17,12 +19,16 @@ export class ExportTypeComponent implements OnInit {
     ) {
     } // ctor
 
-    private onExportTypeSelected: EventEmitter<string> = new EventEmitter();
+    private onExportTypeSelected: EventEmitter<GobiiExtractFilterType> = new EventEmitter();
 
     private handleExportTypeSelected(arg) {
         if (arg.srcElement.checked) {
 
-            this.onExportTypeSelected.emit(arg.srcElement.value)
+            let radioValue:string = arg.srcElement.value;
+
+            let entityFilter:GobiiExtractFilterType = GobiiExtractFilterType[radioValue];
+
+            this.onExportTypeSelected.emit(entityFilter)
         }
     }
 

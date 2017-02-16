@@ -22,7 +22,6 @@ export class DatasetTypeListBoxComponent implements OnInit {
     private nameIdList:NameId[];
 
     private onDatasetTypeSelected:EventEmitter<string> = new EventEmitter();
-
     private handleDatasetTypeSelected(arg) {
         this.onDatasetTypeSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
     }

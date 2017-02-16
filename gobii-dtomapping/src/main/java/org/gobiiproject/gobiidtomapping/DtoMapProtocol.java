@@ -22,4 +22,5 @@ public interface DtoMapProtocol {
     void addVendorProtocolsToProtocol(ProtocolDTO protocolDTO)  throws GobiiException;
     OrganizationDTO updateOrReplaceVendotrByProtocolId(Integer protocolId, OrganizationDTO organizationDTO) throws GobiiDtoMappingException;
     ProtocolDTO getProtocolsByExperimentId(Integer experimentId)  throws GobiiDtoMappingException;
+    VendorProtocolDTO getVendorProtocolByVendorProtocolId(Integer vendorProtocolId) throws GobiiDtoMappingException;
 }

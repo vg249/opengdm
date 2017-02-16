@@ -20,11 +20,16 @@ import {DtoRequestService} from "../services/core/dto-request.service";
 import {AuthenticationService} from "../services/core/authentication.service";
 import {HttpModule, ConnectionBackend} from "@angular/http";
 import {Http} from "@angular/http";
+import {TextAreaComponent} from "../views/text-area.component";
+import {UploaderComponent} from "../views/uploader.component";
+import {FormsModule} from "@angular/forms";
+import {SampleListTypeComponent} from "../views/sample-list-type.component";
 
 
 @NgModule({
     imports: [BrowserModule,
-        HttpModule],
+        HttpModule,
+        FormsModule],
     declarations: [ExtractorRoot,
         ExportFormatComponent,
         ContactsListBoxComponent,
@@ -41,7 +46,10 @@ import {Http} from "@angular/http";
         CheckListBoxComponent,
         SampleMarkerBoxComponent,
         FileSelectDirective,
-        FileDropDirective],
+        FileDropDirective,
+        TextAreaComponent,
+        UploaderComponent,
+        SampleListTypeComponent],
     providers: [AuthenticationService,
         DtoRequestService],
     bootstrap: [ExtractorRoot]
