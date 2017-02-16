@@ -24,7 +24,7 @@ public class SpGetCvItemsByGroupId implements Work{
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select *" +
+        String sql = "select *, g.type as group_type " +
                 "from cv c join cvgroup g\n" +
                 "on (c.cvgroup_id = g.cvgroup_id)\n" +
                 "where g.cvgroup_id=?\n" +

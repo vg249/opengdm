@@ -38,6 +38,7 @@ public class DtoMapCvImpl implements DtoMapCv {
                 CvDTO currentCvDTO = new CvDTO();
                 currentCvDTO.setTerm(resultSet.getString("term"));
                 currentCvDTO.setCvId(resultSet.getInt("cv_id"));
+                currentCvDTO.setGroupType(resultSet.getInt("group_type"));
                 returnVal.add(currentCvDTO);
             }
         } catch (SQLException e) {
