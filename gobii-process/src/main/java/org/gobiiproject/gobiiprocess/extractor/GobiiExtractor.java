@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
+import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
@@ -36,32 +37,35 @@ public class GobiiExtractor {
 	private static String errorLogOverride;
 	private static boolean verbose;
 	private static String rootDir="../";
+    private static String markerListOverrideLocation=null;
 	public static void main(String[] args) throws Exception {
 		Options o = new Options()
          		.addOption("v", "verbose", false, "Verbose output")
          		.addOption("e", "errlog", true, "Error log override location")
          		.addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
          		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
-         		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files");
+         		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
+				.addOption("m", "markerList", true, "Fully qualified path to marker list files - (Debugging, forces marker list extract)");
         
-		 CommandLineParser parser = new DefaultParser();
-         try{
-               CommandLine cli = parser.parse( o, args );
-               if(cli.hasOption("verbose")) verbose=true;
-               if(cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
-               if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
-                      if(cli.hasOption("rootDir")){
+        CommandLineParser parser = new DefaultParser();
+        try{
+            CommandLine cli = parser.parse( o, args );
+            if(cli.hasOption("verbose")) verbose=true;
+            if(cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
+            if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
+            if(cli.hasOption("rootDir")){
                 rootDir = cli.getOptionValue("rootDir");
-               }
-               if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
-               args=cli.getArgs();//Remaining args passed through
-                
-         }catch(org.apache.commons.cli.ParseException exp ) {
-               new HelpFormatter().printHelp("java -jar Extractor.jar ","Also accepts input file directly after arguments\n"
-               		+ "Example: java -jar Extractor.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json",o,null,true);
-               
-               System.exit(2);
-         }
+            }
+            if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
+            if(cli.hasOption("markerList")) markerListOverrideLocation=cli.getOptionValue("markerList");
+            args=cli.getArgs();//Remaining args passed through
+
+        }catch(org.apache.commons.cli.ParseException exp ) {
+            new HelpFormatter().printHelp("java -jar Extractor.jar ","Also accepts input file directly after arguments\n"
+                    + "Example: java -jar Extractor.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json",o,null,true);
+
+            System.exit(2);
+        }
 		
      	String extractorScriptPath=rootDir+"extractors/";
     	pathToHDF5=extractorScriptPath+"hdf5/bin/";
@@ -131,6 +135,8 @@ public class GobiiExtractor {
 			}
 
 			for(GobiiDataSetExtract extract:inst.getDataSetExtracts()){
+				GobiiExtractFilterType filterType = extract.getGobiiExtractFilterType();
+                if(markerListOverrideLocation!=null)filterType=GobiiExtractFilterType.BY_MARKER;
 				String extractDir=extract.getExtractDestinationDirectory();
 				tryExec("rm -f "+extractDir+"*");
 				//TODO: Fix underlying permissions issues
@@ -148,15 +154,37 @@ public class GobiiExtractor {
 					ErrorLogger.logDebug("Extractor", new StringBuilder(mdePath.toString()).append(" does not exist!").toString());
 					return;
 				}
-				String gobiiMDE = "python "+ mdePath+
-						" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
-						" -m " + markerFile +
-						" -b " + mapsetFile +
-						" -s " + sampleFile +
-						" -p " + projectFile +
-						(mapId==null?"":(" -D "+mapId))+
-						" -d " + extract.getDataSetId() +
-						" -l -v ";
+				String gobiiMDE;
+				switch(filterType){
+					case WHOLE_DATASET:
+						gobiiMDE = "python "+ mdePath+
+								" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
+								" -m " + markerFile +
+								" -b " + mapsetFile +
+								" -s " + sampleFile +
+								" -p " + projectFile +
+								(mapId==null?"":(" -D "+mapId))+
+								" -d " + extract.getDataSetId() +
+								" -l -v ";
+						break;
+					case BY_MARKER:
+					    String listLocation=extractDir+extract.getListFileName();
+                        if(markerListOverrideLocation!=null) listLocation=markerListOverrideLocation;
+						gobiiMDE = "python "+ mdePath+
+								" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
+								" -m " + markerFile +
+								" -b " + mapsetFile +
+								" -s " + sampleFile +
+								" -p " + projectFile +
+                                " -x " + listLocation +
+								(mapId==null?"":(" -D "+mapId))+
+								" -l -v ";
+						break;
+					default:
+						gobiiMDE="";
+						ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
+				}
+
 				String errorFile=getLogName(extract,cropConfig,extract.getDataSetId());
 				ErrorLogger.logInfo("Extractor","Executing MDEs");
 				ErrorLogger.logDebug("Extractor",gobiiMDE);
@@ -167,8 +195,20 @@ public class GobiiExtractor {
 				String tempFolder=extractDir;
 				GobiiFileType fileType = extract.getGobiiFileType();
 				boolean markerFast=(fileType == GobiiFileType.HAPMAP);
-				String genoFile = getHDF5Genotype(markerFast, errorFile, dataSetId, tempFolder);
 
+				String genoFile;
+				switch(filterType) {
+					case WHOLE_DATASET:
+						genoFile = getHDF5Genotype(markerFast, errorFile, dataSetId, tempFolder);
+						break;
+					case BY_MARKER:
+						genoFile = getHDF5GenoFromMarkerList(markerFast, errorFile, tempFolder, markerPosFile);
+						break;
+                    default:
+                        genoFile="";
+                        ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
+                        break;
+				}
 
 				switch(extract.getGobiiFileType()){
 
