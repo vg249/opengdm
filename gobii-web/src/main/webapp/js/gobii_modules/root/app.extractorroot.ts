@@ -167,6 +167,10 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                         <div *ngIf="displaySampleListTypeSelector">
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Samples</legend>
+                                <sample-list-type
+                                    (onSampleListTypeSelected)="handleSampleListTypeSelected($event)">
+                                 </sample-list-type>
+                                <hr style="width: 100%; color: black; height: 1px; background-color:black;" />
                                 <sample-marker-box 
                                     (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)">
                                 </sample-marker-box>
@@ -601,7 +605,7 @@ export class ExtractorRoot {
             this.markerList,
             this.sampleList,
             this.uploadFileName,
-            GobiiSampleListType.DNA_SAMPLE,
+            this.selectedSampleListType,
             null,
             null));
 
@@ -717,6 +721,14 @@ export class ExtractorRoot {
         this.makeDatasetExtract();
     }
 
+
+    // ********************************************************************
+    // ********************************************** Sample List Type Selection
+    private selectedSampleListType: GobiiSampleListType;
+
+    private handleSampleListTypeSelected(arg: GobiiSampleListType) {
+        this.selectedSampleListType = arg;
+    }
 
     // ********************************************************************
     // ********************************************** Extract file submission
