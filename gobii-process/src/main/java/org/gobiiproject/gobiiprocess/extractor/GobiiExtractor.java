@@ -12,6 +12,7 @@ import java.util.Scanner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
@@ -25,7 +26,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
-import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
+import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
 
 public class GobiiExtractor {
 	//Paths
@@ -164,8 +165,11 @@ public class GobiiExtractor {
 
 				//HDF5
 				String tempFolder=extractDir;
-				String genoFile = getHDF5genotype(extract.getGobiiFileType(), errorFile, dataSetId, tempFolder);
-				
+				GobiiFileType fileType = extract.getGobiiFileType();
+				boolean markerFast=(fileType == GobiiFileType.HAPMAP);
+				String genoFile = getHDF5Genotype(markerFast, errorFile, dataSetId, tempFolder);
+
+
 				switch(extract.getGobiiFileType()){
 
 				case FLAPJACK:
@@ -191,36 +195,57 @@ public class GobiiExtractor {
 		}
 	}
 
-	private static String getHDF5Genotype(GobiiFileType fileType, String errorFile, Integer dataSetId, String tempFolder) {
-		return getHDF5genotype(fileType,errorFile,dataSetId,tempFolder,null);
-	}
-	private static String getHDF5GenoFromMarkerList(GobiiFileType fileType, String errorFile, String tempFolder,String posFile) throws FileNotFoundException{
+
+	private static String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder,String posFile) throws FileNotFoundException{
 		BufferedReader br=new BufferedReader(new FileReader(posFile));
 		try{
 		br.readLine();//header
 		while(br.ready()) {
 			String[] line = br.readLine().split("\t");
-
-			getHDF5Genotype(fileType,errorFile,Integer.parseInt(line[0]),tempFolder,line[1]);
+			if(line.length < 2){
+				ErrorLogger.logDebug("MarkerList","Skipping line " + Arrays.deepToString(line));
+				continue;
+			}
+			int dsID=Integer.parseInt(line[0]);
+			String positionList=line[1];
+			String positionListFileLoc=tempFolder+"position.list";
+			FileSystemInterface.rmIfExist(positionListFileLoc);
+			FileWriter w = new FileWriter(positionListFileLoc);
+			w.write(positionList);
+			w.close();
+			getHDF5Genotype(markerFast, errorFile,dsID,tempFolder,positionListFileLoc);
 		}
 		}catch(IOException e) {
 			ErrorLogger.logError("GobiiExtractor", "MarkerList reading failed", e);
 		}
-		String genoFile="markerList.genotype";
 
-
+		//Coallate genotype files
+		String genoFile=tempFolder+"markerList.genotype";
+		logDebug("MarkerList", "Accumulating markers into final genotype file");
+		String genotypePartFileIdentifier=tempFolder+"DS*.genotype";
+		if(markerFast) {
+			tryExec("paste " + genotypePartFileIdentifier, genoFile, errorFile);
+		}
+		else{
+			tryExec("cat " + genotypePartFileIdentifier, genoFile, errorFile);
+		}
 		return genoFile;
 	}
-		private static String getHDF5Genotype( GobiiFileType fileType, String errorFile, Integer dataSetId, String tempFolder, String markerList) {
+
+	private static String getHDF5Genotype( boolean markerFast, String errorFile, Integer dataSetId, String tempFolder) {
+		return getHDF5Genotype( markerFast, errorFile,dataSetId,tempFolder,null);
+	}
+
+	private static String getHDF5Genotype( boolean markerFast, String errorFile, Integer dataSetId, String tempFolder, String markerList) {
 		String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
 
 		String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
 		// %s <orientation> <HDF5 file> <output file>
-		boolean markerFast=false;
-		if(fileType == GobiiFileType.HAPMAP)markerFast=true;
 		String ordering="samples-fast";
 		if(markerFast)ordering="markers-fast";
-		ErrorLogger.logDebug("Extractor","HDF5 Ordering is "+ordering);
+
+		logDebug("Extractor","HDF5 Ordering is "+ordering);
+
 		if(markerList!=null) {
 			String hdf5Extractor=pathToHDF5+"fetchmarkerlist";
 			ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
