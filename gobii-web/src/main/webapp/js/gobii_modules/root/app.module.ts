@@ -24,12 +24,15 @@ import {TextAreaComponent} from "../views/text-area.component";
 import {UploaderComponent} from "../views/uploader.component";
 import {FormsModule} from "@angular/forms";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
+import {TreeModule, SharedModule} from 'primeng/primeng';
 
 
 @NgModule({
     imports: [BrowserModule,
         HttpModule,
-        FormsModule],
+        FormsModule,
+        TreeModule,
+        SharedModule],
     declarations: [ExtractorRoot,
         ExportFormatComponent,
         ContactsListBoxComponent,

@@ -24,8 +24,12 @@ export class DtoRequestService<T> {
     getGobiiCropType():string {
         return this._authenticationService.getGobiiCropType();
     }
-    
-    
+
+    private _gobbiiVersion;
+    getGobbiiVersion() {
+        return this._gobbiiVersion;
+    }
+
     public getResult(dtoRequestItem:DtoRequestItem<T>):Observable < T > {
 
         return Observable.create(observer => {
@@ -46,7 +50,9 @@ export class DtoRequestService<T> {
                             let headerResponse:DtoHeaderResponse = DtoHeaderResponse.fromJSON(json);
 
                             if (headerResponse.succeeded) {
+
                                 let result = dtoRequestItem.resultFromJson(json);
+
                                 observer.next(result);
                                 observer.complete();
                             } else {
@@ -100,6 +106,7 @@ export class DtoRequestService<T> {
 
     public get(dtoRequestItem:DtoRequestItem<T>):Observable < T > {
 
+        let scope$ = this;
         return Observable.create(observer => {
 
             this._authenticationService
@@ -117,6 +124,7 @@ export class DtoRequestService<T> {
                             let payloadResponse:PayloadEnvelope = PayloadEnvelope.fromJSON(json);
 
                             if (payloadResponse.header.status.succeeded) {
+                                scope$._gobbiiVersion = payloadResponse.header.gobiiVersion;
                                 let result = dtoRequestItem.resultFromJson(json);
                                 observer.next(result);
                                 observer.complete();

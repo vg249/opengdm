@@ -212,7 +212,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                     </form>
                             
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Status</legend>
+                                <legend class="the-legend">Status: {{currentStatus}}</legend>
                                 <status-display [messages] = "messages"></status-display>
                             </fieldset>
                                    
@@ -249,6 +249,7 @@ export class ExtractorRoot {
     // ********************************************** SERVER SELECTION
     private selectedServerConfig: ServerConfig;
     private serverConfigList: ServerConfig[];
+    private currentStatus:string;
 
     private initializeServerConfigs() {
         let scope$ = this;
@@ -260,6 +261,8 @@ export class ExtractorRoot {
                     let serverCrop: String =
                         this._dtoRequestServiceServerConfigs.getGobiiCropType();
 
+                    let gobiiVersion:string = this._dtoRequestServiceServerConfigs.getGobbiiVersion();
+
                     scope$.selectedServerConfig =
                         scope$.serverConfigList
                             .filter(c => {
@@ -267,6 +270,7 @@ export class ExtractorRoot {
                                 }
                             )[0];
 
+                    scope$.currentStatus = "GOBII Server " + gobiiVersion;
                     scope$.messages.push("Connected to database: " + scope$.selectedServerConfig.crop);
                     scope$.initializeContactsForSumission();
                     scope$.initializeContactsForPi();

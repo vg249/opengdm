@@ -436,6 +436,7 @@
                                         <include>rxjs/**</include>
                                         <include>ng2-uploader/**</include>
                                         <include>ng2-file-upload/**</include>
+                                        <include>primeng/**</include>
 
 
 
