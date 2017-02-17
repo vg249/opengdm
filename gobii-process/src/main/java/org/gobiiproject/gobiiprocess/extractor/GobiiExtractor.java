@@ -24,6 +24,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInst
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 
+import static org.gobiiproject.gobiimodel.types.GobiiExtractFilterType.WHOLE_DATASET;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
@@ -136,6 +137,7 @@ public class GobiiExtractor {
 
 			for(GobiiDataSetExtract extract:inst.getDataSetExtracts()){
 				GobiiExtractFilterType filterType = extract.getGobiiExtractFilterType();
+                if(filterType==null) filterType=WHOLE_DATASET;
                 if(markerListOverrideLocation!=null)filterType=GobiiExtractFilterType.BY_MARKER;
 				String extractDir=extract.getExtractDestinationDirectory();
 				tryExec("rm -f "+extractDir+"*");
@@ -247,7 +249,7 @@ public class GobiiExtractor {
 				continue;
 			}
 			int dsID=Integer.parseInt(line[0]);
-			String positionList=line[1];
+			String positionList=line[1].replace(',','\n');
 			String positionListFileLoc=tempFolder+"position.list";
 			FileSystemInterface.rmIfExist(positionListFileLoc);
 			FileWriter w = new FileWriter(positionListFileLoc);
