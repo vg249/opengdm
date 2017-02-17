@@ -257,7 +257,7 @@ public class GobiiExtractor {
 			w.write(positionList);
 			w.close();
             String genoFile=getHDF5Genotype(markerFast, errorFile,dsID,tempFolder,positionListFileLoc);
-            genoFileString.append(" "+tempFolder+genoFile);
+            genoFileString.append(" "+genoFile);
 		}
 		}catch(IOException e) {
 			ErrorLogger.logError("GobiiExtractor", "MarkerList reading failed", e);
