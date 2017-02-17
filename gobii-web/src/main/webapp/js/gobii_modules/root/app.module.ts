@@ -24,7 +24,8 @@ import {TextAreaComponent} from "../views/text-area.component";
 import {UploaderComponent} from "../views/uploader.component";
 import {FormsModule} from "@angular/forms";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
-import {TreeModule, SharedModule} from 'primeng/primeng';
+import {TreeModule, SharedModule, TreeNode} from 'primeng/primeng';
+import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
 
 
 @NgModule({
@@ -52,7 +53,8 @@ import {TreeModule, SharedModule} from 'primeng/primeng';
         FileDropDirective,
         TextAreaComponent,
         UploaderComponent,
-        SampleListTypeComponent],
+        SampleListTypeComponent,
+        StatusDisplayTreeComponent],
     providers: [AuthenticationService,
         DtoRequestService],
     bootstrap: [ExtractorRoot]

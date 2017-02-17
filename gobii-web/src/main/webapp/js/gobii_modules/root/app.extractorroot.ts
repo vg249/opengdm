@@ -46,8 +46,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 @Component({
     selector: 'extractor-root',
     styleUrls: ['/extractor-ui.css'],
-    template: `
-        <div class = "panel panel-default">
+    template: `<div class = "panel panel-default">
         
            <div class = "panel-heading">
                 <img src="images/gobii_logo.png" alt="GOBii Project"/>
@@ -213,7 +212,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                             
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Status: {{currentStatus}}</legend>
-                                <status-display [messages] = "messages"></status-display>
+                                <status-display-tree></status-display-tree>
                             </fieldset>
                                    
                     </div>  <!-- outer grid column 3 (inner grid)-->
@@ -249,7 +248,7 @@ export class ExtractorRoot {
     // ********************************************** SERVER SELECTION
     private selectedServerConfig: ServerConfig;
     private serverConfigList: ServerConfig[];
-    private currentStatus:string;
+    private currentStatus: string;
 
     private initializeServerConfigs() {
         let scope$ = this;
@@ -261,7 +260,7 @@ export class ExtractorRoot {
                     let serverCrop: String =
                         this._dtoRequestServiceServerConfigs.getGobiiCropType();
 
-                    let gobiiVersion:string = this._dtoRequestServiceServerConfigs.getGobbiiVersion();
+                    let gobiiVersion: string = this._dtoRequestServiceServerConfigs.getGobbiiVersion();
 
                     scope$.selectedServerConfig =
                         scope$.serverConfigList
