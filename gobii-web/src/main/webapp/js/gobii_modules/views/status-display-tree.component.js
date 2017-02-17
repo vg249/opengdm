@@ -1,4 +1,4 @@
-System.register(["@angular/core", "primeng/components/tree/tree"], function (exports_1, context_1) {
+System.register(["@angular/core"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,22 +10,21 @@ System.register(["@angular/core", "primeng/components/tree/tree"], function (exp
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, tree_1, StatusDisplayTreeComponent;
+    var core_1, StatusDisplayTreeComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
-            },
-            function (tree_1_1) {
-                tree_1 = tree_1_1;
             }
         ],
         execute: function () {
             StatusDisplayTreeComponent = (function () {
                 function StatusDisplayTreeComponent() {
+                    this.onItemChecked = new core_1.EventEmitter();
+                    this.onItemSelected = new core_1.EventEmitter();
                 }
                 StatusDisplayTreeComponent.prototype.ngOnInit = function () {
-                    this.filesTree4 = [
+                    this.treeNodes = [
                         {
                             "label": "Documents",
                             "data": "Documents Folder",
@@ -74,11 +73,15 @@ System.register(["@angular/core", "primeng/components/tree/tree"], function (exp
                                 }]
                         }
                     ];
+                    this.selectedNodes = [];
+                    this.selectedNodes.push(this.treeNodes[1].children[0]);
+                    this.treeNodes[1].partialSelected = true;
+                    this.treeNodes[1].expanded = true;
                     var foo = "foo";
                     // this.nodeService.getFiles().then(files => this.filesTree1 = files);
                     // this.nodeService.getFiles().then(files => this.filesTree2 = files);
                     // this.nodeService.getFiles().then(files => this.filesTree3 = files);
-                    // this.nodeService.getFiles().then(files => this.filesTree4 = files);
+                    // this.nodeService.getFiles().then(files => this.treeNodes = files);
                     // this.nodeService.getFiles().then(files => this.filesTree5 = files);
                     // this.nodeService.getFiles().then(files => this.filesTree6 = files);
                     // this.nodeService.getFiles().then(files => this.filesTree7 = files);
@@ -96,37 +99,33 @@ System.register(["@angular/core", "primeng/components/tree/tree"], function (exp
                     // ];
                 };
                 StatusDisplayTreeComponent.prototype.nodeSelect = function (event) {
-                    this.msgs = [];
-                    this.msgs.push({ severity: 'info', summary: 'Node Selected', detail: event.node.label });
+                    //      this.msgs.push({severity: 'info', summary: 'Node Selected', detail: event.node.label});
                 };
                 StatusDisplayTreeComponent.prototype.nodeUnselect = function (event) {
-                    this.msgs = [];
-                    this.msgs.push({ severity: 'info', summary: 'Node Unselected', detail: event.node.label });
+                    //        this.msgs.push({severity: 'info', summary: 'Node Unselected', detail: event.node.label});
                 };
                 StatusDisplayTreeComponent.prototype.nodeExpandMessage = function (event) {
-                    this.msgs = [];
-                    this.msgs.push({ severity: 'info', summary: 'Node Expanded', detail: event.node.label });
+                    //        this.msgs.push({severity: 'info', summary: 'Node Expanded', detail: event.node.label});
                 };
                 StatusDisplayTreeComponent.prototype.nodeExpand = function (event) {
                     if (event.node) {
                     }
                 };
                 StatusDisplayTreeComponent.prototype.viewFile = function (file) {
-                    this.msgs = [];
-                    this.msgs.push({ severity: 'info', summary: 'Node Selected with Right Click', detail: file.label });
+                    //      this.msgs.push({severity: 'info', summary: 'Node Selected with Right Click', detail: file.label});
                 };
                 StatusDisplayTreeComponent.prototype.unselectFile = function () {
-                    this.selectedFile2 = null;
+                    //        this.selectedFile2 = null;
                 };
                 StatusDisplayTreeComponent.prototype.expandAll = function () {
                     var _this = this;
-                    this.filesTree6.forEach(function (node) {
+                    this.treeNodes.forEach(function (node) {
                         _this.expandRecursive(node, true);
                     });
                 };
                 StatusDisplayTreeComponent.prototype.collapseAll = function () {
                     var _this = this;
-                    this.filesTree6.forEach(function (node) {
+                    this.treeNodes.forEach(function (node) {
                         _this.expandRecursive(node, false);
                     });
                 };
@@ -139,18 +138,46 @@ System.register(["@angular/core", "primeng/components/tree/tree"], function (exp
                         });
                     }
                 };
+                // **************** GOBII SPECIFIC EVENTS
+                StatusDisplayTreeComponent.prototype.makeCbEventFromNode = function (treeNode) {
+                    var returnVal = null;
+                    return returnVal;
+                };
+                StatusDisplayTreeComponent.prototype.makeNodeFromCbEvent = function (cbEvent) {
+                    var returnVal = null;
+                    return returnVal;
+                };
+                StatusDisplayTreeComponent.prototype.ngOnChanges = function (changes) {
+                    // if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
+                    //
+                    //     this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
+                    //
+                    //     if (this.itemChangedEvent) {
+                    //         let itemToChange:CheckBoxEvent =
+                    //             this.checkBoxEvents.filter(e => {
+                    //                 return e.id == changes['checkBoxEventChange'].currentValue.id;
+                    //             })[0];
+                    //
+                    //         //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+                    //         if (itemToChange) {
+                    //             itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
+                    //             itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
+                    //         }
+                    //     }
+                    // } else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
+                    //
+                    //     this.setList(changes['nameIdList'].currentValue);
+                    //
+                    // }
+                };
                 return StatusDisplayTreeComponent;
             }());
-            __decorate([
-                core_1.ViewChild('expandingTree'),
-                __metadata("design:type", tree_1.Tree)
-            ], StatusDisplayTreeComponent.prototype, "expandingTree", void 0);
             StatusDisplayTreeComponent = __decorate([
                 core_1.Component({
                     selector: 'status-display-tree',
-                    //    inputs: ['messages'],
-                    //directives: [RADIO_GROUP_DIRECTIVES]
-                    template: " <p-tree [value]=\"filesTree4\" selectionMode=\"checkbox\" [(selection)]=\"selectedFiles2\"></p-tree>\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
+                    inputs: ['checkBoxEventChange'],
+                    outputs: ['onItemSelected', 'onItemChecked'],
+                    template: " <p-tree [value]=\"treeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedNodes\"></p-tree>\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
                 }),
                 __metadata("design:paramtypes", [])
             ], StatusDisplayTreeComponent);

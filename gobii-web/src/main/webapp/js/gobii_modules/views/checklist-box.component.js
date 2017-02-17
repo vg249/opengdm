@@ -56,7 +56,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     }
                     arg.currentTarget.style = "background-color:#b3d9ff";
                     this.previousSelectedItem = arg.currentTarget;
-                    var checkBoxEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.READ, arg.currentTarget.children[0].value, arg.currentTarget.children[0].name, false);
+                    var checkBoxEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.READ, arg.currentTarget.children[0].value, arg.currentTarget.children[0].name, false, false);
                     this.onItemSelected.emit(checkBoxEvent);
                 };
                 CheckListBoxComponent.prototype.setList = function (nameIdList) {
@@ -66,7 +66,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     if (scope$.nameIdList && (scope$.nameIdList.length > 0)) {
                         scope$.checkBoxEvents = [];
                         scope$.nameIdList.forEach(function (n) {
-                            scope$.checkBoxEvents.push(new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.CREATE, n.id, n.name, false));
+                            scope$.checkBoxEvents.push(new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.CREATE, n.id, n.name, false, false));
                         });
                     }
                     else {

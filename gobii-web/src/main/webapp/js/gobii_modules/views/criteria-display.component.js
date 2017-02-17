@@ -36,7 +36,7 @@ System.register(["@angular/core", "../model/event-checkbox", "../model/type-proc
                 };
                 // In this component, every item starts out checked; unchecking it removes it
                 CriteriaDisplayComponent.prototype.handleItemUnChecked = function (arg) {
-                    var checkEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.DELETE, arg.currentTarget.value, arg.currentTarget.name, false);
+                    var checkEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.DELETE, arg.currentTarget.value, arg.currentTarget.name, false, false);
                     var itemToRemove = this.dataSetCheckBoxEvents
                         .filter(function (e) {
                         return e.id === arg.currentTarget.value;

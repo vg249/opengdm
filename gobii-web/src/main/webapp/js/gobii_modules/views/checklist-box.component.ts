@@ -28,20 +28,20 @@ import {CheckBoxEvent} from "../model/event-checkbox";
 
 export class CheckListBoxComponent implements OnInit,OnChanges {
 
-    constructor(private _dtoRequestServiceNameId:DtoRequestService<NameId[]>) {
+    constructor(private _dtoRequestServiceNameId: DtoRequestService<NameId[]>) {
 
     } // ctor
 
     // useg
-    private nameIdList:NameId[];
-    private checkBoxEvents:CheckBoxEvent[] = [];
-    private onItemChecked:EventEmitter<CheckBoxEvent> = new EventEmitter();
-    private onItemSelected:EventEmitter<CheckBoxEvent> = new EventEmitter();
-    private onAddMessage:EventEmitter<string> = new EventEmitter();
+    private nameIdList: NameId[];
+    private checkBoxEvents: CheckBoxEvent[] = [];
+    private onItemChecked: EventEmitter<CheckBoxEvent> = new EventEmitter();
+    private onItemSelected: EventEmitter<CheckBoxEvent> = new EventEmitter();
+    private onAddMessage: EventEmitter<string> = new EventEmitter();
 
     private handleItemChecked(arg) {
 
-        let itemToChange:CheckBoxEvent =
+        let itemToChange: CheckBoxEvent =
             this.checkBoxEvents.filter(e => {
                 return e.id == arg.currentTarget.value;
             })[0];
@@ -57,7 +57,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
         this.onAddMessage.emit(arg);
     }
 
-    private previousSelectedItem:any;
+    private previousSelectedItem: any;
 
     private handleItemSelected(arg) {
 
@@ -67,16 +67,17 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
         arg.currentTarget.style = "background-color:#b3d9ff";
         this.previousSelectedItem = arg.currentTarget;
 
-        let checkBoxEvent:CheckBoxEvent = new CheckBoxEvent(ProcessType.READ,
+        let checkBoxEvent: CheckBoxEvent = new CheckBoxEvent(ProcessType.READ,
             arg.currentTarget.children[0].value,
             arg.currentTarget.children[0].name,
+            false,
             false);
 
         this.onItemSelected.emit(checkBoxEvent);
 
     }
 
-    public setList(nameIdList:NameId[]):void {
+    public setList(nameIdList: NameId[]): void {
 
         // we can get this event whenver the item is clicked, not necessarily when the checkbox
         let scope$ = this;
@@ -91,6 +92,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
                     ProcessType.CREATE,
                     n.id,
                     n.name,
+                    false,
                     false
                 ));
             });
@@ -103,20 +105,20 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
     } // setList()
 
 
-    ngOnInit():any {
+    ngOnInit(): any {
 
     }
 
-    private itemChangedEvent:CheckBoxEvent;
+    private itemChangedEvent: CheckBoxEvent;
 
-    ngOnChanges(changes:{[propName:string]:SimpleChange}) {
+    ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
         if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
 
             this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
 
             if (this.itemChangedEvent) {
-                let itemToChange:CheckBoxEvent =
+                let itemToChange: CheckBoxEvent =
                     this.checkBoxEvents.filter(e => {
                         return e.id == changes['checkBoxEventChange'].currentValue.id;
                     })[0];

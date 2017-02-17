@@ -1,54 +1,30 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
+import {Component, OnInit, ViewChild, OnChanges, SimpleChange, EventEmitter} from "@angular/core";
 import {TreeNode, Message, MenuItem} from "primeng/components/common/api";
 import {Tree} from "primeng/components/tree/tree";
+import {CheckBoxEvent} from "../model/event-checkbox";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
 @Component({
     selector: 'status-display-tree',
-//    inputs: ['messages'],
-    //directives: [RADIO_GROUP_DIRECTIVES]
-    template: ` <p-tree [value]="filesTree4" selectionMode="checkbox" [(selection)]="selectedFiles2"></p-tree>
+    inputs: ['checkBoxEventChange'],
+    outputs: ['onItemSelected', 'onItemChecked'],
+    template: ` <p-tree [value]="treeNodes" selectionMode="checkbox" [(selection)]="selectedNodes"></p-tree>
                     <!--<div>Selected Nodes: <span *ngFor="let file of selectedFiles2">{{file.label}} </span></div>-->
 `
 })
-export class StatusDisplayTreeComponent implements OnInit{
+export class StatusDisplayTreeComponent implements OnInit, OnChanges{
 
 
-    msgs: Message[];
-
-    @ViewChild('expandingTree')
-    expandingTree: Tree;
-
-    filesTree1: TreeNode[];
-    filesTree2: TreeNode[];
-    filesTree3: TreeNode[];
-    filesTree4: TreeNode[];
-    filesTree5: TreeNode[];
-    filesTree6: TreeNode[];
-    filesTree7: TreeNode[];
-    filesTree8: TreeNode[];
-
-    lazyFiles: TreeNode[];
-
-    selectedFile: TreeNode;
-
-    selectedFile2: TreeNode;
-
-    selectedFile3: TreeNode;
-
-    selectedFiles: TreeNode[];
-
-    selectedFiles2: TreeNode[];
-
-    items: MenuItem[];
+    treeNodes: TreeNode[];
+    selectedNodes: TreeNode[];
 
     constructor() { }
 
     ngOnInit() {
 
 
-        this.filesTree4 = [
+        this.treeNodes = [
             {
                 "label": "Documents",
                 "data": "Documents Folder",
@@ -98,11 +74,15 @@ export class StatusDisplayTreeComponent implements OnInit{
         ];
 
 
+        this.selectedNodes = [];
+        this.selectedNodes.push(this.treeNodes[1].children[0])
+        this.treeNodes[1].partialSelected = true;
+        this.treeNodes[1].expanded = true;
         let foo:string = "foo";
         // this.nodeService.getFiles().then(files => this.filesTree1 = files);
         // this.nodeService.getFiles().then(files => this.filesTree2 = files);
         // this.nodeService.getFiles().then(files => this.filesTree3 = files);
-        // this.nodeService.getFiles().then(files => this.filesTree4 = files);
+        // this.nodeService.getFiles().then(files => this.treeNodes = files);
         // this.nodeService.getFiles().then(files => this.filesTree5 = files);
         // this.nodeService.getFiles().then(files => this.filesTree6 = files);
         // this.nodeService.getFiles().then(files => this.filesTree7 = files);
@@ -122,18 +102,15 @@ export class StatusDisplayTreeComponent implements OnInit{
     }
 
     nodeSelect(event) {
-        this.msgs = [];
-        this.msgs.push({severity: 'info', summary: 'Node Selected', detail: event.node.label});
+  //      this.msgs.push({severity: 'info', summary: 'Node Selected', detail: event.node.label});
     }
 
     nodeUnselect(event) {
-        this.msgs = [];
-        this.msgs.push({severity: 'info', summary: 'Node Unselected', detail: event.node.label});
+//        this.msgs.push({severity: 'info', summary: 'Node Unselected', detail: event.node.label});
     }
 
     nodeExpandMessage(event) {
-        this.msgs = [];
-        this.msgs.push({severity: 'info', summary: 'Node Expanded', detail: event.node.label});
+//        this.msgs.push({severity: 'info', summary: 'Node Expanded', detail: event.node.label});
     }
 
     nodeExpand(event) {
@@ -144,22 +121,21 @@ export class StatusDisplayTreeComponent implements OnInit{
     }
 
     viewFile(file: TreeNode) {
-        this.msgs = [];
-        this.msgs.push({severity: 'info', summary: 'Node Selected with Right Click', detail: file.label});
+  //      this.msgs.push({severity: 'info', summary: 'Node Selected with Right Click', detail: file.label});
     }
 
     unselectFile() {
-        this.selectedFile2 = null;
+//        this.selectedFile2 = null;
     }
 
     expandAll(){
-        this.filesTree6.forEach( node => {
+        this.treeNodes.forEach(node => {
             this.expandRecursive(node, true);
         } );
     }
 
     collapseAll(){
-        this.filesTree6.forEach( node => {
+        this.treeNodes.forEach(node => {
             this.expandRecursive(node, false);
         } );
     }
@@ -172,4 +148,58 @@ export class StatusDisplayTreeComponent implements OnInit{
             } );
         }
     }
+
+
+
+
+    // **************** GOBII SPECIFIC EVENTS
+
+
+    private makeCbEventFromNode(treeNode: TreeNode): CheckBoxEvent {
+
+        let returnVal:CheckBoxEvent = null;
+
+        return returnVal;
+
+    }
+
+
+    private makeNodeFromCbEvent(cbEvent: CheckBoxEvent): TreeNode {
+
+        let returnVal:TreeNode = null;
+
+        return returnVal;
+    }
+
+
+
+
+    private onItemChecked:EventEmitter<CheckBoxEvent> = new EventEmitter();
+    private onItemSelected:EventEmitter<CheckBoxEvent> = new EventEmitter();
+
+    ngOnChanges(changes:{[propName:string]:SimpleChange}) {
+
+        // if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
+        //
+        //     this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
+        //
+        //     if (this.itemChangedEvent) {
+        //         let itemToChange:CheckBoxEvent =
+        //             this.checkBoxEvents.filter(e => {
+        //                 return e.id == changes['checkBoxEventChange'].currentValue.id;
+        //             })[0];
+        //
+        //         //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+        //         if (itemToChange) {
+        //             itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
+        //             itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
+        //         }
+        //     }
+        // } else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
+        //
+        //     this.setList(changes['nameIdList'].currentValue);
+        //
+        // }
+    }
+
 }
