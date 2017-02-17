@@ -240,6 +240,7 @@ public class GobiiExtractor {
 
 	private static String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder,String posFile) throws FileNotFoundException{
 		BufferedReader br=new BufferedReader(new FileReader(posFile));
+        StringBuilder genoFileString=new StringBuilder();
 		try{
 		br.readLine();//header
 		while(br.ready()) {
@@ -255,7 +256,8 @@ public class GobiiExtractor {
 			FileWriter w = new FileWriter(positionListFileLoc);
 			w.write(positionList);
 			w.close();
-			getHDF5Genotype(markerFast, errorFile,dsID,tempFolder,positionListFileLoc);
+            String genoFile=getHDF5Genotype(markerFast, errorFile,dsID,tempFolder,positionListFileLoc);
+            genoFileString.append(" "+tempFolder+genoFile);
 		}
 		}catch(IOException e) {
 			ErrorLogger.logError("GobiiExtractor", "MarkerList reading failed", e);
@@ -264,12 +266,12 @@ public class GobiiExtractor {
 		//Coallate genotype files
 		String genoFile=tempFolder+"markerList.genotype";
 		logDebug("MarkerList", "Accumulating markers into final genotype file");
-		String genotypePartFileIdentifier=tempFolder+"DS*.genotype";
+		String genotypePartFileIdentifier=genoFileString.toString();
 		if(markerFast) {
-			tryExec("paste " + genotypePartFileIdentifier, genoFile, errorFile);
+			tryExec("paste" + genotypePartFileIdentifier, genoFile, errorFile);
 		}
 		else{
-			tryExec("cat " + genotypePartFileIdentifier, genoFile, errorFile);
+			tryExec("cat" + genotypePartFileIdentifier, genoFile, errorFile);
 		}
 		return genoFile;
 	}
