@@ -68,7 +68,7 @@ public class CvServiceImpl implements CvService {
 
 						throw new GobiiDomainException("The specified cvId ("
                                 + cvId
-                                + ") belongs to a system group");
+                                + ") belongs to a cvgroup of type system");
 
 					}
 

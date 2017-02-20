@@ -96,7 +96,7 @@ public class DtoMapCvImpl implements DtoMapCv {
             } else {
 
                 LOGGER.error("Cannot create cv term that belongs to a system group");
-                throw new GobiiDtoMappingException("Cannot create cv term that belongs to a system group");
+                throw new GobiiDtoMappingException("Cannot create cv term that belongs to a cvgroup of type system");
 
             }
 
@@ -154,7 +154,7 @@ public class DtoMapCvImpl implements DtoMapCv {
                 LOGGER.error("Cannot delete cv term that belongs to a system group");
                 throw new GobiiDtoMappingException("The specified cvId ("
                         + cvDTO.getCvId()
-                        + ") belongs to a system group");
+                        + ") belongs to a cvgroup of type system");
 
             }
 

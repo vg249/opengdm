@@ -142,6 +142,16 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
                 payloadEnvelope);
 
         Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(cvDTOResponseEnvelope.getHeader()));
+
+        Assert.assertTrue("The error message should contain 'belongs to a cvgroup of type system'",
+            cvDTOResponseEnvelope.getHeader()
+                    .getStatus()
+                    .getStatusMessages()
+                    .stream()
+                    .filter(m -> m.getMessage().toLowerCase().contains("belongs to a cvgroup of type system"))
+                    .count()
+                    > 0);
+
         Assert.assertTrue(cvDTOResponseEnvelope.getPayload().getData().size() == 0);
 
     }
@@ -252,6 +262,16 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
 
         Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(cvDTOResponseEnvelopeUpdate.getHeader()));
 
+        Assert.assertTrue("The error message should contain 'belongs to a cvgroup of type system'",
+            cvDTOResponseEnvelopeUpdate.getHeader()
+                    .getStatus()
+                    .getStatusMessages()
+                    .stream()
+                    .filter(m -> m.getMessage().toLowerCase().contains("belongs to a cvgroup of type system"))
+                    .count()
+                    > 0);
+
+
         Assert.assertTrue(cvDTOResponseEnvelopeUpdate.getPayload().getData().size() == 0);
 
 
@@ -263,7 +283,7 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
 
         CvDTO dtoRequestCvReRetrieved = resultEnvelopeForGetByID.getPayload().getData().get(0);
 
-
+        //check that the cv term has not been updated
         Assert.assertTrue(dtoRequestCvReRetrieved.getTerm().equals(currentName));
 
     }
@@ -380,6 +400,15 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
 
         Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(cvDTOResponseEnvelopeDelete.getHeader()));
 
+
+        Assert.assertTrue("The error message should contain 'belongs to a cvgroup of type system'",
+            cvDTOResponseEnvelopeDelete.getHeader()
+                    .getStatus()
+                    .getStatusMessages()
+                    .stream()
+                    .filter(m -> m.getMessage().toLowerCase().contains("belongs to a cvgroup of type system"))
+                    .count()
+                    > 0);
 
         // the cv should not be deleted
 
