@@ -190,7 +190,7 @@ public class GobiiExtractor {
 				String errorFile=getLogName(extract,cropConfig,extract.getDataSetId());
 				ErrorLogger.logInfo("Extractor","Executing MDEs");
 				ErrorLogger.logDebug("Extractor",gobiiMDE);
-				tryExec(gobiiMDE, null, errorFile);
+				tryExec(gobiiMDE, extractDir+"mdeOut", errorFile);
 				Integer dataSetId=extract.getDataSetId();
 
 				//HDF5
