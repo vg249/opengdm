@@ -11,4 +11,6 @@ public interface DtoMapCvGroup {
 
     List<CvDTO> getCvsForGroup(Integer groupId) throws GobiiDtoMappingException;
 
+    Integer getGroupTypeForGroupId(Integer groupId) throws GobiiDtoMappingException;
+
 }

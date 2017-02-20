@@ -9,13 +9,14 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * Created by VCalaminos on 2/1/2017.
+ * Created by VCalaminos on 2/19/2017.
  */
-public class SpGetCvItemsByGroupId implements Work{
+public class SpGetGroupTypeByGroupId implements Work {
+
 
     private Map<String, Object> parameters = null;
 
-    public SpGetCvItemsByGroupId(Map<String, Object> parameters) { this.parameters = parameters; }
+    public SpGetGroupTypeByGroupId(Map<String, Object> parameters) { this.parameters = parameters; }
 
     private ResultSet resultSet = null;
 
@@ -24,11 +25,7 @@ public class SpGetCvItemsByGroupId implements Work{
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select *, g.type as group_type " +
-                "from cv c join cvgroup g\n" +
-                "on (c.cvgroup_id = g.cvgroup_id)\n" +
-                "where g.cvgroup_id=?\n" +
-                "order by lower(g.name), lower(c.term)";
+        String sql = "select type as group_type from cvgroup where cvgroup_id=?";
 
         PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
         Integer groupId = (Integer) parameters.get("groupId");

@@ -55,4 +55,31 @@ public class DtoMapCvGroupImpl implements DtoMapCvGroup {
 
     }
 
+
+    public Integer getGroupTypeForGroupId(Integer groupId) throws GobiiDtoMappingException {
+
+        Integer returnVal = null;
+
+        try {
+
+            ResultSet resultSet = rsCvGroupDao.getGroupTypeForGroupId(groupId);
+
+            if (resultSet.next()) {
+
+                returnVal = resultSet.getInt("group_type");
+
+            }
+
+
+        } catch (SQLException e) {
+
+            LOGGER.error("Gobii Mapping Error", e);
+            throw new GobiiDtoMappingException(e);
+
+        }
+
+        return  returnVal;
+
+    }
+
 }
