@@ -146,6 +146,22 @@ public class CvServiceImpl implements CvService {
 		return returnVal;
 	}
 
+	@Override
+	public List<CvDTO> getCvsByGroupName(String groupName) throws GobiiDtoMappingException {
+
+		List<CvDTO> returnVal;
+
+		returnVal = dtoMapCv.getCvsByGroupName(groupName);
+
+		for (CvDTO currentCvDTO : returnVal) {
+
+			currentCvDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+		}
+
+		return returnVal;
+
+	}
+
     @Override
     public CvDTO getCvById(Integer cvId) throws GobiiDomainException {
 

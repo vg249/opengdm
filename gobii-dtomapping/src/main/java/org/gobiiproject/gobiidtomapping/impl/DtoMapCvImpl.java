@@ -166,4 +166,34 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         return returnVal;
     }
+
+    @Override
+    public List<CvDTO> getCvsByGroupName(String groupName) throws GobiiDtoMappingException {
+
+        List<CvDTO> returnVal = new ArrayList<>();
+
+        try {
+
+            ResultSet resultSet = rsCvDao.getCvTermsByGroup(groupName);
+
+            while (resultSet.next()) {
+
+                CvDTO currentCvDTO = new CvDTO();
+
+                ResultColumnApplicator.applyColumnValues(resultSet, currentCvDTO);
+                returnVal.add(currentCvDTO);
+
+            }
+
+
+        } catch (SQLException e) {
+
+            LOGGER.error("Gobii Mapping Error", e);
+            throw  new GobiiDtoMappingException(e);
+        }
+
+        return returnVal;
+
+    }
+
 } // DtoMapNameIdListImpl
