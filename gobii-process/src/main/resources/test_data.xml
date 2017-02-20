@@ -1,3 +1,53 @@
 <GobiiTestData>
+    <Entities>
+        <Organizations dbkeysurrogate="name">
+            <Organization>
+                <DbPKey></DbPKey>
+                <Name>Gobii</Name>
+                <Address></Address>
+                <Website></Website>
+            </Organization>
+        </Organizations>
+        <Contacts dbkeysurrogate="email">
+            <Contact>
+                <DbPKey></DbPKey>
+                <LastName></LastName>
+                <FirstName></FirstName>
+                <Code></Code>
+                <Email></Email>
+                <DbFkey entity="organization">
+                    <DbKeySurrogate>Gobii</DbKeySurrogate>
+                    <DbKey></DbKey>
+                </DbFkey>
+            </Contact>
+        </Contacts>
+    </Entities>
+
+    <Scenarios>
+        <Scenario>
+            <Name>2 Letter Nucleotide</Name>
+            <InstructionFile></InstructionFile>
+            <DataFile></DataFile>
+            <DbFkey entity="Contact">
+                <DbKeySurrogate></DbKeySurrogate>
+                <DbKey></DbKey>
+            </DbFkey>
+            <DbFkey entity="Project">
+                <DbKeySurrogate></DbKeySurrogate>
+                <DbKey></DbKey>
+            </DbFkey>
+
+            <DbFkey entity="Experiment">
+                <DbKeySurrogate></DbKeySurrogate>
+                <DbKey></DbKey>
+            </DbFkey>
+
+            <DbFkey entity="Dataset">
+                <DbKeySurrogate></DbKeySurrogate>
+                <DbKey></DbKey>
+            </DbFkey>
+        </Scenario>
+
+    </Scenarios>
 
 </GobiiTestData>
