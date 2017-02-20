@@ -2,23 +2,31 @@
     <Entities>
         <Organizations dbkeysurrogate="name">
             <Organization>
-                <DbPKey></DbPKey>
-                <Name>Gobii</Name>
-                <Address></Address>
-                <Website></Website>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <Name></Name>
+                    <Address></Address>
+                    <Website></Website>
+                </Properties>
             </Organization>
         </Organizations>
         <Contacts dbkeysurrogate="email">
             <Contact>
-                <DbPKey></DbPKey>
-                <LastName></LastName>
-                <FirstName></FirstName>
-                <Code></Code>
-                <Email></Email>
-                <DbFkey entity="organization">
-                    <DbKeySurrogate>Gobii</DbKeySurrogate>
-                    <DbKey></DbKey>
-                </DbFkey>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="organization">
+                        <DbKeySurrogate></DbKeySurrogate>
+                        <DbKey></DbKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <LastName></LastName>
+                    <FirstName></FirstName>
+                    <Code></Code>
+                    <Email></Email>
+                </Properties>
             </Contact>
         </Contacts>
     </Entities>
@@ -26,8 +34,11 @@
     <Scenarios>
         <Scenario>
             <Name>2 Letter Nucleotide</Name>
-            <InstructionFile></InstructionFile>
-            <DataFile></DataFile>
+            <Files>
+                <Instructions></Instructions>
+                <Data></Data>
+            </Files>
+
             <DbFkey entity="Contact">
                 <DbKeySurrogate></DbKeySurrogate>
                 <DbKey></DbKey>
