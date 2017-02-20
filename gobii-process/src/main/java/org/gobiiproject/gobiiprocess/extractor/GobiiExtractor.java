@@ -1,9 +1,6 @@
 package org.gobiiproject.gobiiprocess.extractor;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,8 +9,11 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
+import org.gobiiproject.gobiimodel.types.DataSetType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
@@ -25,6 +25,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInst
 import org.gobiiproject.gobiimodel.types.GobiiCropType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
@@ -223,6 +224,60 @@ public class GobiiExtractor {
 				rmIfExist(extendedMarkerFile);
 				rmIfExist(mapsetFile);
 				ErrorLogger.logDebug("Extractor","DataSet "+dataSetId+" Created");
+
+				// Adding "/" back to the bi-allelic data
+				if (extract.getGobiiDatasetType().equals(DataSetType.SSR_ALLELE_SIZE.toString())) {
+					Path SSRFilePath = Paths.get(extractDir+"DS"+dataSetId+".genotype");
+					File SSRFile = new File(SSRFilePath.toString());
+					if (SSRFile.exists()) {
+						Path AddedSSRFilePath = Paths.get(extractDir, "Added" + SSRFilePath.getFileName());
+						// Deleting any temporal file existent
+						rmIfExist(AddedSSRFilePath.toString());
+						File AddedSSRFile = new File(AddedSSRFilePath.toString());
+						if (AddedSSRFile.createNewFile()) {
+							Scanner scanner = new Scanner(new FileReader(SSRFile));
+							FileWriter fileWriter = new FileWriter(AddedSSRFile);
+							// Copying the header
+							if (scanner.hasNextLine()) {
+								fileWriter.write(scanner.nextLine() + System.lineSeparator());
+							}
+							Pattern pattern = Pattern.compile("[0-9]{8}");
+							while (scanner.hasNextLine()) {
+								String[] lineParts = scanner.nextLine().split("\\t");
+								// The first column does not need to be converted
+								StringBuilder addedLineStringBuilder = new StringBuilder(lineParts[0]);
+								// Removing the line separator from the last column
+								lineParts[lineParts.length - 1] = lineParts[lineParts.length - 1].trim();
+								// Converting each column from the next ones
+								for (int index = 1; index < lineParts.length; index++) {
+									addedLineStringBuilder.append("\t");
+									if (!(pattern.matcher(lineParts[index]).find())) {
+										ErrorLogger.logError("Extractor","Incorrect format: "+lineParts[index]);
+										addedLineStringBuilder.append(lineParts[index]);
+									}
+									else {
+										addedLineStringBuilder.append(Integer.parseInt(lineParts[index].substring(0, 4)));
+										addedLineStringBuilder.append("/");
+										addedLineStringBuilder.append(Integer.parseInt(lineParts[index].substring(4)));
+									}
+								}
+								addedLineStringBuilder.append(System.lineSeparator());
+								fileWriter.write(addedLineStringBuilder.toString());
+							}
+							scanner.close();
+							fileWriter.close();
+							// Deleting any original data backup file existent
+							rmIfExist(Paths.get(SSRFilePath.toString() + ".bak").toString());
+							// Backing up the original data file
+							mv(SSRFilePath.toString(), SSRFilePath.toString() + ".bak");
+							// Renaming the converted data file to the original data file name
+							mv(AddedSSRFilePath.toString(), SSRFilePath.toString());
+						}
+						else {
+							ErrorLogger.logError("Extractor","Unable to create the added SSR file: "+AddedSSRFilePath.toString());
+						}
+					}
+				}
 			}
 			HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 		}
