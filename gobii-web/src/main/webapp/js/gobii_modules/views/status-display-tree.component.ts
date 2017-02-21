@@ -7,7 +7,7 @@ import {CheckBoxEvent} from "../model/event-checkbox";
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
 @Component({
     selector: 'status-display-tree',
-    inputs: ['checkBoxEventChange'],
+    inputs: ['checkBoxEventChange','checkboxEvents'],
     outputs: ['onItemSelected', 'onItemChecked'],
     template: ` <p-tree [value]="treeNodes" selectionMode="checkbox" [(selection)]="selectedNodes"></p-tree>
                     <!--<div>Selected Nodes: <span *ngFor="let file of selectedFiles2">{{file.label}} </span></div>-->
@@ -16,8 +16,6 @@ import {CheckBoxEvent} from "../model/event-checkbox";
 export class StatusDisplayTreeComponent implements OnInit, OnChanges{
 
 
-    treeNodes: TreeNode[];
-    selectedNodes: TreeNode[];
 
     constructor() { }
 
@@ -101,6 +99,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges{
         // ];
     }
 
+    // *****************************************************************
+    // *********************  TREE NODE DATA STRUCTURES AND EVENTS
+    treeNodes: TreeNode[];
+    selectedNodes: TreeNode[];
+
+
     nodeSelect(event) {
   //      this.msgs.push({severity: 'info', summary: 'Node Selected', detail: event.node.label});
     }
@@ -152,7 +156,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges{
 
 
 
-    // **************** GOBII SPECIFIC EVENTS
+    // ********************************************************************************
+    // ********************* CHECKBOX/TREE NODE CONVERSION FUNCTIONS
 
 
     private makeCbEventFromNode(treeNode: TreeNode): CheckBoxEvent {
@@ -173,7 +178,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges{
 
 
 
+    // ********************************************************************************
+    // ********************* CHECKBOX (GOBII-SPECIFIC)  NODE DATA STRUCTURES AND EVENTS
 
+    private checkboxEvents:CheckBoxEvent[] = [];
     private onItemChecked:EventEmitter<CheckBoxEvent> = new EventEmitter();
     private onItemSelected:EventEmitter<CheckBoxEvent> = new EventEmitter();
 

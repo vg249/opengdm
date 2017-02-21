@@ -20,6 +20,9 @@ System.register(["@angular/core"], function (exports_1, context_1) {
         execute: function () {
             StatusDisplayTreeComponent = (function () {
                 function StatusDisplayTreeComponent() {
+                    // ********************************************************************************
+                    // ********************* CHECKBOX (GOBII-SPECIFIC)  NODE DATA STRUCTURES AND EVENTS
+                    this.checkboxEvents = [];
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                 }
@@ -138,7 +141,8 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                         });
                     }
                 };
-                // **************** GOBII SPECIFIC EVENTS
+                // ********************************************************************************
+                // ********************* CHECKBOX/TREE NODE CONVERSION FUNCTIONS
                 StatusDisplayTreeComponent.prototype.makeCbEventFromNode = function (treeNode) {
                     var returnVal = null;
                     return returnVal;
@@ -175,7 +179,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
             StatusDisplayTreeComponent = __decorate([
                 core_1.Component({
                     selector: 'status-display-tree',
-                    inputs: ['checkBoxEventChange'],
+                    inputs: ['checkBoxEventChange', 'checkboxEvents'],
                     outputs: ['onItemSelected', 'onItemChecked'],
                     template: " <p-tree [value]=\"treeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedNodes\"></p-tree>\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
                 }),
