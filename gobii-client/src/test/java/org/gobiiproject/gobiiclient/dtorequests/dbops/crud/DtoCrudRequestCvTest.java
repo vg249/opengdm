@@ -451,7 +451,7 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
         RestUri restUriCvForGetByGroupName = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParamName("groupName",ServiceRequestId.URL_CV);
-        restUriCvForGetByGroupName.setParamValue("groupName", "status");
+        restUriCvForGetByGroupName.setParamValue("groupName", "germplasm_prop");
         GobiiEnvelopeRestResource<CvDTO> gobiiEnvelopeRestResourceForGetByGroupName = new GobiiEnvelopeRestResource<>(restUriCvForGetByGroupName);
         PayloadEnvelope<CvDTO> resultEnvelopeForGetByGroupName = gobiiEnvelopeRestResourceForGetByGroupName
                 .get(CvDTO.class);
@@ -476,6 +476,5 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
             Assert.assertTrue(currentCvDto.getTerm().equals(cvDTOFromLink.getTerm()));
             Assert.assertTrue(currentCvDto.getCvId().equals(cvDTOFromLink.getCvId()));
         }
-
     }
 }

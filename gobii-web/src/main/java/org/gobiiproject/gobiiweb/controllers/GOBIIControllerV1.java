@@ -798,7 +798,7 @@ public class GOBIIControllerV1 {
 
     }
 
-    @RequestMapping(value = "/cvs/{groupName:[a-zA-Z-]+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/cvs/{groupName:[a-zA-Z_]+}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<CvDTO> getCvById(@PathVariable("groupName") String groupName,
                                             HttpServletRequest request,
