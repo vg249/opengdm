@@ -330,28 +330,36 @@ public class GobiiFileReader {
 
 			errorPath=getLogName(zero, cropConfig, crop, "IFLs");
 			String pathToIFL=loaderScriptPath+"postgres/gobii_ifl/gobii_ifl.py";
-			String outputDir = null;
-			try {
-				outputDir = " -o " + configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES);
-			} catch(Exception e) {
-				logError("Path Retrieval", "Error retrieving intermediate file path", e);
-			}
 			String connectionString=" -c "+HelperFunctions.getPostgresConnectionString(cropConfig);
 			
 			//Load PostgreSQL
 			boolean loadedData=false;
 			for(String key:loaderInstructionList){
 				if(!VARIANT_CALL_TABNAME.equals(key)){
-					int totalLines= FileSystemInterface.lineCount(loaderInstructionMap.get(key).getAbsolutePath());
 					String inputFile=" -i "+loaderInstructionMap.get(key);
-					String outputFile=outputDir; //Output here is temporary files
+					String outputFile=dstDir.getAbsolutePath(); //Output here is temporary files
+
 					ErrorLogger.logInfo("Digester","Running IFL: "+pathToIFL+connectionString+inputFile+outputFile);
-					//Lines affected returned by method call
-					int fileLines=HelperFunctions.iExec(pathToIFL+connectionString+inputFile+outputFile,errorPath);
-					loadedData|=calculateLinesLoaded(dm, key, totalLines, fileLines);
+					//Lines affected returned by method call - THIS IS NOW IGNORED
+					int fileLines= HelperFunctions.iExec(pathToIFL+connectionString+inputFile+outputFile,errorPath);
+
+					IFLLineCounts counts=calculateTableStats(dm, loaderInstructionMap, dstDir, key);
+
+					if(counts.loadedData==0){
+						ErrorLogger.logDebug("FileReader","No data loaded for table "+key);
+					}
+					else{
+						loadedData=true;
+					}
+					if(counts.invalidData >0 && !key.contains("_prop")){
+						ErrorLogger.logError("FileReader","Error in table "+key);
+					}
+
 				}
 			}
-			if(!loadedData)ErrorLogger.logError("FileReader","No Data Loaded, may be duplicates?");
+			if(!loadedData){
+				ErrorLogger.logError("FileReader", "No new data was uploaded.");
+			}
 			//Load Monet/HDF5
 			errorPath=getLogName(zero, cropConfig, crop, "Matrix_Upload");
 			String variantFilename="DS"+dataSetId;
@@ -415,29 +423,63 @@ public class GobiiFileReader {
 		HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
 	}
 
-	private static boolean calculateLinesLoaded(DigesterMessage dm, String key, int totalLines, int fileLines) {
-		boolean loadedData=false;
-		//Default to 'we had an error'
-		String totalLinesVal="error";
-		String linesLoadedVal="error";
-		String duplicateLinesVal="error";
+	/**
+	 * Read ppd and nodups files to determine their length, and add the row corresponding to the key to the digester message status.
+	 * Assumes IFL was run with output of dstDir on key in instructionMap.
+	 * @param dm DigesterMessage to record data to
+	 * @param loaderInstructionMap Map of key/location of loader instructions
+	 * @param dstDir Destination directory for IFL call run on key's table
+	 * @param key Key in loaderInstructionMap
+	 * @return
+	 */
+	private static IFLLineCounts calculateTableStats(DigesterMessage dm, Map<String, File> loaderInstructionMap, File dstDir, String key) {
+		String ppdFile=new File(dstDir,"ppd_digest."+key).getAbsolutePath();
+		String noDupsFile=new File(dstDir,"nodups_digest."+key).getAbsolutePath();
 
-		if(key.contains("_prop") && (fileLines >= 0) && (totalLines>0)){
-			totalLinesVal=(totalLines-1)+"";
-			linesLoadedVal=(fileLines)+"";//Header
-			duplicateLinesVal="";//Intentionally blank. Properties can have more or less loaded than total.
-		}
+		//Default to 'we had an error'
+		String totalLinesVal,linesLoadedVal,existingLinesVal,invalidLinesVal;
+		totalLinesVal=linesLoadedVal=existingLinesVal=invalidLinesVal="error";
+
+		//-1 lines for header
+		int totalLines= FileSystemInterface.lineCount(loaderInstructionMap.get(key).getAbsolutePath()) -1;
+		int ppdLines= FileSystemInterface.lineCount(ppdFile) -1;
+		int noDupsLines = FileSystemInterface.lineCount(noDupsFile) -1;
+
+		//Begin Business Logic Zone
+		int loadedLines=noDupsLines;
+		int existingLines=ppdLines-noDupsLines;
+		int invalidLines=totalLines-ppdLines;
+		//End Business Logic Zone - regular logic can resume
+
 		//If total lines/file lines less than 0, something's wrong. Also if total lines is < changed, something's wrong.
-		else if((totalLines>0) && (fileLines >=0) &&(totalLines>fileLines)){
-            totalLinesVal=(totalLines-1)+"";
-            linesLoadedVal=(fileLines)+"";//Header
-            duplicateLinesVal=((totalLines-1)-fileLines)+"";
-        }
-        else{
-            ErrorLogger.logDebug("FileReader","Failed lines check with total lines:"+totalLines+" and loaded lines:"+fileLines);
-        }
-		dm.addEntry(key,totalLinesVal,linesLoadedVal,duplicateLinesVal);
-		return fileLines > 0;
+
+
+		if(key.contains("_prop")){
+			totalLinesVal=totalLines+"";
+			linesLoadedVal=loadedLines+"";
+			//Existing and Invalid may be absolutely random numbers in EAV JSON objects
+			//Also, loaded may be waaaay above total, this is normal
+			existingLinesVal="";
+			invalidLinesVal="";
+		}
+		else{
+			totalLinesVal = totalLines + "";
+			linesLoadedVal = loadedLines + "";//Header
+			existingLinesVal = existingLines + "";
+			invalidLinesVal = invalidLines + "";
+			if(invalidLines==0) {
+				invalidLinesVal = "<mark>" + invalidLines + "</mark>";
+			}
+			if(loadedLines==0) {
+				linesLoadedVal = "<mark>" + loadedLines + "</mark>";
+			}
+		}
+		IFLLineCounts counts=new IFLLineCounts();
+		counts.loadedData=loadedLines;
+		counts.existingData=existingLines;
+		counts.invalidData=invalidLines;
+		dm.addEntry(key,totalLinesVal,linesLoadedVal,existingLinesVal,invalidLinesVal);
+		return counts;
 	}
 
 	/**
@@ -633,4 +675,7 @@ public class GobiiFileReader {
 
 		HelperFunctions.tryExec("cut -f"+refPos+","+altPos+ " "+markerFile,outFile,errorPath);
 	}
+}
+class IFLLineCounts{
+	int loadedData,existingData,invalidData;
 }
