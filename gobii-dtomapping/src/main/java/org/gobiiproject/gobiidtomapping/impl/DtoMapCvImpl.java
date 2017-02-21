@@ -174,7 +174,7 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         try {
 
-            ResultSet resultSet = rsCvDao.getCvTermsByGroup(groupName);
+            ResultSet resultSet = rsCvDao.getCvsByGroup(groupName);
 
             while (resultSet.next()) {
 

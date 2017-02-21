@@ -450,7 +450,7 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
 
         RestUri restUriCvForGetByGroupName = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParamName("groupName", ServiceRequestId.URL_CV);
+                .resourceByUriIdParamName("groupName",ServiceRequestId.URL_CV);
         restUriCvForGetByGroupName.setParamValue("groupName", "status");
         GobiiEnvelopeRestResource<CvDTO> gobiiEnvelopeRestResourceForGetByGroupName = new GobiiEnvelopeRestResource<>(restUriCvForGetByGroupName);
         PayloadEnvelope<CvDTO> resultEnvelopeForGetByGroupName = gobiiEnvelopeRestResourceForGetByGroupName
@@ -458,8 +458,7 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
         Assert.assertNotNull(resultEnvelopeForGetByGroupName);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetByGroupName.getHeader()));
         List<CvDTO> cvDTOByGroupName = resultEnvelopeForGetByGroupName.getPayload().getData();
-        Assert.assertTrue(cvDTOByGroupName.size() <= 2); //at most 2: 1 for system and 1 for user.
-
+        Assert.assertTrue(cvDTOByGroupName.size() > 0); //at most 2: 1 for system and 1 for user.
 
         for(int currentIdx = 0 ; currentIdx<cvDTOByGroupName.size(); currentIdx++ ){
             CvDTO currentCvDto = cvDTOList.get(currentIdx);
@@ -477,5 +476,6 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
             Assert.assertTrue(currentCvDto.getTerm().equals(cvDTOFromLink.getTerm()));
             Assert.assertTrue(currentCvDto.getCvId().equals(cvDTOFromLink.getCvId()));
         }
+
     }
 }
