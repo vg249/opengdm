@@ -280,8 +280,12 @@ public class GobiiFileReader {
 						String markerFilename=markerFile.getAbsolutePath();
 						String markerTmp=new File(markerFile.getParentFile(),"marker.mref").getAbsolutePath();
 						generateMarkerReference(markerFilename,markerTmp,errorPath);
-						new VCFTransformer(markerTmp,fromFile,toFile);
-						break;
+						try {
+							new VCFTransformer(markerTmp, fromFile, toFile);
+						}catch(Exception e){
+							ErrorLogger.logError("VCFTransformer", "Failure loading dataset",e);
+						}
+							break;
 					default:System.err.println("Unknown type "+dst.toString());break;
 				}
 				if(function!=null){
