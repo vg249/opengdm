@@ -337,11 +337,11 @@ public class GobiiFileReader {
 			for(String key:loaderInstructionList){
 				if(!VARIANT_CALL_TABNAME.equals(key)){
 					String inputFile=" -i "+loaderInstructionMap.get(key);
-					String outputFile=dstDir.getAbsolutePath(); //Output here is temporary files
+					String outputFile=" -o "+dstDir.getAbsolutePath(); //Output here is temporary files
 
 					ErrorLogger.logInfo("Digester","Running IFL: "+pathToIFL+connectionString+inputFile+outputFile);
 					//Lines affected returned by method call - THIS IS NOW IGNORED
-					int fileLines= HelperFunctions.iExec(pathToIFL+connectionString+inputFile+outputFile,errorPath);
+					int fileLines= HelperFunctions.iExec(pathToIFL+connectionString+inputFile+outputFile+" -l",errorPath);
 
 					IFLLineCounts counts=calculateTableStats(dm, loaderInstructionMap, dstDir, key);
 
@@ -444,6 +444,10 @@ public class GobiiFileReader {
 		int totalLines= FileSystemInterface.lineCount(loaderInstructionMap.get(key).getAbsolutePath()) -1;
 		int ppdLines= FileSystemInterface.lineCount(ppdFile) -1;
 		int noDupsLines = FileSystemInterface.lineCount(noDupsFile) -1;
+		//They're -1 if the file is missing.
+		if(totalLines<0)totalLines=0;
+		if(ppdLines<0)ppdLines=0;
+		if(noDupsLines<0)noDupsLines=0;
 
 		//Begin Business Logic Zone
 		int loadedLines=noDupsLines;
@@ -467,7 +471,7 @@ public class GobiiFileReader {
 			linesLoadedVal = loadedLines + "";//Header
 			existingLinesVal = existingLines + "";
 			invalidLinesVal = invalidLines + "";
-			if(invalidLines==0) {
+			if(invalidLines!=0) {
 				invalidLinesVal = "<mark>" + invalidLines + "</mark>";
 			}
 			if(loadedLines==0) {
