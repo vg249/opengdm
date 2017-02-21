@@ -623,6 +623,7 @@ export class ExtractorRoot {
 
     private handleCheckedDataSetItem(arg: CheckBoxEvent) {
 
+
         this.selectedDatasetId = arg.id;
 
         if (ProcessType.CREATE == arg.processType) {
@@ -641,7 +642,7 @@ export class ExtractorRoot {
                     });
         } // if-else we're adding
 
-        this.treeCheckboxEvent = arg;
+        this.treeCheckboxEvent = CheckBoxEvent.newCheckboxEvent(arg);
 
     }
 
@@ -651,6 +652,8 @@ export class ExtractorRoot {
     private handleExtractDataSetUnchecked(arg: CheckBoxEvent) {
         // this.changeTrigger++;
         // this.dataSetIdToUncheck = Number(arg.id);
+
+
 
         this.datasetCheckboxEvents.push(arg);
         let dataSetExtractsToRemove: GobiiDataSetExtract[] = this.gobiiDatasetExtracts
@@ -665,7 +668,8 @@ export class ExtractorRoot {
         }
 
         this.datasetCheckBoxEventChange = arg;
-        this.treeCheckboxEvent = arg;
+        this.treeCheckboxEvent = CheckBoxEvent.newCheckboxEvent(arg);
+
     }
 
 
