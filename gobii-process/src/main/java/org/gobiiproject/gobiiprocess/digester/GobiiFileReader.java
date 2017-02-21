@@ -472,10 +472,10 @@ public class GobiiFileReader {
 			existingLinesVal = existingLines + "";
 			invalidLinesVal = invalidLines + "";
 			if(invalidLines!=0) {
-				invalidLinesVal = "<mark>" + invalidLines + "</mark>";
+				invalidLinesVal = "<b style=\"background-color:red\">" + invalidLines + "</b>";
 			}
 			if(loadedLines==0) {
-				linesLoadedVal = "<mark>" + loadedLines + "</mark>";
+				linesLoadedVal = "<b style=\"background-color:yellow\">" + loadedLines + "</b>";
 			}
 		}
 		IFLLineCounts counts=new IFLLineCounts();
