@@ -1,14 +1,24 @@
 <GobiiTestData>
     <Entities>
-        <Organizations DbPKeysurrogate="name">
+        <Organizations DbPKeysurrogate="Name">
             <Organization>
                 <Keys>
                     <DbPKey></DbPKey>
                 </Keys>
                 <Properties>
-                    <Name></Name>
+                    <Name>Gobii Org</Name>
+                    <Address>150 Tower Road</Address>
+                    <Website>gobiiproject.org</Website>
+                </Properties>
+            </Organization>
+            <Organization>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <Name>IRRI Org</Name>
                     <Address></Address>
-                    <Website></Website>
+                    <Website>irri.org</Website>
                 </Properties>
             </Organization>
         </Organizations>
@@ -16,16 +26,16 @@
             <Contact>
                 <Keys>
                     <DbPKey></DbPKey>
-                    <Fkey entity="organization">
-                        <DbPKeySurrogate></DbPKeySurrogate>
+                    <Fkey entity="Organization">
+                        <DbPKeySurrogate>Gobii Org</DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
-                    <LastName></LastName>
-                    <FirstName></FirstName>
+                    <LastName>Glaser</LastName>
+                    <FirstName>Phil</FirstName>
                     <Code></Code>
-                    <Email></Email>
+                    <Email>pdg66@cornell.edu</Email>
                     <Roles>
                         <Role>Curator</Role>
                         <Role>Admin</Role>
@@ -65,5 +75,4 @@
         </Scenario>
 
     </Scenarios>
-
 </GobiiTestData>
