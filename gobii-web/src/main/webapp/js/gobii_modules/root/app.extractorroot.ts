@@ -158,7 +158,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Datasets</legend>
                                 <criteria-display 
-                                    [dataSetCheckBoxEvents] = "currentCheckboxEvents"
+                                    [dataSetCheckBoxEvents] = "datasetCheckboxEvents"
                                     (onItemUnChecked) = "handleExtractDataSetUnchecked($event)"></criteria-display>
                             </fieldset>
                         </div>
@@ -212,7 +212,9 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                             
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Status: {{currentStatus}}</legend>
-                                <status-display-tree></status-display-tree>
+                                <status-display-tree
+                                    [checkBoxEventChange] = "treeCheckboxEvent">
+                                </status-display-tree>
                             </fieldset>
                                    
                     </div>  <!-- outer grid column 3 (inner grid)-->
@@ -233,7 +235,8 @@ export class ExtractorRoot {
     title = 'Gobii Web';
 
 
-    private currentCheckboxEvents: CheckBoxEvent[] = [];
+    private treeCheckboxEvent:CheckBoxEvent;
+    private datasetCheckboxEvents: CheckBoxEvent[] = [];
     private gobiiDatasetExtracts: GobiiDataSetExtract[] = [];
     private messages: string[] = [];
 
@@ -628,8 +631,8 @@ export class ExtractorRoot {
 
         } else {
 
-            let indexOfEventToRemove: number = this.currentCheckboxEvents.indexOf(arg);
-            this.currentCheckboxEvents.splice(indexOfEventToRemove, 1);
+            let indexOfEventToRemove: number = this.datasetCheckboxEvents.indexOf(arg);
+            this.datasetCheckboxEvents.splice(indexOfEventToRemove, 1);
 
             this.gobiiDatasetExtracts =
                 this.gobiiDatasetExtracts
@@ -638,6 +641,7 @@ export class ExtractorRoot {
                     });
         } // if-else we're adding
 
+        this.treeCheckboxEvent = arg;
 
     }
 
@@ -648,7 +652,7 @@ export class ExtractorRoot {
         // this.changeTrigger++;
         // this.dataSetIdToUncheck = Number(arg.id);
 
-        this.currentCheckboxEvents.push(arg);
+        this.datasetCheckboxEvents.push(arg);
         let dataSetExtractsToRemove: GobiiDataSetExtract[] = this.gobiiDatasetExtracts
             .filter(e => {
                 return e.getdataSetId() === Number(arg.id)
@@ -661,6 +665,7 @@ export class ExtractorRoot {
         }
 
         this.datasetCheckBoxEventChange = arg;
+        this.treeCheckboxEvent = arg;
     }
 
 

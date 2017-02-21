@@ -22,7 +22,6 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 function StatusDisplayTreeComponent() {
                     // ********************************************************************************
                     // ********************* CHECKBOX (GOBII-SPECIFIC)  NODE DATA STRUCTURES AND EVENTS
-                    this.checkboxEvents = [];
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                 }
@@ -38,14 +37,22 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                                     "data": "Work Folder",
                                     "expandedIcon": "fa-folder-open",
                                     "collapsedIcon": "fa-folder",
-                                    "children": [{ "label": "Expenses.doc", "icon": "fa-file-word-o", "data": "Expenses Document" }, { "label": "Resume.doc", "icon": "fa-file-word-o", "data": "Resume Document" }]
+                                    "children": [{
+                                            "label": "Expenses.doc",
+                                            "icon": "fa-file-word-o",
+                                            "data": "Expenses Document"
+                                        }, { "label": "Resume.doc", "icon": "fa-file-word-o", "data": "Resume Document" }]
                                 },
                                 {
                                     "label": "Home",
                                     "data": "Home Folder",
                                     "expandedIcon": "fa-folder-open",
                                     "collapsedIcon": "fa-folder",
-                                    "children": [{ "label": "Invoices.txt", "icon": "fa-file-word-o", "data": "Invoices for this month" }]
+                                    "children": [{
+                                            "label": "Invoices.txt",
+                                            "icon": "fa-file-word-o",
+                                            "data": "Invoices for this month"
+                                        }]
                                 }]
                         },
                         {
@@ -67,12 +74,20 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                             "children": [{
                                     "label": "Al Pacino",
                                     "data": "Pacino Movies",
-                                    "children": [{ "label": "Scarface", "icon": "fa-file-video-o", "data": "Scarface Movie" }, { "label": "Serpico", "icon": "fa-file-video-o", "data": "Serpico Movie" }]
+                                    "children": [{
+                                            "label": "Scarface",
+                                            "icon": "fa-file-video-o",
+                                            "data": "Scarface Movie"
+                                        }, { "label": "Serpico", "icon": "fa-file-video-o", "data": "Serpico Movie" }]
                                 },
                                 {
                                     "label": "Robert De Niro",
                                     "data": "De Niro Movies",
-                                    "children": [{ "label": "Goodfellas", "icon": "fa-file-video-o", "data": "Goodfellas Movie" }, { "label": "Untouchables", "icon": "fa-file-video-o", "data": "Untouchables Movie" }]
+                                    "children": [{
+                                            "label": "Goodfellas",
+                                            "icon": "fa-file-video-o",
+                                            "data": "Goodfellas Movie"
+                                        }, { "label": "Untouchables", "icon": "fa-file-video-o", "data": "Untouchables Movie" }]
                                 }]
                         }
                     ];
@@ -151,35 +166,22 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                     var returnVal = null;
                     return returnVal;
                 };
+                StatusDisplayTreeComponent.prototype.placeNodeInTree = function (treeNode) {
+                };
                 StatusDisplayTreeComponent.prototype.ngOnChanges = function (changes) {
-                    // if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
-                    //
-                    //     this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
-                    //
-                    //     if (this.itemChangedEvent) {
-                    //         let itemToChange:CheckBoxEvent =
-                    //             this.checkBoxEvents.filter(e => {
-                    //                 return e.id == changes['checkBoxEventChange'].currentValue.id;
-                    //             })[0];
-                    //
-                    //         //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
-                    //         if (itemToChange) {
-                    //             itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
-                    //             itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
-                    //         }
-                    //     }
-                    // } else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
-                    //
-                    //     this.setList(changes['nameIdList'].currentValue);
-                    //
-                    // }
+                    if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
+                        var itemChangedEvent = changes['checkBoxEventChange'].currentValue;
+                        var treeNode = this.makeNodeFromCbEvent(itemChangedEvent);
+                    }
+                    else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
+                    }
                 };
                 return StatusDisplayTreeComponent;
             }());
             StatusDisplayTreeComponent = __decorate([
                 core_1.Component({
                     selector: 'status-display-tree',
-                    inputs: ['checkBoxEventChange', 'checkboxEvents'],
+                    inputs: ['checkBoxEventChange'],
                     outputs: ['onItemSelected', 'onItemChecked'],
                     template: " <p-tree [value]=\"treeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedNodes\"></p-tree>\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
                 }),
