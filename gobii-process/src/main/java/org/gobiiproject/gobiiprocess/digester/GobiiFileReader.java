@@ -341,7 +341,7 @@ public class GobiiFileReader {
 			for(String key:loaderInstructionList){
 				if(!VARIANT_CALL_TABNAME.equals(key)){
 					String inputFile=" -i "+loaderInstructionMap.get(key);
-					String outputFile=" -o "+dstDir.getAbsolutePath(); //Output here is temporary files
+					String outputFile=" -o "+dstDir.getAbsolutePath()+ "/"; //Output here is temporary files, needs terminal /
 
 					ErrorLogger.logInfo("Digester","Running IFL: "+pathToIFL+connectionString+inputFile+outputFile);
 					//Lines affected returned by method call - THIS IS NOW IGNORED

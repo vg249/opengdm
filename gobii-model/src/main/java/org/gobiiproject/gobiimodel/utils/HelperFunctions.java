@@ -182,7 +182,7 @@ public class HelperFunctions {
 				ErrorLogger.logDebug(executedProcName,"Unable to rm "+ exec[1]);
 				return false;
 			}
-			if(executedProcName.equals("gobii_ifl.py")){
+			if(executedProcName.contains("gobii_ifl.py")){
 				String textToReturn="";
 				try {
 					BufferedReader br = new BufferedReader(new FileReader(errorFile));
