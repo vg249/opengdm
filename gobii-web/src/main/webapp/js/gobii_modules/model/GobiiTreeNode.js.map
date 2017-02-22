@@ -1,1 +1,1 @@
-{"version":3,"file":"GobiiTreeNode.js","sourceRoot":"","sources":["GobiiTreeNode.ts"],"names":[],"mappings":";;;;;;;YAGA;gBAEI,uBAA0B,UAAqB;oBAArB,eAAU,GAAV,UAAU,CAAW;oBAC3C,IAAI,CAAC,UAAU,GAAG,UAAU,CAAC;gBACjC,CAAC;gBAEL,oBAAC;YAAD,CAAC,AAND,IAMC;;QAAA,CAAC"}
+{"version":3,"file":"GobiiTreeNode.js","sourceRoot":"","sources":["GobiiTreeNode.ts"],"names":[],"mappings":";;;;;;;YAGA;gBAEI,uBAA0B,UAAqB;oBAArB,eAAU,GAAV,UAAU,CAAW;oBAUxC,aAAQ,GAAe,EAAE,CAAC;oBAT7B,IAAI,CAAC,UAAU,GAAG,UAAU,CAAC;gBACjC,CAAC;gBAgBL,oBAAC;YAAD,CAAC,AApBD,IAoBC;;QAAA,CAAC"}

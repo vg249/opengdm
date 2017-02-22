@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/GobiiTreeNode"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entity"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode"], function (exports_1
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, GobiiTreeNode_1, StatusDisplayTreeComponent;
+    var core_1, GobiiTreeNode_1, type_entity_1, StatusDisplayTreeComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -18,17 +18,22 @@ System.register(["@angular/core", "../model/GobiiTreeNode"], function (exports_1
             },
             function (GobiiTreeNode_1_1) {
                 GobiiTreeNode_1 = GobiiTreeNode_1_1;
+            },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
             }
         ],
         execute: function () {
             StatusDisplayTreeComponent = (function () {
                 function StatusDisplayTreeComponent() {
+                    this.entityNodeLabels = new Map();
                     // ********************************************************************************
                     // ********************* CHECKBOX (GOBII-SPECIFIC)  NODE DATA STRUCTURES AND EVENTS
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                 }
                 StatusDisplayTreeComponent.prototype.ngOnInit = function () {
+                    this.entityNodeLabels[type_entity_1.EntityType.DataSets] = "Data Sets";
                     this.treeNodes = [
                         {
                             "label": "Documents",
@@ -171,12 +176,24 @@ System.register(["@angular/core", "../model/GobiiTreeNode"], function (exports_1
                     return returnVal;
                 };
                 StatusDisplayTreeComponent.prototype.placeNodeInTree = function (treeNode) {
-                };
+                    if (treeNode.entityType === type_entity_1.EntityType.DataSets) {
+                        var entityLabel_1 = this.entityNodeLabels[type_entity_1.EntityType.DataSets];
+                        var parentNode = this.treeNodes.filter(function (n) { return n.label === entityLabel_1; })[0];
+                        if (parentNode == null) {
+                            parentNode = new GobiiTreeNode_1.GobiiTreeNode(type_entity_1.EntityType.DataSets);
+                            parentNode.label = entityLabel_1;
+                            this.treeNodes.push(parentNode);
+                        }
+                        parentNode.expanded = true;
+                        parentNode.children.push(treeNode);
+                        this.selectedNodes.push(treeNode);
+                    }
+                }; //
                 StatusDisplayTreeComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
                         var itemChangedEvent = changes['checkBoxEventChange'].currentValue;
                         var treeNode = this.makeNodeFromCbEvent(itemChangedEvent);
-                        this.treeNodes.push(treeNode);
+                        this.placeNodeInTree(treeNode);
                     }
                     else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
                     }

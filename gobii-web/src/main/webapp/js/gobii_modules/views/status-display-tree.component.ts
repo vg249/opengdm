@@ -3,6 +3,7 @@ import {TreeNode, Message, MenuItem} from "primeng/components/common/api";
 import {Tree} from "primeng/components/tree/tree";
 import {CheckBoxEvent} from "../model/event-checkbox";
 import {GobiiTreeNode} from "../model/GobiiTreeNode";
+import {EntityType} from "../model/type-entity";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
@@ -21,6 +22,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
+
+        this.entityNodeLabels[EntityType.DataSets] = "Data Sets";
 
 
         this.treeNodes = [
@@ -118,8 +121,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     // *****************************************************************
     // *********************  TREE NODE DATA STRUCTURES AND EVENTS
-    treeNodes: TreeNode[];
-    selectedNodes: TreeNode[];
+    private treeNodes: TreeNode[];
+    private selectedNodes: TreeNode[];
+    private entityNodeLabels:Map<EntityType,string> = new Map<EntityType,string>() ;
+
 
     private experimentId:string;
 
@@ -186,18 +191,37 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-    private makeNodeFromCbEvent(cbEvent: CheckBoxEvent): TreeNode {
+    private makeNodeFromCbEvent(cbEvent: CheckBoxEvent): GobiiTreeNode {
 
-        let returnVal: TreeNode = new GobiiTreeNode(cbEvent.entityType);
+        let returnVal: GobiiTreeNode = new GobiiTreeNode(cbEvent.entityType);
 
         returnVal.label = cbEvent.name;
 
         return returnVal;
     }
 
-    private placeNodeInTree(treeNode: TreeNode) {
 
-    }
+
+
+    private placeNodeInTree(treeNode: GobiiTreeNode) {
+
+        if( treeNode.entityType === EntityType.DataSets ) {
+
+            let entityLabel = this.entityNodeLabels[EntityType.DataSets];
+            let parentNode:TreeNode = this.treeNodes.filter( n =>  n.label === entityLabel )[0];
+            if( parentNode == null ) {
+                parentNode = new GobiiTreeNode(EntityType.DataSets);
+                parentNode.label = entityLabel;
+                this.treeNodes.push(parentNode);
+            }
+
+            parentNode.expanded = true;
+            parentNode.children.push(treeNode);
+            this.selectedNodes.push(treeNode);
+
+        }
+
+    } //
 
 
     // ********************************************************************************
@@ -212,8 +236,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             let itemChangedEvent: CheckBoxEvent = changes['checkBoxEventChange'].currentValue;
 
-            let treeNode: TreeNode = this.makeNodeFromCbEvent(itemChangedEvent);
-            this.treeNodes.push(treeNode);
+            let treeNode: GobiiTreeNode = this.makeNodeFromCbEvent(itemChangedEvent);
+
+
+
+            this.placeNodeInTree(treeNode);
+            //this.treeNodes.push(treeNode);
 
             //this.placeNodeInTree(treeNode);
 

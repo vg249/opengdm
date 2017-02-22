@@ -7,4 +7,18 @@ export class GobiiTreeNode implements  TreeNode{
         this.entityType = entityType;
     }
 
+
+    public label: string;
+    public data: any;
+    public icon: any;
+    public expandedIcon: any;
+    public collapsedIcon: any;
+    public children: TreeNode[] = [];
+    public leaf: boolean;
+    public expanded: boolean;
+    public type: string;
+    public parent: TreeNode;
+    public partialSelected: boolean;
+
+
 }

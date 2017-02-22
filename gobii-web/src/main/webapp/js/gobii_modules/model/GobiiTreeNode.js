@@ -8,6 +8,7 @@ System.register([], function (exports_1, context_1) {
             GobiiTreeNode = (function () {
                 function GobiiTreeNode(entityType) {
                     this.entityType = entityType;
+                    this.children = [];
                     this.entityType = entityType;
                 }
                 return GobiiTreeNode;
