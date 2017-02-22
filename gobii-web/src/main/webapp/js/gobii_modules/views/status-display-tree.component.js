@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entity"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/extractor-submission-item", "../model/cv-filter-type"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, GobiiTreeNode_1, type_entity_1, StatusDisplayTreeComponent;
+    var core_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, extractor_submission_item_1, cv_filter_type_1, StatusDisplayTreeComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -21,6 +21,15 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
             },
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
+            },
+            function (type_extractor_filter_1_1) {
+                type_extractor_filter_1 = type_extractor_filter_1_1;
+            },
+            function (extractor_submission_item_1_1) {
+                extractor_submission_item_1 = extractor_submission_item_1_1;
+            },
+            function (cv_filter_type_1_1) {
+                cv_filter_type_1 = cv_filter_type_1_1;
             }
         ],
         execute: function () {
@@ -35,16 +44,22 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     this.entityNodeLabels = new Map();
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
-                    this.submissionItems = [];
+                    this.submissionItems = new Map();
                 }
                 StatusDisplayTreeComponent.prototype.ngOnInit = function () {
                     this.entityNodeLabels[type_entity_1.EntityType.DataSets] = "Data Sets";
+                    this.entityNodeLabels[type_entity_1.EntityType.Platforms] = "Platforms";
                     this.makeDemoTreeNodes();
-                    // this.submissionItems.push(new ExtractorSubmissionItem(
-                    //     ItemType.Entity,
-                    //     null,
-                    //     Ent
-                    // ))
+                    // ******** SET UP extract by marker
+                    // -- Data set type
+                    this.submissionItems[type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER] = [];
+                    this.submissionItems[type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER].push(extractor_submission_item_1.ExtractorSubmissionItem.build(extractor_submission_item_1.ExtractorItemType.Entity)
+                        .setEntityType(type_entity_1.EntityType.CvTerms)
+                        .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE));
+                    // -- Platforms
+                    this.submissionItems[type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER].push(extractor_submission_item_1.ExtractorSubmissionItem.build(extractor_submission_item_1.ExtractorItemType.Category)
+                        .setCategoryName(this.entityNodeLabels[type_entity_1.EntityType.Platforms])
+                        .setChildEntityTypes([type_entity_1.EntityType.Platforms]));
                 };
                 StatusDisplayTreeComponent.prototype.makeDemoTreeNodes = function () {
                     this.demoTreeNodes = [

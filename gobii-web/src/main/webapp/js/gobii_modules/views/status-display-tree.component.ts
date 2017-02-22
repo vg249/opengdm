@@ -5,7 +5,8 @@ import {CheckBoxEvent} from "../model/event-checkbox";
 import {GobiiTreeNode} from "../model/GobiiTreeNode";
 import {EntityType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {ExtractorSubmissionItem} from "../model/extractor-submission-item";
+import {ExtractorSubmissionItem, ExtractorItemType} from "../model/extractor-submission-item";
+import {CvFilterType} from "../model/cv-filter-type";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
@@ -28,15 +29,26 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     ngOnInit() {
 
         this.entityNodeLabels[EntityType.DataSets] = "Data Sets";
+        this.entityNodeLabels[EntityType.Platforms] = "Platforms";
 
         this.makeDemoTreeNodes();
 
 
-        // this.submissionItems.push(new ExtractorSubmissionItem(
-        //     ItemType.Entity,
-        //     null,
-        //     Ent
-        // ))
+        // ******** SET UP extract by marker
+        // -- Data set type
+
+
+        this.submissionItems[GobiiExtractFilterType.BY_MARKER] = [];
+        this.submissionItems[GobiiExtractFilterType.BY_MARKER].push(
+            ExtractorSubmissionItem.build(ExtractorItemType.Entity)
+                .setEntityType(EntityType.CvTerms)
+                .setCvFilterType(CvFilterType.DATASET_TYPE));
+
+        // -- Platforms
+        this.submissionItems[GobiiExtractFilterType.BY_MARKER].push(
+            ExtractorSubmissionItem.build(ExtractorItemType.Category)
+                .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
+                .setChildEntityTypes([EntityType.Platforms]));
 
     }
 
@@ -266,7 +278,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     private onItemSelected: EventEmitter<CheckBoxEvent> = new EventEmitter();
 
 
-    private submissionItems:ExtractorSubmissionItem[] = [];
+    private submissionItems: Map<GobiiExtractFilterType,Array<ExtractorSubmissionItem>> =
+        new Map<GobiiExtractFilterType,Array<ExtractorSubmissionItem>>();
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
