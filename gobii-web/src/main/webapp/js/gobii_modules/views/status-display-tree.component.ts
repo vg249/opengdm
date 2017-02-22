@@ -11,7 +11,9 @@ import {EntityType} from "../model/type-entity";
     selector: 'status-display-tree',
     inputs: ['checkBoxEventChange'],
     outputs: ['onItemSelected', 'onItemChecked'],
-    template: ` <p-tree [value]="treeNodes" selectionMode="checkbox" [(selection)]="selectedNodes"></p-tree>
+    template: ` 
+                    <p-tree [value]="gobiiTreeNodes" selectionMode="checkbox" [(selection)]="selectedGobiiNodes"></p-tree>
+                    <!--<p-tree [value]="demoTreeNodes" selectionMode="checkbox" [(selection)]="selectedDemoNodes"></p-tree>-->
                     <!--<div>Selected Nodes: <span *ngFor="let file of selectedFiles2">{{file.label}} </span></div>-->
 `
 })
@@ -25,30 +27,38 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         this.entityNodeLabels[EntityType.DataSets] = "Data Sets";
 
+        this.makeDemoTreeNodes();
 
-        this.treeNodes = [
+    }
+
+    private makeDemoTreeNodes() {
+        this.demoTreeNodes = [
             {
                 "label": "Documents",
                 "data": "Documents Folder",
                 "expandedIcon": "fa-folder-open",
                 "collapsedIcon": "fa-folder",
                 "children": [{
+
                     "label": "Work",
                     "data": "Work Folder",
                     "expandedIcon": "fa-folder-open",
                     "collapsedIcon": "fa-folder",
                     "children": [{
+
                         "label": "Expenses.doc",
                         "icon": "fa-file-word-o",
                         "data": "Expenses Document"
                     }, {"label": "Resume.doc", "icon": "fa-file-word-o", "data": "Resume Document"}]
                 },
                     {
+
                         "label": "Home",
                         "data": "Home Folder",
                         "expandedIcon": "fa-folder-open",
                         "collapsedIcon": "fa-folder",
                         "children": [{
+
                             "label": "Invoices.txt",
                             "icon": "fa-file-word-o",
                             "data": "Invoices for this month"
@@ -56,6 +66,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                     }]
             },
             {
+
                 "label": "Pictures",
                 "data": "Pictures Folder",
                 "expandedIcon": "fa-folder-open",
@@ -66,67 +77,61 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                     {"label": "primeui.png", "icon": "fa-file-image-o", "data": "PrimeUI Logo"}]
             },
             {
+
                 "label": "Movies",
                 "data": "Movies Folder",
                 "expandedIcon": "fa-folder-open",
                 "collapsedIcon": "fa-folder",
                 "children": [{
+
                     "label": "Al Pacino",
                     "data": "Pacino Movies",
                     "children": [{
+
                         "label": "Scarface",
                         "icon": "fa-file-video-o",
                         "data": "Scarface Movie"
                     }, {"label": "Serpico", "icon": "fa-file-video-o", "data": "Serpico Movie"}]
                 },
                     {
+
                         "label": "Robert De Niro",
                         "data": "De Niro Movies",
                         "children": [{
+
                             "label": "Goodfellas",
                             "icon": "fa-file-video-o",
                             "data": "Goodfellas Movie"
-                        }, {"label": "Untouchables", "icon": "fa-file-video-o", "data": "Untouchables Movie"}]
+                        }, {
+
+                            "label": "Untouchables",
+                            "icon": "fa-file-video-o",
+                            "data": "Untouchables Movie"
+                        }]
                     }]
             }
         ];
 
 
-        this.selectedNodes = [];
-        this.selectedNodes.push(this.treeNodes[1].children[0])
-        this.treeNodes[1].partialSelected = true;
-        this.treeNodes[1].expanded = true;
-        let foo: string = "foo";
-        // this.nodeService.getFiles().then(files => this.filesTree1 = files);
-        // this.nodeService.getFiles().then(files => this.filesTree2 = files);
-        // this.nodeService.getFiles().then(files => this.filesTree3 = files);
-        // this.nodeService.getFiles().then(files => this.treeNodes = files);
-        // this.nodeService.getFiles().then(files => this.filesTree5 = files);
-        // this.nodeService.getFiles().then(files => this.filesTree6 = files);
-        // this.nodeService.getFiles().then(files => this.filesTree7 = files);
-
-        //     this.filesTree8 = [{
-        //         label: 'Root',
-        //         children: files
-        //     }];
-        // });
-        //
-        // this.nodeService.getLazyFiles().then(files => this.lazyFiles = files);
-        //
-        // this.items = [
-        //     {label: 'View', icon: 'fa-search', command: (event) => this.viewFile(this.selectedFile2)},
-        //     {label: 'Unselect', icon: 'fa-close', command: (event) => this.unselectFile()}
-        // ];
+        this.selectedDemoNodes.push(this.demoTreeNodes[1].children[0])
+        this.demoTreeNodes[1].partialSelected = true;
+        this.demoTreeNodes[1].expanded = true;
     }
+
 
     // *****************************************************************
     // *********************  TREE NODE DATA STRUCTURES AND EVENTS
-    private treeNodes: TreeNode[];
-    private selectedNodes: TreeNode[];
-    private entityNodeLabels:Map<EntityType,string> = new Map<EntityType,string>() ;
+
+    private demoTreeNodes: TreeNode[] = [];
+    private selectedDemoNodes: TreeNode[] = [];
 
 
-    private experimentId:string;
+    private gobiiTreeNodes: GobiiTreeNode[] = [];
+    private selectedGobiiNodes: GobiiTreeNode[] = [];
+    private entityNodeLabels: Map<EntityType,string> = new Map<EntityType,string>();
+
+
+    private experimentId: string;
 
 
     nodeSelect(event) {
@@ -157,13 +162,13 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
     expandAll() {
-        this.treeNodes.forEach(node => {
+        this.gobiiTreeNodes.forEach(node => {
             this.expandRecursive(node, true);
         });
     }
 
     collapseAll() {
-        this.treeNodes.forEach(node => {
+        this.gobiiTreeNodes.forEach(node => {
             this.expandRecursive(node, false);
         });
     }
@@ -182,6 +187,24 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     // ********************* CHECKBOX/TREE NODE CONVERSION FUNCTIONS
 
 
+    private makeGobiiTreeNode(entityType: EntityType, isContainer: boolean): GobiiTreeNode {
+
+        let returnVal: GobiiTreeNode = new GobiiTreeNode(entityType);
+
+        if (isContainer) {
+            returnVal.collapsedIcon = "fa-folder";
+            returnVal.expandedIcon = "fa-folder-open";
+        } else {
+            if (entityType === EntityType.DataSets) {
+
+                returnVal.icon = "fa-database";
+            }
+        }
+
+        return returnVal;
+
+    }
+
     private makeCbEventFromNode(treeNode: TreeNode): CheckBoxEvent {
 
         let returnVal: CheckBoxEvent = null;
@@ -193,7 +216,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     private makeNodeFromCbEvent(cbEvent: CheckBoxEvent): GobiiTreeNode {
 
-        let returnVal: GobiiTreeNode = new GobiiTreeNode(cbEvent.entityType);
+        let returnVal: GobiiTreeNode = this.makeGobiiTreeNode(cbEvent.entityType, false);
 
         returnVal.label = cbEvent.name;
 
@@ -201,23 +224,20 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-
-
     private placeNodeInTree(treeNode: GobiiTreeNode) {
 
-        if( treeNode.entityType === EntityType.DataSets ) {
+        if (treeNode.entityType === EntityType.DataSets) {
 
-            let entityLabel = this.entityNodeLabels[EntityType.DataSets];
-            let parentNode:TreeNode = this.treeNodes.filter( n =>  n.label === entityLabel )[0];
-            if( parentNode == null ) {
-                parentNode = new GobiiTreeNode(EntityType.DataSets);
-                parentNode.label = entityLabel;
-                this.treeNodes.push(parentNode);
+            let parentNode: GobiiTreeNode = this.gobiiTreeNodes.filter(n => n.entityType === EntityType.DataSets)[0];
+            if (parentNode == null) {
+                parentNode = this.makeGobiiTreeNode(EntityType.DataSets, true);
+                parentNode.label = this.entityNodeLabels[EntityType.DataSets];
+                this.gobiiTreeNodes.push(parentNode);
             }
 
             parentNode.expanded = true;
             parentNode.children.push(treeNode);
-            this.selectedNodes.push(treeNode);
+            this.selectedGobiiNodes.push(treeNode);
 
         }
 
@@ -237,7 +257,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             let itemChangedEvent: CheckBoxEvent = changes['checkBoxEventChange'].currentValue;
 
             let treeNode: GobiiTreeNode = this.makeNodeFromCbEvent(itemChangedEvent);
-
 
 
             this.placeNodeInTree(treeNode);

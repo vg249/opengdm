@@ -26,6 +26,12 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
         execute: function () {
             StatusDisplayTreeComponent = (function () {
                 function StatusDisplayTreeComponent() {
+                    // *****************************************************************
+                    // *********************  TREE NODE DATA STRUCTURES AND EVENTS
+                    this.demoTreeNodes = [];
+                    this.selectedDemoNodes = [];
+                    this.gobiiTreeNodes = [];
+                    this.selectedGobiiNodes = [];
                     this.entityNodeLabels = new Map();
                     // ********************************************************************************
                     // ********************* CHECKBOX (GOBII-SPECIFIC)  NODE DATA STRUCTURES AND EVENTS
@@ -34,7 +40,10 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                 }
                 StatusDisplayTreeComponent.prototype.ngOnInit = function () {
                     this.entityNodeLabels[type_entity_1.EntityType.DataSets] = "Data Sets";
-                    this.treeNodes = [
+                    this.makeDemoTreeNodes();
+                };
+                StatusDisplayTreeComponent.prototype.makeDemoTreeNodes = function () {
+                    this.demoTreeNodes = [
                         {
                             "label": "Documents",
                             "data": "Documents Folder",
@@ -95,34 +104,17 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                                             "label": "Goodfellas",
                                             "icon": "fa-file-video-o",
                                             "data": "Goodfellas Movie"
-                                        }, { "label": "Untouchables", "icon": "fa-file-video-o", "data": "Untouchables Movie" }]
+                                        }, {
+                                            "label": "Untouchables",
+                                            "icon": "fa-file-video-o",
+                                            "data": "Untouchables Movie"
+                                        }]
                                 }]
                         }
                     ];
-                    this.selectedNodes = [];
-                    this.selectedNodes.push(this.treeNodes[1].children[0]);
-                    this.treeNodes[1].partialSelected = true;
-                    this.treeNodes[1].expanded = true;
-                    var foo = "foo";
-                    // this.nodeService.getFiles().then(files => this.filesTree1 = files);
-                    // this.nodeService.getFiles().then(files => this.filesTree2 = files);
-                    // this.nodeService.getFiles().then(files => this.filesTree3 = files);
-                    // this.nodeService.getFiles().then(files => this.treeNodes = files);
-                    // this.nodeService.getFiles().then(files => this.filesTree5 = files);
-                    // this.nodeService.getFiles().then(files => this.filesTree6 = files);
-                    // this.nodeService.getFiles().then(files => this.filesTree7 = files);
-                    //     this.filesTree8 = [{
-                    //         label: 'Root',
-                    //         children: files
-                    //     }];
-                    // });
-                    //
-                    // this.nodeService.getLazyFiles().then(files => this.lazyFiles = files);
-                    //
-                    // this.items = [
-                    //     {label: 'View', icon: 'fa-search', command: (event) => this.viewFile(this.selectedFile2)},
-                    //     {label: 'Unselect', icon: 'fa-close', command: (event) => this.unselectFile()}
-                    // ];
+                    this.selectedDemoNodes.push(this.demoTreeNodes[1].children[0]);
+                    this.demoTreeNodes[1].partialSelected = true;
+                    this.demoTreeNodes[1].expanded = true;
                 };
                 StatusDisplayTreeComponent.prototype.nodeSelect = function (event) {
                     //      this.msgs.push({severity: 'info', summary: 'Node Selected', detail: event.node.label});
@@ -145,13 +137,13 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                 };
                 StatusDisplayTreeComponent.prototype.expandAll = function () {
                     var _this = this;
-                    this.treeNodes.forEach(function (node) {
+                    this.gobiiTreeNodes.forEach(function (node) {
                         _this.expandRecursive(node, true);
                     });
                 };
                 StatusDisplayTreeComponent.prototype.collapseAll = function () {
                     var _this = this;
-                    this.treeNodes.forEach(function (node) {
+                    this.gobiiTreeNodes.forEach(function (node) {
                         _this.expandRecursive(node, false);
                     });
                 };
@@ -166,27 +158,39 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                 };
                 // ********************************************************************************
                 // ********************* CHECKBOX/TREE NODE CONVERSION FUNCTIONS
+                StatusDisplayTreeComponent.prototype.makeGobiiTreeNode = function (entityType, isContainer) {
+                    var returnVal = new GobiiTreeNode_1.GobiiTreeNode(entityType);
+                    if (isContainer) {
+                        returnVal.collapsedIcon = "fa-folder";
+                        returnVal.expandedIcon = "fa-folder-open";
+                    }
+                    else {
+                        if (entityType === type_entity_1.EntityType.DataSets) {
+                            returnVal.icon = "fa-database";
+                        }
+                    }
+                    return returnVal;
+                };
                 StatusDisplayTreeComponent.prototype.makeCbEventFromNode = function (treeNode) {
                     var returnVal = null;
                     return returnVal;
                 };
                 StatusDisplayTreeComponent.prototype.makeNodeFromCbEvent = function (cbEvent) {
-                    var returnVal = new GobiiTreeNode_1.GobiiTreeNode(cbEvent.entityType);
+                    var returnVal = this.makeGobiiTreeNode(cbEvent.entityType, false);
                     returnVal.label = cbEvent.name;
                     return returnVal;
                 };
                 StatusDisplayTreeComponent.prototype.placeNodeInTree = function (treeNode) {
                     if (treeNode.entityType === type_entity_1.EntityType.DataSets) {
-                        var entityLabel_1 = this.entityNodeLabels[type_entity_1.EntityType.DataSets];
-                        var parentNode = this.treeNodes.filter(function (n) { return n.label === entityLabel_1; })[0];
+                        var parentNode = this.gobiiTreeNodes.filter(function (n) { return n.entityType === type_entity_1.EntityType.DataSets; })[0];
                         if (parentNode == null) {
-                            parentNode = new GobiiTreeNode_1.GobiiTreeNode(type_entity_1.EntityType.DataSets);
-                            parentNode.label = entityLabel_1;
-                            this.treeNodes.push(parentNode);
+                            parentNode = this.makeGobiiTreeNode(type_entity_1.EntityType.DataSets, true);
+                            parentNode.label = this.entityNodeLabels[type_entity_1.EntityType.DataSets];
+                            this.gobiiTreeNodes.push(parentNode);
                         }
                         parentNode.expanded = true;
                         parentNode.children.push(treeNode);
-                        this.selectedNodes.push(treeNode);
+                        this.selectedGobiiNodes.push(treeNode);
                     }
                 }; //
                 StatusDisplayTreeComponent.prototype.ngOnChanges = function (changes) {
@@ -205,7 +209,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     selector: 'status-display-tree',
                     inputs: ['checkBoxEventChange'],
                     outputs: ['onItemSelected', 'onItemChecked'],
-                    template: " <p-tree [value]=\"treeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedNodes\"></p-tree>\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
+                    template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedGobiiNodes\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
                 }),
                 __metadata("design:paramtypes", [])
             ], StatusDisplayTreeComponent);

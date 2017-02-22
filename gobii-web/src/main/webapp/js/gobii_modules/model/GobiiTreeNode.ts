@@ -13,7 +13,7 @@ export class GobiiTreeNode implements  TreeNode{
     public icon: any;
     public expandedIcon: any;
     public collapsedIcon: any;
-    public children: TreeNode[] = [];
+    public children: GobiiTreeNode[] = [];
     public leaf: boolean;
     public expanded: boolean;
     public type: string;
