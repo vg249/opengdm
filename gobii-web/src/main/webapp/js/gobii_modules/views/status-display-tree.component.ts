@@ -2,6 +2,7 @@ import {Component, OnInit, ViewChild, OnChanges, SimpleChange, EventEmitter} fro
 import {TreeNode, Message, MenuItem} from "primeng/components/common/api";
 import {Tree} from "primeng/components/tree/tree";
 import {CheckBoxEvent} from "../model/event-checkbox";
+import {GobiiTreeNode} from "../model/GobiiTreeNode";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
@@ -187,7 +188,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     private makeNodeFromCbEvent(cbEvent: CheckBoxEvent): TreeNode {
 
-        let returnVal: TreeNode = null;
+        let returnVal: TreeNode = new GobiiTreeNode(cbEvent.entityType);
+
+        returnVal.label = cbEvent.name;
 
         return returnVal;
     }
@@ -210,10 +213,13 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             let itemChangedEvent: CheckBoxEvent = changes['checkBoxEventChange'].currentValue;
 
             let treeNode: TreeNode = this.makeNodeFromCbEvent(itemChangedEvent);
+            this.treeNodes.push(treeNode);
+
+            //this.placeNodeInTree(treeNode);
 
             // this.treeNodes.push(treeNode);
             //
-            // this.placeNodeInTree(treeNode);
+
 
             // if (this.itemChangedEvent) {
             //     let itemToChange:CheckBoxEvent =

@@ -1,4 +1,4 @@
-System.register(["@angular/core"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/GobiiTreeNode"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,11 +10,14 @@ System.register(["@angular/core"], function (exports_1, context_1) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, StatusDisplayTreeComponent;
+    var core_1, GobiiTreeNode_1, StatusDisplayTreeComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (GobiiTreeNode_1_1) {
+                GobiiTreeNode_1 = GobiiTreeNode_1_1;
             }
         ],
         execute: function () {
@@ -163,7 +166,8 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                     return returnVal;
                 };
                 StatusDisplayTreeComponent.prototype.makeNodeFromCbEvent = function (cbEvent) {
-                    var returnVal = null;
+                    var returnVal = new GobiiTreeNode_1.GobiiTreeNode(cbEvent.entityType);
+                    returnVal.label = cbEvent.name;
                     return returnVal;
                 };
                 StatusDisplayTreeComponent.prototype.placeNodeInTree = function (treeNode) {
@@ -172,6 +176,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                     if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
                         var itemChangedEvent = changes['checkBoxEventChange'].currentValue;
                         var treeNode = this.makeNodeFromCbEvent(itemChangedEvent);
+                        this.treeNodes.push(treeNode);
                     }
                     else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
                     }
