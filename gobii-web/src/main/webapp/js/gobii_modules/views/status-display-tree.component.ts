@@ -4,12 +4,14 @@ import {Tree} from "primeng/components/tree/tree";
 import {CheckBoxEvent} from "../model/event-checkbox";
 import {GobiiTreeNode} from "../model/GobiiTreeNode";
 import {EntityType} from "../model/type-entity";
+import {GobiiExtractFilterType} from "../model/type-extractor-filter";
+import {ExtractorSubmissionItem} from "../model/extractor-submission-item";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
 @Component({
     selector: 'status-display-tree',
-    inputs: ['checkBoxEventChange'],
+    inputs: ['checkBoxEventChange', 'gobiiExtractFilterType'],
     outputs: ['onItemSelected', 'onItemChecked'],
     template: ` 
                     <p-tree [value]="gobiiTreeNodes" selectionMode="checkbox" [(selection)]="selectedGobiiNodes"></p-tree>
@@ -28,6 +30,13 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         this.entityNodeLabels[EntityType.DataSets] = "Data Sets";
 
         this.makeDemoTreeNodes();
+
+
+        // this.submissionItems.push(new ExtractorSubmissionItem(
+        //     ItemType.Entity,
+        //     null,
+        //     Ent
+        // ))
 
     }
 
@@ -243,12 +252,21 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     } //
 
+    private setUpRequredItems() {
+
+    }
 
     // ********************************************************************************
     // ********************* CHECKBOX (GOBII-SPECIFIC)  NODE DATA STRUCTURES AND EVENTS
 
+
+    private gobiiExtractFilterType: GobiiExtractFilterType;
+
     private onItemChecked: EventEmitter<CheckBoxEvent> = new EventEmitter();
     private onItemSelected: EventEmitter<CheckBoxEvent> = new EventEmitter();
+
+
+    private submissionItems:ExtractorSubmissionItem[] = [];
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
@@ -280,7 +298,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             //         itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
             //     }
             // }
-        } else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
+        } else if (changes['gobiiExtractFilterType']
+            && ( changes['gobiiExtractFilterType'].currentValue != null )
+            && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
+
+            this.gobiiExtractFilterType = changes['gobiiExtractFilterType'].currentValue;
+            this.setUpRequredItems();
 
             // this.setList(changes['nameIdList'].currentValue);
 

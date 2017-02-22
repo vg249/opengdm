@@ -17,6 +17,7 @@ import {EntityFilter} from "../model/type-entity-filter";
 import {SampleMarkerList} from "../model/sample-marker-list";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {GobiiSampleListType} from "../model/type-extractor-sample-list";
+import {CvFilters, CvFilterType} from "../model/cv-filter-type";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -193,7 +194,8 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Status: {{currentStatus}}</legend>
                                 <status-display-tree
-                                    [checkBoxEventChange] = "treeCheckboxEvent">
+                                    [checkBoxEventChange] = "treeCheckboxEvent"
+                                    [gobiiExtractFilterType] = "selectedExportType">
                                 </status-display-tree>
                             </fieldset>
                                    
@@ -300,11 +302,10 @@ export class ExtractorRoot {
     private displayIncludedDatasetsGrid: boolean = true;
     private displaySampleListTypeSelector: boolean = false;
     private displaySampleMarkerBox: boolean = false;
-
-
-    private selectedExportType: GobiiExtractFilterType;
+    private selectedExportType: GobiiExtractFilterType = GobiiExtractFilterType.WHOLE_DATASET;
 
     private handleExportTypeSelected(arg: GobiiExtractFilterType) {
+
         this.selectedExportType = arg;
 
         if (this.selectedExportType === GobiiExtractFilterType.WHOLE_DATASET) {
@@ -519,7 +520,7 @@ export class ExtractorRoot {
         scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
             EntityType.CvTerms,
             EntityFilter.BYTYPENAME,
-            "dataset_type")).subscribe(nameIds => {
+            CvFilters.get(CvFilterType.DATASET_TYPE))).subscribe(nameIds => {
 
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.datasetTypeNameIdList = nameIds;

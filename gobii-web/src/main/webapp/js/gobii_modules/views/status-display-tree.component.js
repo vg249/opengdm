@@ -33,14 +33,18 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     this.gobiiTreeNodes = [];
                     this.selectedGobiiNodes = [];
                     this.entityNodeLabels = new Map();
-                    // ********************************************************************************
-                    // ********************* CHECKBOX (GOBII-SPECIFIC)  NODE DATA STRUCTURES AND EVENTS
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
+                    this.submissionItems = [];
                 }
                 StatusDisplayTreeComponent.prototype.ngOnInit = function () {
                     this.entityNodeLabels[type_entity_1.EntityType.DataSets] = "Data Sets";
                     this.makeDemoTreeNodes();
+                    // this.submissionItems.push(new ExtractorSubmissionItem(
+                    //     ItemType.Entity,
+                    //     null,
+                    //     Ent
+                    // ))
                 };
                 StatusDisplayTreeComponent.prototype.makeDemoTreeNodes = function () {
                     this.demoTreeNodes = [
@@ -193,13 +197,19 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                         this.selectedGobiiNodes.push(treeNode);
                     }
                 }; //
+                StatusDisplayTreeComponent.prototype.setUpRequredItems = function () {
+                };
                 StatusDisplayTreeComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
                         var itemChangedEvent = changes['checkBoxEventChange'].currentValue;
                         var treeNode = this.makeNodeFromCbEvent(itemChangedEvent);
                         this.placeNodeInTree(treeNode);
                     }
-                    else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
+                    else if (changes['gobiiExtractFilterType']
+                        && (changes['gobiiExtractFilterType'].currentValue != null)
+                        && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
+                        this.gobiiExtractFilterType = changes['gobiiExtractFilterType'].currentValue;
+                        this.setUpRequredItems();
                     }
                 };
                 return StatusDisplayTreeComponent;
@@ -207,7 +217,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
             StatusDisplayTreeComponent = __decorate([
                 core_1.Component({
                     selector: 'status-display-tree',
-                    inputs: ['checkBoxEventChange'],
+                    inputs: ['checkBoxEventChange', 'gobiiExtractFilterType'],
                     outputs: ['onItemSelected', 'onItemChecked'],
                     template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedGobiiNodes\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
                 }),

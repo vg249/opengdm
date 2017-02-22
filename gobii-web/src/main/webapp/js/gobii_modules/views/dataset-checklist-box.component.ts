@@ -9,6 +9,7 @@ import {DataSet} from "../model/dataset";
 import {DtoRequestItemAnalysis} from "../services/app/dto-request-item-analysis";
 import {Analysis} from "../model/analysis";
 import {EntityFilter} from "../model/type-entity-filter";
+import {CvFilterType, CvFilters} from "../model/cv-filter-type";
 
 
 @Component({
@@ -188,7 +189,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
         scope$._dtoRequestServiceNameId
             .get(new DtoRequestItemNameIds(EntityType.CvTerms,
                 EntityFilter.BYTYPENAME,
-                "analysis_type"))
+                CvFilters.get(CvFilterType.ANALYSIS_TYPE)))
             .subscribe(nameIdList => {
                     scope$.nameIdListAnalysisTypes = nameIdList;
                     if (this.experimentId) {
