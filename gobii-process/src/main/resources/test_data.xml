@@ -16,7 +16,7 @@
             <Contact>
                 <Keys>
                     <DbPKey></DbPKey>
-                    <Fkey entity="Organization">
+                    <Fkey entity="Organization" fkproperty="organizationId">
                         <DbPKeySurrogate></DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
@@ -53,7 +53,7 @@
             <Protocol>
                 <Keys>
                     <DbPKey></DbPKey>
-                    <Fkey entity="Platform">
+                    <Fkey entity="Platform" fkproperty="platformId">
                         <DbPKeySurrogate></DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
@@ -85,7 +85,7 @@
             <Mapset>
                 <Keys>
                     <DbPKey></DbPKey>
-                    <Fkey entity="Reference">
+                    <Fkey entity="Reference" fkproperty="referenceId">
                         <DbPKeySurrogate></DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
@@ -104,7 +104,7 @@
             <Project>
                 <Keys>
                     <DbPKey></DbPKey>
-                    <Fkey entity="Contact">
+                    <Fkey entity="Contact" fkproperty="piContact">
                         <DbPKeySurrogate></DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
@@ -133,11 +133,11 @@
             <Experiment>
                 <Keys>
                     <DbPKey></DbPKey>
-                    <Fkey entity="Project">
+                    <Fkey entity="Project" fkproperty="projectId">
                         <DbPKeySurrogate></DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
-                    <Fkey entity="Manifest">
+                    <Fkey entity="Manifest" fkproperty="manifestId">
                         <DbPKeySurrogate></DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
@@ -154,7 +154,7 @@
             <Analysis>
                 <Keys>
                     <DbPKey></DbPKey>
-                    <Fkey entity="Reference">
+                    <Fkey entity="Reference" fkproperty="referenceId">
                         <DbPKeySurrogate></DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
@@ -179,11 +179,11 @@
             <Dataset>
                 <Keys>
                     <DbPKey></DbPKey>
-                    <Fkey entity="Experiment">
+                    <Fkey entity="Experiment" fkproperty="experimentId">
                         <DbPKeySurrogate></DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
-                    <Fkey entity="Analysis">
+                    <Fkey entity="Analysis" fkproperty="callingAnalysisId">
                         <DbPKeySurrogate></DbPKeySurrogate>
                         <DbPKey></DbPKey>
                     </Fkey>
