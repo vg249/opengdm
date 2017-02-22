@@ -6,8 +6,9 @@ System.register([], function (exports_1, context_1) {
         setters: [],
         execute: function () {
             CheckBoxEvent = (function () {
-                function CheckBoxEvent(processType, id, name, checked, required) {
+                function CheckBoxEvent(processType, entityType, id, name, checked, required) {
                     this.processType = processType;
+                    this.entityType = entityType;
                     this.id = id;
                     this.name = name;
                     this.checked = checked;
@@ -24,7 +25,7 @@ System.register([], function (exports_1, context_1) {
                 //subscribe to an observer that is fed by the root component?
                 CheckBoxEvent.newCheckboxEvent = function (checkboxEvent) {
                     //        let existingUniqueId = checkboxEvent.uniqueId;
-                    var returnVal = new CheckBoxEvent(checkboxEvent.processType, checkboxEvent.id, checkboxEvent.name, checkboxEvent.checked, checkboxEvent.required);
+                    var returnVal = new CheckBoxEvent(checkboxEvent.processType, checkboxEvent.entityType, checkboxEvent.id, checkboxEvent.name, checkboxEvent.checked, checkboxEvent.required);
                     //        returnVal.uniqueId = existingUniqueId;
                     return returnVal;
                 };

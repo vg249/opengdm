@@ -1,8 +1,9 @@
-import {Component, OnInit, OnChanges, SimpleChange, EventEmitter} from "@angular/core";
+import {Component, OnInit, OnChanges, SimpleChange, EventEmitter, Input} from "@angular/core";
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {ProcessType} from "../model/type-process";
 import {CheckBoxEvent} from "../model/event-checkbox";
+import {EntityType} from "../model/type-entity";
 
 
 @Component({
@@ -35,6 +36,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
     // useg
     private nameIdList: NameId[];
     private checkBoxEvents: CheckBoxEvent[] = [];
+    private entityType: EntityType = EntityType.Unknown
     private onItemChecked: EventEmitter<CheckBoxEvent> = new EventEmitter();
     private onItemSelected: EventEmitter<CheckBoxEvent> = new EventEmitter();
     private onAddMessage: EventEmitter<string> = new EventEmitter();
@@ -68,6 +70,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
         this.previousSelectedItem = arg.currentTarget;
 
         let checkBoxEvent: CheckBoxEvent = new CheckBoxEvent(ProcessType.READ,
+            this.entityType,
             arg.currentTarget.children[0].value,
             arg.currentTarget.children[0].name,
             false,
@@ -86,10 +89,13 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
         if (scope$.nameIdList && ( scope$.nameIdList.length > 0 )) {
 
+            scope$.entityType =scope$.nameIdList[0].entityType;
+
             scope$.checkBoxEvents = [];
             scope$.nameIdList.forEach(n => {
                 scope$.checkBoxEvents.push(new CheckBoxEvent(
                     ProcessType.CREATE,
+                    scope$.entityType,
                     n.id,
                     n.name,
                     false,
@@ -98,7 +104,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
             });
 
         } else {
-            scope$.nameIdList = [new NameId(0, "<none>")];
+            scope$.nameIdList = [new NameId("0", "<none>",this.entityType)];
         }
 
 
@@ -112,6 +118,8 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
     private itemChangedEvent: CheckBoxEvent;
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
+
+        let stupid:string = "foo";
 
         if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
 
@@ -133,6 +141,10 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
             this.setList(changes['nameIdList'].currentValue);
 
+        } else if (changes['entityType'] && changes['entityType'].currentValue) {
+
+            let enrityTypeString:string = changes['entityType'].currentValue;
+            this.entityType = EntityType[enrityTypeString];
         }
     }
 }

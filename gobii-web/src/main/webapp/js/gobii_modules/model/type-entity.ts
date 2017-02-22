@@ -1,4 +1,5 @@
-export enum EntityType {DataSetNames,
+export enum EntityType {Unknown,
+DataSetNames,
 Contacts,
 Projects,
 Experiments,

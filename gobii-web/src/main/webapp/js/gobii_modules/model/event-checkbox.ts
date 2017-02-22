@@ -1,9 +1,11 @@
 import {ProcessType} from "./type-process";
 import {TreeNode} from "primeng/components/common/api";
 import {Guid} from "./guid";
+import {EntityType} from "./type-entity";
 
 export class CheckBoxEvent {
     constructor(public processType: ProcessType,
+                public entityType:EntityType,
                 public id: string,
                 public name: string,
                 public checked: boolean,
@@ -26,6 +28,7 @@ export class CheckBoxEvent {
 
         let returnVal:CheckBoxEvent  = new CheckBoxEvent(
             checkboxEvent.processType,
+            checkboxEvent.entityType,
             checkboxEvent.id,
             checkboxEvent.name,
             checkboxEvent.checked,

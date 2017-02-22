@@ -1,6 +1,7 @@
 import {Component, OnInit, SimpleChange, EventEmitter} from "@angular/core";
 import {CheckBoxEvent} from "../model/event-checkbox";
 import {ProcessType} from "../model/type-process";
+import {EntityType} from "../model/type-entity";
 
 
 @Component({
@@ -42,6 +43,7 @@ export class CriteriaDisplayComponent implements OnInit {
     // In this component, every item starts out checked; unchecking it removes it
     private handleItemUnChecked(arg) {
         let checkEvent: CheckBoxEvent = new CheckBoxEvent(ProcessType.DELETE,
+            EntityType.DataSets,
             arg.currentTarget.value,
             arg.currentTarget.name,
             false,

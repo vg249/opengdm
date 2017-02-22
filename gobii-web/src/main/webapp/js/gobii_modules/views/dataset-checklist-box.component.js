@@ -79,10 +79,10 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                                 //         false
                                 //     ));
                                 // });
-                                scope$.setDatasetDetails(scope$.dataSetsNameIdList[0].id);
+                                scope$.setDatasetDetails(Number(scope$.dataSetsNameIdList[0].id));
                             }
                             else {
-                                scope$.dataSetsNameIdList = [new name_id_1.NameId(0, "<none>")];
+                                scope$.dataSetsNameIdList = [new name_id_1.NameId("0", "<none>", type_entity_1.EntityType.DataSets)];
                                 scope$.setDatasetDetails(undefined);
                             }
                         }, function (dtoHeaderResponse) {

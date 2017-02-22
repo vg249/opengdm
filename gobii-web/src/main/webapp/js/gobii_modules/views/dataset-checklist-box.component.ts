@@ -2,7 +2,6 @@ import {Component, OnInit, OnChanges, SimpleChange, EventEmitter} from "@angular
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
-import {ProcessType} from "../model/type-process";
 import {EntityType} from "../model/type-entity";
 import {CheckBoxEvent} from "../model/event-checkbox";
 import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
@@ -111,10 +110,10 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                         //     ));
                         // });
 
-                        scope$.setDatasetDetails(scope$.dataSetsNameIdList[0].id);
+                        scope$.setDatasetDetails(Number(scope$.dataSetsNameIdList[0].id));
 
                     } else {
-                        scope$.dataSetsNameIdList = [new NameId(0, "<none>")];
+                        scope$.dataSetsNameIdList = [new NameId("0", "<none>",EntityType.DataSets)];
                         scope$.setDatasetDetails(undefined);
                     }
                 },

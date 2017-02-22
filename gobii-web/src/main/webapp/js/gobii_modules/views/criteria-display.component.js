@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/event-checkbox", "../model/type-process"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/event-checkbox", "../model/type-process", "../model/type-entity"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/event-checkbox", "../model/type-proc
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, event_checkbox_1, type_process_1, CriteriaDisplayComponent;
+    var core_1, event_checkbox_1, type_process_1, type_entity_1, CriteriaDisplayComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -21,6 +21,9 @@ System.register(["@angular/core", "../model/event-checkbox", "../model/type-proc
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
+            },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
             }
         ],
         execute: function () {
@@ -36,7 +39,7 @@ System.register(["@angular/core", "../model/event-checkbox", "../model/type-proc
                 };
                 // In this component, every item starts out checked; unchecking it removes it
                 CriteriaDisplayComponent.prototype.handleItemUnChecked = function (arg) {
-                    var checkEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.DELETE, arg.currentTarget.value, arg.currentTarget.name, false, false);
+                    var checkEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.DELETE, type_entity_1.EntityType.DataSets, arg.currentTarget.value, arg.currentTarget.name, false, false);
                     var itemToRemove = this.dataSetCheckBoxEvents
                         .filter(function (e) {
                         return e.id === arg.currentTarget.value;

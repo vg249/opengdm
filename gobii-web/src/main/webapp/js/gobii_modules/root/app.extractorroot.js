@@ -192,7 +192,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             scope$.selectedContactIdForSubmitter = nameIds[0].id;
                         }
                         else {
-                            scope$.contactNameIdListForSubmitter = [new name_id_1.NameId(0, "ERROR NO USERS")];
+                            scope$.contactNameIdListForSubmitter = [new name_id_1.NameId("0", "ERROR NO USERS", type_entity_1.EntityType.Contacts)];
                         }
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Rettrieving contacts: "
@@ -212,7 +212,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             scope$.selectedContactIdForPi = scope$.contactNameIdListForPi[0].id;
                         }
                         else {
-                            scope$.contactNameIdListForPi = [new name_id_1.NameId(0, "ERROR NO USERS")];
+                            scope$.contactNameIdListForPi = [new name_id_1.NameId("0", "ERROR NO USERS", type_entity_1.EntityType.Contacts)];
                         }
                         scope$.initializeProjectNameIds();
                     }, function (dtoHeaderResponse) {
@@ -239,7 +239,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             scope$.selectedProjectId = nameIds[0].id;
                         }
                         else {
-                            scope$.projectNameIdList = [new name_id_1.NameId(0, "<none>")];
+                            scope$.projectNameIdList = [new name_id_1.NameId("0", "<none>", type_entity_1.EntityType.Projects)];
                             scope$.selectedProjectId = undefined;
                         }
                         _this.initializeExperimentNameIds();
@@ -263,7 +263,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                 scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
                             }
                             else {
-                                scope$.experimentNameIdList = [new name_id_1.NameId(0, "<none>")];
+                                scope$.experimentNameIdList = [new name_id_1.NameId("0", "<none>", type_entity_1.EntityType.Experiments)];
                                 scope$.selectedExperimentId = undefined;
                             }
                         }, function (dtoHeaderResponse) {
@@ -272,7 +272,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         });
                     }
                     else {
-                        scope$.experimentNameIdList = [new name_id_1.NameId(0, "<none>")];
+                        scope$.experimentNameIdList = [new name_id_1.NameId("0", "<none>", type_entity_1.EntityType.Experiments)];
                         scope$.selectedExperimentId = undefined;
                     }
                 };
@@ -287,7 +287,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             scope$.selectedDatasetTypeId = scope$.datasetTypeNameIdList[0].id;
                         }
                         else {
-                            scope$.datasetTypeNameIdList = [new name_id_1.NameId(0, "ERROR NO DATASET TYPES")];
+                            scope$.datasetTypeNameIdList = [new name_id_1.NameId("0", "ERROR NO DATASET TYPES", type_entity_1.EntityType.CvTerms)];
                         }
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retrieving DatasetTypes: "
@@ -308,7 +308,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             scope$.selectedPlatformId = scope$.platformsNameIdList[0].id;
                         }
                         else {
-                            scope$.platformsNameIdList = [new name_id_1.NameId(0, "ERROR NO PLATFORMS")];
+                            scope$.platformsNameIdList = [new name_id_1.NameId("0", "ERROR NO PLATFORMS", type_entity_1.EntityType.Platforms)];
                         }
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retrieving PlatformTypes: "
@@ -364,7 +364,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     var scope$ = this;
                     scope$.nullMapsetName = "<none>";
                     this._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.Mapsets)).subscribe(function (nameIds) {
-                        scope$.mapsetNameIdList = [new name_id_1.NameId(0, scope$.nullMapsetName)];
+                        scope$.mapsetNameIdList = [new name_id_1.NameId("0", scope$.nullMapsetName, type_entity_1.EntityType.Mapsets)];
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.mapsetNameIdList = scope$.mapsetNameIdList.concat(nameIds);
                             scope$.selectedMapsetId = nameIds[0].id;

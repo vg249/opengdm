@@ -1,27 +1,11 @@
 ///<reference path="../../../../../../typings/index.d.ts"/>
-import {NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
 import {Component} from "@angular/core";
-import {HttpModule} from "@angular/http";
-import {ExportTypeComponent} from "../views/export-type.component";
-import {ExportFormatComponent} from "../views/export-format.component";
 import {DtoRequestService} from "../services/core/dto-request.service";
-import {AuthenticationService} from "../services/core/authentication.service";
-import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
-import {DatasetTypeListBoxComponent} from "../views/dataset-types-list-box.component";
-import {ProjectListBoxComponent} from "../views/project-list-box.component";
-import {ExperimentListBoxComponent} from "../views/experiment-list-box.component";
-import {DataSetCheckListBoxComponent} from "../views/dataset-checklist-box.component";
-import {MapsetsListBoxComponent} from "../views/mapsets-list-box.component";
 import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract";
-import {CriteriaDisplayComponent} from "../views/criteria-display.component";
-import {StatusDisplayComponent} from "../views/status-display-box.component";
 import {ProcessType} from "../model/type-process";
 import {CheckBoxEvent} from "../model/event-checkbox";
 import {ServerConfig} from "../model/server-config";
 import {EntityType} from "../model/type-entity";
-import {CropsListBoxComponent} from "../views/crops-list-box.component";
-import {UsersListBoxComponent} from "../views/users-list-box.component";
 import {NameId} from "../model/name-id";
 import {GobiiFileType} from "../model/type-gobii-file";
 import {ExtractorInstructionFilesDTO} from "../model/extractor-instructions/dto-extractor-instruction-files";
@@ -29,11 +13,7 @@ import {GobiiExtractorInstruction} from "../model/extractor-instructions/gobii-e
 import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-item-extractor-submission";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
-import * as EntityFilters from "../model/type-entity-filter";
 import {EntityFilter} from "../model/type-entity-filter";
-import {CheckListBoxComponent} from "../views/checklist-box.component";
-import {SampleMarkerBoxComponent} from "../views/sample-marker-box.component";
-import {FileDropDirective, FileSelectDirective} from "ng2-file-upload";
 import {SampleMarkerList} from "../model/sample-marker-list";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {GobiiSampleListType} from "../model/type-extractor-sample-list";
@@ -394,7 +374,7 @@ export class ExtractorRoot {
                     scope$.contactNameIdListForSubmitter = nameIds
                     scope$.selectedContactIdForSubmitter = nameIds[0].id;
                 } else {
-                    scope$.contactNameIdListForSubmitter = [new NameId(0, "ERROR NO USERS")];
+                    scope$.contactNameIdListForSubmitter = [new NameId("0", "ERROR NO USERS",EntityType.Contacts)];
                 }
             },
             dtoHeaderResponse => {
@@ -426,7 +406,7 @@ export class ExtractorRoot {
                     scope$.contactNameIdListForPi = nameIds;
                     scope$.selectedContactIdForPi = scope$.contactNameIdListForPi[0].id;
                 } else {
-                    scope$.contactNameIdListForPi = [new NameId(0, "ERROR NO USERS")];
+                    scope$.contactNameIdListForPi = [new NameId("0", "ERROR NO USERS",EntityType.Contacts)];
                 }
 
                 scope$.initializeProjectNameIds();
@@ -470,7 +450,7 @@ export class ExtractorRoot {
                     scope$.projectNameIdList = nameIds;
                     scope$.selectedProjectId = nameIds[0].id;
                 } else {
-                    scope$.projectNameIdList = [new NameId(0, "<none>")];
+                    scope$.projectNameIdList = [new NameId("0", "<none>",EntityType.Projects)];
                     scope$.selectedProjectId = undefined;
                 }
 
@@ -510,7 +490,7 @@ export class ExtractorRoot {
                         scope$.experimentNameIdList = nameIds;
                         scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
                     } else {
-                        scope$.experimentNameIdList = [new NameId(0, "<none>")];
+                        scope$.experimentNameIdList = [new NameId("0", "<none>",EntityType.Experiments)];
                         scope$.selectedExperimentId = undefined;
                     }
                 },
@@ -519,7 +499,7 @@ export class ExtractorRoot {
                         + m.message))
                 });
         } else {
-            scope$.experimentNameIdList = [new NameId(0, "<none>")];
+            scope$.experimentNameIdList = [new NameId("0", "<none>",EntityType.Experiments)];
             scope$.selectedExperimentId = undefined;
         }
 
@@ -545,7 +525,7 @@ export class ExtractorRoot {
                     scope$.datasetTypeNameIdList = nameIds;
                     scope$.selectedDatasetTypeId = scope$.datasetTypeNameIdList[0].id;
                 } else {
-                    scope$.datasetTypeNameIdList = [new NameId(0, "ERROR NO DATASET TYPES")];
+                    scope$.datasetTypeNameIdList = [new NameId("0", "ERROR NO DATASET TYPES",EntityType.CvTerms)];
                 }
             },
             dtoHeaderResponse => {
@@ -581,7 +561,7 @@ export class ExtractorRoot {
                     scope$.platformsNameIdList = nameIds;
                     scope$.selectedPlatformId = scope$.platformsNameIdList[0].id;
                 } else {
-                    scope$.platformsNameIdList = [new NameId(0, "ERROR NO PLATFORMS")];
+                    scope$.platformsNameIdList = [new NameId("0", "ERROR NO PLATFORMS",EntityType.Platforms)];
                 }
             },
             dtoHeaderResponse => {
@@ -694,7 +674,7 @@ export class ExtractorRoot {
         this._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
             EntityType.Mapsets)).subscribe(nameIds => {
 
-                scope$.mapsetNameIdList = [new NameId(0, scope$.nullMapsetName)]
+                scope$.mapsetNameIdList = [new NameId("0", scope$.nullMapsetName,EntityType.Mapsets)]
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.mapsetNameIdList = scope$.mapsetNameIdList.concat(nameIds);
                     scope$.selectedMapsetId = nameIds[0].id;

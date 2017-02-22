@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-process", "../model/event-checkbox"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-process", "../model/event-checkbox", "../model/type-entity"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, dto_request_service_1, type_process_1, event_checkbox_1, CheckListBoxComponent;
+    var core_1, name_id_1, dto_request_service_1, type_process_1, event_checkbox_1, type_entity_1, CheckListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -27,6 +27,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             },
             function (event_checkbox_1_1) {
                 event_checkbox_1 = event_checkbox_1_1;
+            },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
             }
         ],
         execute: function () {
@@ -34,6 +37,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 function CheckListBoxComponent(_dtoRequestServiceNameId) {
                     this._dtoRequestServiceNameId = _dtoRequestServiceNameId;
                     this.checkBoxEvents = [];
+                    this.entityType = type_entity_1.EntityType.Unknown;
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                     this.onAddMessage = new core_1.EventEmitter();
@@ -56,7 +60,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     }
                     arg.currentTarget.style = "background-color:#b3d9ff";
                     this.previousSelectedItem = arg.currentTarget;
-                    var checkBoxEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.READ, arg.currentTarget.children[0].value, arg.currentTarget.children[0].name, false, false);
+                    var checkBoxEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.READ, this.entityType, arg.currentTarget.children[0].value, arg.currentTarget.children[0].name, false, false);
                     this.onItemSelected.emit(checkBoxEvent);
                 };
                 CheckListBoxComponent.prototype.setList = function (nameIdList) {
@@ -64,18 +68,20 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     var scope$ = this;
                     scope$.nameIdList = nameIdList;
                     if (scope$.nameIdList && (scope$.nameIdList.length > 0)) {
+                        scope$.entityType = scope$.nameIdList[0].entityType;
                         scope$.checkBoxEvents = [];
                         scope$.nameIdList.forEach(function (n) {
-                            scope$.checkBoxEvents.push(new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.CREATE, n.id, n.name, false, false));
+                            scope$.checkBoxEvents.push(new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.CREATE, scope$.entityType, n.id, n.name, false, false));
                         });
                     }
                     else {
-                        scope$.nameIdList = [new name_id_1.NameId(0, "<none>")];
+                        scope$.nameIdList = [new name_id_1.NameId("0", "<none>", this.entityType)];
                     }
                 }; // setList()
                 CheckListBoxComponent.prototype.ngOnInit = function () {
                 };
                 CheckListBoxComponent.prototype.ngOnChanges = function (changes) {
+                    var stupid = "foo";
                     if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
                         this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
                         if (this.itemChangedEvent) {
@@ -91,6 +97,10 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     }
                     else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
                         this.setList(changes['nameIdList'].currentValue);
+                    }
+                    else if (changes['entityType'] && changes['entityType'].currentValue) {
+                        var enrityTypeString = changes['entityType'].currentValue;
+                        this.entityType = type_entity_1.EntityType[enrityTypeString];
                     }
                 };
                 return CheckListBoxComponent;
