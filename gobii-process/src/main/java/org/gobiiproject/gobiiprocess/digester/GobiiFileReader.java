@@ -438,7 +438,7 @@ public class GobiiFileReader {
 	 */
 	private static IFLLineCounts calculateTableStats(DigesterMessage dm, Map<String, File> loaderInstructionMap, File dstDir, String key) {
 		String ppdFile=new File(dstDir,"ppd_digest."+key).getAbsolutePath();
-		String noDupsFile=new File(dstDir,"nodups_digest."+key).getAbsolutePath();
+		String noDupsFile=new File(dstDir,"nodups_ppd_digest."+key).getAbsolutePath();
 
 		//Default to 'we had an error'
 		String totalLinesVal,linesLoadedVal,existingLinesVal,invalidLinesVal;
