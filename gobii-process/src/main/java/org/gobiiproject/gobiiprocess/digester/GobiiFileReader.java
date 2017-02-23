@@ -345,7 +345,7 @@ public class GobiiFileReader {
 
 					ErrorLogger.logInfo("Digester","Running IFL: "+pathToIFL+connectionString+inputFile+outputFile);
 					//Lines affected returned by method call - THIS IS NOW IGNORED
-					int fileLines= HelperFunctions.iExec(pathToIFL+connectionString+inputFile+outputFile+" -l",errorPath);
+					HelperFunctions.tryExec(pathToIFL+connectionString+inputFile+outputFile+" -l",null,errorPath);
 
 					IFLLineCounts counts=calculateTableStats(dm, loaderInstructionMap, dstDir, key);
 
@@ -355,7 +355,7 @@ public class GobiiFileReader {
 					else{
 						loadedData=true;
 					}
-					if(counts.invalidData >0 && !key.contains("_prop")){
+					if(counts.invalidData >0 && !isVariableLengthTable(key)){
 						ErrorLogger.logError("FileReader","Error in table "+key);
 					}
 
@@ -462,13 +462,18 @@ public class GobiiFileReader {
 		//If total lines/file lines less than 0, something's wrong. Also if total lines is < changed, something's wrong.
 
 
-		if(key.contains("_prop")){
+		if(isVariableLengthTable(key)){
 			totalLinesVal=totalLines+"";
 			linesLoadedVal=loadedLines+"";
 			//Existing and Invalid may be absolutely random numbers in EAV JSON objects
-			//Also, loaded may be waaaay above total, this is normal
+			//Also, loaded may be waaaay above total, this is normal. So lets not report these two fields at all
 			existingLinesVal="";
 			invalidLinesVal="";
+
+			//We can still warn people if no lines were loaded
+			if(loadedLines==0) {
+				linesLoadedVal = "<b style=\"background-color:yellow\">" + loadedLines + "</b>";
+			}
 		}
 		else{
 			totalLinesVal = totalLines + "";
@@ -682,6 +687,16 @@ public class GobiiFileReader {
 		}
 
 		HelperFunctions.tryExec("cut -f"+refPos+","+altPos+ " "+markerFile,outFile,errorPath);
+	}
+
+	/**
+	 * Given a string key, determine if the table is one-to-one with relation to the input file size.
+	 * If not, several metrics become meaningless.
+	 * @param tableKey
+	 * @return true if the table will have different PPD rows than input rows
+	 */
+	private static boolean isVariableLengthTable(String tableKey){
+		return tableKey.contains("_prop") || tableKey.contains("marker_linkage_group") || tableKey.contains("dataset_marker");
 	}
 }
 class IFLLineCounts{
