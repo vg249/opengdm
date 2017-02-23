@@ -8,7 +8,7 @@ export enum ExtractorItemType {CATEGORY,
                                 EXPORT_FORMAT,
                                 CROP_TYPE}
 
-export enum ExtractorCategoryType {CONTAINER, LEAF }
+export enum ExtractorCategoryType {CONTAINER, ENTITY_CONTAINER, LEAF }
 export enum CardinalityType {ZERO_OR_ONE, ZERO_OR_MORE, ONE_ONLY, ONE_OR_MORE , MORE_THAN_ONE}
 
 

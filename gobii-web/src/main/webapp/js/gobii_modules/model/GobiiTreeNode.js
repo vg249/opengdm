@@ -1,15 +1,18 @@
-System.register([], function (exports_1, context_1) {
+System.register(["./type-entity"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var GobiiTreeNode;
+    var type_entity_1, GobiiTreeNode;
     return {
-        setters: [],
+        setters: [
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
+            }
+        ],
         execute: function () {
             GobiiTreeNode = (function () {
-                function GobiiTreeNode(entityType) {
-                    this.entityType = entityType;
+                function GobiiTreeNode() {
+                    this.entityType = type_entity_1.EntityType.UNKNOWN;
                     this.children = [];
-                    this.entityType = entityType;
                 }
                 return GobiiTreeNode;
             }());

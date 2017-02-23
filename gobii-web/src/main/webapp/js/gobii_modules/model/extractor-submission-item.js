@@ -23,7 +23,8 @@ System.register(["./type-entity", "./cv-filter-type"], function (exports_1, cont
             exports_1("ExtractorItemType", ExtractorItemType);
             (function (ExtractorCategoryType) {
                 ExtractorCategoryType[ExtractorCategoryType["CONTAINER"] = 0] = "CONTAINER";
-                ExtractorCategoryType[ExtractorCategoryType["LEAF"] = 1] = "LEAF";
+                ExtractorCategoryType[ExtractorCategoryType["ENTITY_CONTAINER"] = 1] = "ENTITY_CONTAINER";
+                ExtractorCategoryType[ExtractorCategoryType["LEAF"] = 2] = "LEAF";
             })(ExtractorCategoryType || (ExtractorCategoryType = {}));
             exports_1("ExtractorCategoryType", ExtractorCategoryType);
             (function (CardinalityType) {

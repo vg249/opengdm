@@ -22,7 +22,7 @@
     "systemjs": "^0.19.8",
     "zone.js": "^0.7.4",
     "primeng": "2.0.0",
-    "font-awesome": "4.6.3"
+    "font-awesome": "4.7.0"
 
   },
   "devDependencies": {
