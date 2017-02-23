@@ -1,34 +1,71 @@
 import {EntityType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 
-export enum ExtractorItemType {Category, Entity}
-export enum ExtractorCategoryType {Container, MarkerList, SampleList}
+export enum ExtractorItemType {CATEGORY,
+                                ENTITY,
+                                MARKER_LIST,
+                                SAMPLE_LIST,
+                                EXPORT_FORMAT,
+                                CROP_TYPE}
+
+export enum ExtractorCategoryType {CONTAINER, LEAF }
+export enum CardinalityType {ZERO_OR_ONE, ZERO_OR_MORE, ONE_ONLY, ONE_OR_MORE , MORE_THAN_ONE}
 
 
-export class ExtractorSubmissionItem {
+export class StatusTreeTemplate {
 
     constructor(itemType: ExtractorItemType) {
-        this._itemType= itemType;
+        this._itemType = itemType;
     }
 
-    private _itemType: ExtractorItemType;
-    private _categoryType: ExtractorCategoryType;
+    private _children: StatusTreeTemplate[] = [];
+    private _alternatePeerTypes: EntityType[] = [];
+    private _cardinality: CardinalityType = CardinalityType.ZERO_OR_MORE;
+    private _itemType: ExtractorItemType = ExtractorItemType.ENTITY;
+    private _categoryType: ExtractorCategoryType = ExtractorCategoryType.LEAF;
     private _categoryName: string;
-    private _entityType: EntityType;
-    private _cvFilterType: CvFilterType;
-    private _childEntityTypes: EntityType[];
-    private _childCattegoryTypes: ExtractorCategoryType[];
-    private _required: boolean;
+    private _entityType: EntityType = EntityType.UNKNOWN;
+    private _entityName: string;
+    private _cvFilterType: CvFilterType = CvFilterType.UKNOWN;
 
-    public static build(itemType: ExtractorItemType): ExtractorSubmissionItem {
-        return new ExtractorSubmissionItem(itemType);
+
+    public static build(itemType: ExtractorItemType): StatusTreeTemplate {
+        return new StatusTreeTemplate(itemType);
+    }
+
+
+    getAlternatePeerTypes(): EntityType[] {
+        return this._alternatePeerTypes;
+    }
+
+    setAlternatePeerTypes(value: EntityType[]): StatusTreeTemplate {
+        this._alternatePeerTypes = value;
+        return this;
+    }
+
+    getCardinality(): CardinalityType {
+        return this._cardinality;
+    }
+
+    setCardinality(value: CardinalityType): StatusTreeTemplate {
+        this._cardinality = value;
+        return this;
+    }
+
+    getChildren(): StatusTreeTemplate[] {
+        return this._children;
+    }
+
+    addChild(child: StatusTreeTemplate): StatusTreeTemplate {
+        this._children.push(child);
+        return this;
     }
 
     getItemType(): ExtractorItemType {
         return this._itemType;
     }
 
-    setItemType(value: ExtractorItemType): ExtractorSubmissionItem {
+    setItemType(value: ExtractorItemType): StatusTreeTemplate {
         this._itemType = value;
         return this;
     }
@@ -37,7 +74,7 @@ export class ExtractorSubmissionItem {
         return this._categoryType;
     }
 
-    setCategoryType(value: ExtractorCategoryType): ExtractorSubmissionItem {
+    setCategoryType(value: ExtractorCategoryType): StatusTreeTemplate {
         this._categoryType = value;
         return this;
     }
@@ -46,7 +83,7 @@ export class ExtractorSubmissionItem {
         return this._categoryName;
     }
 
-    setCategoryName(value: string): ExtractorSubmissionItem {
+    setCategoryName(value: string): StatusTreeTemplate {
         this._categoryName = value;
         return this;
     }
@@ -55,8 +92,17 @@ export class ExtractorSubmissionItem {
         return this._entityType;
     }
 
-    setEntityType(value: EntityType): ExtractorSubmissionItem {
+    setEntityType(value: EntityType): StatusTreeTemplate {
         this._entityType = value;
+        return this;
+    }
+
+    getEntityName(): string {
+        return this._entityName;
+    }
+
+    setEntityName(value: string): StatusTreeTemplate {
+        this._entityName = value;
         return this;
     }
 
@@ -64,35 +110,9 @@ export class ExtractorSubmissionItem {
         return this._cvFilterType;
     }
 
-    setCvFilterType(value: CvFilterType): ExtractorSubmissionItem {
+    setCvFilterType(value: CvFilterType): StatusTreeTemplate {
         this._cvFilterType = value;
         return this;
     }
 
-    getChildEntityTypes(): EntityType[] {
-        return this._childEntityTypes;
-    }
-
-    setChildEntityTypes(value: EntityType[]): ExtractorSubmissionItem {
-        this._childEntityTypes = value;
-        return this;
-    }
-
-    getChildCattegoryTypes(): ExtractorCategoryType[] {
-        return this._childCattegoryTypes;
-    }
-
-    setChildCattegoryTypes(value: ExtractorCategoryType[]): ExtractorSubmissionItem {
-        this._childCattegoryTypes = value;
-        return this;
-    }
-
-    getRequired(): boolean {
-        return this._required;
-    }
-
-    setRequired(value: boolean): ExtractorSubmissionItem {
-        this._required = value;
-        return this;
-    }
-}   
+}

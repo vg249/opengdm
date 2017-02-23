@@ -37,7 +37,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 function CheckListBoxComponent(_dtoRequestServiceNameId) {
                     this._dtoRequestServiceNameId = _dtoRequestServiceNameId;
                     this.checkBoxEvents = [];
-                    this.entityType = type_entity_1.EntityType.Unknown;
+                    this.entityType = type_entity_1.EntityType.UNKNOWN;
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                     this.onAddMessage = new core_1.EventEmitter();

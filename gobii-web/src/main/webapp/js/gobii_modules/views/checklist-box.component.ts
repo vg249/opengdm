@@ -36,7 +36,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
     // useg
     private nameIdList: NameId[];
     private checkBoxEvents: CheckBoxEvent[] = [];
-    private entityType: EntityType = EntityType.Unknown
+    private entityType: EntityType = EntityType.UNKNOWN
     private onItemChecked: EventEmitter<CheckBoxEvent> = new EventEmitter();
     private onItemSelected: EventEmitter<CheckBoxEvent> = new EventEmitter();
     private onAddMessage: EventEmitter<string> = new EventEmitter();

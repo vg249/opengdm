@@ -3,9 +3,12 @@ import {TreeNode, Message, MenuItem} from "primeng/components/common/api";
 import {Tree} from "primeng/components/tree/tree";
 import {CheckBoxEvent} from "../model/event-checkbox";
 import {GobiiTreeNode} from "../model/GobiiTreeNode";
-import {EntityType} from "../model/type-entity";
+import {EntityType, EntitySubType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {ExtractorSubmissionItem, ExtractorItemType} from "../model/extractor-submission-item";
+import {
+    StatusTreeTemplate, ExtractorItemType, ExtractorCategoryType,
+    CardinalityType
+} from "../model/extractor-submission-item";
 import {CvFilterType} from "../model/cv-filter-type";
 
 
@@ -30,25 +33,104 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         this.entityNodeLabels[EntityType.DataSets] = "Data Sets";
         this.entityNodeLabels[EntityType.Platforms] = "Platforms";
+        this.entityNodeLabels[EntityType.Mapsets] = "Mapsets";
+
+        this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE] = "Dataset Type";
+
+        this.entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
+        this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY] = "Submitted By";
 
         this.makeDemoTreeNodes();
 
 
-        // ******** SET UP extract by marker
+
+        // **** FOR ALL EXTRACTION TYPES
+        let submissionItemsForAll: StatusTreeTemplate[] = [];
+        submissionItemsForAll.push(StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+            .setEntityType(EntityType.Contacts)
+            .setEntityName(this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY])
+            .setCvFilterType(CvFilterType.DATASET_TYPE)
+            .setEntityName(this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE])
+            .setCardinality(CardinalityType.ONE_ONLY)
+        );
+
+        submissionItemsForAll.push(StatusTreeTemplate.build(ExtractorItemType.EXPORT_FORMAT)
+            .setEntityName("Export Formats")
+            .setCardinality(CardinalityType.ONE_ONLY)
+        );
+
+        submissionItemsForAll.push(StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+            .setEntityType(EntityType.Mapsets)
+            .setEntityName(this.entityNodeLabels[EntityType.Mapsets])
+            .setCardinality(CardinalityType.ZERO_OR_ONE)
+        );
+
+
+
+        // ******** SET UP extract by dataset
         // -- Data set type
+        this.submissionItems[GobiiExtractFilterType.WHOLE_DATASET] = [];
+        this.submissionItems[GobiiExtractFilterType.WHOLE_DATASET].concat(submissionItemsForAll);
+        this.submissionItems[GobiiExtractFilterType.WHOLE_DATASET].push(
+            StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+                .setEntityType(EntityType.DataSets)
+                .setEntityName(this.entityNodeLabels[EntityType.DataSets])
+                .setCardinality(CardinalityType.ONE_OR_MORE)
+        );
 
 
-        this.submissionItems[GobiiExtractFilterType.BY_MARKER] = [];
-        this.submissionItems[GobiiExtractFilterType.BY_MARKER].push(
-            ExtractorSubmissionItem.build(ExtractorItemType.Entity)
+        // ******** SET UP extract by samples
+        // -- Data set type
+        this.submissionItems[GobiiExtractFilterType.BY_SAMPLE] = [];
+        this.submissionItems[GobiiExtractFilterType.BY_SAMPLE].concat(submissionItemsForAll);
+        this.submissionItems[GobiiExtractFilterType.BY_SAMPLE].push(
+            StatusTreeTemplate.build(ExtractorItemType.ENTITY)
                 .setEntityType(EntityType.CvTerms)
-                .setCvFilterType(CvFilterType.DATASET_TYPE));
+                .setCvFilterType(CvFilterType.DATASET_TYPE)
+                .setEntityName(this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE])
+                .setCardinality(CardinalityType.ONE_ONLY)
+        );
 
         // -- Platforms
-        this.submissionItems[GobiiExtractFilterType.BY_MARKER].push(
-            ExtractorSubmissionItem.build(ExtractorItemType.Category)
+        this.submissionItems[GobiiExtractFilterType.BY_SAMPLE].push(
+            StatusTreeTemplate.build(ExtractorItemType.CATEGORY)
+                .setCategoryType(ExtractorCategoryType.CONTAINER)
                 .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
-                .setChildEntityTypes([EntityType.Platforms]));
+                .setCardinality(CardinalityType.ZERO_OR_MORE)
+                .addChild(
+                    StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+                        .setEntityType(EntityType.Platforms)
+                        .setEntityName(this.entityNodeLabels[EntityType.Platforms])
+                        .setCardinality(CardinalityType.ZERO_OR_MORE)
+                )
+        );
+
+        // -- Samples
+        this.submissionItems[GobiiExtractFilterType.BY_SAMPLE].push(
+            StatusTreeTemplate.build(ExtractorItemType.CATEGORY)
+                .setCategoryType(ExtractorCategoryType.CONTAINER)
+                .setCategoryName("Sample Crieria")
+                .setCardinality(CardinalityType.ONE_OR_MORE)
+                .setAlternatePeerTypes([EntityType.Projects, EntityType.Contacts])
+                .addChild(StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+                    .setEntityType(EntityType.Contacts)
+                    .setEntityName("Principle Investigator")
+                    .setCardinality(CardinalityType.ZERO_OR_ONE)
+                )
+                .addChild(StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+                    .setEntityType(EntityType.Projects)
+                    .setEntityName(this.entityNodeLabels[EntityType.Projects])
+                    .setCardinality(CardinalityType.ZERO_OR_MORE)
+                )
+                .addChild(StatusTreeTemplate.build(ExtractorItemType.SAMPLE_LIST)
+                    .setEntityName("Sample List")
+                    .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
+                    .setCardinality(CardinalityType.ZERO_OR_MORE)
+                )
+        );
+
+
+
 
     }
 
@@ -150,6 +232,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     private gobiiTreeNodes: GobiiTreeNode[] = [];
     private selectedGobiiNodes: GobiiTreeNode[] = [];
     private entityNodeLabels: Map<EntityType,string> = new Map<EntityType,string>();
+    private entitySubtypeNodeLabels: Map<EntitySubType,string> = new Map<EntitySubType,string>();
+    private cvFilterNodeLabels: Map<CvFilterType,string> = new Map<CvFilterType,string>();
 
 
     private experimentId: string;
@@ -278,8 +362,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     private onItemSelected: EventEmitter<CheckBoxEvent> = new EventEmitter();
 
 
-    private submissionItems: Map<GobiiExtractFilterType,Array<ExtractorSubmissionItem>> =
-        new Map<GobiiExtractFilterType,Array<ExtractorSubmissionItem>>();
+    private submissionItems: Map<GobiiExtractFilterType,Array<StatusTreeTemplate>> =
+        new Map<GobiiExtractFilterType,Array<StatusTreeTemplate>>();
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
