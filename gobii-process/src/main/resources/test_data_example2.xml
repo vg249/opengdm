@@ -1,0 +1,266 @@
+<GobiiTestData>
+    <Entities>
+        <Organizations DbPKeysurrogate="Name">
+            <Organization>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <Name>IRRI ORG</Name>
+                    <Address>Laguna</Address>
+                    <Website>irri.org</Website>
+                </Properties>
+            </Organization>
+            <Organization>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <Name>Gobii</Name>
+                    <Address>Ithaca</Address>
+                    <Website>gobii.org</Website>
+                </Properties>
+            </Organization>
+        </Organizations>
+        <Contacts DbPKeysurrogate="Email">
+            <Contact>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Organization" fkproperty="organizationId">
+                        <DbPKeySurrogate>IRRI ORG</DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <LastName>Calaminos</LastName>
+                    <FirstName>Yanii</FirstName>
+                    <Code></Code>
+                    <Email>dummy@email.address</Email>
+                    <Roles>
+                        <Role>Curator</Role>
+                        <Role>Admin</Role>
+                        <Role>PI</Role>
+                    </Roles>
+                </Properties>
+            </Contact>
+            <Contact>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Organization" fkproperty="organizationId">
+                        <DbPKeySurrogate>cmmyt</DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <LastName>Glaser</LastName>
+                    <FirstName>Phil</FirstName>
+                    <Code></Code>
+                    <Email>pdg66@cornell.edu</Email>
+                    <Roles>
+                        <Role>Curator</Role>
+                        <Role>Admin</Role>
+                        <Role>PI</Role>
+                    </Roles>
+                </Properties>
+            </Contact>
+        </Contacts>
+        <Platforms DbPKeysurrogate="PlatformName">
+            <Platform>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <PlatformName>Platform1</PlatformName>
+                    <PlatformCode></PlatformCode>
+                    <PlatformDescription></PlatformDescription>
+                    <StatusId></StatusId>
+                    <TypeId></TypeId>
+                    <Properties></Properties>
+                </Properties>
+            </Platform>
+        </Platforms>
+        <Protocols DbPKeysurrogate="Name">
+            <Protocol>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Platform" fkproperty="platformId">
+                        <DbPKeySurrogate></DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <Name>Protocol 1</Name>
+                    <Description></Description>
+                    <TypeId></TypeId>
+                    <Status></Status>
+                    <Props></Props>
+                    <VendorProtocols></VendorProtocols>
+                </Properties>
+            </Protocol>
+        </Protocols>
+        <References DbPKeysurrogate="Name">
+            <Reference>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <Name>Reference 1</Name>
+                    <Version></Version>
+                    <Link></Link>
+                    <FilePath></FilePath>
+                </Properties>
+            </Reference>
+        </References>
+        <Mapsets DbPKeysurrogate="Name">
+            <Mapset>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Reference" fkproperty="referenceId">
+                        <DbPKeySurrogate></DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <Name>Mapset 1</Name>
+                    <Code></Code>
+                    <Description></Description>
+                    <MapType></MapType>
+                    <StatusId></StatusId>
+                    <Properties></Properties>
+                </Properties>
+            </Mapset>
+        </Mapsets>
+        <Projects DbPKeysurrogate="ProjectName">
+            <Project>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Contact" fkproperty="piContact">
+                        <DbPKeySurrogate></DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <ProjectName>Projects 1</ProjectName>
+                    <ProjectCode></ProjectCode>
+                    <ProjectDescription></ProjectDescription>
+                    <ProjectStatus></ProjectStatus>
+                </Properties>
+            </Project>
+        </Projects>
+        <Manifests DbPKeysurrogate="Name">
+            <Manifest>
+                <Keys>
+                    <DbPKey></DbPKey>
+                </Keys>
+                <Properties>
+                    <Name>Manifest 1</Name>
+                    <Code></Code>
+                    <FilePath></FilePath>
+                </Properties>
+            </Manifest>
+        </Manifests>
+        <Experiments DbPKeysurrogate="ExperimentName">
+            <Experiment>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Project" fkproperty="projectId">
+                        <DbPKeySurrogate></DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                    <Fkey entity="Manifest" fkproperty="manifestId">
+                        <DbPKeySurrogate></DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <ExperimentName>Experiment 1</ExperimentName>
+                    <ExperimentCode></ExperimentCode>
+                    <VendorProtocolId></VendorProtocolId>
+                    <StatusId></StatusId>
+                </Properties>
+            </Experiment>
+        </Experiments>
+        <Analyses DbPKeysurrogate="AnalysisName">
+            <Analysis>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Reference" fkproperty="referenceId">
+                        <DbPKeySurrogate></DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <AnalysisName>Analysis 1</AnalysisName>
+                    <AnalysisDescription></AnalysisDescription>
+                    <AnlaysisTypeId></AnlaysisTypeId>
+                    <Program></Program>
+                    <ProgramVersion></ProgramVersion>
+                    <Algorithm></Algorithm>
+                    <SourceName></SourceName>
+                    <SourceVersion></SourceVersion>
+                    <SourceUri></SourceUri>
+                    <TimeExecuted></TimeExecuted>
+                    <StatusId></StatusId>
+                    <Parameters></Parameters>
+                </Properties>
+            </Analysis>
+        </Analyses>
+        <Datasets DbPKeysurrogate="Name">
+            <Dataset>
+                <Keys>
+                    <DbPKey></DbPKey>
+                    <Fkey entity="Experiment" fkproperty="experimentId">
+                        <DbPKeySurrogate>Experiment 1</DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                    <Fkey entity="Analysis" fkproperty="callingAnalysisId">
+                        <DbPKeySurrogate>Analysis 1</DbPKeySurrogate>
+                        <DbPKey></DbPKey>
+                    </Fkey>
+                </Keys>
+                <Properties>
+                    <Name>Data set 1</Name>
+                    <DataTable></DataTable>
+                    <DataFile></DataFile>
+                    <QualityTable></QualityTable>
+                    <QualityFile></QualityFile>
+                    <StatusId></StatusId>
+                    <TypeId></TypeId>
+                    <AnalysesIds></AnalysesIds>
+                    <Scores></Scores>
+                </Properties>
+            </Dataset>
+        </Datasets>
+    </Entities>
+
+    <Scenarios>
+        <Scenario>
+            <Name>2 Letter Nucleotide</Name>
+            <Files>
+                <Instruction></Instruction>
+                <Data></Data>
+            </Files>
+
+            <DbFkey entity="Contact">
+                <DbPKeySurrogate></DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+            <DbFkey entity="Project">
+                <DbPKeySurrogate></DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Experiment">
+                <DbPKeySurrogate></DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+
+            <DbFkey entity="Dataset">
+                <DbPKeySurrogate></DbPKeySurrogate>
+                <DbPKey></DbPKey>
+            </DbFkey>
+        </Scenario>
+
+    </Scenarios>
+
+</GobiiTestData>
