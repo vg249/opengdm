@@ -696,7 +696,7 @@ public class GobiiFileReader {
 	 * @return true if the table will have different PPD rows than input rows
 	 */
 	private static boolean isVariableLengthTable(String tableKey){
-		return tableKey.contains("_prop") || tableKey.contains("marker_linkage_group") || tableKey.contains("dataset_marker");
+		return tableKey.contains("_prop";
 	}
 }
 class IFLLineCounts{
