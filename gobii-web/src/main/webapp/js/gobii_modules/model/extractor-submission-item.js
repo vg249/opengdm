@@ -44,6 +44,7 @@ System.register(["./type-entity", "./cv-filter-type"], function (exports_1, cont
                     this._categoryType = ExtractorCategoryType.LEAF;
                     this._entityType = type_entity_1.EntityType.UNKNOWN;
                     this._cvFilterType = cv_filter_type_1.CvFilterType.UKNOWN;
+                    this._gobiiTreeNode = null;
                     this._itemType = itemType;
                 }
                 StatusTreeTemplate.build = function (itemType) {
@@ -111,6 +112,12 @@ System.register(["./type-entity", "./cv-filter-type"], function (exports_1, cont
                 StatusTreeTemplate.prototype.setCvFilterType = function (value) {
                     this._cvFilterType = value;
                     return this;
+                };
+                StatusTreeTemplate.prototype.getGobiiTreeNode = function () {
+                    return this._gobiiTreeNode;
+                };
+                StatusTreeTemplate.prototype.setGobiiTreeNode = function (value) {
+                    this._gobiiTreeNode = value;
                 };
                 return StatusTreeTemplate;
             }());

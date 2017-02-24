@@ -195,7 +195,8 @@ import {CvFilters, CvFilterType} from "../model/cv-filter-type";
                                 <legend class="the-legend">Status: {{currentStatus}}</legend>
                                 <status-display-tree
                                     [checkBoxEventChange] = "treeCheckboxEvent"
-                                    [gobiiExtractFilterType] = "selectedExportType">
+                                    [gobiiExtractFilterTypeEvent] = "selectedExportType"
+                                    (onAddMessage)="handleAddMessage($event)">
                                 </status-display-tree>
                             </fieldset>
                                    
@@ -218,6 +219,7 @@ export class ExtractorRoot {
 
 
     private treeCheckboxEvent:CheckBoxEvent;
+//    private selectedExportTypeEvent:GobiiExtractFilterType;
     private datasetCheckboxEvents: CheckBoxEvent[] = [];
     private gobiiDatasetExtracts: GobiiDataSetExtract[] = [];
     private messages: string[] = [];

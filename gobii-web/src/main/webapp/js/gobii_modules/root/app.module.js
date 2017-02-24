@@ -103,6 +103,7 @@ System.register(["@angular/core", "@angular/platform-browser", "../views/export-
                     imports: [platform_browser_1.BrowserModule,
                         http_1.HttpModule,
                         forms_1.FormsModule,
+                        forms_1.ReactiveFormsModule,
                         primeng_1.TreeModule,
                         primeng_1.SharedModule],
                     declarations: [app_extractorroot_1.ExtractorRoot,

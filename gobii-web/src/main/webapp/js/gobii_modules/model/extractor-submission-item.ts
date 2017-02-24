@@ -1,5 +1,6 @@
 import {EntityType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
+import {GobiiTreeNode} from "./GobiiTreeNode";
 
 export enum ExtractorItemType {CATEGORY,
                                 ENTITY,
@@ -27,6 +28,7 @@ export class StatusTreeTemplate {
     private _entityType: EntityType = EntityType.UNKNOWN;
     private _entityName: string;
     private _cvFilterType: CvFilterType = CvFilterType.UKNOWN;
+    private _gobiiTreeNode:GobiiTreeNode = null;
 
 
     public static build(itemType: ExtractorItemType): StatusTreeTemplate {
@@ -115,4 +117,12 @@ export class StatusTreeTemplate {
         return this;
     }
 
+
+    getGobiiTreeNode(): GobiiTreeNode {
+        return this._gobiiTreeNode;
+    }
+
+    setGobiiTreeNode(value: GobiiTreeNode) {
+        this._gobiiTreeNode = value;
+    }
 }

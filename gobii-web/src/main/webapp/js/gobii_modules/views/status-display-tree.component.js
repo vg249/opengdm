@@ -35,6 +35,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
         execute: function () {
             StatusDisplayTreeComponent = (function () {
                 function StatusDisplayTreeComponent() {
+                    this.onAddMessage = new core_1.EventEmitter();
                     // *****************************************************************
                     // *********************  TREE NODE DATA STRUCTURES AND EVENTS
                     this.demoTreeNodes = [];
@@ -46,16 +47,22 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     this.cvFilterNodeLabels = new Map();
                     this.extractorFilterTypeLabels = new Map();
                     this.treeCategoryLabels = new Map();
+                    // ********************************************************************************
+                    // ********************* CHECKBOX (GOBII-SPECIFIC)  NODE DATA STRUCTURES AND EVENTS
+                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                     this.templates = new Map();
                 }
+                StatusDisplayTreeComponent.prototype.reportMessage = function (arg) {
+                    this.onAddMessage.emit(arg);
+                };
                 StatusDisplayTreeComponent.prototype.ngOnInit = function () {
                     this.makeDemoTreeNodes();
                     this.setUpRequredItems();
                 };
-                StatusDisplayTreeComponent.prototype.getTemplates = function (gobiiExtractFilterType) {
-                    if (this.templates.size === 0) {
+                StatusDisplayTreeComponent.prototype.getTemplates = function (gobiiExtractFilterType, forceReset) {
+                    if (this.templates.size === 0 || forceReset === true) {
                         this.entityNodeLabels[type_entity_1.EntityType.DataSets] = "Data Sets";
                         this.entityNodeLabels[type_entity_1.EntityType.Platforms] = "Platforms";
                         this.entityNodeLabels[type_entity_1.EntityType.Mapsets] = "Mapsets";
@@ -83,31 +90,32 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                             .setCardinality(extractor_submission_item_1.CardinalityType.ZERO_OR_ONE));
                         // ******** SET UP extract by dataset
                         // -- Data set type
-                        this.templates[type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET] = [];
-                        this.templates[type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET] =
-                            this.templates[type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET].concat(submissionItemsForAll);
-                        this.templates[type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET].push(extractor_submission_item_1.StatusTreeTemplate.build(extractor_submission_item_1.ExtractorItemType.CATEGORY)
+                        var submissionItemsForDataSet = [];
+                        submissionItemsForDataSet = submissionItemsForDataSet.concat(submissionItemsForAll);
+                        submissionItemsForDataSet.push(extractor_submission_item_1.StatusTreeTemplate.build(extractor_submission_item_1.ExtractorItemType.CATEGORY)
                             .setCategoryType(extractor_submission_item_1.ExtractorCategoryType.ENTITY_CONTAINER)
                             .setEntityType(type_entity_1.EntityType.DataSets)
-                            .setCategoryName(this.entityNodeLabels[type_entity_1.EntityType.DataSets])
-                            .addChild(extractor_submission_item_1.StatusTreeTemplate.build(extractor_submission_item_1.ExtractorItemType.ENTITY)
-                            .setCategoryType(extractor_submission_item_1.ExtractorCategoryType.LEAF)
-                            .setEntityType(type_entity_1.EntityType.DataSets)
-                            .setEntityName(this.entityNodeLabels[type_entity_1.EntityType.DataSets])
-                            .setCardinality(extractor_submission_item_1.CardinalityType.ONE_OR_MORE)));
+                            .setCategoryName(this.entityNodeLabels[type_entity_1.EntityType.DataSets]));
+                        // .addChild(
+                        //     StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+                        //         .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
+                        //         .setEntityType(EntityType.DataSets)
+                        //         .setEntityName(this.entityNodeLabels[EntityType.DataSets])
+                        //         .setCardinality(CardinalityType.ONE_OR_MORE))
+                        //            );
+                        this.templates.set(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, submissionItemsForDataSet);
                         // ******** SET UP extract by samples
                         // -- Data set type
-                        this.templates[type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE] = [];
-                        this.templates[type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE] =
-                            this.templates[type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE].concat(submissionItemsForAll);
-                        this.templates[type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE].push(extractor_submission_item_1.StatusTreeTemplate.build(extractor_submission_item_1.ExtractorItemType.ENTITY)
+                        var submissionItemsForBySample = [];
+                        submissionItemsForBySample = submissionItemsForBySample.concat(submissionItemsForAll);
+                        submissionItemsForBySample.push(extractor_submission_item_1.StatusTreeTemplate.build(extractor_submission_item_1.ExtractorItemType.ENTITY)
                             .setCategoryType(extractor_submission_item_1.ExtractorCategoryType.LEAF)
                             .setEntityType(type_entity_1.EntityType.CvTerms)
                             .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
                             .setEntityName(this.cvFilterNodeLabels[cv_filter_type_1.CvFilterType.DATASET_TYPE])
                             .setCardinality(extractor_submission_item_1.CardinalityType.ONE_ONLY));
                         // -- Platforms
-                        this.templates[type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE].push(extractor_submission_item_1.StatusTreeTemplate.build(extractor_submission_item_1.ExtractorItemType.CATEGORY)
+                        submissionItemsForBySample.push(extractor_submission_item_1.StatusTreeTemplate.build(extractor_submission_item_1.ExtractorItemType.CATEGORY)
                             .setCategoryType(extractor_submission_item_1.ExtractorCategoryType.ENTITY_CONTAINER)
                             .setCategoryName(this.entityNodeLabels[type_entity_1.EntityType.Platforms])
                             .setCardinality(extractor_submission_item_1.CardinalityType.ZERO_OR_MORE)
@@ -117,7 +125,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                             .setEntityName(this.entityNodeLabels[type_entity_1.EntityType.Platforms])
                             .setCardinality(extractor_submission_item_1.CardinalityType.ZERO_OR_MORE)));
                         // -- Samples
-                        this.templates[type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE].push(extractor_submission_item_1.StatusTreeTemplate.build(extractor_submission_item_1.ExtractorItemType.CATEGORY)
+                        submissionItemsForBySample.push(extractor_submission_item_1.StatusTreeTemplate.build(extractor_submission_item_1.ExtractorItemType.CATEGORY)
                             .setCategoryType(extractor_submission_item_1.ExtractorCategoryType.CONTAINER)
                             .setCategoryName("Sample Crieria")
                             .setCardinality(extractor_submission_item_1.CardinalityType.ONE_OR_MORE)
@@ -135,8 +143,9 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                             .setEntityName("Sample List")
                             .setCategoryName(this.entityNodeLabels[type_entity_1.EntityType.Platforms])
                             .setCardinality(extractor_submission_item_1.CardinalityType.ZERO_OR_MORE)));
+                        this.templates.set(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, submissionItemsForBySample);
                     }
-                    return this.templates[gobiiExtractFilterType];
+                    return this.templates.get(gobiiExtractFilterType);
                 };
                 StatusDisplayTreeComponent.prototype.nodeSelect = function (event) {
                     //      this.msgs.push({severity: 'info', summary: 'Node Selected', detail: event.node.label});
@@ -180,25 +189,28 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                 };
                 // ********************************************************************************
                 // ********************* CHECKBOX/TREE NODE CONVERSION FUNCTIONS
+                StatusDisplayTreeComponent.prototype.addEntityIconToNode = function (entityType, treeNode) {
+                    if (entityType === type_entity_1.EntityType.DataSets) {
+                        treeNode.icon = "fa-database";
+                        treeNode.expandedIcon = "fa-database";
+                        treeNode.collapsedIcon = "fa-database";
+                    }
+                    else if (entityType === type_entity_1.EntityType.Contacts) {
+                        treeNode.icon = "fa-address-book-o";
+                        treeNode.expandedIcon = "fa-address-book-o";
+                        treeNode.collapsedIcon = "fa-address-book-o";
+                    }
+                    else if (entityType === type_entity_1.EntityType.Mapsets) {
+                        treeNode.icon = "fa-map-o";
+                        treeNode.expandedIcon = "fa-map-o";
+                        treeNode.collapsedIcon = "fa-map-o";
+                    }
+                };
                 StatusDisplayTreeComponent.prototype.addIconsToNode = function (statusTreeTemplate, treeNode) {
                     // if( statusTreeTemplate.getItemType() == ExtractorItemType.ENTITY ) {
                     if (statusTreeTemplate.getEntityType() != null
                         && statusTreeTemplate.getEntityType() != type_entity_1.EntityType.UNKNOWN) {
-                        if (statusTreeTemplate.getEntityType() === type_entity_1.EntityType.DataSets) {
-                            treeNode.icon = "fa-database";
-                            treeNode.expandedIcon = "fa-database";
-                            treeNode.collapsedIcon = "fa-database";
-                        }
-                        else if (statusTreeTemplate.getEntityType() === type_entity_1.EntityType.Contacts) {
-                            treeNode.icon = "fa-address-book-o";
-                            treeNode.expandedIcon = "fa-address-book-o";
-                            treeNode.collapsedIcon = "fa-address-book-o";
-                        }
-                        else if (statusTreeTemplate.getEntityType() === type_entity_1.EntityType.Mapsets) {
-                            treeNode.icon = "fa-map-o";
-                            treeNode.expandedIcon = "fa-map-o";
-                            treeNode.collapsedIcon = "fa-map-o";
-                        }
+                        this.addEntityIconToNode(statusTreeTemplate.getEntityType(), treeNode);
                     }
                     else if (statusTreeTemplate.getItemType() === extractor_submission_item_1.ExtractorItemType.EXPORT_FORMAT) {
                         treeNode.icon = "fa-columns";
@@ -217,27 +229,68 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     var returnVal = null;
                     return returnVal;
                 };
-                StatusDisplayTreeComponent.prototype.makeNodeFromCbEvent = function (cbEvent) {
-                    var returnVal = new GobiiTreeNode_1.GobiiTreeNode();
-                    returnVal.entityType = cbEvent.entityType;
-                    returnVal.label = cbEvent.name;
+                StatusDisplayTreeComponent.prototype.findTemplate = function (extractorItemType, entityType) {
+                    var returnVal = null;
+                    var statusTreeTemplates = this.getTemplates(this.gobiiExtractFilterType, false);
+                    for (var idx = 0; (idx < statusTreeTemplates.length) && (returnVal == null); idx++) {
+                        var currentTemplate = statusTreeTemplates[idx];
+                        returnVal = this.findTemplateByCriteria(currentTemplate, extractorItemType, entityType);
+                    }
                     return returnVal;
                 };
-                StatusDisplayTreeComponent.prototype.placeNodeInTree = function (treeNode) {
-                    // if (treeNode.entityType === EntityType.DataSets) {
-                    //
-                    //     let parentNode: GobiiTreeNode = this.gobiiTreeNodes.filter(n => n.entityType === EntityType.DataSets)[0];
-                    //     if (parentNode == null) {
-                    //         parentNode = this.makeGobiiTreeNodeForEntity(EntityType.DataSets);
-                    //         parentNode.label = this.entityNodeLabels[EntityType.DataSets];
-                    //         this.gobiiTreeNodes.push(parentNode);
-                    //     }
-                    //
-                    //     parentNode.expanded = true;
-                    //     parentNode.children.push(treeNode);
-                    //     this.selectedGobiiNodes.push(treeNode);
-                    //
-                    // }
+                StatusDisplayTreeComponent.prototype.findTemplateByCriteria = function (statusTreeTemplate, extractorItemType, entityType) {
+                    var returnVal = null;
+                    if (statusTreeTemplate.getChildren() != null) {
+                        for (var idx = 0; (idx < statusTreeTemplate.getChildren().length) && (returnVal == null); idx++) {
+                            var currentTemplate = statusTreeTemplate.getChildren()[idx];
+                            returnVal = this.findTemplateByCriteria(currentTemplate, extractorItemType, entityType);
+                        }
+                    }
+                    if (returnVal === null) {
+                        if (extractorItemType == statusTreeTemplate.getItemType()
+                            && entityType == statusTreeTemplate.getEntityType()) {
+                            returnVal = statusTreeTemplate;
+                        }
+                    }
+                    return returnVal;
+                };
+                StatusDisplayTreeComponent.prototype.addEntityNameToNode = function (statusTreeTemplate, gobiiTreeNode, checkBoxEvent) {
+                    if (statusTreeTemplate.getCategoryType() === extractor_submission_item_1.ExtractorCategoryType.ENTITY_CONTAINER) {
+                        gobiiTreeNode.label = checkBoxEvent.name;
+                    }
+                    else {
+                        gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + checkBoxEvent.name;
+                    }
+                };
+                StatusDisplayTreeComponent.prototype.placeNodeInTree = function (checkBoxEvent) {
+                    var statusTreeTemplate = this.findTemplate(extractor_submission_item_1.ExtractorItemType.CATEGORY, checkBoxEvent.entityType);
+                    if (statusTreeTemplate != null) {
+                        if (statusTreeTemplate.getCategoryType() === extractor_submission_item_1.ExtractorCategoryType.LEAF) {
+                            var existingGobiiTreeNode = statusTreeTemplate.getGobiiTreeNode();
+                            this.addEntityNameToNode(statusTreeTemplate, existingGobiiTreeNode, checkBoxEvent);
+                        }
+                        else if (statusTreeTemplate.getCategoryType() === extractor_submission_item_1.ExtractorCategoryType.ENTITY_CONTAINER) {
+                            var newGobiiTreeNode = new GobiiTreeNode_1.GobiiTreeNode();
+                            newGobiiTreeNode.entityType = checkBoxEvent.entityType;
+                            this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
+                            this.addEntityNameToNode(statusTreeTemplate, newGobiiTreeNode, checkBoxEvent);
+                            statusTreeTemplate.getGobiiTreeNode().children.push(newGobiiTreeNode);
+                            statusTreeTemplate.getGobiiTreeNode().expanded = true;
+                            this.selectedGobiiNodes.push(newGobiiTreeNode);
+                            this.selectedGobiiNodes.push(statusTreeTemplate.getGobiiTreeNode());
+                        }
+                        else {
+                            this.reportMessage("The node of category  "
+                                + statusTreeTemplate.getCategoryType()
+                                + " for checkbox event " + checkBoxEvent.name
+                                + " could not be placed in the tree ");
+                        }
+                    }
+                    else {
+                        this.reportMessage("Could not place checkbox event "
+                            + checkBoxEvent.name
+                            + " in tree");
+                    }
                 }; //
                 StatusDisplayTreeComponent.prototype.makeTreeNodeFromTemplate = function (statusTreeTemplate) {
                     var _this = this;
@@ -272,13 +325,15 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                             });
                         }
                     }
+                    statusTreeTemplate.setGobiiTreeNode(returnVal);
                     return returnVal;
                 };
                 StatusDisplayTreeComponent.prototype.setUpRequredItems = function () {
                     var _this = this;
-                    var statusTreeTemplates = this.getTemplates(this.gobiiExtractFilterType);
+                    this.gobiiTreeNodes = [];
+                    var statusTreeTemplates = this.getTemplates(this.gobiiExtractFilterType, false);
                     var mainNode = new GobiiTreeNode_1.GobiiTreeNode();
-                    mainNode.label = this.extractorFilterTypeLabels[this.gobiiExtractFilterType].trim();
+                    mainNode.label = this.extractorFilterTypeLabels[this.gobiiExtractFilterType];
                     mainNode.icon = "fa-folder";
                     mainNode.expandedIcon = "fa-folder";
                     mainNode.expanded = true;
@@ -293,13 +348,17 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                 StatusDisplayTreeComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
                         var itemChangedEvent = changes['checkBoxEventChange'].currentValue;
-                        var treeNode = this.makeNodeFromCbEvent(itemChangedEvent);
-                        this.placeNodeInTree(treeNode);
+                        this.placeNodeInTree(itemChangedEvent);
                     }
-                    else if (changes['gobiiExtractFilterType']
-                        && (changes['gobiiExtractFilterType'].currentValue != null)
-                        && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
-                        this.gobiiExtractFilterType = changes['gobiiExtractFilterType'].currentValue;
+                    else if (changes['gobiiExtractFilterTypeEvent']
+                        && (changes['gobiiExtractFilterTypeEvent'].currentValue != null)
+                        && (changes['gobiiExtractFilterTypeEvent'].currentValue != undefined)) {
+                        var newGobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
+                        if (newGobiiExtractFilterType !== this.gobiiExtractFilterType) {
+                            this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
+                            this.getTemplates(this.gobiiExtractFilterType, true);
+                            this.setUpRequredItems();
+                        }
                     }
                 };
                 StatusDisplayTreeComponent.prototype.makeDemoTreeNodes = function () {
@@ -381,8 +440,8 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
             StatusDisplayTreeComponent = __decorate([
                 core_1.Component({
                     selector: 'status-display-tree',
-                    inputs: ['checkBoxEventChange', 'gobiiExtractFilterType'],
-                    outputs: ['onItemSelected', 'onItemChecked'],
+                    inputs: ['checkBoxEventChange', 'gobiiExtractFilterTypeEvent'],
+                    outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage'],
                     template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedGobiiNodes\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
                 }),
                 __metadata("design:paramtypes", [])

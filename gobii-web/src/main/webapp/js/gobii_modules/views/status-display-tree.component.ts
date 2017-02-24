@@ -15,8 +15,8 @@ import {CvFilterType} from "../model/cv-filter-type";
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
 @Component({
     selector: 'status-display-tree',
-    inputs: ['checkBoxEventChange', 'gobiiExtractFilterType'],
-    outputs: ['onItemSelected', 'onItemChecked'],
+    inputs: ['checkBoxEventChange', 'gobiiExtractFilterTypeEvent'],
+    outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage'],
     template: ` 
                     <p-tree [value]="gobiiTreeNodes" selectionMode="checkbox" [(selection)]="selectedGobiiNodes"></p-tree>
                     <!--<p-tree [value]="demoTreeNodes" selectionMode="checkbox" [(selection)]="selectedDemoNodes"></p-tree>-->
@@ -25,6 +25,11 @@ import {CvFilterType} from "../model/cv-filter-type";
 })
 export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
+    private onAddMessage: EventEmitter<string> = new EventEmitter();
+
+    private reportMessage(arg) {
+        this.onAddMessage.emit(arg);
+    }
 
     constructor() {
     }
@@ -33,14 +38,13 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
 
         this.makeDemoTreeNodes();
-
         this.setUpRequredItems();
 
     }
 
-    getTemplates(gobiiExtractFilterType: GobiiExtractFilterType): StatusTreeTemplate[] {
+    getTemplates(gobiiExtractFilterType: GobiiExtractFilterType, forceReset: boolean): StatusTreeTemplate[] {
 
-        if (this.templates.size === 0) {
+        if (this.templates.size === 0 || forceReset === true) {
 
             this.entityNodeLabels[EntityType.DataSets] = "Data Sets";
             this.entityNodeLabels[EntityType.Platforms] = "Platforms";
@@ -80,29 +84,28 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             // ******** SET UP extract by dataset
             // -- Data set type
-            this.templates[GobiiExtractFilterType.WHOLE_DATASET] = [];
-            this.templates[GobiiExtractFilterType.WHOLE_DATASET] =
-                this.templates[GobiiExtractFilterType.WHOLE_DATASET].concat(submissionItemsForAll);
-            this.templates[GobiiExtractFilterType.WHOLE_DATASET].push(
+            let submissionItemsForDataSet: StatusTreeTemplate[] = [];
+            submissionItemsForDataSet = submissionItemsForDataSet.concat(submissionItemsForAll);
+            submissionItemsForDataSet.push(
                 StatusTreeTemplate.build(ExtractorItemType.CATEGORY)
                     .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                     .setEntityType(EntityType.DataSets)
-                    .setCategoryName(this.entityNodeLabels[EntityType.DataSets])
-                    .addChild(
-                        StatusTreeTemplate.build(ExtractorItemType.ENTITY)
-                            .setCategoryType(ExtractorCategoryType.LEAF)
-                            .setEntityType(EntityType.DataSets)
-                            .setEntityName(this.entityNodeLabels[EntityType.DataSets])
-                            .setCardinality(CardinalityType.ONE_OR_MORE))
-            );
+                    .setCategoryName(this.entityNodeLabels[EntityType.DataSets]));
+            // .addChild(
+            //     StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+            //         .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
+            //         .setEntityType(EntityType.DataSets)
+            //         .setEntityName(this.entityNodeLabels[EntityType.DataSets])
+            //         .setCardinality(CardinalityType.ONE_OR_MORE))
+//            );
 
+            this.templates.set(GobiiExtractFilterType.WHOLE_DATASET, submissionItemsForDataSet);
 
             // ******** SET UP extract by samples
             // -- Data set type
-            this.templates[GobiiExtractFilterType.BY_SAMPLE] = [];
-            this.templates[GobiiExtractFilterType.BY_SAMPLE] =
-                this.templates[GobiiExtractFilterType.BY_SAMPLE].concat(submissionItemsForAll);
-            this.templates[GobiiExtractFilterType.BY_SAMPLE].push(
+            let submissionItemsForBySample: StatusTreeTemplate[] = [];
+            submissionItemsForBySample = submissionItemsForBySample.concat(submissionItemsForAll);
+            submissionItemsForBySample.push(
                 StatusTreeTemplate.build(ExtractorItemType.ENTITY)
                     .setCategoryType(ExtractorCategoryType.LEAF)
                     .setEntityType(EntityType.CvTerms)
@@ -112,7 +115,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             );
 
             // -- Platforms
-            this.templates[GobiiExtractFilterType.BY_SAMPLE].push(
+            submissionItemsForBySample.push(
                 StatusTreeTemplate.build(ExtractorItemType.CATEGORY)
                     .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                     .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
@@ -127,7 +130,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             );
 
             // -- Samples
-            this.templates[GobiiExtractFilterType.BY_SAMPLE].push(
+            submissionItemsForBySample.push(
                 StatusTreeTemplate.build(ExtractorItemType.CATEGORY)
                     .setCategoryType(ExtractorCategoryType.CONTAINER)
                     .setCategoryName("Sample Crieria")
@@ -150,9 +153,11 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                         .setCardinality(CardinalityType.ZERO_OR_MORE)
                     )
             );
+            this.templates.set(GobiiExtractFilterType.BY_SAMPLE, submissionItemsForBySample);
+
         }
 
-        return this.templates[gobiiExtractFilterType]
+        return this.templates.get(gobiiExtractFilterType);
     }
 
 
@@ -228,6 +233,28 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 // ********************************************************************************
 // ********************* CHECKBOX/TREE NODE CONVERSION FUNCTIONS
 
+    addEntityIconToNode(entityType: EntityType, treeNode: GobiiTreeNode) {
+
+        if (entityType === EntityType.DataSets) {
+
+            treeNode.icon = "fa-database";
+            treeNode.expandedIcon = "fa-database";
+            treeNode.collapsedIcon = "fa-database";
+
+        } else if (entityType === EntityType.Contacts) {
+
+            treeNode.icon = "fa-address-book-o";
+            treeNode.expandedIcon = "fa-address-book-o";
+            treeNode.collapsedIcon = "fa-address-book-o";
+
+        } else if (entityType === EntityType.Mapsets) {
+
+            treeNode.icon = "fa-map-o";
+            treeNode.expandedIcon = "fa-map-o";
+            treeNode.collapsedIcon = "fa-map-o";
+        }
+    }
+
 
     addIconsToNode(statusTreeTemplate: StatusTreeTemplate, treeNode: GobiiTreeNode) {
 
@@ -236,24 +263,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         if (statusTreeTemplate.getEntityType() != null
             && statusTreeTemplate.getEntityType() != EntityType.UNKNOWN) {
 
-            if (statusTreeTemplate.getEntityType() === EntityType.DataSets) {
-
-                treeNode.icon = "fa-database";
-                treeNode.expandedIcon = "fa-database";
-                treeNode.collapsedIcon = "fa-database";
-
-            } else if (statusTreeTemplate.getEntityType() === EntityType.Contacts) {
-
-                treeNode.icon = "fa-address-book-o";
-                treeNode.expandedIcon = "fa-address-book-o";
-                treeNode.collapsedIcon = "fa-address-book-o";
-
-            } else if (statusTreeTemplate.getEntityType() === EntityType.Mapsets) {
-
-                treeNode.icon = "fa-map-o";
-                treeNode.expandedIcon = "fa-map-o";
-                treeNode.collapsedIcon = "fa-map-o";
-            }
+            this.addEntityIconToNode(statusTreeTemplate.getEntityType(), treeNode);
 
         } else if (statusTreeTemplate.getItemType() === ExtractorItemType.EXPORT_FORMAT) {
             treeNode.icon = "fa-columns";
@@ -278,34 +288,97 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-    makeNodeFromCbEvent(cbEvent: CheckBoxEvent): GobiiTreeNode {
+    findTemplate(extractorItemType: ExtractorItemType, entityType: EntityType) {
 
-        let returnVal: GobiiTreeNode = new GobiiTreeNode();
-        returnVal.entityType = cbEvent.entityType;
+        let returnVal: StatusTreeTemplate = null;
 
+        let statusTreeTemplates: StatusTreeTemplate[] = this.getTemplates(this.gobiiExtractFilterType, false);
 
-        returnVal.label = cbEvent.name;
+        for (let idx: number = 0; ( idx < statusTreeTemplates.length) && (returnVal == null ); idx++) {
+            let currentTemplate: StatusTreeTemplate = statusTreeTemplates[idx];
+            returnVal = this.findTemplateByCriteria(currentTemplate, extractorItemType, entityType);
+        }
 
         return returnVal;
+
     }
 
 
-    placeNodeInTree(treeNode: GobiiTreeNode) {
+    findTemplateByCriteria(statusTreeTemplate: StatusTreeTemplate,
+                           extractorItemType: ExtractorItemType, entityType: EntityType): StatusTreeTemplate {
 
-        // if (treeNode.entityType === EntityType.DataSets) {
-        //
-        //     let parentNode: GobiiTreeNode = this.gobiiTreeNodes.filter(n => n.entityType === EntityType.DataSets)[0];
-        //     if (parentNode == null) {
-        //         parentNode = this.makeGobiiTreeNodeForEntity(EntityType.DataSets);
-        //         parentNode.label = this.entityNodeLabels[EntityType.DataSets];
-        //         this.gobiiTreeNodes.push(parentNode);
-        //     }
-        //
-        //     parentNode.expanded = true;
-        //     parentNode.children.push(treeNode);
-        //     this.selectedGobiiNodes.push(treeNode);
-        //
-        // }
+        let returnVal: StatusTreeTemplate = null;
+
+        if (statusTreeTemplate.getChildren() != null) {
+
+            for (let idx: number = 0; ( idx < statusTreeTemplate.getChildren().length) && (returnVal == null ); idx++) {
+
+                let currentTemplate: StatusTreeTemplate = statusTreeTemplate.getChildren()[idx];
+                returnVal = this.findTemplateByCriteria(currentTemplate, extractorItemType, entityType);
+            }
+        }
+
+        if (returnVal === null) {
+
+            if (extractorItemType == statusTreeTemplate.getItemType()
+                && entityType == statusTreeTemplate.getEntityType()) {
+
+                returnVal = statusTreeTemplate;
+            }
+        }
+
+        return returnVal;
+
+    }
+
+    addEntityNameToNode(statusTreeTemplate: StatusTreeTemplate, gobiiTreeNode: GobiiTreeNode, checkBoxEvent: CheckBoxEvent) {
+
+        if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
+            gobiiTreeNode.label = checkBoxEvent.name;
+        } else {
+            gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + checkBoxEvent.name;
+        }
+    }
+
+    placeNodeInTree(checkBoxEvent: CheckBoxEvent) {
+
+        let statusTreeTemplate: StatusTreeTemplate =
+            this.findTemplate(ExtractorItemType.CATEGORY, checkBoxEvent.entityType);
+
+
+        if (statusTreeTemplate != null) {
+
+
+            if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.LEAF) {
+
+                let existingGobiiTreeNode: GobiiTreeNode = statusTreeTemplate.getGobiiTreeNode();
+                this.addEntityNameToNode(statusTreeTemplate, existingGobiiTreeNode, checkBoxEvent);
+
+            } else if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
+
+                let newGobiiTreeNode = new GobiiTreeNode();
+                newGobiiTreeNode.entityType = checkBoxEvent.entityType;
+                this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
+                this.addEntityNameToNode(statusTreeTemplate, newGobiiTreeNode, checkBoxEvent);
+                statusTreeTemplate.getGobiiTreeNode().children.push(newGobiiTreeNode);
+                statusTreeTemplate.getGobiiTreeNode().expanded = true;
+                this.selectedGobiiNodes.push(newGobiiTreeNode);
+                this.selectedGobiiNodes.push(statusTreeTemplate.getGobiiTreeNode());
+
+            } else {
+                this.reportMessage("The node of category  "
+                    + statusTreeTemplate.getCategoryType()
+                    + " for checkbox event " + checkBoxEvent.name
+                    + " could not be placed in the tree ");
+            }
+
+
+        } else {
+
+            this.reportMessage("Could not place checkbox event "
+                + checkBoxEvent.name
+                + " in tree");
+        }
 
     } //
 
@@ -337,8 +410,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             returnVal = new GobiiTreeNode();
             returnVal.label = "Export Format";
-
-
         }
 
         this.addIconsToNode(statusTreeTemplate, returnVal);
@@ -361,16 +432,20 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             }
         }
 
+        statusTreeTemplate.setGobiiTreeNode(returnVal);
+
         return returnVal;
     }
 
 
     setUpRequredItems() {
 
-        let statusTreeTemplates: StatusTreeTemplate[] = this.getTemplates(this.gobiiExtractFilterType);
+        this.gobiiTreeNodes  = [];
+
+        let statusTreeTemplates: StatusTreeTemplate[] = this.getTemplates(this.gobiiExtractFilterType, false);
 
         let mainNode: GobiiTreeNode = new GobiiTreeNode();
-        mainNode.label = this.extractorFilterTypeLabels[this.gobiiExtractFilterType].trim();
+        mainNode.label = this.extractorFilterTypeLabels[this.gobiiExtractFilterType];
         mainNode.icon = "fa-folder";
         mainNode.expandedIcon = "fa-folder";
         mainNode.expanded = true;
@@ -394,7 +469,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 // ********************* CHECKBOX (GOBII-SPECIFIC)  NODE DATA STRUCTURES AND EVENTS
 
 
-    gobiiExtractFilterType: GobiiExtractFilterType;
+    gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
     onItemChecked: EventEmitter < CheckBoxEvent > = new EventEmitter();
     onItemSelected: EventEmitter < CheckBoxEvent > = new EventEmitter();
@@ -412,10 +487,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             let itemChangedEvent: CheckBoxEvent = changes['checkBoxEventChange'].currentValue;
 
-            let treeNode: GobiiTreeNode = this.makeNodeFromCbEvent(itemChangedEvent);
 
-
-            this.placeNodeInTree(treeNode);
+            this.placeNodeInTree(itemChangedEvent);
             //this.treeNodes.push(treeNode);
 
             //this.placeNodeInTree(treeNode);
@@ -436,11 +509,18 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             //         itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
             //     }
             // }
-        } else if (changes['gobiiExtractFilterType']
-            && ( changes['gobiiExtractFilterType'].currentValue != null )
-            && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
+        } else if (changes['gobiiExtractFilterTypeEvent']
+            && ( changes['gobiiExtractFilterTypeEvent'].currentValue != null )
+            && ( changes['gobiiExtractFilterTypeEvent'].currentValue != undefined )) {
 
-            this.gobiiExtractFilterType = changes['gobiiExtractFilterType'].currentValue;
+            let newGobiiExtractFilterType: GobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
+
+            if (newGobiiExtractFilterType !== this.gobiiExtractFilterType) {
+                this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
+                this.getTemplates(this.gobiiExtractFilterType, true);
+                this.setUpRequredItems();
+            }
+
 
             // this.setList(changes['nameIdList'].currentValue);
 

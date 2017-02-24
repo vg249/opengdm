@@ -22,7 +22,7 @@ import {HttpModule, ConnectionBackend} from "@angular/http";
 import {Http} from "@angular/http";
 import {TextAreaComponent} from "../views/text-area.component";
 import {UploaderComponent} from "../views/uploader.component";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
 import {TreeModule, SharedModule, TreeNode} from 'primeng/primeng';
 import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
@@ -32,6 +32,7 @@ import {StatusDisplayTreeComponent} from "../views/status-display-tree.component
     imports: [BrowserModule,
         HttpModule,
         FormsModule,
+        ReactiveFormsModule,
         TreeModule,
         SharedModule],
     declarations: [ExtractorRoot,
