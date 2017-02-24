@@ -57,10 +57,20 @@ public class CvServiceImpl implements CvService {
 				CvDTO existingCvDTO = dtoMapCv.getCvDetails(cvId);
 				if(null != existingCvDTO.getCvId() && existingCvDTO.getCvId().equals(cvId)) {
 
-					returnVal = dtoMapCv.replaceCv(cvId, cvDTO);
-					returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-					returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
+					if(existingCvDTO.getGroupType().equals(2)) {
+
+						returnVal = dtoMapCv.replaceCv(cvId, cvDTO);
+						returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
+						returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
+						returnVal.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
+
+					} else {
+
+						throw new GobiiDomainException("The specified cvId ("
+                                + cvId
+                                + ") belongs to a cvgroup of type system");
+
+					}
 
 				} else {
 

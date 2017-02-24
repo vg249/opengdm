@@ -26,6 +26,7 @@ public class CvDTO extends DTOBase {
 	private String abbreviation;
 	private String definition;
 	private Integer rank;
+	private Integer groupType;
 
 	@Override
     public Integer getId() {
@@ -128,5 +129,11 @@ public class CvDTO extends DTOBase {
 	public void setEntityStatus(Integer entityStatus) {
 		this.entityStatus = entityStatus;
 	}
+
+	@GobiiEntityParam(paramName = "groupType")
+	public Integer getGroupType() { return groupType; }
+
+	@GobiiEntityColumn(columnName = "group_type")
+	public void setGroupType(Integer groupType) { this.groupType = groupType; }
 
 }
