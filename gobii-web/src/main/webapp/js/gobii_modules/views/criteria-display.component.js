@@ -30,7 +30,7 @@ System.register(["@angular/core", "../model/file-item", "../model/type-process",
             CriteriaDisplayComponent = (function () {
                 function CriteriaDisplayComponent() {
                     // useg
-                    this.dataSetCheckBoxEvents = [];
+                    this.dataSetFileItemEvents = [];
                     this.onItemUnChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                 } // ctor
@@ -40,13 +40,13 @@ System.register(["@angular/core", "../model/file-item", "../model/type-process",
                 // In this component, every item starts out checked; unchecking it removes it
                 CriteriaDisplayComponent.prototype.handleItemUnChecked = function (arg) {
                     var checkEvent = new file_item_1.FileItem(type_process_1.ProcessType.DELETE, type_entity_1.EntityType.DataSets, arg.currentTarget.value, arg.currentTarget.name, false, false);
-                    var itemToRemove = this.dataSetCheckBoxEvents
+                    var itemToRemove = this.dataSetFileItemEvents
                         .filter(function (e) {
                         return e.itemId === arg.currentTarget.value;
                     })[0];
-                    var indexOfItemToRemove = this.dataSetCheckBoxEvents.indexOf(itemToRemove);
+                    var indexOfItemToRemove = this.dataSetFileItemEvents.indexOf(itemToRemove);
                     if (indexOfItemToRemove > -1) {
-                        this.dataSetCheckBoxEvents.splice(indexOfItemToRemove, 1);
+                        this.dataSetFileItemEvents.splice(indexOfItemToRemove, 1);
                     }
                     this.onItemUnChecked.emit(checkEvent);
                 };
@@ -60,16 +60,16 @@ System.register(["@angular/core", "../model/file-item", "../model/type-process",
                     this.onItemSelected.emit(selectedDataSetId);
                 };
                 CriteriaDisplayComponent.prototype.ngOnChanges = function (changes) {
-                    this.dataSetCheckBoxEvents = changes['dataSetCheckBoxEvents'].currentValue;
+                    this.dataSetFileItemEvents = changes['dataSetFileItemEvents'].currentValue;
                 };
                 return CriteriaDisplayComponent;
             }());
             CriteriaDisplayComponent = __decorate([
                 core_1.Component({
                     selector: 'criteria-display',
-                    inputs: ['dataSetCheckBoxEvents'],
+                    inputs: ['dataSetFileItemEvents'],
                     outputs: ['onItemUnChecked', 'onItemSelected'],
-                    template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let dataSetCheckBoxEvent of dataSetCheckBoxEvents\"\n                                (click)=handleItemSelected($event)\n                                (hover)=handleItemHover($event)>\n                                <input  type=\"checkbox\"\n                                    (click)=handleItemUnChecked($event)\n                                    value={{dataSetCheckBoxEvent.itemId}}\n                                    name=\"{{dataSetCheckBoxEvent.itemName}}\"\n                                    checked>&nbsp;{{dataSetCheckBoxEvent.itemName}}\n                        </div>\n                    </div>\n                </form>"
+                    template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let dataSetFileItemEvent of dataSetFileItemEvents\"\n                                (click)=handleItemSelected($event)\n                                (hover)=handleItemHover($event)>\n                                <input  type=\"checkbox\"\n                                    (click)=handleItemUnChecked($event)\n                                    value={{dataSetFileItemEvent.itemId}}\n                                    name=\"{{dataSetFileItemEvent.itemName}}\"\n                                    checked>&nbsp;{{dataSetFileItemEvent.itemName}}\n                        </div>\n                    </div>\n                </form>"
                 }),
                 __metadata("design:paramtypes", [])
             ], CriteriaDisplayComponent);

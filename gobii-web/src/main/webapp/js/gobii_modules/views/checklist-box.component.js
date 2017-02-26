@@ -36,17 +36,17 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             CheckListBoxComponent = (function () {
                 function CheckListBoxComponent(_dtoRequestServiceNameId) {
                     this._dtoRequestServiceNameId = _dtoRequestServiceNameId;
-                    this.checkBoxEvents = [];
+                    this.fileItemEvents = [];
                     this.entityType = type_entity_1.EntityType.UNKNOWN;
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                     this.onAddMessage = new core_1.EventEmitter();
                 } // ctor
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
-                    var itemToChange = this.checkBoxEvents.filter(function (e) {
+                    var itemToChange = this.fileItemEvents.filter(function (e) {
                         return e.itemId == arg.currentTarget.value;
                     })[0];
-                    //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+                    //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
                     itemToChange.processType = arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE;
                     itemToChange.checked = arg.currentTarget.checked;
                     this.onItemChecked.emit(itemToChange);
@@ -60,8 +60,8 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     }
                     arg.currentTarget.style = "background-color:#b3d9ff";
                     this.previousSelectedItem = arg.currentTarget;
-                    var checkBoxEvent = new file_item_1.FileItem(type_process_1.ProcessType.READ, this.entityType, arg.currentTarget.children[0].value, arg.currentTarget.children[0].name, false, false);
-                    this.onItemSelected.emit(checkBoxEvent);
+                    var fileItemEvent = new file_item_1.FileItem(type_process_1.ProcessType.READ, this.entityType, arg.currentTarget.children[0].value, arg.currentTarget.children[0].name, false, false);
+                    this.onItemSelected.emit(fileItemEvent);
                 };
                 CheckListBoxComponent.prototype.setList = function (nameIdList) {
                     // we can get this event whenver the item is clicked, not necessarily when the checkbox
@@ -69,9 +69,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     scope$.nameIdList = nameIdList;
                     if (scope$.nameIdList && (scope$.nameIdList.length > 0)) {
                         scope$.entityType = scope$.nameIdList[0].entityType;
-                        scope$.checkBoxEvents = [];
+                        scope$.fileItemEvents = [];
                         scope$.nameIdList.forEach(function (n) {
-                            scope$.checkBoxEvents.push(new file_item_1.FileItem(type_process_1.ProcessType.CREATE, scope$.entityType, n.id, n.name, false, false));
+                            scope$.fileItemEvents.push(new file_item_1.FileItem(type_process_1.ProcessType.CREATE, scope$.entityType, n.id, n.name, false, false));
                         });
                     }
                     else {
@@ -82,16 +82,16 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 };
                 CheckListBoxComponent.prototype.ngOnChanges = function (changes) {
                     var stupid = "foo";
-                    if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
-                        this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
+                    if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
+                        this.itemChangedEvent = changes['fileItemEventChange'].currentValue;
                         if (this.itemChangedEvent) {
-                            var itemToChange = this.checkBoxEvents.filter(function (e) {
-                                return e.itemId == changes['checkBoxEventChange'].currentValue.itemId;
+                            var itemToChange = this.fileItemEvents.filter(function (e) {
+                                return e.itemId == changes['fileItemEventChange'].currentValue.itemId;
                             })[0];
-                            //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+                            //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
                             if (itemToChange) {
-                                itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
-                                itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
+                                itemToChange.processType = changes['fileItemEventChange'].currentValue.processType;
+                                itemToChange.checked = changes['fileItemEventChange'].currentValue.checked;
                             }
                         }
                     }
@@ -108,9 +108,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             CheckListBoxComponent = __decorate([
                 core_1.Component({
                     selector: 'checklist-box',
-                    inputs: ['checkBoxEventChange', 'nameIdList'],
+                    inputs: ['fileItemEventChange', 'nameIdList'],
                     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage'],
-                    template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let checkBoxEvent of checkBoxEvents\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                [checked]=\"checkBoxEvent.checked\"\n                                value={{checkBoxEvent.itemId}} \n                                name=\"{{checkBoxEvent.itemName}}\">&nbsp;{{checkBoxEvent.itemName}}\n                        </div>            \n                    </div>\n                </form>" // end template
+                    template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let fileItemEvent of fileItemEvents\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                [checked]=\"fileItemEvent.checked\"\n                                value={{fileItemEvent.itemId}} \n                                name=\"{{fileItemEvent.itemName}}\">&nbsp;{{fileItemEvent.itemName}}\n                        </div>            \n                    </div>\n                </form>" // end template
                 }),
                 __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService])
             ], CheckListBoxComponent);

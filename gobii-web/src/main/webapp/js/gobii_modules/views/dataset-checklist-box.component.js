@@ -47,7 +47,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this._dtoRequestServiceNameId = _dtoRequestServiceNameId;
                     this._dtoRequestServiceDataSetDetail = _dtoRequestServiceDataSetDetail;
                     this._dtoRequestServiceAnalysisDetail = _dtoRequestServiceAnalysisDetail;
-                    this.checkBoxEvents = [];
+                    this.fileItemEvents = [];
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onAddMessage = new core_1.EventEmitter();
                     this.analysisNames = [];
@@ -67,15 +67,15 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     // we can get this event whenver the item is clicked, not necessarily when the checkbox
                     var scope$ = this;
                     scope$.dataSetsNameIdList = [];
-                    scope$.checkBoxEvents = [];
+                    scope$.fileItemEvents = [];
                     scope$.setDatasetDetails(undefined);
                     if (scope$.experimentId) {
                         this._dtoRequestServiceNameId.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.DataSets, type_entity_filter_1.EntityFilter.BYTYPEID, this.experimentId)).subscribe(function (nameIds) {
                             if (nameIds && (nameIds.length > 0)) {
                                 scope$.dataSetsNameIdList = nameIds;
-                                // scope$.checkBoxEvents = [];
+                                // scope$.fileItemEvents = [];
                                 // scope$.dataSetsNameIdList.forEach(n => {
-                                //     scope$.checkBoxEvents.push(new FileItem(
+                                //     scope$.fileItemEvents.push(new FileItem(
                                 //         ProcessType.CREATE,
                                 //         n.id,
                                 //         n.name,
@@ -161,9 +161,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             DataSetCheckListBoxComponent = __decorate([
                 core_1.Component({
                     selector: 'dataset-checklist-box',
-                    inputs: ['experimentId', 'checkBoxEventChange'],
+                    inputs: ['experimentId', 'fileItemEventChange'],
                     outputs: ['onItemChecked', 'onAddMessage'],
-                    template: "<checklist-box\n                    [checkBoxEventChange] = \"checkBoxEventChange\"\n                    [nameIdList] = \"dataSetsNameIdList\"\n                    (onItemSelected)=\"handleItemSelected($event)\"\n                    (onItemChecked)=\"handleItemChecked($event)\"\n                    (onAddMessage) = \"handleAddMessage($event)\">\n                </checklist-box>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        <b>Name:</b> {{dataSet.name}}<BR>\n                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>\n                        <b>Data File:</b> {{dataSet.dataFile}}<BR>\n                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>\n                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                            <b>Analyses:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                    </ul>\n                        </div>\n                        <div *ngIf=\"analysisTypes && (analysisTypes.length > 0)\">\n                            <b>Analysis Types:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisType of analysisTypes\" >{{analysisType}}</li>\n                                    </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
+                    template: "<checklist-box\n                    [fileItemEventChange] = \"fileItemEventChange\"\n                    [nameIdList] = \"dataSetsNameIdList\"\n                    (onItemSelected)=\"handleItemSelected($event)\"\n                    (onItemChecked)=\"handleItemChecked($event)\"\n                    (onAddMessage) = \"handleAddMessage($event)\">\n                </checklist-box>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        <b>Name:</b> {{dataSet.name}}<BR>\n                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>\n                        <b>Data File:</b> {{dataSet.dataFile}}<BR>\n                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>\n                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                            <b>Analyses:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                    </ul>\n                        </div>\n                        <div *ngIf=\"analysisTypes && (analysisTypes.length > 0)\">\n                            <b>Analysis Types:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisType of analysisTypes\" >{{analysisType}}</li>\n                                    </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
                 }),
                 __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService,
                     dto_request_service_1.DtoRequestService,

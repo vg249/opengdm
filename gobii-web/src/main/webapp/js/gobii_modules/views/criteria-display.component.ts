@@ -6,18 +6,18 @@ import {EntityType} from "../model/type-entity";
 
 @Component({
     selector: 'criteria-display',
-    inputs: ['dataSetCheckBoxEvents'],
+    inputs: ['dataSetFileItemEvents'],
     outputs: ['onItemUnChecked', 'onItemSelected'],
     template: `<form>
                     <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
-                        <div *ngFor="let dataSetCheckBoxEvent of dataSetCheckBoxEvents"
+                        <div *ngFor="let dataSetFileItemEvent of dataSetFileItemEvents"
                                 (click)=handleItemSelected($event)
                                 (hover)=handleItemHover($event)>
                                 <input  type="checkbox"
                                     (click)=handleItemUnChecked($event)
-                                    value={{dataSetCheckBoxEvent.itemId}}
-                                    name="{{dataSetCheckBoxEvent.itemName}}"
-                                    checked>&nbsp;{{dataSetCheckBoxEvent.itemName}}
+                                    value={{dataSetFileItemEvent.itemId}}
+                                    name="{{dataSetFileItemEvent.itemName}}"
+                                    checked>&nbsp;{{dataSetFileItemEvent.itemName}}
                         </div>
                     </div>
                 </form>`
@@ -28,7 +28,7 @@ export class CriteriaDisplayComponent implements OnInit {
 
 
     // useg
-    private dataSetCheckBoxEvents: FileItem[] = [];
+    private dataSetFileItemEvents: FileItem[] = [];
     private onItemUnChecked: EventEmitter<FileItem> = new EventEmitter();
     private onItemSelected: EventEmitter<number> = new EventEmitter();
 
@@ -50,15 +50,15 @@ export class CriteriaDisplayComponent implements OnInit {
             false);
 
         let itemToRemove: FileItem =
-            this.dataSetCheckBoxEvents
+            this.dataSetFileItemEvents
                 .filter(e => {
                     return e.itemId === arg.currentTarget.value
                 })[0];
 
-        let indexOfItemToRemove: number = this.dataSetCheckBoxEvents.indexOf(itemToRemove);
+        let indexOfItemToRemove: number = this.dataSetFileItemEvents.indexOf(itemToRemove);
 
         if (indexOfItemToRemove > -1) {
-            this.dataSetCheckBoxEvents.splice(indexOfItemToRemove, 1);
+            this.dataSetFileItemEvents.splice(indexOfItemToRemove, 1);
         }
 
         this.onItemUnChecked.emit(checkEvent);
@@ -80,7 +80,7 @@ export class CriteriaDisplayComponent implements OnInit {
 
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
-        this.dataSetCheckBoxEvents = changes['dataSetCheckBoxEvents'].currentValue;
+        this.dataSetFileItemEvents = changes['dataSetFileItemEvents'].currentValue;
     }
 
 }

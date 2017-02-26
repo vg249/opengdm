@@ -254,26 +254,26 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     }
                     return returnVal;
                 };
-                StatusDisplayTreeComponent.prototype.addEntityNameToNode = function (statusTreeTemplate, gobiiTreeNode, checkBoxEvent) {
+                StatusDisplayTreeComponent.prototype.addEntityNameToNode = function (statusTreeTemplate, gobiiTreeNode, fileItemEvent) {
                     if (statusTreeTemplate.getCategoryType() === extractor_submission_item_1.ExtractorCategoryType.ENTITY_CONTAINER) {
-                        gobiiTreeNode.label = checkBoxEvent.itemName;
+                        gobiiTreeNode.label = fileItemEvent.itemName;
                     }
                     else {
-                        gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + checkBoxEvent.itemName;
+                        gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + fileItemEvent.itemName;
                     }
                 };
-                StatusDisplayTreeComponent.prototype.placeNodeInTree = function (checkBoxEvent) {
-                    var statusTreeTemplate = this.findTemplate(extractor_submission_item_1.ExtractorItemType.CATEGORY, checkBoxEvent.entityType);
+                StatusDisplayTreeComponent.prototype.placeNodeInTree = function (fileItemEvent) {
+                    var statusTreeTemplate = this.findTemplate(extractor_submission_item_1.ExtractorItemType.CATEGORY, fileItemEvent.entityType);
                     if (statusTreeTemplate != null) {
                         if (statusTreeTemplate.getCategoryType() === extractor_submission_item_1.ExtractorCategoryType.LEAF) {
                             var existingGobiiTreeNode = statusTreeTemplate.getGobiiTreeNode();
-                            this.addEntityNameToNode(statusTreeTemplate, existingGobiiTreeNode, checkBoxEvent);
+                            this.addEntityNameToNode(statusTreeTemplate, existingGobiiTreeNode, fileItemEvent);
                         }
                         else if (statusTreeTemplate.getCategoryType() === extractor_submission_item_1.ExtractorCategoryType.ENTITY_CONTAINER) {
                             var newGobiiTreeNode = new GobiiTreeNode_1.GobiiTreeNode();
-                            newGobiiTreeNode.entityType = checkBoxEvent.entityType;
+                            newGobiiTreeNode.entityType = fileItemEvent.entityType;
                             this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
-                            this.addEntityNameToNode(statusTreeTemplate, newGobiiTreeNode, checkBoxEvent);
+                            this.addEntityNameToNode(statusTreeTemplate, newGobiiTreeNode, fileItemEvent);
                             statusTreeTemplate.getGobiiTreeNode().children.push(newGobiiTreeNode);
                             statusTreeTemplate.getGobiiTreeNode().expanded = true;
                             this.selectedGobiiNodes.push(newGobiiTreeNode);
@@ -282,13 +282,13 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                         else {
                             this.reportMessage("The node of category  "
                                 + statusTreeTemplate.getCategoryType()
-                                + " for checkbox event " + checkBoxEvent.itemName
+                                + " for checkbox event " + fileItemEvent.itemName
                                 + " could not be placed in the tree ");
                         }
                     }
                     else {
                         this.reportMessage("Could not place checkbox event "
-                            + checkBoxEvent.itemName
+                            + fileItemEvent.itemName
                             + " in tree");
                     }
                 }; //
@@ -346,8 +346,8 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     this.gobiiTreeNodes.push(mainNode);
                 };
                 StatusDisplayTreeComponent.prototype.ngOnChanges = function (changes) {
-                    if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
-                        var itemChangedEvent = changes['checkBoxEventChange'].currentValue;
+                    if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
+                        var itemChangedEvent = changes['fileItemEventChange'].currentValue;
                         this.placeNodeInTree(itemChangedEvent);
                     }
                     else if (changes['gobiiExtractFilterTypeEvent']
@@ -440,7 +440,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
             StatusDisplayTreeComponent = __decorate([
                 core_1.Component({
                     selector: 'status-display-tree',
-                    inputs: ['checkBoxEventChange', 'gobiiExtractFilterTypeEvent'],
+                    inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
                     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage'],
                     template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedGobiiNodes\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
                 }),

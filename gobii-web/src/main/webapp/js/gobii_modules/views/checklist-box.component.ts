@@ -8,18 +8,18 @@ import {EntityType} from "../model/type-entity";
 
 @Component({
     selector: 'checklist-box',
-    inputs: ['checkBoxEventChange', 'nameIdList'],
+    inputs: ['fileItemEventChange', 'nameIdList'],
     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage'],
     template: `<form>
                     <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
-                        <div *ngFor="let checkBoxEvent of checkBoxEvents" 
+                        <div *ngFor="let fileItemEvent of fileItemEvents" 
                             (click)=handleItemSelected($event) 
                             (hover)=handleItemHover($event)>
                             <input  type="checkbox" 
                                 (click)=handleItemChecked($event)
-                                [checked]="checkBoxEvent.checked"
-                                value={{checkBoxEvent.itemId}} 
-                                name="{{checkBoxEvent.itemName}}">&nbsp;{{checkBoxEvent.itemName}}
+                                [checked]="fileItemEvent.checked"
+                                value={{fileItemEvent.itemId}} 
+                                name="{{fileItemEvent.itemName}}">&nbsp;{{fileItemEvent.itemName}}
                         </div>            
                     </div>
                 </form>` // end template
@@ -35,7 +35,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
     // useg
     private nameIdList: NameId[];
-    private checkBoxEvents: FileItem[] = [];
+    private fileItemEvents: FileItem[] = [];
     private entityType: EntityType = EntityType.UNKNOWN
     private onItemChecked: EventEmitter<FileItem> = new EventEmitter();
     private onItemSelected: EventEmitter<FileItem> = new EventEmitter();
@@ -44,11 +44,11 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
     private handleItemChecked(arg) {
 
         let itemToChange: FileItem =
-            this.checkBoxEvents.filter(e => {
+            this.fileItemEvents.filter(e => {
                 return e.itemId == arg.currentTarget.value;
             })[0];
 
-        //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+        //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
         itemToChange.processType = arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE;
         itemToChange.checked = arg.currentTarget.checked;
         this.onItemChecked.emit(itemToChange);
@@ -69,14 +69,14 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
         arg.currentTarget.style = "background-color:#b3d9ff";
         this.previousSelectedItem = arg.currentTarget;
 
-        let checkBoxEvent: FileItem = new FileItem(ProcessType.READ,
+        let fileItemEvent: FileItem = new FileItem(ProcessType.READ,
             this.entityType,
             arg.currentTarget.children[0].value,
             arg.currentTarget.children[0].name,
             false,
             false);
 
-        this.onItemSelected.emit(checkBoxEvent);
+        this.onItemSelected.emit(fileItemEvent);
 
     }
 
@@ -91,9 +91,9 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
             scope$.entityType =scope$.nameIdList[0].entityType;
 
-            scope$.checkBoxEvents = [];
+            scope$.fileItemEvents = [];
             scope$.nameIdList.forEach(n => {
-                scope$.checkBoxEvents.push(new FileItem(
+                scope$.fileItemEvents.push(new FileItem(
                     ProcessType.CREATE,
                     scope$.entityType,
                     n.id,
@@ -121,20 +121,20 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
         let stupid:string = "foo";
 
-        if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
+        if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
 
-            this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
+            this.itemChangedEvent = changes['fileItemEventChange'].currentValue;
 
             if (this.itemChangedEvent) {
                 let itemToChange: FileItem =
-                    this.checkBoxEvents.filter(e => {
-                        return e.itemId == changes['checkBoxEventChange'].currentValue.itemId;
+                    this.fileItemEvents.filter(e => {
+                        return e.itemId == changes['fileItemEventChange'].currentValue.itemId;
                     })[0];
 
-                //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+                //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
                 if (itemToChange) {
-                    itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
-                    itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
+                    itemToChange.processType = changes['fileItemEventChange'].currentValue.processType;
+                    itemToChange.checked = changes['fileItemEventChange'].currentValue.checked;
                 }
             }
         } else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {

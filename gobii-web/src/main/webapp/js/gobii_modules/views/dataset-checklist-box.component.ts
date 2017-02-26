@@ -14,10 +14,10 @@ import {CvFilterType, CvFilters} from "../model/cv-filter-type";
 
 @Component({
     selector: 'dataset-checklist-box',
-    inputs: ['experimentId', 'checkBoxEventChange'],
+    inputs: ['experimentId', 'fileItemEventChange'],
     outputs: ['onItemChecked', 'onAddMessage'],
     template: `<checklist-box
-                    [checkBoxEventChange] = "checkBoxEventChange"
+                    [fileItemEventChange] = "fileItemEventChange"
                     [nameIdList] = "dataSetsNameIdList"
                     (onItemSelected)="handleItemSelected($event)"
                     (onItemChecked)="handleItemChecked($event)"
@@ -58,7 +58,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     // useg
     private dataSetsNameIdList:NameId[];
-    private checkBoxEvents:FileItem[] = [];
+    private fileItemEvents:FileItem[] = [];
     private experimentId:string;
     private onItemChecked:EventEmitter<FileItem> = new EventEmitter();
     private onAddMessage:EventEmitter<string> = new EventEmitter();
@@ -89,7 +89,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
         let scope$ = this;
 
         scope$.dataSetsNameIdList = [];
-        scope$.checkBoxEvents = [];
+        scope$.fileItemEvents = [];
         scope$.setDatasetDetails(undefined);
 
         if( scope$.experimentId) {
@@ -101,9 +101,9 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                     if (nameIds && ( nameIds.length > 0 )) {
 
                         scope$.dataSetsNameIdList = nameIds;
-                        // scope$.checkBoxEvents = [];
+                        // scope$.fileItemEvents = [];
                         // scope$.dataSetsNameIdList.forEach(n => {
-                        //     scope$.checkBoxEvents.push(new FileItem(
+                        //     scope$.fileItemEvents.push(new FileItem(
                         //         ProcessType.CREATE,
                         //         n.id,
                         //         n.name,

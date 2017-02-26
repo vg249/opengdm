@@ -15,7 +15,7 @@ import {CvFilterType} from "../model/cv-filter-type";
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
 @Component({
     selector: 'status-display-tree',
-    inputs: ['checkBoxEventChange', 'gobiiExtractFilterTypeEvent'],
+    inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage'],
     template: ` 
                     <p-tree [value]="gobiiTreeNodes" selectionMode="checkbox" [(selection)]="selectedGobiiNodes"></p-tree>
@@ -331,19 +331,19 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     }
 
-    addEntityNameToNode(statusTreeTemplate: StatusTreeTemplate, gobiiTreeNode: GobiiTreeNode, checkBoxEvent: FileItem) {
+    addEntityNameToNode(statusTreeTemplate: StatusTreeTemplate, gobiiTreeNode: GobiiTreeNode, fileItemEvent: FileItem) {
 
         if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
-            gobiiTreeNode.label = checkBoxEvent.itemName;
+            gobiiTreeNode.label = fileItemEvent.itemName;
         } else {
-            gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + checkBoxEvent.itemName;
+            gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + fileItemEvent.itemName;
         }
     }
 
-    placeNodeInTree(checkBoxEvent: FileItem) {
+    placeNodeInTree(fileItemEvent: FileItem) {
 
         let statusTreeTemplate: StatusTreeTemplate =
-            this.findTemplate(ExtractorItemType.CATEGORY, checkBoxEvent.entityType);
+            this.findTemplate(ExtractorItemType.CATEGORY, fileItemEvent.entityType);
 
 
         if (statusTreeTemplate != null) {
@@ -352,14 +352,14 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.LEAF) {
 
                 let existingGobiiTreeNode: GobiiTreeNode = statusTreeTemplate.getGobiiTreeNode();
-                this.addEntityNameToNode(statusTreeTemplate, existingGobiiTreeNode, checkBoxEvent);
+                this.addEntityNameToNode(statusTreeTemplate, existingGobiiTreeNode, fileItemEvent);
 
             } else if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
 
                 let newGobiiTreeNode = new GobiiTreeNode();
-                newGobiiTreeNode.entityType = checkBoxEvent.entityType;
+                newGobiiTreeNode.entityType = fileItemEvent.entityType;
                 this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
-                this.addEntityNameToNode(statusTreeTemplate, newGobiiTreeNode, checkBoxEvent);
+                this.addEntityNameToNode(statusTreeTemplate, newGobiiTreeNode, fileItemEvent);
                 statusTreeTemplate.getGobiiTreeNode().children.push(newGobiiTreeNode);
                 statusTreeTemplate.getGobiiTreeNode().expanded = true;
                 this.selectedGobiiNodes.push(newGobiiTreeNode);
@@ -368,7 +368,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             } else {
                 this.reportMessage("The node of category  "
                     + statusTreeTemplate.getCategoryType()
-                    + " for checkbox event " + checkBoxEvent.itemName
+                    + " for checkbox event " + fileItemEvent.itemName
                     + " could not be placed in the tree ");
             }
 
@@ -376,7 +376,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         } else {
 
             this.reportMessage("Could not place checkbox event "
-                + checkBoxEvent.itemName
+                + fileItemEvent.itemName
                 + " in tree");
         }
 
@@ -483,9 +483,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             ]: SimpleChange
     }) {
 
-        if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
+        if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
 
-            let itemChangedEvent: FileItem = changes['checkBoxEventChange'].currentValue;
+            let itemChangedEvent: FileItem = changes['fileItemEventChange'].currentValue;
 
 
             this.placeNodeInTree(itemChangedEvent);
@@ -499,14 +499,14 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             // if (this.itemChangedEvent) {
             //     let itemToChange:FileItem =
-            //         this.checkBoxEvents.filter(e => {
-            //             return e.id == changes['checkBoxEventChange'].currentValue.id;
+            //         this.fileItemEvents.filter(e => {
+            //             return e.id == changes['fileItemEventChange'].currentValue.id;
             //         })[0];
             //
-            //     //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
+            //     //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
             //     if (itemToChange) {
-            //         itemToChange.processType = changes['checkBoxEventChange'].currentValue.processType;
-            //         itemToChange.checked = changes['checkBoxEventChange'].currentValue.checked;
+            //         itemToChange.processType = changes['fileItemEventChange'].currentValue.processType;
+            //         itemToChange.checked = changes['fileItemEventChange'].currentValue.checked;
             //     }
             // }
         } else if (changes['gobiiExtractFilterTypeEvent']

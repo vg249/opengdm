@@ -4,7 +4,6 @@ import {SampleMarkerList} from "../model/sample-marker-list";
 @Component({
     selector: 'sample-marker-box',
     outputs: ['onMarkerSamplesCompleted'],
-    // inputs: ['dataSetCheckBoxEvents'],
     template: `<div class="container-fluid">
             
                 <div class="row">

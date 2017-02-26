@@ -107,7 +107,7 @@ import {CvFilters, CvFilterType} from "../model/cv-filter-type";
                             <BR>
                             <label class="the-label">Platforms:</label><BR>
                             <checklist-box
-                                [checkBoxEventChange] = "platformCheckBoxEventChange"
+                                [fileItemEventChange] = "platformFileItemEventChange"
                                 [nameIdList] = "platformsNameIdList"
                                 (onItemSelected)="handlePlatformSelected($event)"
                                 (onItemChecked)="handlePlatformChecked($event)"
@@ -121,7 +121,7 @@ import {CvFilters, CvFilterType} from "../model/cv-filter-type";
                             <BR>
                             <label class="the-label">Data Sets</label><BR>
                             <dataset-checklist-box
-                                [checkBoxEventChange] = "datasetCheckBoxEventChange"
+                                [fileItemEventChange] = "datasetFileItemEventChange"
                                 [experimentId] = "selectedExperimentId" 
                                 (onItemChecked)="handleCheckedDataSetItem($event)"
                                 (onAddMessage) = "handleAddMessage($event)">
@@ -139,7 +139,7 @@ import {CvFilters, CvFilterType} from "../model/cv-filter-type";
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Datasets</legend>
                                 <criteria-display 
-                                    [dataSetCheckBoxEvents] = "datasetCheckboxEvents"
+                                    [dataSetFileItemEvents] = "datasetFileItemEvents"
                                     (onItemUnChecked) = "handleExtractDataSetUnchecked($event)"></criteria-display>
                             </fieldset>
                         </div>
@@ -194,7 +194,7 @@ import {CvFilters, CvFilterType} from "../model/cv-filter-type";
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Status: {{currentStatus}}</legend>
                                 <status-display-tree
-                                    [checkBoxEventChange] = "treeCheckboxEvent"
+                                    [fileItemEventChange] = "treeFileItemEvent"
                                     [gobiiExtractFilterTypeEvent] = "selectedExportType"
                                     (onAddMessage)="handleAddMessage($event)">
                                 </status-display-tree>
@@ -218,9 +218,9 @@ export class ExtractorRoot {
     title = 'Gobii Web';
 
 
-    private treeCheckboxEvent:FileItem;
+    private treeFileItemEvent:FileItem;
 //    private selectedExportTypeEvent:GobiiExtractFilterType;
-    private datasetCheckboxEvents: FileItem[] = [];
+    private datasetFileItemEvents: FileItem[] = [];
     private gobiiDatasetExtracts: GobiiDataSetExtract[] = [];
     private messages: string[] = [];
 
@@ -551,7 +551,7 @@ export class ExtractorRoot {
         this.checkedPlatformId = arg.id;
     }
 
-    private platformCheckBoxEventChange: FileItem;
+    private platformFileItemEventChange: FileItem;
 
 
     private initializePlatforms() {
@@ -615,8 +615,8 @@ export class ExtractorRoot {
 
         } else {
 
-            let indexOfEventToRemove: number = this.datasetCheckboxEvents.indexOf(arg);
-            this.datasetCheckboxEvents.splice(indexOfEventToRemove, 1);
+            let indexOfEventToRemove: number = this.datasetFileItemEvents.indexOf(arg);
+            this.datasetFileItemEvents.splice(indexOfEventToRemove, 1);
 
             this.gobiiDatasetExtracts =
                 this.gobiiDatasetExtracts
@@ -625,11 +625,11 @@ export class ExtractorRoot {
                     });
         } // if-else we're adding
 
-        this.treeCheckboxEvent = FileItem.newCheckboxEvent(arg);
+        this.treeFileItemEvent = FileItem.newFileItemEvent(arg);
 
     }
 
-    private datasetCheckBoxEventChange: FileItem;
+    private datasetFileItemEventChange: FileItem;
     private changeTrigger: number = 0;
 
     private handleExtractDataSetUnchecked(arg: FileItem) {
@@ -638,7 +638,7 @@ export class ExtractorRoot {
 
 
 
-        this.datasetCheckboxEvents.push(arg);
+        this.datasetFileItemEvents.push(arg);
         let dataSetExtractsToRemove: GobiiDataSetExtract[] = this.gobiiDatasetExtracts
             .filter(e => {
                 return e.getdataSetId() === Number(arg.itemId)
@@ -650,8 +650,8 @@ export class ExtractorRoot {
             this.gobiiDatasetExtracts.splice(idxToRemove, 1);
         }
 
-        this.datasetCheckBoxEventChange = arg;
-        this.treeCheckboxEvent = FileItem.newCheckboxEvent(arg);
+        this.datasetFileItemEventChange = arg;
+        this.treeFileItemEvent = FileItem.newFileItemEvent(arg);
 
     }
 

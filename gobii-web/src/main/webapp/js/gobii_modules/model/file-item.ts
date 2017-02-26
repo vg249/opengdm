@@ -18,21 +18,21 @@ export class FileItem {
 //        this.uniqueId = Guid.generateUUID();
     }
 
-    //OnChange does not see the CheckboxEvent as being a new event unless it's
+    //OnChange does not see the FileItemEvent as being a new event unless it's
     //a branch new instance, even if any of the property values are different.
     //I'm sure there's a better way to do this. For example, the tree component should
     //subscribe to an observer that is fed by the root component?
-    public static newCheckboxEvent(checkboxEvent:FileItem): FileItem {
+    public static newFileItemEvent(fileItemEvent:FileItem): FileItem {
 
-//        let existingUniqueId = checkboxEvent.uniqueId;
+//        let existingUniqueId = fileItemEvent.uniqueId;
 
         let returnVal:FileItem  = new FileItem(
-            checkboxEvent.processType,
-            checkboxEvent.entityType,
-            checkboxEvent.itemId,
-            checkboxEvent.itemName,
-            checkboxEvent.checked,
-            checkboxEvent.required
+            fileItemEvent.processType,
+            fileItemEvent.entityType,
+            fileItemEvent.itemId,
+            fileItemEvent.itemName,
+            fileItemEvent.checked,
+            fileItemEvent.required
         );
 
 //        returnVal.uniqueId = existingUniqueId;
