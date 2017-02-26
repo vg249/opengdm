@@ -44,7 +44,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 } // ctor
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var itemToChange = this.checkBoxEvents.filter(function (e) {
-                        return e.id == arg.currentTarget.value;
+                        return e.itemId == arg.currentTarget.value;
                     })[0];
                     //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
                     itemToChange.processType = arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE;
@@ -86,7 +86,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
                         if (this.itemChangedEvent) {
                             var itemToChange = this.checkBoxEvents.filter(function (e) {
-                                return e.id == changes['checkBoxEventChange'].currentValue.id;
+                                return e.itemId == changes['checkBoxEventChange'].currentValue.itemId;
                             })[0];
                             //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
                             if (itemToChange) {
@@ -110,7 +110,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     selector: 'checklist-box',
                     inputs: ['checkBoxEventChange', 'nameIdList'],
                     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage'],
-                    template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let checkBoxEvent of checkBoxEvents\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                [checked]=\"checkBoxEvent.checked\"\n                                value={{checkBoxEvent.id}} \n                                name=\"{{checkBoxEvent.name}}\">&nbsp;{{checkBoxEvent.name}}\n                        </div>            \n                    </div>\n                </form>" // end template
+                    template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let checkBoxEvent of checkBoxEvents\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                [checked]=\"checkBoxEvent.checked\"\n                                value={{checkBoxEvent.itemId}} \n                                name=\"{{checkBoxEvent.itemName}}\">&nbsp;{{checkBoxEvent.itemName}}\n                        </div>            \n                    </div>\n                </form>" // end template
                 }),
                 __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService])
             ], CheckListBoxComponent);

@@ -256,10 +256,10 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                 };
                 StatusDisplayTreeComponent.prototype.addEntityNameToNode = function (statusTreeTemplate, gobiiTreeNode, checkBoxEvent) {
                     if (statusTreeTemplate.getCategoryType() === extractor_submission_item_1.ExtractorCategoryType.ENTITY_CONTAINER) {
-                        gobiiTreeNode.label = checkBoxEvent.name;
+                        gobiiTreeNode.label = checkBoxEvent.itemName;
                     }
                     else {
-                        gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + checkBoxEvent.name;
+                        gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + checkBoxEvent.itemName;
                     }
                 };
                 StatusDisplayTreeComponent.prototype.placeNodeInTree = function (checkBoxEvent) {
@@ -282,13 +282,13 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                         else {
                             this.reportMessage("The node of category  "
                                 + statusTreeTemplate.getCategoryType()
-                                + " for checkbox event " + checkBoxEvent.name
+                                + " for checkbox event " + checkBoxEvent.itemName
                                 + " could not be placed in the tree ");
                         }
                     }
                     else {
                         this.reportMessage("Could not place checkbox event "
-                            + checkBoxEvent.name
+                            + checkBoxEvent.itemName
                             + " in tree");
                     }
                 }; //

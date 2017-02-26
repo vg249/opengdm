@@ -207,7 +207,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleContactForPiSelected = function (arg) {
                     this.selectedContactIdForPi = arg;
                     this.initializeProjectNameIds();
-                    //console.log("selected contact id:" + arg);
+                    //console.log("selected contact itemId:" + arg);
                 };
                 ExtractorRoot.prototype.initializeContactsForPi = function () {
                     var scope$ = this;
@@ -227,7 +227,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 };
                 ExtractorRoot.prototype.handleFormatSelected = function (arg) {
                     this.selectedFormatName = arg;
-                    //console.log("selected contact id:" + arg);
+                    //console.log("selected contact itemId:" + arg);
                 };
                 ExtractorRoot.prototype.handleProjectSelected = function (arg) {
                     this.selectedProjectId = arg;
@@ -257,7 +257,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.selectedExperimentId = arg;
                     this.selectedExperimentDetailId = arg;
                     this.displayExperimentDetail = true;
-                    //console.log("selected contact id:" + arg);
+                    //console.log("selected contact itemId:" + arg);
                 };
                 ExtractorRoot.prototype.initializeExperimentNameIds = function () {
                     var scope$ = this;
@@ -327,7 +327,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.gobiiDatasetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(type_gobii_file_1.GobiiFileType.GENERIC, false, Number(this.selectedDatasetId), this.selectedDatasetName, null, this.selectedExportType, this.markerList, this.sampleList, this.uploadFileName, this.selectedSampleListType, null, null));
                 };
                 ExtractorRoot.prototype.handleCheckedDataSetItem = function (arg) {
-                    this.selectedDatasetId = arg.id;
+                    this.selectedDatasetId = arg.itemId;
                     if (type_process_1.ProcessType.CREATE == arg.processType) {
                         this.makeDatasetExtract();
                     }
@@ -337,18 +337,18 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.gobiiDatasetExtracts =
                             this.gobiiDatasetExtracts
                                 .filter(function (item) {
-                                return item.getdataSetId() != Number(arg.id);
+                                return item.getdataSetId() != Number(arg.itemId);
                             });
                     } // if-else we're adding
                     this.treeCheckboxEvent = event_checkbox_1.CheckBoxEvent.newCheckboxEvent(arg);
                 };
                 ExtractorRoot.prototype.handleExtractDataSetUnchecked = function (arg) {
                     // this.changeTrigger++;
-                    // this.dataSetIdToUncheck = Number(arg.id);
+                    // this.dataSetIdToUncheck = Number(arg.itemId);
                     this.datasetCheckboxEvents.push(arg);
                     var dataSetExtractsToRemove = this.gobiiDatasetExtracts
                         .filter(function (e) {
-                        return e.getdataSetId() === Number(arg.id);
+                        return e.getdataSetId() === Number(arg.itemId);
                     });
                     if (dataSetExtractsToRemove.length > 0) {
                         var idxToRemove = this.gobiiDatasetExtracts.indexOf(dataSetExtractsToRemove[0]);

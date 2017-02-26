@@ -18,8 +18,8 @@ import {EntityType} from "../model/type-entity";
                             <input  type="checkbox" 
                                 (click)=handleItemChecked($event)
                                 [checked]="checkBoxEvent.checked"
-                                value={{checkBoxEvent.id}} 
-                                name="{{checkBoxEvent.name}}">&nbsp;{{checkBoxEvent.name}}
+                                value={{checkBoxEvent.itemId}} 
+                                name="{{checkBoxEvent.itemName}}">&nbsp;{{checkBoxEvent.itemName}}
                         </div>            
                     </div>
                 </form>` // end template
@@ -45,7 +45,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
         let itemToChange: CheckBoxEvent =
             this.checkBoxEvents.filter(e => {
-                return e.id == arg.currentTarget.value;
+                return e.itemId == arg.currentTarget.value;
             })[0];
 
         //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);
@@ -128,7 +128,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
             if (this.itemChangedEvent) {
                 let itemToChange: CheckBoxEvent =
                     this.checkBoxEvents.filter(e => {
-                        return e.id == changes['checkBoxEventChange'].currentValue.id;
+                        return e.itemId == changes['checkBoxEventChange'].currentValue.itemId;
                     })[0];
 
                 //let indexOfItemToChange:number = this.checkBoxEvents.indexOf(arg.currentTarget.name);

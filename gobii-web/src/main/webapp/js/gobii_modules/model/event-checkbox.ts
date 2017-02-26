@@ -6,14 +6,14 @@ import {EntityType} from "./type-entity";
 export class CheckBoxEvent {
     constructor(public processType: ProcessType,
                 public entityType:EntityType,
-                public id: string,
-                public name: string,
+                public itemId: string,
+                public itemName: string,
                 public checked: boolean,
                 public required: boolean) {
 
         this.processType = processType;
-        this.id = id;
-        this.name = name;
+        this.itemId = itemId;
+        this.itemName = itemName;
         this.required = required;
 //        this.uniqueId = Guid.generateUUID();
     }
@@ -29,8 +29,8 @@ export class CheckBoxEvent {
         let returnVal:CheckBoxEvent  = new CheckBoxEvent(
             checkboxEvent.processType,
             checkboxEvent.entityType,
-            checkboxEvent.id,
-            checkboxEvent.name,
+            checkboxEvent.itemId,
+            checkboxEvent.itemName,
             checkboxEvent.checked,
             checkboxEvent.required
         );

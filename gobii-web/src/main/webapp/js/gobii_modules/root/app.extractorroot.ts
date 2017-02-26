@@ -396,7 +396,7 @@ export class ExtractorRoot {
     private handleContactForPiSelected(arg) {
         this.selectedContactIdForPi = arg;
         this.initializeProjectNameIds();
-        //console.log("selected contact id:" + arg);
+        //console.log("selected contact itemId:" + arg);
     }
 
     private initializeContactsForPi() {
@@ -427,7 +427,7 @@ export class ExtractorRoot {
 
     private handleFormatSelected(arg) {
         this.selectedFormatName = arg;
-        //console.log("selected contact id:" + arg);
+        //console.log("selected contact itemId:" + arg);
     }
 
 // ********************************************************************
@@ -478,7 +478,7 @@ export class ExtractorRoot {
         this.selectedExperimentDetailId = arg;
         this.displayExperimentDetail = true;
 
-        //console.log("selected contact id:" + arg);
+        //console.log("selected contact itemId:" + arg);
     }
 
     private initializeExperimentNameIds() {
@@ -607,7 +607,7 @@ export class ExtractorRoot {
     private handleCheckedDataSetItem(arg: CheckBoxEvent) {
 
 
-        this.selectedDatasetId = arg.id;
+        this.selectedDatasetId = arg.itemId;
 
         if (ProcessType.CREATE == arg.processType) {
 
@@ -621,7 +621,7 @@ export class ExtractorRoot {
             this.gobiiDatasetExtracts =
                 this.gobiiDatasetExtracts
                     .filter((item: GobiiDataSetExtract) => {
-                        return item.getdataSetId() != Number(arg.id)
+                        return item.getdataSetId() != Number(arg.itemId)
                     });
         } // if-else we're adding
 
@@ -634,14 +634,14 @@ export class ExtractorRoot {
 
     private handleExtractDataSetUnchecked(arg: CheckBoxEvent) {
         // this.changeTrigger++;
-        // this.dataSetIdToUncheck = Number(arg.id);
+        // this.dataSetIdToUncheck = Number(arg.itemId);
 
 
 
         this.datasetCheckboxEvents.push(arg);
         let dataSetExtractsToRemove: GobiiDataSetExtract[] = this.gobiiDatasetExtracts
             .filter(e => {
-                return e.getdataSetId() === Number(arg.id)
+                return e.getdataSetId() === Number(arg.itemId)
             });
 
         if (dataSetExtractsToRemove.length > 0) {

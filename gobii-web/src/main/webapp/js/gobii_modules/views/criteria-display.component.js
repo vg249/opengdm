@@ -42,7 +42,7 @@ System.register(["@angular/core", "../model/event-checkbox", "../model/type-proc
                     var checkEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.DELETE, type_entity_1.EntityType.DataSets, arg.currentTarget.value, arg.currentTarget.name, false, false);
                     var itemToRemove = this.dataSetCheckBoxEvents
                         .filter(function (e) {
-                        return e.id === arg.currentTarget.value;
+                        return e.itemId === arg.currentTarget.value;
                     })[0];
                     var indexOfItemToRemove = this.dataSetCheckBoxEvents.indexOf(itemToRemove);
                     if (indexOfItemToRemove > -1) {
@@ -69,7 +69,7 @@ System.register(["@angular/core", "../model/event-checkbox", "../model/type-proc
                     selector: 'criteria-display',
                     inputs: ['dataSetCheckBoxEvents'],
                     outputs: ['onItemUnChecked', 'onItemSelected'],
-                    template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let dataSetCheckBoxEvent of dataSetCheckBoxEvents\"\n                                (click)=handleItemSelected($event)\n                                (hover)=handleItemHover($event)>\n                                <input  type=\"checkbox\"\n                                    (click)=handleItemUnChecked($event)\n                                    value={{dataSetCheckBoxEvent.id}}\n                                    name=\"{{dataSetCheckBoxEvent.name}}\"\n                                    checked>&nbsp;{{dataSetCheckBoxEvent.name}}\n                        </div>\n                    </div>\n                </form>"
+                    template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let dataSetCheckBoxEvent of dataSetCheckBoxEvents\"\n                                (click)=handleItemSelected($event)\n                                (hover)=handleItemHover($event)>\n                                <input  type=\"checkbox\"\n                                    (click)=handleItemUnChecked($event)\n                                    value={{dataSetCheckBoxEvent.itemId}}\n                                    name=\"{{dataSetCheckBoxEvent.itemName}}\"\n                                    checked>&nbsp;{{dataSetCheckBoxEvent.itemName}}\n                        </div>\n                    </div>\n                </form>"
                 }),
                 __metadata("design:paramtypes", [])
             ], CriteriaDisplayComponent);

@@ -334,9 +334,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     addEntityNameToNode(statusTreeTemplate: StatusTreeTemplate, gobiiTreeNode: GobiiTreeNode, checkBoxEvent: CheckBoxEvent) {
 
         if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
-            gobiiTreeNode.label = checkBoxEvent.name;
+            gobiiTreeNode.label = checkBoxEvent.itemName;
         } else {
-            gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + checkBoxEvent.name;
+            gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + checkBoxEvent.itemName;
         }
     }
 
@@ -368,7 +368,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             } else {
                 this.reportMessage("The node of category  "
                     + statusTreeTemplate.getCategoryType()
-                    + " for checkbox event " + checkBoxEvent.name
+                    + " for checkbox event " + checkBoxEvent.itemName
                     + " could not be placed in the tree ");
             }
 
@@ -376,7 +376,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         } else {
 
             this.reportMessage("Could not place checkbox event "
-                + checkBoxEvent.name
+                + checkBoxEvent.itemName
                 + " in tree");
         }
 

@@ -15,9 +15,9 @@ import {EntityType} from "../model/type-entity";
                                 (hover)=handleItemHover($event)>
                                 <input  type="checkbox"
                                     (click)=handleItemUnChecked($event)
-                                    value={{dataSetCheckBoxEvent.id}}
-                                    name="{{dataSetCheckBoxEvent.name}}"
-                                    checked>&nbsp;{{dataSetCheckBoxEvent.name}}
+                                    value={{dataSetCheckBoxEvent.itemId}}
+                                    name="{{dataSetCheckBoxEvent.itemName}}"
+                                    checked>&nbsp;{{dataSetCheckBoxEvent.itemName}}
                         </div>
                     </div>
                 </form>`
@@ -52,7 +52,7 @@ export class CriteriaDisplayComponent implements OnInit {
         let itemToRemove: CheckBoxEvent =
             this.dataSetCheckBoxEvents
                 .filter(e => {
-                    return e.id === arg.currentTarget.value
+                    return e.itemId === arg.currentTarget.value
                 })[0];
 
         let indexOfItemToRemove: number = this.dataSetCheckBoxEvents.indexOf(itemToRemove);

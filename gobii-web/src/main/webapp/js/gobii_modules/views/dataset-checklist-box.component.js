@@ -60,7 +60,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this.onAddMessage.emit(arg);
                 };
                 DataSetCheckListBoxComponent.prototype.handleItemSelected = function (arg) {
-                    var selectedDataSetId = Number(arg.id);
+                    var selectedDataSetId = Number(arg.itemId);
                     this.setDatasetDetails(selectedDataSetId);
                 };
                 DataSetCheckListBoxComponent.prototype.setList = function () {
