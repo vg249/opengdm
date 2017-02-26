@@ -2,10 +2,14 @@ import {ProcessType} from "./type-process";
 import {TreeNode} from "primeng/components/common/api";
 import {Guid} from "./guid";
 import {EntityType} from "./type-entity";
+import {CvFilterType} from "./cv-filter-type";
+import {GobiiExtractFilterType} from "./type-extractor-filter";
 
 export class FileItem {
-    constructor(public processType: ProcessType,
+    constructor(public gobiiExtractFilterType:GobiiExtractFilterType,
+                public processType: ProcessType,
                 public entityType:EntityType,
+                public cvFilterType:CvFilterType,
                 public itemId: string,
                 public itemName: string,
                 public checked: boolean,
@@ -27,8 +31,10 @@ export class FileItem {
         let existingUniqueId:string = fileItem.fileItemUniqueId;
 
         let returnVal:FileItem  = new FileItem(
+            fileItem.gobiiExtractFilterType,
             fileItem.processType,
             fileItem.entityType,
+            fileItem.cvFilterType,
             fileItem.itemId,
             fileItem.itemName,
             fileItem.checked,

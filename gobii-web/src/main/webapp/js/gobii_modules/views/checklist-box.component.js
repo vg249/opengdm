@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-process", "../model/file-item", "../model/type-entity"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-process", "../model/file-item", "../model/type-entity", "../model/type-extractor-filter", "../model/cv-filter-type"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, dto_request_service_1, type_process_1, file_item_1, type_entity_1, CheckListBoxComponent;
+    var core_1, name_id_1, dto_request_service_1, type_process_1, file_item_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, CheckListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -30,6 +30,12 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             },
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
+            },
+            function (type_extractor_filter_1_1) {
+                type_extractor_filter_1 = type_extractor_filter_1_1;
+            },
+            function (cv_filter_type_1_1) {
+                cv_filter_type_1 = cv_filter_type_1_1;
             }
         ],
         execute: function () {
@@ -60,7 +66,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     }
                     arg.currentTarget.style = "background-color:#b3d9ff";
                     this.previousSelectedItem = arg.currentTarget;
-                    var fileItemEvent = new file_item_1.FileItem(type_process_1.ProcessType.READ, this.entityType, arg.currentTarget.children[0].value, arg.currentTarget.children[0].name, false, false);
+                    var fileItemEvent = new file_item_1.FileItem(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.READ, this.entityType, cv_filter_type_1.CvFilterType.UKNOWN, arg.currentTarget.children[0].value, arg.currentTarget.children[0].name, false, false);
                     this.onItemSelected.emit(fileItemEvent);
                 };
                 CheckListBoxComponent.prototype.setList = function (nameIdList) {
@@ -71,7 +77,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         scope$.entityType = scope$.nameIdList[0].entityType;
                         scope$.fileItemEvents = [];
                         scope$.nameIdList.forEach(function (n) {
-                            scope$.fileItemEvents.push(new file_item_1.FileItem(type_process_1.ProcessType.CREATE, scope$.entityType, n.id, n.name, false, false));
+                            scope$.fileItemEvents.push(new file_item_1.FileItem(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.CREATE, scope$.entityType, cv_filter_type_1.CvFilterType.UKNOWN, n.id, n.name, false, false));
                         });
                     }
                     else {

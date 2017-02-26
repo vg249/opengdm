@@ -10,9 +10,11 @@ System.register(["./guid"], function (exports_1, context_1) {
         ],
         execute: function () {
             FileItem = (function () {
-                function FileItem(processType, entityType, itemId, itemName, checked, required) {
+                function FileItem(gobiiExtractFilterType, processType, entityType, cvFilterType, itemId, itemName, checked, required) {
+                    this.gobiiExtractFilterType = gobiiExtractFilterType;
                     this.processType = processType;
                     this.entityType = entityType;
+                    this.cvFilterType = cvFilterType;
                     this.itemId = itemId;
                     this.itemName = itemName;
                     this.checked = checked;
@@ -29,7 +31,7 @@ System.register(["./guid"], function (exports_1, context_1) {
                 //subscribe to an observer that is fed by the root component?
                 FileItem.newFileItemEvent = function (fileItem) {
                     var existingUniqueId = fileItem.fileItemUniqueId;
-                    var returnVal = new FileItem(fileItem.processType, fileItem.entityType, fileItem.itemId, fileItem.itemName, fileItem.checked, fileItem.required);
+                    var returnVal = new FileItem(fileItem.gobiiExtractFilterType, fileItem.processType, fileItem.entityType, fileItem.cvFilterType, fileItem.itemId, fileItem.itemName, fileItem.checked, fileItem.required);
                     returnVal.fileItemUniqueId = existingUniqueId;
                     return returnVal;
                 };

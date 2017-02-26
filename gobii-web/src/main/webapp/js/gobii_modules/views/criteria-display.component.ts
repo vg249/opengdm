@@ -2,6 +2,8 @@ import {Component, OnInit, SimpleChange, EventEmitter} from "@angular/core";
 import {FileItem} from "../model/file-item";
 import {ProcessType} from "../model/type-process";
 import {EntityType} from "../model/type-entity";
+import {GobiiExtractFilterType} from "../model/type-extractor-filter";
+import {CvFilterType} from "../model/cv-filter-type";
 
 
 @Component({
@@ -42,8 +44,11 @@ export class CriteriaDisplayComponent implements OnInit {
 
     // In this component, every item starts out checked; unchecking it removes it
     private handleItemUnChecked(arg) {
-        let checkEvent: FileItem = new FileItem(ProcessType.DELETE,
+        let checkEvent: FileItem = new FileItem(
+            GobiiExtractFilterType.UNKNOWN,
+            ProcessType.DELETE,
             EntityType.DataSets,
+            CvFilterType.UKNOWN,
             arg.currentTarget.value,
             arg.currentTarget.name,
             false,

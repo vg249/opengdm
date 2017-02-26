@@ -4,6 +4,8 @@ import {DtoRequestService} from "../services/core/dto-request.service";
 import {ProcessType} from "../model/type-process";
 import {FileItem} from "../model/file-item";
 import {EntityType} from "../model/type-entity";
+import {GobiiExtractFilterType} from "../model/type-extractor-filter";
+import {CvFilterType} from "../model/cv-filter-type";
 
 
 @Component({
@@ -69,8 +71,11 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
         arg.currentTarget.style = "background-color:#b3d9ff";
         this.previousSelectedItem = arg.currentTarget;
 
-        let fileItemEvent: FileItem = new FileItem(ProcessType.READ,
+        let fileItemEvent: FileItem = new FileItem(
+            GobiiExtractFilterType.UNKNOWN,
+            ProcessType.READ,
             this.entityType,
+            CvFilterType.UKNOWN,
             arg.currentTarget.children[0].value,
             arg.currentTarget.children[0].name,
             false,
@@ -94,8 +99,10 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
             scope$.fileItemEvents = [];
             scope$.nameIdList.forEach(n => {
                 scope$.fileItemEvents.push(new FileItem(
+                    GobiiExtractFilterType.UNKNOWN,
                     ProcessType.CREATE,
                     scope$.entityType,
+                    CvFilterType.UKNOWN,
                     n.id,
                     n.name,
                     false,
