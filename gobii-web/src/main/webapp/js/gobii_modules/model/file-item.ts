@@ -15,7 +15,7 @@ export class FileItem {
         this.itemId = itemId;
         this.itemName = itemName;
         this.required = required;
-//        this.uniqueId = Guid.generateUUID();
+        this.fileItemUniqueId = Guid.generateUUID();
     }
 
     //OnChange does not see the FileItemEvent as being a new event unless it's
@@ -24,7 +24,7 @@ export class FileItem {
     //subscribe to an observer that is fed by the root component?
     public static newFileItemEvent(fileItem:FileItem): FileItem {
 
-//        let existingUniqueId = fileItemEvent.uniqueId;
+        let existingUniqueId:string = fileItem.fileItemUniqueId;
 
         let returnVal:FileItem  = new FileItem(
             fileItem.processType,
@@ -35,11 +35,11 @@ export class FileItem {
             fileItem.required
         );
 
-//        returnVal.uniqueId = existingUniqueId;
+        returnVal.fileItemUniqueId = existingUniqueId;
 
         return returnVal;
     }
 
-    public uniqueId:string;
+    public fileItemUniqueId:string;
 
 } // FileItem()

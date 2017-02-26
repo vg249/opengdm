@@ -1,9 +1,13 @@
-System.register([], function (exports_1, context_1) {
+System.register(["./guid"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var FileItem;
+    var guid_1, FileItem;
     return {
-        setters: [],
+        setters: [
+            function (guid_1_1) {
+                guid_1 = guid_1_1;
+            }
+        ],
         execute: function () {
             FileItem = (function () {
                 function FileItem(processType, entityType, itemId, itemName, checked, required) {
@@ -17,16 +21,16 @@ System.register([], function (exports_1, context_1) {
                     this.itemId = itemId;
                     this.itemName = itemName;
                     this.required = required;
-                    //        this.uniqueId = Guid.generateUUID();
+                    this.fileItemUniqueId = guid_1.Guid.generateUUID();
                 }
                 //OnChange does not see the FileItemEvent as being a new event unless it's
                 //a branch new instance, even if any of the property values are different.
                 //I'm sure there's a better way to do this. For example, the tree component should
                 //subscribe to an observer that is fed by the root component?
                 FileItem.newFileItemEvent = function (fileItem) {
-                    //        let existingUniqueId = fileItemEvent.uniqueId;
+                    var existingUniqueId = fileItem.fileItemUniqueId;
                     var returnVal = new FileItem(fileItem.processType, fileItem.entityType, fileItem.itemId, fileItem.itemName, fileItem.checked, fileItem.required);
-                    //        returnVal.uniqueId = existingUniqueId;
+                    returnVal.fileItemUniqueId = existingUniqueId;
                     return returnVal;
                 };
                 return FileItem;
