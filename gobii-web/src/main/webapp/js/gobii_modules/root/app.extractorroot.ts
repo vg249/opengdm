@@ -3,7 +3,7 @@ import {Component} from "@angular/core";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract";
 import {ProcessType} from "../model/type-process";
-import {CheckBoxEvent} from "../model/event-checkbox";
+import {FileItem} from "../model/file-item";
 import {ServerConfig} from "../model/server-config";
 import {EntityType} from "../model/type-entity";
 import {NameId} from "../model/name-id";
@@ -218,9 +218,9 @@ export class ExtractorRoot {
     title = 'Gobii Web';
 
 
-    private treeCheckboxEvent:CheckBoxEvent;
+    private treeCheckboxEvent:FileItem;
 //    private selectedExportTypeEvent:GobiiExtractFilterType;
-    private datasetCheckboxEvents: CheckBoxEvent[] = [];
+    private datasetCheckboxEvents: FileItem[] = [];
     private gobiiDatasetExtracts: GobiiDataSetExtract[] = [];
     private messages: string[] = [];
 
@@ -551,7 +551,7 @@ export class ExtractorRoot {
         this.checkedPlatformId = arg.id;
     }
 
-    private platformCheckBoxEventChange: CheckBoxEvent;
+    private platformCheckBoxEventChange: FileItem;
 
 
     private initializePlatforms() {
@@ -604,7 +604,7 @@ export class ExtractorRoot {
     private selectedDatasetId: string;
     private selectedDatasetName: string;
 
-    private handleCheckedDataSetItem(arg: CheckBoxEvent) {
+    private handleCheckedDataSetItem(arg: FileItem) {
 
 
         this.selectedDatasetId = arg.itemId;
@@ -625,14 +625,14 @@ export class ExtractorRoot {
                     });
         } // if-else we're adding
 
-        this.treeCheckboxEvent = CheckBoxEvent.newCheckboxEvent(arg);
+        this.treeCheckboxEvent = FileItem.newCheckboxEvent(arg);
 
     }
 
-    private datasetCheckBoxEventChange: CheckBoxEvent;
+    private datasetCheckBoxEventChange: FileItem;
     private changeTrigger: number = 0;
 
-    private handleExtractDataSetUnchecked(arg: CheckBoxEvent) {
+    private handleExtractDataSetUnchecked(arg: FileItem) {
         // this.changeTrigger++;
         // this.dataSetIdToUncheck = Number(arg.itemId);
 
@@ -651,7 +651,7 @@ export class ExtractorRoot {
         }
 
         this.datasetCheckBoxEventChange = arg;
-        this.treeCheckboxEvent = CheckBoxEvent.newCheckboxEvent(arg);
+        this.treeCheckboxEvent = FileItem.newCheckboxEvent(arg);
 
     }
 

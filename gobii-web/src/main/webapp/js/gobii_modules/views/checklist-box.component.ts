@@ -2,7 +2,7 @@ import {Component, OnInit, OnChanges, SimpleChange, EventEmitter, Input} from "@
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {ProcessType} from "../model/type-process";
-import {CheckBoxEvent} from "../model/event-checkbox";
+import {FileItem} from "../model/file-item";
 import {EntityType} from "../model/type-entity";
 
 
@@ -35,15 +35,15 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
     // useg
     private nameIdList: NameId[];
-    private checkBoxEvents: CheckBoxEvent[] = [];
+    private checkBoxEvents: FileItem[] = [];
     private entityType: EntityType = EntityType.UNKNOWN
-    private onItemChecked: EventEmitter<CheckBoxEvent> = new EventEmitter();
-    private onItemSelected: EventEmitter<CheckBoxEvent> = new EventEmitter();
+    private onItemChecked: EventEmitter<FileItem> = new EventEmitter();
+    private onItemSelected: EventEmitter<FileItem> = new EventEmitter();
     private onAddMessage: EventEmitter<string> = new EventEmitter();
 
     private handleItemChecked(arg) {
 
-        let itemToChange: CheckBoxEvent =
+        let itemToChange: FileItem =
             this.checkBoxEvents.filter(e => {
                 return e.itemId == arg.currentTarget.value;
             })[0];
@@ -69,7 +69,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
         arg.currentTarget.style = "background-color:#b3d9ff";
         this.previousSelectedItem = arg.currentTarget;
 
-        let checkBoxEvent: CheckBoxEvent = new CheckBoxEvent(ProcessType.READ,
+        let checkBoxEvent: FileItem = new FileItem(ProcessType.READ,
             this.entityType,
             arg.currentTarget.children[0].value,
             arg.currentTarget.children[0].name,
@@ -93,7 +93,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
             scope$.checkBoxEvents = [];
             scope$.nameIdList.forEach(n => {
-                scope$.checkBoxEvents.push(new CheckBoxEvent(
+                scope$.checkBoxEvents.push(new FileItem(
                     ProcessType.CREATE,
                     scope$.entityType,
                     n.id,
@@ -115,7 +115,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
     }
 
-    private itemChangedEvent: CheckBoxEvent;
+    private itemChangedEvent: FileItem;
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
@@ -126,7 +126,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
             this.itemChangedEvent = changes['checkBoxEventChange'].currentValue;
 
             if (this.itemChangedEvent) {
-                let itemToChange: CheckBoxEvent =
+                let itemToChange: FileItem =
                     this.checkBoxEvents.filter(e => {
                         return e.itemId == changes['checkBoxEventChange'].currentValue.itemId;
                     })[0];

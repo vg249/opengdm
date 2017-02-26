@@ -75,7 +75,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                                 scope$.dataSetsNameIdList = nameIds;
                                 // scope$.checkBoxEvents = [];
                                 // scope$.dataSetsNameIdList.forEach(n => {
-                                //     scope$.checkBoxEvents.push(new CheckBoxEvent(
+                                //     scope$.checkBoxEvents.push(new FileItem(
                                 //         ProcessType.CREATE,
                                 //         n.id,
                                 //         n.name,

@@ -1,12 +1,12 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var CheckBoxEvent;
+    var FileItem;
     return {
         setters: [],
         execute: function () {
-            CheckBoxEvent = (function () {
-                function CheckBoxEvent(processType, entityType, itemId, itemName, checked, required) {
+            FileItem = (function () {
+                function FileItem(processType, entityType, itemId, itemName, checked, required) {
                     this.processType = processType;
                     this.entityType = entityType;
                     this.itemId = itemId;
@@ -23,16 +23,16 @@ System.register([], function (exports_1, context_1) {
                 //a branch new instance, even if any of the property values are different.
                 //I'm sure there's a better way to do this. For example, the tree component should
                 //subscribe to an observer that is fed by the root component?
-                CheckBoxEvent.newCheckboxEvent = function (checkboxEvent) {
+                FileItem.newCheckboxEvent = function (checkboxEvent) {
                     //        let existingUniqueId = checkboxEvent.uniqueId;
-                    var returnVal = new CheckBoxEvent(checkboxEvent.processType, checkboxEvent.entityType, checkboxEvent.itemId, checkboxEvent.itemName, checkboxEvent.checked, checkboxEvent.required);
+                    var returnVal = new FileItem(checkboxEvent.processType, checkboxEvent.entityType, checkboxEvent.itemId, checkboxEvent.itemName, checkboxEvent.checked, checkboxEvent.required);
                     //        returnVal.uniqueId = existingUniqueId;
                     return returnVal;
                 };
-                return CheckBoxEvent;
-            }()); // CheckBoxEvent()
-            exports_1("CheckBoxEvent", CheckBoxEvent);
+                return FileItem;
+            }()); // FileItem()
+            exports_1("FileItem", FileItem);
         }
     };
 });
-//# sourceMappingURL=event-checkbox.js.map
+//# sourceMappingURL=file-item.js.map

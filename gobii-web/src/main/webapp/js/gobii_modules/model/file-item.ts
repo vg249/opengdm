@@ -3,7 +3,7 @@ import {TreeNode} from "primeng/components/common/api";
 import {Guid} from "./guid";
 import {EntityType} from "./type-entity";
 
-export class CheckBoxEvent {
+export class FileItem {
     constructor(public processType: ProcessType,
                 public entityType:EntityType,
                 public itemId: string,
@@ -22,11 +22,11 @@ export class CheckBoxEvent {
     //a branch new instance, even if any of the property values are different.
     //I'm sure there's a better way to do this. For example, the tree component should
     //subscribe to an observer that is fed by the root component?
-    public static newCheckboxEvent(checkboxEvent:CheckBoxEvent): CheckBoxEvent {
+    public static newCheckboxEvent(checkboxEvent:FileItem): FileItem {
 
 //        let existingUniqueId = checkboxEvent.uniqueId;
 
-        let returnVal:CheckBoxEvent  = new CheckBoxEvent(
+        let returnVal:FileItem  = new FileItem(
             checkboxEvent.processType,
             checkboxEvent.entityType,
             checkboxEvent.itemId,
@@ -42,4 +42,4 @@ export class CheckBoxEvent {
 
     public uniqueId:string;
 
-} // CheckBoxEvent()
+} // FileItem()

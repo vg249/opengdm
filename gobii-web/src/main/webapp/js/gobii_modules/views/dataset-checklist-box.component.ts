@@ -3,7 +3,7 @@ import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {EntityType} from "../model/type-entity";
-import {CheckBoxEvent} from "../model/event-checkbox";
+import {FileItem} from "../model/file-item";
 import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
 import {DataSet} from "../model/dataset";
 import {DtoRequestItemAnalysis} from "../services/app/dto-request-item-analysis";
@@ -58,9 +58,9 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     // useg
     private dataSetsNameIdList:NameId[];
-    private checkBoxEvents:CheckBoxEvent[] = [];
+    private checkBoxEvents:FileItem[] = [];
     private experimentId:string;
-    private onItemChecked:EventEmitter<CheckBoxEvent> = new EventEmitter();
+    private onItemChecked:EventEmitter<FileItem> = new EventEmitter();
     private onAddMessage:EventEmitter<string> = new EventEmitter();
     private dataSet:DataSet;
     private analysisNames:string[] = [];
@@ -103,7 +103,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                         scope$.dataSetsNameIdList = nameIds;
                         // scope$.checkBoxEvents = [];
                         // scope$.dataSetsNameIdList.forEach(n => {
-                        //     scope$.checkBoxEvents.push(new CheckBoxEvent(
+                        //     scope$.checkBoxEvents.push(new FileItem(
                         //         ProcessType.CREATE,
                         //         n.id,
                         //         n.name,

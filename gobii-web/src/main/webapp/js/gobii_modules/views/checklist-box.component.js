@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-process", "../model/event-checkbox", "../model/type-entity"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-process", "../model/file-item", "../model/type-entity"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, dto_request_service_1, type_process_1, event_checkbox_1, type_entity_1, CheckListBoxComponent;
+    var core_1, name_id_1, dto_request_service_1, type_process_1, file_item_1, type_entity_1, CheckListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -25,8 +25,8 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
             },
-            function (event_checkbox_1_1) {
-                event_checkbox_1 = event_checkbox_1_1;
+            function (file_item_1_1) {
+                file_item_1 = file_item_1_1;
             },
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
@@ -60,7 +60,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     }
                     arg.currentTarget.style = "background-color:#b3d9ff";
                     this.previousSelectedItem = arg.currentTarget;
-                    var checkBoxEvent = new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.READ, this.entityType, arg.currentTarget.children[0].value, arg.currentTarget.children[0].name, false, false);
+                    var checkBoxEvent = new file_item_1.FileItem(type_process_1.ProcessType.READ, this.entityType, arg.currentTarget.children[0].value, arg.currentTarget.children[0].name, false, false);
                     this.onItemSelected.emit(checkBoxEvent);
                 };
                 CheckListBoxComponent.prototype.setList = function (nameIdList) {
@@ -71,7 +71,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         scope$.entityType = scope$.nameIdList[0].entityType;
                         scope$.checkBoxEvents = [];
                         scope$.nameIdList.forEach(function (n) {
-                            scope$.checkBoxEvents.push(new event_checkbox_1.CheckBoxEvent(type_process_1.ProcessType.CREATE, scope$.entityType, n.id, n.name, false, false));
+                            scope$.checkBoxEvents.push(new file_item_1.FileItem(type_process_1.ProcessType.CREATE, scope$.entityType, n.id, n.name, false, false));
                         });
                     }
                     else {

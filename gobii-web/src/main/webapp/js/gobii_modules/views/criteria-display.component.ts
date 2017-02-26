@@ -1,5 +1,5 @@
 import {Component, OnInit, SimpleChange, EventEmitter} from "@angular/core";
-import {CheckBoxEvent} from "../model/event-checkbox";
+import {FileItem} from "../model/file-item";
 import {ProcessType} from "../model/type-process";
 import {EntityType} from "../model/type-entity";
 
@@ -28,8 +28,8 @@ export class CriteriaDisplayComponent implements OnInit {
 
 
     // useg
-    private dataSetCheckBoxEvents: CheckBoxEvent[] = [];
-    private onItemUnChecked: EventEmitter<CheckBoxEvent> = new EventEmitter();
+    private dataSetCheckBoxEvents: FileItem[] = [];
+    private onItemUnChecked: EventEmitter<FileItem> = new EventEmitter();
     private onItemSelected: EventEmitter<number> = new EventEmitter();
 
     constructor() {
@@ -42,14 +42,14 @@ export class CriteriaDisplayComponent implements OnInit {
 
     // In this component, every item starts out checked; unchecking it removes it
     private handleItemUnChecked(arg) {
-        let checkEvent: CheckBoxEvent = new CheckBoxEvent(ProcessType.DELETE,
+        let checkEvent: FileItem = new FileItem(ProcessType.DELETE,
             EntityType.DataSets,
             arg.currentTarget.value,
             arg.currentTarget.name,
             false,
             false);
 
-        let itemToRemove: CheckBoxEvent =
+        let itemToRemove: FileItem =
             this.dataSetCheckBoxEvents
                 .filter(e => {
                     return e.itemId === arg.currentTarget.value

@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild, OnChanges, SimpleChange, EventEmitter} from "@angular/core";
 import {TreeNode, Message, MenuItem} from "primeng/components/common/api";
 import {Tree} from "primeng/components/tree/tree";
-import {CheckBoxEvent} from "../model/event-checkbox";
+import {FileItem} from "../model/file-item";
 import {GobiiTreeNode} from "../model/GobiiTreeNode";
 import {EntityType, EntitySubType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
@@ -279,9 +279,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-    makeCbEventFromNode(treeNode: TreeNode): CheckBoxEvent {
+    makeCbEventFromNode(treeNode: TreeNode): FileItem {
 
-        let returnVal: CheckBoxEvent = null;
+        let returnVal: FileItem = null;
 
         return returnVal;
 
@@ -331,7 +331,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     }
 
-    addEntityNameToNode(statusTreeTemplate: StatusTreeTemplate, gobiiTreeNode: GobiiTreeNode, checkBoxEvent: CheckBoxEvent) {
+    addEntityNameToNode(statusTreeTemplate: StatusTreeTemplate, gobiiTreeNode: GobiiTreeNode, checkBoxEvent: FileItem) {
 
         if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
             gobiiTreeNode.label = checkBoxEvent.itemName;
@@ -340,7 +340,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         }
     }
 
-    placeNodeInTree(checkBoxEvent: CheckBoxEvent) {
+    placeNodeInTree(checkBoxEvent: FileItem) {
 
         let statusTreeTemplate: StatusTreeTemplate =
             this.findTemplate(ExtractorItemType.CATEGORY, checkBoxEvent.entityType);
@@ -471,8 +471,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
-    onItemChecked: EventEmitter < CheckBoxEvent > = new EventEmitter();
-    onItemSelected: EventEmitter < CheckBoxEvent > = new EventEmitter();
+    onItemChecked: EventEmitter < FileItem > = new EventEmitter();
+    onItemSelected: EventEmitter < FileItem > = new EventEmitter();
 
 
     templates: Map < GobiiExtractFilterType, Array < StatusTreeTemplate >> =
@@ -485,7 +485,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         if (changes['checkBoxEventChange'] && changes['checkBoxEventChange'].currentValue) {
 
-            let itemChangedEvent: CheckBoxEvent = changes['checkBoxEventChange'].currentValue;
+            let itemChangedEvent: FileItem = changes['checkBoxEventChange'].currentValue;
 
 
             this.placeNodeInTree(itemChangedEvent);
@@ -498,7 +498,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
 
             // if (this.itemChangedEvent) {
-            //     let itemToChange:CheckBoxEvent =
+            //     let itemToChange:FileItem =
             //         this.checkBoxEvents.filter(e => {
             //             return e.id == changes['checkBoxEventChange'].currentValue.id;
             //         })[0];
