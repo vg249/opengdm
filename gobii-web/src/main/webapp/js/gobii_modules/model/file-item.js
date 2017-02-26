@@ -23,9 +23,9 @@ System.register([], function (exports_1, context_1) {
                 //a branch new instance, even if any of the property values are different.
                 //I'm sure there's a better way to do this. For example, the tree component should
                 //subscribe to an observer that is fed by the root component?
-                FileItem.newFileItemEvent = function (fileItemEvent) {
+                FileItem.newFileItemEvent = function (fileItem) {
                     //        let existingUniqueId = fileItemEvent.uniqueId;
-                    var returnVal = new FileItem(fileItemEvent.processType, fileItemEvent.entityType, fileItemEvent.itemId, fileItemEvent.itemName, fileItemEvent.checked, fileItemEvent.required);
+                    var returnVal = new FileItem(fileItem.processType, fileItem.entityType, fileItem.itemId, fileItem.itemName, fileItem.checked, fileItem.required);
                     //        returnVal.uniqueId = existingUniqueId;
                     return returnVal;
                 };
