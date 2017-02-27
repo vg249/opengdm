@@ -1,5 +1,5 @@
 import {FileItem} from "./file-item";
-import {StatusTreeTemplate} from "./extractor-submission-item";
+import {FileModelNode} from "./file-model-node";
 
 export enum FileModelState {
     UNKNOWN,
@@ -10,7 +10,7 @@ export enum FileModelState {
 export class FileModelTreeEvent {
 
     constructor(public fileItem: FileItem,
-                public statusTreeTemplate: StatusTreeTemplate,
+                public statusTreeTemplate: FileModelNode,
                 public fileModelState: FileModelState) {
 
         this.fileItem = fileItem;

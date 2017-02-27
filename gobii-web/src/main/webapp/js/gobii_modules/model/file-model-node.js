@@ -1,7 +1,7 @@
 System.register(["./type-entity", "./cv-filter-type"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var type_entity_1, cv_filter_type_1, ExtractorItemType, ExtractorCategoryType, CardinalityType, StatusTreeTemplate;
+    var type_entity_1, cv_filter_type_1, ExtractorItemType, ExtractorCategoryType, CardinalityType, FileModelNode;
     return {
         setters: [
             function (type_entity_1_1) {
@@ -35,8 +35,8 @@ System.register(["./type-entity", "./cv-filter-type"], function (exports_1, cont
                 CardinalityType[CardinalityType["MORE_THAN_ONE"] = 4] = "MORE_THAN_ONE";
             })(CardinalityType || (CardinalityType = {}));
             exports_1("CardinalityType", CardinalityType);
-            StatusTreeTemplate = (function () {
-                function StatusTreeTemplate(itemType) {
+            FileModelNode = (function () {
+                function FileModelNode(itemType) {
                     this._children = [];
                     this._alternatePeerTypes = [];
                     this._cardinality = CardinalityType.ZERO_OR_MORE;
@@ -47,82 +47,82 @@ System.register(["./type-entity", "./cv-filter-type"], function (exports_1, cont
                     this._gobiiTreeNode = null;
                     this._itemType = itemType;
                 }
-                StatusTreeTemplate.build = function (itemType) {
-                    return new StatusTreeTemplate(itemType);
+                FileModelNode.build = function (itemType) {
+                    return new FileModelNode(itemType);
                 };
-                StatusTreeTemplate.prototype.getAlternatePeerTypes = function () {
+                FileModelNode.prototype.getAlternatePeerTypes = function () {
                     return this._alternatePeerTypes;
                 };
-                StatusTreeTemplate.prototype.setAlternatePeerTypes = function (value) {
+                FileModelNode.prototype.setAlternatePeerTypes = function (value) {
                     this._alternatePeerTypes = value;
                     return this;
                 };
-                StatusTreeTemplate.prototype.getCardinality = function () {
+                FileModelNode.prototype.getCardinality = function () {
                     return this._cardinality;
                 };
-                StatusTreeTemplate.prototype.setCardinality = function (value) {
+                FileModelNode.prototype.setCardinality = function (value) {
                     this._cardinality = value;
                     return this;
                 };
-                StatusTreeTemplate.prototype.getChildren = function () {
+                FileModelNode.prototype.getChildren = function () {
                     return this._children;
                 };
-                StatusTreeTemplate.prototype.addChild = function (child) {
+                FileModelNode.prototype.addChild = function (child) {
                     this._children.push(child);
                     return this;
                 };
-                StatusTreeTemplate.prototype.getItemType = function () {
+                FileModelNode.prototype.getItemType = function () {
                     return this._itemType;
                 };
-                StatusTreeTemplate.prototype.setItemType = function (value) {
+                FileModelNode.prototype.setItemType = function (value) {
                     this._itemType = value;
                     return this;
                 };
-                StatusTreeTemplate.prototype.getCategoryType = function () {
+                FileModelNode.prototype.getCategoryType = function () {
                     return this._categoryType;
                 };
-                StatusTreeTemplate.prototype.setCategoryType = function (value) {
+                FileModelNode.prototype.setCategoryType = function (value) {
                     this._categoryType = value;
                     return this;
                 };
-                StatusTreeTemplate.prototype.getCategoryName = function () {
+                FileModelNode.prototype.getCategoryName = function () {
                     return this._categoryName;
                 };
-                StatusTreeTemplate.prototype.setCategoryName = function (value) {
+                FileModelNode.prototype.setCategoryName = function (value) {
                     this._categoryName = value;
                     return this;
                 };
-                StatusTreeTemplate.prototype.getEntityType = function () {
+                FileModelNode.prototype.getEntityType = function () {
                     return this._entityType;
                 };
-                StatusTreeTemplate.prototype.setEntityType = function (value) {
+                FileModelNode.prototype.setEntityType = function (value) {
                     this._entityType = value;
                     return this;
                 };
-                StatusTreeTemplate.prototype.getEntityName = function () {
+                FileModelNode.prototype.getEntityName = function () {
                     return this._entityName;
                 };
-                StatusTreeTemplate.prototype.setEntityName = function (value) {
+                FileModelNode.prototype.setEntityName = function (value) {
                     this._entityName = value;
                     return this;
                 };
-                StatusTreeTemplate.prototype.getCvFilterType = function () {
+                FileModelNode.prototype.getCvFilterType = function () {
                     return this._cvFilterType;
                 };
-                StatusTreeTemplate.prototype.setCvFilterType = function (value) {
+                FileModelNode.prototype.setCvFilterType = function (value) {
                     this._cvFilterType = value;
                     return this;
                 };
-                StatusTreeTemplate.prototype.getGobiiTreeNode = function () {
+                FileModelNode.prototype.getGobiiTreeNode = function () {
                     return this._gobiiTreeNode;
                 };
-                StatusTreeTemplate.prototype.setGobiiTreeNode = function (value) {
+                FileModelNode.prototype.setGobiiTreeNode = function (value) {
                     this._gobiiTreeNode = value;
                 };
-                return StatusTreeTemplate;
+                return FileModelNode;
             }());
-            exports_1("StatusTreeTemplate", StatusTreeTemplate);
+            exports_1("FileModelNode", FileModelNode);
         }
     };
 });
-//# sourceMappingURL=extractor-submission-item.js.map
+//# sourceMappingURL=file-model-node.js.map

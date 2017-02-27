@@ -6,9 +6,9 @@ import {GobiiTreeNode} from "../model/GobiiTreeNode";
 import {EntityType, EntitySubType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {
-    StatusTreeTemplate, ExtractorItemType, ExtractorCategoryType,
+    FileModelNode, ExtractorItemType, ExtractorCategoryType,
     CardinalityType
-} from "../model/extractor-submission-item";
+} from "../model/file-model-node";
 import {CvFilterType} from "../model/cv-filter-type";
 
 
@@ -42,9 +42,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     }
 
-    getTemplates(gobiiExtractFilterType: GobiiExtractFilterType, forceReset: boolean): StatusTreeTemplate[] {
+    getTemplates(gobiiExtractFilterType: GobiiExtractFilterType, forceReset: boolean): FileModelNode[] {
 
-        if (this.templates.size === 0 || forceReset === true) {
+        if (this.fileModelNodeTree.size === 0 || forceReset === true) {
 
             this.entityNodeLabels[EntityType.DataSets] = "Data Sets";
             this.entityNodeLabels[EntityType.Platforms] = "Platforms";
@@ -60,21 +60,21 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             this.extractorFilterTypeLabels[GobiiExtractFilterType.BY_MARKER] = "Extract by Marker";
 
             // **** FOR ALL EXTRACTION TYPES
-            let submissionItemsForAll: StatusTreeTemplate[] = [];
-            submissionItemsForAll.push(StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+            let submissionItemsForAll: FileModelNode[] = [];
+            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY)
                 .setCategoryType(ExtractorCategoryType.LEAF)
                 .setEntityType(EntityType.Contacts)
                 .setEntityName(this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY])
                 .setCardinality(CardinalityType.ONE_ONLY)
             );
 
-            submissionItemsForAll.push(StatusTreeTemplate.build(ExtractorItemType.EXPORT_FORMAT)
+            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.EXPORT_FORMAT)
                 .setCategoryType(ExtractorCategoryType.LEAF)
                 .setEntityName("Export Formats")
                 .setCardinality(CardinalityType.ONE_ONLY)
             );
 
-            submissionItemsForAll.push(StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY)
                 .setCategoryType(ExtractorCategoryType.LEAF)
                 .setEntityType(EntityType.Mapsets)
                 .setEntityName(this.entityNodeLabels[EntityType.Mapsets])
@@ -84,29 +84,29 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             // ******** SET UP extract by dataset
             // -- Data set type
-            let submissionItemsForDataSet: StatusTreeTemplate[] = [];
+            let submissionItemsForDataSet: FileModelNode[] = [];
             submissionItemsForDataSet = submissionItemsForDataSet.concat(submissionItemsForAll);
             submissionItemsForDataSet.push(
-                StatusTreeTemplate.build(ExtractorItemType.CATEGORY)
+                FileModelNode.build(ExtractorItemType.CATEGORY)
                     .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                     .setEntityType(EntityType.DataSets)
                     .setCategoryName(this.entityNodeLabels[EntityType.DataSets]));
             // .addChild(
-            //     StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+            //     FileModelNode.build(ExtractorItemType.ENTITY)
             //         .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
             //         .setEntityType(EntityType.DataSets)
             //         .setEntityName(this.entityNodeLabels[EntityType.DataSets])
             //         .setCardinality(CardinalityType.ONE_OR_MORE))
 //            );
 
-            this.templates.set(GobiiExtractFilterType.WHOLE_DATASET, submissionItemsForDataSet);
+            this.fileModelNodeTree.set(GobiiExtractFilterType.WHOLE_DATASET, submissionItemsForDataSet);
 
             // ******** SET UP extract by samples
             // -- Data set type
-            let submissionItemsForBySample: StatusTreeTemplate[] = [];
+            let submissionItemsForBySample: FileModelNode[] = [];
             submissionItemsForBySample = submissionItemsForBySample.concat(submissionItemsForAll);
             submissionItemsForBySample.push(
-                StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+                FileModelNode.build(ExtractorItemType.ENTITY)
                     .setCategoryType(ExtractorCategoryType.LEAF)
                     .setEntityType(EntityType.CvTerms)
                     .setCvFilterType(CvFilterType.DATASET_TYPE)
@@ -116,12 +116,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             // -- Platforms
             submissionItemsForBySample.push(
-                StatusTreeTemplate.build(ExtractorItemType.CATEGORY)
+                FileModelNode.build(ExtractorItemType.CATEGORY)
                     .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                     .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
                     .setCardinality(CardinalityType.ZERO_OR_MORE)
                     .addChild(
-                        StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+                        FileModelNode.build(ExtractorItemType.ENTITY)
                             .setCategoryType(ExtractorCategoryType.LEAF)
                             .setEntityType(EntityType.Platforms)
                             .setEntityName(this.entityNodeLabels[EntityType.Platforms])
@@ -131,33 +131,33 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             // -- Samples
             submissionItemsForBySample.push(
-                StatusTreeTemplate.build(ExtractorItemType.CATEGORY)
+                FileModelNode.build(ExtractorItemType.CATEGORY)
                     .setCategoryType(ExtractorCategoryType.CONTAINER)
                     .setCategoryName("Sample Crieria")
                     .setCardinality(CardinalityType.ONE_OR_MORE)
                     .setAlternatePeerTypes([EntityType.Projects, EntityType.Contacts])
-                    .addChild(StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+                    .addChild(FileModelNode.build(ExtractorItemType.ENTITY)
                         .setCategoryType(ExtractorCategoryType.LEAF)
                         .setEntityType(EntityType.Contacts)
                         .setEntityName("Principle Investigator")
                         .setCardinality(CardinalityType.ZERO_OR_ONE)
                     )
-                    .addChild(StatusTreeTemplate.build(ExtractorItemType.ENTITY)
+                    .addChild(FileModelNode.build(ExtractorItemType.ENTITY)
                         .setEntityType(EntityType.Projects)
                         .setEntityName(this.entityNodeLabels[EntityType.Projects])
                         .setCardinality(CardinalityType.ZERO_OR_MORE)
                     )
-                    .addChild(StatusTreeTemplate.build(ExtractorItemType.SAMPLE_LIST)
+                    .addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST)
                         .setEntityName("Sample List")
                         .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
                         .setCardinality(CardinalityType.ZERO_OR_MORE)
                     )
             );
-            this.templates.set(GobiiExtractFilterType.BY_SAMPLE, submissionItemsForBySample);
+            this.fileModelNodeTree.set(GobiiExtractFilterType.BY_SAMPLE, submissionItemsForBySample);
 
         }
 
-        return this.templates.get(gobiiExtractFilterType);
+        return this.fileModelNodeTree.get(gobiiExtractFilterType);
     }
 
 
@@ -256,7 +256,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-    addIconsToNode(statusTreeTemplate: StatusTreeTemplate, treeNode: GobiiTreeNode) {
+    addIconsToNode(statusTreeTemplate: FileModelNode, treeNode: GobiiTreeNode) {
 
         // if( statusTreeTemplate.getItemType() == ExtractorItemType.ENTITY ) {
 
@@ -290,12 +290,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     findTemplate(extractorItemType: ExtractorItemType, entityType: EntityType) {
 
-        let returnVal: StatusTreeTemplate = null;
+        let returnVal: FileModelNode = null;
 
-        let statusTreeTemplates: StatusTreeTemplate[] = this.getTemplates(this.gobiiExtractFilterType, false);
+        let statusTreeTemplates: FileModelNode[] = this.getTemplates(this.gobiiExtractFilterType, false);
 
         for (let idx: number = 0; ( idx < statusTreeTemplates.length) && (returnVal == null ); idx++) {
-            let currentTemplate: StatusTreeTemplate = statusTreeTemplates[idx];
+            let currentTemplate: FileModelNode = statusTreeTemplates[idx];
             returnVal = this.findTemplateByCriteria(currentTemplate, extractorItemType, entityType);
         }
 
@@ -304,16 +304,16 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-    findTemplateByCriteria(statusTreeTemplate: StatusTreeTemplate,
-                           extractorItemType: ExtractorItemType, entityType: EntityType): StatusTreeTemplate {
+    findTemplateByCriteria(statusTreeTemplate: FileModelNode,
+                           extractorItemType: ExtractorItemType, entityType: EntityType): FileModelNode {
 
-        let returnVal: StatusTreeTemplate = null;
+        let returnVal: FileModelNode = null;
 
         if (statusTreeTemplate.getChildren() != null) {
 
             for (let idx: number = 0; ( idx < statusTreeTemplate.getChildren().length) && (returnVal == null ); idx++) {
 
-                let currentTemplate: StatusTreeTemplate = statusTreeTemplate.getChildren()[idx];
+                let currentTemplate: FileModelNode = statusTreeTemplate.getChildren()[idx];
                 returnVal = this.findTemplateByCriteria(currentTemplate, extractorItemType, entityType);
             }
         }
@@ -331,7 +331,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     }
 
-    addEntityNameToNode(statusTreeTemplate: StatusTreeTemplate, gobiiTreeNode: GobiiTreeNode, fileItemEvent: FileItem) {
+    addEntityNameToNode(statusTreeTemplate: FileModelNode, gobiiTreeNode: GobiiTreeNode, fileItemEvent: FileItem) {
 
         if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
             gobiiTreeNode.label = fileItemEvent.itemName;
@@ -342,7 +342,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     placeNodeInTree(fileItemEvent: FileItem) {
 
-        let statusTreeTemplate: StatusTreeTemplate =
+        let statusTreeTemplate: FileModelNode =
             this.findTemplate(ExtractorItemType.CATEGORY, fileItemEvent.entityType);
 
 
@@ -383,7 +383,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     } //
 
 
-    makeTreeNodeFromTemplate(statusTreeTemplate: StatusTreeTemplate): GobiiTreeNode {
+    makeTreeNodeFromTemplate(statusTreeTemplate: FileModelNode): GobiiTreeNode {
 
         let returnVal: GobiiTreeNode = null;
 
@@ -442,7 +442,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         this.gobiiTreeNodes  = [];
 
-        let statusTreeTemplates: StatusTreeTemplate[] = this.getTemplates(this.gobiiExtractFilterType, false);
+        let statusTreeTemplates: FileModelNode[] = this.getTemplates(this.gobiiExtractFilterType, false);
 
         let mainNode: GobiiTreeNode = new GobiiTreeNode();
         mainNode.label = this.extractorFilterTypeLabels[this.gobiiExtractFilterType];
@@ -475,8 +475,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     onItemSelected: EventEmitter < FileItem > = new EventEmitter();
 
 
-    templates: Map < GobiiExtractFilterType, Array < StatusTreeTemplate >> =
-        new Map<GobiiExtractFilterType,Array<StatusTreeTemplate>>();
+    fileModelNodeTree: Map < GobiiExtractFilterType, Array < FileModelNode >> =
+        new Map<GobiiExtractFilterType,Array<FileModelNode>>();
 
     ngOnChanges(changes: {
         [propName: string

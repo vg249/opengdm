@@ -13,13 +13,13 @@ export enum ExtractorCategoryType {CONTAINER, ENTITY_CONTAINER, LEAF }
 export enum CardinalityType {ZERO_OR_ONE, ZERO_OR_MORE, ONE_ONLY, ONE_OR_MORE , MORE_THAN_ONE}
 
 
-export class StatusTreeTemplate {
+export class FileModelNode {
 
     constructor(itemType: ExtractorItemType) {
         this._itemType = itemType;
     }
 
-    private _children: StatusTreeTemplate[] = [];
+    private _children: FileModelNode[] = [];
     private _alternatePeerTypes: EntityType[] = [];
     private _cardinality: CardinalityType = CardinalityType.ZERO_OR_MORE;
     private _itemType: ExtractorItemType = ExtractorItemType.ENTITY;
@@ -31,8 +31,8 @@ export class StatusTreeTemplate {
     private _gobiiTreeNode:GobiiTreeNode = null;
 
 
-    public static build(itemType: ExtractorItemType): StatusTreeTemplate {
-        return new StatusTreeTemplate(itemType);
+    public static build(itemType: ExtractorItemType): FileModelNode {
+        return new FileModelNode(itemType);
     }
 
 
@@ -40,7 +40,7 @@ export class StatusTreeTemplate {
         return this._alternatePeerTypes;
     }
 
-    setAlternatePeerTypes(value: EntityType[]): StatusTreeTemplate {
+    setAlternatePeerTypes(value: EntityType[]): FileModelNode {
         this._alternatePeerTypes = value;
         return this;
     }
@@ -49,16 +49,16 @@ export class StatusTreeTemplate {
         return this._cardinality;
     }
 
-    setCardinality(value: CardinalityType): StatusTreeTemplate {
+    setCardinality(value: CardinalityType): FileModelNode {
         this._cardinality = value;
         return this;
     }
 
-    getChildren(): StatusTreeTemplate[] {
+    getChildren(): FileModelNode[] {
         return this._children;
     }
 
-    addChild(child: StatusTreeTemplate): StatusTreeTemplate {
+    addChild(child: FileModelNode): FileModelNode {
         this._children.push(child);
         return this;
     }
@@ -67,7 +67,7 @@ export class StatusTreeTemplate {
         return this._itemType;
     }
 
-    setItemType(value: ExtractorItemType): StatusTreeTemplate {
+    setItemType(value: ExtractorItemType): FileModelNode {
         this._itemType = value;
         return this;
     }
@@ -76,7 +76,7 @@ export class StatusTreeTemplate {
         return this._categoryType;
     }
 
-    setCategoryType(value: ExtractorCategoryType): StatusTreeTemplate {
+    setCategoryType(value: ExtractorCategoryType): FileModelNode {
         this._categoryType = value;
         return this;
     }
@@ -85,7 +85,7 @@ export class StatusTreeTemplate {
         return this._categoryName;
     }
 
-    setCategoryName(value: string): StatusTreeTemplate {
+    setCategoryName(value: string): FileModelNode {
         this._categoryName = value;
         return this;
     }
@@ -94,7 +94,7 @@ export class StatusTreeTemplate {
         return this._entityType;
     }
 
-    setEntityType(value: EntityType): StatusTreeTemplate {
+    setEntityType(value: EntityType): FileModelNode {
         this._entityType = value;
         return this;
     }
@@ -103,7 +103,7 @@ export class StatusTreeTemplate {
         return this._entityName;
     }
 
-    setEntityName(value: string): StatusTreeTemplate {
+    setEntityName(value: string): FileModelNode {
         this._entityName = value;
         return this;
     }
@@ -112,7 +112,7 @@ export class StatusTreeTemplate {
         return this._cvFilterType;
     }
 
-    setCvFilterType(value: CvFilterType): StatusTreeTemplate {
+    setCvFilterType(value: CvFilterType): FileModelNode {
         this._cvFilterType = value;
         return this;
     }
