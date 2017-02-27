@@ -10,9 +10,11 @@ System.register(["./type-entity"], function (exports_1, context_1) {
         ],
         execute: function () {
             GobiiTreeNode = (function () {
-                function GobiiTreeNode() {
+                function GobiiTreeNode(fileModelNodeId, fileItemId) {
                     this.entityType = type_entity_1.EntityType.UNKNOWN;
                     this.children = [];
+                    this.fileModelNodeId = fileModelNodeId;
+                    this.fileItemId = fileItemId;
                 }
                 return GobiiTreeNode;
             }());

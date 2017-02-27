@@ -1,7 +1,13 @@
 import {TreeNode} from "primeng/components/common/api";
 import {EntityType} from "./type-entity";
 
+
 export class GobiiTreeNode implements TreeNode {
+
+    constructor(fileModelNodeId:string,fileItemId:string) {
+        this.fileModelNodeId = fileModelNodeId;
+        this.fileItemId = fileItemId;
+    }
 
     public entityType: EntityType = EntityType.UNKNOWN;
     public label: string;
@@ -15,6 +21,7 @@ export class GobiiTreeNode implements TreeNode {
     public type: string;
     public parent: TreeNode;
     public partialSelected: boolean;
-
+    public fileModelNodeId: string;
+    public fileItemId: string;
 
 }

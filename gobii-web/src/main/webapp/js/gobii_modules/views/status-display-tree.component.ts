@@ -10,6 +10,8 @@ import {
     CardinalityType
 } from "../model/file-model-node";
 import {CvFilterType} from "../model/cv-filter-type";
+import {FileModelTreeService} from "../services/core/file-model-tree-service";
+import {FileModelTreeEvent} from "../model/file-model-tree-event";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
@@ -31,133 +33,22 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         this.onAddMessage.emit(arg);
     }
 
-    constructor() {
+    constructor(private _fileModelTreeService: FileModelTreeService) {
     }
 
     ngOnInit() {
 
+        this._fileModelTreeService.subject.subscribe(this.handleFileModelTreeEvent);
 
-        this.makeDemoTreeNodes();
-        this.setUpRequredItems();
+        // this.makeDemoTreeNodes();
+        // this.setUpRequredItems();
 
     }
 
-    getTemplates(gobiiExtractFilterType: GobiiExtractFilterType, forceReset: boolean): FileModelNode[] {
-
-        if (this.fileModelNodeTree.size === 0 || forceReset === true) {
-
-            this.entityNodeLabels[EntityType.DataSets] = "Data Sets";
-            this.entityNodeLabels[EntityType.Platforms] = "Platforms";
-            this.entityNodeLabels[EntityType.Mapsets] = "Mapsets";
-
-            this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE] = "Dataset Type";
-
-            this.entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
-            this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY] = "Submitted By";
-
-            this.extractorFilterTypeLabels[GobiiExtractFilterType.WHOLE_DATASET] = "Extract by Dataset";
-            this.extractorFilterTypeLabels[GobiiExtractFilterType.BY_SAMPLE] = "Extract by Sample";
-            this.extractorFilterTypeLabels[GobiiExtractFilterType.BY_MARKER] = "Extract by Marker";
-
-            // **** FOR ALL EXTRACTION TYPES
-            let submissionItemsForAll: FileModelNode[] = [];
-            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY)
-                .setCategoryType(ExtractorCategoryType.LEAF)
-                .setEntityType(EntityType.Contacts)
-                .setEntityName(this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY])
-                .setCardinality(CardinalityType.ONE_ONLY)
-            );
-
-            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.EXPORT_FORMAT)
-                .setCategoryType(ExtractorCategoryType.LEAF)
-                .setEntityName("Export Formats")
-                .setCardinality(CardinalityType.ONE_ONLY)
-            );
-
-            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY)
-                .setCategoryType(ExtractorCategoryType.LEAF)
-                .setEntityType(EntityType.Mapsets)
-                .setEntityName(this.entityNodeLabels[EntityType.Mapsets])
-                .setCardinality(CardinalityType.ZERO_OR_ONE)
-            );
+    handleFileModelTreeEvent(fileModelTreeEvent: FileModelTreeEvent) {
 
 
-            // ******** SET UP extract by dataset
-            // -- Data set type
-            let submissionItemsForDataSet: FileModelNode[] = [];
-            submissionItemsForDataSet = submissionItemsForDataSet.concat(submissionItemsForAll);
-            submissionItemsForDataSet.push(
-                FileModelNode.build(ExtractorItemType.CATEGORY)
-                    .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
-                    .setEntityType(EntityType.DataSets)
-                    .setCategoryName(this.entityNodeLabels[EntityType.DataSets]));
-            // .addChild(
-            //     FileModelNode.build(ExtractorItemType.ENTITY)
-            //         .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
-            //         .setEntityType(EntityType.DataSets)
-            //         .setEntityName(this.entityNodeLabels[EntityType.DataSets])
-            //         .setCardinality(CardinalityType.ONE_OR_MORE))
-//            );
-
-            this.fileModelNodeTree.set(GobiiExtractFilterType.WHOLE_DATASET, submissionItemsForDataSet);
-
-            // ******** SET UP extract by samples
-            // -- Data set type
-            let submissionItemsForBySample: FileModelNode[] = [];
-            submissionItemsForBySample = submissionItemsForBySample.concat(submissionItemsForAll);
-            submissionItemsForBySample.push(
-                FileModelNode.build(ExtractorItemType.ENTITY)
-                    .setCategoryType(ExtractorCategoryType.LEAF)
-                    .setEntityType(EntityType.CvTerms)
-                    .setCvFilterType(CvFilterType.DATASET_TYPE)
-                    .setEntityName(this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE])
-                    .setCardinality(CardinalityType.ONE_ONLY)
-            );
-
-            // -- Platforms
-            submissionItemsForBySample.push(
-                FileModelNode.build(ExtractorItemType.CATEGORY)
-                    .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
-                    .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
-                    .setCardinality(CardinalityType.ZERO_OR_MORE)
-                    .addChild(
-                        FileModelNode.build(ExtractorItemType.ENTITY)
-                            .setCategoryType(ExtractorCategoryType.LEAF)
-                            .setEntityType(EntityType.Platforms)
-                            .setEntityName(this.entityNodeLabels[EntityType.Platforms])
-                            .setCardinality(CardinalityType.ZERO_OR_MORE)
-                    )
-            );
-
-            // -- Samples
-            submissionItemsForBySample.push(
-                FileModelNode.build(ExtractorItemType.CATEGORY)
-                    .setCategoryType(ExtractorCategoryType.CONTAINER)
-                    .setCategoryName("Sample Crieria")
-                    .setCardinality(CardinalityType.ONE_OR_MORE)
-                    .setAlternatePeerTypes([EntityType.Projects, EntityType.Contacts])
-                    .addChild(FileModelNode.build(ExtractorItemType.ENTITY)
-                        .setCategoryType(ExtractorCategoryType.LEAF)
-                        .setEntityType(EntityType.Contacts)
-                        .setEntityName("Principle Investigator")
-                        .setCardinality(CardinalityType.ZERO_OR_ONE)
-                    )
-                    .addChild(FileModelNode.build(ExtractorItemType.ENTITY)
-                        .setEntityType(EntityType.Projects)
-                        .setEntityName(this.entityNodeLabels[EntityType.Projects])
-                        .setCardinality(CardinalityType.ZERO_OR_MORE)
-                    )
-                    .addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST)
-                        .setEntityName("Sample List")
-                        .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
-                        .setCardinality(CardinalityType.ZERO_OR_MORE)
-                    )
-            );
-            this.fileModelNodeTree.set(GobiiExtractFilterType.BY_SAMPLE, submissionItemsForBySample);
-
-        }
-
-        return this.fileModelNodeTree.get(gobiiExtractFilterType);
+        this.placeNodeInTree(fileModelTreeEvent.fileItem);
     }
 
 
@@ -170,11 +61,11 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     gobiiTreeNodes: GobiiTreeNode[] = [];
     selectedGobiiNodes: GobiiTreeNode[] = [];
-    entityNodeLabels: Map < EntityType, string > = new Map<EntityType,string>();
-    entitySubtypeNodeLabels: Map < EntitySubType, string > = new Map<EntitySubType,string>();
-    cvFilterNodeLabels: Map < CvFilterType, string > = new Map<CvFilterType,string>();
-    extractorFilterTypeLabels: Map < GobiiExtractFilterType, string > = new Map<GobiiExtractFilterType, string>();
-    treeCategoryLabels: Map<ExtractorCategoryType,string> = new Map<ExtractorCategoryType,string>();
+    // entityNodeLabels: Map < EntityType, string > = new Map<EntityType,string>();
+    // entitySubtypeNodeLabels: Map < EntitySubType, string > = new Map<EntitySubType,string>();
+    // cvFilterNodeLabels: Map < CvFilterType, string > = new Map<CvFilterType,string>();
+    // extractorFilterTypeLabels: Map < GobiiExtractFilterType, string > = new Map<GobiiExtractFilterType, string>();
+    // treeCategoryLabels: Map<ExtractorCategoryType,string> = new Map<ExtractorCategoryType,string>();
 
 
     experimentId: string;
@@ -279,58 +170,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-    makeCbEventFromNode(treeNode: TreeNode): FileItem {
-
-        let returnVal: FileItem = null;
-
-        return returnVal;
-
-    }
-
-
-    findTemplate(extractorItemType: ExtractorItemType, entityType: EntityType) {
-
-        let returnVal: FileModelNode = null;
-
-        let statusTreeTemplates: FileModelNode[] = this.getTemplates(this.gobiiExtractFilterType, false);
-
-        for (let idx: number = 0; ( idx < statusTreeTemplates.length) && (returnVal == null ); idx++) {
-            let currentTemplate: FileModelNode = statusTreeTemplates[idx];
-            returnVal = this.findTemplateByCriteria(currentTemplate, extractorItemType, entityType);
-        }
-
-        return returnVal;
-
-    }
-
-
-    findTemplateByCriteria(statusTreeTemplate: FileModelNode,
-                           extractorItemType: ExtractorItemType, entityType: EntityType): FileModelNode {
-
-        let returnVal: FileModelNode = null;
-
-        if (statusTreeTemplate.getChildren() != null) {
-
-            for (let idx: number = 0; ( idx < statusTreeTemplate.getChildren().length) && (returnVal == null ); idx++) {
-
-                let currentTemplate: FileModelNode = statusTreeTemplate.getChildren()[idx];
-                returnVal = this.findTemplateByCriteria(currentTemplate, extractorItemType, entityType);
-            }
-        }
-
-        if (returnVal === null) {
-
-            if (extractorItemType == statusTreeTemplate.getItemType()
-                && entityType == statusTreeTemplate.getEntityType()) {
-
-                returnVal = statusTreeTemplate;
-            }
-        }
-
-        return returnVal;
-
-    }
-
     addEntityNameToNode(statusTreeTemplate: FileModelNode, gobiiTreeNode: GobiiTreeNode, fileItemEvent: FileItem) {
 
         if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
@@ -342,85 +181,85 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     placeNodeInTree(fileItemEvent: FileItem) {
 
-        let statusTreeTemplate: FileModelNode =
-            this.findTemplate(ExtractorItemType.CATEGORY, fileItemEvent.entityType);
-
-
-        if (statusTreeTemplate != null) {
-
-
-            if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.LEAF) {
-
-                let existingGobiiTreeNode: GobiiTreeNode = statusTreeTemplate.getGobiiTreeNode();
-                this.addEntityNameToNode(statusTreeTemplate, existingGobiiTreeNode, fileItemEvent);
-
-            } else if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
-
-                let newGobiiTreeNode = new GobiiTreeNode();
-                newGobiiTreeNode.entityType = fileItemEvent.entityType;
-                this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
-                this.addEntityNameToNode(statusTreeTemplate, newGobiiTreeNode, fileItemEvent);
-                statusTreeTemplate.getGobiiTreeNode().children.push(newGobiiTreeNode);
-                statusTreeTemplate.getGobiiTreeNode().expanded = true;
-                this.selectedGobiiNodes.push(newGobiiTreeNode);
-                this.selectedGobiiNodes.push(statusTreeTemplate.getGobiiTreeNode());
-
-            } else {
-                this.reportMessage("The node of category  "
-                    + statusTreeTemplate.getCategoryType()
-                    + " for checkbox event " + fileItemEvent.itemName
-                    + " could not be placed in the tree ");
-            }
-
-
-        } else {
-
-            this.reportMessage("Could not place checkbox event "
-                + fileItemEvent.itemName
-                + " in tree");
-        }
+        // let statusTreeTemplate: FileModelNode =
+        //     this.findFileModelNode(ExtractorItemType.CATEGORY, fileItemEvent.entityType);
+        //
+        //
+        // if (statusTreeTemplate != null) {
+        //
+        //
+        //     if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.LEAF) {
+        //
+        //         let existingGobiiTreeNode: GobiiTreeNode = statusTreeTemplate.getFileItems();
+        //         this.addEntityNameToNode(statusTreeTemplate, existingGobiiTreeNode, fileItemEvent);
+        //
+        //     } else if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
+        //
+        //         let newGobiiTreeNode = new GobiiTreeNode();
+        //         newGobiiTreeNode.entityType = fileItemEvent.entityType;
+        //         this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
+        //         this.addEntityNameToNode(statusTreeTemplate, newGobiiTreeNode, fileItemEvent);
+        //         statusTreeTemplate.getFileItems().children.push(newGobiiTreeNode);
+        //         statusTreeTemplate.getFileItems().expanded = true;
+        //         this.selectedGobiiNodes.push(newGobiiTreeNode);
+        //         this.selectedGobiiNodes.push(statusTreeTemplate.getFileItems());
+        //
+        //     } else {
+        //         this.reportMessage("The node of category  "
+        //             + statusTreeTemplate.getCategoryType()
+        //             + " for checkbox event " + fileItemEvent.itemName
+        //             + " could not be placed in the tree ");
+        //     }
+        //
+        //
+        // } else {
+        //
+        //     this.reportMessage("Could not place checkbox event "
+        //         + fileItemEvent.itemName
+        //         + " in tree");
+        // }
 
     } //
 
 
-    makeTreeNodeFromTemplate(statusTreeTemplate: FileModelNode): GobiiTreeNode {
+    makeTreeNodeFromTemplate(fileModelNode: FileModelNode): GobiiTreeNode {
 
         let returnVal: GobiiTreeNode = null;
 
 
-        if (statusTreeTemplate.getItemType() === ExtractorItemType.ENTITY) {
+        if (fileModelNode.getItemType() === ExtractorItemType.ENTITY) {
 
-            returnVal = new GobiiTreeNode();
-            returnVal.entityType = statusTreeTemplate.getEntityType();
-            returnVal.label = statusTreeTemplate.getEntityName();
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(),null);
+            returnVal.entityType = fileModelNode.getEntityType();
+            returnVal.label = fileModelNode.getEntityName();
 
 
-        } else if (statusTreeTemplate.getItemType() === ExtractorItemType.CATEGORY) {
+        } else if (fileModelNode.getItemType() === ExtractorItemType.CATEGORY) {
 
-            returnVal = new GobiiTreeNode();
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(),null);
 
-            if (statusTreeTemplate.getEntityType() != null
-                && statusTreeTemplate.getEntityType() != EntityType.UNKNOWN) {
-                returnVal.entityType = statusTreeTemplate.getEntityType();
+            if (fileModelNode.getEntityType() != null
+                && fileModelNode.getEntityType() != EntityType.UNKNOWN) {
+                returnVal.entityType = fileModelNode.getEntityType();
             }
 
-            returnVal.label = statusTreeTemplate.getCategoryName();
+            returnVal.label = fileModelNode.getCategoryName();
 
-        } else if (statusTreeTemplate.getItemType() == ExtractorItemType.EXPORT_FORMAT) {
+        } else if (fileModelNode.getItemType() == ExtractorItemType.EXPORT_FORMAT) {
 
-            returnVal = new GobiiTreeNode();
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(),null);
             returnVal.label = "Export Format";
         }
 
-        this.addIconsToNode(statusTreeTemplate, returnVal);
+        this.addIconsToNode(fileModelNode, returnVal);
 
         if (null != returnVal) {
 
-            if (( statusTreeTemplate.getCategoryType() != ExtractorCategoryType.ENTITY_CONTAINER
-                && statusTreeTemplate.getChildren() !== null )
-                && ( statusTreeTemplate.getChildren().length > 0)) {
+            if (( fileModelNode.getCategoryType() != ExtractorCategoryType.ENTITY_CONTAINER
+                && fileModelNode.getChildren() !== null )
+                && ( fileModelNode.getChildren().length > 0)) {
 
-                statusTreeTemplate.getChildren().forEach(
+                fileModelNode.getChildren().forEach(
                     stt => {
 
                         let currentTreeNode: GobiiTreeNode = this.makeTreeNodeFromTemplate(stt);
@@ -432,37 +271,30 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             }
         }
 
-        statusTreeTemplate.setGobiiTreeNode(returnVal);
-
         return returnVal;
     }
 
 
-    setUpRequredItems() {
+    setUpRequredItems(gobiiExtractorFilterType: GobiiExtractFilterType) {
 
-        this.gobiiTreeNodes  = [];
+        this.gobiiTreeNodes = [];
 
-        let statusTreeTemplates: FileModelNode[] = this.getTemplates(this.gobiiExtractFilterType, false);
-
-        let mainNode: GobiiTreeNode = new GobiiTreeNode();
-        mainNode.label = this.extractorFilterTypeLabels[this.gobiiExtractFilterType];
-        mainNode.icon = "fa-folder";
-        mainNode.expandedIcon = "fa-folder";
-        mainNode.expanded = true;
-
-
-        statusTreeTemplates.forEach(
-            currentFirstLevelTemplate => {
-
-                let currentTreeNode: GobiiTreeNode = this.makeTreeNodeFromTemplate(currentFirstLevelTemplate);
-                if (currentTreeNode != null) {
-                    mainNode.children.push(currentTreeNode);
-                }
+        let fileModelNodes: FileModelNode[] = [];
+        this._fileModelTreeService.get(gobiiExtractorFilterType).subscribe(
+            f => {
+                fileModelNodes = f;
             }
         );
 
-        this.gobiiTreeNodes.push(mainNode)
+        fileModelNodes.forEach(
+            currentFirstLevelFileModelNode => {
 
+                let currentTreeNode: GobiiTreeNode = this.makeTreeNodeFromTemplate(currentFirstLevelFileModelNode);
+                if (currentTreeNode != null) {
+                    this.gobiiTreeNodes.push(currentTreeNode);
+                }
+            }
+        );
     }
 
 // ********************************************************************************
@@ -488,7 +320,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             let itemChangedEvent: FileItem = changes['fileItemEventChange'].currentValue;
 
 
-            this.placeNodeInTree(itemChangedEvent);
+//            this.placeNodeInTree(itemChangedEvent);
             //this.treeNodes.push(treeNode);
 
             //this.placeNodeInTree(treeNode);
@@ -509,7 +341,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             //         itemToChange.checked = changes['fileItemEventChange'].currentValue.checked;
             //     }
             // }
-        } else if (changes['gobiiExtractFilterTypeEvent']
+        }         else if (changes['gobiiExtractFilterTypeEvent']
             && ( changes['gobiiExtractFilterTypeEvent'].currentValue != null )
             && ( changes['gobiiExtractFilterTypeEvent'].currentValue != undefined )) {
 
@@ -517,8 +349,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             if (newGobiiExtractFilterType !== this.gobiiExtractFilterType) {
                 this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
-                this.getTemplates(this.gobiiExtractFilterType, true);
-                this.setUpRequredItems();
+                //this.getTemplates(this.gobiiExtractFilterType, true);
+                this.setUpRequredItems(newGobiiExtractFilterType);
             }
 
 

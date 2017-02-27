@@ -18,6 +18,7 @@ import {SampleMarkerList} from "../model/sample-marker-list";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 import {CvFilters, CvFilterType} from "../model/cv-filter-type";
+import {FileModelTreeService} from "../services/core/file-model-tree-service";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -218,7 +219,7 @@ export class ExtractorRoot {
     title = 'Gobii Web';
 
 
-    private treeFileItemEvent:FileItem;
+    private treeFileItemEvent: FileItem;
 //    private selectedExportTypeEvent:GobiiExtractFilterType;
     private datasetFileItemEvents: FileItem[] = [];
     private gobiiDatasetExtracts: GobiiDataSetExtract[] = [];
@@ -227,8 +228,8 @@ export class ExtractorRoot {
 
     constructor(private _dtoRequestServiceExtractorFile: DtoRequestService<ExtractorInstructionFilesDTO>,
                 private _dtoRequestServiceNameIds: DtoRequestService<NameId[]>,
-                private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>) {
-
+                private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
+                private _fileModelTreeService: FileModelTreeService) {
     }
 
     // ****************************************************************
@@ -377,7 +378,7 @@ export class ExtractorRoot {
                     scope$.contactNameIdListForSubmitter = nameIds
                     scope$.selectedContactIdForSubmitter = nameIds[0].id;
                 } else {
-                    scope$.contactNameIdListForSubmitter = [new NameId("0", "ERROR NO USERS",EntityType.Contacts)];
+                    scope$.contactNameIdListForSubmitter = [new NameId("0", "ERROR NO USERS", EntityType.Contacts)];
                 }
             },
             dtoHeaderResponse => {
@@ -409,7 +410,7 @@ export class ExtractorRoot {
                     scope$.contactNameIdListForPi = nameIds;
                     scope$.selectedContactIdForPi = scope$.contactNameIdListForPi[0].id;
                 } else {
-                    scope$.contactNameIdListForPi = [new NameId("0", "ERROR NO USERS",EntityType.Contacts)];
+                    scope$.contactNameIdListForPi = [new NameId("0", "ERROR NO USERS", EntityType.Contacts)];
                 }
 
                 scope$.initializeProjectNameIds();
@@ -453,7 +454,7 @@ export class ExtractorRoot {
                     scope$.projectNameIdList = nameIds;
                     scope$.selectedProjectId = nameIds[0].id;
                 } else {
-                    scope$.projectNameIdList = [new NameId("0", "<none>",EntityType.Projects)];
+                    scope$.projectNameIdList = [new NameId("0", "<none>", EntityType.Projects)];
                     scope$.selectedProjectId = undefined;
                 }
 
@@ -493,7 +494,7 @@ export class ExtractorRoot {
                         scope$.experimentNameIdList = nameIds;
                         scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
                     } else {
-                        scope$.experimentNameIdList = [new NameId("0", "<none>",EntityType.Experiments)];
+                        scope$.experimentNameIdList = [new NameId("0", "<none>", EntityType.Experiments)];
                         scope$.selectedExperimentId = undefined;
                     }
                 },
@@ -502,7 +503,7 @@ export class ExtractorRoot {
                         + m.message))
                 });
         } else {
-            scope$.experimentNameIdList = [new NameId("0", "<none>",EntityType.Experiments)];
+            scope$.experimentNameIdList = [new NameId("0", "<none>", EntityType.Experiments)];
             scope$.selectedExperimentId = undefined;
         }
 
@@ -528,7 +529,7 @@ export class ExtractorRoot {
                     scope$.datasetTypeNameIdList = nameIds;
                     scope$.selectedDatasetTypeId = scope$.datasetTypeNameIdList[0].id;
                 } else {
-                    scope$.datasetTypeNameIdList = [new NameId("0", "ERROR NO DATASET TYPES",EntityType.CvTerms)];
+                    scope$.datasetTypeNameIdList = [new NameId("0", "ERROR NO DATASET TYPES", EntityType.CvTerms)];
                 }
             },
             dtoHeaderResponse => {
@@ -564,7 +565,7 @@ export class ExtractorRoot {
                     scope$.platformsNameIdList = nameIds;
                     scope$.selectedPlatformId = scope$.platformsNameIdList[0].id;
                 } else {
-                    scope$.platformsNameIdList = [new NameId("0", "ERROR NO PLATFORMS",EntityType.Platforms)];
+                    scope$.platformsNameIdList = [new NameId("0", "ERROR NO PLATFORMS", EntityType.Platforms)];
                 }
             },
             dtoHeaderResponse => {
@@ -625,7 +626,11 @@ export class ExtractorRoot {
                     });
         } // if-else we're adding
 
-        this.treeFileItemEvent = FileItem.newFileItemEvent(arg);
+        //this.treeFileItemEvent = FileItem.newFileItemEvent(arg);
+        let fileItemEvent:FileItem = FileItem.newFileItemEvent(arg);
+
+
+        this._fileModelTreeService.put(fileItemEvent).subscribe();
 
     }
 
@@ -635,7 +640,6 @@ export class ExtractorRoot {
     private handleExtractDataSetUnchecked(arg: FileItem) {
         // this.changeTrigger++;
         // this.dataSetIdToUncheck = Number(arg.itemId);
-
 
 
         this.datasetFileItemEvents.push(arg);
@@ -677,7 +681,7 @@ export class ExtractorRoot {
         this._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
             EntityType.Mapsets)).subscribe(nameIds => {
 
-                scope$.mapsetNameIdList = [new NameId("0", scope$.nullMapsetName,EntityType.Mapsets)]
+                scope$.mapsetNameIdList = [new NameId("0", scope$.nullMapsetName, EntityType.Mapsets)]
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.mapsetNameIdList = scope$.mapsetNameIdList.concat(nameIds);
                     scope$.selectedMapsetId = nameIds[0].id;

@@ -1,7 +1,7 @@
-System.register(["./type-entity", "./cv-filter-type"], function (exports_1, context_1) {
+System.register(["./type-entity", "./cv-filter-type", "./guid"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var type_entity_1, cv_filter_type_1, ExtractorItemType, ExtractorCategoryType, CardinalityType, FileModelNode;
+    var type_entity_1, cv_filter_type_1, guid_1, ExtractorItemType, ExtractorCategoryType, CardinalityType, FileModelNode;
     return {
         setters: [
             function (type_entity_1_1) {
@@ -9,6 +9,9 @@ System.register(["./type-entity", "./cv-filter-type"], function (exports_1, cont
             },
             function (cv_filter_type_1_1) {
                 cv_filter_type_1 = cv_filter_type_1_1;
+            },
+            function (guid_1_1) {
+                guid_1 = guid_1_1;
             }
         ],
         execute: function () {
@@ -44,7 +47,8 @@ System.register(["./type-entity", "./cv-filter-type"], function (exports_1, cont
                     this._categoryType = ExtractorCategoryType.LEAF;
                     this._entityType = type_entity_1.EntityType.UNKNOWN;
                     this._cvFilterType = cv_filter_type_1.CvFilterType.UKNOWN;
-                    this._gobiiTreeNode = null;
+                    this._fileItems = [];
+                    this._fileModelNodeUniqueId = guid_1.Guid.generateUUID();
                     this._itemType = itemType;
                 }
                 FileModelNode.build = function (itemType) {
@@ -113,11 +117,14 @@ System.register(["./type-entity", "./cv-filter-type"], function (exports_1, cont
                     this._cvFilterType = value;
                     return this;
                 };
-                FileModelNode.prototype.getGobiiTreeNode = function () {
-                    return this._gobiiTreeNode;
+                FileModelNode.prototype.getFileItems = function () {
+                    return this._fileItems;
                 };
-                FileModelNode.prototype.setGobiiTreeNode = function (value) {
-                    this._gobiiTreeNode = value;
+                FileModelNode.prototype.setFileItem = function (value) {
+                    this._fileItems = value;
+                };
+                FileModelNode.prototype.getFileModelNodeUniqueId = function () {
+                    return this._fileModelNodeUniqueId;
                 };
                 return FileModelNode;
             }());

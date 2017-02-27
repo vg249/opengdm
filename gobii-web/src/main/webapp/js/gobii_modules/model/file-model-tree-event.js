@@ -8,14 +8,16 @@ System.register([], function (exports_1, context_1) {
             (function (FileModelState) {
                 FileModelState[FileModelState["UNKNOWN"] = 0] = "UNKNOWN";
                 FileModelState[FileModelState["NOT_COMPLETE"] = 1] = "NOT_COMPLETE";
-                FileModelState[FileModelState["COMPLETE"] = 2] = "COMPLETE";
+                FileModelState[FileModelState["ERROR"] = 2] = "ERROR";
+                FileModelState[FileModelState["COMPLETE"] = 3] = "COMPLETE";
             })(FileModelState || (FileModelState = {}));
             exports_1("FileModelState", FileModelState);
             FileModelTreeEvent = (function () {
-                function FileModelTreeEvent(fileItem, statusTreeTemplate, fileModelState) {
+                function FileModelTreeEvent(fileItem, statusTreeTemplate, fileModelState, message) {
                     this.fileItem = fileItem;
                     this.statusTreeTemplate = statusTreeTemplate;
                     this.fileModelState = fileModelState;
+                    this.message = message;
                     this.fileItem = fileItem;
                     this.statusTreeTemplate = statusTreeTemplate;
                     this.fileModelState = fileModelState;
