@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <GobiiTestData>
     <Entities>
         <Organizations DbPKeysurrogate="Name">
             <Organization>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>492035495</DbPKey>
                 </Keys>
                 <Properties>
                     <Name>IRRI ORG</Name>
@@ -13,7 +14,7 @@
             </Organization>
             <Organization>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>-323916278</DbPKey>
                 </Keys>
                 <Properties>
                     <Name>Gobii</Name>
@@ -25,16 +26,16 @@
         <Contacts DbPKeysurrogate="Email">
             <Contact>
                 <Keys>
-                    <DbPKey></DbPKey>
+                   <DbPKey>-800362631</DbPKey>
                     <Fkey entity="Organization" fkproperty="organizationId">
                         <DbPKeySurrogate>IRRI ORG</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKey>492035495</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
                     <LastName>Calaminos</LastName>
                     <FirstName>Yanii</FirstName>
-                    <Code></Code>
+                    <Code/>
                     <Email>dummy@email.address</Email>
                     <Roles>
                         <Role>Curator</Role>
@@ -45,16 +46,16 @@
             </Contact>
             <Contact>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>1570297564</DbPKey>
                     <Fkey entity="Organization" fkproperty="organizationId">
-                        <DbPKeySurrogate>cmmyt</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKeySurrogate>Gobii</DbPKeySurrogate>
+                        <DbPKey>-323916278</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
                     <LastName>Glaser</LastName>
                     <FirstName>Phil</FirstName>
-                    <Code></Code>
+                    <Code/>
                     <Email>pdg66@cornell.edu</Email>
                     <Roles>
                         <Role>Curator</Role>
@@ -67,167 +68,167 @@
         <Platforms DbPKeysurrogate="PlatformName">
             <Platform>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>-1900438937</DbPKey>
                 </Keys>
                 <Properties>
                     <PlatformName>Platform1</PlatformName>
-                    <PlatformCode></PlatformCode>
-                    <PlatformDescription></PlatformDescription>
-                    <StatusId></StatusId>
-                    <TypeId></TypeId>
-                    <Properties></Properties>
+                    <PlatformCode/>
+                    <PlatformDescription/>
+                    <StatusId/>
+                    <TypeId/>
+                    <Properties/>
                 </Properties>
             </Platform>
         </Platforms>
         <Protocols DbPKeysurrogate="Name">
             <Protocol>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>1200963977</DbPKey>
                     <Fkey entity="Platform" fkproperty="platformId">
-                        <DbPKeySurrogate></DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKeySurrogate>Platform1</DbPKeySurrogate>
+                        <DbPKey>-1900438937</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
                     <Name>Protocol 1</Name>
-                    <Description></Description>
-                    <TypeId></TypeId>
-                    <Status></Status>
-                    <Props></Props>
-                    <VendorProtocols></VendorProtocols>
+                    <Description/>
+                    <TypeId/>
+                    <Status/>
+                    <Props/>
+                    <VendorProtocols/>
                 </Properties>
             </Protocol>
         </Protocols>
         <References DbPKeysurrogate="Name">
             <Reference>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>1814731809</DbPKey>
                 </Keys>
                 <Properties>
                     <Name>Reference 1</Name>
-                    <Version></Version>
-                    <Link></Link>
-                    <FilePath></FilePath>
+                    <Version/>
+                    <Link/>
+                    <FilePath/>
                 </Properties>
             </Reference>
         </References>
         <Mapsets DbPKeysurrogate="Name">
             <Mapset>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>-2084536079</DbPKey>
                     <Fkey entity="Reference" fkproperty="referenceId">
-                        <DbPKeySurrogate></DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKeySurrogate>Reference 1</DbPKeySurrogate>
+                        <DbPKey>1814731809</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
                     <Name>Mapset 1</Name>
-                    <Code></Code>
-                    <Description></Description>
-                    <MapType></MapType>
-                    <StatusId></StatusId>
-                    <Properties></Properties>
+                    <Code/>
+                    <Description/>
+                    <MapType/>
+                    <StatusId/>
+                    <Properties/>
                 </Properties>
             </Mapset>
         </Mapsets>
         <Projects DbPKeysurrogate="ProjectName">
             <Project>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>399519408</DbPKey>
                     <Fkey entity="Contact" fkproperty="piContact">
-                        <DbPKeySurrogate></DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKeySurrogate>dummy@email.address</DbPKeySurrogate>
+                        <DbPKey>-800362631</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
                     <ProjectName>Projects 1</ProjectName>
-                    <ProjectCode></ProjectCode>
-                    <ProjectDescription></ProjectDescription>
-                    <ProjectStatus></ProjectStatus>
+                    <ProjectCode/>
+                    <ProjectDescription/>
+                    <ProjectStatus/>
                 </Properties>
             </Project>
         </Projects>
         <Manifests DbPKeysurrogate="Name">
             <Manifest>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>-224538965</DbPKey>
                 </Keys>
                 <Properties>
                     <Name>Manifest 1</Name>
-                    <Code></Code>
-                    <FilePath></FilePath>
+                    <Code/>
+                    <FilePath/>
                 </Properties>
             </Manifest>
         </Manifests>
         <Experiments DbPKeysurrogate="ExperimentName">
             <Experiment>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>-1483531901</DbPKey>
                     <Fkey entity="Project" fkproperty="projectId">
-                        <DbPKeySurrogate></DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKeySurrogate>Projects 1</DbPKeySurrogate>
+                        <DbPKey>399519408</DbPKey>
                     </Fkey>
                     <Fkey entity="Manifest" fkproperty="manifestId">
-                        <DbPKeySurrogate></DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKeySurrogate>Manifest 1</DbPKeySurrogate>
+                        <DbPKey>-224538965</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
                     <ExperimentName>Experiment 1</ExperimentName>
-                    <ExperimentCode></ExperimentCode>
-                    <VendorProtocolId></VendorProtocolId>
-                    <StatusId></StatusId>
+                    <ExperimentCode/>
+                    <VendorProtocolId/>
+                    <StatusId/>
                 </Properties>
             </Experiment>
         </Experiments>
         <Analyses DbPKeysurrogate="AnalysisName">
             <Analysis>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>-157005879</DbPKey>
                     <Fkey entity="Reference" fkproperty="referenceId">
-                        <DbPKeySurrogate></DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKeySurrogate>Reference 1</DbPKeySurrogate>
+                        <DbPKey>1814731809</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
                     <AnalysisName>Analysis 1</AnalysisName>
-                    <AnalysisDescription></AnalysisDescription>
-                    <AnlaysisTypeId></AnlaysisTypeId>
-                    <Program></Program>
-                    <ProgramVersion></ProgramVersion>
-                    <Algorithm></Algorithm>
-                    <SourceName></SourceName>
-                    <SourceVersion></SourceVersion>
-                    <SourceUri></SourceUri>
-                    <TimeExecuted></TimeExecuted>
-                    <StatusId></StatusId>
-                    <Parameters></Parameters>
+                    <AnalysisDescription/>
+                    <AnlaysisTypeId/>
+                    <Program/>
+                    <ProgramVersion/>
+                    <Algorithm/>
+                    <SourceName/>
+                    <SourceVersion/>
+                    <SourceUri/>
+                    <TimeExecuted/>
+                    <StatusId/>
+                    <Parameters/>
                 </Properties>
             </Analysis>
         </Analyses>
         <Datasets DbPKeysurrogate="Name">
             <Dataset>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>-1043626483</DbPKey>
                     <Fkey entity="Experiment" fkproperty="experimentId">
                         <DbPKeySurrogate>Experiment 1</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKey>-1483531901</DbPKey>
                     </Fkey>
                     <Fkey entity="Analysis" fkproperty="callingAnalysisId">
                         <DbPKeySurrogate>Analysis 1</DbPKeySurrogate>
-                        <DbPKey></DbPKey>
+                        <DbPKey>-157005879</DbPKey>
                     </Fkey>
                 </Keys>
                 <Properties>
                     <Name>Data set 1</Name>
-                    <DataTable></DataTable>
-                    <DataFile></DataFile>
-                    <QualityTable></QualityTable>
-                    <QualityFile></QualityFile>
-                    <StatusId></StatusId>
-                    <TypeId></TypeId>
-                    <AnalysesIds></AnalysesIds>
-                    <Scores></Scores>
+                    <DataTable/>
+                    <DataFile/>
+                    <QualityTable/>
+                    <QualityFile/>
+                    <StatusId/>
+                    <TypeId/>
+                    <AnalysesIds/>
+                    <Scores/>
                 </Properties>
             </Dataset>
         </Datasets>
@@ -237,27 +238,27 @@
         <Scenario>
             <Name>2 Letter Nucleotide</Name>
             <Files>
-                <Instruction></Instruction>
-                <Data></Data>
+                <Instruction/>
+                <Data/>
             </Files>
 
             <DbFkey entity="Contact">
-                <DbPKeySurrogate></DbPKeySurrogate>
-                <DbPKey></DbPKey>
+                <DbPKeySurrogate/>
+                <DbPKey/>
             </DbFkey>
             <DbFkey entity="Project">
-                <DbPKeySurrogate></DbPKeySurrogate>
-                <DbPKey></DbPKey>
+                <DbPKeySurrogate/>
+                <DbPKey/>
             </DbFkey>
 
             <DbFkey entity="Experiment">
-                <DbPKeySurrogate></DbPKeySurrogate>
-                <DbPKey></DbPKey>
+                <DbPKeySurrogate/>
+                <DbPKey/>
             </DbFkey>
 
             <DbFkey entity="Dataset">
-                <DbPKeySurrogate></DbPKeySurrogate>
-                <DbPKey></DbPKey>
+                <DbPKeySurrogate/>
+                <DbPKey/>
             </DbFkey>
         </Scenario>
 
