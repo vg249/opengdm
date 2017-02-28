@@ -10,6 +10,7 @@ import java.util.List;
 public interface DtoMapCv {
     CvDTO getCvDetails(Integer cvId) throws GobiiDtoMappingException;
     List<CvDTO> getCvs() throws GobiiDtoMappingException;
+    List<CvDTO> getCvsByGroupName(String groupName) throws GobiiDtoMappingException;
     CvDTO createCv(CvDTO cvDTO) throws GobiiDtoMappingException;
     CvDTO replaceCv(Integer cvId, CvDTO cvDTO) throws GobiiDtoMappingException;
     CvDTO deleteCv(CvDTO cvDTO) throws GobiiDtoMappingException;

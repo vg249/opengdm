@@ -20,4 +20,5 @@ public interface CvService {
     CvDTO deleteCv(Integer cvId) throws GobiiDomainException;
     CvDTO getCvById(Integer cvId) throws GobiiDomainException;
     List<CvDTO> getCvs() throws GobiiDomainException;
+    List<CvDTO> getCvsByGroupName(String groupName) throws GobiiDomainException;
 }

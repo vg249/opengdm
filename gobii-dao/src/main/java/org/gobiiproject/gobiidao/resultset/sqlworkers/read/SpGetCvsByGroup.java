@@ -11,13 +11,15 @@ import java.util.Map;
 /**
  * Created by Angel on 4/26/2016.
  */
-public class SpGetCvGroups implements Work {
-
+public class SpGetCvsByGroup implements Work {
+    /**
+     * Created by Angel on 4/26/2016.
+     */
     private Map<String, Object> parameters = null;
 
-    public SpGetCvGroups() {
+    public SpGetCvsByGroup(Map<String, Object> parameters) {
+        this.parameters = parameters;
     }
-
 
     private ResultSet resultSet = null;
 
@@ -28,11 +30,12 @@ public class SpGetCvGroups implements Work {
     @Override
     public void execute(Connection dbConnection) throws SQLException {
 
-        String sql = "select distinct on (lower(name)) cvgroup_id,lower(name) from cvgroup order by lower(name)";
-
-        PreparedStatement preparedStatement = dbConnection.prepareStatement(sql);
-
+        String Sql = "select cv.*, g.type as group_type from cv join cvgroup g on (cv.cvgroup_id=g.cvgroup_id) where lower(g.name)= ? order by lower(term)";
+        PreparedStatement preparedStatement = dbConnection.prepareStatement(Sql);
+        String groupName = (String) parameters.get("groupName");
+        preparedStatement.setString(1, groupName.toLowerCase());
+        
         resultSet = preparedStatement.executeQuery();
-
     } // execute()
+
 }
