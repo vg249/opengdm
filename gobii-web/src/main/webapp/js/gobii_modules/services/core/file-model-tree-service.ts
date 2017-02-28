@@ -63,7 +63,8 @@ export class FileModelTreeService {
 
             submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.EXPORT_FORMAT, null)
                 .setCategoryType(ExtractorCategoryType.LEAF)
-                .setEntityName("Export Formats")
+                .setCategoryName(this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT])
+                .setEntityName(this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT])
                 .setCardinality(CardinalityType.ONE_ONLY)
             );
 
@@ -172,8 +173,8 @@ export class FileModelTreeService {
                         )
                         .addChild(FileModelNode.build(ExtractorItemType.MARKER_LIST, currentParent)
                             .setCategoryType(ExtractorCategoryType.CATEGORY_CONTAINER)
-                            .setEntityName(this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST])
-                            .setCategoryName(this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST])
+                            .setEntityName(this.treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST])
+                            .setCategoryName(this.treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST])
                             .setCardinality(CardinalityType.ZERO_OR_MORE)
                         ));
 

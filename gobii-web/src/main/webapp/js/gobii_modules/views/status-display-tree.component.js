@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/file-model-tree-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/file-model-node", "../model/cv-filter-type", "../services/core/file-model-tree-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, file_model_node_1, file_model_tree_service_1, StatusDisplayTreeComponent;
+    var core_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, file_model_node_1, cv_filter_type_1, file_model_tree_service_1, StatusDisplayTreeComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -27,6 +27,9 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
             },
             function (file_model_node_1_1) {
                 file_model_node_1 = file_model_node_1_1;
+            },
+            function (cv_filter_type_1_1) {
+                cv_filter_type_1 = cv_filter_type_1_1;
             },
             function (file_model_tree_service_1_1) {
                 file_model_tree_service_1 = file_model_tree_service_1_1;
@@ -105,33 +108,60 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                 };
                 // ********************************************************************************
                 // ********************* CHECKBOX/TREE NODE CONVERSION FUNCTIONS
-                StatusDisplayTreeComponent.prototype.addEntityIconToNode = function (entityType, treeNode) {
+                StatusDisplayTreeComponent.prototype.addEntityIconToNode = function (entityType, cvFilterType, treeNode) {
                     if (entityType === type_entity_1.EntityType.DataSets) {
                         treeNode.icon = "fa-database";
                         treeNode.expandedIcon = "fa-database";
                         treeNode.collapsedIcon = "fa-database";
                     }
                     else if (entityType === type_entity_1.EntityType.Contacts) {
-                        treeNode.icon = "fa-address-book-o";
-                        treeNode.expandedIcon = "fa-address-book-o";
-                        treeNode.collapsedIcon = "fa-address-book-o";
+                        treeNode.icon = "fa-user-o";
+                        treeNode.expandedIcon = "fa-user-o";
+                        treeNode.collapsedIcon = "fa-user-o";
                     }
                     else if (entityType === type_entity_1.EntityType.Mapsets) {
                         treeNode.icon = "fa-map-o";
                         treeNode.expandedIcon = "fa-map-o";
                         treeNode.collapsedIcon = "fa-map-o";
                     }
+                    else if (entityType === type_entity_1.EntityType.Platforms) {
+                        treeNode.icon = "fa-calculator";
+                        treeNode.expandedIcon = "fa-calculator";
+                        treeNode.collapsedIcon = "fa-calculator";
+                    }
+                    else if (entityType === type_entity_1.EntityType.Projects) {
+                        treeNode.icon = "fa-clipboard";
+                        treeNode.expandedIcon = "fa-clipboard";
+                        treeNode.collapsedIcon = "fa-clipboard";
+                    }
+                    else if (entityType === type_entity_1.EntityType.CvTerms) {
+                        if (cvFilterType === cv_filter_type_1.CvFilterType.DATASET_TYPE) {
+                            treeNode.icon = "fa-file-excel-o";
+                            treeNode.expandedIcon = "fa-file-excel-o";
+                            treeNode.collapsedIcon = "fa-file-excel-o";
+                        }
+                    }
                 };
                 StatusDisplayTreeComponent.prototype.addIconsToNode = function (statusTreeTemplate, treeNode) {
                     // if( fileModelNode.getItemType() == ExtractorItemType.ENTITY ) {
                     if (statusTreeTemplate.getEntityType() != null
                         && statusTreeTemplate.getEntityType() != type_entity_1.EntityType.UNKNOWN) {
-                        this.addEntityIconToNode(statusTreeTemplate.getEntityType(), treeNode);
+                        this.addEntityIconToNode(statusTreeTemplate.getEntityType(), statusTreeTemplate.getCvFilterType(), treeNode);
                     }
                     else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.EXPORT_FORMAT) {
                         treeNode.icon = "fa-columns";
                         treeNode.expandedIcon = "fa-columns";
                         treeNode.collapsedIcon = "fa-columns";
+                    }
+                    else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST) {
+                        treeNode.icon = "fa-eyedropper";
+                        treeNode.expandedIcon = "fa-eyedropper";
+                        treeNode.collapsedIcon = "fa-eyedropper";
+                    }
+                    else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST) {
+                        treeNode.icon = "fa-map-marker";
+                        treeNode.expandedIcon = "fa-map-marker";
+                        treeNode.collapsedIcon = "fa-map-marker";
                     }
                     else {
                         //     }
@@ -182,7 +212,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                             if (gobiiTreeNodeToBePlaced === null) {
                                 var newGobiiTreeNode = new GobiiTreeNode_1.GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(), fileModelTreeEvent.fileItem.fileItemUniqueId);
                                 this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
-                                this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
+                                this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), newGobiiTreeNode);
                                 // now we need to add the new tree node to the parent
                                 if (fileModelTreeEvent.fileModelNode.getParent() != null) {
                                     var fileModelNodeParent = fileModelTreeEvent.fileModelNode.getParent();
@@ -214,7 +244,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                                     if (existingGobiiTreeNodeChild === null) {
                                         var newGobiiTreeNode = new GobiiTreeNode_1.GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(), fileModelTreeEvent.fileItem.fileItemUniqueId);
                                         newGobiiTreeNode.entityType = fileModelTreeEvent.fileItem.entityType;
-                                        this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
+                                        this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), newGobiiTreeNode);
                                         this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
                                         parentTreeNode.children.push(newGobiiTreeNode);
                                         parentTreeNode.expanded = true;
@@ -279,6 +309,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     if (null != returnVal) {
                         var debug = "debug";
                         this.addIconsToNode(fileModelNode, returnVal);
+                        returnVal.expanded = true;
                         fileModelNode.getChildren().forEach(function (stt) {
                             var currentTreeNode = _this.makeTreeNodeFromTemplate(stt);
                             if (null != currentTreeNode) {

@@ -75,7 +75,8 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             .setCardinality(file_model_node_1.CardinalityType.ONE_ONLY));
                         submissionItemsForAll.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.EXPORT_FORMAT, null)
                             .setCategoryType(file_model_node_1.ExtractorCategoryType.LEAF)
-                            .setEntityName("Export Formats")
+                            .setCategoryName(this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.EXPORT_FORMAT])
+                            .setEntityName(this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.EXPORT_FORMAT])
                             .setCardinality(file_model_node_1.CardinalityType.ONE_ONLY));
                         submissionItemsForAll.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, null)
                             .setCategoryType(file_model_node_1.ExtractorCategoryType.LEAF)
@@ -157,8 +158,8 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                                 .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE))
                                 .addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.MARKER_LIST, currentParent)
                                 .setCategoryType(file_model_node_1.ExtractorCategoryType.CATEGORY_CONTAINER)
-                                .setEntityName(this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_LIST])
-                                .setCategoryName(this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_LIST])
+                                .setEntityName(this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST])
+                                .setCategoryName(this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST])
                                 .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE)));
                         this.fileModelNodeTree
                             .set(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, submissionItemsForByMarkers);

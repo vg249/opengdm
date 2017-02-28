@@ -121,7 +121,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 // ********************************************************************************
 // ********************* CHECKBOX/TREE NODE CONVERSION FUNCTIONS
 
-    addEntityIconToNode(entityType: EntityType, treeNode: GobiiTreeNode) {
+    addEntityIconToNode(entityType: EntityType, cvFilterType: CvFilterType, treeNode: GobiiTreeNode) {
 
         if (entityType === EntityType.DataSets) {
 
@@ -131,15 +131,36 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         } else if (entityType === EntityType.Contacts) {
 
-            treeNode.icon = "fa-address-book-o";
-            treeNode.expandedIcon = "fa-address-book-o";
-            treeNode.collapsedIcon = "fa-address-book-o";
+            treeNode.icon = "fa-user-o";
+            treeNode.expandedIcon = "fa-user-o";
+            treeNode.collapsedIcon = "fa-user-o";
 
         } else if (entityType === EntityType.Mapsets) {
 
             treeNode.icon = "fa-map-o";
             treeNode.expandedIcon = "fa-map-o";
             treeNode.collapsedIcon = "fa-map-o";
+
+        } else if (entityType === EntityType.Platforms) {
+
+            treeNode.icon = "fa-calculator";
+            treeNode.expandedIcon = "fa-calculator";
+            treeNode.collapsedIcon = "fa-calculator";
+
+        } else if (entityType === EntityType.Projects) {
+
+            treeNode.icon = "fa-clipboard";
+            treeNode.expandedIcon = "fa-clipboard";
+            treeNode.collapsedIcon = "fa-clipboard";
+
+        } else if (entityType === EntityType.CvTerms) {
+
+            if (cvFilterType === CvFilterType.DATASET_TYPE) {
+                treeNode.icon = "fa-file-excel-o";
+                treeNode.expandedIcon = "fa-file-excel-o";
+                treeNode.collapsedIcon = "fa-file-excel-o";
+            }
+
         }
     }
 
@@ -151,12 +172,20 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         if (statusTreeTemplate.getEntityType() != null
             && statusTreeTemplate.getEntityType() != EntityType.UNKNOWN) {
 
-            this.addEntityIconToNode(statusTreeTemplate.getEntityType(), treeNode);
+            this.addEntityIconToNode(statusTreeTemplate.getEntityType(), statusTreeTemplate.getCvFilterType(), treeNode);
 
         } else if (statusTreeTemplate.getItemType() === ExtractorItemType.EXPORT_FORMAT) {
             treeNode.icon = "fa-columns";
             treeNode.expandedIcon = "fa-columns";
             treeNode.collapsedIcon = "fa-columns";
+        } else if (statusTreeTemplate.getItemType() === ExtractorItemType.SAMPLE_LIST) {
+            treeNode.icon = "fa-eyedropper";
+            treeNode.expandedIcon = "fa-eyedropper";
+            treeNode.collapsedIcon = "fa-eyedropper";
+        } else if (statusTreeTemplate.getItemType() === ExtractorItemType.MARKER_LIST) {
+            treeNode.icon = "fa-map-marker";
+            treeNode.expandedIcon = "fa-map-marker";
+            treeNode.collapsedIcon = "fa-map-marker";
         } else {
             //     }
             // } else if (fileModelNode.getItemType() == ExtractorItemType.CATEGORY ) {
@@ -225,7 +254,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                         fileModelTreeEvent.fileItem.fileItemUniqueId);
 
                     this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
-                    this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
+                    this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(),fileModelTreeEvent.fileModelNode.getCvFilterType(), newGobiiTreeNode);
 
                     // now we need to add the new tree node to the parent
                     if (fileModelTreeEvent.fileModelNode.getParent() != null) {
@@ -274,7 +303,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                                 new GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(),
                                     fileModelTreeEvent.fileItem.fileItemUniqueId);
                             newGobiiTreeNode.entityType = fileModelTreeEvent.fileItem.entityType;
-                            this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
+                            this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(),fileModelTreeEvent.fileModelNode.getCvFilterType() , newGobiiTreeNode);
                             this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
                             parentTreeNode.children.push(newGobiiTreeNode);
                             parentTreeNode.expanded = true;
@@ -362,9 +391,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         if (null != returnVal) {
 
-            let debug:string = "debug";
+            let debug: string = "debug";
             this.addIconsToNode(fileModelNode, returnVal);
 
+            returnVal.expanded = true;
             fileModelNode.getChildren().forEach(
                 stt => {
 
