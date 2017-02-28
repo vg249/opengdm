@@ -345,7 +345,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             });
                     } // if-else we're adding
                     //this.treeFileItemEvent = FileItem.newFileItemEvent(arg);
-                    var fileItemEvent = file_item_1.FileItem.newFileItemEvent(arg);
+                    var fileItemEvent = file_item_1.FileItem.newFileItemEvent(arg, this.selectedExportType);
                     this._fileModelTreeService.put(fileItemEvent).subscribe();
                 };
                 ExtractorRoot.prototype.handleExtractDataSetUnchecked = function (arg) {
@@ -361,7 +361,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.gobiiDatasetExtracts.splice(idxToRemove, 1);
                     }
                     this.datasetFileItemEventChange = arg;
-                    this.treeFileItemEvent = file_item_1.FileItem.newFileItemEvent(arg);
+                    this.treeFileItemEvent = file_item_1.FileItem.newFileItemEvent(arg, this.selectedExportType);
                 };
                 ExtractorRoot.prototype.handleMapsetSelected = function (arg) {
                     if (arg > 0) {

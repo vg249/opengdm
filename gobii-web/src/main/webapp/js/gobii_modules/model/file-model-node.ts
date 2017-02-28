@@ -17,10 +17,12 @@ export enum CardinalityType {ZERO_OR_ONE, ZERO_OR_MORE, ONE_ONLY, ONE_OR_MORE, M
 
 export class FileModelNode {
 
-    constructor(itemType: ExtractorItemType) {
+    constructor(itemType: ExtractorItemType,parent:FileModelNode) {
         this._itemType = itemType;
+        this._parent = parent;
     }
 
+    private _parent: FileModelNode = null;
     private _children: FileModelNode[] = [];
     private _alternatePeerTypes: EntityType[] = [];
     private _cardinality: CardinalityType = CardinalityType.ZERO_OR_MORE;
@@ -30,12 +32,12 @@ export class FileModelNode {
     private _entityType: EntityType = EntityType.UNKNOWN;
     private _entityName: string;
     private _cvFilterType: CvFilterType = CvFilterType.UKNOWN;
-    private _fileItems: FileItem[] = [];
+    private _childFileItems: FileItem[] = [];
     private _fileModelNodeUniqueId = Guid.generateUUID();
 
 
-    public static build(itemType: ExtractorItemType): FileModelNode {
-        return new FileModelNode(itemType);
+    public static build(itemType: ExtractorItemType, parent:FileModelNode): FileModelNode {
+        return new FileModelNode(itemType,parent);
     }
 
 
@@ -55,6 +57,11 @@ export class FileModelNode {
     setCardinality(value: CardinalityType): FileModelNode {
         this._cardinality = value;
         return this;
+    }
+
+
+    getParent(): FileModelNode {
+        return this._parent;
     }
 
     getChildren(): FileModelNode[] {
@@ -121,14 +128,14 @@ export class FileModelNode {
     }
 
 
-    getFileItems(): FileItem[] {
-        return this._fileItems;
+    getChildFileItems(): FileItem[] {
+        return this._childFileItems;
     }
 
-    setFileItem(value: FileItem[]) {
-        this._fileItems = value;
+    setChildFileItems(value: FileItem[]): FileModelNode {
+        this._childFileItems = value;
+        return this;
     }
-
 
     getFileModelNodeUniqueId(): string {
         return this._fileModelNodeUniqueId;

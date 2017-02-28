@@ -39,7 +39,8 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
             })(CardinalityType || (CardinalityType = {}));
             exports_1("CardinalityType", CardinalityType);
             FileModelNode = (function () {
-                function FileModelNode(itemType) {
+                function FileModelNode(itemType, parent) {
+                    this._parent = null;
                     this._children = [];
                     this._alternatePeerTypes = [];
                     this._cardinality = CardinalityType.ZERO_OR_MORE;
@@ -47,12 +48,13 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
                     this._categoryType = ExtractorCategoryType.LEAF;
                     this._entityType = type_entity_1.EntityType.UNKNOWN;
                     this._cvFilterType = cv_filter_type_1.CvFilterType.UKNOWN;
-                    this._fileItems = [];
+                    this._childFileItems = [];
                     this._fileModelNodeUniqueId = guid_1.Guid.generateUUID();
                     this._itemType = itemType;
+                    this._parent = parent;
                 }
-                FileModelNode.build = function (itemType) {
-                    return new FileModelNode(itemType);
+                FileModelNode.build = function (itemType, parent) {
+                    return new FileModelNode(itemType, parent);
                 };
                 FileModelNode.prototype.getAlternatePeerTypes = function () {
                     return this._alternatePeerTypes;
@@ -67,6 +69,9 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
                 FileModelNode.prototype.setCardinality = function (value) {
                     this._cardinality = value;
                     return this;
+                };
+                FileModelNode.prototype.getParent = function () {
+                    return this._parent;
                 };
                 FileModelNode.prototype.getChildren = function () {
                     return this._children;
@@ -117,11 +122,12 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
                     this._cvFilterType = value;
                     return this;
                 };
-                FileModelNode.prototype.getFileItems = function () {
-                    return this._fileItems;
+                FileModelNode.prototype.getChildFileItems = function () {
+                    return this._childFileItems;
                 };
-                FileModelNode.prototype.setFileItem = function (value) {
-                    this._fileItems = value;
+                FileModelNode.prototype.setChildFileItems = function (value) {
+                    this._childFileItems = value;
+                    return this;
                 };
                 FileModelNode.prototype.getFileModelNodeUniqueId = function () {
                     return this._fileModelNodeUniqueId;

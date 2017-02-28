@@ -29,9 +29,9 @@ System.register(["./guid"], function (exports_1, context_1) {
                 //a branch new instance, even if any of the property values are different.
                 //I'm sure there's a better way to do this. For example, the tree component should
                 //subscribe to an observer that is fed by the root component?
-                FileItem.newFileItemEvent = function (fileItem) {
+                FileItem.newFileItemEvent = function (fileItem, gobiiExtractFilterType) {
                     var existingUniqueId = fileItem.fileItemUniqueId;
-                    var returnVal = new FileItem(fileItem.gobiiExtractFilterType, fileItem.processType, fileItem.entityType, fileItem.cvFilterType, fileItem.itemId, fileItem.itemName, fileItem.checked, fileItem.required);
+                    var returnVal = new FileItem(gobiiExtractFilterType, fileItem.processType, fileItem.entityType, fileItem.cvFilterType, fileItem.itemId, fileItem.itemName, fileItem.checked, fileItem.required);
                     returnVal.fileItemUniqueId = existingUniqueId;
                     return returnVal;
                 };

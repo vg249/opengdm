@@ -176,67 +176,128 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         }
     }
 
-    findTreeNodebyId(gobiiTreeNodes: GobiiTreeNode[], uniqueId: String): GobiiTreeNode {
+    findTreeNodebyModelNodeId(gobiiTreeNodes: GobiiTreeNode[], fileModelNodeId: String): GobiiTreeNode {
 
-        let returnVal:GobiiTreeNode = null;
+        let returnVal: GobiiTreeNode = null;
 
         gobiiTreeNodes.forEach(currentTreeNode => {
 
-            if ((currentTreeNode.fileItemId === uniqueId) || (currentTreeNode.fileModelNodeId === uniqueId)) {
+            if (currentTreeNode.fileModelNodeId === fileModelNodeId) {
                 returnVal = currentTreeNode;
             } else {
 
-                returnVal = this.findTreeNodebyId(currentTreeNode.children,uniqueId);
+                returnVal = this.findTreeNodebyModelNodeId(currentTreeNode.children, fileModelNodeId);
             }
         });
 
         return returnVal;
     }
 
+    findTreeNodebyFileItemIdId(gobiiTreeNodes: GobiiTreeNode[], fileItemId: String): GobiiTreeNode {
+
+        let returnVal: GobiiTreeNode = null;
+
+        gobiiTreeNodes.forEach(currentTreeNode => {
+
+            if (currentTreeNode.fileItemId === fileItemId) {
+                returnVal = currentTreeNode;
+            } else {
+
+                returnVal = this.findTreeNodebyModelNodeId(currentTreeNode.children, fileItemId);
+            }
+        });
+
+        return returnVal;
+    }
+
+
     placeNodeInTree(fileModelTreeEvent: FileModelTreeEvent) {
 
-        // if (fileModelTreeEvent.fileModelNode != null) {
-        //
-        //
-        //     if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
-        //
-        //
-        //
-        //         // let treeNodeId: string = = fileModelTreeEvent
-        //         //     .fileModelNode
-        //         //     .getFileItems()[0].itemId;
-        //
-        //         let existingGobiiTreeNode: GobiiTreeNode = this.findTreeNodebyId(this.gobiiTreeNodes, treeNodeId);
-        //
-        //         this.addEntityNameToNode(fileModelTreeEvent, existingGobiiTreeNode, fileItemEvent);
-        //
-        //     } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
-        //
-        //         let newGobiiTreeNode = new GobiiTreeNode();
-        //         newGobiiTreeNode.entityType = fileItemEvent.entityType;
-        //         this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
-        //         this.addEntityNameToNode(fileModelTreeEvent, newGobiiTreeNode, fileItemEvent);
-        //         fileModelTreeEvent.fileModelNode.getFileItems().children.push(newGobiiTreeNode);
-        //         fileModelTreeEvent.fileModelNode.getFileItems().expanded = true;
-        //         this.selectedGobiiNodes.push(newGobiiTreeNode);
-        //         this.selectedGobiiNodes.push(fileModelTreeEvent.fileModelNode.getFileItems());
-        //
-        //     } else {
-        //         this.reportMessage("The node of category  "
-        //             + fileModelTreeEvent.fileModelNode.getCategoryType()
-        //             + " for checkbox event " + fileItemEvent.itemName
-        //             + " could not be placed in the tree ");
-        //     }
-        //
-        //
-        // } else {
-        //
-        //     this.reportMessage("Could not place checkbox event "
-        //         + fileItemEvent.itemName
-        //         + " in tree");
-        // }
+        if (fileModelTreeEvent.fileModelNode != null && fileModelTreeEvent.fileItem != null) {
 
-    } //
+            if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
+
+                let gobiiTreeNodeToBePlaced: GobiiTreeNode = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.fileItemUniqueId);
+
+                if (gobiiTreeNodeToBePlaced === null) {
+
+                    let newGobiiTreeNode: GobiiTreeNode = new GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(),
+                        fileModelTreeEvent.fileItem.fileItemUniqueId);
+
+                    this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
+                    this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
+
+                    // now we need to add the new tree node to the parent
+                    if (fileModelTreeEvent.fileModelNode.getParent() != null) {
+
+                        let fileModelNodeParent: FileModelNode = fileModelTreeEvent.fileModelNode.getParent();
+                        let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelNodeParent.getFileModelNodeUniqueId());
+
+                        if (parentTreeNode != null) {
+                            parentTreeNode.children.push(newGobiiTreeNode);
+                        } else {
+                            // error condition
+                        } // the model tree's parent does not have a corresponding tree node
+
+                    } else {
+                        // error condition
+
+                    } // if-else the model node has a parent
+
+
+                } else {
+                    // modify existing node?
+                } // if-else we found an existing node for the LEAF node's file item
+
+
+            } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
+
+                // there should not be a file item associated with the model because it's a container -- the file items are just for the children
+                let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
+                if (parentTreeNode != null) {
+
+                    let existingFileModelItem: FileItem = fileModelTreeEvent
+                        .fileModelNode
+                        .getChildFileItems()
+                        .find(item => {
+                            return item.fileItemUniqueId === fileModelTreeEvent.fileItem.fileItemUniqueId
+                        });
+
+                    if (existingFileModelItem !== null) {
+
+
+                        let existingGobiiTreeNodeChild: GobiiTreeNode = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, existingFileModelItem.fileItemUniqueId);
+
+                        if (existingGobiiTreeNodeChild === null) {
+
+                            let newGobiiTreeNode: GobiiTreeNode =
+                                new GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(),
+                                    fileModelTreeEvent.fileItem.fileItemUniqueId);
+                            newGobiiTreeNode.entityType = fileModelTreeEvent.fileItem.entityType;
+                            this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
+                            this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
+                            parentTreeNode.children.push(newGobiiTreeNode);
+                            parentTreeNode.expanded = true;
+                            this.selectedGobiiNodes.push(newGobiiTreeNode);
+                            this.selectedGobiiNodes.push(parentTreeNode);
+                        } else {
+                            // modify existing existingGobiiTreeNodeChild
+                        } // if-else there already exists a corresponding tree node
+
+                    } else {
+                        // error condition
+                    } // if else we found an existing file item
+
+                } else {
+                    // error condition
+                } // if-else we found a tree node to serve as parent for the container's item tree nodes
+
+            } // if-else -if on extractor category type
+
+        } else {
+            // error condition: invalid event
+        } // there i sno file mode node for tree event
+    } // place node in tree
 
 
     makeTreeNodeFromTemplate(fileModelNode: FileModelNode): GobiiTreeNode {
@@ -337,10 +398,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             let itemChangedEvent: FileItem = changes['fileItemEventChange'].currentValue;
 
 
-//            this.placeNodeInTree(itemChangedEvent);
+//            this.placeNodeInModel(itemChangedEvent);
             //this.treeNodes.push(treeNode);
 
-            //this.placeNodeInTree(treeNode);
+            //this.placeNodeInModel(treeNode);
 
             // this.treeNodes.push(treeNode);
             //

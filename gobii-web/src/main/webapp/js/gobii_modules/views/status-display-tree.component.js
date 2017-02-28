@@ -149,61 +149,91 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                         gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + fileItemEvent.itemName;
                     }
                 };
-                StatusDisplayTreeComponent.prototype.findTreeNodebyId = function (gobiiTreeNodes, uniqueId) {
+                StatusDisplayTreeComponent.prototype.findTreeNodebyModelNodeId = function (gobiiTreeNodes, fileModelNodeId) {
                     var _this = this;
                     var returnVal = null;
                     gobiiTreeNodes.forEach(function (currentTreeNode) {
-                        if ((currentTreeNode.fileItemId === uniqueId) || (currentTreeNode.fileModelNodeId === uniqueId)) {
+                        if (currentTreeNode.fileModelNodeId === fileModelNodeId) {
                             returnVal = currentTreeNode;
                         }
                         else {
-                            returnVal = _this.findTreeNodebyId(currentTreeNode.children, uniqueId);
+                            returnVal = _this.findTreeNodebyModelNodeId(currentTreeNode.children, fileModelNodeId);
+                        }
+                    });
+                    return returnVal;
+                };
+                StatusDisplayTreeComponent.prototype.findTreeNodebyFileItemIdId = function (gobiiTreeNodes, fileItemId) {
+                    var _this = this;
+                    var returnVal = null;
+                    gobiiTreeNodes.forEach(function (currentTreeNode) {
+                        if (currentTreeNode.fileItemId === fileItemId) {
+                            returnVal = currentTreeNode;
+                        }
+                        else {
+                            returnVal = _this.findTreeNodebyModelNodeId(currentTreeNode.children, fileItemId);
                         }
                     });
                     return returnVal;
                 };
                 StatusDisplayTreeComponent.prototype.placeNodeInTree = function (fileModelTreeEvent) {
-                    // if (fileModelTreeEvent.fileModelNode != null) {
-                    //
-                    //
-                    //     if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
-                    //
-                    //
-                    //
-                    //         // let treeNodeId: string = = fileModelTreeEvent
-                    //         //     .fileModelNode
-                    //         //     .getFileItems()[0].itemId;
-                    //
-                    //         let existingGobiiTreeNode: GobiiTreeNode = this.findTreeNodebyId(this.gobiiTreeNodes, treeNodeId);
-                    //
-                    //         this.addEntityNameToNode(fileModelTreeEvent, existingGobiiTreeNode, fileItemEvent);
-                    //
-                    //     } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
-                    //
-                    //         let newGobiiTreeNode = new GobiiTreeNode();
-                    //         newGobiiTreeNode.entityType = fileItemEvent.entityType;
-                    //         this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
-                    //         this.addEntityNameToNode(fileModelTreeEvent, newGobiiTreeNode, fileItemEvent);
-                    //         fileModelTreeEvent.fileModelNode.getFileItems().children.push(newGobiiTreeNode);
-                    //         fileModelTreeEvent.fileModelNode.getFileItems().expanded = true;
-                    //         this.selectedGobiiNodes.push(newGobiiTreeNode);
-                    //         this.selectedGobiiNodes.push(fileModelTreeEvent.fileModelNode.getFileItems());
-                    //
-                    //     } else {
-                    //         this.reportMessage("The node of category  "
-                    //             + fileModelTreeEvent.fileModelNode.getCategoryType()
-                    //             + " for checkbox event " + fileItemEvent.itemName
-                    //             + " could not be placed in the tree ");
-                    //     }
-                    //
-                    //
-                    // } else {
-                    //
-                    //     this.reportMessage("Could not place checkbox event "
-                    //         + fileItemEvent.itemName
-                    //         + " in tree");
-                    // }
-                }; //
+                    if (fileModelTreeEvent.fileModelNode != null && fileModelTreeEvent.fileItem != null) {
+                        if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.LEAF) {
+                            var gobiiTreeNodeToBePlaced = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.fileItemUniqueId);
+                            if (gobiiTreeNodeToBePlaced === null) {
+                                var newGobiiTreeNode = new GobiiTreeNode_1.GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(), fileModelTreeEvent.fileItem.fileItemUniqueId);
+                                this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
+                                this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
+                                // now we need to add the new tree node to the parent
+                                if (fileModelTreeEvent.fileModelNode.getParent() != null) {
+                                    var fileModelNodeParent = fileModelTreeEvent.fileModelNode.getParent();
+                                    var parentTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelNodeParent.getFileModelNodeUniqueId());
+                                    if (parentTreeNode != null) {
+                                        parentTreeNode.children.push(newGobiiTreeNode);
+                                    }
+                                    else {
+                                    } // the model tree's parent does not have a corresponding tree node
+                                }
+                                else {
+                                } // if-else the model node has a parent
+                            }
+                            else {
+                            } // if-else we found an existing node for the LEAF node's file item
+                        }
+                        else if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
+                            // there should not be a file item associated with the model because it's a container -- the file items are just for the children
+                            var parentTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
+                            if (parentTreeNode != null) {
+                                var existingFileModelItem = fileModelTreeEvent
+                                    .fileModelNode
+                                    .getChildFileItems()
+                                    .find(function (item) {
+                                    return item.fileItemUniqueId === fileModelTreeEvent.fileItem.fileItemUniqueId;
+                                });
+                                if (existingFileModelItem !== null) {
+                                    var existingGobiiTreeNodeChild = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, existingFileModelItem.fileItemUniqueId);
+                                    if (existingGobiiTreeNodeChild === null) {
+                                        var newGobiiTreeNode = new GobiiTreeNode_1.GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(), fileModelTreeEvent.fileItem.fileItemUniqueId);
+                                        newGobiiTreeNode.entityType = fileModelTreeEvent.fileItem.entityType;
+                                        this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
+                                        this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
+                                        parentTreeNode.children.push(newGobiiTreeNode);
+                                        parentTreeNode.expanded = true;
+                                        this.selectedGobiiNodes.push(newGobiiTreeNode);
+                                        this.selectedGobiiNodes.push(parentTreeNode);
+                                    }
+                                    else {
+                                    } // if-else there already exists a corresponding tree node
+                                }
+                                else {
+                                } // if else we found an existing file item
+                            }
+                            else {
+                            } // if-else we found a tree node to serve as parent for the container's item tree nodes
+                        } // if-else -if on extractor category type
+                    }
+                    else {
+                    } // there i sno file mode node for tree event
+                }; // place node in tree
                 StatusDisplayTreeComponent.prototype.makeTreeNodeFromTemplate = function (fileModelNode) {
                     var _this = this;
                     var returnVal = null;

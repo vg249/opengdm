@@ -26,12 +26,12 @@ export class FileItem {
     //a branch new instance, even if any of the property values are different.
     //I'm sure there's a better way to do this. For example, the tree component should
     //subscribe to an observer that is fed by the root component?
-    public static newFileItemEvent(fileItem:FileItem): FileItem {
+    public static newFileItemEvent(fileItem:FileItem,gobiiExtractFilterType:GobiiExtractFilterType ): FileItem {
 
         let existingUniqueId:string = fileItem.fileItemUniqueId;
 
         let returnVal:FileItem  = new FileItem(
-            fileItem.gobiiExtractFilterType,
+            gobiiExtractFilterType,
             fileItem.processType,
             fileItem.entityType,
             fileItem.cvFilterType,

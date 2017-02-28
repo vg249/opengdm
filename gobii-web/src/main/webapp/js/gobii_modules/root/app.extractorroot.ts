@@ -627,7 +627,7 @@ export class ExtractorRoot {
         } // if-else we're adding
 
         //this.treeFileItemEvent = FileItem.newFileItemEvent(arg);
-        let fileItemEvent:FileItem = FileItem.newFileItemEvent(arg);
+        let fileItemEvent:FileItem = FileItem.newFileItemEvent(arg,this.selectedExportType);
 
 
         this._fileModelTreeService.put(fileItemEvent).subscribe();
@@ -655,7 +655,7 @@ export class ExtractorRoot {
         }
 
         this.datasetFileItemEventChange = arg;
-        this.treeFileItemEvent = FileItem.newFileItemEvent(arg);
+        this.treeFileItemEvent = FileItem.newFileItemEvent(arg,this.selectedExportType);
 
     }
 
