@@ -348,11 +348,15 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         } else if (fileModelNode.getItemType() == ExtractorItemType.EXPORT_FORMAT) {
 
             returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
-            returnVal.label = "Export Format";
+            returnVal.label = fileModelNode.getCategoryName();
         } else if (fileModelNode.getItemType() == ExtractorItemType.SAMPLE_LIST) {
 
             returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
-            returnVal.label = "Sample List";
+            returnVal.label = fileModelNode.getCategoryName();
+        } else if (fileModelNode.getItemType() == ExtractorItemType.MARKER_LIST) {
+
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
+            returnVal.label = fileModelNode.getCategoryName();
         }
 
 

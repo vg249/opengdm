@@ -266,11 +266,15 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     }
                     else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.EXPORT_FORMAT) {
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
-                        returnVal.label = "Export Format";
+                        returnVal.label = fileModelNode.getCategoryName();
                     }
                     else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.SAMPLE_LIST) {
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
-                        returnVal.label = "Sample List";
+                        returnVal.label = fileModelNode.getCategoryName();
+                    }
+                    else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.MARKER_LIST) {
+                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
+                        returnVal.label = fileModelNode.getCategoryName();
                     }
                     if (null != returnVal) {
                         var debug = "debug";

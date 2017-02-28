@@ -24,7 +24,7 @@ export class FileModelTreeService {
     entitySubtypeNodeLabels: Map < EntitySubType, string > = new Map<EntitySubType,string>();
     cvFilterNodeLabels: Map < CvFilterType, string > = new Map<CvFilterType,string>();
     extractorFilterTypeLabels: Map < GobiiExtractFilterType, string > = new Map<GobiiExtractFilterType, string>();
-    treeCategoryLabels: Map<ExtractorCategoryType,string> = new Map<ExtractorCategoryType,string>();
+    treeExtractorTypeLabels: Map<ExtractorItemType,string> = new Map<ExtractorItemType,string>();
 
     private getFileModelNodes(gobiiExtractFilterType: GobiiExtractFilterType): FileModelNode[] {
 
@@ -44,7 +44,14 @@ export class FileModelTreeService {
             this.extractorFilterTypeLabels[GobiiExtractFilterType.BY_SAMPLE] = "Extract by Sample";
             this.extractorFilterTypeLabels[GobiiExtractFilterType.BY_MARKER] = "Extract by Marker";
 
-            // **** FOR ALL EXTRACTION TYPES
+            this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST] = "Sample List";
+            this.treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST] = "Marker List";
+            this.treeExtractorTypeLabels[ExtractorItemType.CROP_TYPE] = "Crop Type";
+            this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT] = "Extraction Format";
+
+
+
+            // **** FOR ALL EXTRACTION TYPES **********************************************************************
             // **** THESE ARE ALL ROOT LEVEL NODES
             let submissionItemsForAll: FileModelNode[] = [];
             submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
@@ -68,7 +75,8 @@ export class FileModelTreeService {
             );
 
 
-            // ******** SET UP extract by dataset
+
+            // **** SET UP EXTRACT BY DATASET  **********************************************************************
             // -- Data set type
             let submissionItemsForDataSet: FileModelNode[] = [];
             submissionItemsForDataSet = submissionItemsForDataSet.concat(submissionItemsForAll);
@@ -81,7 +89,7 @@ export class FileModelTreeService {
 
             this.fileModelNodeTree.set(GobiiExtractFilterType.WHOLE_DATASET, submissionItemsForDataSet);
 
-            // ******** SET UP extract by samples
+            // **** SET UP EXTRACT BY SAMPLES  **********************************************************************
             // -- Data set type
             let submissionItemsForBySample: FileModelNode[] = [];
             submissionItemsForBySample = submissionItemsForBySample.concat(submissionItemsForAll);
@@ -115,7 +123,7 @@ export class FileModelTreeService {
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
                             .setCategoryType(ExtractorCategoryType.LEAF)
                             .setEntityType(EntityType.Contacts)
-                            .setEntityName("Principle Investigator")
+                            .setEntityName(this.entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR])
                             .setCardinality(CardinalityType.ZERO_OR_ONE)
                         )
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
@@ -126,14 +134,53 @@ export class FileModelTreeService {
                         )
                         .addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST, currentParent)
                             .setCategoryType(ExtractorCategoryType.CATEGORY_CONTAINER)
-                            .setEntityName("Sample List")
-                            .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
+                            .setEntityName(this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST])
+                            .setCategoryName(this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST])
                             .setCardinality(CardinalityType.ZERO_OR_MORE)
                         ));
 
             this.fileModelNodeTree
                 .set(GobiiExtractFilterType.BY_SAMPLE,
                     submissionItemsForBySample
+                );
+
+
+            // **** SET UP EXTRACT BY MARKERS  **********************************************************************
+            let submissionItemsForByMarkers: FileModelNode[] = [];
+            submissionItemsForByMarkers = submissionItemsForByMarkers.concat(submissionItemsForAll);
+            submissionItemsForByMarkers.push(
+                FileModelNode.build(ExtractorItemType.ENTITY, null)
+                    .setCategoryType(ExtractorCategoryType.LEAF)
+                    .setEntityType(EntityType.CvTerms)
+                    .setCvFilterType(CvFilterType.DATASET_TYPE)
+                    .setEntityName(this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE])
+                    .setCardinality(CardinalityType.ONE_ONLY)
+            );
+
+            submissionItemsForByMarkers
+                .push(currentParent =
+                    FileModelNode.build(ExtractorItemType.CATEGORY, null)
+                        .setCategoryType(ExtractorCategoryType.MODEL_CONTAINER)
+                        .setCategoryName("Markers Crieria")
+                        .setCardinality(CardinalityType.ONE_OR_MORE)
+                        .setAlternatePeerTypes([EntityType.Platforms])
+                        .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
+                            .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
+                            .setEntityType(EntityType.Platforms)
+                            .setEntityName(this.entityNodeLabels[EntityType.Platforms])
+                            .setCardinality(CardinalityType.ZERO_OR_MORE)
+                        )
+                        .addChild(FileModelNode.build(ExtractorItemType.MARKER_LIST, currentParent)
+                            .setCategoryType(ExtractorCategoryType.CATEGORY_CONTAINER)
+                            .setEntityName(this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST])
+                            .setCategoryName(this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST])
+                            .setCardinality(CardinalityType.ZERO_OR_MORE)
+                        ));
+
+
+            this.fileModelNodeTree
+                .set(GobiiExtractFilterType.BY_MARKER,
+                    submissionItemsForByMarkers
                 );
 
         }
