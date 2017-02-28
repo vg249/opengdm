@@ -59,6 +59,30 @@ public class RsCvDaoImpl implements RsCvDao {
         return returnVal;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getCvsByGroup(String groupName) throws GobiiDaoException{
+        ResultSet returnVal = null;
+
+        try {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("groupName", groupName);
+            SpGetCvsByGroup spGetCvsByGroup = new SpGetCvsByGroup(parameters);
+
+            storedProcExec.doWithConnection(spGetCvsByGroup);
+
+            returnVal = spGetCvsByGroup.getResultSet();
+        } catch (SQLGrammarException e) {
+
+            LOGGER.error("Error retrieving CVTERMS terms by group with SQL " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+
+        }
+
+
+        return returnVal;
+    }
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public ResultSet getCvGroups() throws GobiiDaoException {
