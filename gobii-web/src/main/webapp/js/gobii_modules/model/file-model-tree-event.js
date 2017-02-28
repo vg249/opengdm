@@ -13,13 +13,13 @@ System.register([], function (exports_1, context_1) {
             })(FileModelState || (FileModelState = {}));
             exports_1("FileModelState", FileModelState);
             FileModelTreeEvent = (function () {
-                function FileModelTreeEvent(fileItem, statusTreeTemplate, fileModelState, message) {
+                function FileModelTreeEvent(fileItem, fileModelNode, fileModelState, message) {
                     this.fileItem = fileItem;
-                    this.statusTreeTemplate = statusTreeTemplate;
+                    this.fileModelNode = fileModelNode;
                     this.fileModelState = fileModelState;
                     this.message = message;
                     this.fileItem = fileItem;
-                    this.statusTreeTemplate = statusTreeTemplate;
+                    this.fileModelNode = fileModelNode;
                     this.fileModelState = fileModelState;
                 }
                 return FileModelTreeEvent;

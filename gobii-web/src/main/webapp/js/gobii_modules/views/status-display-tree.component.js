@@ -54,12 +54,14 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     this.onAddMessage.emit(arg);
                 };
                 StatusDisplayTreeComponent.prototype.ngOnInit = function () {
-                    this._fileModelTreeService.subject.subscribe(this.handleFileModelTreeEvent);
+                    var _this = this;
+                    this._fileModelTreeService
+                        .subject
+                        .subscribe(function (te) {
+                        _this.placeNodeInTree(te);
+                    });
                     // this.makeDemoTreeNodes();
                     // this.setUpRequredItems();
-                };
-                StatusDisplayTreeComponent.prototype.handleFileModelTreeEvent = function (fileModelTreeEvent) {
-                    this.placeNodeInTree(fileModelTreeEvent.fileItem);
                 };
                 StatusDisplayTreeComponent.prototype.nodeSelect = function (event) {
                     //      this.msgs.push({severity: 'info', summary: 'Node Selected', detail: event.node.label});
@@ -121,7 +123,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     }
                 };
                 StatusDisplayTreeComponent.prototype.addIconsToNode = function (statusTreeTemplate, treeNode) {
-                    // if( statusTreeTemplate.getItemType() == ExtractorItemType.ENTITY ) {
+                    // if( fileModelNode.getItemType() == ExtractorItemType.ENTITY ) {
                     if (statusTreeTemplate.getEntityType() != null
                         && statusTreeTemplate.getEntityType() != type_entity_1.EntityType.UNKNOWN) {
                         this.addEntityIconToNode(statusTreeTemplate.getEntityType(), treeNode);
@@ -133,7 +135,7 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     }
                     else {
                         //     }
-                        // } else if (statusTreeTemplate.getItemType() == ExtractorItemType.CATEGORY ) {
+                        // } else if (fileModelNode.getItemType() == ExtractorItemType.CATEGORY ) {
                         treeNode.icon = "fa-folder";
                         treeNode.expandedIcon = "fa-folder-expanded";
                         treeNode.collapsedIcon = "fa-folder";
@@ -147,33 +149,49 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                         gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + fileItemEvent.itemName;
                     }
                 };
-                StatusDisplayTreeComponent.prototype.placeNodeInTree = function (fileItemEvent) {
-                    // let statusTreeTemplate: FileModelNode =
-                    //     this.findFileModelNode(ExtractorItemType.CATEGORY, fileItemEvent.entityType);
+                StatusDisplayTreeComponent.prototype.findTreeNodebyId = function (gobiiTreeNodes, uniqueId) {
+                    var _this = this;
+                    var returnVal = null;
+                    gobiiTreeNodes.forEach(function (currentTreeNode) {
+                        if ((currentTreeNode.fileItemId === uniqueId) || (currentTreeNode.fileModelNodeId === uniqueId)) {
+                            returnVal = currentTreeNode;
+                        }
+                        else {
+                            returnVal = _this.findTreeNodebyId(currentTreeNode.children, uniqueId);
+                        }
+                    });
+                    return returnVal;
+                };
+                StatusDisplayTreeComponent.prototype.placeNodeInTree = function (fileModelTreeEvent) {
+                    // if (fileModelTreeEvent.fileModelNode != null) {
                     //
                     //
-                    // if (statusTreeTemplate != null) {
+                    //     if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
                     //
                     //
-                    //     if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.LEAF) {
                     //
-                    //         let existingGobiiTreeNode: GobiiTreeNode = statusTreeTemplate.getFileItems();
-                    //         this.addEntityNameToNode(statusTreeTemplate, existingGobiiTreeNode, fileItemEvent);
+                    //         // let treeNodeId: string = = fileModelTreeEvent
+                    //         //     .fileModelNode
+                    //         //     .getFileItems()[0].itemId;
                     //
-                    //     } else if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
+                    //         let existingGobiiTreeNode: GobiiTreeNode = this.findTreeNodebyId(this.gobiiTreeNodes, treeNodeId);
+                    //
+                    //         this.addEntityNameToNode(fileModelTreeEvent, existingGobiiTreeNode, fileItemEvent);
+                    //
+                    //     } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
                     //
                     //         let newGobiiTreeNode = new GobiiTreeNode();
                     //         newGobiiTreeNode.entityType = fileItemEvent.entityType;
                     //         this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
-                    //         this.addEntityNameToNode(statusTreeTemplate, newGobiiTreeNode, fileItemEvent);
-                    //         statusTreeTemplate.getFileItems().children.push(newGobiiTreeNode);
-                    //         statusTreeTemplate.getFileItems().expanded = true;
+                    //         this.addEntityNameToNode(fileModelTreeEvent, newGobiiTreeNode, fileItemEvent);
+                    //         fileModelTreeEvent.fileModelNode.getFileItems().children.push(newGobiiTreeNode);
+                    //         fileModelTreeEvent.fileModelNode.getFileItems().expanded = true;
                     //         this.selectedGobiiNodes.push(newGobiiTreeNode);
-                    //         this.selectedGobiiNodes.push(statusTreeTemplate.getFileItems());
+                    //         this.selectedGobiiNodes.push(fileModelTreeEvent.fileModelNode.getFileItems());
                     //
                     //     } else {
                     //         this.reportMessage("The node of category  "
-                    //             + statusTreeTemplate.getCategoryType()
+                    //             + fileModelTreeEvent.fileModelNode.getCategoryType()
                     //             + " for checkbox event " + fileItemEvent.itemName
                     //             + " could not be placed in the tree ");
                     //     }

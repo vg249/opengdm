@@ -38,19 +38,16 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     ngOnInit() {
 
-        this._fileModelTreeService.subject.subscribe(this.handleFileModelTreeEvent);
+        this._fileModelTreeService
+            .subject
+            .subscribe(te => {
+                this.placeNodeInTree(te);
+            });
 
         // this.makeDemoTreeNodes();
         // this.setUpRequredItems();
 
     }
-
-    handleFileModelTreeEvent(fileModelTreeEvent: FileModelTreeEvent) {
-
-
-        this.placeNodeInTree(fileModelTreeEvent.fileItem);
-    }
-
 
 // *****************************************************************
 // *********************  TREE NODE DATA STRUCTURES AND EVENTS
@@ -149,7 +146,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     addIconsToNode(statusTreeTemplate: FileModelNode, treeNode: GobiiTreeNode) {
 
-        // if( statusTreeTemplate.getItemType() == ExtractorItemType.ENTITY ) {
+        // if( fileModelNode.getItemType() == ExtractorItemType.ENTITY ) {
 
         if (statusTreeTemplate.getEntityType() != null
             && statusTreeTemplate.getEntityType() != EntityType.UNKNOWN) {
@@ -162,7 +159,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             treeNode.collapsedIcon = "fa-columns";
         } else {
             //     }
-            // } else if (statusTreeTemplate.getItemType() == ExtractorItemType.CATEGORY ) {
+            // } else if (fileModelNode.getItemType() == ExtractorItemType.CATEGORY ) {
             treeNode.icon = "fa-folder";
             treeNode.expandedIcon = "fa-folder-expanded";
             treeNode.collapsedIcon = "fa-folder";
@@ -179,34 +176,54 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         }
     }
 
-    placeNodeInTree(fileItemEvent: FileItem) {
+    findTreeNodebyId(gobiiTreeNodes: GobiiTreeNode[], uniqueId: String): GobiiTreeNode {
 
-        // let statusTreeTemplate: FileModelNode =
-        //     this.findFileModelNode(ExtractorItemType.CATEGORY, fileItemEvent.entityType);
+        let returnVal:GobiiTreeNode = null;
+
+        gobiiTreeNodes.forEach(currentTreeNode => {
+
+            if ((currentTreeNode.fileItemId === uniqueId) || (currentTreeNode.fileModelNodeId === uniqueId)) {
+                returnVal = currentTreeNode;
+            } else {
+
+                returnVal = this.findTreeNodebyId(currentTreeNode.children,uniqueId);
+            }
+        });
+
+        return returnVal;
+    }
+
+    placeNodeInTree(fileModelTreeEvent: FileModelTreeEvent) {
+
+        // if (fileModelTreeEvent.fileModelNode != null) {
         //
         //
-        // if (statusTreeTemplate != null) {
+        //     if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
         //
         //
-        //     if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.LEAF) {
         //
-        //         let existingGobiiTreeNode: GobiiTreeNode = statusTreeTemplate.getFileItems();
-        //         this.addEntityNameToNode(statusTreeTemplate, existingGobiiTreeNode, fileItemEvent);
+        //         // let treeNodeId: string = = fileModelTreeEvent
+        //         //     .fileModelNode
+        //         //     .getFileItems()[0].itemId;
         //
-        //     } else if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
+        //         let existingGobiiTreeNode: GobiiTreeNode = this.findTreeNodebyId(this.gobiiTreeNodes, treeNodeId);
+        //
+        //         this.addEntityNameToNode(fileModelTreeEvent, existingGobiiTreeNode, fileItemEvent);
+        //
+        //     } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
         //
         //         let newGobiiTreeNode = new GobiiTreeNode();
         //         newGobiiTreeNode.entityType = fileItemEvent.entityType;
         //         this.addEntityIconToNode(newGobiiTreeNode.entityType, newGobiiTreeNode);
-        //         this.addEntityNameToNode(statusTreeTemplate, newGobiiTreeNode, fileItemEvent);
-        //         statusTreeTemplate.getFileItems().children.push(newGobiiTreeNode);
-        //         statusTreeTemplate.getFileItems().expanded = true;
+        //         this.addEntityNameToNode(fileModelTreeEvent, newGobiiTreeNode, fileItemEvent);
+        //         fileModelTreeEvent.fileModelNode.getFileItems().children.push(newGobiiTreeNode);
+        //         fileModelTreeEvent.fileModelNode.getFileItems().expanded = true;
         //         this.selectedGobiiNodes.push(newGobiiTreeNode);
-        //         this.selectedGobiiNodes.push(statusTreeTemplate.getFileItems());
+        //         this.selectedGobiiNodes.push(fileModelTreeEvent.fileModelNode.getFileItems());
         //
         //     } else {
         //         this.reportMessage("The node of category  "
-        //             + statusTreeTemplate.getCategoryType()
+        //             + fileModelTreeEvent.fileModelNode.getCategoryType()
         //             + " for checkbox event " + fileItemEvent.itemName
         //             + " could not be placed in the tree ");
         //     }
@@ -229,14 +246,14 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         if (fileModelNode.getItemType() === ExtractorItemType.ENTITY) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(),null);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
             returnVal.entityType = fileModelNode.getEntityType();
             returnVal.label = fileModelNode.getEntityName();
 
 
         } else if (fileModelNode.getItemType() === ExtractorItemType.CATEGORY) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(),null);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
 
             if (fileModelNode.getEntityType() != null
                 && fileModelNode.getEntityType() != EntityType.UNKNOWN) {
@@ -247,7 +264,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         } else if (fileModelNode.getItemType() == ExtractorItemType.EXPORT_FORMAT) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(),null);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
             returnVal.label = "Export Format";
         }
 
@@ -341,7 +358,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             //         itemToChange.checked = changes['fileItemEventChange'].currentValue.checked;
             //     }
             // }
-        }         else if (changes['gobiiExtractFilterTypeEvent']
+        } else if (changes['gobiiExtractFilterTypeEvent']
             && ( changes['gobiiExtractFilterTypeEvent'].currentValue != null )
             && ( changes['gobiiExtractFilterTypeEvent'].currentValue != undefined )) {
 

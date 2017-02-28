@@ -11,12 +11,12 @@ export enum FileModelState {
 export class FileModelTreeEvent {
 
     constructor(public fileItem: FileItem,
-                public statusTreeTemplate: FileModelNode,
+                public fileModelNode: FileModelNode,
                 public fileModelState: FileModelState,
                 public message:string) {
 
         this.fileItem = fileItem;
-        this.statusTreeTemplate = statusTreeTemplate;
+        this.fileModelNode = fileModelNode;
         this.fileModelState = fileModelState;
 
     }
