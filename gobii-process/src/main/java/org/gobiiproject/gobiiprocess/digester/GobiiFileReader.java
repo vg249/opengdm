@@ -453,6 +453,8 @@ public class GobiiFileReader {
 		if(ppdLines<0)ppdLines=0;
 		if(noDupsLines<0)noDupsLines=0;
 
+		boolean noDupsFileExists=new File(noDupsFile).exists();
+		if(!noDupsFileExists)noDupsLines=ppdLines;
 		//Begin Business Logic Zone
 		int loadedLines=noDupsLines;
 		int existingLines=ppdLines-noDupsLines;
@@ -480,6 +482,9 @@ public class GobiiFileReader {
 			linesLoadedVal = loadedLines + "";//Header
 			existingLinesVal = existingLines + "";
 			invalidLinesVal = invalidLines + "";
+			if(!noDupsFileExists){
+				existingLinesVal="";
+			}
 			if(invalidLines!=0) {
 				invalidLinesVal = "<b style=\"background-color:red\">" + invalidLines + "</b>";
 			}
