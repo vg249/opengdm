@@ -661,7 +661,7 @@ export class ExtractorRoot {
 
 
 // ********************************************************************
-// ********************************************** MAPSET SELECTION
+// ********************************************** MAPSET SELECTIONz
     private mapsetNameIdList: NameId[];
     private selectedMapsetId: string;
     private nullMapsetName: string;

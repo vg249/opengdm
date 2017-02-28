@@ -33,6 +33,7 @@ export class FileModelTreeService {
             this.entityNodeLabels[EntityType.DataSets] = "Data Sets";
             this.entityNodeLabels[EntityType.Platforms] = "Platforms";
             this.entityNodeLabels[EntityType.Mapsets] = "Mapsets";
+            this.entityNodeLabels[EntityType.Projects] = "Projects";
 
             this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE] = "Dataset Type";
 
@@ -75,7 +76,8 @@ export class FileModelTreeService {
                 FileModelNode.build(ExtractorItemType.CATEGORY, null)
                     .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                     .setEntityType(EntityType.DataSets)
-                    .setCategoryName(this.entityNodeLabels[EntityType.DataSets]));
+                    .setCategoryName(this.entityNodeLabels[EntityType.DataSets])
+                    .setCardinality(CardinalityType.ONE_OR_MORE));
 
             this.fileModelNodeTree.set(GobiiExtractFilterType.WHOLE_DATASET, submissionItemsForDataSet);
 
@@ -94,45 +96,45 @@ export class FileModelTreeService {
 
             // -- Platforms
             let currentParent: FileModelNode = null;
-            submissionItemsForBySample.push(currentParent =
-                FileModelNode.build(ExtractorItemType.CATEGORY, null)
-                    .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
-                    .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
-                    .setCardinality(CardinalityType.ZERO_OR_MORE)
-                    .addChild(
-                        FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
-                            .setCategoryType(ExtractorCategoryType.LEAF)
-                            .setEntityType(EntityType.Platforms)
-                            .setEntityName(this.entityNodeLabels[EntityType.Platforms])
-                            .setCardinality(CardinalityType.ZERO_OR_MORE)
-                    )
+            submissionItemsForBySample.push(FileModelNode.build(ExtractorItemType.CATEGORY, null)
+                .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
+                .setEntityType(EntityType.Platforms)
+                .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
+                .setCardinality(CardinalityType.ZERO_OR_MORE)
             );
 
+
             // -- Samples
-            submissionItemsForBySample.push(currentParent =
-                FileModelNode.build(ExtractorItemType.CATEGORY, null)
-                    .setCategoryType(ExtractorCategoryType.CONTAINER)
-                    .setCategoryName("Sample Crieria")
-                    .setCardinality(CardinalityType.ONE_OR_MORE)
-                    .setAlternatePeerTypes([EntityType.Projects, EntityType.Contacts])
-                    .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
-                        .setCategoryType(ExtractorCategoryType.LEAF)
-                        .setEntityType(EntityType.Contacts)
-                        .setEntityName("Principle Investigator")
-                        .setCardinality(CardinalityType.ZERO_OR_ONE)
-                    )
-                    .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
-                        .setEntityType(EntityType.Projects)
-                        .setEntityName(this.entityNodeLabels[EntityType.Projects])
-                        .setCardinality(CardinalityType.ZERO_OR_MORE)
-                    )
-                    .addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST, currentParent)
-                        .setEntityName("Sample List")
-                        .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
-                        .setCardinality(CardinalityType.ZERO_OR_MORE)
-                    )
-            );
-            this.fileModelNodeTree.set(GobiiExtractFilterType.BY_SAMPLE, submissionItemsForBySample);
+            submissionItemsForBySample
+                .push(currentParent =
+                    FileModelNode.build(ExtractorItemType.CATEGORY, null)
+                        .setCategoryType(ExtractorCategoryType.MODEL_CONTAINER)
+                        .setCategoryName("Sample Crieria")
+                        .setCardinality(CardinalityType.ONE_OR_MORE)
+                        .setAlternatePeerTypes([EntityType.Projects, EntityType.Contacts])
+                        .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
+                            .setCategoryType(ExtractorCategoryType.LEAF)
+                            .setEntityType(EntityType.Contacts)
+                            .setEntityName("Principle Investigator")
+                            .setCardinality(CardinalityType.ZERO_OR_ONE)
+                        )
+                        .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
+                            .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
+                            .setEntityType(EntityType.Projects)
+                            .setEntityName(this.entityNodeLabels[EntityType.Projects])
+                            .setCardinality(CardinalityType.ZERO_OR_MORE)
+                        )
+                        .addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST, currentParent)
+                            .setCategoryType(ExtractorCategoryType.CATEGORY_CONTAINER)
+                            .setEntityName("Sample List")
+                            .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
+                            .setCardinality(CardinalityType.ZERO_OR_MORE)
+                        ));
+
+            this.fileModelNodeTree
+                .set(GobiiExtractFilterType.BY_SAMPLE,
+                    submissionItemsForBySample
+                );
 
         }
 
@@ -140,7 +142,8 @@ export class FileModelTreeService {
     }
 
 
-    private mutate(fileItem: FileItem): FileModelTreeEvent {
+    private
+    mutate(fileItem: FileItem): FileModelTreeEvent {
 
         let returnVal: FileModelTreeEvent = null;
 
@@ -247,14 +250,15 @@ export class FileModelTreeService {
     } //
 
 
-    public subject: Subject<FileModelTreeEvent> = new Subject<FileModelTreeEvent>();
+    public subject: Subject < FileModelTreeEvent > = new Subject<FileModelTreeEvent>();
 
 
-    public put(fileItem: FileItem): Observable < FileModelTreeEvent > {
+    public
+    put(fileItem: FileItem): Observable < FileModelTreeEvent > {
 
         return Observable.create(observer => {
 
-            let foo:string = "foo";
+            let foo: string = "foo";
 
             let fileTreeEvent: FileModelTreeEvent = this.mutate(fileItem);
 
@@ -266,7 +270,7 @@ export class FileModelTreeService {
         });
     }
 
-    public get(gobiiExtractFilterType: GobiiExtractFilterType): Observable <FileModelNode[]> {
+    public get(gobiiExtractFilterType: GobiiExtractFilterType): Observable < FileModelNode[] > {
 
         return Observable.create(observer => {
             let nodesForFilterType: FileModelNode[] = this.getFileModelNodes(gobiiExtractFilterType);

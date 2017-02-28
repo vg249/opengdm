@@ -25,9 +25,10 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
             })(ExtractorItemType || (ExtractorItemType = {}));
             exports_1("ExtractorItemType", ExtractorItemType);
             (function (ExtractorCategoryType) {
-                ExtractorCategoryType[ExtractorCategoryType["CONTAINER"] = 0] = "CONTAINER";
+                ExtractorCategoryType[ExtractorCategoryType["MODEL_CONTAINER"] = 0] = "MODEL_CONTAINER";
                 ExtractorCategoryType[ExtractorCategoryType["ENTITY_CONTAINER"] = 1] = "ENTITY_CONTAINER";
-                ExtractorCategoryType[ExtractorCategoryType["LEAF"] = 2] = "LEAF";
+                ExtractorCategoryType[ExtractorCategoryType["CATEGORY_CONTAINER"] = 2] = "CATEGORY_CONTAINER";
+                ExtractorCategoryType[ExtractorCategoryType["LEAF"] = 3] = "LEAF";
             })(ExtractorCategoryType || (ExtractorCategoryType = {}));
             exports_1("ExtractorCategoryType", ExtractorCategoryType);
             (function (CardinalityType) {

@@ -300,6 +300,28 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     } // place node in tree
 
 
+    setUpRequredItems(gobiiExtractorFilterType: GobiiExtractFilterType) {
+
+        this.gobiiTreeNodes = [];
+
+        let fileModelNodes: FileModelNode[] = [];
+        this._fileModelTreeService.get(gobiiExtractorFilterType).subscribe(
+            f => {
+                fileModelNodes = f;
+            }
+        );
+
+        fileModelNodes.forEach(
+            currentFirstLevelFileModelNode => {
+
+                let currentTreeNode: GobiiTreeNode = this.makeTreeNodeFromTemplate(currentFirstLevelFileModelNode);
+                if (currentTreeNode != null) {
+                    this.gobiiTreeNodes.push(currentTreeNode);
+                }
+            }
+        );
+    }
+
     makeTreeNodeFromTemplate(fileModelNode: FileModelNode): GobiiTreeNode {
 
         let returnVal: GobiiTreeNode = null;
@@ -327,53 +349,32 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
             returnVal.label = "Export Format";
+        } else if (fileModelNode.getItemType() == ExtractorItemType.SAMPLE_LIST) {
+
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
+            returnVal.label = "Sample List";
         }
 
-        this.addIconsToNode(fileModelNode, returnVal);
 
         if (null != returnVal) {
 
-            if (( fileModelNode.getCategoryType() != ExtractorCategoryType.ENTITY_CONTAINER
-                && fileModelNode.getChildren() !== null )
-                && ( fileModelNode.getChildren().length > 0)) {
+            let debug:string = "debug";
+            this.addIconsToNode(fileModelNode, returnVal);
 
-                fileModelNode.getChildren().forEach(
-                    stt => {
+            fileModelNode.getChildren().forEach(
+                stt => {
 
-                        let currentTreeNode: GobiiTreeNode = this.makeTreeNodeFromTemplate(stt);
-                        if (null != currentTreeNode) {
-                            returnVal.children.push(currentTreeNode);
-                        }
+                    let currentTreeNode: GobiiTreeNode = this.makeTreeNodeFromTemplate(stt);
+                    if (null != currentTreeNode) {
+                        returnVal.children.push(currentTreeNode);
                     }
-                );
-            }
-        }
+                }
+            ); // iterate child model node
+        } // if we created a tree node
 
         return returnVal;
     }
 
-
-    setUpRequredItems(gobiiExtractorFilterType: GobiiExtractFilterType) {
-
-        this.gobiiTreeNodes = [];
-
-        let fileModelNodes: FileModelNode[] = [];
-        this._fileModelTreeService.get(gobiiExtractorFilterType).subscribe(
-            f => {
-                fileModelNodes = f;
-            }
-        );
-
-        fileModelNodes.forEach(
-            currentFirstLevelFileModelNode => {
-
-                let currentTreeNode: GobiiTreeNode = this.makeTreeNodeFromTemplate(currentFirstLevelFileModelNode);
-                if (currentTreeNode != null) {
-                    this.gobiiTreeNodes.push(currentTreeNode);
-                }
-            }
-        );
-    }
 
 // ********************************************************************************
 // ********************* CHECKBOX (GOBII-SPECIFIC)  NODE DATA STRUCTURES AND EVENTS

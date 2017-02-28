@@ -234,6 +234,20 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                     else {
                     } // there i sno file mode node for tree event
                 }; // place node in tree
+                StatusDisplayTreeComponent.prototype.setUpRequredItems = function (gobiiExtractorFilterType) {
+                    var _this = this;
+                    this.gobiiTreeNodes = [];
+                    var fileModelNodes = [];
+                    this._fileModelTreeService.get(gobiiExtractorFilterType).subscribe(function (f) {
+                        fileModelNodes = f;
+                    });
+                    fileModelNodes.forEach(function (currentFirstLevelFileModelNode) {
+                        var currentTreeNode = _this.makeTreeNodeFromTemplate(currentFirstLevelFileModelNode);
+                        if (currentTreeNode != null) {
+                            _this.gobiiTreeNodes.push(currentTreeNode);
+                        }
+                    });
+                };
                 StatusDisplayTreeComponent.prototype.makeTreeNodeFromTemplate = function (fileModelNode) {
                     var _this = this;
                     var returnVal = null;
@@ -254,34 +268,21 @@ System.register(["@angular/core", "../model/GobiiTreeNode", "../model/type-entit
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
                         returnVal.label = "Export Format";
                     }
-                    this.addIconsToNode(fileModelNode, returnVal);
-                    if (null != returnVal) {
-                        if ((fileModelNode.getCategoryType() != file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER
-                            && fileModelNode.getChildren() !== null)
-                            && (fileModelNode.getChildren().length > 0)) {
-                            fileModelNode.getChildren().forEach(function (stt) {
-                                var currentTreeNode = _this.makeTreeNodeFromTemplate(stt);
-                                if (null != currentTreeNode) {
-                                    returnVal.children.push(currentTreeNode);
-                                }
-                            });
-                        }
+                    else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.SAMPLE_LIST) {
+                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
+                        returnVal.label = "Sample List";
                     }
+                    if (null != returnVal) {
+                        var debug = "debug";
+                        this.addIconsToNode(fileModelNode, returnVal);
+                        fileModelNode.getChildren().forEach(function (stt) {
+                            var currentTreeNode = _this.makeTreeNodeFromTemplate(stt);
+                            if (null != currentTreeNode) {
+                                returnVal.children.push(currentTreeNode);
+                            }
+                        }); // iterate child model node
+                    } // if we created a tree node
                     return returnVal;
-                };
-                StatusDisplayTreeComponent.prototype.setUpRequredItems = function (gobiiExtractorFilterType) {
-                    var _this = this;
-                    this.gobiiTreeNodes = [];
-                    var fileModelNodes = [];
-                    this._fileModelTreeService.get(gobiiExtractorFilterType).subscribe(function (f) {
-                        fileModelNodes = f;
-                    });
-                    fileModelNodes.forEach(function (currentFirstLevelFileModelNode) {
-                        var currentTreeNode = _this.makeTreeNodeFromTemplate(currentFirstLevelFileModelNode);
-                        if (currentTreeNode != null) {
-                            _this.gobiiTreeNodes.push(currentTreeNode);
-                        }
-                    });
                 };
                 StatusDisplayTreeComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
