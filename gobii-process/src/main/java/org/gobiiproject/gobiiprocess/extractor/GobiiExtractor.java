@@ -18,6 +18,7 @@ import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
+import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -198,22 +199,21 @@ public class GobiiExtractor {
 				
 				case HAPMAP:
 					String hapmapOutFile = extractDir+"DS"+dataSetId+".hmp.txt";
-					try{
-						System.out.println("Executing HapMap creation");
-						String hapmapTransform="python "+extractorScriptPath+"HapmapExtractor.py"+
-								" -k "+extendedMarkerFile+
-								" -s "+sampleFile+
-								" -p "+projectFile+
-								" -m "+genoFile+ 
-								" -o "+hapmapOutFile;
-						//HapmapTransformer.generateFile(markerFile,sampleFile,projectFile,tempFolder,hapmapOutFile,errorFile);
-						HelperFunctions.tryExec(hapmapTransform, null, errorFile);
+					HapmapTransformer hapmapTransformer = new HapmapTransformer();
+					System.out.println("Executing HapMap creation");
+					if (hapmapTransformer.generateFile(markerFile,
+							                           sampleFile,
+							                           mapsetFile,
+							                           genoFile,
+							                           hapmapOutFile,
+							                           errorFile)) {
 						rm(genoFile);
 						rmIfExist(chrLengthFile);
-					}catch(Exception e){
-						ErrorLogger.logError("Extractor","Exception in HapMap creation",e);
+						HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
 					}
-					HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
+					else {
+						ErrorLogger.logError("Extractor","Exception in HapMap creation");
+					}
 					break;
 
 					default:
@@ -246,8 +246,6 @@ public class GobiiExtractor {
 								String[] lineParts = scanner.nextLine().split("\\t");
 								// The first column does not need to be converted
 								StringBuilder addedLineStringBuilder = new StringBuilder(lineParts[0]);
-								// Removing the line separator from the last column
-								lineParts[lineParts.length - 1] = lineParts[lineParts.length - 1].trim();
 								// Converting each column from the next ones
 								for (int index = 1; index < lineParts.length; index++) {
 									addedLineStringBuilder.append("\t");
@@ -276,6 +274,8 @@ public class GobiiExtractor {
 						else {
 							ErrorLogger.logError("Extractor","Unable to create the added SSR file: "+AddedSSRFilePath.toString());
 						}
+					} else {
+						ErrorLogger.logError("Extractor","No genotype file: "+SSRFilePath.toString());
 					}
 				}
 			}
