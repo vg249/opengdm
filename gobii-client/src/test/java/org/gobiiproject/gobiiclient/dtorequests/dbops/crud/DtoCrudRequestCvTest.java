@@ -216,24 +216,12 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
     @Test
     public void updateCvForSystemGroup() throws Exception {
 
-        // create a new cv for our test
-        CvDTO newCvDto = TestDtoFactory
-                .makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
-
-        PayloadEnvelope<CvDTO> payloadEnvelope = new PayloadEnvelope<>(newCvDto, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<CvDTO> restResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceColl(ServiceRequestId.URL_CV));
-        PayloadEnvelope<CvDTO> protocolDTOResponseEnvelope = restResource.post(CvDTO.class,
-                payloadEnvelope);
-        CvDTO newCvDTOResponse = protocolDTOResponseEnvelope.getPayload().getData().get(0);
-
-        // re-retrieve the cv we just created so we start with a fresh READ mode dto
+        // retrieve a cv with system group
 
         RestUri restUriCvForGetById = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CV);
-        restUriCvForGetById.setParamValue("id", newCvDTOResponse.getCvId().toString());
+        restUriCvForGetById.setParamValue("id", "1");
         GobiiEnvelopeRestResource<CvDTO> restResourceForGetById = new GobiiEnvelopeRestResource<>(restUriCvForGetById);
         PayloadEnvelope<CvDTO> resultEnvelopeForGetByID = restResourceForGetById
                 .get(CvDTO.class);
@@ -242,17 +230,6 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
         CvDTO cvDTOReceived = resultEnvelopeForGetByID.getPayload().getData().get(0);
 
         String currentName = cvDTOReceived.getTerm();
-
-        // change group ID and group type to system group
-        cvDTOReceived.setGroupId(1);
-        cvDTOReceived.setGroupType(1);
-
-        restResourceForGetById.setParamValue("id", cvDTOReceived.getCvId().toString());
-        PayloadEnvelope<CvDTO> cvDTOResponseEnvelopeUpdateSystemGroup = restResourceForGetById.put(CvDTO.class,
-                new PayloadEnvelope<>(cvDTOReceived, GobiiProcessType.UPDATE));
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResponseEnvelopeUpdateSystemGroup.getHeader()));
-
 
         String newName = UUID.randomUUID().toString();
         cvDTOReceived.setTerm(newName);
@@ -352,47 +329,19 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
     @Test
     public void deleteCvForSystemGroup() throws Exception {
 
-        // create a new cv for our test
-        CvDTO newCvDto = TestDtoFactory
-                .makePopulatedCvDTO(GobiiProcessType.CREATE, 1);
-
-        PayloadEnvelope<CvDTO> payloadEnvelope = new PayloadEnvelope<>(newCvDto, GobiiProcessType.CREATE);
-
-        GobiiEnvelopeRestResource<CvDTO> restResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
-                .getUriFactory()
-                .resourceColl(ServiceRequestId.URL_CV));
-
-        PayloadEnvelope<CvDTO> protocolDTOResponseEnvelope = restResource.post(CvDTO.class,
-                payloadEnvelope);
-
-        CvDTO newCvDTOResponse = protocolDTOResponseEnvelope.getPayload().getData().get(0);
-
-        Integer newCvId = newCvDTOResponse.getCvId();
-
-        // re-retrieve the cv we just created so we start with a fresh READ mode too
+        // retrieve cv with system group
 
         RestUri restUriCvForGetById = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CV);
 
-        restUriCvForGetById.setParamValue("id", newCvDTOResponse.getCvId().toString());
+        restUriCvForGetById.setParamValue("id", "1");
         GobiiEnvelopeRestResource<CvDTO> restResourceForGetById = new GobiiEnvelopeRestResource<>(restUriCvForGetById);
         PayloadEnvelope<CvDTO> resultEnvelopeForGetById = restResourceForGetById
                 .get(CvDTO.class);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetById.getHeader()));
         CvDTO cvDTOReceived = resultEnvelopeForGetById.getPayload().getData().get(0);
-
-
-        // change group ID and group type to system group
-        cvDTOReceived.setGroupId(1);
-        cvDTOReceived.setGroupType(1);
-
-        restResourceForGetById.setParamValue("id", cvDTOReceived.getCvId().toString());
-        PayloadEnvelope<CvDTO> cvDTOResponseEnvelopeUpdateSystemGroup = restResourceForGetById.put(CvDTO.class,
-                new PayloadEnvelope<>(cvDTOReceived, GobiiProcessType.UPDATE));
-
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(cvDTOResponseEnvelopeUpdateSystemGroup.getHeader()));
 
         restResourceForGetById.setParamValue("id", cvDTOReceived.getCvId().toString());
 
@@ -415,7 +364,7 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
         RestUri restUriCvForGetByIdDeleted = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(ServiceRequestId.URL_CV);
-        restUriCvForGetByIdDeleted.setParamValue("id", newCvId.toString());
+        restUriCvForGetByIdDeleted.setParamValue("id", cvDTOReceived.getCvId().toString());
         GobiiEnvelopeRestResource<CvDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriCvForGetByIdDeleted);
         PayloadEnvelope<CvDTO> resultEnvelopeForGetByIdDeleted = gobiiEnvelopeRestResourceForGetById
                 .get(CvDTO.class);
