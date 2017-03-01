@@ -34,6 +34,10 @@ public class FileSystemInterface {
 	}
 
 	public static int lineCount(String file){
+		if(!new File(file).exists()){
+			ErrorLogger.logDebug("FileSystemInterface","File " + file + " being WC'd does not exist");
+			return 0;
+		}
 		String [] exec={"wc","-l",file};
 		int retVal=-1;
 		try {
