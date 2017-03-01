@@ -101,6 +101,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     // ********************************************************************
                     // ********************************************** DATASET ID
                     this.displayDataSetDetail = false;
+                    //private datasetFileItemEventChange: FileItem;
                     this.changeTrigger = 0;
                     // ********************************************************************
                     // ********************************************** MARKER/SAMPLE selection
@@ -360,7 +361,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         var idxToRemove = this.gobiiDatasetExtracts.indexOf(dataSetExtractsToRemove[0]);
                         this.gobiiDatasetExtracts.splice(idxToRemove, 1);
                     }
-                    this.datasetFileItemEventChange = arg;
+                    // this.datasetFileItemEventChange = arg;
                     this.treeFileItemEvent = file_item_1.FileItem.newFileItemEvent(arg, this.selectedExportType);
                 };
                 ExtractorRoot.prototype.handleMapsetSelected = function (arg) {

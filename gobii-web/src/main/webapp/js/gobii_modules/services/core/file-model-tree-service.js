@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/file-model-tree-event", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/type-entity", "../../model/cv-filter-type", "rxjs/Subject", "rxjs/Observable"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/file-model-tree-event", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/type-entity", "../../model/cv-filter-type", "rxjs/Subject", "rxjs/Observable", "../../model/type-process"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, file_model_tree_event_1, file_model_node_1, type_extractor_filter_1, type_entity_1, cv_filter_type_1, Subject_1, Observable_1, FileModelTreeService;
+    var core_1, file_model_tree_event_1, file_model_node_1, type_extractor_filter_1, type_entity_1, cv_filter_type_1, Subject_1, Observable_1, type_process_1, FileModelTreeService;
     return {
         setters: [
             function (core_1_1) {
@@ -36,6 +36,9 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
             },
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
+            },
+            function (type_process_1_1) {
+                type_process_1 = type_process_1_1;
             }
         ],
         execute: function () {
@@ -47,7 +50,8 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                     this.cvFilterNodeLabels = new Map();
                     this.extractorFilterTypeLabels = new Map();
                     this.treeExtractorTypeLabels = new Map();
-                    this.subject = new Subject_1.Subject();
+                    this.subjectTreeNotifications = new Subject_1.Subject();
+                    this.subjectFileItemNotifications = new Subject_1.Subject();
                 }
                 FileModelTreeService.prototype.getFileModelNodes = function (gobiiExtractFilterType) {
                     if (this.fileModelNodeTree.size === 0) {
@@ -169,16 +173,27 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                 FileModelTreeService.prototype.mutate = function (fileItem) {
                     var returnVal = null;
                     if (fileItem.gobiiExtractFilterType != type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN) {
-                        var fileModelNodes = this.getFileModelNodes(fileItem.gobiiExtractFilterType);
-                        var fileModelNodeForFileItem = this.placeNodeInModel(fileModelNodes, fileItem);
-                        returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNodeForFileItem, file_model_tree_event_1.FileModelState.NOT_COMPLETE, null);
+                        var fileModelNode = this.findFileModelNode(fileItem.gobiiExtractFilterType, file_model_node_1.ExtractorItemType.CATEGORY, fileItem.entityType);
+                        var fileModelNodeForFileItem = null;
+                        if (fileItem.processType === type_process_1.ProcessType.CREATE) {
+                            fileModelNodeForFileItem = this.placeNodeInModel(fileModelNode, fileItem);
+                            returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNodeForFileItem, file_model_tree_event_1.FileModelState.NOT_COMPLETE, null);
+                        }
+                        else if (fileItem.processType === type_process_1.ProcessType.DELETE) {
+                            fileModelNodeForFileItem = this.removeFromModel(fileModelNode, fileItem);
+                            returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNodeForFileItem, file_model_tree_event_1.FileModelState.NOT_COMPLETE, null);
+                        }
+                        else {
+                            returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, null, file_model_tree_event_1.FileModelState.ERROR, "Unhandled file item process type: " + type_process_1.ProcessType[fileItem.processType]);
+                        }
                     }
                     else {
                         returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, null, file_model_tree_event_1.FileModelState.ERROR, "An invalid extract filter type was specified");
                     }
                     return returnVal;
                 };
-                FileModelTreeService.prototype.findFileModelNode = function (fileModelNodes, extractorItemType, entityType) {
+                FileModelTreeService.prototype.findFileModelNode = function (gobiiExtractFilterType, extractorItemType, entityType) {
+                    var fileModelNodes = this.getFileModelNodes(gobiiExtractFilterType);
                     var returnVal = null;
                     for (var idx = 0; (idx < fileModelNodes.length) && (returnVal == null); idx++) {
                         var currentTemplate = fileModelNodes[idx];
@@ -202,33 +217,56 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                     }
                     return returnVal;
                 };
-                FileModelTreeService.prototype.placeNodeInModel = function (fileModelNodes, fileItemEvent) {
-                    var fileModelNode = this.findFileModelNode(fileModelNodes, file_model_node_1.ExtractorItemType.CATEGORY, fileItemEvent.entityType);
+                FileModelTreeService.prototype.placeNodeInModel = function (fileModelNode, fileItem) {
                     if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.LEAF) {
                         // a leaf should never have more than one
                         if (fileModelNode.getChildFileItems().length === 0) {
-                            fileModelNode.getChildFileItems().push(fileItemEvent);
+                            fileModelNode.getChildFileItems().push(fileItem);
                         }
                         else {
-                            fileModelNode.getChildFileItems()[0] = fileItemEvent;
+                            fileModelNode.getChildFileItems()[0] = fileItem;
                         }
                     }
                     else if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
                         var existingItems = fileModelNode.getChildFileItems().filter(function (item) {
-                            return item.fileItemUniqueId === fileItemEvent.fileItemUniqueId;
+                            return item.fileItemUniqueId === fileItem.fileItemUniqueId;
                         });
                         if (existingItems.length === 0) {
-                            fileModelNode.getChildFileItems().push(fileItemEvent);
+                            fileModelNode.getChildFileItems().push(fileItem);
                         }
                         else {
                             var idx = fileModelNode.getChildFileItems().indexOf(existingItems[0]);
-                            fileModelNode.getChildFileItems()[idx] = fileItemEvent;
+                            fileModelNode.getChildFileItems()[idx] = fileItem;
                         }
                     }
                     else {
                     }
                     return fileModelNode;
                 }; //
+                FileModelTreeService.prototype.removeFromModel = function (fileModelNode, fileItem) {
+                    if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.LEAF) {
+                        // a leaf should never have more than one
+                        if (fileModelNode.getChildFileItems()[0].fileItemUniqueId === fileItem.fileItemUniqueId) {
+                            fileModelNode.getChildFileItems().splice(0, 1);
+                        }
+                    }
+                    else if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
+                        var existingItem = fileModelNode.getChildFileItems().find(function (item) {
+                            return item.fileItemUniqueId === fileItem.fileItemUniqueId;
+                        });
+                        var idxOfItemToRemove = fileModelNode.getChildFileItems().indexOf(existingItem);
+                        fileModelNode.getChildFileItems().splice(idxOfItemToRemove, 1);
+                    }
+                    else {
+                    }
+                    return fileModelNode;
+                };
+                FileModelTreeService.prototype.treeNotifications = function () {
+                    return this.subjectTreeNotifications;
+                };
+                FileModelTreeService.prototype.fileItemNotifications = function () {
+                    return this.subjectFileItemNotifications;
+                };
                 FileModelTreeService.prototype.put = function (fileItem) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
@@ -236,7 +274,8 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         var fileTreeEvent = _this.mutate(fileItem);
                         observer.next(fileTreeEvent);
                         observer.complete();
-                        _this.subject.next(fileTreeEvent);
+                        _this.subjectTreeNotifications.next(fileTreeEvent);
+                        _this.subjectFileItemNotifications.next(fileTreeEvent.fileItem);
                     });
                 };
                 FileModelTreeService.prototype.get = function (gobiiExtractFilterType) {

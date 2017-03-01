@@ -135,7 +135,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
             if (this.itemChangedEvent) {
                 let itemToChange: FileItem =
                     this.fileItemEvents.filter(e => {
-                        return e.itemId == changes['fileItemEventChange'].currentValue.itemId;
+                        return e.fileItemUniqueId == changes['fileItemEventChange'].currentValue.fileItemUniqueId;
                     })[0];
 
                 //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);

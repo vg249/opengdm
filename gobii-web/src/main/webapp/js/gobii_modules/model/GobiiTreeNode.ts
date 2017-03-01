@@ -1,5 +1,6 @@
 import {TreeNode} from "primeng/components/common/api";
 import {EntityType} from "./type-entity";
+import {CvFilterType} from "./cv-filter-type";
 
 
 export class GobiiTreeNode implements TreeNode {
@@ -10,6 +11,7 @@ export class GobiiTreeNode implements TreeNode {
     }
 
     public entityType: EntityType = EntityType.UNKNOWN;
+    public cvFilterType: CvFilterType;
     public label: string;
     public data: any;
     public icon: any;

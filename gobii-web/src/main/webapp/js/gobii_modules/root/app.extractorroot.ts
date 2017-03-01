@@ -634,7 +634,7 @@ export class ExtractorRoot {
 
     }
 
-    private datasetFileItemEventChange: FileItem;
+    //private datasetFileItemEventChange: FileItem;
     private changeTrigger: number = 0;
 
     private handleExtractDataSetUnchecked(arg: FileItem) {
@@ -654,7 +654,7 @@ export class ExtractorRoot {
             this.gobiiDatasetExtracts.splice(idxToRemove, 1);
         }
 
-        this.datasetFileItemEventChange = arg;
+        // this.datasetFileItemEventChange = arg;
         this.treeFileItemEvent = FileItem.newFileItemEvent(arg,this.selectedExportType);
 
     }

@@ -7,6 +7,7 @@ import {EntityType, EntitySubType} from "../../model/type-entity";
 import {CvFilterType} from "../../model/cv-filter-type";
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
+import {ProcessType} from "../../model/type-process";
 
 
 @Injectable()
@@ -50,7 +51,6 @@ export class FileModelTreeService {
             this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT] = "Extraction Format";
 
 
-
             // **** FOR ALL EXTRACTION TYPES **********************************************************************
             // **** THESE ARE ALL ROOT LEVEL NODES
             let submissionItemsForAll: FileModelNode[] = [];
@@ -74,7 +74,6 @@ export class FileModelTreeService {
                 .setEntityName(this.entityNodeLabels[EntityType.Mapsets])
                 .setCardinality(CardinalityType.ZERO_OR_ONE)
             );
-
 
 
             // **** SET UP EXTRACT BY DATASET  **********************************************************************
@@ -189,18 +188,35 @@ export class FileModelTreeService {
         return this.fileModelNodeTree.get(gobiiExtractFilterType);
     }
 
-
-    private
-    mutate(fileItem: FileItem): FileModelTreeEvent {
+    private mutate(fileItem: FileItem): FileModelTreeEvent {
 
         let returnVal: FileModelTreeEvent = null;
 
         if (fileItem.gobiiExtractFilterType != GobiiExtractFilterType.UNKNOWN) {
 
-            let fileModelNodes: FileModelNode[] = this.getFileModelNodes(fileItem.gobiiExtractFilterType);
-            let fileModelNodeForFileItem: FileModelNode = this.placeNodeInModel(fileModelNodes, fileItem);
 
-            returnVal = new FileModelTreeEvent(fileItem, fileModelNodeForFileItem, FileModelState.NOT_COMPLETE, null);
+            let fileModelNode: FileModelNode = this.findFileModelNode(fileItem.gobiiExtractFilterType, ExtractorItemType.CATEGORY, fileItem.entityType);
+
+            let fileModelNodeForFileItem: FileModelNode = null;
+
+            if (fileItem.processType === ProcessType.CREATE) {
+
+                fileModelNodeForFileItem = this.placeNodeInModel(fileModelNode, fileItem);
+                returnVal = new FileModelTreeEvent(fileItem, fileModelNodeForFileItem, FileModelState.NOT_COMPLETE, null);
+
+            } else if (fileItem.processType === ProcessType.DELETE) {
+
+
+                fileModelNodeForFileItem = this.removeFromModel(fileModelNode, fileItem);
+                returnVal = new FileModelTreeEvent(fileItem, fileModelNodeForFileItem, FileModelState.NOT_COMPLETE, null);
+
+            } else {
+                returnVal = new FileModelTreeEvent(fileItem,
+                    null,
+                    FileModelState.ERROR,
+                    "Unhandled file item process type: " + ProcessType[fileItem.processType]);
+            }
+
 
         } else {
             returnVal = new FileModelTreeEvent(fileItem,
@@ -214,7 +230,9 @@ export class FileModelTreeService {
     }
 
 
-    findFileModelNode(fileModelNodes: FileModelNode[], extractorItemType: ExtractorItemType, entityType: EntityType) {
+    findFileModelNode(gobiiExtractFilterType: GobiiExtractFilterType, extractorItemType: ExtractorItemType, entityType: EntityType) {
+
+        let fileModelNodes: FileModelNode[] = this.getFileModelNodes(gobiiExtractFilterType);
 
         let returnVal: FileModelNode = null;
 
@@ -256,33 +274,31 @@ export class FileModelTreeService {
     }
 
 
-    private placeNodeInModel(fileModelNodes: FileModelNode[], fileItemEvent: FileItem): FileModelNode {
-
-        let fileModelNode: FileModelNode = this.findFileModelNode(fileModelNodes, ExtractorItemType.CATEGORY, fileItemEvent.entityType);
+    private placeNodeInModel(fileModelNode: FileModelNode, fileItem: FileItem): FileModelNode {
 
 
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
             // a leaf should never have more than one
             if (fileModelNode.getChildFileItems().length === 0) {
-                fileModelNode.getChildFileItems().push(fileItemEvent);
+                fileModelNode.getChildFileItems().push(fileItem);
             } else {
-                fileModelNode.getChildFileItems()[0] = fileItemEvent;
+                fileModelNode.getChildFileItems()[0] = fileItem;
             }
 
         } else if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
 
             let existingItems: FileItem[] = fileModelNode.getChildFileItems().filter(
                 item => {
-                    return item.fileItemUniqueId === fileItemEvent.fileItemUniqueId;
+                    return item.fileItemUniqueId === fileItem.fileItemUniqueId;
                 }
             )
 
             if (existingItems.length === 0) {
-                fileModelNode.getChildFileItems().push(fileItemEvent);
+                fileModelNode.getChildFileItems().push(fileItem);
             } else {
                 let idx: number = fileModelNode.getChildFileItems().indexOf(existingItems[0]);
-                fileModelNode.getChildFileItems()[idx] = fileItemEvent;
+                fileModelNode.getChildFileItems()[idx] = fileItem;
             }
 
         } else {
@@ -297,12 +313,55 @@ export class FileModelTreeService {
 
     } //
 
+    private removeFromModel(fileModelNode: FileModelNode, fileItem: FileItem): FileModelNode {
 
-    public subject: Subject < FileModelTreeEvent > = new Subject<FileModelTreeEvent>();
+
+        if (fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
+
+            // a leaf should never have more than one
+            if (fileModelNode.getChildFileItems()[0].fileItemUniqueId === fileItem.fileItemUniqueId) {
+                fileModelNode.getChildFileItems().splice(0, 1);
+            }
+
+        } else if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
+
+            let existingItem: FileItem = fileModelNode.getChildFileItems().find(
+                item => {
+                    return item.fileItemUniqueId === fileItem.fileItemUniqueId;
+                }
+            );
+
+            let idxOfItemToRemove: number = fileModelNode.getChildFileItems().indexOf(existingItem);
+
+            fileModelNode.getChildFileItems().splice(idxOfItemToRemove, 1);
 
 
-    public
-    put(fileItem: FileItem): Observable < FileModelTreeEvent > {
+        } else {
+            // this.reportMessage("The node of category  "
+            //     + fileModelNode.getCategoryType()
+            //     + " for checkbox event " + fileItemEvent.itemName
+            //     + " could not be placed in the tree ");
+        }
+
+
+        return fileModelNode;
+
+    }
+
+    private subjectTreeNotifications: Subject < FileModelTreeEvent > = new Subject<FileModelTreeEvent>();
+
+    public treeNotifications(): Subject < FileModelTreeEvent > {
+        return this.subjectTreeNotifications
+    }
+
+    private subjectFileItemNotifications: Subject < FileItem > = new Subject<FileItem>();
+
+    public fileItemNotifications(): Subject < FileItem > {
+        return this.subjectFileItemNotifications
+    }
+
+
+    public put(fileItem: FileItem): Observable < FileModelTreeEvent > {
 
         return Observable.create(observer => {
 
@@ -314,7 +373,8 @@ export class FileModelTreeService {
             observer.next(fileTreeEvent);
             observer.complete();
 
-            this.subject.next(fileTreeEvent);
+            this.subjectTreeNotifications.next(fileTreeEvent);
+            this.subjectFileItemNotifications.next(fileTreeEvent.fileItem);
         });
     }
 

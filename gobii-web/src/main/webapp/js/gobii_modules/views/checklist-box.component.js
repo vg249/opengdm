@@ -92,7 +92,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         this.itemChangedEvent = changes['fileItemEventChange'].currentValue;
                         if (this.itemChangedEvent) {
                             var itemToChange = this.fileItemEvents.filter(function (e) {
-                                return e.itemId == changes['fileItemEventChange'].currentValue.itemId;
+                                return e.fileItemUniqueId == changes['fileItemEventChange'].currentValue.fileItemUniqueId;
                             })[0];
                             //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
                             if (itemToChange) {
