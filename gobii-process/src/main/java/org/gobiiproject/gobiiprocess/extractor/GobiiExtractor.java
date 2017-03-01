@@ -280,6 +280,15 @@ public class GobiiExtractor {
 		return getHDF5Genotype( markerFast, errorFile,dataSetId,tempFolder,null);
 	}
 
+	/**
+	 * If marker list is null, do a dataset extract. Else, do a marker list extract on the dataset
+	 * @param markerFast
+	 * @param errorFile
+	 * @param dataSetId Dataset ID to be pulled from
+	 * @param tempFolder
+	 * @param markerList nullable - determines what markers to extract. List of marker positions, comma separated
+	 * @return
+	 */
 	private static String getHDF5Genotype( boolean markerFast, String errorFile, Integer dataSetId, String tempFolder, String markerList) {
 		String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
 
