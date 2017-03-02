@@ -1,7 +1,7 @@
-System.register(["./guid", "./type-entity", "./cv-filter-type"], function (exports_1, context_1) {
+System.register(["./guid", "./type-entity", "./cv-filter-type", "./file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var guid_1, type_entity_1, cv_filter_type_1, FileItem;
+    var guid_1, type_entity_1, cv_filter_type_1, file_model_node_1, FileItem;
     return {
         setters: [
             function (guid_1_1) {
@@ -12,30 +12,42 @@ System.register(["./guid", "./type-entity", "./cv-filter-type"], function (expor
             },
             function (cv_filter_type_1_1) {
                 cv_filter_type_1 = cv_filter_type_1_1;
+            },
+            function (file_model_node_1_1) {
+                file_model_node_1 = file_model_node_1_1;
             }
         ],
         execute: function () {
             FileItem = (function () {
-                function FileItem(_gobiiExtractFilterType, _processType, _entityType, _cvFilterType, _itemId, _itemName, _checked, _required) {
+                function FileItem(_gobiiExtractFilterType, _processType, _extractorItemType, _entityType, _cvFilterType, _itemId, _itemName, _checked, _required) {
                     this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     this._processType = _processType;
+                    this._extractorItemType = _extractorItemType;
                     this._entityType = _entityType;
                     this._cvFilterType = _cvFilterType;
                     this._itemId = _itemId;
                     this._itemName = _itemName;
                     this._checked = _checked;
                     this._required = _required;
+                    this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     this._processType = _processType;
+                    this._entityType = _entityType;
+                    this._extractorItemType = _extractorItemType;
+                    this._cvFilterType = _cvFilterType;
                     this._itemId = _itemId;
                     this._itemName = _itemName;
+                    this._checked = _checked;
                     this._required = _required;
                     this._fileItemUniqueId = guid_1.Guid.generateUUID();
                     if (this._cvFilterType === null) {
                         this._cvFilterType = cv_filter_type_1.CvFilterType.UKNOWN;
                     }
+                    if (this._extractorItemType == null) {
+                        this._extractorItemType = file_model_node_1.ExtractorItemType.UNKNOWN;
+                    }
                 }
                 FileItem.build = function (gobiiExtractFilterType, processType) {
-                    var returnVal = new FileItem(gobiiExtractFilterType, processType, type_entity_1.EntityType.UNKNOWN, cv_filter_type_1.CvFilterType.UKNOWN, null, null, null, null);
+                    var returnVal = new FileItem(gobiiExtractFilterType, processType, file_model_node_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, cv_filter_type_1.CvFilterType.UKNOWN, null, null, null, null);
                     return returnVal;
                 };
                 //OnChange does not see the FileItemEvent as being a new event unless it's
@@ -74,6 +86,13 @@ System.register(["./guid", "./type-entity", "./cv-filter-type"], function (expor
                 };
                 FileItem.prototype.setProcessType = function (value) {
                     this._processType = value;
+                    return this;
+                };
+                FileItem.prototype.getExtractorItemType = function () {
+                    return this._extractorItemType;
+                };
+                FileItem.prototype.setExtractorItemType = function (value) {
+                    this._extractorItemType = value;
                     return this;
                 };
                 FileItem.prototype.getEntityType = function () {

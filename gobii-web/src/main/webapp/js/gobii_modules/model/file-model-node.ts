@@ -4,20 +4,22 @@ import {GobiiTreeNode} from "./GobiiTreeNode";
 import {FileItem} from "./file-item";
 import {Guid} from "./guid";
 
-export enum ExtractorItemType {CATEGORY,
-ENTITY,
-MARKER_LIST,
-SAMPLE_LIST,
-EXPORT_FORMAT,
-CROP_TYPE}
+export enum ExtractorItemType {
+    UNKNOWN,
+    CATEGORY,
+    ENTITY,
+    MARKER_LIST,
+    SAMPLE_LIST,
+    EXPORT_FORMAT,
+    CROP_TYPE}
 
-export enum ExtractorCategoryType {MODEL_CONTAINER, ENTITY_CONTAINER, CATEGORY_CONTAINER , LEAF }
+export enum ExtractorCategoryType {MODEL_CONTAINER, ENTITY_CONTAINER, CATEGORY_CONTAINER, LEAF }
 export enum CardinalityType {ZERO_OR_ONE, ZERO_OR_MORE, ONE_ONLY, ONE_OR_MORE, MORE_THAN_ONE}
 
 
 export class FileModelNode {
 
-    constructor(itemType: ExtractorItemType,parent:FileModelNode) {
+    constructor(itemType: ExtractorItemType, parent: FileModelNode) {
         this._itemType = itemType;
         this._parent = parent;
     }
@@ -36,8 +38,8 @@ export class FileModelNode {
     private _fileModelNodeUniqueId = Guid.generateUUID();
 
 
-    public static build(itemType: ExtractorItemType, parent:FileModelNode): FileModelNode {
-        return new FileModelNode(itemType,parent);
+    public static build(itemType: ExtractorItemType, parent: FileModelNode): FileModelNode {
+        return new FileModelNode(itemType, parent);
     }
 
 

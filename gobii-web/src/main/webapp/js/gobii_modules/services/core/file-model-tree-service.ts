@@ -8,6 +8,7 @@ import {CvFilterType} from "../../model/cv-filter-type";
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {ProcessType} from "../../model/type-process";
+import {Labels} from "../../views/entity-labels";
 
 
 @Injectable()
@@ -21,11 +22,6 @@ export class FileModelTreeService {
         new Map<GobiiExtractFilterType,Array<FileModelNode>>();
 
 
-    entityNodeLabels: Map < EntityType, string > = new Map<EntityType,string>();
-    entitySubtypeNodeLabels: Map < EntitySubType, string > = new Map<EntitySubType,string>();
-    cvFilterNodeLabels: Map < CvFilterType, string > = new Map<CvFilterType,string>();
-    extractorFilterTypeLabels: Map < GobiiExtractFilterType, string > = new Map<GobiiExtractFilterType, string>();
-    treeExtractorTypeLabels: Map<ExtractorItemType,string> = new Map<ExtractorItemType,string>();
 
 
     private validateModel(): boolean {
@@ -46,25 +42,6 @@ export class FileModelTreeService {
 
         if (this.fileModelNodeTree.size === 0) {
 
-            this.entityNodeLabels[EntityType.DataSets] = "Data Sets";
-            this.entityNodeLabels[EntityType.Platforms] = "Platforms";
-            this.entityNodeLabels[EntityType.Mapsets] = "Mapsets";
-            this.entityNodeLabels[EntityType.Projects] = "Projects";
-
-            this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE] = "Dataset Type";
-
-            this.entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
-            this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY] = "User";
-
-            this.extractorFilterTypeLabels[GobiiExtractFilterType.WHOLE_DATASET] = "Extract by Dataset";
-            this.extractorFilterTypeLabels[GobiiExtractFilterType.BY_SAMPLE] = "Extract by Sample";
-            this.extractorFilterTypeLabels[GobiiExtractFilterType.BY_MARKER] = "Extract by Marker";
-
-            this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST] = "Sample List";
-            this.treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST] = "Marker List";
-            this.treeExtractorTypeLabels[ExtractorItemType.CROP_TYPE] = "Crop Type";
-            this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT] = "Format";
-
 
             // **** FOR ALL EXTRACTION TYPES **********************************************************************
             // **** THESE ARE ALL ROOT LEVEL NODES
@@ -72,21 +49,21 @@ export class FileModelTreeService {
             submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
                 .setCategoryType(ExtractorCategoryType.LEAF)
                 .setEntityType(EntityType.Contacts)
-                .setEntityName(this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY])
+                .setEntityName(Labels.instance().entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY])
                 .setCardinality(CardinalityType.ONE_ONLY)
             );
 
             submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.EXPORT_FORMAT, null)
                 .setCategoryType(ExtractorCategoryType.LEAF)
-                .setCategoryName(this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT])
-                .setEntityName(this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT])
+                .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT])
+                .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT])
                 .setCardinality(CardinalityType.ONE_ONLY)
             );
 
             submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.CATEGORY, null)
                 .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                 .setEntityType(EntityType.Mapsets)
-                .setCategoryName(this.entityNodeLabels[EntityType.Mapsets])
+                .setCategoryName(Labels.instance().entityNodeLabels[EntityType.Mapsets])
                 .setCardinality(CardinalityType.ZERO_OR_ONE)
             );
 
@@ -99,7 +76,7 @@ export class FileModelTreeService {
                 FileModelNode.build(ExtractorItemType.CATEGORY, null)
                     .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                     .setEntityType(EntityType.DataSets)
-                    .setCategoryName(this.entityNodeLabels[EntityType.DataSets])
+                    .setCategoryName(Labels.instance().entityNodeLabels[EntityType.DataSets])
                     .setCardinality(CardinalityType.ONE_OR_MORE));
 
             this.fileModelNodeTree.set(GobiiExtractFilterType.WHOLE_DATASET, submissionItemsForDataSet);
@@ -113,7 +90,7 @@ export class FileModelTreeService {
                     .setCategoryType(ExtractorCategoryType.LEAF)
                     .setEntityType(EntityType.CvTerms)
                     .setCvFilterType(CvFilterType.DATASET_TYPE)
-                    .setEntityName(this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE])
+                    .setEntityName(Labels.instance().cvFilterNodeLabels[CvFilterType.DATASET_TYPE])
                     .setCardinality(CardinalityType.ONE_ONLY)
             );
 
@@ -122,7 +99,7 @@ export class FileModelTreeService {
             submissionItemsForBySample.push(FileModelNode.build(ExtractorItemType.CATEGORY, null)
                 .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                 .setEntityType(EntityType.Platforms)
-                .setCategoryName(this.entityNodeLabels[EntityType.Platforms])
+                .setCategoryName(Labels.instance().entityNodeLabels[EntityType.Platforms])
                 .setCardinality(CardinalityType.ZERO_OR_MORE)
             );
 
@@ -138,19 +115,19 @@ export class FileModelTreeService {
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
                             .setCategoryType(ExtractorCategoryType.LEAF)
                             .setEntityType(EntityType.Contacts)
-                            .setEntityName(this.entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR])
+                            .setEntityName(Labels.instance().entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR])
                             .setCardinality(CardinalityType.ZERO_OR_ONE)
                         )
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
                             .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                             .setEntityType(EntityType.Projects)
-                            .setEntityName(this.entityNodeLabels[EntityType.Projects])
+                            .setEntityName(Labels.instance().entityNodeLabels[EntityType.Projects])
                             .setCardinality(CardinalityType.ZERO_OR_MORE)
                         )
                         .addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST, currentParent)
                             .setCategoryType(ExtractorCategoryType.CATEGORY_CONTAINER)
-                            .setEntityName(this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST])
-                            .setCategoryName(this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST])
+                            .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST])
+                            .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST])
                             .setCardinality(CardinalityType.ZERO_OR_MORE)
                         ));
 
@@ -168,7 +145,7 @@ export class FileModelTreeService {
                     .setCategoryType(ExtractorCategoryType.LEAF)
                     .setEntityType(EntityType.CvTerms)
                     .setCvFilterType(CvFilterType.DATASET_TYPE)
-                    .setEntityName(this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE])
+                    .setEntityName(Labels.instance().cvFilterNodeLabels[CvFilterType.DATASET_TYPE])
                     .setCardinality(CardinalityType.ONE_ONLY)
             );
 
@@ -182,13 +159,13 @@ export class FileModelTreeService {
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
                             .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                             .setEntityType(EntityType.Platforms)
-                            .setEntityName(this.entityNodeLabels[EntityType.Platforms])
+                            .setEntityName(Labels.instance().entityNodeLabels[EntityType.Platforms])
                             .setCardinality(CardinalityType.ZERO_OR_MORE)
                         )
                         .addChild(FileModelNode.build(ExtractorItemType.MARKER_LIST, currentParent)
                             .setCategoryType(ExtractorCategoryType.CATEGORY_CONTAINER)
-                            .setEntityName(this.treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST])
-                            .setCategoryName(this.treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST])
+                            .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST])
+                            .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST])
                             .setCardinality(CardinalityType.ZERO_OR_MORE)
                         ));
 
@@ -215,13 +192,12 @@ export class FileModelTreeService {
 
             let fileModelNode: FileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(), fileItem.getEntityType(), fileItem.getCvFilterType());
 
-            if (fileItem.getProcessType() === ProcessType.CREATE) {
+            if (fileItem.getProcessType() === ProcessType.CREATE || fileItem.getProcessType() === ProcessType.READ) {
 
                 this.placeNodeInModel(fileModelNode, fileItem);
                 returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.NOT_COMPLETE, null);
 
             } else if (fileItem.getProcessType() === ProcessType.DELETE) {
-
 
                 this.removeFromModel(fileModelNode, fileItem);
                 returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.NOT_COMPLETE, null);
@@ -288,6 +264,7 @@ export class FileModelTreeService {
         return returnVal;
 
     }
+
 
 
     private placeNodeInModel(fileModelNode: FileModelNode, fileItem: FileItem) {

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-nameids", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/cv-filter-type", "../services/core/file-model-tree-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-nameids", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_nameids_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, cv_filter_type_1, file_model_tree_service_1, ExtractorRoot;
+    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_nameids_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, cv_filter_type_1, file_model_tree_service_1, file_model_node_1, ExtractorRoot;
     return {
         setters: [
             function (core_1_1) {
@@ -66,6 +66,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             },
             function (file_model_tree_service_1_1) {
                 file_model_tree_service_1 = file_model_tree_service_1_1;
+            },
+            function (file_model_node_1_1) {
+                file_model_node_1 = file_model_node_1_1;
             }
         ],
         execute: function () {
@@ -153,6 +156,10 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleExportTypeSelected = function (arg) {
                     var foo = "foo";
                     this.gobiiExtractFilterType = arg;
+                    var extractFilterTypeFileItem = file_item_1.FileItem
+                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
+                        .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT);
+                    this._fileModelTreeService.put(extractFilterTypeFileItem).subscribe();
                     //        let extractorFilterItemType: FileItem = FileItem.bui(this.gobiiExtractFilterType)
                     if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                         this.displaySelectorPi = true;

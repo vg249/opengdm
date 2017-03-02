@@ -19,6 +19,7 @@ import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 import {CvFilters, CvFilterType} from "../model/cv-filter-type";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
+import {ExtractorItemType} from "../model/file-model-node";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -312,6 +313,12 @@ export class ExtractorRoot {
         let foo: string = "foo";
 
         this.gobiiExtractFilterType = arg;
+
+        let extractFilterTypeFileItem:FileItem = FileItem
+            .build(this.gobiiExtractFilterType,ProcessType.UPDATE)
+            .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT);
+
+        this._fileModelTreeService.put(extractFilterTypeFileItem).subscribe();
 
 //        let extractorFilterItemType: FileItem = FileItem.bui(this.gobiiExtractFilterType)
 
