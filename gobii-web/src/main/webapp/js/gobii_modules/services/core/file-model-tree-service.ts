@@ -27,7 +27,22 @@ export class FileModelTreeService {
     extractorFilterTypeLabels: Map < GobiiExtractFilterType, string > = new Map<GobiiExtractFilterType, string>();
     treeExtractorTypeLabels: Map<ExtractorItemType,string> = new Map<ExtractorItemType,string>();
 
+
+    private validateModel(): boolean {
+
+        //When this method is implemented, it will confirm that the sturcture of the tree is correct;
+        //this is not just an intellectual exercise; the findFileModelNode() method (and probably others)
+        //make important assumptions about the structure of the model. These are the assumptions:
+        // 0) There is one, and only one, FileModelNode per EntityType and CvFilter value
+        // there are a bunch of other rules pertaining to how tree nodes are associated with FileModelNodes,
+        // but since that's in the presentation department, you'll see that over there in in the status tree.
+
+        return true;
+
+    }
+
     private getFileModelNodes(gobiiExtractFilterType: GobiiExtractFilterType): FileModelNode[] {
+
 
         if (this.fileModelNodeTree.size === 0) {
 
@@ -68,10 +83,10 @@ export class FileModelTreeService {
                 .setCardinality(CardinalityType.ONE_ONLY)
             );
 
-            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
-                .setCategoryType(ExtractorCategoryType.LEAF)
+            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.CATEGORY, null)
+                .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                 .setEntityType(EntityType.Mapsets)
-                .setEntityName(this.entityNodeLabels[EntityType.Mapsets])
+                .setCategoryName(this.entityNodeLabels[EntityType.Mapsets])
                 .setCardinality(CardinalityType.ZERO_OR_ONE)
             );
 
@@ -183,6 +198,10 @@ export class FileModelTreeService {
                     submissionItemsForByMarkers
                 );
 
+
+            if (this.validateModel() == false) {
+                //raise major warning
+            }
         }
 
         return this.fileModelNodeTree.get(gobiiExtractFilterType);
@@ -194,21 +213,18 @@ export class FileModelTreeService {
 
         if (fileItem.gobiiExtractFilterType != GobiiExtractFilterType.UNKNOWN) {
 
-
-            let fileModelNode: FileModelNode = this.findFileModelNode(fileItem.gobiiExtractFilterType, ExtractorItemType.CATEGORY, fileItem.entityType);
-
-            let fileModelNodeForFileItem: FileModelNode = null;
+            let fileModelNode: FileModelNode = this.findFileModelNode(fileItem.gobiiExtractFilterType, fileItem.entityType, fileItem.cvFilterType);
 
             if (fileItem.processType === ProcessType.CREATE) {
 
-                fileModelNodeForFileItem = this.placeNodeInModel(fileModelNode, fileItem);
-                returnVal = new FileModelTreeEvent(fileItem, fileModelNodeForFileItem, FileModelState.NOT_COMPLETE, null);
+                this.placeNodeInModel(fileModelNode, fileItem);
+                returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.NOT_COMPLETE, null);
 
             } else if (fileItem.processType === ProcessType.DELETE) {
 
 
-                fileModelNodeForFileItem = this.removeFromModel(fileModelNode, fileItem);
-                returnVal = new FileModelTreeEvent(fileItem, fileModelNodeForFileItem, FileModelState.NOT_COMPLETE, null);
+                this.removeFromModel(fileModelNode, fileItem);
+                returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.NOT_COMPLETE, null);
 
             } else {
                 returnVal = new FileModelTreeEvent(fileItem,
@@ -230,7 +246,7 @@ export class FileModelTreeService {
     }
 
 
-    findFileModelNode(gobiiExtractFilterType: GobiiExtractFilterType, extractorItemType: ExtractorItemType, entityType: EntityType) {
+    findFileModelNode(gobiiExtractFilterType: GobiiExtractFilterType, entityType: EntityType, cvFilter: CvFilterType) {
 
         let fileModelNodes: FileModelNode[] = this.getFileModelNodes(gobiiExtractFilterType);
 
@@ -238,7 +254,7 @@ export class FileModelTreeService {
 
         for (let idx: number = 0; ( idx < fileModelNodes.length) && (returnVal == null ); idx++) {
             let currentTemplate: FileModelNode = fileModelNodes[idx];
-            returnVal = this.findTemplateByCriteria(currentTemplate, extractorItemType, entityType);
+            returnVal = this.findTemplateByCriteria(currentTemplate, entityType, cvFilter);
         }
 
         return returnVal;
@@ -246,26 +262,26 @@ export class FileModelTreeService {
     }
 
 
-    findTemplateByCriteria(statusTreeTemplate: FileModelNode,
-                           extractorItemType: ExtractorItemType, entityType: EntityType): FileModelNode {
+    findTemplateByCriteria(fileModelNode: FileModelNode,
+                           entityType: EntityType,
+                           cvFilterType: CvFilterType): FileModelNode {
 
         let returnVal: FileModelNode = null;
 
-        if (statusTreeTemplate.getChildren() != null) {
+        if (fileModelNode.getChildren() != null) {
 
-            for (let idx: number = 0; ( idx < statusTreeTemplate.getChildren().length) && (returnVal == null ); idx++) {
+            for (let idx: number = 0; ( idx < fileModelNode.getChildren().length) && (returnVal == null ); idx++) {
 
-                let currentTemplate: FileModelNode = statusTreeTemplate.getChildren()[idx];
-                returnVal = this.findTemplateByCriteria(currentTemplate, extractorItemType, entityType);
+                let currentTemplate: FileModelNode = fileModelNode.getChildren()[idx];
+                returnVal = this.findTemplateByCriteria(currentTemplate, entityType, cvFilterType);
             }
         }
 
         if (returnVal === null) {
 
-            if (extractorItemType == statusTreeTemplate.getItemType()
-                && entityType == statusTreeTemplate.getEntityType()) {
+            if (entityType == fileModelNode.getEntityType() && cvFilterType == fileModelNode.getCvFilterType()) {
 
-                returnVal = statusTreeTemplate;
+                returnVal = fileModelNode;
             }
         }
 
@@ -274,7 +290,7 @@ export class FileModelTreeService {
     }
 
 
-    private placeNodeInModel(fileModelNode: FileModelNode, fileItem: FileItem): FileModelNode {
+    private placeNodeInModel(fileModelNode: FileModelNode, fileItem: FileItem) {
 
 
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
@@ -309,11 +325,9 @@ export class FileModelTreeService {
         }
 
 
-        return fileModelNode;
-
     } //
 
-    private removeFromModel(fileModelNode: FileModelNode, fileItem: FileItem): FileModelNode {
+    private removeFromModel(fileModelNode: FileModelNode, fileItem: FileItem) {
 
 
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
@@ -342,9 +356,6 @@ export class FileModelTreeService {
             //     + " for checkbox event " + fileItemEvent.itemName
             //     + " could not be placed in the tree ");
         }
-
-
-        return fileModelNode;
 
     }
 

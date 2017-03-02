@@ -11,7 +11,7 @@ export class GobiiTreeNode implements TreeNode {
     }
 
     public entityType: EntityType = EntityType.UNKNOWN;
-    public cvFilterType: CvFilterType;
+    public cvFilterType: CvFilterType = CvFilterType.UKNOWN;
     public label: string;
     public data: any;
     public icon: any;

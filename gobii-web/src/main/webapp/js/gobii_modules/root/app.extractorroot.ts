@@ -196,7 +196,7 @@ import {FileModelTreeService} from "../services/core/file-model-tree-service";
                                 <legend class="the-legend">Status: {{currentStatus}}</legend>
                                 <status-display-tree
                                     [fileItemEventChange] = "treeFileItemEvent"
-                                    [gobiiExtractFilterTypeEvent] = "selectedExportType"
+                                    [gobiiExtractFilterTypeEvent] = "gobiiExtractFilterType"
                                     (onAddMessage)="handleAddMessage($event)">
                                 </status-display-tree>
                             </fieldset>
@@ -305,13 +305,13 @@ export class ExtractorRoot {
     private displayIncludedDatasetsGrid: boolean = true;
     private displaySampleListTypeSelector: boolean = false;
     private displaySampleMarkerBox: boolean = false;
-    private selectedExportType: GobiiExtractFilterType = GobiiExtractFilterType.WHOLE_DATASET;
+    private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.WHOLE_DATASET;
 
     private handleExportTypeSelected(arg: GobiiExtractFilterType) {
 
-        this.selectedExportType = arg;
+        this.gobiiExtractFilterType = arg;
 
-        if (this.selectedExportType === GobiiExtractFilterType.WHOLE_DATASET) {
+        if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
             this.displaySelectorPi = true;
             this.displaySelectorProject = true;
@@ -325,7 +325,7 @@ export class ExtractorRoot {
             this.displaySampleMarkerBox = false;
 
 
-        } else if (this.selectedExportType === GobiiExtractFilterType.BY_SAMPLE) {
+        } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
             this.initializeDatasetTypes();
             this.initializePlatforms();
@@ -342,7 +342,7 @@ export class ExtractorRoot {
             this.displaySampleMarkerBox = false;
 
 
-        } else if (this.selectedExportType === GobiiExtractFilterType.BY_MARKER) {
+        } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
             this.initializeDatasetTypes();
             this.initializePlatforms();
@@ -591,7 +591,7 @@ export class ExtractorRoot {
             Number(this.selectedDatasetId),
             this.selectedDatasetName,
             null,
-            this.selectedExportType,
+            this.gobiiExtractFilterType,
             this.markerList,
             this.sampleList,
             this.uploadFileName,
@@ -627,7 +627,7 @@ export class ExtractorRoot {
         } // if-else we're adding
 
         //this.treeFileItemEvent = FileItem.newFileItemEvent(arg);
-        let fileItemEvent:FileItem = FileItem.newFileItemEvent(arg,this.selectedExportType);
+        let fileItemEvent:FileItem = FileItem.newFileItemEvent(arg,this.gobiiExtractFilterType);
 
 
         this._fileModelTreeService.put(fileItemEvent).subscribe();
@@ -655,7 +655,7 @@ export class ExtractorRoot {
         }
 
         // this.datasetFileItemEventChange = arg;
-        this.treeFileItemEvent = FileItem.newFileItemEvent(arg,this.selectedExportType);
+        this.treeFileItemEvent = FileItem.newFileItemEvent(arg,this.gobiiExtractFilterType);
 
     }
 
@@ -666,10 +666,22 @@ export class ExtractorRoot {
     private selectedMapsetId: string;
     private nullMapsetName: string;
 
-    private handleMapsetSelected(arg) {
+    private handleMapsetSelected(arg:NameId) {
 
-        if (arg > 0) {
-            this.selectedMapsetId = arg;
+        if (Number(arg.id) > 0) {
+            this.selectedMapsetId = arg.id;
+            let fileItem:FileItem = new FileItem(
+                this.gobiiExtractFilterType,
+                ProcessType.CREATE,
+                EntityType.Mapsets,
+                CvFilterType.UKNOWN,
+                arg.id,
+                arg.name,
+                true,
+                null);
+
+            this._fileModelTreeService.put(fileItem).subscribe();
+
         } else {
             this.selectedMapsetId = undefined;
         }
@@ -707,10 +719,10 @@ export class ExtractorRoot {
 
 
         if (sampleMarkerList.isArray) {
-            if (this.selectedExportType === GobiiExtractFilterType.BY_SAMPLE) {
+            if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
                 this.sampleList = sampleMarkerList.items;
 
-            } else if (this.selectedExportType === GobiiExtractFilterType.BY_MARKER) {
+            } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
                 this.markerList = sampleMarkerList.items;
             }
         } else {

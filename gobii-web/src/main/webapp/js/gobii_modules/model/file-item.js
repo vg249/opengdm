@@ -1,11 +1,14 @@
-System.register(["./guid"], function (exports_1, context_1) {
+System.register(["./guid", "./cv-filter-type"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var guid_1, FileItem;
+    var guid_1, cv_filter_type_1, FileItem;
     return {
         setters: [
             function (guid_1_1) {
                 guid_1 = guid_1_1;
+            },
+            function (cv_filter_type_1_1) {
+                cv_filter_type_1 = cv_filter_type_1_1;
             }
         ],
         execute: function () {
@@ -24,6 +27,9 @@ System.register(["./guid"], function (exports_1, context_1) {
                     this.itemName = itemName;
                     this.required = required;
                     this.fileItemUniqueId = guid_1.Guid.generateUUID();
+                    if (this.cvFilterType === null) {
+                        this.cvFilterType = cv_filter_type_1.CvFilterType.UKNOWN;
+                    }
                 }
                 //OnChange does not see the FileItemEvent as being a new event unless it's
                 //a branch new instance, even if any of the property values are different.

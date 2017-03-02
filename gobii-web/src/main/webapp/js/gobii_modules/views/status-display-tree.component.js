@@ -198,16 +198,17 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                     }
                 };
                 StatusDisplayTreeComponent.prototype.findTreeNodebyModelNodeId = function (gobiiTreeNodes, fileModelNodeId) {
-                    var _this = this;
+                    var foo = "bar";
                     var returnVal = null;
-                    gobiiTreeNodes.forEach(function (currentTreeNode) {
+                    for (var idx = 0; (idx < gobiiTreeNodes.length) && (returnVal === null); idx++) {
+                        var currentTreeNode = gobiiTreeNodes[idx];
                         if (currentTreeNode.fileModelNodeId === fileModelNodeId) {
                             returnVal = currentTreeNode;
                         }
                         else {
-                            returnVal = _this.findTreeNodebyModelNodeId(currentTreeNode.children, fileModelNodeId);
+                            returnVal = this.findTreeNodebyModelNodeId(currentTreeNode.children, fileModelNodeId);
                         }
-                    });
+                    } // iterate gobii nodes
                     return returnVal;
                 };
                 StatusDisplayTreeComponent.prototype.findTreeNodebyFileItemIdId = function (gobiiTreeNodes, fileItemId) {
@@ -238,7 +239,9 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                             // there should not be a file item associated with the model because it's a container -- the file items are just for the children
                             var parentTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                             if (parentTreeNode != null) {
-                                var nodeToDelete = parentTreeNode.children.find(function (n) { return n.fileItemId === fileModelTreeEvent.fileItem.fileItemUniqueId; });
+                                var nodeToDelete = parentTreeNode.children.find(function (n) {
+                                    return n.fileItemId === fileModelTreeEvent.fileItem.fileItemUniqueId;
+                                });
                                 if (nodeToDelete != null) {
                                     var idxOfNodeToDelete = parentTreeNode.children.indexOf(nodeToDelete);
                                     parentTreeNode.children.splice(idxOfNodeToDelete, 1);

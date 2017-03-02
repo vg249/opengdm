@@ -239,9 +239,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     findTreeNodebyModelNodeId(gobiiTreeNodes: GobiiTreeNode[], fileModelNodeId: String): GobiiTreeNode {
 
+        let foo: string = "bar";
         let returnVal: GobiiTreeNode = null;
 
-        gobiiTreeNodes.forEach(currentTreeNode => {
+
+        for (let idx: number = 0; (idx < gobiiTreeNodes.length) && (returnVal === null); idx++) {
+            let currentTreeNode: GobiiTreeNode = gobiiTreeNodes[idx];
 
             if (currentTreeNode.fileModelNodeId === fileModelNodeId) {
                 returnVal = currentTreeNode;
@@ -249,7 +252,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                 returnVal = this.findTreeNodebyModelNodeId(currentTreeNode.children, fileModelNodeId);
             }
-        });
+        } // iterate gobii nodes
+
 
         return returnVal;
     }
@@ -293,18 +297,19 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                 // there should not be a file item associated with the model because it's a container -- the file items are just for the children
                 let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
-                if( parentTreeNode != null ) {
-                    let nodeToDelete:GobiiTreeNode =  parentTreeNode.children.find(n => {return n.fileItemId === fileModelTreeEvent.fileItem.fileItemUniqueId});
+                if (parentTreeNode != null) {
+                    let nodeToDelete: GobiiTreeNode = parentTreeNode.children.find(n => {
+                        return n.fileItemId === fileModelTreeEvent.fileItem.fileItemUniqueId
+                    });
 
-                    if( nodeToDelete != null ) {
-                        let idxOfNodeToDelete:number = parentTreeNode.children.indexOf(nodeToDelete);
-                        parentTreeNode.children.splice(idxOfNodeToDelete,1);
+                    if (nodeToDelete != null) {
+                        let idxOfNodeToDelete: number = parentTreeNode.children.indexOf(nodeToDelete);
+                        parentTreeNode.children.splice(idxOfNodeToDelete, 1);
                     }
 
                 } else {
                     // error?
                 }
-
 
 
                 // if (parentTreeNode != null) {
