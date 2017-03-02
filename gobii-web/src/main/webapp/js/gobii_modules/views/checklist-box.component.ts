@@ -19,9 +19,9 @@ import {CvFilterType} from "../model/cv-filter-type";
                             (hover)=handleItemHover($event)>
                             <input  type="checkbox" 
                                 (click)=handleItemChecked($event)
-                                [checked]="fileItemEvent.checked"
-                                value={{fileItemEvent.itemId}} 
-                                name="{{fileItemEvent.itemName}}">&nbsp;{{fileItemEvent.itemName}}
+                                [checked]="fileItemEvent.getChecked()"
+                                value={{fileItemEvent.getItemId()}} 
+                                name="{{fileItemEvent.getItemName()}}">&nbsp;{{fileItemEvent.getItemName()}}
                         </div>            
                     </div>
                 </form>` // end template
@@ -47,12 +47,12 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
         let itemToChange: FileItem =
             this.fileItemEvents.filter(e => {
-                return e.itemId == arg.currentTarget.value;
+                return e.getItemId() === arg.currentTarget.value;
             })[0];
 
         //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
-        itemToChange.processType = arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE;
-        itemToChange.checked = arg.currentTarget.checked;
+        itemToChange.setProcessType(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE);
+        itemToChange.setChecked(arg.currentTarget.checked);
         this.onItemChecked.emit(itemToChange);
 
     } // handleItemChecked()
@@ -71,15 +71,15 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
         arg.currentTarget.style = "background-color:#b3d9ff";
         this.previousSelectedItem = arg.currentTarget;
 
-        let fileItemEvent: FileItem = new FileItem(
+        let fileItemEvent: FileItem = FileItem.build(
             GobiiExtractFilterType.UNKNOWN,
-            ProcessType.READ,
-            this.entityType,
-            CvFilterType.UKNOWN,
-            arg.currentTarget.children[0].value,
-            arg.currentTarget.children[0].name,
-            false,
-            false);
+            ProcessType.READ)
+            .setEntityType(this.entityType)
+            .setCvFilterType(CvFilterType.UKNOWN)
+            .setItemId(arg.currentTarget.children[0].value)
+            .setItemName(arg.currentTarget.children[0].name)
+            .setChecked(false)
+            .setRequired(false);
 
         this.onItemSelected.emit(fileItemEvent);
 
@@ -94,24 +94,24 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
         if (scope$.nameIdList && ( scope$.nameIdList.length > 0 )) {
 
-            scope$.entityType =scope$.nameIdList[0].entityType;
+            scope$.entityType = scope$.nameIdList[0].entityType;
 
             scope$.fileItemEvents = [];
             scope$.nameIdList.forEach(n => {
-                scope$.fileItemEvents.push(new FileItem(
+                scope$.fileItemEvents.push(FileItem.build(
                     GobiiExtractFilterType.UNKNOWN,
-                    ProcessType.CREATE,
-                    scope$.entityType,
-                    CvFilterType.UKNOWN,
-                    n.id,
-                    n.name,
-                    false,
-                    false
-                ));
+                    ProcessType.CREATE)
+                    .setEntityType(scope$.entityType)
+                    .setCvFilterType(CvFilterType.UKNOWN)
+                    .setItemId(n.id)
+                    .setItemName(n.name)
+                    .setChecked(false)
+                    .setRequired(false)
+                );
             });
 
         } else {
-            scope$.nameIdList = [new NameId("0", "<none>",this.entityType)];
+            scope$.nameIdList = [new NameId("0", "<none>", this.entityType)];
         }
 
 
@@ -122,26 +122,26 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
     }
 
-    private itemChangedEvent: FileItem;
+    private eventedFileItem: FileItem;
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
-        let stupid:string = "foo";
+        let bar: string = "foo";
 
         if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
 
-            this.itemChangedEvent = changes['fileItemEventChange'].currentValue;
+            this.eventedFileItem = changes['fileItemEventChange'].currentValue;
 
-            if (this.itemChangedEvent) {
+            if (this.eventedFileItem) {
                 let itemToChange: FileItem =
                     this.fileItemEvents.filter(e => {
-                        return e.fileItemUniqueId == changes['fileItemEventChange'].currentValue.fileItemUniqueId;
+                        return e.getFileItemUniqueId() == this.eventedFileItem.getFileItemUniqueId();
                     })[0];
 
                 //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
                 if (itemToChange) {
-                    itemToChange.processType = changes['fileItemEventChange'].currentValue.processType;
-                    itemToChange.checked = changes['fileItemEventChange'].currentValue.checked;
+                    itemToChange.setProcessType(this.eventedFileItem.getProcessType());
+                    itemToChange.setChecked(this.eventedFileItem.getChecked());
                 }
             }
         } else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
@@ -150,7 +150,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
         } else if (changes['entityType'] && changes['entityType'].currentValue) {
 
-            let enrityTypeString:string = changes['entityType'].currentValue;
+            let enrityTypeString: string = changes['entityType'].currentValue;
             this.entityType = EntityType[enrityTypeString];
         }
     }

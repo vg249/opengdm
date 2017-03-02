@@ -305,11 +305,15 @@ export class ExtractorRoot {
     private displayIncludedDatasetsGrid: boolean = true;
     private displaySampleListTypeSelector: boolean = false;
     private displaySampleMarkerBox: boolean = false;
-    private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.WHOLE_DATASET;
+    private gobiiExtractFilterType: GobiiExtractFilterType;
 
     private handleExportTypeSelected(arg: GobiiExtractFilterType) {
 
+        let foo: string = "foo";
+
         this.gobiiExtractFilterType = arg;
+
+//        let extractorFilterItemType: FileItem = FileItem.bui(this.gobiiExtractFilterType)
 
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
@@ -608,9 +612,9 @@ export class ExtractorRoot {
     private handleCheckedDataSetItem(arg: FileItem) {
 
 
-        this.selectedDatasetId = arg.itemId;
+        this.selectedDatasetId = arg.getItemId();
 
-        if (ProcessType.CREATE == arg.processType) {
+        if (ProcessType.CREATE == arg.getProcessType()) {
 
             this.makeDatasetExtract();
 
@@ -622,12 +626,12 @@ export class ExtractorRoot {
             this.gobiiDatasetExtracts =
                 this.gobiiDatasetExtracts
                     .filter((item: GobiiDataSetExtract) => {
-                        return item.getdataSetId() != Number(arg.itemId)
+                        return item.getdataSetId() != Number(arg.getItemId())
                     });
         } // if-else we're adding
 
-        //this.treeFileItemEvent = FileItem.newFileItemEvent(arg);
-        let fileItemEvent:FileItem = FileItem.newFileItemEvent(arg,this.gobiiExtractFilterType);
+        //this.treeFileItemEvent = FileItem.fromFileItem(arg);
+        let fileItemEvent: FileItem = FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
 
 
         this._fileModelTreeService.put(fileItemEvent).subscribe();
@@ -645,7 +649,7 @@ export class ExtractorRoot {
         this.datasetFileItemEvents.push(arg);
         let dataSetExtractsToRemove: GobiiDataSetExtract[] = this.gobiiDatasetExtracts
             .filter(e => {
-                return e.getdataSetId() === Number(arg.itemId)
+                return e.getdataSetId() === Number(arg.getItemId())
             });
 
         if (dataSetExtractsToRemove.length > 0) {
@@ -655,7 +659,7 @@ export class ExtractorRoot {
         }
 
         // this.datasetFileItemEventChange = arg;
-        this.treeFileItemEvent = FileItem.newFileItemEvent(arg,this.gobiiExtractFilterType);
+        this.treeFileItemEvent = FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
 
     }
 
@@ -666,19 +670,18 @@ export class ExtractorRoot {
     private selectedMapsetId: string;
     private nullMapsetName: string;
 
-    private handleMapsetSelected(arg:NameId) {
+    private handleMapsetSelected(arg: NameId) {
 
         if (Number(arg.id) > 0) {
             this.selectedMapsetId = arg.id;
-            let fileItem:FileItem = new FileItem(
-                this.gobiiExtractFilterType,
-                ProcessType.CREATE,
-                EntityType.Mapsets,
-                CvFilterType.UKNOWN,
-                arg.id,
-                arg.name,
-                true,
-                null);
+            let fileItem: FileItem = FileItem.build(this.gobiiExtractFilterType,
+                ProcessType.CREATE)
+                .setEntityType(EntityType.Mapsets)
+                .setCvFilterType(CvFilterType.UKNOWN)
+                .setItemId(arg.id)
+                .setItemName(arg.name)
+                .setChecked(true)
+                .setRequired(null);
 
             this._fileModelTreeService.put(fileItem).subscribe();
 
@@ -802,6 +805,7 @@ export class ExtractorRoot {
 
     ngOnInit(): any {
 
+        this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
         this.initializeServerConfigs();
 
     }

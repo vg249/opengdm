@@ -54,7 +54,7 @@ export class FileModelTreeService {
             this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE] = "Dataset Type";
 
             this.entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
-            this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY] = "Submitted By";
+            this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY] = "User";
 
             this.extractorFilterTypeLabels[GobiiExtractFilterType.WHOLE_DATASET] = "Extract by Dataset";
             this.extractorFilterTypeLabels[GobiiExtractFilterType.BY_SAMPLE] = "Extract by Sample";
@@ -63,7 +63,7 @@ export class FileModelTreeService {
             this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST] = "Sample List";
             this.treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST] = "Marker List";
             this.treeExtractorTypeLabels[ExtractorItemType.CROP_TYPE] = "Crop Type";
-            this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT] = "Extraction Format";
+            this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT] = "Format";
 
 
             // **** FOR ALL EXTRACTION TYPES **********************************************************************
@@ -211,16 +211,16 @@ export class FileModelTreeService {
 
         let returnVal: FileModelTreeEvent = null;
 
-        if (fileItem.gobiiExtractFilterType != GobiiExtractFilterType.UNKNOWN) {
+        if (fileItem.getGobiiExtractFilterType() != GobiiExtractFilterType.UNKNOWN) {
 
-            let fileModelNode: FileModelNode = this.findFileModelNode(fileItem.gobiiExtractFilterType, fileItem.entityType, fileItem.cvFilterType);
+            let fileModelNode: FileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(), fileItem.getEntityType(), fileItem.getCvFilterType());
 
-            if (fileItem.processType === ProcessType.CREATE) {
+            if (fileItem.getProcessType() === ProcessType.CREATE) {
 
                 this.placeNodeInModel(fileModelNode, fileItem);
                 returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.NOT_COMPLETE, null);
 
-            } else if (fileItem.processType === ProcessType.DELETE) {
+            } else if (fileItem.getProcessType() === ProcessType.DELETE) {
 
 
                 this.removeFromModel(fileModelNode, fileItem);
@@ -230,7 +230,7 @@ export class FileModelTreeService {
                 returnVal = new FileModelTreeEvent(fileItem,
                     null,
                     FileModelState.ERROR,
-                    "Unhandled file item process type: " + ProcessType[fileItem.processType]);
+                    "Unhandled file item process type: " + ProcessType[fileItem.getProcessType()]);
             }
 
 
@@ -306,7 +306,7 @@ export class FileModelTreeService {
 
             let existingItems: FileItem[] = fileModelNode.getChildFileItems().filter(
                 item => {
-                    return item.fileItemUniqueId === fileItem.fileItemUniqueId;
+                    return item.getFileItemUniqueId() === fileItem.getFileItemUniqueId();
                 }
             )
 
@@ -333,7 +333,7 @@ export class FileModelTreeService {
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
             // a leaf should never have more than one
-            if (fileModelNode.getChildFileItems()[0].fileItemUniqueId === fileItem.fileItemUniqueId) {
+            if (fileModelNode.getChildFileItems()[0].getFileItemUniqueId() === fileItem.getFileItemUniqueId()) {
                 fileModelNode.getChildFileItems().splice(0, 1);
             }
 
@@ -341,7 +341,7 @@ export class FileModelTreeService {
 
             let existingItem: FileItem = fileModelNode.getChildFileItems().find(
                 item => {
-                    return item.fileItemUniqueId === fileItem.fileItemUniqueId;
+                    return item.getFileItemUniqueId() === fileItem.getFileItemUniqueId();
                 }
             );
 

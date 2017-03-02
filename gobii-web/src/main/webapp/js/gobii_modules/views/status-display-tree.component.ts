@@ -24,7 +24,7 @@ import {ProcessType} from "../model/type-process";
                     <p-tree [value]="gobiiTreeNodes" 
                     selectionMode="checkbox" 
                     [(selection)]="selectedGobiiNodes"
-                    (onNodeUnselect)="nodeUnselect($event)"></p-tree>
+                    (onNodeUnselect)="nodeUnselect($event)" ></p-tree>
                     <!--<p-tree [value]="demoTreeNodes" selectionMode="checkbox" [(selection)]="selectedDemoNodes"></p-tree>-->
                     <!--<div>Selected Nodes: <span *ngFor="let file of selectedFiles2">{{file.label}} </span></div>-->
 `
@@ -46,9 +46,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             .treeNotifications()
             .subscribe(te => {
 
-                if (te.fileItem.processType === ProcessType.CREATE) {
+                if (te.fileItem.getProcessType() === ProcessType.CREATE) {
                     this.placeNodeInTree(te);
-                } else if (te.fileItem.processType === ProcessType.DELETE) {
+                } else if (te.fileItem.getProcessType() === ProcessType.DELETE) {
                     this.removeNodeFromTree(te);
                 }
             });
@@ -93,23 +93,23 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, checked: boolean): FileItem {
 
-        let returnVal: FileItem = new FileItem(
+        let returnVal: FileItem = FileItem.build(
             this.gobiiExtractFilterType,
-            (checked ? ProcessType.CREATE : ProcessType.DELETE),
-            gobiiTreeNode.entityType,
-            gobiiTreeNode.cvFilterType,
-            null,
-            gobiiTreeNode.label,
-            checked,
-            null);
+            (checked ? ProcessType.CREATE : ProcessType.DELETE))
+            .setEntityType(gobiiTreeNode.entityType)
+            .setCvFilterType(gobiiTreeNode.cvFilterType)
+            .setItemId(null)
+            .setItemName(gobiiTreeNode.label)
+            .setChecked(checked)
+            .setRequired(null);
 
-        returnVal.fileItemUniqueId = gobiiTreeNode.fileItemId;
+        returnVal.setFileItemUniqueId(gobiiTreeNode.fileItemId);
 
         return returnVal;
     }
 
     nodeExpandMessage(event) {
-//        this.msgs.push({severity: 'info', summary: 'Node Expanded', detail: event.node.label});
+
     }
 
     nodeExpand(event) {
@@ -158,7 +158,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         if (entityType === EntityType.DataSets) {
 
             treeNode.icon = "fa-database";
-            treeNode.expandedIcon = "fa-database";
+            treeNode.expandedIcon = "fa-folder-expanded";
             treeNode.collapsedIcon = "fa-database";
 
         } else if (entityType === EntityType.Contacts) {
@@ -231,9 +231,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     addEntityNameToNode(statusTreeTemplate: FileModelNode, gobiiTreeNode: GobiiTreeNode, fileItemEvent: FileItem) {
 
         if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
-            gobiiTreeNode.label = fileItemEvent.itemName;
+            gobiiTreeNode.label = fileItemEvent.getItemName();
         } else {
-            gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + fileItemEvent.itemName;
+            gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + fileItemEvent.getItemName();
         }
     }
 
@@ -280,7 +280,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
-                let gobiiTreeNodeToBeRemoved: GobiiTreeNode = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.fileItemUniqueId);
+                let gobiiTreeNodeToBeRemoved: GobiiTreeNode = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.getFileItemUniqueId());
 
                 if (gobiiTreeNodeToBeRemoved !== null) {
 
@@ -299,7 +299,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                 if (parentTreeNode != null) {
                     let nodeToDelete: GobiiTreeNode = parentTreeNode.children.find(n => {
-                        return n.fileItemId === fileModelTreeEvent.fileItem.fileItemUniqueId
+                        return n.fileItemId === fileModelTreeEvent.fileItem.getFileItemUniqueId()
                     });
 
                     if (nodeToDelete != null) {
@@ -363,12 +363,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
-                let gobiiTreeNodeToBePlaced: GobiiTreeNode = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.fileItemUniqueId);
+                let gobiiTreeNodeToBePlaced: GobiiTreeNode = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.getFileItemUniqueId());
 
                 if (gobiiTreeNodeToBePlaced === null) {
 
                     let newGobiiTreeNode: GobiiTreeNode = new GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(),
-                        fileModelTreeEvent.fileItem.fileItemUniqueId);
+                        fileModelTreeEvent.fileItem.getFileItemUniqueId());
 
                     this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
                     this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), newGobiiTreeNode);
@@ -406,20 +406,20 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                         .fileModelNode
                         .getChildFileItems()
                         .find(item => {
-                            return item.fileItemUniqueId === fileModelTreeEvent.fileItem.fileItemUniqueId
+                            return item.getFileItemUniqueId() === fileModelTreeEvent.fileItem.getFileItemUniqueId()
                         });
 
                     if (existingFileModelItem !== null) {
 
 
-                        let existingGobiiTreeNodeChild: GobiiTreeNode = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, existingFileModelItem.fileItemUniqueId);
+                        let existingGobiiTreeNodeChild: GobiiTreeNode = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, existingFileModelItem.getFileItemUniqueId());
 
                         if (existingGobiiTreeNodeChild === null) {
 
                             let newGobiiTreeNode: GobiiTreeNode =
                                 new GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(),
-                                    fileModelTreeEvent.fileItem.fileItemUniqueId);
-                            newGobiiTreeNode.entityType = fileModelTreeEvent.fileItem.entityType;
+                                    fileModelTreeEvent.fileItem.getFileItemUniqueId());
+                            newGobiiTreeNode.entityType = fileModelTreeEvent.fileItem.getEntityType();
                             this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), newGobiiTreeNode);
                             this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
                             parentTreeNode.children.push(newGobiiTreeNode);

@@ -45,10 +45,16 @@ System.register(["@angular/core", "../model/file-item", "../model/type-process",
                 };
                 // In this component, every item starts out checked; unchecking it removes it
                 CriteriaDisplayComponent.prototype.handleItemUnChecked = function (arg) {
-                    var checkEvent = new file_item_1.FileItem(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.DELETE, type_entity_1.EntityType.DataSets, cv_filter_type_1.CvFilterType.UKNOWN, arg.currentTarget.value, arg.currentTarget.name, false, false);
+                    var checkEvent = file_item_1.FileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.DELETE)
+                        .setEntityType(type_entity_1.EntityType.DataSets)
+                        .setCvFilterType(cv_filter_type_1.CvFilterType.UKNOWN)
+                        .setItemId(arg.currentTarget.value)
+                        .setItemName(arg.currentTarget.name)
+                        .setChecked(false)
+                        .setRequired(false);
                     var itemToRemove = this.dataSetFileItemEvents
                         .filter(function (e) {
-                        return e.itemId === arg.currentTarget.value;
+                        return e.getItemId() === arg.currentTarget.value;
                     })[0];
                     var indexOfItemToRemove = this.dataSetFileItemEvents.indexOf(itemToRemove);
                     if (indexOfItemToRemove > -1) {

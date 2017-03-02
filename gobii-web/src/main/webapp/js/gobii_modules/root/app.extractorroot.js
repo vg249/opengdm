@@ -91,7 +91,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.displayIncludedDatasetsGrid = true;
                     this.displaySampleListTypeSelector = false;
                     this.displaySampleMarkerBox = false;
-                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET;
                     // ********************************************************************
                     // ********************************************** HAPMAP SELECTION
                     this.selectedFormatName = "Hapmap";
@@ -152,7 +151,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     window.location.href = newDestination;
                 }; // handleServerSelected()
                 ExtractorRoot.prototype.handleExportTypeSelected = function (arg) {
+                    var foo = "foo";
                     this.gobiiExtractFilterType = arg;
+                    //        let extractorFilterItemType: FileItem = FileItem.bui(this.gobiiExtractFilterType)
                     if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                         this.displaySelectorPi = true;
                         this.displaySelectorProject = true;
@@ -332,8 +333,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.gobiiDatasetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(type_gobii_file_1.GobiiFileType.GENERIC, false, Number(this.selectedDatasetId), this.selectedDatasetName, null, this.gobiiExtractFilterType, this.markerList, this.sampleList, this.uploadFileName, this.selectedSampleListType, null, null));
                 };
                 ExtractorRoot.prototype.handleCheckedDataSetItem = function (arg) {
-                    this.selectedDatasetId = arg.itemId;
-                    if (type_process_1.ProcessType.CREATE == arg.processType) {
+                    this.selectedDatasetId = arg.getItemId();
+                    if (type_process_1.ProcessType.CREATE == arg.getProcessType()) {
                         this.makeDatasetExtract();
                     }
                     else {
@@ -342,11 +343,11 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.gobiiDatasetExtracts =
                             this.gobiiDatasetExtracts
                                 .filter(function (item) {
-                                return item.getdataSetId() != Number(arg.itemId);
+                                return item.getdataSetId() != Number(arg.getItemId());
                             });
                     } // if-else we're adding
-                    //this.treeFileItemEvent = FileItem.newFileItemEvent(arg);
-                    var fileItemEvent = file_item_1.FileItem.newFileItemEvent(arg, this.gobiiExtractFilterType);
+                    //this.treeFileItemEvent = FileItem.fromFileItem(arg);
+                    var fileItemEvent = file_item_1.FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
                     this._fileModelTreeService.put(fileItemEvent).subscribe();
                 };
                 ExtractorRoot.prototype.handleExtractDataSetUnchecked = function (arg) {
@@ -355,19 +356,25 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.datasetFileItemEvents.push(arg);
                     var dataSetExtractsToRemove = this.gobiiDatasetExtracts
                         .filter(function (e) {
-                        return e.getdataSetId() === Number(arg.itemId);
+                        return e.getdataSetId() === Number(arg.getItemId());
                     });
                     if (dataSetExtractsToRemove.length > 0) {
                         var idxToRemove = this.gobiiDatasetExtracts.indexOf(dataSetExtractsToRemove[0]);
                         this.gobiiDatasetExtracts.splice(idxToRemove, 1);
                     }
                     // this.datasetFileItemEventChange = arg;
-                    this.treeFileItemEvent = file_item_1.FileItem.newFileItemEvent(arg, this.gobiiExtractFilterType);
+                    this.treeFileItemEvent = file_item_1.FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
                 };
                 ExtractorRoot.prototype.handleMapsetSelected = function (arg) {
                     if (Number(arg.id) > 0) {
                         this.selectedMapsetId = arg.id;
-                        var fileItem = new file_item_1.FileItem(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE, type_entity_1.EntityType.Mapsets, cv_filter_type_1.CvFilterType.UKNOWN, arg.id, arg.name, true, null);
+                        var fileItem = file_item_1.FileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                            .setEntityType(type_entity_1.EntityType.Mapsets)
+                            .setCvFilterType(cv_filter_type_1.CvFilterType.UKNOWN)
+                            .setItemId(arg.id)
+                            .setItemName(arg.name)
+                            .setChecked(true)
+                            .setRequired(null);
                         this._fileModelTreeService.put(fileItem).subscribe();
                     }
                     else {
@@ -445,6 +452,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     });
                 };
                 ExtractorRoot.prototype.ngOnInit = function () {
+                    this.handleExportTypeSelected(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET);
                     this.initializeServerConfigs();
                 };
                 return ExtractorRoot;

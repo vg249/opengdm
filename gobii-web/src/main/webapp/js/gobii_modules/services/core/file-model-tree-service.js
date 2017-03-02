@@ -70,14 +70,14 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         this.entityNodeLabels[type_entity_1.EntityType.Projects] = "Projects";
                         this.cvFilterNodeLabels[cv_filter_type_1.CvFilterType.DATASET_TYPE] = "Dataset Type";
                         this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
-                        this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_SUBMITED_BY] = "Submitted By";
+                        this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_SUBMITED_BY] = "User";
                         this.extractorFilterTypeLabels[type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET] = "Extract by Dataset";
                         this.extractorFilterTypeLabels[type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE] = "Extract by Sample";
                         this.extractorFilterTypeLabels[type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER] = "Extract by Marker";
                         this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_LIST] = "Sample List";
                         this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST] = "Marker List";
                         this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.CROP_TYPE] = "Crop Type";
-                        this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.EXPORT_FORMAT] = "Extraction Format";
+                        this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.EXPORT_FORMAT] = "Format";
                         // **** FOR ALL EXTRACTION TYPES **********************************************************************
                         // **** THESE ARE ALL ROOT LEVEL NODES
                         var submissionItemsForAll = [];
@@ -183,18 +183,18 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                 };
                 FileModelTreeService.prototype.mutate = function (fileItem) {
                     var returnVal = null;
-                    if (fileItem.gobiiExtractFilterType != type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN) {
-                        var fileModelNode = this.findFileModelNode(fileItem.gobiiExtractFilterType, fileItem.entityType, fileItem.cvFilterType);
-                        if (fileItem.processType === type_process_1.ProcessType.CREATE) {
+                    if (fileItem.getGobiiExtractFilterType() != type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN) {
+                        var fileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(), fileItem.getEntityType(), fileItem.getCvFilterType());
+                        if (fileItem.getProcessType() === type_process_1.ProcessType.CREATE) {
                             this.placeNodeInModel(fileModelNode, fileItem);
                             returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.NOT_COMPLETE, null);
                         }
-                        else if (fileItem.processType === type_process_1.ProcessType.DELETE) {
+                        else if (fileItem.getProcessType() === type_process_1.ProcessType.DELETE) {
                             this.removeFromModel(fileModelNode, fileItem);
                             returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.NOT_COMPLETE, null);
                         }
                         else {
-                            returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, null, file_model_tree_event_1.FileModelState.ERROR, "Unhandled file item process type: " + type_process_1.ProcessType[fileItem.processType]);
+                            returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, null, file_model_tree_event_1.FileModelState.ERROR, "Unhandled file item process type: " + type_process_1.ProcessType[fileItem.getProcessType()]);
                         }
                     }
                     else {
@@ -238,7 +238,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                     }
                     else if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
                         var existingItems = fileModelNode.getChildFileItems().filter(function (item) {
-                            return item.fileItemUniqueId === fileItem.fileItemUniqueId;
+                            return item.getFileItemUniqueId() === fileItem.getFileItemUniqueId();
                         });
                         if (existingItems.length === 0) {
                             fileModelNode.getChildFileItems().push(fileItem);
@@ -254,13 +254,13 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                 FileModelTreeService.prototype.removeFromModel = function (fileModelNode, fileItem) {
                     if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.LEAF) {
                         // a leaf should never have more than one
-                        if (fileModelNode.getChildFileItems()[0].fileItemUniqueId === fileItem.fileItemUniqueId) {
+                        if (fileModelNode.getChildFileItems()[0].getFileItemUniqueId() === fileItem.getFileItemUniqueId()) {
                             fileModelNode.getChildFileItems().splice(0, 1);
                         }
                     }
                     else if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
                         var existingItem = fileModelNode.getChildFileItems().find(function (item) {
-                            return item.fileItemUniqueId === fileItem.fileItemUniqueId;
+                            return item.getFileItemUniqueId() === fileItem.getFileItemUniqueId();
                         });
                         var idxOfItemToRemove = fileModelNode.getChildFileItems().indexOf(existingItem);
                         fileModelNode.getChildFileItems().splice(idxOfItemToRemove, 1);

@@ -58,7 +58,7 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
                     var returnVal = [];
                     //let nameListItems:Object[] = json.payload.data;
                     json.payload.data.forEach(function (item) {
-                        var currentId = item.id;
+                        var currentId = String(item.id);
                         var currentName = item.name;
                         returnVal.push(new name_id_1.NameId(currentId, currentName, _this.entityType));
                     });

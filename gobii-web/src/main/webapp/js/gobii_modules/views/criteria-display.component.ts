@@ -44,20 +44,20 @@ export class CriteriaDisplayComponent implements OnInit {
 
     // In this component, every item starts out checked; unchecking it removes it
     private handleItemUnChecked(arg) {
-        let checkEvent: FileItem = new FileItem(
+        let checkEvent: FileItem = FileItem.build(
             GobiiExtractFilterType.UNKNOWN,
-            ProcessType.DELETE,
-            EntityType.DataSets,
-            CvFilterType.UKNOWN,
-            arg.currentTarget.value,
-            arg.currentTarget.name,
-            false,
-            false);
+            ProcessType.DELETE)
+            .setEntityType(EntityType.DataSets)
+            .setCvFilterType(CvFilterType.UKNOWN)
+            .setItemId(arg.currentTarget.value)
+            .setItemName(arg.currentTarget.name)
+            .setChecked(false)
+            .setRequired(false);
 
         let itemToRemove: FileItem =
             this.dataSetFileItemEvents
                 .filter(e => {
-                    return e.itemId === arg.currentTarget.value
+                    return e.getItemId() === arg.currentTarget.value
                 })[0];
 
         let indexOfItemToRemove: number = this.dataSetFileItemEvents.indexOf(itemToRemove);
