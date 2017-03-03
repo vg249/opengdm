@@ -178,7 +178,7 @@ export class FileModelTreeService {
 
 
             if (this.validateModel() == true) {
-                this.subjectTreeStateNotifications.next(new TreeStatusNotification(FileModelState.READY,null));
+                this.subjectTreeStateNotifications.next(new TreeStatusNotification(FileModelState.READY, null));
             } else {
                 //raise major warning.
             }
@@ -200,6 +200,15 @@ export class FileModelTreeService {
             if (fileItem.getProcessType() === ProcessType.CREATE || fileItem.getProcessType() === ProcessType.UPDATE) {
 
                 this.placeNodeInModel(fileModelNode, fileItem);
+
+                if (fileModelNode.getCardinality() === CardinalityType.ONE_OR_MORE
+                    || fileModelNode.getCardinality() === CardinalityType.ONE_ONLY
+                    || fileModelNode.getCardinality() === CardinalityType.MORE_THAN_ONE) {
+
+                    fileItem.setRequired(true);
+
+                }
+
                 returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.SUBMISSION_INCOMPLETE, null);
 
             } else if (fileItem.getProcessType() === ProcessType.DELETE) {
@@ -306,6 +315,7 @@ export class FileModelTreeService {
         }
 
 
+
     } //
 
     private removeFromModel(fileModelNode: FileModelNode, fileItem: FileItem) {
@@ -341,18 +351,20 @@ export class FileModelTreeService {
     }
 
     private subjectTreeStateNotifications: Subject < TreeStatusNotification > = new Subject<TreeStatusNotification>();
+
     public treeStateNotifications(): Subject < TreeStatusNotification > {
         return this.subjectTreeStateNotifications;
     }
 
 
-
     private subjectTreeNotifications: Subject < FileModelTreeEvent > = new Subject<FileModelTreeEvent>();
+
     public treeNotifications(): Subject < FileModelTreeEvent > {
         return this.subjectTreeNotifications
     }
 
     private subjectFileItemNotifications: Subject < FileItem > = new Subject<FileItem>();
+
     public fileItemNotifications(): Subject < FileItem > {
         return this.subjectFileItemNotifications
     }
@@ -381,7 +393,7 @@ export class FileModelTreeService {
                     + fileTreeEvent.message
                     + " processing file item: "
                     + fileItem.getFileItemUniqueId()
-                    + " (" +  (fileItem.getItemName() !== null ? fileItem.getItemName()  : "unnamed" ) + ")",
+                    + " (" + (fileItem.getItemName() !== null ? fileItem.getItemName() : "unnamed" ) + ")",
                     null,
                     null
                 )]);

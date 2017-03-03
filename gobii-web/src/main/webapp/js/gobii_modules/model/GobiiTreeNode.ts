@@ -5,9 +5,12 @@ import {CvFilterType} from "./cv-filter-type";
 
 export class GobiiTreeNode implements TreeNode {
 
-    constructor(fileModelNodeId:string,fileItemId:string) {
+    constructor(fileModelNodeId: string,
+                fileItemId: string,
+                required: boolean) {
         this.fileModelNodeId = fileModelNodeId;
         this.fileItemId = fileItemId;
+        this.required = required;
     }
 
     public entityType: EntityType = EntityType.UNKNOWN;
@@ -25,5 +28,6 @@ export class GobiiTreeNode implements TreeNode {
     public partialSelected: boolean;
     public fileModelNodeId: string;
     public fileItemId: string;
+    public required: boolean = false;
 
 }

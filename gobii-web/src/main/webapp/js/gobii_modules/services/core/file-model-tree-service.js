@@ -184,6 +184,11 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         var fileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(), fileItem.getEntityType(), fileItem.getCvFilterType());
                         if (fileItem.getProcessType() === type_process_1.ProcessType.CREATE || fileItem.getProcessType() === type_process_1.ProcessType.UPDATE) {
                             this.placeNodeInModel(fileModelNode, fileItem);
+                            if (fileModelNode.getCardinality() === file_model_node_1.CardinalityType.ONE_OR_MORE
+                                || fileModelNode.getCardinality() === file_model_node_1.CardinalityType.ONE_ONLY
+                                || fileModelNode.getCardinality() === file_model_node_1.CardinalityType.MORE_THAN_ONE) {
+                                fileItem.setRequired(true);
+                            }
                             returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.SUBMISSION_INCOMPLETE, null);
                         }
                         else if (fileItem.getProcessType() === type_process_1.ProcessType.DELETE) {

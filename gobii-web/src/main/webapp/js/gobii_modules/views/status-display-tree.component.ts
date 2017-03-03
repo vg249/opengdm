@@ -45,6 +45,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     constructor(private _fileModelTreeService: FileModelTreeService) {
 
+        // has to be in ctor because if you put it in ngOnInit(), there can be ngOnChange events
+        // before ngOnInit() is called.
         this._fileModelTreeService
             .treeNotifications()
             .subscribe(te => {
@@ -105,11 +107,18 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         let fileItem: FileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, false);
 
-        this._fileModelTreeService.put(fileItem).subscribe(
-            null,
-            headerResponse  => {
-                this.handleAddStatusMessage(headerResponse)
-            });
+        // if the item is required, take no action and in fact make it selected again
+        if( ! fileItem.getRequired()) {
+            this._fileModelTreeService.put(fileItem).subscribe(
+                null,
+                headerResponse  => {
+                    this.handleAddStatusMessage(headerResponse)
+                });
+        } else {
+            this.selectedGobiiNodes.push(unselectedTreeNode);
+        }
+
+
     }
 
     makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, checked: boolean): FileItem {
@@ -122,7 +131,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             .setItemId(null)
             .setItemName(gobiiTreeNode.label)
             .setChecked(checked)
-            .setRequired(null);
+            .setRequired(gobiiTreeNode.required);
 
         returnVal.setFileItemUniqueId(gobiiTreeNode.fileItemId);
 
@@ -396,6 +405,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                     this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, fileModelTreeEvent.fileItem);
                     this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), gobiiTreeLeafNodeTobeMutated);
+                    gobiiTreeLeafNodeTobeMutated.required = fileModelTreeEvent.fileItem.getRequired();
+                    if(  this.selectedGobiiNodes.indexOf(gobiiTreeLeafNodeTobeMutated) === -1 ) {
+                        this.selectedGobiiNodes.push(gobiiTreeLeafNodeTobeMutated);
+                    }
 
                     // now we need to add the new tree node to the parent
                     // if (fileModelTreeEvent.fileModelNode.getParent() != null) {
@@ -451,7 +464,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                             let newGobiiTreeNode: GobiiTreeNode =
                                 new GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(),
-                                    fileModelTreeEvent.fileItem.getFileItemUniqueId());
+                                    fileModelTreeEvent.fileItem.getFileItemUniqueId(),
+                                    fileModelTreeEvent.fileItem.getRequired());
                             newGobiiTreeNode.entityType = fileModelTreeEvent.fileItem.getEntityType();
                             this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), newGobiiTreeNode);
                             this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
@@ -508,14 +522,14 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         if (fileModelNode.getItemType() === ExtractorItemType.ENTITY) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null,false);
             returnVal.entityType = fileModelNode.getEntityType();
             returnVal.label = fileModelNode.getEntityName();
 
 
         } else if (fileModelNode.getItemType() === ExtractorItemType.CATEGORY) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null,false);
 
             if (fileModelNode.getEntityType() != null
                 && fileModelNode.getEntityType() != EntityType.UNKNOWN) {
@@ -526,15 +540,15 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         } else if (fileModelNode.getItemType() == ExtractorItemType.EXPORT_FORMAT) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null,false);
             returnVal.label = fileModelNode.getCategoryName();
         } else if (fileModelNode.getItemType() == ExtractorItemType.SAMPLE_LIST) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null,false);
             returnVal.label = fileModelNode.getCategoryName();
         } else if (fileModelNode.getItemType() == ExtractorItemType.MARKER_LIST) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null,false);
             returnVal.label = fileModelNode.getCategoryName();
         }
 
