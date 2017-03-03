@@ -282,30 +282,31 @@ public class GobiiExtractor {
 						ErrorLogger.logError("Extractor","No genotype file: "+SSRFilePath.toString());
 					}
 				}
+
+				//QC - Subsection #1 of 1
+				if (inst.isQcCheck()) {
+					QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
+					//qcInstructionsDTOToSend.setContactId();
+					qcInstructionsDTOToSend.setDataFileDirectory(extractDir);
+					//qcInstructionsDTOToSend.setDataFileName();
+					qcInstructionsDTOToSend.setDatasetId(dataSetId);
+					qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
+					//qcInstructionsDTOToSend.setId();
+					//qcInstructionsDTOToSend.setQualityFileName();
+					PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
+					GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
+					PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
+							                                                                                           payloadEnvelope);
+					if (qcInstructionFileDTOResponseEnvelope == null) {
+						ErrorLogger.logError("Extractor","Unable to create the QC instructions file");
+					}
+					else {
+						//It is possible that the writing success is so apparent...
+						ErrorLogger.logInfo("Extractor","The QC instructions file is created but you never know it there...");
+					}
+				}
 			}
 			HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
-
-			//QC - Subsection #1 of 1
-			if (inst.isQcCheck()) {
-				QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
-				qcInstructionsDTOToSend.setContactId(inst.getContactId());
-				//qcInstructionsDTOToSend.setDataFileDirectory();
-				//qcInstructionsDTOToSend.setDataFileName();
-				//qcInstructionsDTOToSend.setDatasetId();
-				qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
-				// qcInstructionsDTOToSend.setId();  It is always internally set to 1 at the moment
-				//qcInstructionsDTOToSend.setQualityFileName();
-				PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
-				GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
-				PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
-						                                                                                           payloadEnvelope);
-				if (qcInstructionFileDTOResponseEnvelope != null) {
-					ErrorLogger.logInfo("Extractor","Successful QC Request Submission");
-				}
-				else {
-					ErrorLogger.logWarning("Extractor","Error Submitting QC Request");
-				}
-			}
 		}
 	}
 
