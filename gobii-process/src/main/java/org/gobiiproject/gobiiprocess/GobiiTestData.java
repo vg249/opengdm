@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiprocess;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiclient.core.common.Authenticator;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
@@ -15,7 +16,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.*;
+
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,6 +38,8 @@ public class GobiiTestData {
 
 
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
+
+
 
         for(int i=0; i<nodeList.getLength(); i++) {
 
@@ -437,6 +440,8 @@ public class GobiiTestData {
     }
 
     public static void main(String[] args) throws Exception{
+
+        Authenticator.authenticate();
 
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
