@@ -1,14 +1,24 @@
 package org.gobiiproject.gobiiprocess;
 
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.OrganizationDTO;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -17,15 +27,14 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Random;
-import java.util.UUID;
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * Created by VCalaminos on 2/21/2017.
  */
 public class GobiiTestData {
+
 
     private static void validateKeys(NodeList nodeList, XPath xPath, Document document) throws Exception {
 
@@ -149,6 +158,143 @@ public class GobiiTestData {
 
     }
 
+    private static String processPropName(String propertyName) {
+
+        char c[] = propertyName.toCharArray();
+        c[0] = Character.toLowerCase(c[0]);
+        propertyName = new String(c);
+
+
+        return propertyName;
+
+    }
+
+
+    private static Integer createEntity(Element parentElement, String entityName) throws Exception {
+
+        Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
+        NodeList propKeyList = props.getElementsByTagName("*");
+
+        Integer returnVal = null;
+
+        switch (entityName) {
+
+            case "Organization" :
+
+                OrganizationDTO newOrganizationDTO = new OrganizationDTO();
+
+                for (int j=0; j<propKeyList.getLength(); j++) {
+
+                    Element propKey = (Element) propKeyList.item(j);
+
+                    String propKeyLocalName = propKey.getLocalName();
+
+                    propKeyLocalName = processPropName(propKeyLocalName);
+
+                    Field field = OrganizationDTO.class.getDeclaredField(propKeyLocalName);
+                    field.setAccessible(true);
+                    field.set(newOrganizationDTO, propKey.getTextContent());
+                }
+
+                newOrganizationDTO.setCreatedBy(1);
+                newOrganizationDTO.setCreatedDate(new Date());
+                newOrganizationDTO.setModifiedBy(1);
+                newOrganizationDTO.setModifiedDate(new Date());
+                newOrganizationDTO.setStatusId(1);
+
+                PayloadEnvelope<OrganizationDTO> payloadEnvelope = new PayloadEnvelope<>(newOrganizationDTO, GobiiProcessType.CREATE);
+                GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+                        .getUriFactory()
+                        .resourceColl(ServiceRequestId.URL_ORGANIZATION));
+                PayloadEnvelope<OrganizationDTO> organizationDTOResponseEnvelope = gobiiEnvelopeRestResource.post(OrganizationDTO.class,
+                        payloadEnvelope);
+                OrganizationDTO organizationDTOResponse = organizationDTOResponseEnvelope.getPayload().getData().get(0);
+
+
+                returnVal = organizationDTOResponse.getOrganizationId();
+
+                break;
+
+            case "Contact":
+
+                ContactDTO newContactDTO = new ContactDTO();
+
+                // get roles
+                RestUri rolesUri = ClientContext.getInstance(null, false)
+                        .getUriFactory()
+                        .nameIdListByQueryParams();
+
+                GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeNameResource = new GobiiEnvelopeRestResource<>(rolesUri);
+                rolesUri.setParamValue("entity", GobiiEntityNameType.ROLES.toString().toLowerCase());
+
+                PayloadEnvelope<NameIdDTO> resultEnvelopeRoles = gobiiEnvelopeNameResource.get(NameIdDTO.class);
+
+                List<NameIdDTO> nameIdDTOList = resultEnvelopeRoles.getPayload().getData();
+
+                Map<String, Integer> rolesMap = new HashMap<>();
+
+                for(int i=0; i<nameIdDTOList.size(); i++) {
+
+                    NameIdDTO currentNameIdDTO = nameIdDTOList.get(i);
+                    rolesMap.put(currentNameIdDTO.getName(), currentNameIdDTO.getId());
+
+                }
+
+                for (int j=0; j<propKeyList.getLength(); j++) {
+
+                    Element propKey = (Element) propKeyList.item(j);
+
+                    String propKeyLocalName = propKey.getLocalName();
+
+                    if (propKeyLocalName.equals("Roles")) {continue;}
+
+                    if(propKeyLocalName.equals("Role")) {
+
+                        Integer roleId = rolesMap.get(propKey.getTextContent());
+
+                        newContactDTO.getRoles().add(roleId);
+
+                    } else {
+
+                        propKeyLocalName = processPropName(propKeyLocalName);
+
+                        Field field = ContactDTO.class.getDeclaredField(propKeyLocalName);
+                        field.setAccessible(true);
+                        field.set(newContactDTO, propKey.getTextContent());
+
+                    }
+
+                }
+
+                PayloadEnvelope<ContactDTO> payloadEnvelopeContact = new PayloadEnvelope<>(newContactDTO, GobiiProcessType.CREATE);
+                GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceContact = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+                            .getUriFactory()
+                            .resourceColl(ServiceRequestId.URL_CONTACTS));
+                PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = gobiiEnvelopeRestResourceContact.post(ContactDTO.class,
+                        payloadEnvelopeContact);
+                ContactDTO contactDTOResponse = contactDTOResponseEnvelope.getPayload().getData().get(0);
+
+                returnVal = contactDTOResponse.getContactId();
+
+                System.out.println(newContactDTO.getLastName() + newContactDTO.getEmail() + newContactDTO.getRoles() + "\n");
+
+                break;
+
+            case "Platform":
+                break;
+
+            default:
+                break;
+
+
+        }
+
+
+        return returnVal;
+
+    }
+
+
     private static void writePkValues(XPath xPath, Document document, File fXmlFile) throws Exception{
 
         //get nodes with no FKey dependencies to update DbPKey
@@ -188,7 +334,7 @@ public class GobiiTestData {
 
         }
 
-        writeToFile(document, fXmlFile);
+//        writeToFile(document, fXmlFile);
 
         //update DbPKey of elements with FKey dependencies
 
@@ -256,6 +402,14 @@ public class GobiiTestData {
 
             Element currentDbPkey = (Element) element.getElementsByTagName("DbPKey").item(0);
 
+            String parentLocalName = parentElement.getLocalName();
+
+            if (parentLocalName.equals("Contact")) {
+
+                Integer returnEntityId = createEntity(parentElement, parentLocalName);
+
+            }
+
             Random rn = new Random();
             Integer testPk = rn.nextInt();
 
@@ -263,7 +417,7 @@ public class GobiiTestData {
         }
 
 
-        writeToFile(document, fXmlFile);
+//        writeToFile(document, fXmlFile);
 
     }
 
@@ -283,7 +437,6 @@ public class GobiiTestData {
     }
 
     public static void main(String[] args) throws Exception{
-
 
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);

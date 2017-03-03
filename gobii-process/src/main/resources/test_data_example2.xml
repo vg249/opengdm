@@ -71,9 +71,9 @@
                 </Keys>
                 <Properties>
                     <PlatformName>Platform1</PlatformName>
-                    <PlatformCode></PlatformCode>
-                    <PlatformDescription></PlatformDescription>
-                    <StatusId></StatusId>
+                    <PlatformCode>Platform1 code</PlatformCode>
+                    <PlatformDescription>This is platform 1</PlatformDescription>
+                    <StatusId>1</StatusId>
                     <TypeId></TypeId>
                     <Properties></Properties>
                 </Properties>
