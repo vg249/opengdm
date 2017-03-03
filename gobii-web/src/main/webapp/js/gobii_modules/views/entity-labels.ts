@@ -2,6 +2,7 @@ import {EntityType, EntitySubType} from "../model/type-entity";
 import {CvFilterType} from "../model/cv-filter-type";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {ExtractorItemType} from "../model/file-model-node";
+import {GobiiExtractFormat} from "../model/type-extract-format";
 
 export class Labels {
 
@@ -37,6 +38,9 @@ export class Labels {
         this.treeExtractorTypeLabels[ExtractorItemType.CROP_TYPE] = "Crop Type";
         this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT] = "Format";
 
+        this.extractFormatTypeLabels[GobiiExtractFormat.HAPMAP] = "Hapmap";
+        this.extractFormatTypeLabels[GobiiExtractFormat.FLAPJACK] = "Flapjack";
+        this.extractFormatTypeLabels[GobiiExtractFormat.META_DATA_ONLY] = "Meta Data";
 
     }
 
@@ -46,5 +50,6 @@ export class Labels {
     public cvFilterNodeLabels: Map < CvFilterType, string > = new Map<CvFilterType,string>();
     public extractorFilterTypeLabels: Map < GobiiExtractFilterType, string > = new Map<GobiiExtractFilterType, string>();
     public treeExtractorTypeLabels: Map<ExtractorItemType,string> = new Map<ExtractorItemType,string>();
+    public extractFormatTypeLabels: Map<GobiiExtractFormat,string> = new Map<GobiiExtractFormat,string>();
 
 }

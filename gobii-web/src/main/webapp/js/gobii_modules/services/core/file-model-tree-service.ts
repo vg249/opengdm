@@ -11,6 +11,7 @@ import {ProcessType} from "../../model/type-process";
 import {Labels} from "../../views/entity-labels";
 import {DtoHeaderResponse} from "../../model/dto-header-response";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
+import {TreeStatusNotification} from "../../model/tree-status-notification";
 
 
 @Injectable()
@@ -176,9 +177,13 @@ export class FileModelTreeService {
                 );
 
 
-            if (this.validateModel() == false) {
-                //raise major warning
+            if (this.validateModel() == true) {
+                this.subjectTreeStateNotifications.next(new TreeStatusNotification(FileModelState.READY,null));
+            } else {
+                //raise major warning.
             }
+
+
         }
 
         return this.fileModelNodeTree.get(gobiiExtractFilterType);
@@ -195,12 +200,12 @@ export class FileModelTreeService {
             if (fileItem.getProcessType() === ProcessType.CREATE || fileItem.getProcessType() === ProcessType.UPDATE) {
 
                 this.placeNodeInModel(fileModelNode, fileItem);
-                returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.NOT_COMPLETE, null);
+                returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.SUBMISSION_INCOMPLETE, null);
 
             } else if (fileItem.getProcessType() === ProcessType.DELETE) {
 
                 this.removeFromModel(fileModelNode, fileItem);
-                returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.NOT_COMPLETE, null);
+                returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.SUBMISSION_INCOMPLETE, null);
 
             } else {
                 returnVal = new FileModelTreeEvent(fileItem,
@@ -335,14 +340,19 @@ export class FileModelTreeService {
 
     }
 
-    private subjectTreeNotifications: Subject < FileModelTreeEvent > = new Subject<FileModelTreeEvent>();
+    private subjectTreeStateNotifications: Subject < TreeStatusNotification > = new Subject<TreeStatusNotification>();
+    public treeStateNotifications(): Subject < TreeStatusNotification > {
+        return this.subjectTreeStateNotifications;
+    }
 
+
+
+    private subjectTreeNotifications: Subject < FileModelTreeEvent > = new Subject<FileModelTreeEvent>();
     public treeNotifications(): Subject < FileModelTreeEvent > {
         return this.subjectTreeNotifications
     }
 
     private subjectFileItemNotifications: Subject < FileItem > = new Subject<FileItem>();
-
     public fileItemNotifications(): Subject < FileItem > {
         return this.subjectFileItemNotifications
     }

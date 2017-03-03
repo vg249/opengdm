@@ -3,9 +3,10 @@ import {FileModelNode} from "./file-model-node";
 
 export enum FileModelState {
     UNKNOWN,
-    NOT_COMPLETE,
+    READY,
+    SUBMISSION_INCOMPLETE,
     ERROR,
-    COMPLETE
+    SUBMISSION_READY
 }
 
 export class FileModelTreeEvent {
@@ -13,7 +14,7 @@ export class FileModelTreeEvent {
     constructor(public fileItem: FileItem,
                 public fileModelNode: FileModelNode,
                 public fileModelState: FileModelState,
-                public message:string) {
+                public message: string) {
 
         this.fileItem = fileItem;
         this.fileModelNode = fileModelNode;

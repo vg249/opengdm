@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/file-model-tree-event", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/type-entity", "../../model/cv-filter-type", "rxjs/Subject", "rxjs/Observable", "../../model/type-process", "../../views/entity-labels", "../../model/dto-header-response", "../../model/dto-header-status-message"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/file-model-tree-event", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/type-entity", "../../model/cv-filter-type", "rxjs/Subject", "rxjs/Observable", "../../model/type-process", "../../views/entity-labels", "../../model/dto-header-response", "../../model/dto-header-status-message", "../../model/tree-status-notification"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, file_model_tree_event_1, file_model_node_1, type_extractor_filter_1, type_entity_1, cv_filter_type_1, Subject_1, Observable_1, type_process_1, entity_labels_1, dto_header_response_1, dto_header_status_message_1, FileModelTreeService;
+    var core_1, file_model_tree_event_1, file_model_node_1, type_extractor_filter_1, type_entity_1, cv_filter_type_1, Subject_1, Observable_1, type_process_1, entity_labels_1, dto_header_response_1, dto_header_status_message_1, tree_status_notification_1, FileModelTreeService;
     return {
         setters: [
             function (core_1_1) {
@@ -48,12 +48,16 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
             },
             function (dto_header_status_message_1_1) {
                 dto_header_status_message_1 = dto_header_status_message_1_1;
+            },
+            function (tree_status_notification_1_1) {
+                tree_status_notification_1 = tree_status_notification_1_1;
             }
         ],
         execute: function () {
             FileModelTreeService = (function () {
                 function FileModelTreeService() {
                     this.fileModelNodeTree = new Map();
+                    this.subjectTreeStateNotifications = new Subject_1.Subject();
                     this.subjectTreeNotifications = new Subject_1.Subject();
                     this.subjectFileItemNotifications = new Subject_1.Subject();
                 }
@@ -166,7 +170,10 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                                 .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE)));
                         this.fileModelNodeTree
                             .set(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, submissionItemsForByMarkers);
-                        if (this.validateModel() == false) {
+                        if (this.validateModel() == true) {
+                            this.subjectTreeStateNotifications.next(new tree_status_notification_1.TreeStatusNotification(file_model_tree_event_1.FileModelState.READY, null));
+                        }
+                        else {
                         }
                     }
                     return this.fileModelNodeTree.get(gobiiExtractFilterType);
@@ -177,11 +184,11 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         var fileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(), fileItem.getEntityType(), fileItem.getCvFilterType());
                         if (fileItem.getProcessType() === type_process_1.ProcessType.CREATE || fileItem.getProcessType() === type_process_1.ProcessType.UPDATE) {
                             this.placeNodeInModel(fileModelNode, fileItem);
-                            returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.NOT_COMPLETE, null);
+                            returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.SUBMISSION_INCOMPLETE, null);
                         }
                         else if (fileItem.getProcessType() === type_process_1.ProcessType.DELETE) {
                             this.removeFromModel(fileModelNode, fileItem);
-                            returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.NOT_COMPLETE, null);
+                            returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.SUBMISSION_INCOMPLETE, null);
                         }
                         else {
                             returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, null, file_model_tree_event_1.FileModelState.ERROR, "Unhandled file item process type: " + type_process_1.ProcessType[fileItem.getProcessType()]);
@@ -257,6 +264,9 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                     }
                     else {
                     }
+                };
+                FileModelTreeService.prototype.treeStateNotifications = function () {
+                    return this.subjectTreeStateNotifications;
                 };
                 FileModelTreeService.prototype.treeNotifications = function () {
                     return this.subjectTreeNotifications;

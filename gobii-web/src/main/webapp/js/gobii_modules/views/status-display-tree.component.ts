@@ -1,6 +1,5 @@
 import {Component, OnInit, ViewChild, OnChanges, SimpleChange, EventEmitter} from "@angular/core";
 import {TreeNode, Message, MenuItem} from "primeng/components/common/api";
-import {Tree} from "primeng/components/tree/tree";
 import {FileItem} from "../model/file-item";
 import {GobiiTreeNode} from "../model/GobiiTreeNode";
 import {EntityType, EntitySubType} from "../model/type-entity";
@@ -11,16 +10,19 @@ import {
 } from "../model/file-model-node";
 import {CvFilterType} from "../model/cv-filter-type";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
-import {FileModelTreeEvent} from "../model/file-model-tree-event";
+import {FileModelTreeEvent, FileModelState} from "../model/file-model-tree-event";
 import {ProcessType} from "../model/type-process";
 import {DtoHeaderResponse} from "../model/dto-header-response";
+import {GobiiExtractFormat} from "../model/type-extract-format";
+import {HeaderStatusMessage} from "../model/dto-header-status-message";
+import {Labels} from "./entity-labels";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
 @Component({
     selector: 'status-display-tree',
     inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
-    outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage'],
+    outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
     template: ` 
                     <p-tree [value]="gobiiTreeNodes" 
                     selectionMode="checkbox" 
@@ -33,6 +35,7 @@ import {DtoHeaderResponse} from "../model/dto-header-response";
 export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     private onAddMessage: EventEmitter<DtoHeaderResponse> = new EventEmitter();
+    private onTreeReady: EventEmitter<DtoHeaderResponse> = new EventEmitter();
 
     private handleAddStatusMessage(dtoHeaderResponse: DtoHeaderResponse) {
 
@@ -41,20 +44,37 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
     constructor(private _fileModelTreeService: FileModelTreeService) {
-    }
-
-    ngOnInit() {
 
         this._fileModelTreeService
             .treeNotifications()
             .subscribe(te => {
 
-                if (te.fileItem.getProcessType() === ProcessType.CREATE) {
+                if (te.fileItem.getProcessType() === ProcessType.CREATE
+                    || te.fileItem.getProcessType() === ProcessType.UPDATE) {
                     this.placeNodeInTree(te);
                 } else if (te.fileItem.getProcessType() === ProcessType.DELETE) {
                     this.removeNodeFromTree(te);
+                } else {
+                    let headerResponse: DtoHeaderResponse = new DtoHeaderResponse(false, [new HeaderStatusMessage(
+                        "Error in status display tree processing file item type "
+                        + ExtractorItemType[te.fileItem.getExtractorItemType()]
+                        + ": Unknown porcess type: "
+                        + ProcessType[te.fileItem.getProcessType()],
+                        null,
+                        null
+                    )]);
+
+                    this.handleAddStatusMessage(headerResponse);
+
                 }
             });
+    }
+
+    ngOnInit() {
+
+        let foo:string = "bar";
+
+
 
         // this.makeDemoTreeNodes();
         // this.setUpRequredItems();
@@ -70,12 +90,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     gobiiTreeNodes: GobiiTreeNode[] = [];
     selectedGobiiNodes: GobiiTreeNode[] = [];
-    // entityNodeLabels: Map < EntityType, string > = new Map<EntityType,string>();
-    // entitySubtypeNodeLabels: Map < EntitySubType, string > = new Map<EntitySubType,string>();
-    // cvFilterNodeLabels: Map < CvFilterType, string > = new Map<CvFilterType,string>();
-    // extractorFilterTypeLabels: Map < GobiiExtractFilterType, string > = new Map<GobiiExtractFilterType, string>();
-    // treeCategoryLabels: Map<ExtractorCategoryType,string> = new Map<ExtractorCategoryType,string>();
-
 
     experimentId: string;
 
@@ -235,12 +249,17 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-    addEntityNameToNode(fileModelNode: FileModelNode, gobiiTreeNode: GobiiTreeNode, fileItemEvent: FileItem) {
+    addEntityNameToNode(fileModelNode: FileModelNode, gobiiTreeNode: GobiiTreeNode, eventedFileItem: FileItem) {
 
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
-            gobiiTreeNode.label = fileItemEvent.getItemName();
+            gobiiTreeNode.label = eventedFileItem.getItemName();
         } else { // coves the LEAF node use case
-            gobiiTreeNode.label += fileModelNode.getEntityName() + ": " + fileItemEvent.getItemName();
+            if( eventedFileItem.getExtractorItemType() == ExtractorItemType.EXPORT_FORMAT ) {
+                let gobiiExtractFormat:GobiiExtractFormat=  <GobiiExtractFormat> GobiiExtractFormat[eventedFileItem.getItemId()];
+                gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + Labels.instance().extractFormatTypeLabels[gobiiExtractFormat];
+            } else {
+                gobiiTreeNode.label += fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
+            }
         }
     }
 
@@ -370,36 +389,43 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
-                let gobiiTreeNodeToBePlaced: GobiiTreeNode = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.getFileItemUniqueId());
+                let gobiiTreeLeafNodeTobeMutated: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
 
-                if (gobiiTreeNodeToBePlaced === null) {
+                if (gobiiTreeLeafNodeTobeMutated != null) {
 
-                    let newGobiiTreeNode: GobiiTreeNode = new GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(),
-                        fileModelTreeEvent.fileItem.getFileItemUniqueId());
 
-                    this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
-                    this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), newGobiiTreeNode);
+                    this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, fileModelTreeEvent.fileItem);
+                    this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), gobiiTreeLeafNodeTobeMutated);
 
                     // now we need to add the new tree node to the parent
-                    if (fileModelTreeEvent.fileModelNode.getParent() != null) {
-
-                        let fileModelNodeParent: FileModelNode = fileModelTreeEvent.fileModelNode.getParent();
-                        let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelNodeParent.getFileModelNodeUniqueId());
-
-                        if (parentTreeNode != null) {
-                            parentTreeNode.children.push(newGobiiTreeNode);
-                        } else {
-                            // error condition
-                        } // the model tree's parent does not have a corresponding tree node
-
-                    } else {
-                        // error condition
-
-                    } // if-else the model node has a parent
+                    // if (fileModelTreeEvent.fileModelNode.getParent() != null) {
+                    //
+                    //     let fileModelNodeParent: FileModelNode = fileModelTreeEvent.fileModelNode.getParent();
+                    //     let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelNodeParent.getFileModelNodeUniqueId());
+                    //
+                    //     if (parentTreeNode != null) {
+                    //         parentTreeNode.children.push(newGobiiTreeNode);
+                    //     } else {
+                    //         // error condition
+                    //     } // the model tree's parent does not have a corresponding tree node
+                    //
+                    // } else {
+                    //     // error condition
+                    //
+                    // } // if-else the model node has a parent
 
 
                 } else {
-                    // modify existing node?
+
+                    let headerResponse: DtoHeaderResponse = new DtoHeaderResponse(false, [new HeaderStatusMessage(
+                        "Error placing file item in the status tree: there is no gobii tree leaf node for model node "
+                        + fileModelTreeEvent.fileModelNode.getEntityName(),
+                        null,
+                        null
+                    )]);
+
+                    this.handleAddStatusMessage(headerResponse);
+
                 } // if-else we found an existing node for the LEAF node's file item
 
 
@@ -588,6 +614,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
                 //this.getTemplates(this.gobiiExtractFilterType, true);
                 this.setUpRequredItems(newGobiiExtractFilterType);
+                this.onTreeReady.emit( new DtoHeaderResponse(true,[]));
             }
 
 

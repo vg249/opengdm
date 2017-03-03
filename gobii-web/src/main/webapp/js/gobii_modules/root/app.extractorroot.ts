@@ -1,5 +1,5 @@
 ///<reference path="../../../../../../typings/index.d.ts"/>
-import {Component} from "@angular/core";
+import {Component, OnInit} from "@angular/core";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract";
 import {ProcessType} from "../model/type-process";
@@ -21,6 +21,8 @@ import {CvFilters, CvFilterType} from "../model/cv-filter-type";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {ExtractorItemType} from "../model/file-model-node";
 import {DtoHeaderResponse} from "../model/dto-header-response";
+import {GobiiExtractFormat} from "../model/type-extract-format";
+import {FileModelState} from "../model/file-model-tree-event";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -206,7 +208,8 @@ import {DtoHeaderResponse} from "../model/dto-header-response";
                                 <status-display-tree
                                     [fileItemEventChange] = "treeFileItemEvent"
                                     [gobiiExtractFilterTypeEvent] = "gobiiExtractFilterType"
-                                    (onAddMessage)="handleAddStatusMessage($event)">
+                                    (onAddMessage)="handleAddStatusMessage($event)"
+                                    (onTreeReady)="handleStatusTreeReady($event)">
                                 </status-display-tree>
                             </fieldset>
                                    
@@ -224,7 +227,7 @@ import {DtoHeaderResponse} from "../model/dto-header-response";
             </div>` // end template
 }) // @Component
 
-export class ExtractorRoot {
+export class ExtractorRoot implements OnInit {
     title = 'Gobii Web';
 
 
@@ -240,6 +243,8 @@ export class ExtractorRoot {
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private _fileModelTreeService: FileModelTreeService) {
     }
+
+
 
     // ****************************************************************
     // ********************************************** SERVER SELECTION
@@ -322,16 +327,6 @@ export class ExtractorRoot {
 
         this.gobiiExtractFilterType = arg;
 
-        let extractFilterTypeFileItem: FileItem = FileItem
-            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-            .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT);
-
-        this._fileModelTreeService.put(extractFilterTypeFileItem)
-            .subscribe(
-                null,
-                headerResponse => {
-                    this.handleAddStatusMessage(headerResponse)
-                });
 
 //        let extractorFilterItemType: FileItem = FileItem.bui(this.gobiiExtractFilterType)
 
@@ -448,10 +443,25 @@ export class ExtractorRoot {
 
 // ********************************************************************
 // ********************************************** HAPMAP SELECTION
-    private selectedFormatName: string = "Hapmap";
+    private selectedExtractFormat: GobiiExtractFormat = GobiiExtractFormat.HAPMAP;
 
-    private handleFormatSelected(arg) {
-        this.selectedFormatName = arg;
+    private handleFormatSelected(arg:GobiiExtractFormat) {
+
+        this.selectedExtractFormat = arg;
+
+        let extractFilterTypeFileItem: FileItem = FileItem
+            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+            .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+            .setItemId(GobiiExtractFormat[arg])
+            .setItemName(GobiiExtractFormat[GobiiExtractFormat[arg]]);
+
+        this._fileModelTreeService.put(extractFilterTypeFileItem)
+            .subscribe(
+                null,
+                headerResponse => {
+                    this.handleAddStatusMessage(headerResponse)
+                });
+
         //console.log("selected contact itemId:" + arg);
     }
 
@@ -617,6 +627,10 @@ export class ExtractorRoot {
         }
     }
 
+    handleStatusTreeReady( dtoHeaderResponse: DtoHeaderResponse )  {
+
+        this.handleFormatSelected(GobiiExtractFormat.HAPMAP);
+    }
 
     private makeDatasetExtract() {
 
@@ -789,7 +803,7 @@ export class ExtractorRoot {
         let scope$ = this;
         let gobiiExtractorInstructions: GobiiExtractorInstruction[] = [];
 
-        let gobiiFileType: GobiiFileType = GobiiFileType[this.selectedFormatName.toUpperCase()];
+        let gobiiFileType: GobiiFileType = GobiiFileType[ GobiiExtractFormat[ this.selectedExtractFormat]];
         this.gobiiDatasetExtracts.forEach(e => e.setgobiiFileType(gobiiFileType));
 
         let mapsetIds: number[] = [];
@@ -842,6 +856,17 @@ export class ExtractorRoot {
     }
 
     ngOnInit(): any {
+
+        this._fileModelTreeService
+            .treeStateNotifications()
+            .subscribe( ts => {
+
+                if( ts.fileModelState == FileModelState.SUBMISSION_READY) {
+                    //
+                }
+
+            });
+
 
         this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
         this.initializeServerConfigs();

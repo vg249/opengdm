@@ -7,9 +7,10 @@ System.register([], function (exports_1, context_1) {
         execute: function () {
             (function (FileModelState) {
                 FileModelState[FileModelState["UNKNOWN"] = 0] = "UNKNOWN";
-                FileModelState[FileModelState["NOT_COMPLETE"] = 1] = "NOT_COMPLETE";
-                FileModelState[FileModelState["ERROR"] = 2] = "ERROR";
-                FileModelState[FileModelState["COMPLETE"] = 3] = "COMPLETE";
+                FileModelState[FileModelState["READY"] = 1] = "READY";
+                FileModelState[FileModelState["SUBMISSION_INCOMPLETE"] = 2] = "SUBMISSION_INCOMPLETE";
+                FileModelState[FileModelState["ERROR"] = 3] = "ERROR";
+                FileModelState[FileModelState["SUBMISSION_READY"] = 4] = "SUBMISSION_READY";
             })(FileModelState || (FileModelState = {}));
             exports_1("FileModelState", FileModelState);
             FileModelTreeEvent = (function () {
