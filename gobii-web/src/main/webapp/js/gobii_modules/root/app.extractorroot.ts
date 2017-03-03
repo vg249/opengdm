@@ -59,15 +59,13 @@ import {FileModelState} from "../model/file-model-tree-event";
                 
                     <div class="col-md-4">
                     
-                    <!--
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Submit As</legend>
-                        <users-list-box
-                            [nameIdList]="contactNameIdListForSubmitter"
-                            (onUserSelected)="handleContactForSubmissionSelected($event)">
-                        </users-list-box>
-                        </fieldset>
-                        -->
+                    <fieldset class="well the-fieldset">
+                    <legend class="the-legend">Submit As</legend>
+                    <users-list-box
+                        [nameIdList]="contactNameIdListForSubmitter"
+                        (onUserSelected)="handleContactForSubmissionSelected($event)">
+                    </users-list-box>
+                    </fieldset>
                         
                      <fieldset class="well the-fieldset">
                         <legend class="the-legend">Filters</legend><BR>
@@ -243,7 +241,6 @@ export class ExtractorRoot implements OnInit {
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private _fileModelTreeService: FileModelTreeService) {
     }
-
 
 
     // ****************************************************************
@@ -445,7 +442,7 @@ export class ExtractorRoot implements OnInit {
 // ********************************************** HAPMAP SELECTION
     private selectedExtractFormat: GobiiExtractFormat = GobiiExtractFormat.HAPMAP;
 
-    private handleFormatSelected(arg:GobiiExtractFormat) {
+    private handleFormatSelected(arg: GobiiExtractFormat) {
 
         this.selectedExtractFormat = arg;
 
@@ -627,7 +624,7 @@ export class ExtractorRoot implements OnInit {
         }
     }
 
-    handleStatusTreeReady( dtoHeaderResponse: DtoHeaderResponse )  {
+    handleStatusTreeReady(dtoHeaderResponse: DtoHeaderResponse) {
 
         this.handleFormatSelected(GobiiExtractFormat.HAPMAP);
     }
@@ -803,7 +800,7 @@ export class ExtractorRoot implements OnInit {
         let scope$ = this;
         let gobiiExtractorInstructions: GobiiExtractorInstruction[] = [];
 
-        let gobiiFileType: GobiiFileType = GobiiFileType[ GobiiExtractFormat[ this.selectedExtractFormat]];
+        let gobiiFileType: GobiiFileType = GobiiFileType[GobiiExtractFormat[this.selectedExtractFormat]];
         this.gobiiDatasetExtracts.forEach(e => e.setgobiiFileType(gobiiFileType));
 
         let mapsetIds: number[] = [];
@@ -859,9 +856,9 @@ export class ExtractorRoot implements OnInit {
 
         this._fileModelTreeService
             .treeStateNotifications()
-            .subscribe( ts => {
+            .subscribe(ts => {
 
-                if( ts.fileModelState == FileModelState.SUBMISSION_READY) {
+                if (ts.fileModelState == FileModelState.SUBMISSION_READY) {
                     //
                 }
 
