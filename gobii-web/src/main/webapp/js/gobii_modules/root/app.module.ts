@@ -23,6 +23,7 @@ import {Http} from "@angular/http";
 import {TextAreaComponent} from "../views/text-area.component";
 import {UploaderComponent} from "../views/uploader.component";
 import {FormsModule} from "@angular/forms";
+import {SampleListTypeComponent} from "../views/sample-list-type.component";
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import {FormsModule} from "@angular/forms";
         FileSelectDirective,
         FileDropDirective,
         TextAreaComponent,
-        UploaderComponent],
+        UploaderComponent,
+        SampleListTypeComponent],
     providers: [AuthenticationService,
         DtoRequestService],
     bootstrap: [ExtractorRoot]

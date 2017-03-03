@@ -10,4 +10,5 @@ import java.sql.ResultSet;
 public interface RsCvGroupDao {
 
     ResultSet getCvsByGroupId(Integer groupId) throws GobiiDaoException;
+    ResultSet getGroupTypeForGroupId(Integer groupId) throws GobiiDaoException;
 }
