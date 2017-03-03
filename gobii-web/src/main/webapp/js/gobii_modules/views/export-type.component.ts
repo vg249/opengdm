@@ -9,7 +9,7 @@ import {GobiiExtractFilterType} from "../model/type-extractor-filter";
     template: `<label class="the-label">Export By:&nbsp;</label>
                   <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="WHOLE_DATASET" checked="checked">Data Set&nbsp;
                   <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="BY_SAMPLE" disabled>Sample&nbsp;
-                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="BY_MARKER">Marker&nbsp;` // end template
+                  <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="BY_MARKER" disabled>Marker&nbsp;` // end template
 })
 
 export class ExportTypeComponent implements OnInit {
