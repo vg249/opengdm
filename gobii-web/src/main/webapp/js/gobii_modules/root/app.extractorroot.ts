@@ -20,6 +20,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 import {CvFilters, CvFilterType} from "../model/cv-filter-type";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {ExtractorItemType} from "../model/file-model-node";
+import {DtoHeaderResponse} from "../model/dto-header-response";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -168,6 +169,13 @@ import {ExtractorItemType} from "../model/file-model-node";
                             </fieldset>
                         </div>
                         
+                        <div>
+                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
+                                <legend class="the-legend">Status: {{currentStatus}}</legend>
+                                <status-display [messages] = "messages"></status-display>
+                            </fieldset>
+                        </div>
+                        
                     </div>  <!-- outer grid column 2-->
                     
                     
@@ -194,11 +202,11 @@ import {ExtractorItemType} from "../model/file-model-node";
                     </form>
                             
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Status: {{currentStatus}}</legend>
+                                <legend class="the-legend">Extraction Criteria Summary</legend>
                                 <status-display-tree
                                     [fileItemEventChange] = "treeFileItemEvent"
                                     [gobiiExtractFilterTypeEvent] = "gobiiExtractFilterType"
-                                    (onAddMessage)="handleAddMessage($event)">
+                                    (onAddMessage)="handleAddStatusMessage($event)">
                                 </status-display-tree>
                             </fieldset>
                                    
@@ -314,11 +322,16 @@ export class ExtractorRoot {
 
         this.gobiiExtractFilterType = arg;
 
-        let extractFilterTypeFileItem:FileItem = FileItem
-            .build(this.gobiiExtractFilterType,ProcessType.UPDATE)
+        let extractFilterTypeFileItem: FileItem = FileItem
+            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
             .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT);
 
-        this._fileModelTreeService.put(extractFilterTypeFileItem).subscribe();
+        this._fileModelTreeService.put(extractFilterTypeFileItem)
+            .subscribe(
+                null,
+                headerResponse => {
+                    this.handleAddStatusMessage(headerResponse)
+                });
 
 //        let extractorFilterItemType: FileItem = FileItem.bui(this.gobiiExtractFilterType)
 
@@ -594,6 +607,16 @@ export class ExtractorRoot {
         this.messages.push(arg);
     }
 
+    private handleAddStatusMessage(dtoHeaderResponse: DtoHeaderResponse) {
+
+        if (dtoHeaderResponse.statusMessages !== null) {
+
+            dtoHeaderResponse.statusMessages.forEach(statusMessage => {
+                this.messages.push(statusMessage.message);
+            })
+        }
+    }
+
 
     private makeDatasetExtract() {
 
@@ -641,7 +664,11 @@ export class ExtractorRoot {
         let fileItemEvent: FileItem = FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
 
 
-        this._fileModelTreeService.put(fileItemEvent).subscribe();
+        this._fileModelTreeService.put(fileItemEvent).subscribe(
+            null,
+            headerResponse => {
+                this.handleAddStatusMessage(headerResponse)
+            });
 
     }
 
@@ -690,7 +717,11 @@ export class ExtractorRoot {
                 .setChecked(true)
                 .setRequired(null);
 
-            this._fileModelTreeService.put(fileItem).subscribe();
+            this._fileModelTreeService.put(fileItem).subscribe(
+                null,
+                headerResponse => {
+                    this.handleAddStatusMessage(headerResponse)
+                });
 
         } else {
             this.selectedMapsetId = undefined;

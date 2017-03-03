@@ -59,8 +59,8 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                     this.onItemSelected = new core_1.EventEmitter();
                     this.fileModelNodeTree = new Map();
                 }
-                StatusDisplayTreeComponent.prototype.reportMessage = function (arg) {
-                    this.onAddMessage.emit(arg);
+                StatusDisplayTreeComponent.prototype.handleAddStatusMessage = function (dtoHeaderResponse) {
+                    this.onAddMessage.emit(dtoHeaderResponse);
                 };
                 StatusDisplayTreeComponent.prototype.ngOnInit = function () {
                     var _this = this;
@@ -81,9 +81,12 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                     //      this.msgs.push({severity: 'info', summary: 'Node Selected', detail: event.node.label});
                 };
                 StatusDisplayTreeComponent.prototype.nodeUnselect = function (event) {
+                    var _this = this;
                     var unselectedTreeNode = event.node;
                     var fileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, false);
-                    this._fileModelTreeService.put(fileItem).subscribe();
+                    this._fileModelTreeService.put(fileItem).subscribe(null, function (headerResponse) {
+                        _this.handleAddStatusMessage(headerResponse);
+                    });
                 };
                 StatusDisplayTreeComponent.prototype.makeFileItemFromTreeNode = function (gobiiTreeNode, checked) {
                     var returnVal = file_item_1.FileItem.build(this.gobiiExtractFilterType, (checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE))
@@ -194,12 +197,12 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                         treeNode.collapsedIcon = "fa-folder";
                     }
                 };
-                StatusDisplayTreeComponent.prototype.addEntityNameToNode = function (statusTreeTemplate, gobiiTreeNode, fileItemEvent) {
-                    if (statusTreeTemplate.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
+                StatusDisplayTreeComponent.prototype.addEntityNameToNode = function (fileModelNode, gobiiTreeNode, fileItemEvent) {
+                    if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
                         gobiiTreeNode.label = fileItemEvent.getItemName();
                     }
                     else {
-                        gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + fileItemEvent.getItemName();
+                        gobiiTreeNode.label += fileModelNode.getEntityName() + ": " + fileItemEvent.getItemName();
                     }
                 };
                 StatusDisplayTreeComponent.prototype.findTreeNodebyModelNodeId = function (gobiiTreeNodes, fileModelNodeId) {

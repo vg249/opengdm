@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/file-model-tree-event", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/type-entity", "../../model/cv-filter-type", "rxjs/Subject", "rxjs/Observable", "../../model/type-process", "../../views/entity-labels"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/file-model-tree-event", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/type-entity", "../../model/cv-filter-type", "rxjs/Subject", "rxjs/Observable", "../../model/type-process", "../../views/entity-labels", "../../model/dto-header-response", "../../model/dto-header-status-message"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, file_model_tree_event_1, file_model_node_1, type_extractor_filter_1, type_entity_1, cv_filter_type_1, Subject_1, Observable_1, type_process_1, entity_labels_1, FileModelTreeService;
+    var core_1, file_model_tree_event_1, file_model_node_1, type_extractor_filter_1, type_entity_1, cv_filter_type_1, Subject_1, Observable_1, type_process_1, entity_labels_1, dto_header_response_1, dto_header_status_message_1, FileModelTreeService;
     return {
         setters: [
             function (core_1_1) {
@@ -42,6 +42,12 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
             },
             function (entity_labels_1_1) {
                 entity_labels_1 = entity_labels_1_1;
+            },
+            function (dto_header_response_1_1) {
+                dto_header_response_1 = dto_header_response_1_1;
+            },
+            function (dto_header_status_message_1_1) {
+                dto_header_status_message_1 = dto_header_status_message_1_1;
             }
         ],
         execute: function () {
@@ -169,7 +175,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                     var returnVal = null;
                     if (fileItem.getGobiiExtractFilterType() != type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN) {
                         var fileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(), fileItem.getEntityType(), fileItem.getCvFilterType());
-                        if (fileItem.getProcessType() === type_process_1.ProcessType.CREATE || fileItem.getProcessType() === type_process_1.ProcessType.READ) {
+                        if (fileItem.getProcessType() === type_process_1.ProcessType.CREATE || fileItem.getProcessType() === type_process_1.ProcessType.UPDATE) {
                             this.placeNodeInModel(fileModelNode, fileItem);
                             returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.NOT_COMPLETE, null);
                         }
@@ -263,10 +269,20 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                     return Observable_1.Observable.create(function (observer) {
                         var foo = "foo";
                         var fileTreeEvent = _this.mutate(fileItem);
-                        observer.next(fileTreeEvent);
-                        observer.complete();
-                        _this.subjectTreeNotifications.next(fileTreeEvent);
-                        _this.subjectFileItemNotifications.next(fileTreeEvent.fileItem);
+                        if (fileTreeEvent.fileModelState != file_model_tree_event_1.FileModelState.ERROR) {
+                            observer.next(fileTreeEvent);
+                            observer.complete();
+                            _this.subjectTreeNotifications.next(fileTreeEvent);
+                            _this.subjectFileItemNotifications.next(fileTreeEvent.fileItem);
+                        }
+                        else {
+                            var headerResponse = new dto_header_response_1.DtoHeaderResponse(false, [new dto_header_status_message_1.HeaderStatusMessage("Error mutating file item in file model tree service: "
+                                    + fileTreeEvent.message
+                                    + " processing file item: "
+                                    + fileItem.getFileItemUniqueId()
+                                    + " (" + (fileItem.getItemName() !== null ? fileItem.getItemName() : "unnamed") + ")", null, null)]);
+                            observer.error(headerResponse);
+                        }
                     });
                 };
                 FileModelTreeService.prototype.get = function (gobiiExtractFilterType) {

@@ -13,6 +13,7 @@ import {CvFilterType} from "../model/cv-filter-type";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {FileModelTreeEvent} from "../model/file-model-tree-event";
 import {ProcessType} from "../model/type-process";
+import {DtoHeaderResponse} from "../model/dto-header-response";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
@@ -31,10 +32,12 @@ import {ProcessType} from "../model/type-process";
 })
 export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
-    private onAddMessage: EventEmitter<string> = new EventEmitter();
+    private onAddMessage: EventEmitter<DtoHeaderResponse> = new EventEmitter();
 
-    private reportMessage(arg) {
-        this.onAddMessage.emit(arg);
+    private handleAddStatusMessage(dtoHeaderResponse: DtoHeaderResponse) {
+
+        this.onAddMessage.emit(dtoHeaderResponse);
+
     }
 
     constructor(private _fileModelTreeService: FileModelTreeService) {
@@ -88,7 +91,11 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         let fileItem: FileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, false);
 
-        this._fileModelTreeService.put(fileItem).subscribe();
+        this._fileModelTreeService.put(fileItem).subscribe(
+            null,
+            headerResponse  => {
+                this.handleAddStatusMessage(headerResponse)
+            });
     }
 
     makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, checked: boolean): FileItem {
@@ -228,12 +235,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-    addEntityNameToNode(statusTreeTemplate: FileModelNode, gobiiTreeNode: GobiiTreeNode, fileItemEvent: FileItem) {
+    addEntityNameToNode(fileModelNode: FileModelNode, gobiiTreeNode: GobiiTreeNode, fileItemEvent: FileItem) {
 
-        if (statusTreeTemplate.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
+        if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
             gobiiTreeNode.label = fileItemEvent.getItemName();
-        } else {
-            gobiiTreeNode.label += statusTreeTemplate.getEntityName() + ": " + fileItemEvent.getItemName();
+        } else { // coves the LEAF node use case
+            gobiiTreeNode.label += fileModelNode.getEntityName() + ": " + fileItemEvent.getItemName();
         }
     }
 

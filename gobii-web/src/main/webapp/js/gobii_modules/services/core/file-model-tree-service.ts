@@ -9,6 +9,8 @@ import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {ProcessType} from "../../model/type-process";
 import {Labels} from "../../views/entity-labels";
+import {DtoHeaderResponse} from "../../model/dto-header-response";
+import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 
 
 @Injectable()
@@ -20,8 +22,6 @@ export class FileModelTreeService {
 
     fileModelNodeTree: Map < GobiiExtractFilterType, Array < FileModelNode >> =
         new Map<GobiiExtractFilterType,Array<FileModelNode>>();
-
-
 
 
     private validateModel(): boolean {
@@ -192,7 +192,7 @@ export class FileModelTreeService {
 
             let fileModelNode: FileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(), fileItem.getEntityType(), fileItem.getCvFilterType());
 
-            if (fileItem.getProcessType() === ProcessType.CREATE || fileItem.getProcessType() === ProcessType.READ) {
+            if (fileItem.getProcessType() === ProcessType.CREATE || fileItem.getProcessType() === ProcessType.UPDATE) {
 
                 this.placeNodeInModel(fileModelNode, fileItem);
                 returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.NOT_COMPLETE, null);
@@ -264,7 +264,6 @@ export class FileModelTreeService {
         return returnVal;
 
     }
-
 
 
     private placeNodeInModel(fileModelNode: FileModelNode, fileItem: FileItem) {
@@ -357,12 +356,28 @@ export class FileModelTreeService {
 
             let fileTreeEvent: FileModelTreeEvent = this.mutate(fileItem);
 
+            if (fileTreeEvent.fileModelState != FileModelState.ERROR) {
 
-            observer.next(fileTreeEvent);
-            observer.complete();
+                observer.next(fileTreeEvent);
+                observer.complete();
 
-            this.subjectTreeNotifications.next(fileTreeEvent);
-            this.subjectFileItemNotifications.next(fileTreeEvent.fileItem);
+                this.subjectTreeNotifications.next(fileTreeEvent);
+                this.subjectFileItemNotifications.next(fileTreeEvent.fileItem);
+            } else {
+
+
+                let headerResponse: DtoHeaderResponse = new DtoHeaderResponse(false, [new HeaderStatusMessage(
+                    "Error mutating file item in file model tree service: "
+                    + fileTreeEvent.message
+                    + " processing file item: "
+                    + fileItem.getFileItemUniqueId()
+                    + " (" +  (fileItem.getItemName() !== null ? fileItem.getItemName()  : "unnamed" ) + ")",
+                    null,
+                    null
+                )]);
+
+                observer.error(headerResponse);
+            }
         });
     }
 
