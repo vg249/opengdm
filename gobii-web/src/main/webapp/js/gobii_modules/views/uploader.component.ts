@@ -12,7 +12,6 @@ const URL = 'gobii/v1/uploadfile';
 
 @Component({
     selector: 'uploader',
-    // inputs: ['dataSetCheckBoxEvents'],
     // outputs: ['onItemUnChecked', 'onItemSelected'],
     template: `<style>
     .my-drop-zone { border: dotted 3px lightgray; }
