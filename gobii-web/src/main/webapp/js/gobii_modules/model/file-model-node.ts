@@ -35,7 +35,7 @@ export class FileModelNode {
     private _entitySubType: EntitySubType = EntitySubType.UNKNOWN;
     private _entityName: string;
     private _cvFilterType: CvFilterType = CvFilterType.UKNOWN;
-    private _childFileItems: FileItem[] = [];
+    private _fileItems: FileItem[] = [];
     private _fileModelNodeUniqueId = Guid.generateUUID();
 
 
@@ -140,12 +140,12 @@ export class FileModelNode {
     }
 
 
-    getChildFileItems(): FileItem[] {
-        return this._childFileItems;
+    getFileItems(): FileItem[] {
+        return this._fileItems;
     }
 
     setChildFileItems(value: FileItem[]): FileModelNode {
-        this._childFileItems = value;
+        this._fileItems = value;
         return this;
     }
 

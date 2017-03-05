@@ -27,7 +27,8 @@ import {Labels} from "./entity-labels";
                     <p-tree [value]="gobiiTreeNodes" 
                     selectionMode="checkbox" 
                     [(selection)]="selectedGobiiNodes"
-                    (onNodeUnselect)="nodeUnselect($event)" ></p-tree>
+                    (onNodeUnselect)="nodeUnselect($event)"
+                    styleClass="criteria-tree"></p-tree>
                     <!--<p-tree [value]="demoTreeNodes" selectionMode="checkbox" [(selection)]="selectedDemoNodes"></p-tree>-->
                     <!--<div>Selected Nodes: <span *ngFor="let file of selectedFiles2">{{file.label}} </span></div>-->
 `
@@ -450,7 +451,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                     let existingFileModelItem: FileItem = fileModelTreeEvent
                         .fileModelNode
-                        .getChildFileItems()
+                        .getFileItems()
                         .find(item => {
                             return item.getFileItemUniqueId() === fileModelTreeEvent.fileItem.getFileItemUniqueId()
                         });
@@ -498,7 +499,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         this.gobiiTreeNodes = [];
 
         let fileModelNodes: FileModelNode[] = [];
-        this._fileModelTreeService.get(gobiiExtractorFilterType).subscribe(
+        this._fileModelTreeService.getFileModel(gobiiExtractorFilterType).subscribe(
             f => {
                 fileModelNodes = f;
             }

@@ -322,7 +322,7 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                             if (parentTreeNode != null) {
                                 var existingFileModelItem = fileModelTreeEvent
                                     .fileModelNode
-                                    .getChildFileItems()
+                                    .getFileItems()
                                     .find(function (item) {
                                     return item.getFileItemUniqueId() === fileModelTreeEvent.fileItem.getFileItemUniqueId();
                                 });
@@ -355,7 +355,7 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                     var _this = this;
                     this.gobiiTreeNodes = [];
                     var fileModelNodes = [];
-                    this._fileModelTreeService.get(gobiiExtractorFilterType).subscribe(function (f) {
+                    this._fileModelTreeService.getFileModel(gobiiExtractorFilterType).subscribe(function (f) {
                         fileModelNodes = f;
                     });
                     fileModelNodes.forEach(function (currentFirstLevelFileModelNode) {
@@ -503,7 +503,7 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                     selector: 'status-display-tree',
                     inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
                     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
-                    template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" \n                    selectionMode=\"checkbox\" \n                    [(selection)]=\"selectedGobiiNodes\"\n                    (onNodeUnselect)=\"nodeUnselect($event)\" ></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
+                    template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" \n                    selectionMode=\"checkbox\" \n                    [(selection)]=\"selectedGobiiNodes\"\n                    (onNodeUnselect)=\"nodeUnselect($event)\"\n                    styleClass=\"criteria-tree\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
                 }),
                 __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
             ], StatusDisplayTreeComponent);

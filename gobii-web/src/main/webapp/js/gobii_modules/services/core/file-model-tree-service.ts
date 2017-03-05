@@ -38,6 +38,26 @@ export class FileModelTreeService {
 
     }
 
+    private getFileItemsFromModel(fileModelNodes: FileModelNode[]): FileItem[] {
+
+        let returnVal: FileItem[] = [];
+
+        fileModelNodes.forEach(currentModelNode => {
+
+            if (currentModelNode.getChildren().length > 0) {
+                let childFileItems: FileItem[] = this.getFileItemsFromModel(currentModelNode.getChildren());
+                returnVal = returnVal.concat(childFileItems);
+            } else {
+                returnVal = returnVal.concat(currentModelNode.getFileItems());
+            }
+
+        });
+
+
+        return returnVal;
+
+    } //
+
     private getFileModelNodes(gobiiExtractFilterType: GobiiExtractFilterType): FileModelNode[] {
 
 
@@ -209,9 +229,9 @@ export class FileModelTreeService {
                 if (( fileModelNode.getCardinality() === CardinalityType.ONE_OR_MORE
                     || fileModelNode.getCardinality() === CardinalityType.ONE_ONLY
                     || fileModelNode.getCardinality() === CardinalityType.MORE_THAN_ONE)
-                && fileModelNode.getCategoryType() != ExtractorCategoryType.ENTITY_CONTAINER ) {
+                    && fileModelNode.getCategoryType() != ExtractorCategoryType.ENTITY_CONTAINER) {
 
-                    if( fileModelNode.getParent() == null ) {
+                    if (fileModelNode.getParent() == null) {
 
                         fileItem.setRequired(true);
                     }
@@ -295,25 +315,25 @@ export class FileModelTreeService {
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
             // a leaf should never have more than one
-            if (fileModelNode.getChildFileItems().length === 0) {
-                fileModelNode.getChildFileItems().push(fileItem);
+            if (fileModelNode.getFileItems().length === 0) {
+                fileModelNode.getFileItems().push(fileItem);
             } else {
-                fileModelNode.getChildFileItems()[0] = fileItem;
+                fileModelNode.getFileItems()[0] = fileItem;
             }
 
         } else if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
 
-            let existingItems: FileItem[] = fileModelNode.getChildFileItems().filter(
+            let existingItems: FileItem[] = fileModelNode.getFileItems().filter(
                 item => {
                     return item.getFileItemUniqueId() === fileItem.getFileItemUniqueId();
                 }
             )
 
             if (existingItems.length === 0) {
-                fileModelNode.getChildFileItems().push(fileItem);
+                fileModelNode.getFileItems().push(fileItem);
             } else {
-                let idx: number = fileModelNode.getChildFileItems().indexOf(existingItems[0]);
-                fileModelNode.getChildFileItems()[idx] = fileItem;
+                let idx: number = fileModelNode.getFileItems().indexOf(existingItems[0]);
+                fileModelNode.getFileItems()[idx] = fileItem;
             }
 
         } else {
@@ -324,7 +344,6 @@ export class FileModelTreeService {
         }
 
 
-
     } //
 
     private removeFromModel(fileModelNode: FileModelNode, fileItem: FileItem) {
@@ -333,21 +352,21 @@ export class FileModelTreeService {
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
             // a leaf should never have more than one
-            if (fileModelNode.getChildFileItems()[0].getFileItemUniqueId() === fileItem.getFileItemUniqueId()) {
-                fileModelNode.getChildFileItems().splice(0, 1);
+            if (fileModelNode.getFileItems()[0].getFileItemUniqueId() === fileItem.getFileItemUniqueId()) {
+                fileModelNode.getFileItems().splice(0, 1);
             }
 
         } else if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
 
-            let existingItem: FileItem = fileModelNode.getChildFileItems().find(
+            let existingItem: FileItem = fileModelNode.getFileItems().find(
                 item => {
                     return item.getFileItemUniqueId() === fileItem.getFileItemUniqueId();
                 }
             );
 
-            let idxOfItemToRemove: number = fileModelNode.getChildFileItems().indexOf(existingItem);
+            let idxOfItemToRemove: number = fileModelNode.getFileItems().indexOf(existingItem);
 
-            fileModelNode.getChildFileItems().splice(idxOfItemToRemove, 1);
+            fileModelNode.getFileItems().splice(idxOfItemToRemove, 1);
 
 
         } else {
@@ -412,7 +431,7 @@ export class FileModelTreeService {
         });
     }
 
-    public get(gobiiExtractFilterType: GobiiExtractFilterType): Observable < FileModelNode[] > {
+    public getFileModel(gobiiExtractFilterType: GobiiExtractFilterType): Observable < FileModelNode[] > {
 
         return Observable.create(observer => {
             let nodesForFilterType: FileModelNode[] = this.getFileModelNodes(gobiiExtractFilterType);
@@ -421,4 +440,14 @@ export class FileModelTreeService {
         });
     }
 
+    public getFileItems(gobiiExtractFilterType: GobiiExtractFilterType): Observable < FileItem[] > {
+
+        return Observable.create(observer => {
+
+            let nodesForFilterType: FileModelNode[] = this.getFileModelNodes(gobiiExtractFilterType);
+            let fileItemsForExtractorFilterType: FileItem[] = this.getFileItemsFromModel(nodesForFilterType);
+            observer.next(fileItemsForExtractorFilterType);
+            observer.complete();
+        });
+    }
 }

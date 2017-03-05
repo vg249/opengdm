@@ -51,7 +51,7 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
                     this._entityType = type_entity_1.EntityType.UNKNOWN;
                     this._entitySubType = type_entity_1.EntitySubType.UNKNOWN;
                     this._cvFilterType = cv_filter_type_1.CvFilterType.UKNOWN;
-                    this._childFileItems = [];
+                    this._fileItems = [];
                     this._fileModelNodeUniqueId = guid_1.Guid.generateUUID();
                     this._itemType = itemType;
                     this._parent = parent;
@@ -132,11 +132,11 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
                     this._cvFilterType = value;
                     return this;
                 };
-                FileModelNode.prototype.getChildFileItems = function () {
-                    return this._childFileItems;
+                FileModelNode.prototype.getFileItems = function () {
+                    return this._fileItems;
                 };
                 FileModelNode.prototype.setChildFileItems = function (value) {
-                    this._childFileItems = value;
+                    this._fileItems = value;
                     return this;
                 };
                 FileModelNode.prototype.getFileModelNodeUniqueId = function () {

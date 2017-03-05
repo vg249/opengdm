@@ -138,15 +138,7 @@ import {FileModelState} from "../model/file-model-tree-event";
                 
                 
                     <div class="col-md-4"> 
-                        <div *ngIf="displayIncludedDatasetsGrid">
-                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Included Datasets</legend>
-                                <criteria-display 
-                                    [dataSetFileItemEvents] = "datasetFileItemEvents"
-                                    (onItemUnChecked) = "handleExtractDataSetUnchecked($event)"></criteria-display>
-                            </fieldset>
-                        </div>
-                        
+
                         <div *ngIf="displaySampleListTypeSelector">
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Samples</legend>
@@ -168,48 +160,50 @@ import {FileModelState} from "../model/file-model-tree-event";
                                 </sample-marker-box>
                             </fieldset>
                         </div>
+
                         
+                        <form>
+                           <fieldset class="well the-fieldset">
+                                <legend class="the-legend">Export</legend>
+                           
+                                <export-format (onFormatSelected)="handleFormatSelected($event)"></export-format>
+                                <BR>
+                           
+                                <mapsets-list-box [nameIdList]="mapsetNameIdList" 
+                                    (onMapsetSelected)="handleMapsetSelected($event)"></mapsets-list-box>
+                                <BR>
+                                <BR>
+                       
+                                <input type="button" 
+                                value="Submit"
+                                 [disabled]="(gobiiDatasetExtracts.length === 0)"
+                                (click)="handleExtractSubmission()" >
+                            </fieldset>
+                        </form>
+                        
+                        
+                    </div>  <!-- outer grid column 2-->
+                    
+                    
+                    <div class="col-md-4">
+
+                        <fieldset class="well the-fieldset" style="vertical-align: bottom;">
+                            <legend class="the-legend">Extraction Criteria Summary</legend>
+                            <status-display-tree
+                                [fileItemEventChange] = "treeFileItemEvent"
+                                [gobiiExtractFilterTypeEvent] = "gobiiExtractFilterType"
+                                (onAddMessage)="handleAddStatusMessage($event)"
+                                (onTreeReady)="handleStatusTreeReady($event)">
+                            </status-display-tree>
+                        </fieldset>
+                            
                         <div>
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Status: {{currentStatus}}</legend>
                                 <status-display [messages] = "messages"></status-display>
                             </fieldset>
                         </div>
-                        
-                    </div>  <!-- outer grid column 2-->
-                    
-                    
-                    <div class="col-md-4">
-                         
                             
-                    <form>
-			           <fieldset class="well the-fieldset">
-                			<legend class="the-legend">Export</legend>
-			           
-                            <export-format (onFormatSelected)="handleFormatSelected($event)"></export-format>
-                            <BR>
-                       
-                            <mapsets-list-box [nameIdList]="mapsetNameIdList" 
-                                (onMapsetSelected)="handleMapsetSelected($event)"></mapsets-list-box>
-                            <BR>
-                            <BR>
-                   
-                            <input type="button" 
-                            value="Submit"
-                             [disabled]="(gobiiDatasetExtracts.length === 0)"
-                            (click)="handleExtractSubmission()" >
-            			</fieldset>
-                    </form>
-                            
-                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Extraction Criteria Summary</legend>
-                                <status-display-tree
-                                    [fileItemEventChange] = "treeFileItemEvent"
-                                    [gobiiExtractFilterTypeEvent] = "gobiiExtractFilterType"
-                                    (onAddMessage)="handleAddStatusMessage($event)"
-                                    (onTreeReady)="handleStatusTreeReady($event)">
-                                </status-display-tree>
-                            </fieldset>
                                    
                     </div>  <!-- outer grid column 3 (inner grid)-->
                                         
@@ -375,6 +369,8 @@ export class ExtractorRoot implements OnInit {
             this.displaySampleListTypeSelector = false;
 
         }
+
+
     }
 
 // ********************************************************************
@@ -643,6 +639,8 @@ export class ExtractorRoot implements OnInit {
     handleStatusTreeReady(dtoHeaderResponse: DtoHeaderResponse) {
 
         this.handleFormatSelected(GobiiExtractFormat.HAPMAP);
+        //this.handleContactForSubmissionSelected(this.contactNameIdListForSubmitter[0]);
+
     }
 
     private makeDatasetExtract() {
@@ -881,8 +879,8 @@ export class ExtractorRoot implements OnInit {
             });
 
 
-        this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
         this.initializeServerConfigs();
+        this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
 
     }
 
