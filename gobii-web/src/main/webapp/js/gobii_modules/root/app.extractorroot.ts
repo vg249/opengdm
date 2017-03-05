@@ -168,7 +168,7 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                         
                         <form>
                            <fieldset class="well the-fieldset">
-                                <legend class="the-legend">Export</legend>
+                                <legend class="the-legend">Extract</legend>
                            
                                 <export-format (onFormatSelected)="handleFormatSelected($event)"></export-format>
                                 <BR>
