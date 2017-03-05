@@ -72,7 +72,15 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                                 else {
                                     observer.error(headerResponse);
                                 }
+                            }, function (json) {
+                                var obj = JSON.parse(json._body);
+                                var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
+                                observer.error(payloadResponse.header);
                             }); // subscribe http
+                        }, function (json) {
+                            var obj = JSON.parse(json._body);
+                            var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
+                            observer.error(payloadResponse.header);
                         }); // subscribe get authentication token
                     }); // observable
                 };
@@ -94,9 +102,17 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                                     observer.complete();
                                 }
                                 else {
-                                    observer.error(payloadResponse);
+                                    observer.error(payloadResponse.header);
                                 }
+                            }, function (json) {
+                                var obj = JSON.parse(json._body);
+                                var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
+                                observer.error(payloadResponse.header);
                             }); // subscribe http
+                        }, function (json) {
+                            var obj = JSON.parse(json._body);
+                            var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
+                            observer.error(payloadResponse.header);
                         }); // subscribe get authentication token
                     }); // observable
                 };
@@ -123,6 +139,10 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                                     observer.error(payloadResponse);
                                 }
                             }); // subscribe http
+                        }, function (json) {
+                            var obj = JSON.parse(json._body);
+                            var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
+                            observer.error(payloadResponse.header);
                         }); // subscribe get authentication token
                     }); // observable
                 };

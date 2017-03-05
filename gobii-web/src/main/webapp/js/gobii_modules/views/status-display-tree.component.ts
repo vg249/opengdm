@@ -12,10 +12,10 @@ import {CvFilterType} from "../model/cv-filter-type";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {FileModelTreeEvent, FileModelState} from "../model/file-model-tree-event";
 import {ProcessType} from "../model/type-process";
-import {DtoHeaderResponse} from "../model/dto-header-response";
 import {GobiiExtractFormat} from "../model/type-extract-format";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {Labels} from "./entity-labels";
+import {Header} from "../model/payload/header";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
@@ -35,12 +35,12 @@ import {Labels} from "./entity-labels";
 })
 export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
-    private onAddMessage: EventEmitter<DtoHeaderResponse> = new EventEmitter();
-    private onTreeReady: EventEmitter<DtoHeaderResponse> = new EventEmitter();
+    private onAddMessage: EventEmitter<HeaderStatusMessage> = new EventEmitter();
+    private onTreeReady: EventEmitter<HeaderStatusMessage> = new EventEmitter();
 
-    private handleAddStatusMessage(dtoHeaderResponse: DtoHeaderResponse) {
+    private handleAddStatusMessage(headerStatusMessage: HeaderStatusMessage) {
 
-        this.onAddMessage.emit(dtoHeaderResponse);
+        this.onAddMessage.emit(headerStatusMessage);
 
     }
 
@@ -58,25 +58,21 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 } else if (te.fileItem.getProcessType() === ProcessType.DELETE) {
                     this.removeNodeFromTree(te);
                 } else {
-                    let headerResponse: DtoHeaderResponse = new DtoHeaderResponse(false, [new HeaderStatusMessage(
-                        "Error in status display tree processing file item type "
-                        + ExtractorItemType[te.fileItem.getExtractorItemType()]
-                        + ": Unknown porcess type: "
-                        + ProcessType[te.fileItem.getProcessType()],
-                        null,
-                        null
-                    )]);
 
-                    this.handleAddStatusMessage(headerResponse);
+                    let headerStatusMessage: HeaderStatusMessage =
+                        new HeaderStatusMessage("Error in status display tree processing file item type "
+                            + ExtractorItemType[te.fileItem.getExtractorItemType()]
+                            + ": Unknown porcess type: "
+                            + ProcessType[te.fileItem.getProcessType()], null, null);
 
+                    this.handleAddStatusMessage(headerStatusMessage);
                 }
             });
     }
 
     ngOnInit() {
 
-        let foo:string = "bar";
-
+        let foo: string = "bar";
 
 
         // this.makeDemoTreeNodes();
@@ -109,10 +105,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         let fileItem: FileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, false);
 
         // if the item is required, take no action and in fact make it selected again
-        if( ! fileItem.getRequired()) {
+        if (!fileItem.getRequired()) {
             this._fileModelTreeService.put(fileItem).subscribe(
                 null,
-                headerResponse  => {
+                headerResponse => {
                     this.handleAddStatusMessage(headerResponse)
                 });
         } else {
@@ -264,8 +260,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
             gobiiTreeNode.label = eventedFileItem.getItemName();
         } else { // coves the LEAF node use case
-            if( eventedFileItem.getExtractorItemType() == ExtractorItemType.EXPORT_FORMAT ) {
-                let gobiiExtractFormat:GobiiExtractFormat=  <GobiiExtractFormat> GobiiExtractFormat[eventedFileItem.getItemId()];
+            if (eventedFileItem.getExtractorItemType() == ExtractorItemType.EXPORT_FORMAT) {
+                let gobiiExtractFormat: GobiiExtractFormat = <GobiiExtractFormat> GobiiExtractFormat[eventedFileItem.getItemId()];
                 gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + Labels.instance().extractFormatTypeLabels[gobiiExtractFormat];
             } else {
                 gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
@@ -407,7 +403,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                     this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, fileModelTreeEvent.fileItem);
                     this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), gobiiTreeLeafNodeTobeMutated);
                     gobiiTreeLeafNodeTobeMutated.required = fileModelTreeEvent.fileItem.getRequired();
-                    if(  this.selectedGobiiNodes.indexOf(gobiiTreeLeafNodeTobeMutated) === -1 ) {
+                    if (this.selectedGobiiNodes.indexOf(gobiiTreeLeafNodeTobeMutated) === -1) {
                         this.selectedGobiiNodes.push(gobiiTreeLeafNodeTobeMutated);
                     }
 
@@ -431,14 +427,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                 } else {
 
-                    let headerResponse: DtoHeaderResponse = new DtoHeaderResponse(false, [new HeaderStatusMessage(
+                    this.handleAddStatusMessage(new HeaderStatusMessage(
                         "Error placing file item in the status tree: there is no gobii tree leaf node for model node "
                         + fileModelTreeEvent.fileModelNode.getEntityName(),
                         null,
                         null
-                    )]);
-
-                    this.handleAddStatusMessage(headerResponse);
+                    ));
 
                 } // if-else we found an existing node for the LEAF node's file item
 
@@ -523,14 +517,14 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         if (fileModelNode.getItemType() === ExtractorItemType.ENTITY) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null,false);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
             returnVal.entityType = fileModelNode.getEntityType();
             returnVal.label = fileModelNode.getEntityName();
 
 
         } else if (fileModelNode.getItemType() === ExtractorItemType.CATEGORY) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null,false);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
 
             if (fileModelNode.getEntityType() != null
                 && fileModelNode.getEntityType() != EntityType.UNKNOWN) {
@@ -541,15 +535,15 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         } else if (fileModelNode.getItemType() == ExtractorItemType.EXPORT_FORMAT) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null,false);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
             returnVal.label = fileModelNode.getCategoryName();
         } else if (fileModelNode.getItemType() == ExtractorItemType.SAMPLE_LIST) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null,false);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
             returnVal.label = fileModelNode.getCategoryName();
         } else if (fileModelNode.getItemType() == ExtractorItemType.MARKER_LIST) {
 
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null,false);
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
             returnVal.label = fileModelNode.getCategoryName();
         }
 
@@ -629,7 +623,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
                 //this.getTemplates(this.gobiiExtractFilterType, true);
                 this.setUpRequredItems(newGobiiExtractFilterType);
-                this.onTreeReady.emit( new DtoHeaderResponse(true,[]));
+                this.onTreeReady.emit( new HeaderStatusMessage("ready",null,null));
             }
 
 

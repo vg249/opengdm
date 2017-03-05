@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/file-model-node", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/type-process", "../model/dto-header-response", "../model/type-extract-format", "../model/dto-header-status-message", "./entity-labels"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/file-model-node", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/type-process", "../model/type-extract-format", "../model/dto-header-status-message", "./entity-labels"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, file_item_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, file_model_node_1, cv_filter_type_1, file_model_tree_service_1, type_process_1, dto_header_response_1, type_extract_format_1, dto_header_status_message_1, entity_labels_1, StatusDisplayTreeComponent;
+    var core_1, file_item_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, file_model_node_1, cv_filter_type_1, file_model_tree_service_1, type_process_1, type_extract_format_1, dto_header_status_message_1, entity_labels_1, StatusDisplayTreeComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -39,9 +39,6 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
-            },
-            function (dto_header_response_1_1) {
-                dto_header_response_1 = dto_header_response_1_1;
             },
             function (type_extract_format_1_1) {
                 type_extract_format_1 = type_extract_format_1_1;
@@ -85,16 +82,16 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                             _this.removeNodeFromTree(te);
                         }
                         else {
-                            var headerResponse = new dto_header_response_1.DtoHeaderResponse(false, [new dto_header_status_message_1.HeaderStatusMessage("Error in status display tree processing file item type "
-                                    + file_model_node_1.ExtractorItemType[te.fileItem.getExtractorItemType()]
-                                    + ": Unknown porcess type: "
-                                    + type_process_1.ProcessType[te.fileItem.getProcessType()], null, null)]);
-                            _this.handleAddStatusMessage(headerResponse);
+                            var headerStatusMessage = new dto_header_status_message_1.HeaderStatusMessage("Error in status display tree processing file item type "
+                                + file_model_node_1.ExtractorItemType[te.fileItem.getExtractorItemType()]
+                                + ": Unknown porcess type: "
+                                + type_process_1.ProcessType[te.fileItem.getProcessType()], null, null);
+                            _this.handleAddStatusMessage(headerStatusMessage);
                         }
                     });
                 }
-                StatusDisplayTreeComponent.prototype.handleAddStatusMessage = function (dtoHeaderResponse) {
-                    this.onAddMessage.emit(dtoHeaderResponse);
+                StatusDisplayTreeComponent.prototype.handleAddStatusMessage = function (headerStatusMessage) {
+                    this.onAddMessage.emit(headerStatusMessage);
                 };
                 StatusDisplayTreeComponent.prototype.ngOnInit = function () {
                     var foo = "bar";
@@ -311,9 +308,8 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                                 }
                             }
                             else {
-                                var headerResponse = new dto_header_response_1.DtoHeaderResponse(false, [new dto_header_status_message_1.HeaderStatusMessage("Error placing file item in the status tree: there is no gobii tree leaf node for model node "
-                                        + fileModelTreeEvent.fileModelNode.getEntityName(), null, null)]);
-                                this.handleAddStatusMessage(headerResponse);
+                                this.handleAddStatusMessage(new dto_header_status_message_1.HeaderStatusMessage("Error placing file item in the status tree: there is no gobii tree leaf node for model node "
+                                    + fileModelTreeEvent.fileModelNode.getEntityName(), null, null));
                             } // if-else we found an existing node for the LEAF node's file item
                         }
                         else if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
@@ -418,7 +414,7 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                             this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
                             //this.getTemplates(this.gobiiExtractFilterType, true);
                             this.setUpRequredItems(newGobiiExtractFilterType);
-                            this.onTreeReady.emit(new dto_header_response_1.DtoHeaderResponse(true, []));
+                            this.onTreeReady.emit(new dto_header_status_message_1.HeaderStatusMessage("ready", null, null));
                         }
                     }
                 };
