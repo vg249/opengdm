@@ -436,6 +436,9 @@
                                         <include>rxjs/**</include>
                                         <include>ng2-uploader/**</include>
                                         <include>ng2-file-upload/**</include>
+                                        <include>primeng/**</include>
+                                        <include>font-awesome/css/font-awesome.min.css</include>
+                                        <include>font-awesome/fonts/**</include>
 
 
 

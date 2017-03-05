@@ -54,12 +54,13 @@ System.register(["@angular/core", "../../model/name-id", "../../model/type-entit
                     this.entityType = entityType;
                 };
                 DtoRequestItemNameIds.prototype.resultFromJson = function (json) {
+                    var _this = this;
                     var returnVal = [];
                     //let nameListItems:Object[] = json.payload.data;
                     json.payload.data.forEach(function (item) {
-                        var currentId = item.id;
+                        var currentId = String(item.id);
                         var currentName = item.name;
-                        returnVal.push(new name_id_1.NameId(currentId, currentName));
+                        returnVal.push(new name_id_1.NameId(currentId, currentName, _this.entityType));
                     });
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
