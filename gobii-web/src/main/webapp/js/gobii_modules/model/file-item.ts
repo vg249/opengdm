@@ -1,7 +1,7 @@
 import {ProcessType} from "./type-process";
 import {TreeNode} from "primeng/components/common/api";
 import {Guid} from "./guid";
-import {EntityType} from "./type-entity";
+import {EntityType, EntitySubType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./file-model-node";
@@ -14,6 +14,7 @@ export class FileItem {
                         private _processType: ProcessType,
                         private _extractorItemType: ExtractorItemType,
                         private _entityType: EntityType,
+                        private _entitySubType: EntitySubType,
                         private _cvFilterType: CvFilterType,
                         private _itemId: string,
                         private _itemName: string,
@@ -23,6 +24,7 @@ export class FileItem {
         this._gobiiExtractFilterType = _gobiiExtractFilterType;
         this._processType = _processType;
         this._entityType = _entityType;
+        this._entitySubType = _entitySubType;
         this._extractorItemType = _extractorItemType;
         this._cvFilterType = _cvFilterType;
         this._itemId = _itemId;
@@ -40,6 +42,14 @@ export class FileItem {
             this._extractorItemType = ExtractorItemType.UNKNOWN;
         }
 
+        if(this._entityType == null ) {
+            this._entityType = EntityType.UNKNOWN;
+        }
+
+        if(this._entitySubType == null ) {
+            this._entitySubType = EntitySubType.UNKNOWN;
+        }
+
     }
 
     public static build(gobiiExtractFilterType: GobiiExtractFilterType,
@@ -50,6 +60,7 @@ export class FileItem {
             processType,
             ExtractorItemType.UNKNOWN,
             EntityType.UNKNOWN,
+            EntitySubType.UNKNOWN, 
             CvFilterType.UKNOWN,
             null,
             null,
@@ -126,6 +137,15 @@ export class FileItem {
 
     setEntityType(value: EntityType): FileItem {
         this._entityType = value;
+        return this;
+    }
+
+    getEntitySubType(): EntitySubType {
+        return this._entitySubType;
+    }
+
+    setEntitySubType(value: EntitySubType): FileItem {
+        this._entitySubType = value;
         return this;
     }
 

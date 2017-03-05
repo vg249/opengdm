@@ -237,7 +237,7 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                             gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + entity_labels_1.Labels.instance().extractFormatTypeLabels[gobiiExtractFormat];
                         }
                         else {
-                            gobiiTreeNode.label += fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
+                            gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
                         }
                     }
                 };

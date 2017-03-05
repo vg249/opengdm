@@ -19,11 +19,12 @@ System.register(["./guid", "./type-entity", "./cv-filter-type", "./file-model-no
         ],
         execute: function () {
             FileItem = (function () {
-                function FileItem(_gobiiExtractFilterType, _processType, _extractorItemType, _entityType, _cvFilterType, _itemId, _itemName, _checked, _required) {
+                function FileItem(_gobiiExtractFilterType, _processType, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _itemId, _itemName, _checked, _required) {
                     this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     this._processType = _processType;
                     this._extractorItemType = _extractorItemType;
                     this._entityType = _entityType;
+                    this._entitySubType = _entitySubType;
                     this._cvFilterType = _cvFilterType;
                     this._itemId = _itemId;
                     this._itemName = _itemName;
@@ -32,6 +33,7 @@ System.register(["./guid", "./type-entity", "./cv-filter-type", "./file-model-no
                     this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     this._processType = _processType;
                     this._entityType = _entityType;
+                    this._entitySubType = _entitySubType;
                     this._extractorItemType = _extractorItemType;
                     this._cvFilterType = _cvFilterType;
                     this._itemId = _itemId;
@@ -45,9 +47,15 @@ System.register(["./guid", "./type-entity", "./cv-filter-type", "./file-model-no
                     if (this._extractorItemType == null) {
                         this._extractorItemType = file_model_node_1.ExtractorItemType.UNKNOWN;
                     }
+                    if (this._entityType == null) {
+                        this._entityType = type_entity_1.EntityType.UNKNOWN;
+                    }
+                    if (this._entitySubType == null) {
+                        this._entitySubType = type_entity_1.EntitySubType.UNKNOWN;
+                    }
                 }
                 FileItem.build = function (gobiiExtractFilterType, processType) {
-                    var returnVal = new FileItem(gobiiExtractFilterType, processType, file_model_node_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, cv_filter_type_1.CvFilterType.UKNOWN, null, null, null, null);
+                    var returnVal = new FileItem(gobiiExtractFilterType, processType, file_model_node_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UKNOWN, null, null, null, null);
                     return returnVal;
                 };
                 //OnChange does not see the FileItemEvent as being a new event unless it's
@@ -100,6 +108,13 @@ System.register(["./guid", "./type-entity", "./cv-filter-type", "./file-model-no
                 };
                 FileItem.prototype.setEntityType = function (value) {
                     this._entityType = value;
+                    return this;
+                };
+                FileItem.prototype.getEntitySubType = function () {
+                    return this._entitySubType;
+                };
+                FileItem.prototype.setEntitySubType = function (value) {
+                    this._entitySubType = value;
                     return this;
                 };
                 FileItem.prototype.getCvFilterType = function () {

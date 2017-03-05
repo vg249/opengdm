@@ -58,6 +58,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this.analysisTypes = [];
                 } // ctor
                 DataSetCheckListBoxComponent.prototype.handleItemChecked = function (arg) {
+                    arg.setRequired(false);
                     this.onItemChecked.emit(arg);
                 }; // handleItemChecked()
                 DataSetCheckListBoxComponent.prototype.handleAddMessage = function (arg) {

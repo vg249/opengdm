@@ -202,14 +202,27 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     }
                 };
                 ExtractorRoot.prototype.handleContactForSubmissionSelected = function (arg) {
-                    this.selectedContactIdForSubmitter = arg;
+                    var _this = this;
+                    this.selectedContactIdForSubmitter = arg.id;
+                    var fileItem = file_item_1.FileItem
+                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
+                        .setEntityType(type_entity_1.EntityType.Contacts)
+                        .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
+                        .setItemId(arg.id)
+                        .setItemName(arg.name);
+                    this._fileModelTreeService.put(fileItem)
+                        .subscribe(null, function (headerResponse) {
+                        _this.handleAddStatusMessage(headerResponse);
+                    });
                 };
                 ExtractorRoot.prototype.initializeContactsForSumission = function () {
+                    var _this = this;
                     var scope$ = this;
                     this._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.Contacts)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.contactNameIdListForSubmitter = nameIds;
                             scope$.selectedContactIdForSubmitter = nameIds[0].id;
+                            _this.handleContactForSubmissionSelected(nameIds[0]);
                         }
                         else {
                             scope$.contactNameIdListForSubmitter = [new name_id_1.NameId("0", "ERROR NO USERS", type_entity_1.EntityType.Contacts)];

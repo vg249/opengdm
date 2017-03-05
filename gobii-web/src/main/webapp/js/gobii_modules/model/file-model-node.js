@@ -49,6 +49,7 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
                     this._itemType = ExtractorItemType.ENTITY;
                     this._categoryType = ExtractorCategoryType.LEAF;
                     this._entityType = type_entity_1.EntityType.UNKNOWN;
+                    this._entitySubType = type_entity_1.EntitySubType.UNKNOWN;
                     this._cvFilterType = cv_filter_type_1.CvFilterType.UKNOWN;
                     this._childFileItems = [];
                     this._fileModelNodeUniqueId = guid_1.Guid.generateUUID();
@@ -108,6 +109,13 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
                 };
                 FileModelNode.prototype.setEntityType = function (value) {
                     this._entityType = value;
+                    return this;
+                };
+                FileModelNode.prototype.getEntitySubType = function () {
+                    return this._entitySubType;
+                };
+                FileModelNode.prototype.setEntitySubType = function (value) {
+                    this._entitySubType = value;
                     return this;
                 };
                 FileModelNode.prototype.getEntityName = function () {

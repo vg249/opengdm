@@ -17,8 +17,9 @@ System.register([], function (exports_1, context_1) {
             })(EntityType || (EntityType = {}));
             exports_1("EntityType", EntityType);
             (function (EntitySubType) {
-                EntitySubType[EntitySubType["CONTACT_PRINCIPLE_INVESTIGATOR"] = 0] = "CONTACT_PRINCIPLE_INVESTIGATOR";
-                EntitySubType[EntitySubType["CONTACT_SUBMITED_BY"] = 1] = "CONTACT_SUBMITED_BY";
+                EntitySubType[EntitySubType["UNKNOWN"] = 0] = "UNKNOWN";
+                EntitySubType[EntitySubType["CONTACT_PRINCIPLE_INVESTIGATOR"] = 1] = "CONTACT_PRINCIPLE_INVESTIGATOR";
+                EntitySubType[EntitySubType["CONTACT_SUBMITED_BY"] = 2] = "CONTACT_SUBMITED_BY";
             })(EntitySubType || (EntitySubType = {}));
             exports_1("EntitySubType", EntitySubType);
         }

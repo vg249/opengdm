@@ -73,8 +73,9 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
 
 
-    private handleItemChecked(arg) {
+    private handleItemChecked(arg:FileItem) {
 
+        arg.setRequired(false);
         this.onItemChecked.emit(arg);
 
     } // handleItemChecked()

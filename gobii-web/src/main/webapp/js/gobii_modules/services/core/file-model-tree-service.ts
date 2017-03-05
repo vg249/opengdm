@@ -201,11 +201,20 @@ export class FileModelTreeService {
 
                 this.placeNodeInModel(fileModelNode, fileItem);
 
-                if (fileModelNode.getCardinality() === CardinalityType.ONE_OR_MORE
-                    || fileModelNode.getCardinality() === CardinalityType.ONE_ONLY
-                    || fileModelNode.getCardinality() === CardinalityType.MORE_THAN_ONE) {
 
-                    fileItem.setRequired(true);
+                // this condition is going to required further thought . . .
+                // you have to if cardiality of aprent is ONE_OR_MORE, then
+                // you have to check for siblings. Not sure how complex we
+                // need to make this
+                if (( fileModelNode.getCardinality() === CardinalityType.ONE_OR_MORE
+                    || fileModelNode.getCardinality() === CardinalityType.ONE_ONLY
+                    || fileModelNode.getCardinality() === CardinalityType.MORE_THAN_ONE)
+                && fileModelNode.getCategoryType() != ExtractorCategoryType.ENTITY_CONTAINER ) {
+
+                    if( fileModelNode.getParent() == null ) {
+
+                        fileItem.setRequired(true);
+                    }
 
                 }
 

@@ -1,4 +1,4 @@
-import {EntityType} from "./type-entity";
+import {EntityType, EntitySubType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {GobiiTreeNode} from "./GobiiTreeNode";
 import {FileItem} from "./file-item";
@@ -32,6 +32,7 @@ export class FileModelNode {
     private _categoryType: ExtractorCategoryType = ExtractorCategoryType.LEAF;
     private _categoryName: string;
     private _entityType: EntityType = EntityType.UNKNOWN;
+    private _entitySubType: EntitySubType = EntitySubType.UNKNOWN;
     private _entityName: string;
     private _cvFilterType: CvFilterType = CvFilterType.UKNOWN;
     private _childFileItems: FileItem[] = [];
@@ -108,6 +109,15 @@ export class FileModelNode {
 
     setEntityType(value: EntityType): FileModelNode {
         this._entityType = value;
+        return this;
+    }
+
+    getEntitySubType(): EntitySubType {
+        return this._entitySubType;
+    }
+
+    setEntitySubType(value: EntitySubType): FileModelNode {
+        this._entitySubType = value;
         return this;
     }
 

@@ -184,10 +184,17 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         var fileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(), fileItem.getEntityType(), fileItem.getCvFilterType());
                         if (fileItem.getProcessType() === type_process_1.ProcessType.CREATE || fileItem.getProcessType() === type_process_1.ProcessType.UPDATE) {
                             this.placeNodeInModel(fileModelNode, fileItem);
-                            if (fileModelNode.getCardinality() === file_model_node_1.CardinalityType.ONE_OR_MORE
+                            // this condition is going to required further thought . . .
+                            // you have to if cardiality of aprent is ONE_OR_MORE, then
+                            // you have to check for siblings. Not sure how complex we
+                            // need to make this
+                            if ((fileModelNode.getCardinality() === file_model_node_1.CardinalityType.ONE_OR_MORE
                                 || fileModelNode.getCardinality() === file_model_node_1.CardinalityType.ONE_ONLY
-                                || fileModelNode.getCardinality() === file_model_node_1.CardinalityType.MORE_THAN_ONE) {
-                                fileItem.setRequired(true);
+                                || fileModelNode.getCardinality() === file_model_node_1.CardinalityType.MORE_THAN_ONE)
+                                && fileModelNode.getCategoryType() != file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
+                                if (fileModelNode.getParent() == null) {
+                                    fileItem.setRequired(true);
+                                }
                             }
                             returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.SUBMISSION_INCOMPLETE, null);
                         }

@@ -267,7 +267,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 let gobiiExtractFormat:GobiiExtractFormat=  <GobiiExtractFormat> GobiiExtractFormat[eventedFileItem.getItemId()];
                 gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + Labels.instance().extractFormatTypeLabels[gobiiExtractFormat];
             } else {
-                gobiiTreeNode.label += fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
+                gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
             }
         }
     }

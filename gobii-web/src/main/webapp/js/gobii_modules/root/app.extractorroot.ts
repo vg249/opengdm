@@ -5,7 +5,7 @@ import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extr
 import {ProcessType} from "../model/type-process";
 import {FileItem} from "../model/file-item";
 import {ServerConfig} from "../model/server-config";
-import {EntityType} from "../model/type-entity";
+import {EntityType, EntitySubType} from "../model/type-entity";
 import {NameId} from "../model/name-id";
 import {GobiiFileType} from "../model/type-gobii-file";
 import {ExtractorInstructionFilesDTO} from "../model/extractor-instructions/dto-extractor-instruction-files";
@@ -382,8 +382,23 @@ export class ExtractorRoot implements OnInit {
     private contactNameIdListForSubmitter: NameId[];
     private selectedContactIdForSubmitter: string;
 
-    private handleContactForSubmissionSelected(arg) {
-        this.selectedContactIdForSubmitter = arg;
+    private handleContactForSubmissionSelected(arg:NameId) {
+        this.selectedContactIdForSubmitter = arg.id;
+
+        let fileItem:FileItem = FileItem
+            .build(this.gobiiExtractFilterType,ProcessType.UPDATE)
+            .setEntityType(EntityType.Contacts)
+            .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
+            .setItemId(arg.id)
+            .setItemName(arg.name);
+
+        this._fileModelTreeService.put(fileItem)
+            .subscribe(
+                null,
+                headerResponse => {
+                    this.handleAddStatusMessage(headerResponse)
+                });
+
     }
 
     private initializeContactsForSumission() {
@@ -393,6 +408,7 @@ export class ExtractorRoot implements OnInit {
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.contactNameIdListForSubmitter = nameIds
                     scope$.selectedContactIdForSubmitter = nameIds[0].id;
+                    this.handleContactForSubmissionSelected(nameIds[0]);
                 } else {
                     scope$.contactNameIdListForSubmitter = [new NameId("0", "ERROR NO USERS", EntityType.Contacts)];
                 }
