@@ -171,13 +171,6 @@ import {FileModelState} from "../model/file-model-tree-event";
                            
                                 <mapsets-list-box [nameIdList]="mapsetNameIdList" 
                                     (onMapsetSelected)="handleMapsetSelected($event)"></mapsets-list-box>
-                                <BR>
-                                <BR>
-                       
-                                <input type="button" 
-                                value="Submit"
-                                 [disabled]="(gobiiDatasetExtracts.length === 0)"
-                                (click)="handleExtractSubmission()" >
                             </fieldset>
                         </form>
                         
@@ -195,6 +188,12 @@ import {FileModelState} from "../model/file-model-tree-event";
                                 (onAddMessage)="handleAddStatusMessage($event)"
                                 (onTreeReady)="handleStatusTreeReady($event)">
                             </status-display-tree>
+                            <BR>
+                                <input type="button" 
+                                value="Submit"
+                                 [disabled]="(gobiiDatasetExtracts.length === 0)"
+                                (click)="handleExtractSubmission()" >
+                            
                         </fieldset>
                             
                         <div>
