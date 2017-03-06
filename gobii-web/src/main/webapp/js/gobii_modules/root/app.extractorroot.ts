@@ -1,27 +1,11 @@
 ///<reference path="../../../../../../typings/index.d.ts"/>
-import {NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
-import {Component} from "@angular/core";
-import {HttpModule} from "@angular/http";
-import {ExportTypeComponent} from "../views/export-type.component";
-import {ExportFormatComponent} from "../views/export-format.component";
+import {Component, OnInit} from "@angular/core";
 import {DtoRequestService} from "../services/core/dto-request.service";
-import {AuthenticationService} from "../services/core/authentication.service";
-import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
-import {DatasetTypeListBoxComponent} from "../views/dataset-types-list-box.component";
-import {ProjectListBoxComponent} from "../views/project-list-box.component";
-import {ExperimentListBoxComponent} from "../views/experiment-list-box.component";
-import {DataSetCheckListBoxComponent} from "../views/dataset-checklist-box.component";
-import {MapsetsListBoxComponent} from "../views/mapsets-list-box.component";
 import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract";
-import {CriteriaDisplayComponent} from "../views/criteria-display.component";
-import {StatusDisplayComponent} from "../views/status-display-box.component";
 import {ProcessType} from "../model/type-process";
-import {CheckBoxEvent} from "../model/event-checkbox";
+import {FileItem} from "../model/file-item";
 import {ServerConfig} from "../model/server-config";
-import {EntityType} from "../model/type-entity";
-import {CropsListBoxComponent} from "../views/crops-list-box.component";
-import {UsersListBoxComponent} from "../views/users-list-box.component";
+import {EntityType, EntitySubType} from "../model/type-entity";
 import {NameId} from "../model/name-id";
 import {GobiiFileType} from "../model/type-gobii-file";
 import {ExtractorInstructionFilesDTO} from "../model/extractor-instructions/dto-extractor-instruction-files";
@@ -29,14 +13,20 @@ import {GobiiExtractorInstruction} from "../model/extractor-instructions/gobii-e
 import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-item-extractor-submission";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
-import * as EntityFilters from "../model/type-entity-filter";
 import {EntityFilter} from "../model/type-entity-filter";
-import {CheckListBoxComponent} from "../views/checklist-box.component";
-import {SampleMarkerBoxComponent} from "../views/sample-marker-box.component";
-import {FileDropDirective, FileSelectDirective} from "ng2-file-upload";
 import {SampleMarkerList} from "../model/sample-marker-list";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {GobiiSampleListType} from "../model/type-extractor-sample-list";
+import {CvFilters, CvFilterType} from "../model/cv-filter-type";
+import {FileModelTreeService} from "../services/core/file-model-tree-service";
+import {ExtractorItemType} from "../model/file-model-node";
+import {DtoHeaderResponse} from "../model/dto-header-response";
+import {GobiiExtractFormat} from "../model/type-extract-format";
+import {FileModelState} from "../model/file-model-tree-event";
+import forEach = require("core-js/fn/array/for-each");
+import {platform} from "os";
+import {Header} from "../model/payload/header";
+import {HeaderStatusMessage} from "../model/dto-header-status-message";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -46,8 +36,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 @Component({
     selector: 'extractor-root',
     styleUrls: ['/extractor-ui.css'],
-    template: `
-        <div class = "panel panel-default">
+    template: `<div class = "panel panel-default">
         
            <div class = "panel-heading">
                 <img src="images/gobii_logo.png" alt="GOBii Project"/>
@@ -74,15 +63,13 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                 
                     <div class="col-md-4">
                     
-                    <!--
-                        <fieldset class="well the-fieldset">
-                        <legend class="the-legend">Submit As</legend>
-                        <users-list-box
-                            [nameIdList]="contactNameIdListForSubmitter"
-                            (onUserSelected)="handleContactForSubmissionSelected($event)">
-                        </users-list-box>
-                        </fieldset>
-                        -->
+                    <fieldset class="well the-fieldset">
+                    <legend class="the-legend">Submit As</legend>
+                    <users-list-box
+                        [nameIdList]="contactNameIdListForSubmitter"
+                        (onUserSelected)="handleContactForSubmissionSelected($event)">
+                    </users-list-box>
+                    </fieldset>
                         
                      <fieldset class="well the-fieldset">
                         <legend class="the-legend">Filters</legend><BR>
@@ -127,7 +114,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                             <BR>
                             <label class="the-label">Platforms:</label><BR>
                             <checklist-box
-                                [checkBoxEventChange] = "platformCheckBoxEventChange"
+                                [fileItemEventChange] = "platformFileItemEventChange"
                                 [nameIdList] = "platformsNameIdList"
                                 (onItemSelected)="handlePlatformSelected($event)"
                                 (onItemChecked)="handlePlatformChecked($event)"
@@ -141,7 +128,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                             <BR>
                             <label class="the-label">Data Sets</label><BR>
                             <dataset-checklist-box
-                                [checkBoxEventChange] = "checkBoxEventChange"
+                                [fileItemEventChange] = "datasetFileItemEventChange"
                                 [experimentId] = "selectedExperimentId" 
                                 (onItemChecked)="handleCheckedDataSetItem($event)"
                                 (onAddMessage) = "handleAddMessage($event)">
@@ -155,15 +142,7 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                 
                 
                     <div class="col-md-4"> 
-                        <div *ngIf="displayIncludedDatasetsGrid">
-                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Included Datasets</legend>
-                                <criteria-display 
-                                    [dataSetCheckBoxEvents] = "dataSetCheckBoxEvents"
-                                    (onItemUnChecked) = "handleExtractDataSetUnchecked($event)"></criteria-display>
-                            </fieldset>
-                        </div>
-                        
+
                         <div *ngIf="displaySampleListTypeSelector">
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Samples</legend>
@@ -185,36 +164,49 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
                                 </sample-marker-box>
                             </fieldset>
                         </div>
+
+                        
+                        <form>
+                           <fieldset class="well the-fieldset">
+                                <legend class="the-legend">Extract</legend>
+                           
+                                <export-format (onFormatSelected)="handleFormatSelected($event)"></export-format>
+                                <BR>
+                           
+                                <mapsets-list-box [nameIdList]="mapsetNameIdList" 
+                                    (onMapsetSelected)="handleMapsetSelected($event)"></mapsets-list-box>
+                            </fieldset>
+                        </form>
+                        
                         
                     </div>  <!-- outer grid column 2-->
                     
                     
                     <div class="col-md-4">
-                         
+
+                        <fieldset class="well the-fieldset" style="vertical-align: bottom;">
+                            <legend class="the-legend">Extraction Criteria Summary</legend>
+                            <status-display-tree
+                                [fileItemEventChange] = "treeFileItemEvent"
+                                [gobiiExtractFilterTypeEvent] = "gobiiExtractFilterType"
+                                (onAddMessage)="handleHeaderStatusMessage($event)"
+                                (onTreeReady)="handleStatusTreeReady($event)">
+                            </status-display-tree>
+                            <BR>
+                                <input type="button" 
+                                value="Submit"
+                                 [disabled]="(gobiiDatasetExtracts.length === 0)"
+                                (click)="handleExtractSubmission()" >
                             
-                    <form>
-			           <fieldset class="well the-fieldset">
-                			<legend class="the-legend">Export</legend>
-			           
-                            <export-format (onFormatSelected)="handleFormatSelected($event)"></export-format>
-                            <BR>
-                       
-                            <mapsets-list-box [nameIdList]="mapsetNameIdList" 
-                                (onMapsetSelected)="handleMapsetSelected($event)"></mapsets-list-box>
-                            <BR>
-                            <BR>
-                   
-                            <input type="button" 
-                            value="Submit"
-                             [disabled]="(gobiiDatasetExtracts.length === 0)"
-                            (click)="handleExtractSubmission()" >
-            			</fieldset>
-                    </form>
+                        </fieldset>
                             
+                        <div>
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Status</legend>
+                                <legend class="the-legend">Status: {{currentStatus}}</legend>
                                 <status-display [messages] = "messages"></status-display>
                             </fieldset>
+                        </div>
+                            
                                    
                     </div>  <!-- outer grid column 3 (inner grid)-->
                                         
@@ -230,25 +222,29 @@ import {GobiiSampleListType} from "../model/type-extractor-sample-list";
             </div>` // end template
 }) // @Component
 
-export class ExtractorRoot {
+export class ExtractorRoot implements OnInit {
     title = 'Gobii Web';
 
 
-    private dataSetCheckBoxEvents: CheckBoxEvent[] = [];
+    private treeFileItemEvent: FileItem;
+//    private selectedExportTypeEvent:GobiiExtractFilterType;
+    private datasetFileItemEvents: FileItem[] = [];
     private gobiiDatasetExtracts: GobiiDataSetExtract[] = [];
     private messages: string[] = [];
 
 
     constructor(private _dtoRequestServiceExtractorFile: DtoRequestService<ExtractorInstructionFilesDTO>,
                 private _dtoRequestServiceNameIds: DtoRequestService<NameId[]>,
-                private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>) {
-
+                private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
+                private _fileModelTreeService: FileModelTreeService) {
     }
+
 
     // ****************************************************************
     // ********************************************** SERVER SELECTION
     private selectedServerConfig: ServerConfig;
     private serverConfigList: ServerConfig[];
+    private currentStatus: string;
 
     private initializeServerConfigs() {
         let scope$ = this;
@@ -260,6 +256,8 @@ export class ExtractorRoot {
                     let serverCrop: String =
                         this._dtoRequestServiceServerConfigs.getGobiiCropType();
 
+                    let gobiiVersion: string = this._dtoRequestServiceServerConfigs.getGobbiiVersion();
+
                     scope$.selectedServerConfig =
                         scope$.serverConfigList
                             .filter(c => {
@@ -267,6 +265,7 @@ export class ExtractorRoot {
                                 }
                             )[0];
 
+                    scope$.currentStatus = "GOBII Server " + gobiiVersion;
                     scope$.messages.push("Connected to database: " + scope$.selectedServerConfig.crop);
                     scope$.initializeContactsForSumission();
                     scope$.initializeContactsForPi();
@@ -314,14 +313,18 @@ export class ExtractorRoot {
     private displayIncludedDatasetsGrid: boolean = true;
     private displaySampleListTypeSelector: boolean = false;
     private displaySampleMarkerBox: boolean = false;
-
-
-    private selectedExportType: GobiiExtractFilterType;
+    private gobiiExtractFilterType: GobiiExtractFilterType;
 
     private handleExportTypeSelected(arg: GobiiExtractFilterType) {
-        this.selectedExportType = arg;
 
-        if (this.selectedExportType === GobiiExtractFilterType.WHOLE_DATASET) {
+        let foo: string = "foo";
+
+        this.gobiiExtractFilterType = arg;
+
+
+//        let extractorFilterItemType: FileItem = FileItem.bui(this.gobiiExtractFilterType)
+
+        if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
             this.displaySelectorPi = true;
             this.displaySelectorProject = true;
@@ -335,7 +338,7 @@ export class ExtractorRoot {
             this.displaySampleMarkerBox = false;
 
 
-        } else if (this.selectedExportType === GobiiExtractFilterType.BY_SAMPLE) {
+        } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
             this.initializeDatasetTypes();
             this.initializePlatforms();
@@ -352,7 +355,7 @@ export class ExtractorRoot {
             this.displaySampleMarkerBox = false;
 
 
-        } else if (this.selectedExportType === GobiiExtractFilterType.BY_MARKER) {
+        } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
             this.initializeDatasetTypes();
             this.initializePlatforms();
@@ -369,6 +372,8 @@ export class ExtractorRoot {
             this.displaySampleListTypeSelector = false;
 
         }
+
+
     }
 
 // ********************************************************************
@@ -376,8 +381,23 @@ export class ExtractorRoot {
     private contactNameIdListForSubmitter: NameId[];
     private selectedContactIdForSubmitter: string;
 
-    private handleContactForSubmissionSelected(arg) {
-        this.selectedContactIdForSubmitter = arg;
+    private handleContactForSubmissionSelected(arg: NameId) {
+        this.selectedContactIdForSubmitter = arg.id;
+
+        let fileItem: FileItem = FileItem
+            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+            .setEntityType(EntityType.Contacts)
+            .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
+            .setItemId(arg.id)
+            .setItemName(arg.name);
+
+        this._fileModelTreeService.put(fileItem)
+            .subscribe(
+                null,
+                headerResponse => {
+                    this.handleResponseHeader(headerResponse)
+                });
+
     }
 
     private initializeContactsForSumission() {
@@ -387,8 +407,9 @@ export class ExtractorRoot {
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.contactNameIdListForSubmitter = nameIds
                     scope$.selectedContactIdForSubmitter = nameIds[0].id;
+                    this.handleContactForSubmissionSelected(nameIds[0]);
                 } else {
-                    scope$.contactNameIdListForSubmitter = [new NameId(0, "ERROR NO USERS")];
+                    scope$.contactNameIdListForSubmitter = [new NameId("0", "ERROR NO USERS", EntityType.Contacts)];
                 }
             },
             dtoHeaderResponse => {
@@ -407,7 +428,7 @@ export class ExtractorRoot {
     private handleContactForPiSelected(arg) {
         this.selectedContactIdForPi = arg;
         this.initializeProjectNameIds();
-        //console.log("selected contact id:" + arg);
+        //console.log("selected contact itemId:" + arg);
     }
 
     private initializeContactsForPi() {
@@ -420,7 +441,7 @@ export class ExtractorRoot {
                     scope$.contactNameIdListForPi = nameIds;
                     scope$.selectedContactIdForPi = scope$.contactNameIdListForPi[0].id;
                 } else {
-                    scope$.contactNameIdListForPi = [new NameId(0, "ERROR NO USERS")];
+                    scope$.contactNameIdListForPi = [new NameId("0", "ERROR NO USERS", EntityType.Contacts)];
                 }
 
                 scope$.initializeProjectNameIds();
@@ -434,11 +455,26 @@ export class ExtractorRoot {
 
 // ********************************************************************
 // ********************************************** HAPMAP SELECTION
-    private selectedFormatName: string = "Hapmap";
+    private selectedExtractFormat: GobiiExtractFormat = GobiiExtractFormat.HAPMAP;
 
-    private handleFormatSelected(arg) {
-        this.selectedFormatName = arg;
-        //console.log("selected contact id:" + arg);
+    private handleFormatSelected(arg: GobiiExtractFormat) {
+
+        this.selectedExtractFormat = arg;
+
+        let extractFilterTypeFileItem: FileItem = FileItem
+            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+            .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
+            .setItemId(GobiiExtractFormat[arg])
+            .setItemName(GobiiExtractFormat[GobiiExtractFormat[arg]]);
+
+        this._fileModelTreeService.put(extractFilterTypeFileItem)
+            .subscribe(
+                null,
+                headerResponse => {
+                    this.handleResponseHeader(headerResponse)
+                });
+
+        //console.log("selected contact itemId:" + arg);
     }
 
 // ********************************************************************
@@ -464,7 +500,7 @@ export class ExtractorRoot {
                     scope$.projectNameIdList = nameIds;
                     scope$.selectedProjectId = nameIds[0].id;
                 } else {
-                    scope$.projectNameIdList = [new NameId(0, "<none>")];
+                    scope$.projectNameIdList = [new NameId("0", "<none>", EntityType.Projects)];
                     scope$.selectedProjectId = undefined;
                 }
 
@@ -489,7 +525,7 @@ export class ExtractorRoot {
         this.selectedExperimentDetailId = arg;
         this.displayExperimentDetail = true;
 
-        //console.log("selected contact id:" + arg);
+        //console.log("selected contact itemId:" + arg);
     }
 
     private initializeExperimentNameIds() {
@@ -504,7 +540,7 @@ export class ExtractorRoot {
                         scope$.experimentNameIdList = nameIds;
                         scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
                     } else {
-                        scope$.experimentNameIdList = [new NameId(0, "<none>")];
+                        scope$.experimentNameIdList = [new NameId("0", "<none>", EntityType.Experiments)];
                         scope$.selectedExperimentId = undefined;
                     }
                 },
@@ -513,7 +549,7 @@ export class ExtractorRoot {
                         + m.message))
                 });
         } else {
-            scope$.experimentNameIdList = [new NameId(0, "<none>")];
+            scope$.experimentNameIdList = [new NameId("0", "<none>", EntityType.Experiments)];
             scope$.selectedExperimentId = undefined;
         }
 
@@ -533,13 +569,13 @@ export class ExtractorRoot {
         scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
             EntityType.CvTerms,
             EntityFilter.BYTYPENAME,
-            "dataset_type")).subscribe(nameIds => {
+            CvFilters.get(CvFilterType.DATASET_TYPE))).subscribe(nameIds => {
 
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.datasetTypeNameIdList = nameIds;
                     scope$.selectedDatasetTypeId = scope$.datasetTypeNameIdList[0].id;
                 } else {
-                    scope$.datasetTypeNameIdList = [new NameId(0, "ERROR NO DATASET TYPES")];
+                    scope$.datasetTypeNameIdList = [new NameId("0", "ERROR NO DATASET TYPES", EntityType.CvTerms)];
                 }
             },
             dtoHeaderResponse => {
@@ -562,7 +598,7 @@ export class ExtractorRoot {
         this.checkedPlatformId = arg.id;
     }
 
-    private platformCheckBoxEventChange: CheckBoxEvent;
+    private platformFileItemEventChange: FileItem;
 
 
     private initializePlatforms() {
@@ -575,7 +611,7 @@ export class ExtractorRoot {
                     scope$.platformsNameIdList = nameIds;
                     scope$.selectedPlatformId = scope$.platformsNameIdList[0].id;
                 } else {
-                    scope$.platformsNameIdList = [new NameId(0, "ERROR NO PLATFORMS")];
+                    scope$.platformsNameIdList = [new NameId("0", "ERROR NO PLATFORMS", EntityType.Platforms)];
                 }
             },
             dtoHeaderResponse => {
@@ -594,6 +630,28 @@ export class ExtractorRoot {
     }
 
 
+    private handleHeaderStatusMessage(statusMessage:HeaderStatusMessage) {
+
+        this.handleAddMessage(statusMessage.message);
+    }
+
+    private handleResponseHeader(header: Header) {
+
+        if (header.status !== null && header.status.statusMessages != null) {
+
+            header.status.statusMessages.forEach(statusMessage => {
+                this.handleHeaderStatusMessage(statusMessage);
+            })
+        }
+    }
+
+    handleStatusTreeReady(headerStatusMessage: HeaderStatusMessage) {
+
+        this.handleFormatSelected(GobiiExtractFormat.HAPMAP);
+        //this.handleContactForSubmissionSelected(this.contactNameIdListForSubmitter[0]);
+
+    }
+
     private makeDatasetExtract() {
 
         this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(GobiiFileType.GENERIC,
@@ -601,7 +659,7 @@ export class ExtractorRoot {
             Number(this.selectedDatasetId),
             this.selectedDatasetName,
             null,
-            this.selectedExportType,
+            this.gobiiExtractFilterType,
             this.markerList,
             this.sampleList,
             this.uploadFileName,
@@ -615,40 +673,51 @@ export class ExtractorRoot {
     private selectedDatasetId: string;
     private selectedDatasetName: string;
 
-    private handleCheckedDataSetItem(arg: CheckBoxEvent) {
+    private handleCheckedDataSetItem(arg: FileItem) {
 
-        this.selectedDatasetId = arg.id;
 
-        if (ProcessType.CREATE == arg.processType) {
+        this.selectedDatasetId = arg.getItemId();
+
+        if (ProcessType.CREATE == arg.getProcessType()) {
 
             this.makeDatasetExtract();
 
         } else {
 
-            let indexOfEventToRemove: number = this.dataSetCheckBoxEvents.indexOf(arg);
-            this.dataSetCheckBoxEvents.splice(indexOfEventToRemove, 1);
+            let indexOfEventToRemove: number = this.datasetFileItemEvents.indexOf(arg);
+            this.datasetFileItemEvents.splice(indexOfEventToRemove, 1);
 
             this.gobiiDatasetExtracts =
                 this.gobiiDatasetExtracts
                     .filter((item: GobiiDataSetExtract) => {
-                        return item.getdataSetId() != Number(arg.id)
+                        return item.getdataSetId() != Number(arg.getItemId())
                     });
         } // if-else we're adding
 
+        //this.treeFileItemEvent = FileItem.fromFileItem(arg);
+        let fileItemEvent: FileItem = FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
+
+
+        this._fileModelTreeService.put(fileItemEvent).subscribe(
+            null,
+            headerResponse => {
+                this.handleResponseHeader(headerResponse)
+            });
 
     }
 
-    private checkBoxEventChange: CheckBoxEvent;
+    //private datasetFileItemEventChange: FileItem;
     private changeTrigger: number = 0;
 
-    private handleExtractDataSetUnchecked(arg: CheckBoxEvent) {
+    private handleExtractDataSetUnchecked(arg: FileItem) {
         // this.changeTrigger++;
-        // this.dataSetIdToUncheck = Number(arg.id);
+        // this.dataSetIdToUncheck = Number(arg.itemId);
 
-        this.dataSetCheckBoxEvents.push(arg);
+
+        this.datasetFileItemEvents.push(arg);
         let dataSetExtractsToRemove: GobiiDataSetExtract[] = this.gobiiDatasetExtracts
             .filter(e => {
-                return e.getdataSetId() === Number(arg.id)
+                return e.getdataSetId() === Number(arg.getItemId())
             });
 
         if (dataSetExtractsToRemove.length > 0) {
@@ -657,20 +726,37 @@ export class ExtractorRoot {
             this.gobiiDatasetExtracts.splice(idxToRemove, 1);
         }
 
-        this.checkBoxEventChange = arg;
+        // this.datasetFileItemEventChange = arg;
+        this.treeFileItemEvent = FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
+
     }
 
 
 // ********************************************************************
-// ********************************************** MAPSET SELECTION
+// ********************************************** MAPSET SELECTIONz
     private mapsetNameIdList: NameId[];
     private selectedMapsetId: string;
     private nullMapsetName: string;
 
-    private handleMapsetSelected(arg) {
+    private handleMapsetSelected(arg: NameId) {
 
-        if (arg > 0) {
-            this.selectedMapsetId = arg;
+        if (Number(arg.id) > 0) {
+            this.selectedMapsetId = arg.id;
+            let fileItem: FileItem = FileItem.build(this.gobiiExtractFilterType,
+                ProcessType.CREATE)
+                .setEntityType(EntityType.Mapsets)
+                .setCvFilterType(CvFilterType.UKNOWN)
+                .setItemId(arg.id)
+                .setItemName(arg.name)
+                .setChecked(true)
+                .setRequired(null);
+
+            this._fileModelTreeService.put(fileItem).subscribe(
+                null,
+                headerResponse => {
+                    this.handleResponseHeader(headerResponse)
+                });
+
         } else {
             this.selectedMapsetId = undefined;
         }
@@ -682,7 +768,7 @@ export class ExtractorRoot {
         this._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
             EntityType.Mapsets)).subscribe(nameIds => {
 
-                scope$.mapsetNameIdList = [new NameId(0, scope$.nullMapsetName)]
+                scope$.mapsetNameIdList = [new NameId("0", scope$.nullMapsetName, EntityType.Mapsets)]
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.mapsetNameIdList = scope$.mapsetNameIdList.concat(nameIds);
                     scope$.selectedMapsetId = nameIds[0].id;
@@ -708,10 +794,10 @@ export class ExtractorRoot {
 
 
         if (sampleMarkerList.isArray) {
-            if (this.selectedExportType === GobiiExtractFilterType.BY_SAMPLE) {
+            if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
                 this.sampleList = sampleMarkerList.items;
 
-            } else if (this.selectedExportType === GobiiExtractFilterType.BY_MARKER) {
+            } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
                 this.markerList = sampleMarkerList.items;
             }
         } else {
@@ -735,22 +821,79 @@ export class ExtractorRoot {
     private handleExtractSubmission() {
 
         let scope$ = this;
+
         let gobiiExtractorInstructions: GobiiExtractorInstruction[] = [];
-
-        let gobiiFileType: GobiiFileType = GobiiFileType[this.selectedFormatName.toUpperCase()];
-        this.gobiiDatasetExtracts.forEach(e => e.setgobiiFileType(gobiiFileType));
-
+        let gobiiDataSetExtracts: GobiiDataSetExtract[] = [];
         let mapsetIds: number[] = [];
+        let submitterContactid: number = null;
+        scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(
+            fileItems => {
 
-        if ((scope$.selectedMapsetId !== undefined)) {
-            mapsetIds.push(Number(scope$.selectedMapsetId));
-        }
+                let submitterFileItem: FileItem = fileItems.find(item => {
+                    return (item.getEntityType() === EntityType.Contacts)
+                        && (item.getEntitySubType() === EntitySubType.CONTACT_SUBMITED_BY)
+                });
+
+                submitterContactid = Number(submitterFileItem.getItemId());
+
+
+                mapsetIds = fileItems
+                    .filter(item => {
+                        return item.getEntityType() === EntityType.Mapsets
+                    })
+                    .map(item => {
+                        return Number(item.getItemId())
+                    });
+
+                let exportFileItem: FileItem = fileItems.find(item => {
+                    return item.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
+                });
+                let extractFormat: GobiiExtractFormat = GobiiExtractFormat[exportFileItem.getItemId()];
+                let gobiiFileType: GobiiFileType = GobiiFileType[GobiiExtractFormat[extractFormat]];
+
+                let dataTypeFileItem: FileItem = fileItems.find(item => {
+                    return item.getEntityType() === EntityType.CvTerms
+                        && item.getCvFilterType() === CvFilterType.DATASET_TYPE
+                });
+
+                let datSetTypeName: string = dataTypeFileItem != null ? dataTypeFileItem.getItemName() : null;
+
+                let platformFileItems: FileItem[] = fileItems.filter(item => {
+                    return item.getEntityType() === EntityType.Platforms
+                });
+
+                let platformIds: number[] = platformFileItems.map(item => {
+                    return Number(item.getItemId())
+                });
+
+
+                fileItems
+                    .filter(item => {
+                        return item.getEntityType() === EntityType.DataSets
+                    })
+                    .forEach(datsetFileItem => {
+
+                        gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
+                            false,
+                            Number(datsetFileItem.getItemId()),
+                            datsetFileItem.getItemName(),
+                            null,
+                            this.gobiiExtractFilterType,
+                            this.markerList,
+                            this.sampleList,
+                            this.uploadFileName,
+                            this.selectedSampleListType,
+                            datSetTypeName,
+                            platformIds));
+                    });
+            }
+        );
 
 
         gobiiExtractorInstructions.push(
             new GobiiExtractorInstruction(
-                this.gobiiDatasetExtracts,
-                Number(this.selectedContactIdForSubmitter),
+                gobiiDataSetExtracts,
+                submitterContactid,
                 null,
                 mapsetIds)
         );
@@ -769,10 +912,10 @@ export class ExtractorRoot {
             + date.getMinutes()
             + "_"
             + date.getSeconds();
+
         let extractorInstructionFilesDTORequest: ExtractorInstructionFilesDTO =
             new ExtractorInstructionFilesDTO(gobiiExtractorInstructions,
                 fileName);
-//this.selectedServerConfig.crop
 
         let extractorInstructionFilesDTOResponse: ExtractorInstructionFilesDTO = null;
 
@@ -783,15 +926,27 @@ export class ExtractorRoot {
                         + extractorInstructionFilesDTOResponse.getInstructionFileName());
                 },
                 dtoHeaderResponse => {
-                    dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Submitting extractor instructions: "
-                        + m.message))
+
+                    scope$.handleResponseHeader(dtoHeaderResponse);
                 });
 
     }
 
     ngOnInit(): any {
 
+        this._fileModelTreeService
+            .treeStateNotifications()
+            .subscribe(ts => {
+
+                if (ts.fileModelState == FileModelState.SUBMISSION_READY) {
+                    //
+                }
+
+            });
+
+
         this.initializeServerConfigs();
+        this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
 
     }
 

@@ -1,4 +1,5 @@
 import {Component, OnInit,EventEmitter} from '@angular/core';
+import {GobiiExtractFormat} from "../model/type-extract-format";
 
 
 @Component({
@@ -9,9 +10,9 @@ import {Component, OnInit,EventEmitter} from '@angular/core';
 //  directives: [Alert]
     template: `
     		  <label class="the-label">Select Format:</label><BR>
-              &nbsp;&nbsp;&nbsp;<input type="radio" (change)="handleContactSelected($event)" name="format" value="Hapmap" checked="checked">Hapmap<br>
-              &nbsp;&nbsp;&nbsp;<input type="radio" (change)="handleContactSelected($event)" name="format" value="FlapJack">FlapJack<br>
-              &nbsp;&nbsp;&nbsp;<input type="radio" (change)="handleContactSelected($event)" name="format" value="MetaDataOnly">Dataset Metadata Only<br>
+              &nbsp;&nbsp;&nbsp;<input type="radio" (change)="handleContactSelected($event)" name="format" value="HAPMAP" checked="checked">Hapmap<br>
+              &nbsp;&nbsp;&nbsp;<input type="radio" (change)="handleContactSelected($event)" name="format" value="FLAPJACK">FlapJack<br>
+              &nbsp;&nbsp;&nbsp;<input type="radio" (change)="handleContactSelected($event)" name="format" value="META_DATA_ONLY">Dataset Metadata Only<br>
 	` // end template
 })
 
@@ -22,11 +23,15 @@ export class ExportFormatComponent implements OnInit {
     ) {
     } // ctor
 
-    private onFormatSelected:EventEmitter<string> = new EventEmitter();
+    private onFormatSelected:EventEmitter<GobiiExtractFormat> = new EventEmitter();
     private handleContactSelected(arg) {
         if( arg.srcElement.checked ) {
-        
-            this.onFormatSelected.emit(arg.srcElement.value)
+
+            let radioValue:string = arg.srcElement.value;
+
+            let gobiiExportFormat:GobiiExtractFormat = GobiiExtractFormat[radioValue];
+
+            this.onFormatSelected.emit(gobiiExportFormat)
         }
         let foo = arg;
         //this.onContactSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);

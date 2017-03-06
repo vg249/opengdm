@@ -2,22 +2,23 @@ import {Component, OnInit, OnChanges, SimpleChange, EventEmitter} from "@angular
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
-import {ProcessType} from "../model/type-process";
 import {EntityType} from "../model/type-entity";
-import {CheckBoxEvent} from "../model/event-checkbox";
+import {FileItem} from "../model/file-item";
 import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
 import {DataSet} from "../model/dataset";
 import {DtoRequestItemAnalysis} from "../services/app/dto-request-item-analysis";
 import {Analysis} from "../model/analysis";
 import {EntityFilter} from "../model/type-entity-filter";
+import {CvFilterType, CvFilters} from "../model/cv-filter-type";
+import {FileModelTreeService} from "../services/core/file-model-tree-service";
 
 
 @Component({
     selector: 'dataset-checklist-box',
-    inputs: ['experimentId', 'checkBoxEventChange'],
+    inputs: ['experimentId', 'fileItemEventChange'],
     outputs: ['onItemChecked', 'onAddMessage'],
     template: `<checklist-box
-                    [checkBoxEventChange] = "checkBoxEventChange"
+                    [fileItemEventChange] = "datasetFileItemEventChange"
                     [nameIdList] = "dataSetsNameIdList"
                     (onItemSelected)="handleItemSelected($event)"
                     (onItemChecked)="handleItemChecked($event)"
@@ -50,25 +51,31 @@ import {EntityFilter} from "../model/type-entity-filter";
 
 export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
-    constructor(private _dtoRequestServiceNameId:DtoRequestService<NameId[]>,
-                private _dtoRequestServiceDataSetDetail:DtoRequestService<DataSet>,
-                private _dtoRequestServiceAnalysisDetail:DtoRequestService<Analysis>) {
+    constructor(private _dtoRequestServiceNameId: DtoRequestService<NameId[]>,
+                private _dtoRequestServiceDataSetDetail: DtoRequestService<DataSet>,
+                private _dtoRequestServiceAnalysisDetail: DtoRequestService<Analysis>,
+                private _fileModelTreeService: FileModelTreeService) {
 
     } // ctor
 
     // useg
-    private dataSetsNameIdList:NameId[];
-    private checkBoxEvents:CheckBoxEvent[] = [];
-    private experimentId:string;
-    private onItemChecked:EventEmitter<CheckBoxEvent> = new EventEmitter();
-    private onAddMessage:EventEmitter<string> = new EventEmitter();
-    private dataSet:DataSet;
-    private analysisNames:string[] = [];
-    private analysisTypes:string[] = [];
-    private nameIdListAnalysisTypes:NameId[];
+    private dataSetsNameIdList: NameId[];
+    private fileItemEvents: FileItem[] = [];
+    private experimentId: string;
+    private onItemChecked: EventEmitter<FileItem> = new EventEmitter();
+    private onAddMessage: EventEmitter<string> = new EventEmitter();
+    private dataSet: DataSet;
+    private analysisNames: string[] = [];
+    private analysisTypes: string[] = [];
+    private nameIdListAnalysisTypes: NameId[];
+    private datasetFileItemEventChange: FileItem;
 
-    private handleItemChecked(arg) {
 
+
+
+    private handleItemChecked(arg:FileItem) {
+
+        arg.setRequired(false);
         this.onItemChecked.emit(arg);
 
     } // handleItemChecked()
@@ -79,20 +86,20 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     }
 
     private handleItemSelected(arg) {
-        let selectedDataSetId:number = Number(arg.id);
+        let selectedDataSetId: number = Number(arg.itemId);
         this.setDatasetDetails(selectedDataSetId);
     }
 
-    private setList():void {
+    private setList(): void {
 
         // we can get this event whenver the item is clicked, not necessarily when the checkbox
         let scope$ = this;
 
         scope$.dataSetsNameIdList = [];
-        scope$.checkBoxEvents = [];
+        scope$.fileItemEvents = [];
         scope$.setDatasetDetails(undefined);
 
-        if( scope$.experimentId) {
+        if (scope$.experimentId) {
 
             this._dtoRequestServiceNameId.get(new DtoRequestItemNameIds(
                 EntityType.DataSets,
@@ -101,9 +108,9 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                     if (nameIds && ( nameIds.length > 0 )) {
 
                         scope$.dataSetsNameIdList = nameIds;
-                        // scope$.checkBoxEvents = [];
+                        // scope$.fileItemEvents = [];
                         // scope$.dataSetsNameIdList.forEach(n => {
-                        //     scope$.checkBoxEvents.push(new CheckBoxEvent(
+                        //     scope$.fileItemEvents.push(new FileItem(
                         //         ProcessType.CREATE,
                         //         n.id,
                         //         n.name,
@@ -111,10 +118,10 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                         //     ));
                         // });
 
-                        scope$.setDatasetDetails(scope$.dataSetsNameIdList[0].id);
+                        scope$.setDatasetDetails(Number(scope$.dataSetsNameIdList[0].id));
 
                     } else {
-                        scope$.dataSetsNameIdList = [new NameId(0, "<none>")];
+                        scope$.dataSetsNameIdList = [new NameId("0", "<none>", EntityType.DataSets)];
                         scope$.setDatasetDetails(undefined);
                     }
                 },
@@ -128,9 +135,9 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     } // setList()
 
-    private setDatasetDetails(dataSetId:number):void {
+    private setDatasetDetails(dataSetId: number): void {
 
-        if( dataSetId ) {
+        if (dataSetId) {
             let scope$ = this;
             scope$._dtoRequestServiceDataSetDetail.get(new DtoRequestItemDataSet(dataSetId))
                 .subscribe(dataSet => {
@@ -143,7 +150,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
                             scope$.dataSet.analysesIds.forEach(
                                 analysisId => {
-                                    let currentAnalysisId:number = analysisId;
+                                    let currentAnalysisId: number = analysisId;
                                     if (currentAnalysisId) {
                                         scope$._dtoRequestServiceAnalysisDetail
                                             .getResult(new DtoRequestItemAnalysis(currentAnalysisId))
@@ -183,13 +190,20 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     } // setList()
 
 
-    ngOnInit():any {
+    ngOnInit(): any {
+
+        this._fileModelTreeService
+            .fileItemNotifications()
+            .subscribe(fileItem => {
+                this.datasetFileItemEventChange = fileItem;
+            });
+
 
         let scope$ = this;
         scope$._dtoRequestServiceNameId
             .get(new DtoRequestItemNameIds(EntityType.CvTerms,
                 EntityFilter.BYTYPENAME,
-                "analysis_type"))
+                CvFilters.get(CvFilterType.ANALYSIS_TYPE)))
             .subscribe(nameIdList => {
                     scope$.nameIdListAnalysisTypes = nameIdList;
                     if (this.experimentId) {
@@ -202,7 +216,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     }
 
-    ngOnChanges(changes:{[propName:string]:SimpleChange}) {
+    ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
         if (changes['experimentId']) {
             this.experimentId = changes['experimentId'].currentValue;
