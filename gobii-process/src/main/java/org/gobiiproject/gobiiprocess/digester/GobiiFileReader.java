@@ -198,14 +198,17 @@ public class GobiiFileReader {
 		}
 
 		//QC - Subsection #1 of 3
+		System.out.println("qcCheck: " + zero.isQcCheck());
 		GobiiExtractorInstruction gobiiExtractorInstruction = null;
 		if (zero.isQcCheck()) {
+			System.out.println("Entering into QC Subsection #1 of 3...");
 			gobiiExtractorInstruction = new GobiiExtractorInstruction();
 			gobiiExtractorInstruction.setContactEmail(zero.getContactEmail());
 			gobiiExtractorInstruction.setContactId(zero.getContactId());
 			gobiiExtractorInstruction.setGobiiCropType(crop);
 			gobiiExtractorInstruction.getMapsetIds().add(zero.getMapset().getId());
 			gobiiExtractorInstruction.setQcCheck(true);
+			System.out.println("Done with QC Subsection #1 of 3...");
 		}
 
 		//Section - Processing
@@ -347,6 +350,7 @@ public class GobiiFileReader {
 
 			//QC - Subsection #2 of 3
 			if (zero.isQcCheck()) {
+				System.out.println("Entering into QC Subsection #2 of 3...");
 				GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
 				gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
 				gobiiDataSetExtract.setDataSetId(inst.getDataSet().getId());
@@ -363,6 +367,7 @@ public class GobiiFileReader {
 				gobiiDataSetExtract.setGobiiJobStatus(null);  // It is going to be set by the GobiiExtractor class
 				gobiiDataSetExtract.setGobiiFileType(inst.getGobiiFile().getGobiiFileType());
 				gobiiExtractorInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
+				System.out.println("Done with QC Subsection #2 of 3...");
 			}
 		}
 		
@@ -464,6 +469,7 @@ public class GobiiFileReader {
 
 		//QC - Subsection #3 of 3
 		if (zero.isQcCheck()) {
+			System.out.println("Entering into QC Subsection #3 of 3...");
 			ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
 			extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
 			String extractorInstructionFileName = "extractor_" + DateUtils.makeDateIdString() + ".json";
@@ -482,6 +488,7 @@ public class GobiiFileReader {
 			else {
 				ErrorLogger.logWarning("Digester","Error Submitting Extractor Request");
 			}
+			System.out.println("Done with QC Subsection #3 of 3...");
 		}
 	}
 
