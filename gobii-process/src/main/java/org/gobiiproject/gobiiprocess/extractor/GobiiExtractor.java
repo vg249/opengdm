@@ -285,8 +285,10 @@ public class GobiiExtractor {
 
 				//QC - Subsection #1 of 1
 				if (inst.isQcCheck()) {
+					ErrorLogger.logInfo("Extractor", "qcCheck detected");
+					ErrorLogger.logInfo("Extractor","Entering into the QC Subsection...");
 					QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
-					//qcInstructionsDTOToSend.setContactId();
+					qcInstructionsDTOToSend.setContactId(inst.getContactId());
 					qcInstructionsDTOToSend.setDataFileDirectory(extractDir);
 					//qcInstructionsDTOToSend.setDataFileName();
 					qcInstructionsDTOToSend.setDatasetId(dataSetId);
@@ -304,6 +306,7 @@ public class GobiiExtractor {
 						//It is possible that the writing success is so apparent...
 						ErrorLogger.logInfo("Extractor","The QC instructions file is created but you never know it there...");
 					}
+					ErrorLogger.logInfo("Extractor","Done with the QC Subsection!");
 				}
 			}
 			HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
