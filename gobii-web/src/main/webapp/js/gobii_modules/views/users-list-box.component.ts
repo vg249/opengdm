@@ -1,4 +1,4 @@
-import {Component, OnInit, EventEmitter} from "@angular/core";
+import {Component, OnInit, EventEmitter, OnChanges, SimpleChange} from "@angular/core";
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {EntityType} from "../model/type-entity";
@@ -6,7 +6,7 @@ import {EntityType} from "../model/type-entity";
 
 @Component({
     selector: 'users-list-box',
-    inputs: ['nameIdList'],
+    inputs: ['nameIdList', 'entityType'],
     outputs: ['onUserSelected'],
     template: `<select name="users" (change)="handleUserSelected($event)" >
 			<option *ngFor="let nameId of nameIdList " 
@@ -16,11 +16,13 @@ import {EntityType} from "../model/type-entity";
 
 })
 
-export class UsersListBoxComponent implements OnInit {
+export class UsersListBoxComponent implements OnInit, OnChanges {
 
 
     // useg
     private nameIdList: NameId[];
+
+    private entityType:EntityType = EntityType.UNKNOWN;
 
     private onUserSelected: EventEmitter<NameId> = new EventEmitter();
 
@@ -39,5 +41,8 @@ export class UsersListBoxComponent implements OnInit {
 
     ngOnInit(): any {
         return null;
+    }
+
+    ngOnChanges(changes: {[propName: string]: SimpleChange}) {
     }
 }

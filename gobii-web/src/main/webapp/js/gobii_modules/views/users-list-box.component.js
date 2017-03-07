@@ -30,6 +30,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             UsersListBoxComponent = (function () {
                 function UsersListBoxComponent(_dtoRequestService) {
                     this._dtoRequestService = _dtoRequestService;
+                    this.entityType = type_entity_1.EntityType.UNKNOWN;
                     this.onUserSelected = new core_1.EventEmitter();
                 } // ctor
                 UsersListBoxComponent.prototype.handleUserSelected = function (arg) {
@@ -39,12 +40,14 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 UsersListBoxComponent.prototype.ngOnInit = function () {
                     return null;
                 };
+                UsersListBoxComponent.prototype.ngOnChanges = function (changes) {
+                };
                 return UsersListBoxComponent;
             }());
             UsersListBoxComponent = __decorate([
                 core_1.Component({
                     selector: 'users-list-box',
-                    inputs: ['nameIdList'],
+                    inputs: ['nameIdList', 'entityType'],
                     outputs: ['onUserSelected'],
                     template: "<select name=\"users\" (change)=\"handleUserSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                 }),

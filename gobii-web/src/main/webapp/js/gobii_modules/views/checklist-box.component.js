@@ -68,7 +68,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this.previousSelectedItem = arg.currentTarget;
                     var fileItemEvent = file_item_1.FileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.READ)
                         .setEntityType(this.entityType)
-                        .setCvFilterType(cv_filter_type_1.CvFilterType.UKNOWN)
+                        .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                         .setItemId(arg.currentTarget.children[0].value)
                         .setItemName(arg.currentTarget.children[0].name)
                         .setChecked(false)
@@ -85,7 +85,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         scope$.nameIdList.forEach(function (n) {
                             scope$.fileItemEvents.push(file_item_1.FileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.CREATE)
                                 .setEntityType(scope$.entityType)
-                                .setCvFilterType(cv_filter_type_1.CvFilterType.UKNOWN)
+                                .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                                 .setItemId(n.id)
                                 .setItemName(n.name)
                                 .setChecked(false)

@@ -48,7 +48,7 @@ export class CriteriaDisplayComponent implements OnInit {
             GobiiExtractFilterType.UNKNOWN,
             ProcessType.DELETE)
             .setEntityType(EntityType.DataSets)
-            .setCvFilterType(CvFilterType.UKNOWN)
+            .setCvFilterType(CvFilterType.UNKNOWN)
             .setItemId(arg.currentTarget.value)
             .setItemName(arg.currentTarget.name)
             .setChecked(false)

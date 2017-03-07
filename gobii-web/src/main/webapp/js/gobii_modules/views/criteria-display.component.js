@@ -47,7 +47,7 @@ System.register(["@angular/core", "../model/file-item", "../model/type-process",
                 CriteriaDisplayComponent.prototype.handleItemUnChecked = function (arg) {
                     var checkEvent = file_item_1.FileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.DELETE)
                         .setEntityType(type_entity_1.EntityType.DataSets)
-                        .setCvFilterType(cv_filter_type_1.CvFilterType.UKNOWN)
+                        .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                         .setItemId(arg.currentTarget.value)
                         .setItemName(arg.currentTarget.name)
                         .setChecked(false)

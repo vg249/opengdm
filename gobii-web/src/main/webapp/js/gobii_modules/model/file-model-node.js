@@ -50,7 +50,7 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
                     this._categoryType = ExtractorCategoryType.LEAF;
                     this._entityType = type_entity_1.EntityType.UNKNOWN;
                     this._entitySubType = type_entity_1.EntitySubType.UNKNOWN;
-                    this._cvFilterType = cv_filter_type_1.CvFilterType.UKNOWN;
+                    this._cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
                     this._fileItems = [];
                     this._fileModelNodeUniqueId = guid_1.Guid.generateUUID();
                     this._itemType = itemType;

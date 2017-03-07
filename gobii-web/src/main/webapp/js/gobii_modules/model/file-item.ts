@@ -35,7 +35,7 @@ export class FileItem {
         this._fileItemUniqueId = Guid.generateUUID();
 
         if (this._cvFilterType === null) {
-            this._cvFilterType = CvFilterType.UKNOWN;
+            this._cvFilterType = CvFilterType.UNKNOWN;
         }
 
         if( this._extractorItemType == null ) {
@@ -61,7 +61,7 @@ export class FileItem {
             ExtractorItemType.UNKNOWN,
             EntityType.UNKNOWN,
             EntitySubType.UNKNOWN, 
-            CvFilterType.UKNOWN,
+            CvFilterType.UNKNOWN,
             null,
             null,
             null,

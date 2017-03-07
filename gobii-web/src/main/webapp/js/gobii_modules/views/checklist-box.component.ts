@@ -75,7 +75,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
             GobiiExtractFilterType.UNKNOWN,
             ProcessType.READ)
             .setEntityType(this.entityType)
-            .setCvFilterType(CvFilterType.UKNOWN)
+            .setCvFilterType(CvFilterType.UNKNOWN)
             .setItemId(arg.currentTarget.children[0].value)
             .setItemName(arg.currentTarget.children[0].name)
             .setChecked(false)
@@ -102,7 +102,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
                     GobiiExtractFilterType.UNKNOWN,
                     ProcessType.CREATE)
                     .setEntityType(scope$.entityType)
-                    .setCvFilterType(CvFilterType.UKNOWN)
+                    .setCvFilterType(CvFilterType.UNKNOWN)
                     .setItemId(n.id)
                     .setItemName(n.name)
                     .setChecked(false)

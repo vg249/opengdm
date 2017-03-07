@@ -42,7 +42,7 @@ System.register(["./guid", "./type-entity", "./cv-filter-type", "./file-model-no
                     this._required = _required;
                     this._fileItemUniqueId = guid_1.Guid.generateUUID();
                     if (this._cvFilterType === null) {
-                        this._cvFilterType = cv_filter_type_1.CvFilterType.UKNOWN;
+                        this._cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
                     }
                     if (this._extractorItemType == null) {
                         this._extractorItemType = file_model_node_1.ExtractorItemType.UNKNOWN;
@@ -55,7 +55,7 @@ System.register(["./guid", "./type-entity", "./cv-filter-type", "./file-model-no
                     }
                 }
                 FileItem.build = function (gobiiExtractFilterType, processType) {
-                    var returnVal = new FileItem(gobiiExtractFilterType, processType, file_model_node_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UKNOWN, null, null, null, null);
+                    var returnVal = new FileItem(gobiiExtractFilterType, processType, file_model_node_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, null, null, null);
                     return returnVal;
                 };
                 //OnChange does not see the FileItemEvent as being a new event unless it's

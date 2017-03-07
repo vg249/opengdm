@@ -34,7 +34,7 @@ export class FileModelNode {
     private _entityType: EntityType = EntityType.UNKNOWN;
     private _entitySubType: EntitySubType = EntitySubType.UNKNOWN;
     private _entityName: string;
-    private _cvFilterType: CvFilterType = CvFilterType.UKNOWN;
+    private _cvFilterType: CvFilterType = CvFilterType.UNKNOWN;
     private _fileItems: FileItem[] = [];
     private _fileModelNodeUniqueId = Guid.generateUUID();
 

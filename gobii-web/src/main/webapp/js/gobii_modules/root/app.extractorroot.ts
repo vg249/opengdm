@@ -67,8 +67,21 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                     <legend class="the-legend">Submit As</legend>
                     <users-list-box
                         [nameIdList]="contactNameIdListForSubmitter"
+                        [entityType]="entityTypeForTemplates.Experiments"
                         (onUserSelected)="handleContactForSubmissionSelected($event)">
                     </users-list-box>
+                    </fieldset>
+                        
+                    <fieldset class="well the-fieldset">
+                    <legend class="the-legend">From Generic</legend>
+                        <name-id-list-box
+                            [entityType]="entityTypeForTemplates.Contacts"
+z                            [entityFilter] = "entityFilterForTemplates.BYTYPENAME"
+                            [entityFilterValue] = "getEntityFilterValue(entityTypeForTemplates.Contacts,entitySubTypeForTemplates.CONTACT_SUBMITED_BY)"
+                            [entitySubType] = "entitySubTypeForTemplates.CONTACT_SUBMITED_BY"
+                            [cvFilterType] = "cvFilterTypeForTemplates.UNKNOWN"
+                            (onUserSelected)="handleContactForSubmissionSelected($event)">
+                        </name-id-list-box>
                     </fieldset>
                         
                      <fieldset class="well the-fieldset">
@@ -226,6 +239,28 @@ export class ExtractorRoot implements OnInit {
     title = 'Gobii Web';
 
 
+    // *** You cannot use an Enum directly as a template type parameter, so we need
+    //     to assign them to properties
+    private entityTypeForTemplates = EntityType;
+    private entityFilterForTemplates = EntityFilter;
+    private entitySubTypeForTemplates = EntitySubType;
+    private cvFilterTypeForTemplates = CvFilterType;
+
+    private getEntityFilterValue(entityType: EntityType, entitySubType: EntitySubType): string {
+
+        let returnVal: string = null;
+
+        if (entityType === EntityType.Contacts) {
+             if (entitySubType === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR ) {
+                 returnVal = "PI";
+            }
+        }
+
+        return returnVal;
+    }
+
+    // ************************************************************************
+
     private treeFileItemEvent: FileItem;
 //    private selectedExportTypeEvent:GobiiExtractFilterType;
     private datasetFileItemEvents: FileItem[] = [];
@@ -237,6 +272,7 @@ export class ExtractorRoot implements OnInit {
                 private _dtoRequestServiceNameIds: DtoRequestService<NameId[]>,
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private _fileModelTreeService: FileModelTreeService) {
+
     }
 
 
@@ -372,7 +408,6 @@ export class ExtractorRoot implements OnInit {
             this.displaySampleListTypeSelector = false;
 
         }
-
 
     }
 
@@ -630,7 +665,7 @@ export class ExtractorRoot implements OnInit {
     }
 
 
-    private handleHeaderStatusMessage(statusMessage:HeaderStatusMessage) {
+    private handleHeaderStatusMessage(statusMessage: HeaderStatusMessage) {
 
         this.handleAddMessage(statusMessage.message);
     }
@@ -745,7 +780,7 @@ export class ExtractorRoot implements OnInit {
             let fileItem: FileItem = FileItem.build(this.gobiiExtractFilterType,
                 ProcessType.CREATE)
                 .setEntityType(EntityType.Mapsets)
-                .setCvFilterType(CvFilterType.UKNOWN)
+                .setCvFilterType(CvFilterType.UNKNOWN)
                 .setItemId(arg.id)
                 .setItemName(arg.name)
                 .setChecked(true)
