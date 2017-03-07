@@ -19,6 +19,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.*;
+import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
@@ -290,7 +291,8 @@ public class GobiiExtractor {
 					QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
 					qcInstructionsDTOToSend.setContactId(inst.getContactId());
 					qcInstructionsDTOToSend.setDataFileDirectory(extractDir);
-					//qcInstructionsDTOToSend.setDataFileName();
+					StringBuilder stringBuilderQcInstructionFileName = new StringBuilder("qc_").append(DateUtils.makeDateIdString()).append(".json");
+					qcInstructionsDTOToSend.setDataFileName(stringBuilderQcInstructionFileName.toString());
 					qcInstructionsDTOToSend.setDatasetId(dataSetId);
 					qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
 					//qcInstructionsDTOToSend.setId();

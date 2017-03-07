@@ -472,8 +472,8 @@ public class GobiiFileReader {
 			ErrorLogger.logInfo("Digester","Entering into the QC Subsection #3 of 3...");
 			ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
 			extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
-			String extractorInstructionFileName = "extractor_" + DateUtils.makeDateIdString() + ".json";
-			extractorInstructionFilesDTOToSend.setInstructionFileName(extractorInstructionFileName);
+			StringBuilder stringBuilderInstructionFileName = new StringBuilder("extractor_").append(DateUtils.makeDateIdString()).append(".json");
+			extractorInstructionFilesDTOToSend.setInstructionFileName(stringBuilderInstructionFileName.toString());
 			//extractorInstructionFilesDTOToSend.setId();
 			//extractorInstructionFilesDTOToSend.setJobId();
 			PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
