@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-entity", "../services/app/dto-request-item-nameids", "../model/type-entity-filter"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-entity", "../services/app/dto-request-item-nameids", "../model/type-entity-filter", "../model/file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, dto_request_service_1, type_entity_1, dto_request_item_nameids_1, type_entity_filter_1, NameIdListBoxComponent;
+    var core_1, name_id_1, dto_request_service_1, type_entity_1, dto_request_item_nameids_1, type_entity_filter_1, file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -30,20 +30,35 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             },
             function (type_entity_filter_1_1) {
                 type_entity_filter_1 = type_entity_filter_1_1;
+            },
+            function (file_item_1_1) {
+                file_item_1 = file_item_1_1;
+            },
+            function (type_process_1_1) {
+                type_process_1 = type_process_1_1;
+            },
+            function (file_model_tree_service_1_1) {
+                file_model_tree_service_1 = file_model_tree_service_1_1;
+            },
+            function (type_extractor_filter_1_1) {
+                type_extractor_filter_1 = type_extractor_filter_1_1;
             }
         ],
         execute: function () {
             NameIdListBoxComponent = (function () {
-                function NameIdListBoxComponent(_dtoRequestService) {
+                function NameIdListBoxComponent(_dtoRequestService, _fileModelTreeService) {
                     this._dtoRequestService = _dtoRequestService;
+                    this._fileModelTreeService = _fileModelTreeService;
                     // DtoRequestItemNameIds expects the value to be null if it's not set (not "UNKNOWN")
                     this.entityType = null;
                     this.entityFilter = null;
                     this.entityFilterValue = null;
                     this.entitySubType = null;
                     this.cvFilterType = null;
+                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.selectedNameId = null;
                     this.onNameIdSelected = new core_1.EventEmitter();
+                    this.onError = new core_1.EventEmitter();
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     var _this = this;
@@ -68,14 +83,30 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         else {
                             scope$.nameIdList = [new name_id_1.NameId("0", "ERROR NO " + type_entity_1.EntityType[scope$.entityType], scope$.entityType)];
                         }
-                    }, function (dtoHeaderResponse) {
-                        // dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Rettrieving nameIds: "
-                        //     + m.message))
+                    }, function (responseHeader) {
+                        _this.handleResponseHeader(responseHeader);
                     });
                 };
+                NameIdListBoxComponent.prototype.handleResponseHeader = function (header) {
+                    this.onError.emit(header);
+                };
                 NameIdListBoxComponent.prototype.handleNameIdSelected = function (arg) {
-                    var nameId = new name_id_1.NameId(this.nameIdList[arg.srcElement.selectedIndex].id, this.nameIdList[arg.srcElement.selectedIndex].name, this.entityType);
-                    this.onNameIdSelected.emit(nameId);
+                    var _this = this;
+                    var nameId = this.nameIdList[arg.srcElement.selectedIndex];
+                    // let nameId: NameId = new NameId(this.nameIdList[arg.srcElement.selectedIndex].id,
+                    //     this.nameIdList[arg.srcElement.selectedIndex].name,
+                    //     this.entityType);
+                    // this.onNameIdSelected.emit(nameId);
+                    var fileItem = file_item_1.FileItem
+                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
+                        .setEntityType(this.entityType)
+                        .setEntitySubType(this.entitySubType)
+                        .setItemId(nameId.id)
+                        .setItemName(nameId.name);
+                    this._fileModelTreeService.put(fileItem)
+                        .subscribe(null, function (headerResponse) {
+                        _this.handleResponseHeader(headerResponse);
+                    });
                 };
                 NameIdListBoxComponent.prototype.getEntityFilterValue = function (entityType, entitySubType) {
                     var returnVal = null;
@@ -93,11 +124,12 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             NameIdListBoxComponent = __decorate([
                 core_1.Component({
                     selector: 'name-id-list-box',
-                    inputs: ['entityType', 'entityFilter', 'entitySubType', 'cvFilterType'],
-                    outputs: ['onNameIdSelected'],
+                    inputs: ['gobiiExtractFilterType', 'entityType', 'entityFilter', 'entitySubType', 'cvFilterType'],
+                    outputs: ['onNameIdSelected', 'onError'],
                     template: "<select name=\"users\" (change)=\"handleNameIdSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                 }),
-                __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService])
+                __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService,
+                    file_model_tree_service_1.FileModelTreeService])
             ], NameIdListBoxComponent);
             exports_1("NameIdListBoxComponent", NameIdListBoxComponent);
         }

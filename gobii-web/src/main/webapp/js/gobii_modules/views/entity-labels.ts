@@ -14,7 +14,7 @@ export class Labels {
         if( this._instance === null ) {
             this._instance = new Labels();
         }
-
+    
         return this._instance;
     }
 
@@ -27,7 +27,7 @@ export class Labels {
         this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE] = "Dataset Type";
 
         this.entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
-        this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY] = "User";
+        this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY] = "Submit As";
 
         this.extractorFilterTypeLabels[GobiiExtractFilterType.WHOLE_DATASET] = "By Dataset";
         this.extractorFilterTypeLabels[GobiiExtractFilterType.BY_SAMPLE] = "By Sample";

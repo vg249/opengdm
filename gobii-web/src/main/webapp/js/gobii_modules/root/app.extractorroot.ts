@@ -65,21 +65,13 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                     
                     <fieldset class="well the-fieldset">
                     <legend class="the-legend">Submit As</legend>
-                    <users-list-box
-                        [nameIdList]="contactNameIdListForSubmitter"
-                        [entityType]="entityTypeForTemplates.Experiments"
-                        (onUserSelected)="handleContactForSubmissionSelected($event)">
-                    </users-list-box>
-                    </fieldset>
-                        
-                    <fieldset class="well the-fieldset">
-                    <legend class="the-legend">From Generic</legend>
                         <name-id-list-box
+                            [gobiiExtractFilterType] = "gobiiExtractFilterType"
                             [entityType]="entityTypeForTemplates.Contacts"
                             [entityFilter] = "entityFilterForTemplates.NONE"
                             [entitySubType] = "entitySubTypeForTemplates.CONTACT_SUBMITED_BY"
                             [cvFilterType] = "cvFilterTypeForTemplates.UNKNOWN"
-                            (onUserSelected)="handleContactForSubmissionSelected($event)">
+                            (onError) = "handleResponseHeader($event)">
                         </name-id-list-box>
                     </fieldset>
                         
@@ -301,7 +293,7 @@ export class ExtractorRoot implements OnInit {
 
                     scope$.currentStatus = "GOBII Server " + gobiiVersion;
                     scope$.messages.push("Connected to database: " + scope$.selectedServerConfig.crop);
-                    scope$.initializeContactsForSumission();
+                    //scope$.initializeContactsForSumission();
                     scope$.initializeContactsForPi();
                     scope$.initializeMapsetsForSumission();
 
@@ -411,46 +403,46 @@ export class ExtractorRoot implements OnInit {
 
 // ********************************************************************
 // ********************************************** SUBMISSION-USER SELECTION
-    private contactNameIdListForSubmitter: NameId[];
-    private selectedContactIdForSubmitter: string;
+//     private contactNameIdListForSubmitter: NameId[];
+//     private selectedContactIdForSubmitter: string;
+//
+//     private handleContactForSubmissionSelected(arg: NameId) {
+//         this.selectedContactIdForSubmitter = arg.id;
+//
+//         let fileItem: FileItem = FileItem
+//             .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+//             .setEntityType(EntityType.Contacts)
+//             .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
+//             .setItemId(arg.id)
+//             .setItemName(arg.name);
+//
+//         this._fileModelTreeService.put(fileItem)
+//             .subscribe(
+//                 null,
+//                 headerResponse => {
+//                     this.handleResponseHeader(headerResponse)
+//                 });
+//
+//     }
 
-    private handleContactForSubmissionSelected(arg: NameId) {
-        this.selectedContactIdForSubmitter = arg.id;
-
-        let fileItem: FileItem = FileItem
-            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-            .setEntityType(EntityType.Contacts)
-            .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
-            .setItemId(arg.id)
-            .setItemName(arg.name);
-
-        this._fileModelTreeService.put(fileItem)
-            .subscribe(
-                null,
-                headerResponse => {
-                    this.handleResponseHeader(headerResponse)
-                });
-
-    }
-
-    private initializeContactsForSumission() {
-        let scope$ = this;
-        this._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
-            EntityType.Contacts)).subscribe(nameIds => {
-                if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.contactNameIdListForSubmitter = nameIds
-                    scope$.selectedContactIdForSubmitter = nameIds[0].id;
-                    this.handleContactForSubmissionSelected(nameIds[0]);
-                } else {
-                    scope$.contactNameIdListForSubmitter = [new NameId("0", "ERROR NO USERS", EntityType.Contacts)];
-                }
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Rettrieving contacts: "
-                    + m.message))
-            });
-
-    }
+    // private initializeContactsForSumission() {
+    //     let scope$ = this;
+    //     this._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+    //         EntityType.Contacts)).subscribe(nameIds => {
+    //             if (nameIds && ( nameIds.length > 0 )) {
+    //                 scope$.contactNameIdListForSubmitter = nameIds
+    //                 scope$.selectedContactIdForSubmitter = nameIds[0].id;
+    //                 this.handleContactForSubmissionSelected(nameIds[0]);
+    //             } else {
+    //                 scope$.contactNameIdListForSubmitter = [new NameId("0", "ERROR NO USERS", EntityType.Contacts)];
+    //             }
+    //         },
+    //         dtoHeaderResponse => {
+    //             dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Rettrieving contacts: "
+    //                 + m.message))
+    //         });
+    //
+    // }
 
 
 // ********************************************************************
@@ -958,9 +950,9 @@ export class ExtractorRoot implements OnInit {
                     scope$.messages.push("Extractor instruction file created on server: "
                         + extractorInstructionFilesDTOResponse.getInstructionFileName());
                 },
-                dtoHeaderResponse => {
+                headerResponse => {
 
-                    scope$.handleResponseHeader(dtoHeaderResponse);
+                    scope$.handleResponseHeader(headerResponse);
                 });
 
     }

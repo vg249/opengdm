@@ -5,12 +5,17 @@ import {EntityType, EntitySubType} from "../model/type-entity";
 import {CvFilterType} from "../model/cv-filter-type";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {EntityFilter} from "../model/type-entity-filter";
+import {FileItem} from "../model/file-item";
+import {ProcessType} from "../model/type-process";
+import {FileModelTreeService} from "../services/core/file-model-tree-service";
+import {GobiiExtractFilterType} from "../model/type-extractor-filter";
+import {Header} from "../model/payload/header";
 
 
 @Component({
     selector: 'name-id-list-box',
-    inputs: ['entityType', 'entityFilter', 'entitySubType', 'cvFilterType'],
-    outputs: ['onNameIdSelected'],
+    inputs: ['gobiiExtractFilterType','entityType', 'entityFilter', 'entitySubType', 'cvFilterType'],
+    outputs: ['onNameIdSelected', 'onError'],
     template: `<select name="users" (change)="handleNameIdSelected($event)" >
 			<option *ngFor="let nameId of nameIdList " 
 				value={{nameId.id}}>{{nameId.name}}</option>
@@ -21,7 +26,8 @@ import {EntityFilter} from "../model/type-entity-filter";
 
 export class NameIdListBoxComponent implements OnInit, OnChanges {
 
-    constructor(private _dtoRequestService: DtoRequestService<NameId[]>) {
+    constructor(private _dtoRequestService: DtoRequestService<NameId[]>,
+                private _fileModelTreeService: FileModelTreeService) {
 
     } // ctor
 
@@ -51,9 +57,8 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
                     scope$.nameIdList = [new NameId("0", "ERROR NO " + EntityType[scope$.entityType], scope$.entityType)];
                 }
             },
-            dtoHeaderResponse => {
-                // dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Rettrieving nameIds: "
-                //     + m.message))
+            responseHeader => {
+                this.handleResponseHeader(responseHeader);
             });
     }
 
@@ -66,18 +71,41 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
     private entityFilterValue: string = null;
     private entitySubType: EntitySubType = null;
     private cvFilterType: CvFilterType = null;
+    private gobiiExtractFilterType:GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
     private selectedNameId: string = null;
 
     private onNameIdSelected: EventEmitter<NameId> = new EventEmitter();
+    private onError: EventEmitter<Header> = new EventEmitter();
+
+
+    private handleResponseHeader(header: Header) {
+
+        this.onError.emit(header);
+    }
+
 
     private handleNameIdSelected(arg) {
 
-        let nameId: NameId = new NameId(this.nameIdList[arg.srcElement.selectedIndex].id,
-            this.nameIdList[arg.srcElement.selectedIndex].name,
-            this.entityType);
+        let nameId:NameId = this.nameIdList[arg.srcElement.selectedIndex]
 
-        this.onNameIdSelected.emit(nameId);
+        // let nameId: NameId = new NameId(this.nameIdList[arg.srcElement.selectedIndex].id,
+        //     this.nameIdList[arg.srcElement.selectedIndex].name,
+        //     this.entityType);
+        // this.onNameIdSelected.emit(nameId);
+        let fileItem: FileItem = FileItem
+            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+            .setEntityType(this.entityType)
+            .setEntitySubType(this.entitySubType)
+            .setItemId(nameId.id)
+            .setItemName(nameId.name);
+
+        this._fileModelTreeService.put(fileItem)
+            .subscribe(
+                null,
+                headerResponse => {
+                    this.handleResponseHeader(headerResponse)
+                });
     }
 
 
