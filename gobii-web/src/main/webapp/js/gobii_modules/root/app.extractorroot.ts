@@ -673,6 +673,9 @@ export class ExtractorRoot implements OnInit {
     handleStatusTreeReady(headerStatusMessage: HeaderStatusMessage) {
 
         this.handleFormatSelected(GobiiExtractFormat.HAPMAP);
+
+        // this will trigger child components to initialize their data
+        //this.gobiiExtractFilterTypeForTemplate = this.gobiiExtractFilterType;
         //this.handleContactForSubmissionSelected(this.contactNameIdListForSubmitter[0]);
 
     }
@@ -964,16 +967,16 @@ export class ExtractorRoot implements OnInit {
             .subscribe(ts => {
 
                 if (ts.fileModelState == FileModelState.SUBMISSION_READY) {
-                    //
+                    // Only when the tree is ready do we effectively tell the child chomponents that they can
+                    // intitialze themselves
                 }
-
             });
 
 
         this.initializeServerConfigs();
         this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
 
-    }
+    } // ngOnInit()
 
 
 }

@@ -14,7 +14,7 @@ export class Labels {
         if( this._instance === null ) {
             this._instance = new Labels();
         }
-    
+
         return this._instance;
     }
 

@@ -14,7 +14,7 @@ import {Header} from "../model/payload/header";
 
 @Component({
     selector: 'name-id-list-box',
-    inputs: ['gobiiExtractFilterType','entityType', 'entityFilter', 'entitySubType', 'cvFilterType'],
+    inputs: ['gobiiExtractFilterType', 'entityType', 'entityFilter', 'entitySubType', 'cvFilterType'],
     outputs: ['onNameIdSelected', 'onError'],
     template: `<select name="users" (change)="handleNameIdSelected($event)" >
 			<option *ngFor="let nameId of nameIdList " 
@@ -43,7 +43,11 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
             this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType);
         }
 
+        this.initializeNameIds();
 
+    }
+
+    private initializeNameIds() {
         let scope$ = this;
         this._dtoRequestService.get(new DtoRequestItemNameIds(
             this.entityType,
@@ -52,7 +56,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.nameIdList = nameIds;
                     scope$.selectedNameId = nameIds[0].id;
-                    this.handleNameIdSelected(nameIds[0]);
+                    this.updateTreeService(nameIds[0]);
                 } else {
                     scope$.nameIdList = [new NameId("0", "ERROR NO " + EntityType[scope$.entityType], scope$.entityType)];
                 }
@@ -71,7 +75,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
     private entityFilterValue: string = null;
     private entitySubType: EntitySubType = null;
     private cvFilterType: CvFilterType = null;
-    private gobiiExtractFilterType:GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+    private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
     private selectedNameId: string = null;
 
@@ -84,15 +88,8 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
         this.onError.emit(header);
     }
 
+    private updateTreeService(nameId:NameId) {
 
-    private handleNameIdSelected(arg) {
-
-        let nameId:NameId = this.nameIdList[arg.srcElement.selectedIndex]
-
-        // let nameId: NameId = new NameId(this.nameIdList[arg.srcElement.selectedIndex].id,
-        //     this.nameIdList[arg.srcElement.selectedIndex].name,
-        //     this.entityType);
-        // this.onNameIdSelected.emit(nameId);
         let fileItem: FileItem = FileItem
             .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
             .setEntityType(this.entityType)
@@ -106,6 +103,20 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
                 headerResponse => {
                     this.handleResponseHeader(headerResponse)
                 });
+
+    }
+
+
+    private handleNameIdSelected(arg) {
+
+        let nameId: NameId = this.nameIdList[arg.srcElement.selectedIndex]
+
+        // let nameId: NameId = new NameId(this.nameIdList[arg.srcElement.selectedIndex].id,
+        //     this.nameIdList[arg.srcElement.selectedIndex].name,
+        //     this.entityType);
+        // this.onNameIdSelected.emit(nameId);
+
+        this.updateTreeService(nameId);
     }
 
 
@@ -124,5 +135,19 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
 
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
-    }
-}
+
+        if (changes['gobiiExtractFilterType']
+            && ( changes['gobiiExtractFilterType'].currentValue != null )
+            && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
+
+                if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+
+                    this.initializeNameIds();
+
+                } // if we have a new filter type
+
+        } // if filter type changed
+
+    } // ngonChanges
+
+} // class

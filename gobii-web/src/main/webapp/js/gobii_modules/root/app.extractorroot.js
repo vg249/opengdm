@@ -349,6 +349,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 };
                 ExtractorRoot.prototype.handleStatusTreeReady = function (headerStatusMessage) {
                     this.handleFormatSelected(type_extract_format_1.GobiiExtractFormat.HAPMAP);
+                    // this will trigger child components to initialize their data
+                    //this.gobiiExtractFilterTypeForTemplate = this.gobiiExtractFilterType;
                     //this.handleContactForSubmissionSelected(this.contactNameIdListForSubmitter[0]);
                 };
                 ExtractorRoot.prototype.makeDatasetExtract = function () {
@@ -521,7 +523,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     });
                     this.initializeServerConfigs();
                     this.handleExportTypeSelected(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET);
-                };
+                }; // ngOnInit()
                 return ExtractorRoot;
             }());
             ExtractorRoot = __decorate([

@@ -61,7 +61,6 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this.onError = new core_1.EventEmitter();
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
-                    var _this = this;
                     // entityFilterValue and entityFilter must either have values or be null.
                     if (this.entityFilter === type_entity_filter_1.EntityFilter.NONE) {
                         this.entityFilter = null;
@@ -73,12 +72,16 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     else {
                         this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType);
                     }
+                    this.initializeNameIds();
+                };
+                NameIdListBoxComponent.prototype.initializeNameIds = function () {
+                    var _this = this;
                     var scope$ = this;
                     this._dtoRequestService.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(this.entityType, this.entityFilter, this.entityFilterValue)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.nameIdList = nameIds;
                             scope$.selectedNameId = nameIds[0].id;
-                            _this.handleNameIdSelected(nameIds[0]);
+                            _this.updateTreeService(nameIds[0]);
                         }
                         else {
                             scope$.nameIdList = [new name_id_1.NameId("0", "ERROR NO " + type_entity_1.EntityType[scope$.entityType], scope$.entityType)];
@@ -90,13 +93,8 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 NameIdListBoxComponent.prototype.handleResponseHeader = function (header) {
                     this.onError.emit(header);
                 };
-                NameIdListBoxComponent.prototype.handleNameIdSelected = function (arg) {
+                NameIdListBoxComponent.prototype.updateTreeService = function (nameId) {
                     var _this = this;
-                    var nameId = this.nameIdList[arg.srcElement.selectedIndex];
-                    // let nameId: NameId = new NameId(this.nameIdList[arg.srcElement.selectedIndex].id,
-                    //     this.nameIdList[arg.srcElement.selectedIndex].name,
-                    //     this.entityType);
-                    // this.onNameIdSelected.emit(nameId);
                     var fileItem = file_item_1.FileItem
                         .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
                         .setEntityType(this.entityType)
@@ -108,6 +106,14 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         _this.handleResponseHeader(headerResponse);
                     });
                 };
+                NameIdListBoxComponent.prototype.handleNameIdSelected = function (arg) {
+                    var nameId = this.nameIdList[arg.srcElement.selectedIndex];
+                    // let nameId: NameId = new NameId(this.nameIdList[arg.srcElement.selectedIndex].id,
+                    //     this.nameIdList[arg.srcElement.selectedIndex].name,
+                    //     this.entityType);
+                    // this.onNameIdSelected.emit(nameId);
+                    this.updateTreeService(nameId);
+                };
                 NameIdListBoxComponent.prototype.getEntityFilterValue = function (entityType, entitySubType) {
                     var returnVal = null;
                     if (entityType === type_entity_1.EntityType.Contacts) {
@@ -118,9 +124,16 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     return returnVal;
                 };
                 NameIdListBoxComponent.prototype.ngOnChanges = function (changes) {
-                };
+                    if (changes['gobiiExtractFilterType']
+                        && (changes['gobiiExtractFilterType'].currentValue != null)
+                        && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
+                        if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+                            this.initializeNameIds();
+                        } // if we have a new filter type
+                    } // if filter type changed
+                }; // ngonChanges
                 return NameIdListBoxComponent;
-            }());
+            }()); // class
             NameIdListBoxComponent = __decorate([
                 core_1.Component({
                     selector: 'name-id-list-box',
