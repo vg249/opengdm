@@ -76,9 +76,19 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                     <legend class="the-legend">From Generic</legend>
                         <name-id-list-box
                             [entityType]="entityTypeForTemplates.Contacts"
-z                            [entityFilter] = "entityFilterForTemplates.BYTYPENAME"
-                            [entityFilterValue] = "getEntityFilterValue(entityTypeForTemplates.Contacts,entitySubTypeForTemplates.CONTACT_SUBMITED_BY)"
+                            [entityFilter] = "entityFilterForTemplates.NONE"
                             [entitySubType] = "entitySubTypeForTemplates.CONTACT_SUBMITED_BY"
+                            [cvFilterType] = "cvFilterTypeForTemplates.UNKNOWN"
+                            (onUserSelected)="handleContactForSubmissionSelected($event)">
+                        </name-id-list-box>
+                    </fieldset>
+                        
+                    <fieldset class="well the-fieldset">
+                    <legend class="the-legend">From Generic</legend>
+                        <name-id-list-box
+                            [entityType]="entityTypeForTemplates.Contacts"
+                            [entityFilter] = "entityFilterForTemplates.BYTYPENAME"
+                            [entitySubType] = "entitySubTypeForTemplates.CONTACT_PRINCIPLE_INVESTIGATOR"
                             [cvFilterType] = "cvFilterTypeForTemplates.UNKNOWN"
                             (onUserSelected)="handleContactForSubmissionSelected($event)">
                         </name-id-list-box>
@@ -246,18 +256,6 @@ export class ExtractorRoot implements OnInit {
     private entitySubTypeForTemplates = EntitySubType;
     private cvFilterTypeForTemplates = CvFilterType;
 
-    private getEntityFilterValue(entityType: EntityType, entitySubType: EntitySubType): string {
-
-        let returnVal: string = null;
-
-        if (entityType === EntityType.Contacts) {
-             if (entitySubType === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR ) {
-                 returnVal = "PI";
-            }
-        }
-
-        return returnVal;
-    }
 
     // ************************************************************************
 

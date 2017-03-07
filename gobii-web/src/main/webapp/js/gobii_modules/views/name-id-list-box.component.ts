@@ -9,7 +9,7 @@ import {EntityFilter} from "../model/type-entity-filter";
 
 @Component({
     selector: 'name-id-list-box',
-    inputs: ['entityType', 'entityFilter', 'entityFilterValue', 'entitySubType',  'cvFilterType'],
+    inputs: ['entityType', 'entityFilter', 'entitySubType', 'cvFilterType'],
     outputs: ['onNameIdSelected'],
     template: `<select name="users" (change)="handleNameIdSelected($event)" >
 			<option *ngFor="let nameId of nameIdList " 
@@ -26,6 +26,17 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
     } // ctor
 
     ngOnInit(): any {
+
+        // entityFilterValue and entityFilter must either have values or be null.
+        if (this.entityFilter === EntityFilter.NONE) {
+            this.entityFilter = null;
+            this.entityFilterValue = null;
+        } else if (this.entityFilter === null) {
+            this.entityFilterValue = null;
+        } else {
+            this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType);
+        }
+
 
         let scope$ = this;
         this._dtoRequestService.get(new DtoRequestItemNameIds(
@@ -56,7 +67,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
     private entitySubType: EntitySubType = null;
     private cvFilterType: CvFilterType = null;
 
-    private selectedNameId:string = null;
+    private selectedNameId: string = null;
 
     private onNameIdSelected: EventEmitter<NameId> = new EventEmitter();
 
@@ -67,6 +78,20 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
             this.entityType);
 
         this.onNameIdSelected.emit(nameId);
+    }
+
+
+    private getEntityFilterValue(entityType: EntityType, entitySubType: EntitySubType): string {
+
+        let returnVal: string = null;
+
+        if (entityType === EntityType.Contacts) {
+            if (entitySubType === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR) {
+                returnVal = "PI";
+            }
+        }
+
+        return returnVal;
     }
 
 
