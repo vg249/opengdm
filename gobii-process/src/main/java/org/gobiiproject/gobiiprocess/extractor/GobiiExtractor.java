@@ -213,6 +213,7 @@ public class GobiiExtractor {
 					}
 					else {
 						ErrorLogger.logError("Extractor","Exception in HapMap creation");
+						HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
 					}
 					break;
 
