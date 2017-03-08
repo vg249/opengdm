@@ -675,11 +675,7 @@ export class ExtractorRoot implements OnInit {
 
     handleStatusTreeReady(headerStatusMessage: HeaderStatusMessage) {
 
-        this.handleFormatSelected(GobiiExtractFormat.HAPMAP);
-
-        // this will trigger child components to initialize their data
-        //this.gobiiExtractFilterTypeForTemplate = this.gobiiExtractFilterType;
-        //this.handleContactForSubmissionSelected(this.contactNameIdListForSubmitter[0]);
+        //this.handleFormatSelected(GobiiExtractFormat.HAPMAP);
 
     }
 
