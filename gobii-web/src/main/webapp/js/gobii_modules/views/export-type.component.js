@@ -33,6 +33,7 @@ System.register(["@angular/core", "../model/type-extractor-filter"], function (e
                     }
                 };
                 ExportTypeComponent.prototype.ngOnInit = function () {
+                    //this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
                 };
                 return ExportTypeComponent;
             }());

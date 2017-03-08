@@ -628,14 +628,11 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             && ( changes['gobiiExtractFilterTypeEvent'].currentValue != null )
             && ( changes['gobiiExtractFilterTypeEvent'].currentValue != undefined )) {
 
-            let newGobiiExtractFilterType: GobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
-
-            if (newGobiiExtractFilterType !== this.gobiiExtractFilterType) {
-//                this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
-                this.setUpRequredItems(newGobiiExtractFilterType);
-//                this.onTreeReady.emit( new HeaderStatusMessage("ready",null,null));
+            if (changes['gobiiExtractFilterTypeEvent'].currentValue !== changes['gobiiExtractFilterTypeEvent'].previousValue) {
+                this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
+                this.setUpRequredItems(this.gobiiExtractFilterType);
+                this.onTreeReady.emit( new HeaderStatusMessage("","","") );
             }
-
 
             // this.setList(changes['nameIdList'].currentValue);
 

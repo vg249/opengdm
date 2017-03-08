@@ -418,10 +418,10 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                     else if (changes['gobiiExtractFilterTypeEvent']
                         && (changes['gobiiExtractFilterTypeEvent'].currentValue != null)
                         && (changes['gobiiExtractFilterTypeEvent'].currentValue != undefined)) {
-                        var newGobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
-                        if (newGobiiExtractFilterType !== this.gobiiExtractFilterType) {
-                            //                this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
-                            this.setUpRequredItems(newGobiiExtractFilterType);
+                        if (changes['gobiiExtractFilterTypeEvent'].currentValue !== changes['gobiiExtractFilterTypeEvent'].previousValue) {
+                            this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
+                            this.setUpRequredItems(this.gobiiExtractFilterType);
+                            this.onTreeReady.emit(new dto_header_status_message_1.HeaderStatusMessage("", "", ""));
                         }
                     }
                 };

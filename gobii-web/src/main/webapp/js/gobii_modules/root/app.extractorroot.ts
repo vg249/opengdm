@@ -185,7 +185,10 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                            <fieldset class="well the-fieldset">
                                 <legend class="the-legend">Extract</legend>
                            
-                                <export-format (onFormatSelected)="handleFormatSelected($event)"></export-format>
+                                <export-format
+                                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                    (onFormatSelected)="handleFormatSelected($event)"
+                                ></export-format>
                                 <BR>
                            
                                 <mapsets-list-box [nameIdList]="mapsetNameIdList" 
