@@ -5,7 +5,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -241,7 +240,7 @@ public class GobiiExtractor {
 							if (scanner.hasNextLine()) {
 								fileWriter.write(scanner.nextLine() + System.lineSeparator());
 							}
-							Pattern pattern = Pattern.compile("[0-9]{8}");
+							Pattern pattern = Pattern.compile("^[0-9]{1,8}$");
 							while (scanner.hasNextLine()) {
 								String[] lineParts = scanner.nextLine().split("\\t");
 								// The first column does not need to be converted
@@ -250,13 +249,36 @@ public class GobiiExtractor {
 								for (int index = 1; index < lineParts.length; index++) {
 									addedLineStringBuilder.append("\t");
 									if (!(pattern.matcher(lineParts[index]).find())) {
-										ErrorLogger.logError("Extractor","Incorrect format: "+lineParts[index]);
+										ErrorLogger.logError("Extractor","Incorrect SSR allele size format (1): "+lineParts[index]);
 										addedLineStringBuilder.append(lineParts[index]);
 									}
 									else {
-										addedLineStringBuilder.append(Integer.parseInt(lineParts[index].substring(0, 4)));
-										addedLineStringBuilder.append("/");
-										addedLineStringBuilder.append(Integer.parseInt(lineParts[index].substring(4)));
+										if ((5 <= lineParts[index].length()) && (lineParts[index].length() <= 8)) {
+											addedLineStringBuilder.append(Integer.parseInt(lineParts[index].substring(0, lineParts[index].length() - 4)));
+											addedLineStringBuilder.append("/");
+											addedLineStringBuilder.append(Integer.parseInt(lineParts[index].substring(lineParts[index].length() - 4)));
+										}
+										else {
+											if ((1 < lineParts[index].length()) && (lineParts[index].length() <= 4)) {
+												addedLineStringBuilder.append("0/");
+												addedLineStringBuilder.append(Integer.parseInt(lineParts[index]));
+											}
+											else {
+												if (lineParts[index].length() == 1) {
+													Integer digit = Integer.parseInt(lineParts[index]);
+													if (digit != 0) {
+														addedLineStringBuilder.append("0/");
+														addedLineStringBuilder.append(digit);
+													} else {
+														addedLineStringBuilder.append("N/N");
+													}
+												}
+												else {
+													ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): "+lineParts[index]);
+													addedLineStringBuilder.append(lineParts[index]);
+												}
+											}
+										}
 									}
 								}
 								addedLineStringBuilder.append(System.lineSeparator());
