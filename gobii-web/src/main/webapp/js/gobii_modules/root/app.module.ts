@@ -1,5 +1,8 @@
 import {NgModule} from "@angular/core";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {HttpModule} from "@angular/http";
 import {BrowserModule} from "@angular/platform-browser";
+
 import {ExportFormatComponent} from "../views/export-format.component";
 import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
 import {ProjectListBoxComponent} from "../views/project-list-box.component";
@@ -18,18 +21,21 @@ import {FileSelectDirective, FileDropDirective} from "ng2-file-upload";
 import {ExtractorRoot} from "./app.extractorroot";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {AuthenticationService} from "../services/core/authentication.service";
-import {HttpModule, ConnectionBackend} from "@angular/http";
-import {Http} from "@angular/http";
 import {TextAreaComponent} from "../views/text-area.component";
 import {UploaderComponent} from "../views/uploader.component";
-import {FormsModule} from "@angular/forms";
 import {SampleListTypeComponent} from "../views/sample-list-type.component";
+import {TreeModule, SharedModule, TreeNode} from 'primeng/primeng';
+import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
+import {FileModelTreeService} from "../services/core/file-model-tree-service";
 
 
 @NgModule({
     imports: [BrowserModule,
         HttpModule,
-        FormsModule],
+        FormsModule,
+        ReactiveFormsModule,
+        TreeModule,
+        SharedModule],
     declarations: [ExtractorRoot,
         ExportFormatComponent,
         ContactsListBoxComponent,
@@ -49,9 +55,11 @@ import {SampleListTypeComponent} from "../views/sample-list-type.component";
         FileDropDirective,
         TextAreaComponent,
         UploaderComponent,
-        SampleListTypeComponent],
+        SampleListTypeComponent,
+        StatusDisplayTreeComponent],
     providers: [AuthenticationService,
-        DtoRequestService],
+        DtoRequestService,
+        FileModelTreeService],
     bootstrap: [ExtractorRoot]
 })
 

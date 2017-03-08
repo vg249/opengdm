@@ -6,9 +6,10 @@ System.register([], function (exports_1, context_1) {
         setters: [],
         execute: function () {
             (function (GobiiExtractFilterType) {
-                GobiiExtractFilterType[GobiiExtractFilterType["WHOLE_DATASET"] = 0] = "WHOLE_DATASET";
-                GobiiExtractFilterType[GobiiExtractFilterType["BY_MARKER"] = 1] = "BY_MARKER";
-                GobiiExtractFilterType[GobiiExtractFilterType["BY_SAMPLE"] = 2] = "BY_SAMPLE";
+                GobiiExtractFilterType[GobiiExtractFilterType["UNKNOWN"] = 0] = "UNKNOWN";
+                GobiiExtractFilterType[GobiiExtractFilterType["WHOLE_DATASET"] = 1] = "WHOLE_DATASET";
+                GobiiExtractFilterType[GobiiExtractFilterType["BY_MARKER"] = 2] = "BY_MARKER";
+                GobiiExtractFilterType[GobiiExtractFilterType["BY_SAMPLE"] = 3] = "BY_SAMPLE";
             })(GobiiExtractFilterType || (GobiiExtractFilterType = {}));
             exports_1("GobiiExtractFilterType", GobiiExtractFilterType);
         }

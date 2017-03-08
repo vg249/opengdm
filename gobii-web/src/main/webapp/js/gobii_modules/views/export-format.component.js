@@ -1,4 +1,4 @@
-System.register(["@angular/core"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extract-format"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,11 +10,14 @@ System.register(["@angular/core"], function (exports_1, context_1) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, ExportFormatComponent;
+    var core_1, type_extract_format_1, ExportFormatComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (type_extract_format_1_1) {
+                type_extract_format_1 = type_extract_format_1_1;
             }
         ],
         execute: function () {
@@ -24,7 +27,9 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 } // ctor
                 ExportFormatComponent.prototype.handleContactSelected = function (arg) {
                     if (arg.srcElement.checked) {
-                        this.onFormatSelected.emit(arg.srcElement.value);
+                        var radioValue = arg.srcElement.value;
+                        var gobiiExportFormat = type_extract_format_1.GobiiExtractFormat[radioValue];
+                        this.onFormatSelected.emit(gobiiExportFormat);
                     }
                     var foo = arg;
                     //this.onContactSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
@@ -45,7 +50,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                     //  inputs: ['hero'],
                     //directives: [RADIO_GROUP_DIRECTIVES]
                     //  directives: [Alert]
-                    template: "\n    \t\t  <label class=\"the-label\">Select Format:</label><BR>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleContactSelected($event)\" name=\"format\" value=\"Hapmap\" checked=\"checked\">Hapmap<br>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleContactSelected($event)\" name=\"format\" value=\"FlapJack\">FlapJack<br>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleContactSelected($event)\" name=\"format\" value=\"MetaDataOnly\">Dataset Metadata Only<br>\n\t" // end template
+                    template: "\n    \t\t  <label class=\"the-label\">Select Format:</label><BR>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleContactSelected($event)\" name=\"format\" value=\"HAPMAP\" checked=\"checked\">Hapmap<br>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleContactSelected($event)\" name=\"format\" value=\"FLAPJACK\">FlapJack<br>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleContactSelected($event)\" name=\"format\" value=\"META_DATA_ONLY\">Dataset Metadata Only<br>\n\t" // end template
                 }),
                 __metadata("design:paramtypes", [])
             ], ExportFormatComponent);

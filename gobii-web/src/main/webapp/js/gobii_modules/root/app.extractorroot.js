@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-nameids", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-nameids", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-node", "../model/type-extract-format", "../model/file-model-tree-event"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_nameids_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, ExtractorRoot;
+    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_nameids_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, cv_filter_type_1, file_model_tree_service_1, file_model_node_1, type_extract_format_1, file_model_tree_event_1, ExtractorRoot;
     return {
         setters: [
             function (core_1_1) {
@@ -24,6 +24,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
+            },
+            function (file_item_1_1) {
+                file_item_1 = file_item_1_1;
             },
             function (server_config_1_1) {
                 server_config_1 = server_config_1_1;
@@ -57,16 +60,33 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
+            },
+            function (cv_filter_type_1_1) {
+                cv_filter_type_1 = cv_filter_type_1_1;
+            },
+            function (file_model_tree_service_1_1) {
+                file_model_tree_service_1 = file_model_tree_service_1_1;
+            },
+            function (file_model_node_1_1) {
+                file_model_node_1 = file_model_node_1_1;
+            },
+            function (type_extract_format_1_1) {
+                type_extract_format_1 = type_extract_format_1_1;
+            },
+            function (file_model_tree_event_1_1) {
+                file_model_tree_event_1 = file_model_tree_event_1_1;
             }
         ],
         execute: function () {
             ExtractorRoot = (function () {
-                function ExtractorRoot(_dtoRequestServiceExtractorFile, _dtoRequestServiceNameIds, _dtoRequestServiceServerConfigs) {
+                function ExtractorRoot(_dtoRequestServiceExtractorFile, _dtoRequestServiceNameIds, _dtoRequestServiceServerConfigs, _fileModelTreeService) {
                     this._dtoRequestServiceExtractorFile = _dtoRequestServiceExtractorFile;
                     this._dtoRequestServiceNameIds = _dtoRequestServiceNameIds;
                     this._dtoRequestServiceServerConfigs = _dtoRequestServiceServerConfigs;
+                    this._fileModelTreeService = _fileModelTreeService;
                     this.title = 'Gobii Web';
-                    this.dataSetCheckBoxEvents = [];
+                    //    private selectedExportTypeEvent:GobiiExtractFilterType;
+                    this.datasetFileItemEvents = [];
                     this.gobiiDatasetExtracts = [];
                     this.messages = [];
                     // ********************************************************************
@@ -82,13 +102,14 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.displaySampleMarkerBox = false;
                     // ********************************************************************
                     // ********************************************** HAPMAP SELECTION
-                    this.selectedFormatName = "Hapmap";
+                    this.selectedExtractFormat = type_extract_format_1.GobiiExtractFormat.HAPMAP;
                     // ********************************************************************
                     // ********************************************** EXPERIMENT ID
                     this.displayExperimentDetail = false;
                     // ********************************************************************
                     // ********************************************** DATASET ID
                     this.displayDataSetDetail = false;
+                    //private datasetFileItemEventChange: FileItem;
                     this.changeTrigger = 0;
                     // ********************************************************************
                     // ********************************************** MARKER/SAMPLE selection
@@ -103,11 +124,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         if (serverConfigs && (serverConfigs.length > 0)) {
                             scope$.serverConfigList = serverConfigs;
                             var serverCrop_1 = _this._dtoRequestServiceServerConfigs.getGobiiCropType();
+                            var gobiiVersion = _this._dtoRequestServiceServerConfigs.getGobbiiVersion();
                             scope$.selectedServerConfig =
                                 scope$.serverConfigList
                                     .filter(function (c) {
                                     return c.crop === serverCrop_1;
                                 })[0];
+                            scope$.currentStatus = "GOBII Server " + gobiiVersion;
                             scope$.messages.push("Connected to database: " + scope$.selectedServerConfig.crop);
                             scope$.initializeContactsForSumission();
                             scope$.initializeContactsForPi();
@@ -137,8 +160,10 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     window.location.href = newDestination;
                 }; // handleServerSelected()
                 ExtractorRoot.prototype.handleExportTypeSelected = function (arg) {
-                    this.selectedExportType = arg;
-                    if (this.selectedExportType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
+                    var foo = "foo";
+                    this.gobiiExtractFilterType = arg;
+                    //        let extractorFilterItemType: FileItem = FileItem.bui(this.gobiiExtractFilterType)
+                    if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                         this.displaySelectorPi = true;
                         this.displaySelectorProject = true;
                         this.displaySelectorExperiment = true;
@@ -149,7 +174,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.displaySampleListTypeSelector = false;
                         this.displaySampleMarkerBox = false;
                     }
-                    else if (this.selectedExportType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
+                    else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
                         this.initializeDatasetTypes();
                         this.initializePlatforms();
                         this.displaySelectorPi = true;
@@ -162,7 +187,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.displayIncludedDatasetsGrid = false;
                         this.displaySampleMarkerBox = false;
                     }
-                    else if (this.selectedExportType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
+                    else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
                         this.initializeDatasetTypes();
                         this.initializePlatforms();
                         this.displaySelectorDataType = true;
@@ -177,17 +202,30 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     }
                 };
                 ExtractorRoot.prototype.handleContactForSubmissionSelected = function (arg) {
-                    this.selectedContactIdForSubmitter = arg;
+                    var _this = this;
+                    this.selectedContactIdForSubmitter = arg.id;
+                    var fileItem = file_item_1.FileItem
+                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
+                        .setEntityType(type_entity_1.EntityType.Contacts)
+                        .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
+                        .setItemId(arg.id)
+                        .setItemName(arg.name);
+                    this._fileModelTreeService.put(fileItem)
+                        .subscribe(null, function (headerResponse) {
+                        _this.handleResponseHeader(headerResponse);
+                    });
                 };
                 ExtractorRoot.prototype.initializeContactsForSumission = function () {
+                    var _this = this;
                     var scope$ = this;
                     this._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.Contacts)).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.contactNameIdListForSubmitter = nameIds;
                             scope$.selectedContactIdForSubmitter = nameIds[0].id;
+                            _this.handleContactForSubmissionSelected(nameIds[0]);
                         }
                         else {
-                            scope$.contactNameIdListForSubmitter = [new name_id_1.NameId(0, "ERROR NO USERS")];
+                            scope$.contactNameIdListForSubmitter = [new name_id_1.NameId("0", "ERROR NO USERS", type_entity_1.EntityType.Contacts)];
                         }
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Rettrieving contacts: "
@@ -197,7 +235,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleContactForPiSelected = function (arg) {
                     this.selectedContactIdForPi = arg;
                     this.initializeProjectNameIds();
-                    //console.log("selected contact id:" + arg);
+                    //console.log("selected contact itemId:" + arg);
                 };
                 ExtractorRoot.prototype.initializeContactsForPi = function () {
                     var scope$ = this;
@@ -207,7 +245,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             scope$.selectedContactIdForPi = scope$.contactNameIdListForPi[0].id;
                         }
                         else {
-                            scope$.contactNameIdListForPi = [new name_id_1.NameId(0, "ERROR NO USERS")];
+                            scope$.contactNameIdListForPi = [new name_id_1.NameId("0", "ERROR NO USERS", type_entity_1.EntityType.Contacts)];
                         }
                         scope$.initializeProjectNameIds();
                     }, function (dtoHeaderResponse) {
@@ -216,8 +254,18 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     });
                 };
                 ExtractorRoot.prototype.handleFormatSelected = function (arg) {
-                    this.selectedFormatName = arg;
-                    //console.log("selected contact id:" + arg);
+                    var _this = this;
+                    this.selectedExtractFormat = arg;
+                    var extractFilterTypeFileItem = file_item_1.FileItem
+                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
+                        .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
+                        .setItemId(type_extract_format_1.GobiiExtractFormat[arg])
+                        .setItemName(type_extract_format_1.GobiiExtractFormat[type_extract_format_1.GobiiExtractFormat[arg]]);
+                    this._fileModelTreeService.put(extractFilterTypeFileItem)
+                        .subscribe(null, function (headerResponse) {
+                        _this.handleResponseHeader(headerResponse);
+                    });
+                    //console.log("selected contact itemId:" + arg);
                 };
                 ExtractorRoot.prototype.handleProjectSelected = function (arg) {
                     this.selectedProjectId = arg;
@@ -234,7 +282,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             scope$.selectedProjectId = nameIds[0].id;
                         }
                         else {
-                            scope$.projectNameIdList = [new name_id_1.NameId(0, "<none>")];
+                            scope$.projectNameIdList = [new name_id_1.NameId("0", "<none>", type_entity_1.EntityType.Projects)];
                             scope$.selectedProjectId = undefined;
                         }
                         _this.initializeExperimentNameIds();
@@ -247,7 +295,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.selectedExperimentId = arg;
                     this.selectedExperimentDetailId = arg;
                     this.displayExperimentDetail = true;
-                    //console.log("selected contact id:" + arg);
+                    //console.log("selected contact itemId:" + arg);
                 };
                 ExtractorRoot.prototype.initializeExperimentNameIds = function () {
                     var scope$ = this;
@@ -258,7 +306,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                 scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
                             }
                             else {
-                                scope$.experimentNameIdList = [new name_id_1.NameId(0, "<none>")];
+                                scope$.experimentNameIdList = [new name_id_1.NameId("0", "<none>", type_entity_1.EntityType.Experiments)];
                                 scope$.selectedExperimentId = undefined;
                             }
                         }, function (dtoHeaderResponse) {
@@ -267,7 +315,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         });
                     }
                     else {
-                        scope$.experimentNameIdList = [new name_id_1.NameId(0, "<none>")];
+                        scope$.experimentNameIdList = [new name_id_1.NameId("0", "<none>", type_entity_1.EntityType.Experiments)];
                         scope$.selectedExperimentId = undefined;
                     }
                 };
@@ -276,13 +324,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 };
                 ExtractorRoot.prototype.initializeDatasetTypes = function () {
                     var scope$ = this;
-                    scope$._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.CvTerms, type_entity_filter_1.EntityFilter.BYTYPENAME, "dataset_type")).subscribe(function (nameIds) {
+                    scope$._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.CvTerms, type_entity_filter_1.EntityFilter.BYTYPENAME, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))).subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.datasetTypeNameIdList = nameIds;
                             scope$.selectedDatasetTypeId = scope$.datasetTypeNameIdList[0].id;
                         }
                         else {
-                            scope$.datasetTypeNameIdList = [new name_id_1.NameId(0, "ERROR NO DATASET TYPES")];
+                            scope$.datasetTypeNameIdList = [new name_id_1.NameId("0", "ERROR NO DATASET TYPES", type_entity_1.EntityType.CvTerms)];
                         }
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retrieving DatasetTypes: "
@@ -303,7 +351,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             scope$.selectedPlatformId = scope$.platformsNameIdList[0].id;
                         }
                         else {
-                            scope$.platformsNameIdList = [new name_id_1.NameId(0, "ERROR NO PLATFORMS")];
+                            scope$.platformsNameIdList = [new name_id_1.NameId("0", "ERROR NO PLATFORMS", type_entity_1.EntityType.Platforms)];
                         }
                     }, function (dtoHeaderResponse) {
                         dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retrieving PlatformTypes: "
@@ -313,41 +361,74 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleAddMessage = function (arg) {
                     this.messages.push(arg);
                 };
+                ExtractorRoot.prototype.handleHeaderStatusMessage = function (statusMessage) {
+                    this.handleAddMessage(statusMessage.message);
+                };
+                ExtractorRoot.prototype.handleResponseHeader = function (header) {
+                    var _this = this;
+                    if (header.status !== null && header.status.statusMessages != null) {
+                        header.status.statusMessages.forEach(function (statusMessage) {
+                            _this.handleHeaderStatusMessage(statusMessage);
+                        });
+                    }
+                };
+                ExtractorRoot.prototype.handleStatusTreeReady = function (headerStatusMessage) {
+                    this.handleFormatSelected(type_extract_format_1.GobiiExtractFormat.HAPMAP);
+                    //this.handleContactForSubmissionSelected(this.contactNameIdListForSubmitter[0]);
+                };
                 ExtractorRoot.prototype.makeDatasetExtract = function () {
-                    this.gobiiDatasetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(type_gobii_file_1.GobiiFileType.GENERIC, false, Number(this.selectedDatasetId), this.selectedDatasetName, null, this.selectedExportType, this.markerList, this.sampleList, this.uploadFileName, this.selectedSampleListType, null, null));
+                    this.gobiiDatasetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(type_gobii_file_1.GobiiFileType.GENERIC, false, Number(this.selectedDatasetId), this.selectedDatasetName, null, this.gobiiExtractFilterType, this.markerList, this.sampleList, this.uploadFileName, this.selectedSampleListType, null, null));
                 };
                 ExtractorRoot.prototype.handleCheckedDataSetItem = function (arg) {
-                    this.selectedDatasetId = arg.id;
-                    if (type_process_1.ProcessType.CREATE == arg.processType) {
+                    var _this = this;
+                    this.selectedDatasetId = arg.getItemId();
+                    if (type_process_1.ProcessType.CREATE == arg.getProcessType()) {
                         this.makeDatasetExtract();
                     }
                     else {
-                        var indexOfEventToRemove = this.dataSetCheckBoxEvents.indexOf(arg);
-                        this.dataSetCheckBoxEvents.splice(indexOfEventToRemove, 1);
+                        var indexOfEventToRemove = this.datasetFileItemEvents.indexOf(arg);
+                        this.datasetFileItemEvents.splice(indexOfEventToRemove, 1);
                         this.gobiiDatasetExtracts =
                             this.gobiiDatasetExtracts
                                 .filter(function (item) {
-                                return item.getdataSetId() != Number(arg.id);
+                                return item.getdataSetId() != Number(arg.getItemId());
                             });
                     } // if-else we're adding
+                    //this.treeFileItemEvent = FileItem.fromFileItem(arg);
+                    var fileItemEvent = file_item_1.FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
+                    this._fileModelTreeService.put(fileItemEvent).subscribe(null, function (headerResponse) {
+                        _this.handleResponseHeader(headerResponse);
+                    });
                 };
                 ExtractorRoot.prototype.handleExtractDataSetUnchecked = function (arg) {
                     // this.changeTrigger++;
-                    // this.dataSetIdToUncheck = Number(arg.id);
-                    this.dataSetCheckBoxEvents.push(arg);
+                    // this.dataSetIdToUncheck = Number(arg.itemId);
+                    this.datasetFileItemEvents.push(arg);
                     var dataSetExtractsToRemove = this.gobiiDatasetExtracts
                         .filter(function (e) {
-                        return e.getdataSetId() === Number(arg.id);
+                        return e.getdataSetId() === Number(arg.getItemId());
                     });
                     if (dataSetExtractsToRemove.length > 0) {
                         var idxToRemove = this.gobiiDatasetExtracts.indexOf(dataSetExtractsToRemove[0]);
                         this.gobiiDatasetExtracts.splice(idxToRemove, 1);
                     }
-                    this.checkBoxEventChange = arg;
+                    // this.datasetFileItemEventChange = arg;
+                    this.treeFileItemEvent = file_item_1.FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
                 };
                 ExtractorRoot.prototype.handleMapsetSelected = function (arg) {
-                    if (arg > 0) {
-                        this.selectedMapsetId = arg;
+                    var _this = this;
+                    if (Number(arg.id) > 0) {
+                        this.selectedMapsetId = arg.id;
+                        var fileItem = file_item_1.FileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                            .setEntityType(type_entity_1.EntityType.Mapsets)
+                            .setCvFilterType(cv_filter_type_1.CvFilterType.UKNOWN)
+                            .setItemId(arg.id)
+                            .setItemName(arg.name)
+                            .setChecked(true)
+                            .setRequired(null);
+                        this._fileModelTreeService.put(fileItem).subscribe(null, function (headerResponse) {
+                            _this.handleResponseHeader(headerResponse);
+                        });
                     }
                     else {
                         this.selectedMapsetId = undefined;
@@ -357,7 +438,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     var scope$ = this;
                     scope$.nullMapsetName = "<none>";
                     this._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.Mapsets)).subscribe(function (nameIds) {
-                        scope$.mapsetNameIdList = [new name_id_1.NameId(0, scope$.nullMapsetName)];
+                        scope$.mapsetNameIdList = [new name_id_1.NameId("0", scope$.nullMapsetName, type_entity_1.EntityType.Mapsets)];
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.mapsetNameIdList = scope$.mapsetNameIdList.concat(nameIds);
                             scope$.selectedMapsetId = nameIds[0].id;
@@ -370,10 +451,10 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleSampleMarkerListComplete = function (arg) {
                     var sampleMarkerList = arg;
                     if (sampleMarkerList.isArray) {
-                        if (this.selectedExportType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
+                        if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
                             this.sampleList = sampleMarkerList.items;
                         }
-                        else if (this.selectedExportType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
+                        else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
                             this.markerList = sampleMarkerList.items;
                         }
                     }
@@ -388,15 +469,50 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 // ********************************************************************
                 // ********************************************** Extract file submission
                 ExtractorRoot.prototype.handleExtractSubmission = function () {
+                    var _this = this;
                     var scope$ = this;
                     var gobiiExtractorInstructions = [];
-                    var gobiiFileType = type_gobii_file_1.GobiiFileType[this.selectedFormatName.toUpperCase()];
-                    this.gobiiDatasetExtracts.forEach(function (e) { return e.setgobiiFileType(gobiiFileType); });
+                    var gobiiDataSetExtracts = [];
                     var mapsetIds = [];
-                    if ((scope$.selectedMapsetId !== undefined)) {
-                        mapsetIds.push(Number(scope$.selectedMapsetId));
-                    }
-                    gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction(this.gobiiDatasetExtracts, Number(this.selectedContactIdForSubmitter), null, mapsetIds));
+                    var submitterContactid = null;
+                    scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(function (fileItems) {
+                        var submitterFileItem = fileItems.find(function (item) {
+                            return (item.getEntityType() === type_entity_1.EntityType.Contacts)
+                                && (item.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_SUBMITED_BY);
+                        });
+                        submitterContactid = Number(submitterFileItem.getItemId());
+                        mapsetIds = fileItems
+                            .filter(function (item) {
+                            return item.getEntityType() === type_entity_1.EntityType.Mapsets;
+                        })
+                            .map(function (item) {
+                            return Number(item.getItemId());
+                        });
+                        var exportFileItem = fileItems.find(function (item) {
+                            return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.EXPORT_FORMAT;
+                        });
+                        var extractFormat = type_extract_format_1.GobiiExtractFormat[exportFileItem.getItemId()];
+                        var gobiiFileType = type_gobii_file_1.GobiiFileType[type_extract_format_1.GobiiExtractFormat[extractFormat]];
+                        var dataTypeFileItem = fileItems.find(function (item) {
+                            return item.getEntityType() === type_entity_1.EntityType.CvTerms
+                                && item.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
+                        });
+                        var datSetTypeName = dataTypeFileItem != null ? dataTypeFileItem.getItemName() : null;
+                        var platformFileItems = fileItems.filter(function (item) {
+                            return item.getEntityType() === type_entity_1.EntityType.Platforms;
+                        });
+                        var platformIds = platformFileItems.map(function (item) {
+                            return Number(item.getItemId());
+                        });
+                        fileItems
+                            .filter(function (item) {
+                            return item.getEntityType() === type_entity_1.EntityType.DataSets;
+                        })
+                            .forEach(function (datsetFileItem) {
+                            gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, Number(datsetFileItem.getItemId()), datsetFileItem.getItemName(), null, _this.gobiiExtractFilterType, _this.markerList, _this.sampleList, _this.uploadFileName, _this.selectedSampleListType, datSetTypeName, platformIds));
+                        });
+                    });
+                    gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction(gobiiDataSetExtracts, submitterContactid, null, mapsetIds));
                     var date = new Date();
                     var fileName = "extractor_"
                         + date.getFullYear()
@@ -411,7 +527,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         + "_"
                         + date.getSeconds();
                     var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName);
-                    //this.selectedServerConfig.crop
                     var extractorInstructionFilesDTOResponse = null;
                     this._dtoRequestServiceExtractorFile.post(new dto_request_item_extractor_submission_1.DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
                         .subscribe(function (extractorInstructionFilesDTO) {
@@ -419,12 +534,18 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         scope$.messages.push("Extractor instruction file created on server: "
                             + extractorInstructionFilesDTOResponse.getInstructionFileName());
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Submitting extractor instructions: "
-                            + m.message); });
+                        scope$.handleResponseHeader(dtoHeaderResponse);
                     });
                 };
                 ExtractorRoot.prototype.ngOnInit = function () {
+                    this._fileModelTreeService
+                        .treeStateNotifications()
+                        .subscribe(function (ts) {
+                        if (ts.fileModelState == file_model_tree_event_1.FileModelState.SUBMISSION_READY) {
+                        }
+                    });
                     this.initializeServerConfigs();
+                    this.handleExportTypeSelected(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET);
                 };
                 return ExtractorRoot;
             }());
@@ -432,12 +553,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 core_1.Component({
                     selector: 'extractor-root',
                     styleUrls: ['/extractor-ui.css'],
-                    template: "\n        <div class = \"panel panel-default\">\n        \n           <div class = \"panel-heading\">\n                <img src=\"images/gobii_logo.png\" alt=\"GOBii Project\"/>\n\n                <fieldset class=\"well the-fieldset\">\n                    <div class=\"col-md-2\">\n                        <crops-list-box\n                            [serverConfigList]=\"serverConfigList\"\n                            [selectedServerConfig]=\"selectedServerConfig\"\n                            (onServerSelected)=\"handleServerSelected($event)\"></crops-list-box>\n                    </div>\n                    \n                    <div class=\"col-md-3\">\n                       <export-type\n                        (onExportTypeSelected)=\"handleExportTypeSelected($event)\"></export-type>\n                     </div>\n                     \n                </fieldset>\n           </div>\n           \n            <div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-4\">\n                    \n                    <!--\n                        <fieldset class=\"well the-fieldset\">\n                        <legend class=\"the-legend\">Submit As</legend>\n                        <users-list-box\n                            [nameIdList]=\"contactNameIdListForSubmitter\"\n                            (onUserSelected)=\"handleContactForSubmissionSelected($event)\">\n                        </users-list-box>\n                        </fieldset>\n                        -->\n                        \n                     <fieldset class=\"well the-fieldset\">\n                        <legend class=\"the-legend\">Filters</legend><BR>\n                        \n                        \n                        <div *ngIf=\"displaySelectorPi\">\n                            <label class=\"the-label\">Principle Investigator:</label><BR>\n                            <contacts-list-box [nameIdList]=\"contactNameIdListForPi\" (onContactSelected)=\"handleContactForPiSelected($event)\"></contacts-list-box>\n                        </div>\n                        \n                        <div *ngIf=\"displaySelectorProject\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Project:</label><BR>\n                            <project-list-box [primaryInvestigatorId] = \"selectedContactIdForPi\"\n                                [nameIdList]=\"projectNameIdList\"\n                                [nameIdListPIs]=\"contactNameIdListForPi\"\n                                (onProjectSelected)=\"handleProjectSelected($event)\"\n                                (onAddMessage)=\"handleAddMessage($event)\"></project-list-box>\n                        </div>\n\n                        <div *ngIf=\"displaySelectorDataType\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Dataset Types:</label><BR>\n                            <dataset-types-list-box [nameIdList]=\"datasetTypeNameIdList\" (onDatasetTypeSelected)=\"handleDatasetTypeSelected($event)\"></dataset-types-list-box>\n                        </div>\n\n                        \n                        <div *ngIf=\"displaySelectorExperiment\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Experiment:</label><BR>\n                            <experiment-list-box [projectId] = \"selectedProjectId\"\n                                [nameIdList] = \"experimentNameIdList\"\n                                (onExperimentSelected)=\"handleExperimentSelected($event)\"\n                                (onAddMessage)=\"handleAddMessage($event)\"></experiment-list-box>\n                        </div>\n\n                        <div *ngIf=\"displaySelectorPlatform\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Platforms:</label><BR>\n                            <checklist-box\n                                [checkBoxEventChange] = \"platformCheckBoxEventChange\"\n                                [nameIdList] = \"platformsNameIdList\"\n                                (onItemSelected)=\"handlePlatformSelected($event)\"\n                                (onItemChecked)=\"handlePlatformChecked($event)\"\n                                (onAddMessage) = \"handleAddMessage($event)\">\n                            </checklist-box>\n                         </div>\n\n\n                        <div *ngIf=\"displayAvailableDatasets\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Data Sets</label><BR>\n                            <dataset-checklist-box\n                                [checkBoxEventChange] = \"checkBoxEventChange\"\n                                [experimentId] = \"selectedExperimentId\" \n                                (onItemChecked)=\"handleCheckedDataSetItem($event)\"\n                                (onAddMessage) = \"handleAddMessage($event)\">\n                            </dataset-checklist-box>\n                        </div>\n                    </fieldset>\n                       \n                       \n                    </div>  <!-- outer grid column 1-->\n                \n                \n                \n                    <div class=\"col-md-4\"> \n                        <div *ngIf=\"displayIncludedDatasetsGrid\">\n                            <fieldset class=\"well the-fieldset\" style=\"vertical-align: bottom;\">\n                                <legend class=\"the-legend\">Included Datasets</legend>\n                                <criteria-display \n                                    [dataSetCheckBoxEvents] = \"dataSetCheckBoxEvents\"\n                                    (onItemUnChecked) = \"handleExtractDataSetUnchecked($event)\"></criteria-display>\n                            </fieldset>\n                        </div>\n                        \n                        <div *ngIf=\"displaySampleListTypeSelector\">\n                            <fieldset class=\"well the-fieldset\" style=\"vertical-align: bottom;\">\n                                <legend class=\"the-legend\">Included Samples</legend>\n                                <sample-list-type\n                                    (onSampleListTypeSelected)=\"handleSampleListTypeSelected($event)\">\n                                 </sample-list-type>\n                                <hr style=\"width: 100%; color: black; height: 1px; background-color:black;\" />\n                                <sample-marker-box \n                                    (onMarkerSamplesCompleted) = \"handleSampleMarkerListComplete($event)\">\n                                </sample-marker-box>\n                            </fieldset>\n                        </div>\n                        \n                        <div *ngIf=\"displaySampleMarkerBox\">\n                            <fieldset class=\"well the-fieldset\" style=\"vertical-align: bottom;\">\n                                <legend class=\"the-legend\">Included Markers</legend>\n                                <sample-marker-box \n                                    (onMarkerSamplesCompleted) = \"handleSampleMarkerListComplete($event)\">\n                                </sample-marker-box>\n                            </fieldset>\n                        </div>\n                        \n                    </div>  <!-- outer grid column 2-->\n                    \n                    \n                    <div class=\"col-md-4\">\n                         \n                            \n                    <form>\n\t\t\t           <fieldset class=\"well the-fieldset\">\n                \t\t\t<legend class=\"the-legend\">Export</legend>\n\t\t\t           \n                            <export-format (onFormatSelected)=\"handleFormatSelected($event)\"></export-format>\n                            <BR>\n                       \n                            <mapsets-list-box [nameIdList]=\"mapsetNameIdList\" \n                                (onMapsetSelected)=\"handleMapsetSelected($event)\"></mapsets-list-box>\n                            <BR>\n                            <BR>\n                   \n                            <input type=\"button\" \n                            value=\"Submit\"\n                             [disabled]=\"(gobiiDatasetExtracts.length === 0)\"\n                            (click)=\"handleExtractSubmission()\" >\n            \t\t\t</fieldset>\n                    </form>\n                            \n                            <fieldset class=\"well the-fieldset\" style=\"vertical-align: bottom;\">\n                                <legend class=\"the-legend\">Status</legend>\n                                <status-display [messages] = \"messages\"></status-display>\n                            </fieldset>\n                                   \n                    </div>  <!-- outer grid column 3 (inner grid)-->\n                                        \n                </div> <!-- .row of outer grid -->\n                \n                    <div class=\"row\"><!-- begin .row 2 of outer grid-->\n                        <div class=\"col-md-3\"><!-- begin column 1 of outer grid -->\n                         \n                         </div><!-- end column 1 of outer grid -->\n                    \n                    </div><!-- end .row 2 of outer grid-->\n                \n            </div>" // end template
+                    template: "<div class = \"panel panel-default\">\n        \n           <div class = \"panel-heading\">\n                <img src=\"images/gobii_logo.png\" alt=\"GOBii Project\"/>\n\n                <fieldset class=\"well the-fieldset\">\n                    <div class=\"col-md-2\">\n                        <crops-list-box\n                            [serverConfigList]=\"serverConfigList\"\n                            [selectedServerConfig]=\"selectedServerConfig\"\n                            (onServerSelected)=\"handleServerSelected($event)\"></crops-list-box>\n                    </div>\n                    \n                    <div class=\"col-md-3\">\n                       <export-type\n                        (onExportTypeSelected)=\"handleExportTypeSelected($event)\"></export-type>\n                     </div>\n                     \n                </fieldset>\n           </div>\n           \n            <div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-4\">\n                    \n                    <fieldset class=\"well the-fieldset\">\n                    <legend class=\"the-legend\">Submit As</legend>\n                    <users-list-box\n                        [nameIdList]=\"contactNameIdListForSubmitter\"\n                        (onUserSelected)=\"handleContactForSubmissionSelected($event)\">\n                    </users-list-box>\n                    </fieldset>\n                        \n                     <fieldset class=\"well the-fieldset\">\n                        <legend class=\"the-legend\">Filters</legend><BR>\n                        \n                        \n                        <div *ngIf=\"displaySelectorPi\">\n                            <label class=\"the-label\">Principle Investigator:</label><BR>\n                            <contacts-list-box [nameIdList]=\"contactNameIdListForPi\" (onContactSelected)=\"handleContactForPiSelected($event)\"></contacts-list-box>\n                        </div>\n                        \n                        <div *ngIf=\"displaySelectorProject\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Project:</label><BR>\n                            <project-list-box [primaryInvestigatorId] = \"selectedContactIdForPi\"\n                                [nameIdList]=\"projectNameIdList\"\n                                [nameIdListPIs]=\"contactNameIdListForPi\"\n                                (onProjectSelected)=\"handleProjectSelected($event)\"\n                                (onAddMessage)=\"handleAddMessage($event)\"></project-list-box>\n                        </div>\n\n                        <div *ngIf=\"displaySelectorDataType\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Dataset Types:</label><BR>\n                            <dataset-types-list-box [nameIdList]=\"datasetTypeNameIdList\" (onDatasetTypeSelected)=\"handleDatasetTypeSelected($event)\"></dataset-types-list-box>\n                        </div>\n\n                        \n                        <div *ngIf=\"displaySelectorExperiment\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Experiment:</label><BR>\n                            <experiment-list-box [projectId] = \"selectedProjectId\"\n                                [nameIdList] = \"experimentNameIdList\"\n                                (onExperimentSelected)=\"handleExperimentSelected($event)\"\n                                (onAddMessage)=\"handleAddMessage($event)\"></experiment-list-box>\n                        </div>\n\n                        <div *ngIf=\"displaySelectorPlatform\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Platforms:</label><BR>\n                            <checklist-box\n                                [fileItemEventChange] = \"platformFileItemEventChange\"\n                                [nameIdList] = \"platformsNameIdList\"\n                                (onItemSelected)=\"handlePlatformSelected($event)\"\n                                (onItemChecked)=\"handlePlatformChecked($event)\"\n                                (onAddMessage) = \"handleAddMessage($event)\">\n                            </checklist-box>\n                         </div>\n\n\n                        <div *ngIf=\"displayAvailableDatasets\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Data Sets</label><BR>\n                            <dataset-checklist-box\n                                [fileItemEventChange] = \"datasetFileItemEventChange\"\n                                [experimentId] = \"selectedExperimentId\" \n                                (onItemChecked)=\"handleCheckedDataSetItem($event)\"\n                                (onAddMessage) = \"handleAddMessage($event)\">\n                            </dataset-checklist-box>\n                        </div>\n                    </fieldset>\n                       \n                       \n                    </div>  <!-- outer grid column 1-->\n                \n                \n                \n                    <div class=\"col-md-4\"> \n\n                        <div *ngIf=\"displaySampleListTypeSelector\">\n                            <fieldset class=\"well the-fieldset\" style=\"vertical-align: bottom;\">\n                                <legend class=\"the-legend\">Included Samples</legend>\n                                <sample-list-type\n                                    (onSampleListTypeSelected)=\"handleSampleListTypeSelected($event)\">\n                                 </sample-list-type>\n                                <hr style=\"width: 100%; color: black; height: 1px; background-color:black;\" />\n                                <sample-marker-box \n                                    (onMarkerSamplesCompleted) = \"handleSampleMarkerListComplete($event)\">\n                                </sample-marker-box>\n                            </fieldset>\n                        </div>\n                        \n                        <div *ngIf=\"displaySampleMarkerBox\">\n                            <fieldset class=\"well the-fieldset\" style=\"vertical-align: bottom;\">\n                                <legend class=\"the-legend\">Included Markers</legend>\n                                <sample-marker-box \n                                    (onMarkerSamplesCompleted) = \"handleSampleMarkerListComplete($event)\">\n                                </sample-marker-box>\n                            </fieldset>\n                        </div>\n\n                        \n                        <form>\n                           <fieldset class=\"well the-fieldset\">\n                                <legend class=\"the-legend\">Extract</legend>\n                           \n                                <export-format (onFormatSelected)=\"handleFormatSelected($event)\"></export-format>\n                                <BR>\n                           \n                                <mapsets-list-box [nameIdList]=\"mapsetNameIdList\" \n                                    (onMapsetSelected)=\"handleMapsetSelected($event)\"></mapsets-list-box>\n                            </fieldset>\n                        </form>\n                        \n                        \n                    </div>  <!-- outer grid column 2-->\n                    \n                    \n                    <div class=\"col-md-4\">\n\n                        <fieldset class=\"well the-fieldset\" style=\"vertical-align: bottom;\">\n                            <legend class=\"the-legend\">Extraction Criteria Summary</legend>\n                            <status-display-tree\n                                [fileItemEventChange] = \"treeFileItemEvent\"\n                                [gobiiExtractFilterTypeEvent] = \"gobiiExtractFilterType\"\n                                (onAddMessage)=\"handleHeaderStatusMessage($event)\"\n                                (onTreeReady)=\"handleStatusTreeReady($event)\">\n                            </status-display-tree>\n                            <BR>\n                                <input type=\"button\" \n                                value=\"Submit\"\n                                 [disabled]=\"(gobiiDatasetExtracts.length === 0)\"\n                                (click)=\"handleExtractSubmission()\" >\n                            \n                        </fieldset>\n                            \n                        <div>\n                            <fieldset class=\"well the-fieldset\" style=\"vertical-align: bottom;\">\n                                <legend class=\"the-legend\">Status: {{currentStatus}}</legend>\n                                <status-display [messages] = \"messages\"></status-display>\n                            </fieldset>\n                        </div>\n                            \n                                   \n                    </div>  <!-- outer grid column 3 (inner grid)-->\n                                        \n                </div> <!-- .row of outer grid -->\n                \n                    <div class=\"row\"><!-- begin .row 2 of outer grid-->\n                        <div class=\"col-md-3\"><!-- begin column 1 of outer grid -->\n                         \n                         </div><!-- end column 1 of outer grid -->\n                    \n                    </div><!-- end .row 2 of outer grid-->\n                \n            </div>" // end template
                 }) // @Component
                 ,
                 __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService,
                     dto_request_service_1.DtoRequestService,
-                    dto_request_service_1.DtoRequestService])
+                    dto_request_service_1.DtoRequestService,
+                    file_model_tree_service_1.FileModelTreeService])
             ], ExtractorRoot);
             exports_1("ExtractorRoot", ExtractorRoot);
         }

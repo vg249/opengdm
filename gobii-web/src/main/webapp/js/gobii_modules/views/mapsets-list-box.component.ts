@@ -1,5 +1,6 @@
 import {Component, OnInit, EventEmitter} from "@angular/core";
 import {NameId} from "../model/name-id";
+import {FileModelTreeService} from "../services/core/file-model-tree-service";
 
 
 @Component({
@@ -22,13 +23,14 @@ export class MapsetsListBoxComponent implements OnInit {
     // useg
     private nameIdList:NameId[];
 
-    private onMapsetSelected:EventEmitter<string> = new EventEmitter();
+    private onMapsetSelected:EventEmitter<NameId> = new EventEmitter();
 
     private handleMapsetSelected(arg) {
-        this.onMapsetSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
+        this.onMapsetSelected.emit(this.nameIdList[arg.srcElement.selectedIndex]);
+
     }
 
-    constructor() {
+    constructor(private _fileModelTreeService: FileModelTreeService) {
 
     } // ctor
 

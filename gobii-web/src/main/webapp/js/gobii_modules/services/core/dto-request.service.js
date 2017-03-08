@@ -49,6 +49,9 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                 DtoRequestService.prototype.getGobiiCropType = function () {
                     return this._authenticationService.getGobiiCropType();
                 };
+                DtoRequestService.prototype.getGobbiiVersion = function () {
+                    return this._gobbiiVersion;
+                };
                 DtoRequestService.prototype.getResult = function (dtoRequestItem) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
@@ -69,7 +72,15 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                                 else {
                                     observer.error(headerResponse);
                                 }
+                            }, function (json) {
+                                var obj = JSON.parse(json._body);
+                                var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
+                                observer.error(payloadResponse.header);
                             }); // subscribe http
+                        }, function (json) {
+                            var obj = JSON.parse(json._body);
+                            var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
+                            observer.error(payloadResponse.header);
                         }); // subscribe get authentication token
                     }); // observable
                 };
@@ -91,14 +102,23 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                                     observer.complete();
                                 }
                                 else {
-                                    observer.error(payloadResponse);
+                                    observer.error(payloadResponse.header);
                                 }
+                            }, function (json) {
+                                var obj = JSON.parse(json._body);
+                                var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
+                                observer.error(payloadResponse.header);
                             }); // subscribe http
+                        }, function (json) {
+                            var obj = JSON.parse(json._body);
+                            var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
+                            observer.error(payloadResponse.header);
                         }); // subscribe get authentication token
                     }); // observable
                 };
                 DtoRequestService.prototype.get = function (dtoRequestItem) {
                     var _this = this;
+                    var scope$ = this;
                     return Observable_1.Observable.create(function (observer) {
                         _this._authenticationService
                             .getToken()
@@ -110,6 +130,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                                 .subscribe(function (json) {
                                 var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(json);
                                 if (payloadResponse.header.status.succeeded) {
+                                    scope$._gobbiiVersion = payloadResponse.header.gobiiVersion;
                                     var result = dtoRequestItem.resultFromJson(json);
                                     observer.next(result);
                                     observer.complete();
@@ -118,6 +139,10 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                                     observer.error(payloadResponse);
                                 }
                             }); // subscribe http
+                        }, function (json) {
+                            var obj = JSON.parse(json._body);
+                            var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
+                            observer.error(payloadResponse.header);
                         }); // subscribe get authentication token
                     }); // observable
                 };
