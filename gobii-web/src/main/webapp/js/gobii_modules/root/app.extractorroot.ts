@@ -87,7 +87,7 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                                 [entityFilter] = "entityFilterForTemplates.BYTYPENAME"
                                 [entitySubType] = "entitySubTypeForTemplates.CONTACT_PRINCIPLE_INVESTIGATOR"
                                 [cvFilterType] = "cvFilterTypeForTemplates.UNKNOWN"
-                                (onUserSelected)="handleContactForPiSelected($event)">
+                                (onNameIdSelected)="handleContactForPiSelected($event)">
                             </name-id-list-box>
                             
                         </div>
@@ -451,7 +451,7 @@ export class ExtractorRoot implements OnInit {
     private selectedContactIdForPi: string;
 
     private handleContactForPiSelected(arg) {
-        this.selectedContactIdForPi = arg;
+        this.selectedContactIdForPi = arg.id;
         this.initializeProjectNameIds();
         //console.log("selected contact itemId:" + arg);
     }

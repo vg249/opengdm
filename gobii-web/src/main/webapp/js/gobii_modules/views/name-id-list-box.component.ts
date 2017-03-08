@@ -121,7 +121,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
         // let nameId: NameId = new NameId(this.nameIdList[arg.srcElement.selectedIndex].id,
         //     this.nameIdList[arg.srcElement.selectedIndex].name,
         //     this.entityType);
-        // this.onNameIdSelected.emit(nameId);
+        this.onNameIdSelected.emit(nameId);
 
         this.updateTreeService(nameId);
     }

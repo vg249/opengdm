@@ -116,7 +116,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     // let nameId: NameId = new NameId(this.nameIdList[arg.srcElement.selectedIndex].id,
                     //     this.nameIdList[arg.srcElement.selectedIndex].name,
                     //     this.entityType);
-                    // this.onNameIdSelected.emit(nameId);
+                    this.onNameIdSelected.emit(nameId);
                     this.updateTreeService(nameId);
                 };
                 NameIdListBoxComponent.prototype.getEntityFilterValue = function (entityType, entitySubType) {
