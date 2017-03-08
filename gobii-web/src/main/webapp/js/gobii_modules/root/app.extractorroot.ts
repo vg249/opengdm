@@ -78,6 +78,7 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                     <fieldset class="well the-fieldset">
                     <legend class="the-legend">From Generic</legend>
                         <name-id-list-box
+                            [gobiiExtractFilterType] = "gobiiExtractFilterType"
                             [entityType]="entityTypeForTemplates.Contacts"
                             [entityFilter] = "entityFilterForTemplates.BYTYPENAME"
                             [entitySubType] = "entitySubTypeForTemplates.CONTACT_PRINCIPLE_INVESTIGATOR"
