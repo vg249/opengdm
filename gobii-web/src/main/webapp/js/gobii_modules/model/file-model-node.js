@@ -23,6 +23,7 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
                 ExtractorItemType[ExtractorItemType["SAMPLE_LIST"] = 4] = "SAMPLE_LIST";
                 ExtractorItemType[ExtractorItemType["EXPORT_FORMAT"] = 5] = "EXPORT_FORMAT";
                 ExtractorItemType[ExtractorItemType["CROP_TYPE"] = 6] = "CROP_TYPE";
+                ExtractorItemType[ExtractorItemType["STATUS_DISPLAY_TREE_READY"] = 7] = "STATUS_DISPLAY_TREE_READY";
             })(ExtractorItemType || (ExtractorItemType = {}));
             exports_1("ExtractorItemType", ExtractorItemType);
             (function (ExtractorCategoryType) {

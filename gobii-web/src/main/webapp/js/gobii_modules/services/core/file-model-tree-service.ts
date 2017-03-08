@@ -209,6 +209,14 @@ export class FileModelTreeService {
         return this.fileModelNodeTree.get(gobiiExtractFilterType);
     }
 
+
+    private processNotification(fileItem: FileItem): FileModelTreeEvent {
+
+        let returnVal: FileModelTreeEvent = new FileModelTreeEvent(fileItem,null,null,null);
+        return returnVal;
+
+    }
+
     private mutate(fileItem: FileItem): FileModelTreeEvent {
 
         let returnVal: FileModelTreeEvent = null;
@@ -404,7 +412,13 @@ export class FileModelTreeService {
 
             let foo: string = "foo";
 
-            let fileTreeEvent: FileModelTreeEvent = this.mutate(fileItem);
+            let fileTreeEvent: FileModelTreeEvent = null;
+
+            if( fileItem.getProcessType() !== ProcessType.NOTIFY ) {
+                fileTreeEvent = this.mutate(fileItem);
+            } else {
+                fileTreeEvent = this.processNotification(fileItem);
+            }
 
             if (fileTreeEvent.fileModelState != FileModelState.ERROR) {
 

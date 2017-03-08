@@ -46,17 +46,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     constructor(private _fileModelTreeService: FileModelTreeService) {
 
-
-        // setUpRequiredItems _must_ be done in the constructor because otherwise
-        // other components cannot depend on the tree being there to accrete the
-        // file items. Consequently though, since the constructor occurs before
-        // ngOnChanges, we don't know what the end user's selected extract type.
-        // So all components just have to "know" that the default initial type
-        // is whole dataset. We _should_ be getting the extract type from the parent
-        // component, but doing things this way avoids other lifecycle issues.
-        this.gobiiExtractFilterType = GobiiExtractFilterType.WHOLE_DATASET;
-        this.setUpRequredItems(this.gobiiExtractFilterType);
-
         // has to be in ctor because if you put it in ngOnInit(), there can be ngOnChange events
         // before ngOnInit() is called.
         this._fileModelTreeService
@@ -68,6 +57,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                     this.placeNodeInTree(te);
                 } else if (te.fileItem.getProcessType() === ProcessType.DELETE) {
                     this.removeNodeFromTree(te);
+                } else if (te.fileItem.getProcessType() === ProcessType.NOTIFY) {
+                    // for now do nothing
                 } else {
 
                     let headerStatusMessage: HeaderStatusMessage =
@@ -631,7 +622,11 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             if (changes['gobiiExtractFilterTypeEvent'].currentValue !== changes['gobiiExtractFilterTypeEvent'].previousValue) {
                 this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
                 this.setUpRequredItems(this.gobiiExtractFilterType);
-                this.onTreeReady.emit( new HeaderStatusMessage("","","") );
+                //this.onTreeReady.emit( new HeaderStatusMessage("","","") );
+
+                this._fileModelTreeService.put( FileItem
+                    .build(this.gobiiExtractFilterType,ProcessType.NOTIFY)
+                    .setExtractorItemType(ExtractorItemType.STATUS_DISPLAY_TREE_READY)).subscribe();
             }
 
             // this.setList(changes['nameIdList'].currentValue);

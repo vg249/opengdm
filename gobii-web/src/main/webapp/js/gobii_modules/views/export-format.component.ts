@@ -14,7 +14,7 @@ import {EntityType} from "../model/type-entity";
 
 @Component({
     selector: 'export-format',
-    outputs: ['onFormatSelected','onError'],
+    outputs: ['onFormatSelected', 'onError'],
     inputs: ['gobiiExtractFilterType'],
     //directives: [RADIO_GROUP_DIRECTIVES]
 //  directives: [Alert]
@@ -28,8 +28,7 @@ import {EntityType} from "../model/type-entity";
 
 export class ExportFormatComponent implements OnInit, OnChanges {
 
-    constructor(private _dtoRequestService: DtoRequestService<NameId[]>,
-                private _fileModelTreeService: FileModelTreeService) {
+    constructor(private _fileModelTreeService: FileModelTreeService) {
     } // ctor
 
     // private nameIdList: NameId[];
@@ -51,7 +50,7 @@ export class ExportFormatComponent implements OnInit, OnChanges {
         // to the model service _after_ the tree calls oncomplete. If we want to encapsulate all the
         // service communication in the child components, the tree service will have to accommodate
         // notification events to which these components will subscribe.
-        this.updateTreeService(GobiiExtractFormat.HAPMAP);
+
 
 
         // let scope$ = this;
@@ -73,6 +72,20 @@ export class ExportFormatComponent implements OnInit, OnChanges {
         //     });
 
 
+        // so, for now, this dispensation solves the problem. But I suspect it only works because the
+        // the tree component just happens to be the last one to be processed because it's at the end
+        // of the control tree, so it's the last one to get the property binding updates. If it were
+        // at the top of the control tree, we would have the reverse problem in that it would send out
+        // the of TREE_READY before the sibling components had been bound to their property values,
+        // and the component initialization would not work. perhaps. For now, I think this is ok.
+        this._fileModelTreeService
+            .fileItemNotifications()
+            .subscribe(fileItem => {
+                if (fileItem.getProcessType() === ProcessType.NOTIFY
+                    && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+                    this.updateTreeService(GobiiExtractFormat.HAPMAP);
+                }
+            });
     }
 
     private handleResponseHeader(header: Header) {
@@ -81,7 +94,7 @@ export class ExportFormatComponent implements OnInit, OnChanges {
     }
 
 
-    private gobiiExtractFilterType:GobiiExtractFilterType;
+    private gobiiExtractFilterType: GobiiExtractFilterType;
     private onFormatSelected: EventEmitter<GobiiExtractFormat> = new EventEmitter();
     private onError: EventEmitter<Header> = new EventEmitter();
 
@@ -99,6 +112,7 @@ export class ExportFormatComponent implements OnInit, OnChanges {
     }
 
     private selectedExtractFormat: GobiiExtractFormat = GobiiExtractFormat.HAPMAP;
+
     private updateTreeService(arg: GobiiExtractFormat) {
 
         this.selectedExtractFormat = arg;
@@ -121,20 +135,19 @@ export class ExportFormatComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
-        if (changes['gobiiExtractFilterType']
-            && ( changes['gobiiExtractFilterType'].currentValue != null )
-            && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
-
-            if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
-
-                this.updateTreeService(GobiiExtractFormat.HAPMAP);
-
-            } // if we have a new filter type
-
-        } // if filter type changed
+        // if (changes['gobiiExtractFilterType']
+        //     && ( changes['gobiiExtractFilterType'].currentValue != null )
+        //     && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
+        //
+        //     if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+        //
+        //         this.updateTreeService(GobiiExtractFormat.HAPMAP);
+        //
+        //     } // if we have a new filter type
+        //
+        // } // if filter type changed
 
     } // ngonChanges
-
 
 
 }

@@ -69,15 +69,6 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                     this.fileModelNodeTree = new Map();
-                    // setUpRequiredItems _must_ be done in the constructor because otherwise
-                    // other components cannot depend on the tree being there to accrete the
-                    // file items. Consequently though, since the constructor occurs before
-                    // ngOnChanges, we don't know what the end user's selected extract type.
-                    // So all components just have to "know" that the default initial type
-                    // is whole dataset. We _should_ be getting the extract type from the parent
-                    // component, but doing things this way avoids other lifecycle issues.
-                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET;
-                    this.setUpRequredItems(this.gobiiExtractFilterType);
                     // has to be in ctor because if you put it in ngOnInit(), there can be ngOnChange events
                     // before ngOnInit() is called.
                     this._fileModelTreeService
@@ -89,6 +80,8 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                         }
                         else if (te.fileItem.getProcessType() === type_process_1.ProcessType.DELETE) {
                             _this.removeNodeFromTree(te);
+                        }
+                        else if (te.fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY) {
                         }
                         else {
                             var headerStatusMessage = new dto_header_status_message_1.HeaderStatusMessage("Error in status display tree processing file item type "
@@ -421,7 +414,10 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                         if (changes['gobiiExtractFilterTypeEvent'].currentValue !== changes['gobiiExtractFilterTypeEvent'].previousValue) {
                             this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
                             this.setUpRequredItems(this.gobiiExtractFilterType);
-                            this.onTreeReady.emit(new dto_header_status_message_1.HeaderStatusMessage("", "", ""));
+                            //this.onTreeReady.emit( new HeaderStatusMessage("","","") );
+                            this._fileModelTreeService.put(file_item_1.FileItem
+                                .build(this.gobiiExtractFilterType, type_process_1.ProcessType.NOTIFY)
+                                .setExtractorItemType(file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY)).subscribe();
                         }
                     }
                 };

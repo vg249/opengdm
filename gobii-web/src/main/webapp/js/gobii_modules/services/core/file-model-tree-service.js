@@ -192,6 +192,10 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                     }
                     return this.fileModelNodeTree.get(gobiiExtractFilterType);
                 };
+                FileModelTreeService.prototype.processNotification = function (fileItem) {
+                    var returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, null, null, null);
+                    return returnVal;
+                };
                 FileModelTreeService.prototype.mutate = function (fileItem) {
                     var returnVal = null;
                     if (fileItem.getGobiiExtractFilterType() != type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN) {
@@ -304,7 +308,13 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
                         var foo = "foo";
-                        var fileTreeEvent = _this.mutate(fileItem);
+                        var fileTreeEvent = null;
+                        if (fileItem.getProcessType() !== type_process_1.ProcessType.NOTIFY) {
+                            fileTreeEvent = _this.mutate(fileItem);
+                        }
+                        else {
+                            fileTreeEvent = _this.processNotification(fileItem);
+                        }
                         if (fileTreeEvent.fileModelState != file_model_tree_event_1.FileModelState.ERROR) {
                             observer.next(fileTreeEvent);
                             observer.complete();

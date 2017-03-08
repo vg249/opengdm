@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-extract-format", "../services/core/file-model-tree-service", "../model/file-item", "../model/type-process", "../model/file-model-node", "../services/core/dto-request.service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extract-format", "../services/core/file-model-tree-service", "../model/file-item", "../model/type-process", "../model/file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extract_format_1, file_model_tree_service_1, file_item_1, type_process_1, file_model_node_1, dto_request_service_1, ExportFormatComponent;
+    var core_1, type_extract_format_1, file_model_tree_service_1, file_item_1, type_process_1, file_model_node_1, ExportFormatComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -30,15 +30,11 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
             },
             function (file_model_node_1_1) {
                 file_model_node_1 = file_model_node_1_1;
-            },
-            function (dto_request_service_1_1) {
-                dto_request_service_1 = dto_request_service_1_1;
             }
         ],
         execute: function () {
             ExportFormatComponent = (function () {
-                function ExportFormatComponent(_dtoRequestService, _fileModelTreeService) {
-                    this._dtoRequestService = _dtoRequestService;
+                function ExportFormatComponent(_fileModelTreeService) {
                     this._fileModelTreeService = _fileModelTreeService;
                     this.onFormatSelected = new core_1.EventEmitter();
                     this.onError = new core_1.EventEmitter();
@@ -62,7 +58,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
                     // to the model service _after_ the tree calls oncomplete. If we want to encapsulate all the
                     // service communication in the child components, the tree service will have to accommodate
                     // notification events to which these components will subscribe.
-                    this.updateTreeService(type_extract_format_1.GobiiExtractFormat.HAPMAP);
+                    var _this = this;
                     // let scope$ = this;
                     // this._dtoRequestService.get(new DtoRequestItemNameIds(
                     //     EntityType.Contacts,
@@ -80,6 +76,20 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
                     //     responseHeader => {
                     //         this.handleResponseHeader(responseHeader);
                     //     });
+                    // so, for now, this dispensation solves the problem. But I suspect it only works because the
+                    // the tree component just happens to be the last one to be processed because it's at the end
+                    // of the control tree, so it's the last one to get the property binding updates. If it were
+                    // at the top of the control tree, we would have the reverse problem in that it would send out
+                    // the of TREE_READY before the sibling components had been bound to their property values,
+                    // and the component initialization would not work. perhaps. For now, I think this is ok.
+                    this._fileModelTreeService
+                        .fileItemNotifications()
+                        .subscribe(function (fileItem) {
+                        if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
+                            && fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+                            _this.updateTreeService(type_extract_format_1.GobiiExtractFormat.HAPMAP);
+                        }
+                    });
                 };
                 ExportFormatComponent.prototype.handleResponseHeader = function (header) {
                     this.onError.emit(header);
@@ -108,13 +118,17 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
                     //console.log("selected contact itemId:" + arg);
                 };
                 ExportFormatComponent.prototype.ngOnChanges = function (changes) {
-                    if (changes['gobiiExtractFilterType']
-                        && (changes['gobiiExtractFilterType'].currentValue != null)
-                        && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
-                        if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
-                            this.updateTreeService(type_extract_format_1.GobiiExtractFormat.HAPMAP);
-                        } // if we have a new filter type
-                    } // if filter type changed
+                    // if (changes['gobiiExtractFilterType']
+                    //     && ( changes['gobiiExtractFilterType'].currentValue != null )
+                    //     && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
+                    //
+                    //     if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+                    //
+                    //         this.updateTreeService(GobiiExtractFormat.HAPMAP);
+                    //
+                    //     } // if we have a new filter type
+                    //
+                    // } // if filter type changed
                 }; // ngonChanges
                 return ExportFormatComponent;
             }());
@@ -127,8 +141,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
                     //  directives: [Alert]
                     template: "\n    \t\t  <label class=\"the-label\">Select Format:</label><BR>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleFormatSelected($event)\" name=\"format\" value=\"HAPMAP\" checked=\"checked\">Hapmap<br>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleFormatSelected($event)\" name=\"format\" value=\"FLAPJACK\">FlapJack<br>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleFormatSelected($event)\" name=\"format\" value=\"META_DATA_ONLY\">Dataset Metadata Only<br>\n\t" // end template
                 }),
-                __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService,
-                    file_model_tree_service_1.FileModelTreeService])
+                __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
             ], ExportFormatComponent);
             exports_1("ExportFormatComponent", ExportFormatComponent);
         }

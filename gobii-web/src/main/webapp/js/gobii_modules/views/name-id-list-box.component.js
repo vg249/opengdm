@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-entity", "../services/app/dto-request-item-nameids", "../model/type-entity-filter", "../model/file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-entity", "../services/app/dto-request-item-nameids", "../model/type-entity-filter", "../model/file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter", "../model/file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, dto_request_service_1, type_entity_1, dto_request_item_nameids_1, type_entity_filter_1, file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, NameIdListBoxComponent;
+    var core_1, name_id_1, dto_request_service_1, type_entity_1, dto_request_item_nameids_1, type_entity_filter_1, file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, file_model_node_1, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -42,11 +42,15 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
+            },
+            function (file_model_node_1_1) {
+                file_model_node_1 = file_model_node_1_1;
             }
         ],
         execute: function () {
             NameIdListBoxComponent = (function () {
                 function NameIdListBoxComponent(_dtoRequestService, _fileModelTreeService) {
+                    var _this = this;
                     this._dtoRequestService = _dtoRequestService;
                     this._fileModelTreeService = _fileModelTreeService;
                     // DtoRequestItemNameIds expects the value to be null if it's not set (not "UNKNOWN")
@@ -59,6 +63,14 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this.selectedNameId = null;
                     this.onNameIdSelected = new core_1.EventEmitter();
                     this.onError = new core_1.EventEmitter();
+                    _fileModelTreeService
+                        .fileItemNotifications()
+                        .subscribe(function (fileItem) {
+                        if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
+                            && fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+                            _this.initializeNameIds();
+                        }
+                    });
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     // entityFilterValue and entityFilter must either have values or be null.
@@ -72,7 +84,6 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     else {
                         this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType);
                     }
-                    this.initializeNameIds();
                 };
                 NameIdListBoxComponent.prototype.initializeNameIds = function () {
                     var _this = this;

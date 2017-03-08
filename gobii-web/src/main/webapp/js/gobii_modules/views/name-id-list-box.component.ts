@@ -10,6 +10,7 @@ import {ProcessType} from "../model/type-process";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {Header} from "../model/payload/header";
+import {ExtractorItemType} from "../model/file-model-node";
 
 
 @Component({
@@ -29,6 +30,15 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
     constructor(private _dtoRequestService: DtoRequestService<NameId[]>,
                 private _fileModelTreeService: FileModelTreeService) {
 
+        _fileModelTreeService
+            .fileItemNotifications()
+            .subscribe( fileItem => {
+                if( fileItem.getProcessType() === ProcessType.NOTIFY
+                && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+                    this.initializeNameIds();
+                }
+            });
+
     } // ctor
 
     ngOnInit(): any {
@@ -43,7 +53,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
             this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType);
         }
 
-        this.initializeNameIds();
+
 
     }
 

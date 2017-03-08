@@ -11,7 +11,8 @@ export enum ExtractorItemType {
     MARKER_LIST,
     SAMPLE_LIST,
     EXPORT_FORMAT,
-    CROP_TYPE}
+    CROP_TYPE,
+    STATUS_DISPLAY_TREE_READY}
 
 export enum ExtractorCategoryType {MODEL_CONTAINER, ENTITY_CONTAINER, CATEGORY_CONTAINER, LEAF }
 export enum CardinalityType {ZERO_OR_ONE, ZERO_OR_MORE, ONE_ONLY, ONE_OR_MORE, MORE_THAN_ONE}
