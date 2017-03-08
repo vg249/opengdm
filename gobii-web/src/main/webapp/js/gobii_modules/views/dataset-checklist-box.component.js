@@ -98,6 +98,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                                 + ": "
                                 + m.message); });
                         });
+                    }
+                    else {
+                        scope$.dataSetsNameIdList = [];
                     } // if we have an experiment id
                 }; // setList()
                 DataSetCheckListBoxComponent.prototype.setDatasetDetails = function (dataSetId) {

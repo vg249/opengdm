@@ -131,7 +131,9 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                         + m.message))
                 });
 
-        } // if we have an experiment id
+        }  else {
+            scope$.dataSetsNameIdList = [];
+        }// if we have an experiment id
 
     } // setList()
 

@@ -111,7 +111,8 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
             });
 
         } else {
-            scope$.nameIdList = [new NameId("0", "<none>", this.entityType)];
+            scope$.fileItemEvents = [];
+            // scope$.nameIdList = [new NameId("0", "<none>", this.entityType)];
         }
 
 

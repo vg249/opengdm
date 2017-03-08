@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-process", "../model/file-item", "../model/type-entity", "../model/type-extractor-filter", "../model/cv-filter-type"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../model/type-process", "../model/file-item", "../model/type-entity", "../model/type-extractor-filter", "../model/cv-filter-type"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,14 +10,11 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, dto_request_service_1, type_process_1, file_item_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, CheckListBoxComponent;
+    var core_1, dto_request_service_1, type_process_1, file_item_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, CheckListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
-            },
-            function (name_id_1_1) {
-                name_id_1 = name_id_1_1;
             },
             function (dto_request_service_1_1) {
                 dto_request_service_1 = dto_request_service_1_1;
@@ -93,7 +90,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         });
                     }
                     else {
-                        scope$.nameIdList = [new name_id_1.NameId("0", "<none>", this.entityType)];
+                        scope$.fileItemEvents = [];
                     }
                 }; // setList()
                 CheckListBoxComponent.prototype.ngOnInit = function () {
