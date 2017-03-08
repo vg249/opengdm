@@ -133,7 +133,7 @@ public class GobiiConfig {
      * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -gR "/shared_data/gobii/"
      * <p>
      * # Configure email server (global)
-     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -stE  -soH smtp.gmail.com -soN 465 -soU gobii.jira@gmail.com -soP ***REMOVED*** -stT SMTP -stH na
+     * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -stE  -soH smtp.gmail.com -soN 465 -soU user@gmail.com -soP password -stT SMTP -stH na
      * <p>
      * # Configure web server for crop DEV
      * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  DEV  -stW  -soH localhost -soN 8282 -soR /gobii-dev/
@@ -143,7 +143,7 @@ public class GobiiConfig {
      * <p>
      * # Configure PostGRES server for crop DEV
      * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  DEV  -stP
-     * -soH localhost -soN 5432 -soU appuser -soP ***REMOVED*** -soR gobii_dev
+     * -soH localhost -soN 5432 -soU appuser -soP password -soR gobii_dev
      * <p>
      * # Configure MonetDB server for crop DEV
      * java -jar gobiiconfig.jar -a -wfqpn /gobii-config-test/gobii-web.xml -c  DEV -stM  -soH localhost -soN 5000 -soU appuser -soP appuser -soR gobii_dev
