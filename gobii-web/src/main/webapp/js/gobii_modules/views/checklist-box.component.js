@@ -44,6 +44,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                     this.onAddMessage = new core_1.EventEmitter();
+                    this.checkedFileItemHistory = [];
                 } // ctor
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var itemToChange = this.fileItemEvents.filter(function (e) {
@@ -52,8 +53,25 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
                     itemToChange.setProcessType(arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE);
                     itemToChange.setChecked(arg.currentTarget.checked);
+                    if (itemToChange.getChecked() === true) {
+                        this.checkedFileItemHistory.push(itemToChange);
+                    }
+                    else {
+                        var idx = this.checkedFileItemHistory.indexOf(itemToChange);
+                        if (idx) {
+                            this.checkedFileItemHistory.splice(idx);
+                        }
+                    }
                     this.onItemChecked.emit(itemToChange);
                 }; // handleItemChecked()
+                CheckListBoxComponent.prototype.wasItemPreviouslyChecked = function (fileItem) {
+                    var checkedFileItem = this.checkedFileItemHistory.find(function (fi) {
+                        return fi.getEntityType() === fileItem.getEntityType()
+                            && fi.getItemId() === fileItem.getItemId()
+                            && fi.getItemName() === fileItem.getItemName();
+                    });
+                    return checkedFileItem != null;
+                };
                 CheckListBoxComponent.prototype.handleAddMessage = function (arg) {
                     this.onAddMessage.emit(arg);
                 };
@@ -80,13 +98,17 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         scope$.entityType = scope$.nameIdList[0].entityType;
                         scope$.fileItemEvents = [];
                         scope$.nameIdList.forEach(function (n) {
-                            scope$.fileItemEvents.push(file_item_1.FileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.CREATE)
+                            var currentFileeItem = file_item_1.FileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.CREATE)
                                 .setEntityType(scope$.entityType)
                                 .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                                 .setItemId(n.id)
                                 .setItemName(n.name)
                                 .setChecked(false)
-                                .setRequired(false));
+                                .setRequired(false);
+                            if (scope$.wasItemPreviouslyChecked(currentFileeItem)) {
+                                currentFileeItem.setChecked(true);
+                            }
+                            scope$.fileItemEvents.push(currentFileeItem);
                         });
                     }
                     else {
@@ -101,9 +123,10 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
                         this.eventedFileItem = changes['fileItemEventChange'].currentValue;
                         if (this.eventedFileItem) {
-                            var itemToChange = this.fileItemEvents.filter(function (e) {
-                                return e.getFileItemUniqueId() == _this.eventedFileItem.getFileItemUniqueId();
-                            })[0];
+                            var itemToChange = this.fileItemEvents.find(function (e) {
+                                return e.getEntityType() == _this.eventedFileItem.getEntityType()
+                                    && e.getItemName() == _this.eventedFileItem.getItemName();
+                            });
                             //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
                             if (itemToChange) {
                                 itemToChange.setProcessType(this.eventedFileItem.getProcessType());

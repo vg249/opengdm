@@ -42,6 +42,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
     private onItemChecked: EventEmitter<FileItem> = new EventEmitter();
     private onItemSelected: EventEmitter<FileItem> = new EventEmitter();
     private onAddMessage: EventEmitter<string> = new EventEmitter();
+    private checkedFileItemHistory: FileItem[] = [];
 
     private handleItemChecked(arg) {
 
@@ -53,9 +54,31 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
         //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
         itemToChange.setProcessType(arg.currentTarget.checked ? ProcessType.CREATE : ProcessType.DELETE);
         itemToChange.setChecked(arg.currentTarget.checked);
+
+        if (itemToChange.getChecked() === true) {
+            this.checkedFileItemHistory.push(itemToChange);
+        } else {
+
+            let idx: number = this.checkedFileItemHistory.indexOf(itemToChange);
+            if (idx) {
+                this.checkedFileItemHistory.splice(idx);
+            }
+        }
+
         this.onItemChecked.emit(itemToChange);
 
     } // handleItemChecked()
+
+    private wasItemPreviouslyChecked(fileItem: FileItem): boolean {
+
+        let checkedFileItem: FileItem = this.checkedFileItemHistory.find(fi => {
+            return fi.getEntityType() === fileItem.getEntityType()
+                && fi.getItemId() === fileItem.getItemId()
+                && fi.getItemName() === fileItem.getItemName()
+        });
+
+        return checkedFileItem != null;
+    }
 
     private handleAddMessage(arg) {
         this.onAddMessage.emit(arg);
@@ -98,16 +121,23 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
             scope$.fileItemEvents = [];
             scope$.nameIdList.forEach(n => {
-                scope$.fileItemEvents.push(FileItem.build(
-                    GobiiExtractFilterType.UNKNOWN,
-                    ProcessType.CREATE)
-                    .setEntityType(scope$.entityType)
-                    .setCvFilterType(CvFilterType.UNKNOWN)
-                    .setItemId(n.id)
-                    .setItemName(n.name)
-                    .setChecked(false)
-                    .setRequired(false)
-                );
+                let currentFileeItem: FileItem =
+                    FileItem.build(
+                        GobiiExtractFilterType.UNKNOWN,
+                        ProcessType.CREATE)
+                        .setEntityType(scope$.entityType)
+                        .setCvFilterType(CvFilterType.UNKNOWN)
+                        .setItemId(n.id)
+                        .setItemName(n.name)
+                        .setChecked(false)
+                        .setRequired(false);
+
+
+                if (scope$.wasItemPreviouslyChecked(currentFileeItem)) {
+                    currentFileeItem.setChecked(true);
+                }
+
+                scope$.fileItemEvents.push(currentFileeItem);
             });
 
         } else {
@@ -135,9 +165,11 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
             if (this.eventedFileItem) {
                 let itemToChange: FileItem =
-                    this.fileItemEvents.filter(e => {
-                        return e.getFileItemUniqueId() == this.eventedFileItem.getFileItemUniqueId();
-                    })[0];
+                    this.fileItemEvents.find(e => {
+                        return e.getEntityType() == this.eventedFileItem.getEntityType()
+                            // && e.getItemId() == this.eventedFileItem.getItemId() -- the tree does not cash item IDs
+                            && e.getItemName() == this.eventedFileItem.getItemName()
+                    });
 
                 //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
                 if (itemToChange) {
