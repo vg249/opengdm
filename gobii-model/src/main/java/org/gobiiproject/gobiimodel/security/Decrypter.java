@@ -76,11 +76,5 @@ private static final String secretKey="wenc4+PN393s3+7l3/Ptmw==";
 		return Base64.getDecoder().decode(value);
 	}
 	
-    public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
-        String scramble="cbsugobii06";
-        String encryptedText="q6HMprhktLfzbM0Hy9NZJg==";
 
-        System.out.println(decrypt(encryptedText,scramble));
-	
-    }
 }
