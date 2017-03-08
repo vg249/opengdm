@@ -97,10 +97,11 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                             <BR>
                             <label class="the-label">Project:</label><BR>
                             <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi"
+                                [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [nameIdList]="projectNameIdList"
                                 [nameIdListPIs]="contactNameIdListForPi"
                                 (onProjectSelected)="handleProjectSelected($event)"
-                                (onAddMessage)="handleAddMessage($event)"></project-list-box>
+                                (onAddHeaderStatus)="handleHeaderStatusMessage($event)"></project-list-box>
                         </div>
 
                         <div *ngIf="displaySelectorDataType">

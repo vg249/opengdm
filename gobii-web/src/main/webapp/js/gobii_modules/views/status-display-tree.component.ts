@@ -50,24 +50,28 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         // before ngOnInit() is called.
         this._fileModelTreeService
             .treeNotifications()
-            .subscribe(te => {
+            .subscribe(fileModelTreeEvent => {
 
-                if (te.fileItem.getProcessType() === ProcessType.CREATE
-                    || te.fileItem.getProcessType() === ProcessType.UPDATE) {
-                    this.placeNodeInTree(te);
-                } else if (te.fileItem.getProcessType() === ProcessType.DELETE) {
-                    this.removeNodeFromTree(te);
-                } else if (te.fileItem.getProcessType() === ProcessType.NOTIFY) {
-                    // for now do nothing
-                } else {
 
-                    let headerStatusMessage: HeaderStatusMessage =
-                        new HeaderStatusMessage("Error in status display tree processing file item type "
-                            + ExtractorItemType[te.fileItem.getExtractorItemType()]
-                            + ": Unknown porcess type: "
-                            + ProcessType[te.fileItem.getProcessType()], null, null);
+                if( fileModelTreeEvent.fileModelState != FileModelState.MISMATCHED_EXTRACTOR_FILTER_TYPE ) {
 
-                    this.handleAddStatusMessage(headerStatusMessage);
+                    if (fileModelTreeEvent.fileItem.getProcessType() === ProcessType.CREATE
+                        || fileModelTreeEvent.fileItem.getProcessType() === ProcessType.UPDATE) {
+                        this.placeNodeInTree(fileModelTreeEvent);
+                    } else if (fileModelTreeEvent.fileItem.getProcessType() === ProcessType.DELETE) {
+                        this.removeNodeFromTree(fileModelTreeEvent);
+                    } else if (fileModelTreeEvent.fileItem.getProcessType() === ProcessType.NOTIFY) {
+                        // for now do nothing
+                    } else {
+
+                        let headerStatusMessage: HeaderStatusMessage =
+                            new HeaderStatusMessage("Error in status display tree processing file item type "
+                                + ExtractorItemType[fileModelTreeEvent.fileItem.getExtractorItemType()]
+                                + ": Unknown porcess type: "
+                                + ProcessType[fileModelTreeEvent.fileItem.getProcessType()], null, null);
+
+                        this.handleAddStatusMessage(headerStatusMessage);
+                    }
                 }
             });
     }
@@ -626,7 +630,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                 this._fileModelTreeService.put( FileItem
                     .build(this.gobiiExtractFilterType,ProcessType.NOTIFY)
-                    .setExtractorItemType(ExtractorItemType.STATUS_DISPLAY_TREE_READY)).subscribe();
+                    .setExtractorItemType(ExtractorItemType.STATUS_DISPLAY_TREE_READY)).subscribe(
+                        null,
+                    headerResponse => {
+                        this.handleAddStatusMessage(headerResponse)
+                    }
+                );
             }
 
             // this.setList(changes['nameIdList'].currentValue);

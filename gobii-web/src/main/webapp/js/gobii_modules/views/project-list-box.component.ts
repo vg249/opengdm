@@ -3,16 +3,25 @@ import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {Project} from "../model/project";
 import {DtoRequestItemProject} from "../services/app/dto-request-item-project";
+import {GobiiExtractFilterType} from "../model/type-extractor-filter";
+import {EntityType, EntitySubType} from "../model/type-entity";
+import {EntityFilter} from "../model/type-entity-filter";
+import {CvFilterType} from "../model/cv-filter-type";
+import {Header} from "../model/payload/header";
 
 @Component({
     selector: 'project-list-box',
-    inputs: ['primaryInvestigatorId', 'nameIdList','nameIdListPIs'],
-    outputs: ['onProjectSelected', 'onAddMessage'],
-    template: `<select name="projects" 
-                    (change)="handleProjectSelected($event)">
-                    <option *ngFor="let nameId of nameIdList " 
-                    value={{nameId.id}}>{{nameId.name}}</option>
-		        </select>
+    inputs: ['primaryInvestigatorId', 'nameIdList','nameIdListPIs','gobiiExtractFilterType'],
+    outputs: ['onProjectSelected', 'onAddHeaderStatus'],
+    template: `<name-id-list-box
+                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                    [entityType]="entityTypeForTemplates.Projects"
+                    [entityFilter] = "entityFilterForTemplates.BYTYPEID"
+                    [entityFilterValue] = "primaryInvestigatorId"
+                    (onNameIdSelected) = "handleProjectSelected($event)"
+                    (onError) = "handleHeaderStatus($event)">
+                </name-id-list-box>
+		        
                 <div *ngIf="project">
                     <BR>
                      <fieldset class="form-group">
@@ -27,6 +36,14 @@ import {DtoRequestItemProject} from "../services/app/dto-request-item-project";
 
 export class ProjectListBoxComponent implements OnInit,OnChanges {
 
+    private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+    // *** You cannot use an Enum directly as a template type parameter, so we need
+    //     to assign them to properties
+    private entityTypeForTemplates = EntityType;
+    private entityFilterForTemplates = EntityFilter;
+    private entitySubTypeForTemplates = EntitySubType;
+    private cvFilterTypeForTemplates = CvFilterType;
+
 
     // useg    privatre
     private project:Project;
@@ -35,16 +52,16 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
     private primaryInvestigatorId:string;
     private primaryInvestigatorName:string;
     private onProjectSelected:EventEmitter<string> = new EventEmitter();
-    private onAddMessage:EventEmitter<string> = new EventEmitter();
+    private onAddHeaderStatus:EventEmitter<Header> = new EventEmitter();
 
     private handleProjectSelected(arg) {
-        let selectedProjectId = this.nameIdList[arg.srcElement.selectedIndex].id;
+        let selectedProjectId = arg.id;
         this.setProjectDetails(selectedProjectId);
         this.onProjectSelected.emit(selectedProjectId);
     }
 
-    private handleAddMessage(arg) {
-        this.onAddMessage.emit(arg);
+    private handleHeaderStatus(arg:Header) {
+        this.onAddHeaderStatus.emit(arg);
     }
 
 
@@ -63,16 +80,14 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
                         scope$.setPiName();
                     }
                 },
-                dtoHeaderResponse => {
-                    dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(
-                        "Retrieving project detail: " 
-                        + m.message))
+                headerStatusMessage => {
+                    scope$.handleHeaderStatus(headerStatusMessage);
                 });
     }
 
     ngOnInit():any {
 
-        //this.setList();
+        let foo:string = "foo";
     }
 
     private setPiName() {

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/file-model-tree-event", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/type-entity", "../../model/cv-filter-type", "rxjs/Subject", "rxjs/Observable", "../../model/type-process", "../../views/entity-labels", "../../model/dto-header-response", "../../model/dto-header-status-message", "../../model/tree-status-notification"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/file-model-tree-event", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/type-entity", "../../model/cv-filter-type", "rxjs/Subject", "rxjs/Observable", "../../model/type-process", "../../views/entity-labels", "../../model/dto-header-status-message", "../../model/tree-status-notification"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, file_model_tree_event_1, file_model_node_1, type_extractor_filter_1, type_entity_1, cv_filter_type_1, Subject_1, Observable_1, type_process_1, entity_labels_1, dto_header_response_1, dto_header_status_message_1, tree_status_notification_1, FileModelTreeService;
+    var core_1, file_model_tree_event_1, file_model_node_1, type_extractor_filter_1, type_entity_1, cv_filter_type_1, Subject_1, Observable_1, type_process_1, entity_labels_1, dto_header_status_message_1, tree_status_notification_1, FileModelTreeService;
     return {
         setters: [
             function (core_1_1) {
@@ -42,9 +42,6 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
             },
             function (entity_labels_1_1) {
                 entity_labels_1 = entity_labels_1_1;
-            },
-            function (dto_header_response_1_1) {
-                dto_header_response_1 = dto_header_response_1_1;
             },
             function (dto_header_status_message_1_1) {
                 dto_header_status_message_1 = dto_header_status_message_1_1;
@@ -200,33 +197,64 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                     var returnVal = null;
                     if (fileItem.getGobiiExtractFilterType() != type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN) {
                         var fileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(), fileItem.getEntityType(), fileItem.getCvFilterType());
-                        if (fileItem.getProcessType() === type_process_1.ProcessType.CREATE || fileItem.getProcessType() === type_process_1.ProcessType.UPDATE) {
-                            this.placeNodeInModel(fileModelNode, fileItem);
-                            // this condition is going to required further thought . . .
-                            // you have to if cardiality of aprent is ONE_OR_MORE, then
-                            // you have to check for siblings. Not sure how complex we
-                            // need to make this
-                            if ((fileModelNode.getCardinality() === file_model_node_1.CardinalityType.ONE_OR_MORE
-                                || fileModelNode.getCardinality() === file_model_node_1.CardinalityType.ONE_ONLY
-                                || fileModelNode.getCardinality() === file_model_node_1.CardinalityType.MORE_THAN_ONE)
-                                && fileModelNode.getCategoryType() != file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
-                                if (fileModelNode.getParent() == null) {
-                                    fileItem.setRequired(true);
+                        if (fileModelNode != null) {
+                            if (fileItem.getProcessType() === type_process_1.ProcessType.CREATE || fileItem.getProcessType() === type_process_1.ProcessType.UPDATE) {
+                                this.placeNodeInModel(fileModelNode, fileItem);
+                                // this condition is going to required further thought . . .
+                                // you have to if cardiality of aprent is ONE_OR_MORE, then
+                                // you have to check for siblings. Not sure how complex we
+                                // need to make this
+                                if ((fileModelNode.getCardinality() === file_model_node_1.CardinalityType.ONE_OR_MORE
+                                    || fileModelNode.getCardinality() === file_model_node_1.CardinalityType.ONE_ONLY
+                                    || fileModelNode.getCardinality() === file_model_node_1.CardinalityType.MORE_THAN_ONE)
+                                    && fileModelNode.getCategoryType() != file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
+                                    if (fileModelNode.getParent() == null) {
+                                        fileItem.setRequired(true);
+                                    }
                                 }
+                                returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.SUBMISSION_INCOMPLETE, null);
                             }
-                            returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.SUBMISSION_INCOMPLETE, null);
-                        }
-                        else if (fileItem.getProcessType() === type_process_1.ProcessType.DELETE) {
-                            this.removeFromModel(fileModelNode, fileItem);
-                            returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.SUBMISSION_INCOMPLETE, null);
+                            else if (fileItem.getProcessType() === type_process_1.ProcessType.DELETE) {
+                                this.removeFromModel(fileModelNode, fileItem);
+                                returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.SUBMISSION_INCOMPLETE, null);
+                            }
+                            else {
+                                returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, null, file_model_tree_event_1.FileModelState.ERROR, "Unhandled file item process type: " + type_process_1.ProcessType[fileItem.getProcessType()]);
+                            }
                         }
                         else {
-                            returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, null, file_model_tree_event_1.FileModelState.ERROR, "Unhandled file item process type: " + type_process_1.ProcessType[fileItem.getProcessType()]);
-                        }
+                            // this condition deals with a design flaw: not all entity types are handled for all
+                            // extract filter types; this is not an error, but we want to validate that the entity
+                            // does match at least one exractor type; if it does, then we mark it as a mismatch
+                            // and subscribers know to ignore this type of event; in the future, if we want the
+                            // status tree to maintain state across extraction filter types, this could be useful
+                            var remainingExtractorTypes = [];
+                            for (var item in type_extractor_filter_1.GobiiExtractFilterType) {
+                                var currentGobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType[type_extractor_filter_1.GobiiExtractFilterType[item]];
+                                if (currentGobiiExtractFilterType != type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN
+                                    && currentGobiiExtractFilterType != fileItem.getGobiiExtractFilterType()) {
+                                    remainingExtractorTypes.push(currentGobiiExtractFilterType);
+                                }
+                            }
+                            var fileModelNode_1 = null;
+                            for (var idx = 0; idx < remainingExtractorTypes.length && fileModelNode_1 == null; idx++) {
+                                var currentGobiiExtractFilterType = remainingExtractorTypes[idx];
+                                fileModelNode_1 = this.findFileModelNode(currentGobiiExtractFilterType, fileItem.getEntityType(), fileItem.getCvFilterType());
+                                if (fileModelNode_1 != null) {
+                                    fileItem.setGobiiExtractFilterType(currentGobiiExtractFilterType);
+                                }
+                            }
+                            if (fileModelNode_1 != null) {
+                                returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode_1, file_model_tree_event_1.FileModelState.MISMATCHED_EXTRACTOR_FILTER_TYPE, null);
+                            }
+                            else {
+                                returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, null, file_model_tree_event_1.FileModelState.ERROR, "Unable to find a FileModelNode for fileItem in any extractor type tree");
+                            }
+                        } // if else found a file mode node for the file item's specified extractor filter type
                     }
                     else {
                         returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, null, file_model_tree_event_1.FileModelState.ERROR, "An invalid extract filter type was specified");
-                    }
+                    } // if-else extractor filter type is not set
                     return returnVal;
                 };
                 FileModelTreeService.prototype.findFileModelNode = function (gobiiExtractFilterType, entityType, cvFilter) {
@@ -322,12 +350,11 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             _this.subjectFileItemNotifications.next(fileTreeEvent.fileItem);
                         }
                         else {
-                            var headerResponse = new dto_header_response_1.DtoHeaderResponse(false, [new dto_header_status_message_1.HeaderStatusMessage("Error mutating file item in file model tree service: "
-                                    + fileTreeEvent.message
-                                    + " processing file item: "
-                                    + fileItem.getFileItemUniqueId()
-                                    + " (" + (fileItem.getItemName() !== null ? fileItem.getItemName() : "unnamed") + ")", null, null)]);
-                            observer.error(headerResponse);
+                            var headerStatusMessage = new dto_header_status_message_1.HeaderStatusMessage("Error mutating file item in file model tree service: "
+                                + fileTreeEvent.message
+                                + " processing file item: "
+                                + JSON.stringify(fileItem, null, '\t'), null, null);
+                            observer.error(headerStatusMessage);
                         }
                     });
                 };

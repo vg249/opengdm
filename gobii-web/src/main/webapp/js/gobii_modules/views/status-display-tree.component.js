@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/file-model-node", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/type-process", "../model/type-extract-format", "../model/dto-header-status-message", "./entity-labels"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/file-model-node", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-tree-event", "../model/type-process", "../model/type-extract-format", "../model/dto-header-status-message", "./entity-labels"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, file_item_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, file_model_node_1, cv_filter_type_1, file_model_tree_service_1, type_process_1, type_extract_format_1, dto_header_status_message_1, entity_labels_1, StatusDisplayTreeComponent;
+    var core_1, file_item_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, file_model_node_1, cv_filter_type_1, file_model_tree_service_1, file_model_tree_event_1, type_process_1, type_extract_format_1, dto_header_status_message_1, entity_labels_1, StatusDisplayTreeComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -36,6 +36,9 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
             },
             function (file_model_tree_service_1_1) {
                 file_model_tree_service_1 = file_model_tree_service_1_1;
+            },
+            function (file_model_tree_event_1_1) {
+                file_model_tree_event_1 = file_model_tree_event_1_1;
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
@@ -73,22 +76,24 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                     // before ngOnInit() is called.
                     this._fileModelTreeService
                         .treeNotifications()
-                        .subscribe(function (te) {
-                        if (te.fileItem.getProcessType() === type_process_1.ProcessType.CREATE
-                            || te.fileItem.getProcessType() === type_process_1.ProcessType.UPDATE) {
-                            _this.placeNodeInTree(te);
-                        }
-                        else if (te.fileItem.getProcessType() === type_process_1.ProcessType.DELETE) {
-                            _this.removeNodeFromTree(te);
-                        }
-                        else if (te.fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY) {
-                        }
-                        else {
-                            var headerStatusMessage = new dto_header_status_message_1.HeaderStatusMessage("Error in status display tree processing file item type "
-                                + file_model_node_1.ExtractorItemType[te.fileItem.getExtractorItemType()]
-                                + ": Unknown porcess type: "
-                                + type_process_1.ProcessType[te.fileItem.getProcessType()], null, null);
-                            _this.handleAddStatusMessage(headerStatusMessage);
+                        .subscribe(function (fileModelTreeEvent) {
+                        if (fileModelTreeEvent.fileModelState != file_model_tree_event_1.FileModelState.MISMATCHED_EXTRACTOR_FILTER_TYPE) {
+                            if (fileModelTreeEvent.fileItem.getProcessType() === type_process_1.ProcessType.CREATE
+                                || fileModelTreeEvent.fileItem.getProcessType() === type_process_1.ProcessType.UPDATE) {
+                                _this.placeNodeInTree(fileModelTreeEvent);
+                            }
+                            else if (fileModelTreeEvent.fileItem.getProcessType() === type_process_1.ProcessType.DELETE) {
+                                _this.removeNodeFromTree(fileModelTreeEvent);
+                            }
+                            else if (fileModelTreeEvent.fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY) {
+                            }
+                            else {
+                                var headerStatusMessage = new dto_header_status_message_1.HeaderStatusMessage("Error in status display tree processing file item type "
+                                    + file_model_node_1.ExtractorItemType[fileModelTreeEvent.fileItem.getExtractorItemType()]
+                                    + ": Unknown porcess type: "
+                                    + type_process_1.ProcessType[fileModelTreeEvent.fileItem.getProcessType()], null, null);
+                                _this.handleAddStatusMessage(headerStatusMessage);
+                            }
                         }
                     });
                 }
@@ -405,6 +410,7 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                     return returnVal;
                 };
                 StatusDisplayTreeComponent.prototype.ngOnChanges = function (changes) {
+                    var _this = this;
                     if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
                         var itemChangedEvent = changes['fileItemEventChange'].currentValue;
                     }
@@ -417,7 +423,9 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                             //this.onTreeReady.emit( new HeaderStatusMessage("","","") );
                             this._fileModelTreeService.put(file_item_1.FileItem
                                 .build(this.gobiiExtractFilterType, type_process_1.ProcessType.NOTIFY)
-                                .setExtractorItemType(file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY)).subscribe();
+                                .setExtractorItemType(file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY)).subscribe(null, function (headerResponse) {
+                                _this.handleAddStatusMessage(headerResponse);
+                            });
                         }
                     }
                 };

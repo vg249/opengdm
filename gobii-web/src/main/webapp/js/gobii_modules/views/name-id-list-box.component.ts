@@ -16,7 +16,12 @@ import {Guid} from "../model/guid";
 
 @Component({
     selector: 'name-id-list-box',
-    inputs: ['gobiiExtractFilterType', 'entityType', 'entityFilter', 'entitySubType', 'cvFilterType'],
+    inputs: ['gobiiExtractFilterType',
+        'entityType',
+        'entityFilter',
+        'entityFilterValue',
+        'entitySubType',
+        'cvFilterType'],
     outputs: ['onNameIdSelected', 'onError'],
     template: `<select name="users" (change)="handleNameIdSelected($event)" >
 			<option *ngFor="let nameId of nameIdList " 
@@ -41,16 +46,36 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
     ngOnInit(): any {
 
         // entityFilterValue and entityFilter must either have values or be null.
-        if (this.entityFilter === EntityFilter.NONE) {
+        if (this.isReadyForInit()) {
+            this.initializeNameIds();
+        }
+    }
+
+    private isReadyForInit(): boolean {
+
+        let returnVal: boolean = false;
+
+        if (this.entityFilter === EntityFilter.NONE ) {
+
             this.entityFilter = null;
             this.entityFilterValue = null;
-        } else if (this.entityFilter === null) {
-            this.entityFilterValue = null;
-        } else {
-            this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType);
+            returnVal = true;
+
+        } else if (this.entityFilter === EntityFilter.BYTYPEID) {
+
+            //for filter BYTYPEID we must have a filter value specified by parent
+
+            returnVal = (this.entityFilterValue != null);
+
+        } else if (this.entityFilter === EntityFilter.BYTYPENAME) {
+
+            //for filter BYTYPENAME we divine the typename algorityhmically for now
+            if (this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType)) {
+                returnVal = true;
+            }
         }
 
-        this.initializeNameIds();
+        return returnVal;
 
     }
 
@@ -65,7 +90,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
                     scope$.selectedNameId = nameIds[0].id;
                     this.updateTreeService(nameIds[0]);
                 } else {
-                    scope$.nameIdList = [new NameId("0", "ERROR NO " + EntityType[scope$.entityType], scope$.entityType)];
+                    scope$.nameIdList = [new NameId("0", "<none>", scope$.entityType)];
                 }
             },
             responseHeader => {
@@ -97,6 +122,8 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
 
     private updateTreeService(nameId: NameId) {
 
+        this.onNameIdSelected.emit(nameId);
+
         let fileItem: FileItem = FileItem
             .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
             .setEntityType(this.entityType)
@@ -121,7 +148,6 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
         // let nameId: NameId = new NameId(this.nameIdList[arg.srcElement.selectedIndex].id,
         //     this.nameIdList[arg.srcElement.selectedIndex].name,
         //     this.entityType);
-        this.onNameIdSelected.emit(nameId);
 
         this.updateTreeService(nameId);
     }
@@ -164,6 +190,12 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
             } // if we have a new filter type
 
         } // if filter type changed
+
+        // we may have gotten a filterValue now so we init if we do
+        if (this.isReadyForInit()) {
+            this.initializeNameIds();
+        }
+
 
     } // ngonChanges
 

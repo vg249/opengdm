@@ -72,6 +72,8 @@ export class FileItem {
         return returnVal;
     }
 
+
+
     //OnChange does not see the FileItemEvent as being a new event unless it's
     //a branch new instance, even if any of the property values are different.
     //I'm sure there's a better way to do this. For example, the tree component should

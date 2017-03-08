@@ -67,17 +67,28 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     // entityFilterValue and entityFilter must either have values or be null.
+                    if (this.isReadyForInit()) {
+                        this.initializeNameIds();
+                    }
+                };
+                NameIdListBoxComponent.prototype.isReadyForInit = function () {
+                    var returnVal = false;
                     if (this.entityFilter === type_entity_filter_1.EntityFilter.NONE) {
                         this.entityFilter = null;
                         this.entityFilterValue = null;
+                        returnVal = true;
                     }
-                    else if (this.entityFilter === null) {
-                        this.entityFilterValue = null;
+                    else if (this.entityFilter === type_entity_filter_1.EntityFilter.BYTYPEID) {
+                        //for filter BYTYPEID we must have a filter value specified by parent
+                        returnVal = (this.entityFilterValue != null);
                     }
-                    else {
-                        this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType);
+                    else if (this.entityFilter === type_entity_filter_1.EntityFilter.BYTYPENAME) {
+                        //for filter BYTYPENAME we divine the typename algorityhmically for now
+                        if (this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType)) {
+                            returnVal = true;
+                        }
                     }
-                    this.initializeNameIds();
+                    return returnVal;
                 };
                 NameIdListBoxComponent.prototype.initializeNameIds = function () {
                     var _this = this;
@@ -89,7 +100,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                             _this.updateTreeService(nameIds[0]);
                         }
                         else {
-                            scope$.nameIdList = [new name_id_1.NameId("0", "ERROR NO " + type_entity_1.EntityType[scope$.entityType], scope$.entityType)];
+                            scope$.nameIdList = [new name_id_1.NameId("0", "<none>", scope$.entityType)];
                         }
                     }, function (responseHeader) {
                         _this.handleResponseHeader(responseHeader);
@@ -100,6 +111,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 };
                 NameIdListBoxComponent.prototype.updateTreeService = function (nameId) {
                     var _this = this;
+                    this.onNameIdSelected.emit(nameId);
                     var fileItem = file_item_1.FileItem
                         .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
                         .setEntityType(this.entityType)
@@ -116,7 +128,6 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     // let nameId: NameId = new NameId(this.nameIdList[arg.srcElement.selectedIndex].id,
                     //     this.nameIdList[arg.srcElement.selectedIndex].name,
                     //     this.entityType);
-                    this.onNameIdSelected.emit(nameId);
                     this.updateTreeService(nameId);
                 };
                 NameIdListBoxComponent.prototype.getEntityFilterValue = function (entityType, entitySubType) {
@@ -144,13 +155,22 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                             });
                         } // if we have a new filter type
                     } // if filter type changed
+                    // we may have gotten a filterValue now so we init if we do
+                    if (this.isReadyForInit()) {
+                        this.initializeNameIds();
+                    }
                 }; // ngonChanges
                 return NameIdListBoxComponent;
             }()); // class
             NameIdListBoxComponent = __decorate([
                 core_1.Component({
                     selector: 'name-id-list-box',
-                    inputs: ['gobiiExtractFilterType', 'entityType', 'entityFilter', 'entitySubType', 'cvFilterType'],
+                    inputs: ['gobiiExtractFilterType',
+                        'entityType',
+                        'entityFilter',
+                        'entityFilterValue',
+                        'entitySubType',
+                        'cvFilterType'],
                     outputs: ['onNameIdSelected', 'onError'],
                     template: "<select name=\"users\" (change)=\"handleNameIdSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                 }),
