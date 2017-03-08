@@ -93,6 +93,14 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                         <div *ngIf="displaySelectorPi">
                             <label class="the-label">Principle Investigator:</label><BR>
                             <contacts-list-box [nameIdList]="contactNameIdListForPi" (onContactSelected)="handleContactForPiSelected($event)"></contacts-list-box>
+                            <name-id-list-box
+                                [entityType]="entityTypeForTemplates.Contacts"
+                                [entityFilter] = "entityFilterForTemplates.BYTYPENAME"
+                                [entitySubType] = "entitySubTypeForTemplates.CONTACT_PRINCIPLE_INVESTIGATOR"
+                                [cvFilterType] = "cvFilterTypeForTemplates.UNKNOWN"
+                                (onUserSelected)="handleContactForSubmissionSelected($event)">
+                            </name-id-list-box>
+                            
                         </div>
                         
                         <div *ngIf="displaySelectorProject">

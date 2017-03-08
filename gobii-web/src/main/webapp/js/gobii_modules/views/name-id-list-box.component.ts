@@ -11,6 +11,7 @@ import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {Header} from "../model/payload/header";
 import {ExtractorItemType} from "../model/file-model-node";
+import {Guid} from "../model/guid";
 
 
 @Component({
@@ -27,17 +28,13 @@ import {ExtractorItemType} from "../model/file-model-node";
 
 export class NameIdListBoxComponent implements OnInit, OnChanges {
 
+    //private uniqueId:string;
+
     constructor(private _dtoRequestService: DtoRequestService<NameId[]>,
                 private _fileModelTreeService: FileModelTreeService) {
 
-        _fileModelTreeService
-            .fileItemNotifications()
-            .subscribe( fileItem => {
-                if( fileItem.getProcessType() === ProcessType.NOTIFY
-                && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                    this.initializeNameIds();
-                }
-            });
+        //this.uniqueId  = Guid.generateUUID();
+
 
     } // ctor
 
@@ -53,7 +50,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
             this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType);
         }
 
-
+        this.initializeNameIds();
 
     }
 
@@ -98,7 +95,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
         this.onError.emit(header);
     }
 
-    private updateTreeService(nameId:NameId) {
+    private updateTreeService(nameId: NameId) {
 
         let fileItem: FileItem = FileItem
             .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
@@ -150,11 +147,21 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
             && ( changes['gobiiExtractFilterType'].currentValue != null )
             && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
 
-                if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+            if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
-                    this.initializeNameIds();
 
-                } // if we have a new filter type
+                this._fileModelTreeService
+                    .fileItemNotifications()
+                    .subscribe(fileItem => {
+                        if (fileItem.getProcessType() === ProcessType.NOTIFY
+                            && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+
+                            this.initializeNameIds();
+
+                        }
+                    });
+
+            } // if we have a new filter type
 
         } // if filter type changed
 

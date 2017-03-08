@@ -112,7 +112,8 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
                         forms_1.ReactiveFormsModule,
                         primeng_1.TreeModule,
                         primeng_1.SharedModule],
-                    declarations: [app_extractorroot_1.ExtractorRoot,
+                    declarations: [
+                        app_extractorroot_1.ExtractorRoot,
                         export_format_component_1.ExportFormatComponent,
                         contacts_list_box_component_1.ContactsListBoxComponent,
                         project_list_box_component_1.ProjectListBoxComponent,
@@ -132,8 +133,9 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
                         text_area_component_1.TextAreaComponent,
                         uploader_component_1.UploaderComponent,
                         sample_list_type_component_1.SampleListTypeComponent,
-                        status_display_tree_component_1.StatusDisplayTreeComponent,
-                        name_id_list_box_component_1.NameIdListBoxComponent],
+                        name_id_list_box_component_1.NameIdListBoxComponent,
+                        status_display_tree_component_1.StatusDisplayTreeComponent
+                    ],
                     providers: [authentication_service_1.AuthenticationService,
                         dto_request_service_1.DtoRequestService,
                         file_model_tree_service_1.FileModelTreeService],

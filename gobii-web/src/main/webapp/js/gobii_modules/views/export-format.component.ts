@@ -82,7 +82,7 @@ export class ExportFormatComponent implements OnInit, OnChanges {
         // we would set a flag in this component saying, tree is ready; in ngInit, after the component properties
         // are bound, we would check whether that flag is set, and if it was, then we would send
         // the tree notification. I _think_ that would cover all the contingencies, but it's ugly.
-        // I am not sure whether reactive forms would address this issue. 
+        // I am not sure whether reactive forms would address this issue.
         this._fileModelTreeService
             .fileItemNotifications()
             .subscribe(fileItem => {

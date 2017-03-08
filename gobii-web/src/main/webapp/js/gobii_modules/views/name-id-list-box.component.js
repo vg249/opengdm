@@ -49,8 +49,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
         ],
         execute: function () {
             NameIdListBoxComponent = (function () {
+                //private uniqueId:string;
                 function NameIdListBoxComponent(_dtoRequestService, _fileModelTreeService) {
-                    var _this = this;
+                    //this.uniqueId  = Guid.generateUUID();
                     this._dtoRequestService = _dtoRequestService;
                     this._fileModelTreeService = _fileModelTreeService;
                     // DtoRequestItemNameIds expects the value to be null if it's not set (not "UNKNOWN")
@@ -63,14 +64,6 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     this.selectedNameId = null;
                     this.onNameIdSelected = new core_1.EventEmitter();
                     this.onError = new core_1.EventEmitter();
-                    _fileModelTreeService
-                        .fileItemNotifications()
-                        .subscribe(function (fileItem) {
-                        if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
-                            && fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                            _this.initializeNameIds();
-                        }
-                    });
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     // entityFilterValue and entityFilter must either have values or be null.
@@ -84,6 +77,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     else {
                         this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType);
                     }
+                    this.initializeNameIds();
                 };
                 NameIdListBoxComponent.prototype.initializeNameIds = function () {
                     var _this = this;
@@ -135,11 +129,19 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     return returnVal;
                 };
                 NameIdListBoxComponent.prototype.ngOnChanges = function (changes) {
+                    var _this = this;
                     if (changes['gobiiExtractFilterType']
                         && (changes['gobiiExtractFilterType'].currentValue != null)
                         && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
-                            this.initializeNameIds();
+                            this._fileModelTreeService
+                                .fileItemNotifications()
+                                .subscribe(function (fileItem) {
+                                if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
+                                    && fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+                                    _this.initializeNameIds();
+                                }
+                            });
                         } // if we have a new filter type
                     } // if filter type changed
                 }; // ngonChanges
