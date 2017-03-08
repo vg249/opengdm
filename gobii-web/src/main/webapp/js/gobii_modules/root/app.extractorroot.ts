@@ -75,31 +75,19 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                         </name-id-list-box>
                     </fieldset>
                         
-                    <fieldset class="well the-fieldset">
-                    <legend class="the-legend">From Generic</legend>
-                        <name-id-list-box
-                            [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                            [entityType]="entityTypeForTemplates.Contacts"
-                            [entityFilter] = "entityFilterForTemplates.BYTYPENAME"
-                            [entitySubType] = "entitySubTypeForTemplates.CONTACT_PRINCIPLE_INVESTIGATOR"
-                            [cvFilterType] = "cvFilterTypeForTemplates.UNKNOWN"
-                            (onUserSelected)="handleContactForSubmissionSelected($event)">
-                        </name-id-list-box>
-                    </fieldset>
-                        
                      <fieldset class="well the-fieldset">
                         <legend class="the-legend">Filters</legend><BR>
                         
                         
                         <div *ngIf="displaySelectorPi">
                             <label class="the-label">Principle Investigator:</label><BR>
-                            <contacts-list-box [nameIdList]="contactNameIdListForPi" (onContactSelected)="handleContactForPiSelected($event)"></contacts-list-box>
                             <name-id-list-box
+                                [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [entityType]="entityTypeForTemplates.Contacts"
                                 [entityFilter] = "entityFilterForTemplates.BYTYPENAME"
                                 [entitySubType] = "entitySubTypeForTemplates.CONTACT_PRINCIPLE_INVESTIGATOR"
                                 [cvFilterType] = "cvFilterTypeForTemplates.UNKNOWN"
-                                (onUserSelected)="handleContactForSubmissionSelected($event)">
+                                (onUserSelected)="handleContactForPiSelected($event)">
                             </name-id-list-box>
                             
                         </div>
