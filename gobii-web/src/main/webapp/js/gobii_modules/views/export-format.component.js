@@ -81,7 +81,12 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
                     // of the control tree, so it's the last one to get the property binding updates. If it were
                     // at the top of the control tree, we would have the reverse problem in that it would send out
                     // the of TREE_READY before the sibling components had been bound to their property values,
-                    // and the component initialization would not work. perhaps. For now, I think this is ok.
+                    // and the component initialization would not work. perhaps. Tne work around for that would be that
+                    // in this callback, we would check that the temlate-bound parameters had values; if they did not
+                    // we would set a flag in this component saying, tree is ready; in ngInit, after the component properties
+                    // are bound, we would check whether that flag is set, and if it was, then we would send
+                    // the tree notification. I _think_ that would cover all the contingencies, but it's ugly.
+                    // I am not sure whether reactive forms would address this issue. 
                     this._fileModelTreeService
                         .fileItemNotifications()
                         .subscribe(function (fileItem) {
