@@ -249,7 +249,7 @@ public class GobiiExtractor {
 								for (int index = 1; index < lineParts.length; index++) {
 									addedLineStringBuilder.append("\t");
 									if (!(pattern.matcher(lineParts[index]).find())) {
-										ErrorLogger.logError("Extractor","Incorrect format (1): "+lineParts[index]);
+										ErrorLogger.logError("Extractor","Incorrect SSR allele size format (1): "+lineParts[index]);
 										addedLineStringBuilder.append(lineParts[index]);
 									}
 									else {
@@ -259,13 +259,24 @@ public class GobiiExtractor {
 											addedLineStringBuilder.append(Integer.parseInt(lineParts[index].substring(lineParts[index].length() - 4)));
 										}
 										else {
-											if ((0 < lineParts[index].length()) && (lineParts[index].length() <= 4)) {
+											if ((1 < lineParts[index].length()) && (lineParts[index].length() <= 4)) {
 												addedLineStringBuilder.append("0/");
 												addedLineStringBuilder.append(Integer.parseInt(lineParts[index]));
 											}
 											else {
-												ErrorLogger.logError("Extractor","Incorrect format (2): "+lineParts[index]);
-												addedLineStringBuilder.append(lineParts[index]);
+												if (lineParts[index].length() == 1) {
+													Integer digit = Integer.parseInt(lineParts[index]);
+													if (digit != 0) {
+														addedLineStringBuilder.append("0/");
+														addedLineStringBuilder.append(digit);
+													} else {
+														addedLineStringBuilder.append("N/N");
+													}
+												}
+												else {
+													ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): "+lineParts[index]);
+													addedLineStringBuilder.append(lineParts[index]);
+												}
 											}
 										}
 									}
