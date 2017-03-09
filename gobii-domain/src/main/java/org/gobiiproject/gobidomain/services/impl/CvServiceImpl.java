@@ -60,7 +60,7 @@ public class CvServiceImpl implements CvService {
 					returnVal = dtoMapCv.replaceCv(cvId, cvDTO);
 					returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
 					returnVal.getAllowedProcessTypes().add(GobiiProcessType.UPDATE);
-                    returnVal.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
+					returnVal.getAllowedProcessTypes().add(GobiiProcessType.DELETE);
 
 				} else {
 
@@ -134,6 +134,22 @@ public class CvServiceImpl implements CvService {
 		}
 
 		return returnVal;
+	}
+
+	@Override
+	public List<CvDTO> getCvsByGroupName(String groupName) throws GobiiDtoMappingException {
+
+		List<CvDTO> returnVal;
+
+		returnVal = dtoMapCv.getCvsByGroupName(groupName);
+
+		for (CvDTO currentCvDTO : returnVal) {
+
+			currentCvDTO.getAllowedProcessTypes().add(GobiiProcessType.READ);
+		}
+
+		return returnVal;
+
 	}
 
     @Override

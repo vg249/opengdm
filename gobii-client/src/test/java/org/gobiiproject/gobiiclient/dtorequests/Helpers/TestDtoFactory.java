@@ -111,7 +111,7 @@ public class TestDtoFactory {
                                            Integer uniqueStem) {
 
         CvDTO returnVal = new CvDTO();
-        returnVal.setGroupId(1);
+        returnVal.setGroupId(14);
         returnVal.setTerm(UUID.randomUUID().toString());
         returnVal.setDefinition(uniqueStem + "dummy definition");
         returnVal.setRank(1);

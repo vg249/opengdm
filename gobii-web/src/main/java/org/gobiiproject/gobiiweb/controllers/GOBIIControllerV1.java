@@ -798,6 +798,40 @@ public class GOBIIControllerV1 {
 
     }
 
+    @RequestMapping(value = "/cvs/{groupName:[a-zA-Z_]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<CvDTO> getCvById(@PathVariable("groupName") String groupName,
+                                            HttpServletRequest request,
+                                            HttpServletResponse response) {
+
+        PayloadEnvelope<CvDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            List<CvDTO> cvDTOs = cvService.getCvsByGroupName(groupName);
+
+            PayloadWriter<CvDTO> payloadWriter = new PayloadWriter<>(request,
+                    CvDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(),
+                            ServiceRequestId.URL_CV),
+                    cvDTOs);
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
     // *********************************************
     // *************************** CVGROUP METHODS
