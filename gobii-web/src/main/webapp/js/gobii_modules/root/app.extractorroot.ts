@@ -372,7 +372,6 @@ export class ExtractorRoot implements OnInit {
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
-            this.initializeDatasetTypes();
             this.initializePlatforms();
 
             this.displaySelectorPi = true;
@@ -389,7 +388,6 @@ export class ExtractorRoot implements OnInit {
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
-            this.initializeDatasetTypes();
             this.initializePlatforms();
 
             this.displaySelectorDataType = true;
@@ -586,34 +584,6 @@ export class ExtractorRoot implements OnInit {
 
     }
 
-// ********************************************************************
-// ********************************************** DATASET TYPE SELECTION
-    private datasetTypeNameIdList: NameId[];
-    private selectedDatasetTypeId: string;
-
-    private handleDatasetTypeSelected(arg) {
-        this.selectedDatasetTypeId = arg;
-    }
-
-    private initializeDatasetTypes() {
-        let scope$ = this;
-        scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
-            EntityType.CvTerms,
-            EntityFilter.BYTYPENAME,
-            CvFilters.get(CvFilterType.DATASET_TYPE))).subscribe(nameIds => {
-
-                if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.datasetTypeNameIdList = nameIds;
-                    scope$.selectedDatasetTypeId = scope$.datasetTypeNameIdList[0].id;
-                } else {
-                    scope$.datasetTypeNameIdList = [new NameId("0", "ERROR NO DATASET TYPES", EntityType.CvTerms)];
-                }
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving DatasetTypes: "
-                    + m.message))
-            });
-    }
 
 // ********************************************************************
 // ********************************************** PLATFORM SELECTION

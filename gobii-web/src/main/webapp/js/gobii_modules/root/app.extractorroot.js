@@ -180,7 +180,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.displaySampleMarkerBox = false;
                     }
                     else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
-                        this.initializeDatasetTypes();
                         this.initializePlatforms();
                         this.displaySelectorPi = true;
                         this.displaySelectorProject = true;
@@ -193,7 +192,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.displaySampleMarkerBox = false;
                     }
                     else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
-                        this.initializeDatasetTypes();
                         this.initializePlatforms();
                         this.displaySelectorDataType = true;
                         this.displaySelectorPlatform = true;
@@ -292,24 +290,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         scope$.experimentNameIdList = [new name_id_1.NameId("0", "<none>", type_entity_1.EntityType.Experiments)];
                         scope$.selectedExperimentId = undefined;
                     }
-                };
-                ExtractorRoot.prototype.handleDatasetTypeSelected = function (arg) {
-                    this.selectedDatasetTypeId = arg;
-                };
-                ExtractorRoot.prototype.initializeDatasetTypes = function () {
-                    var scope$ = this;
-                    scope$._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.CvTerms, type_entity_filter_1.EntityFilter.BYTYPENAME, cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE))).subscribe(function (nameIds) {
-                        if (nameIds && (nameIds.length > 0)) {
-                            scope$.datasetTypeNameIdList = nameIds;
-                            scope$.selectedDatasetTypeId = scope$.datasetTypeNameIdList[0].id;
-                        }
-                        else {
-                            scope$.datasetTypeNameIdList = [new name_id_1.NameId("0", "ERROR NO DATASET TYPES", type_entity_1.EntityType.CvTerms)];
-                        }
-                    }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retrieving DatasetTypes: "
-                            + m.message); });
-                    });
                 };
                 ExtractorRoot.prototype.handlePlatformSelected = function (arg) {
                     this.selectedPlatformId = arg.id;
