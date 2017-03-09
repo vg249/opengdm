@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiiprocess;
 
+import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
@@ -10,6 +11,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.w3c.dom.Document;
@@ -220,6 +222,33 @@ public class GobiiTestData {
 
     }
 
+    private static Map<String, Integer> getCvTermsWithId(String filterValue) throws Exception{
+
+        Map<String, Integer> returnVal = new HashMap<>();
+
+        RestUri namesUri = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .nameIdListByQueryParams();
+        GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
+        namesUri.setParamValue("entity", GobiiEntityNameType.CVTERMS.toString().toLowerCase());
+        namesUri.setParamValue("filterType", StringUtils.capitalize(GobiiFilterType.BYTYPENAME.toString().toUpperCase()));
+        namesUri.setParamValue("filterValue", filterValue);
+
+        PayloadEnvelope<NameIdDTO> resultEnvelope = gobiiEnvelopeRestResource.get(NameIdDTO.class);
+
+        List<NameIdDTO> nameIdDTOList = resultEnvelope.getPayload().getData();
+
+        for (int i=0; i<nameIdDTOList.size(); i++){
+
+            NameIdDTO currentNameIdDTO = nameIdDTOList.get(i);
+            returnVal.put(currentNameIdDTO.getName().toLowerCase(), currentNameIdDTO.getId());
+
+        }
+
+        return returnVal;
+
+    }
+
     private static Integer createOrganization(Element parentElement, String entityName, NodeList fkeys, String dbPkeysurrogateValue,
                                               XPath xPath, Document document, NodeList propKeyList) throws Exception {
 
@@ -392,6 +421,10 @@ public class GobiiTestData {
 
         Element propertiesElement = null;
 
+        /*** get cv's from platform_type group ***/
+
+        Map<String, Integer> platformTypeMap = getCvTermsWithId("platform_type");
+
         for (int j=0; j<propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
@@ -403,6 +436,14 @@ public class GobiiTestData {
             if (propKeyLocalName.equals("properties")) {
 
                 propertiesElement = propKey;
+                continue;
+            }
+
+            if (propKeyLocalName.equals("typeId")) {
+
+                Integer typeId = platformTypeMap.get(propKey.getTextContent().toLowerCase());
+
+                newPlatformDTO.setTypeId(typeId);
                 continue;
             }
 
@@ -550,6 +591,92 @@ public class GobiiTestData {
 
     }
 
+    private static Integer createVendorProtocol(Element parentElement, String entityName, NodeList fkeys, String dbPkeysurrogateValue,
+                                                XPath xPath, Document document, NodeList propKeyList) throws Exception {
+
+        Integer returnVal = null;
+
+        VendorProtocolDTO newVendorProtocolDTO = new VendorProtocolDTO();
+
+        Element propsElement = null;
+
+        for (int j=0; j<propKeyList.getLength(); j++) {
+
+            Element propKey = (Element) propKeyList.item(j);
+
+            String propKeyLocalName = propKey.getLocalName();
+
+            propKeyLocalName = processPropName(propKeyLocalName);
+
+            Field field = VendorProtocolDTO.class.getDeclaredField(propKeyLocalName);
+            field.setAccessible(true);
+            field.set(newVendorProtocolDTO, processTypes(propKey.getTextContent(), field.getType()));
+
+        }
+
+        if(fkeys != null && fkeys.getLength() > 0) {
+
+            for (int i=0; i<fkeys.getLength(); i++) {
+
+                Element currentFkeyElement = (Element) fkeys.item(i);
+
+                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
+
+                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
+
+                Field field = VendorProtocolDTO.class.getDeclaredField(fkproperty);
+                field.setAccessible(true);
+                field.set(newVendorProtocolDTO, fKeyDbPkey);
+
+            }
+
+        }
+
+
+        // get organization/vendor
+
+        RestUri restUriForGetOrganizationById = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_ORGANIZATION);
+        restUriForGetOrganizationById.setParamValue("id", newVendorProtocolDTO.getOrganizationId().toString());
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceForGetOrganizationById =
+                new GobiiEnvelopeRestResource<>(restUriForGetOrganizationById);
+        PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetOrganizationByID = gobiiEnvelopeRestResourceForGetOrganizationById
+                .get(OrganizationDTO.class);
+        OrganizationDTO organizationDTO = resultEnvelopeForGetOrganizationByID.getPayload().getData().get(0);
+        organizationDTO.getVendorProtocols().add(newVendorProtocolDTO);
+
+        RestUri restUriProtocoLVendor = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .childResourceByUriIdParam(ServiceRequestId.URL_PROTOCOL,
+                        ServiceRequestId.URL_VENDORS);
+        restUriProtocoLVendor.setParamValue("id", newVendorProtocolDTO.getProtocolId().toString());
+        GobiiEnvelopeRestResource<OrganizationDTO> protocolVendorResource =
+                new GobiiEnvelopeRestResource<>(restUriProtocoLVendor);
+        PayloadEnvelope<OrganizationDTO> vendorPayloadEnvelope =
+                new PayloadEnvelope<>(organizationDTO, GobiiProcessType.CREATE);
+        PayloadEnvelope<OrganizationDTO> protocolVendorResult =
+                protocolVendorResource.post(OrganizationDTO.class, vendorPayloadEnvelope);
+
+        checkStatus(protocolVendorResult);
+
+        OrganizationDTO vendorResult = protocolVendorResult.getPayload().getData().get(0);
+
+        for (VendorProtocolDTO vendorProtocolDTO : vendorResult.getVendorProtocols()) {
+
+            if (vendorProtocolDTO.getName().equals(newVendorProtocolDTO.getName())) {
+
+                returnVal = vendorProtocolDTO.getId();
+                break;
+
+            }
+
+        }
+
+        return returnVal;
+
+    }
+
     private static Integer createReference(Element parentElement, String entityName, NodeList fkeys, String dbPkeysurrogateValue,
                                           XPath xPath, Document document, NodeList propKeyList) throws Exception {
 
@@ -621,6 +748,10 @@ public class GobiiTestData {
 
         Element propertiesElement = null;
 
+        /*** get cv's from mapset_type group ***/
+
+        Map<String, Integer> mapsetTypeMap = getCvTermsWithId("mapset_type");
+
         for (int j=0; j<propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
@@ -632,6 +763,15 @@ public class GobiiTestData {
             if (propKeyLocalName.equals("properties")) {
 
                 propertiesElement = propKey;
+                continue;
+
+            }
+
+            if (propKeyLocalName.equals("mapType")) {
+
+                Integer typeId = mapsetTypeMap.get(propKey.getTextContent().toLowerCase());
+
+                newMapsetDTO.setMapType(typeId);
                 continue;
 
             }
@@ -891,6 +1031,10 @@ public class GobiiTestData {
 
         Element paramElement = null;
 
+        /*** get cv's from analysis_type group ***/
+
+        Map<String, Integer> analysisTypeMap = getCvTermsWithId("analysis_type");
+
         for (int j=0; j<propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
@@ -902,6 +1046,14 @@ public class GobiiTestData {
             if(propKeyLocalName.equals("parameters")){
 
                 paramElement = propKey;
+                continue;
+            }
+
+            if (propKeyLocalName.equals("anlaysisTypeId")) {
+
+                Integer typeId = analysisTypeMap.get(propKey.getTextContent().toLowerCase());
+
+                newAnalysisDTO.setAnlaysisTypeId(typeId);
                 continue;
             }
 
@@ -973,6 +1125,11 @@ public class GobiiTestData {
 
         DataSetDTO newDataSetDTO = new DataSetDTO();
 
+        /*** get cv's from dataset_type group ***/
+
+        Map<String, Integer> datasetTypeMap = getCvTermsWithId("dataset_type");
+
+
         for (int j=0; j<propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
@@ -988,6 +1145,15 @@ public class GobiiTestData {
                 newDataSetDTO.getAnalysesIds().add(Integer.parseInt(propKey.getTextContent()));
                 continue;
             }
+
+            if (propKeyLocalName.equals("typeId")) {
+
+                Integer typeId = datasetTypeMap.get(propKey.getTextContent().toLowerCase());
+
+                newDataSetDTO.setTypeId(typeId);
+                continue;
+            }
+
 
             if(propKeyLocalName.equals("scores")) {continue;}
 
@@ -1083,6 +1249,12 @@ public class GobiiTestData {
 
                 break;
 
+            case "VendorProtocol":
+
+                returnVal = createVendorProtocol(parentElement, entityName, fKeys, dbPkeysurrogateValue, xPath, document, propKeyList);
+
+                break;
+
             case "Reference":
 
                 returnVal = createReference(parentElement, entityName, fKeys, dbPkeysurrogateValue, xPath, document, propKeyList);
@@ -1170,17 +1342,49 @@ public class GobiiTestData {
 
         currentFkeydbPKeyElement.setTextContent(dbPkeyValue);
 
-        System.out.println(dbPkeyValue);
-
         return Integer.parseInt(dbPkeyValue);
 
 
     }
 
+    private static void writePkValues(NodeList nodeList, XPath xPath, Document document) throws Exception{
 
-    private static void writePkValues(XPath xPath, Document document, File fXmlFile) throws Exception{
+        for (int i=0; i<nodeList.getLength(); i++) {
 
-        //get nodes with no FKey dependencies to update DbPKey
+            Element element = (Element) nodeList.item(i);
+
+            Element parentElement = (Element) element.getParentNode();
+
+            String parentLocalName = parentElement.getLocalName();
+
+            Element rootElement = (Element) parentElement.getParentNode();
+
+            String DBPKeysurrogateName = rootElement.getAttribute("DbPKeysurrogate");
+
+            Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
+
+            String dbPkeysurrogateValue = props.getElementsByTagName(DBPKeysurrogateName).item(0).getTextContent();
+
+            Random rn = new Random();
+//            Integer returnEntityId = rn.nextInt();
+
+            Element dbPKey = (Element) element.getElementsByTagName("DbPKey").item(0);
+
+            NodeList fkeys = element.getElementsByTagName("Fkey");
+
+            Integer returnEntityId = createEntity(parentElement, parentLocalName, fkeys, dbPkeysurrogateValue, xPath, document);
+
+            System.out.println("\nWriting DbPKey for "+parentLocalName+" ("+dbPkeysurrogateValue+") " +
+                    " to file...\n");
+
+            dbPKey.setTextContent(returnEntityId.toString());
+        }
+
+    }
+
+    private static void getEntities(XPath xPath, Document document, File fXmlFile) throws Exception{
+
+        /****** get nodes with no FKey dependencies to update DbPKey ******/
 
         String expr = "//*[local-name() = 'Keys' and not(descendant::*[local-name() = 'Fkey'])]";
 
@@ -1188,81 +1392,31 @@ public class GobiiTestData {
 
         NodeList nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
 
-        for(int i=0; i<nodeList.getLength(); i++) {
-
-            Element element = (Element) nodeList.item(i);
-
-            Element parentElement = (Element) element.getParentNode();
-
-            String parentLocalName = parentElement.getLocalName();
-
-            Element rootElement = (Element) parentElement.getParentNode();
-
-            String DBPKeysurrogateName = rootElement.getAttribute("DbPKeysurrogate");
-            Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
-
-            String dbPkeysurrogateValue = props.getElementsByTagName(DBPKeysurrogateName).item(0).getTextContent();
-
-
-            // write test pk values;
-            Random rn = new Random();
-            Integer testPk = rn.nextInt();
-
-            Element dbPKey = (Element) element.getElementsByTagName("DbPKey").item(0);
-
-            NodeList fkeys = null;
-
-            Integer returnEntityId = createEntity(parentElement, parentLocalName, fkeys, dbPkeysurrogateValue, xPath, document);
-
-
-            System.out.println("\nWriting DbPKey for "+parentLocalName+" ("+dbPkeysurrogateValue+") " +
-                    " to file...\n");
-
-            dbPKey.setTextContent(returnEntityId.toString());
-
-        }
+        writePkValues(nodeList, xPath, document);
 
         writeToFile(document, fXmlFile);
 
-        //update DbPKey of elements with FKey dependencies
 
-        expr = "//*[local-name() = 'Keys' and descendant::*[local-name() = 'Fkey']]";
+        /***** update DbPKey of elements with FKey dependencies ********/
 
-        xPathExpression = xPath.compile(expr);
+        String constantStr = "//*[local-name() = 'Keys' and descendant::*[local-name() = 'Fkey'] and parent::*[local-name() = ";
+        List<String> entityList = new ArrayList<>();
 
-        nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
+        entityList.add("Contact");
+        entityList.add("Protocol");
+        entityList.add("Project");
+        entityList.add("VendorProtocol");
+        entityList.add("Experiment");
+        entityList.add("Dataset");
 
-        for(int i=0; i<nodeList.getLength(); i++) {
+        for (int i=0; i<entityList.size(); i++) {
 
-            Element element = (Element) nodeList.item(i);
+            expr = constantStr + "'"+entityList.get(i)+"']]";
+            xPathExpression = xPath.compile(expr);
+            nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
+            writePkValues(nodeList, xPath, document);
 
-            Element parentElement = (Element) element.getParentNode();
-
-            Element rootElement = (Element) parentElement.getParentNode();
-
-            String DBPKeysurrogateName = rootElement.getAttribute("DbPKeysurrogate");
-            Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
-
-            String dbPkeysurrogateValue = props.getElementsByTagName(DBPKeysurrogateName).item(0).getTextContent();
-
-            NodeList fKdbPkeys = element.getElementsByTagName("Fkey");
-
-            Element currentDbPkey = (Element) element.getElementsByTagName("DbPKey").item(0);
-
-            String parentLocalName = parentElement.getLocalName();
-
-            Integer returnEntityId = createEntity(parentElement, parentLocalName, fKdbPkeys, dbPkeysurrogateValue, xPath, document);
-
-            Random rn = new Random();
-            Integer testPk = rn.nextInt();
-
-            System.out.println("\nWriting DbPKey for "+parentElement.getLocalName()+" ("+dbPkeysurrogateValue+") " +
-                    " to file...\n");
-            // set  <DbPKey/> of current entity
-
-            currentDbPkey.setTextContent(returnEntityId.toString());
         }
-
 
         writeToFile(document, fXmlFile);
 
@@ -1288,7 +1442,7 @@ public class GobiiTestData {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
 
-        File fXmlFile = new File("src/main/resources/test_data_example2.xml");
+        File fXmlFile = new File("src/main/resources/test_profiles/codominant_test.xml");
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document document = documentBuilder.parse(fXmlFile);
 
@@ -1305,7 +1459,7 @@ public class GobiiTestData {
 
         System.out.println("\nFile passed key checks...\n");
 
-        writePkValues(xPath, document, fXmlFile);
+        getEntities(xPath, document, fXmlFile);
 
         System.out.println("\n\n\nSuccessfully saved DbPKeys to file\n");
     }
