@@ -275,30 +275,23 @@ export class FileModelTreeService {
                 // and subscribers know to ignore this type of event; in the future, if we want the
                 // status tree to maintain state across extraction filter types, this could be useful
 
-                let remainingExtractorTypes:GobiiExtractFilterType[] = [];
+                let remainingExtractorTypes: GobiiExtractFilterType[] = [GobiiExtractFilterType.WHOLE_DATASET,
+                    GobiiExtractFilterType.BY_SAMPLE,
+                    GobiiExtractFilterType.BY_MARKER];
 
-                for(  var item in GobiiExtractFilterType ) {
-
-                    let currentGobiiExtractFilterType:GobiiExtractFilterType =
-                        GobiiExtractFilterType[GobiiExtractFilterType[item]];
-
-                    if( currentGobiiExtractFilterType != GobiiExtractFilterType.UNKNOWN
-                        && currentGobiiExtractFilterType  != fileItem.getGobiiExtractFilterType()   ) {
-                        remainingExtractorTypes.push(currentGobiiExtractFilterType);
-                    }
-                }
+                remainingExtractorTypes.splice(remainingExtractorTypes.indexOf(fileItem.getGobiiExtractFilterType()));
 
                 let fileModelNode: FileModelNode = null;
-                for( let idx:number = 0; idx < remainingExtractorTypes.length && fileModelNode == null; idx++) {
+                for (let idx: number = 0; idx < remainingExtractorTypes.length && fileModelNode == null; idx++) {
 
-                    let currentGobiiExtractFilterType:GobiiExtractFilterType = remainingExtractorTypes[idx];
+                    let currentGobiiExtractFilterType: GobiiExtractFilterType = remainingExtractorTypes[idx];
                     fileModelNode = this.findFileModelNode(currentGobiiExtractFilterType, fileItem);
-                    if( fileModelNode != null ) {
+                    if (fileModelNode != null) {
                         fileItem.setGobiiExtractFilterType(currentGobiiExtractFilterType);
                     }
                 }
 
-                if( fileModelNode != null  ) {
+                if (fileModelNode != null) {
 
                     returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.MISMATCHED_EXTRACTOR_FILTER_TYPE, null);
 
@@ -322,7 +315,7 @@ export class FileModelTreeService {
     }
 
 
-    findFileModelNode(gobiiExtractFilterType: GobiiExtractFilterType, fileItem:FileItem) {
+    findFileModelNode(gobiiExtractFilterType: GobiiExtractFilterType, fileItem: FileItem) {
 
         let fileModelNodes: FileModelNode[] = this.getFileModelNodes(gobiiExtractFilterType);
 
@@ -343,7 +336,7 @@ export class FileModelTreeService {
 
     findTemplateByCriteria(fileModelNode: FileModelNode,
                            entityType: EntityType,
-                           entitySubType:EntitySubType,
+                           entitySubType: EntitySubType,
                            cvFilterType: CvFilterType): FileModelNode {
 
         let returnVal: FileModelNode = null;
@@ -353,7 +346,7 @@ export class FileModelTreeService {
             for (let idx: number = 0; ( idx < fileModelNode.getChildren().length) && (returnVal == null ); idx++) {
 
                 let currentTemplate: FileModelNode = fileModelNode.getChildren()[idx];
-                returnVal = this.findTemplateByCriteria(currentTemplate, entityType,entitySubType, cvFilterType);
+                returnVal = this.findTemplateByCriteria(currentTemplate, entityType, entitySubType, cvFilterType);
             }
         }
 
@@ -484,7 +477,7 @@ export class FileModelTreeService {
                 this.subjectFileItemNotifications.next(fileTreeEvent.fileItem);
             } else {
 
-                let headerStatusMessage:HeaderStatusMessage = new HeaderStatusMessage(
+                let headerStatusMessage: HeaderStatusMessage = new HeaderStatusMessage(
                     "Error mutating file item in file model tree service: "
                     + fileTreeEvent.message
                     + " processing file item: "

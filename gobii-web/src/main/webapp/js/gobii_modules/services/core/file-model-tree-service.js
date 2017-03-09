@@ -230,14 +230,10 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             // does match at least one exractor type; if it does, then we mark it as a mismatch
                             // and subscribers know to ignore this type of event; in the future, if we want the
                             // status tree to maintain state across extraction filter types, this could be useful
-                            var remainingExtractorTypes = [];
-                            for (var item in type_extractor_filter_1.GobiiExtractFilterType) {
-                                var currentGobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType[type_extractor_filter_1.GobiiExtractFilterType[item]];
-                                if (currentGobiiExtractFilterType != type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN
-                                    && currentGobiiExtractFilterType != fileItem.getGobiiExtractFilterType()) {
-                                    remainingExtractorTypes.push(currentGobiiExtractFilterType);
-                                }
-                            }
+                            var remainingExtractorTypes = [type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
+                                type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE,
+                                type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER];
+                            remainingExtractorTypes.splice(remainingExtractorTypes.indexOf(fileItem.getGobiiExtractFilterType()));
                             var fileModelNode_1 = null;
                             for (var idx = 0; idx < remainingExtractorTypes.length && fileModelNode_1 == null; idx++) {
                                 var currentGobiiExtractFilterType = remainingExtractorTypes[idx];

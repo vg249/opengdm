@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-entity", "../services/app/dto-request-item-nameids", "../model/type-entity-filter", "../model/file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter", "../model/file-model-node"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../services/core/dto-request.service", "../model/type-entity", "../model/cv-filter-type", "../services/app/dto-request-item-nameids", "../model/type-entity-filter", "../model/file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter", "../model/file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, dto_request_service_1, type_entity_1, dto_request_item_nameids_1, type_entity_filter_1, file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, file_model_node_1, NameIdListBoxComponent;
+    var core_1, name_id_1, dto_request_service_1, type_entity_1, cv_filter_type_1, dto_request_item_nameids_1, type_entity_filter_1, file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, file_model_node_1, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -24,6 +24,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
             },
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
+            },
+            function (cv_filter_type_1_1) {
+                cv_filter_type_1 = cv_filter_type_1_1;
             },
             function (dto_request_item_nameids_1_1) {
                 dto_request_item_nameids_1 = dto_request_item_nameids_1_1;
@@ -85,7 +88,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     }
                     else if (this.entityFilter === type_entity_filter_1.EntityFilter.BYTYPENAME) {
                         //for filter BYTYPENAME we divine the typename algorityhmically for now
-                        if (this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType)) {
+                        if (this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType, this.cvFilterType)) {
                             returnVal = true;
                         }
                     }
@@ -119,6 +122,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
                         .setEntityType(this.entityType)
                         .setEntitySubType(this.entitySubType)
+                        .setCvFilterType(this.cvFilterType)
                         .setItemId(nameId.id)
                         .setItemName(nameId.name);
                     this._fileModelTreeService.put(fileItem)
@@ -133,11 +137,16 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     //     this.entityType);
                     this.updateTreeService(nameId);
                 };
-                NameIdListBoxComponent.prototype.getEntityFilterValue = function (entityType, entitySubType) {
+                NameIdListBoxComponent.prototype.getEntityFilterValue = function (entityType, entitySubType, cvFilterType) {
                     var returnVal = null;
                     if (entityType === type_entity_1.EntityType.Contacts) {
                         if (entitySubType === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR) {
                             returnVal = "PI";
+                        }
+                    }
+                    else if (entityType === type_entity_1.EntityType.CvTerms) {
+                        if (cvFilterType != null && cvFilterType != cv_filter_type_1.CvFilterType.UNKNOWN) {
+                            returnVal = cv_filter_type_1.CvFilters.get(cv_filter_type_1.CvFilterType.DATASET_TYPE);
                         }
                     }
                     return returnVal;

@@ -77,9 +77,8 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                     </fieldset>
                         
                      <fieldset class="well the-fieldset">
+                     
                         <legend class="the-legend">Filters</legend><BR>
-                        
-                        
                         <div *ngIf="displaySelectorPi">
                             <label class="the-label">Principle Investigator:</label><BR>
                             <name-id-list-box
@@ -106,10 +105,14 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                         </div>
 
                         <div *ngIf="displaySelectorDataType">
-                            <BR>
-                            <BR>
                             <label class="the-label">Dataset Types:</label><BR>
-                            <dataset-types-list-box [nameIdList]="datasetTypeNameIdList" (onDatasetTypeSelected)="handleDatasetTypeSelected($event)"></dataset-types-list-box>
+                            <name-id-list-box
+                                [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                [notifyOnInit]="true"
+                                [entityType]="entityTypeForTemplates.CvTerms"
+                                [entityFilter] = "entityFilterForTemplates.BYTYPENAME"
+                                [cvFilterType] = "cvFilterTypeForTemplates.DATASET_TYPE">
+                            </name-id-list-box>
                         </div>
 
                         

@@ -2,7 +2,7 @@ import {Component, OnInit, EventEmitter, OnChanges, SimpleChange} from "@angular
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {EntityType, EntitySubType} from "../model/type-entity";
-import {CvFilterType} from "../model/cv-filter-type";
+import {CvFilterType, CvFilters} from "../model/cv-filter-type";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {EntityFilter} from "../model/type-entity-filter";
 import {FileItem} from "../model/file-item";
@@ -71,7 +71,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
         } else if (this.entityFilter === EntityFilter.BYTYPENAME) {
 
             //for filter BYTYPENAME we divine the typename algorityhmically for now
-            if (this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType)) {
+            if (this.entityFilterValue = this.getEntityFilterValue(this.entityType, this.entitySubType, this.cvFilterType)) {
                 returnVal = true;
             }
         }
@@ -132,6 +132,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
             .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
             .setEntityType(this.entityType)
             .setEntitySubType(this.entitySubType)
+            .setCvFilterType(this.cvFilterType)
             .setItemId(nameId.id)
             .setItemName(nameId.name);
 
@@ -157,13 +158,17 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
     }
 
 
-    private getEntityFilterValue(entityType: EntityType, entitySubType: EntitySubType): string {
+    private getEntityFilterValue(entityType: EntityType, entitySubType: EntitySubType, cvFilterType: CvFilterType): string {
 
         let returnVal: string = null;
 
         if (entityType === EntityType.Contacts) {
             if (entitySubType === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR) {
                 returnVal = "PI";
+            }
+        } else if (entityType === EntityType.CvTerms) {
+            if (cvFilterType != null && cvFilterType != CvFilterType.UNKNOWN) {
+                returnVal = CvFilters.get(CvFilterType.DATASET_TYPE);
             }
         }
 

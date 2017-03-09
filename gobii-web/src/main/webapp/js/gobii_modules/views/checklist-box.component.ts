@@ -83,7 +83,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
             if (historyFileItem != null) {
                 let idx: number = this.checkedFileItemHistory.indexOf(historyFileItem);
                 this.checkedFileItemHistory.splice(idx, 1);
-z            }
+            }
         }
     }
 
