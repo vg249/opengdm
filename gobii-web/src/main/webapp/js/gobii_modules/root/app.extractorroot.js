@@ -140,7 +140,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             scope$.messages.push("Connected to database: " + scope$.selectedServerConfig.crop);
                             //scope$.initializeContactsForSumission();
                             scope$.initializeContactsForPi();
-                            scope$.initializeMapsetsForSumission();
                         }
                         else {
                             scope$.serverConfigList = [new server_config_1.ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
@@ -388,39 +387,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     }
                     // this.datasetFileItemEventChange = arg;
                     this.treeFileItemEvent = file_item_1.FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
-                };
-                ExtractorRoot.prototype.handleMapsetSelected = function (arg) {
-                    var _this = this;
-                    if (Number(arg.id) > 0) {
-                        this.selectedMapsetId = arg.id;
-                        var fileItem = file_item_1.FileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                            .setEntityType(type_entity_1.EntityType.Mapsets)
-                            .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
-                            .setItemId(arg.id)
-                            .setItemName(arg.name)
-                            .setChecked(true)
-                            .setRequired(null);
-                        this._fileModelTreeService.put(fileItem).subscribe(null, function (headerResponse) {
-                            _this.handleResponseHeader(headerResponse);
-                        });
-                    }
-                    else {
-                        this.selectedMapsetId = undefined;
-                    }
-                };
-                ExtractorRoot.prototype.initializeMapsetsForSumission = function () {
-                    var scope$ = this;
-                    scope$.nullMapsetName = "<none>";
-                    this._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.Mapsets)).subscribe(function (nameIds) {
-                        scope$.mapsetNameIdList = [new name_id_1.NameId("0", scope$.nullMapsetName, type_entity_1.EntityType.Mapsets)];
-                        if (nameIds && (nameIds.length > 0)) {
-                            scope$.mapsetNameIdList = scope$.mapsetNameIdList.concat(nameIds);
-                            scope$.selectedMapsetId = nameIds[0].id;
-                        }
-                    }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Rettrieving mapsets: "
-                            + m.message); });
-                    });
                 };
                 ExtractorRoot.prototype.handleSampleMarkerListComplete = function (arg) {
                     var sampleMarkerList = arg;

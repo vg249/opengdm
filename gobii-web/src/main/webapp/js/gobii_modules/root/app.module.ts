@@ -8,7 +8,6 @@ import {ContactsListBoxComponent} from "../views/contacts-list-box.component";
 import {ProjectListBoxComponent} from "../views/project-list-box.component";
 import {ExperimentListBoxComponent} from "../views/experiment-list-box.component";
 import {DataSetCheckListBoxComponent} from "../views/dataset-checklist-box.component";
-import {MapsetsListBoxComponent} from "../views/mapsets-list-box.component";
 import {CriteriaDisplayComponent} from "../views/criteria-display.component";
 import {StatusDisplayComponent} from "../views/status-display-box.component";
 import {CropsListBoxComponent} from "../views/crops-list-box.component";
@@ -43,7 +42,6 @@ import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
         ProjectListBoxComponent,
         ExperimentListBoxComponent,
         DataSetCheckListBoxComponent,
-        MapsetsListBoxComponent,
         CriteriaDisplayComponent,
         StatusDisplayComponent,
         CropsListBoxComponent,

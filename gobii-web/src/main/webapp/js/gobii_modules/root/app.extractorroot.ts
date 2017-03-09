@@ -299,7 +299,6 @@ export class ExtractorRoot implements OnInit {
                     scope$.messages.push("Connected to database: " + scope$.selectedServerConfig.crop);
                     //scope$.initializeContactsForSumission();
                     scope$.initializeContactsForPi();
-                    scope$.initializeMapsetsForSumission();
 
                 } else {
                     scope$.serverConfigList = [new ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
@@ -756,56 +755,6 @@ export class ExtractorRoot implements OnInit {
 
         // this.datasetFileItemEventChange = arg;
         this.treeFileItemEvent = FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
-
-    }
-
-
-// ********************************************************************
-// ********************************************** MAPSET SELECTIONz
-    private mapsetNameIdList: NameId[];
-    private selectedMapsetId: string;
-    private nullMapsetName: string;
-
-    private handleMapsetSelected(arg: NameId) {
-
-        if (Number(arg.id) > 0) {
-            this.selectedMapsetId = arg.id;
-            let fileItem: FileItem = FileItem.build(this.gobiiExtractFilterType,
-                ProcessType.CREATE)
-                .setEntityType(EntityType.Mapsets)
-                .setCvFilterType(CvFilterType.UNKNOWN)
-                .setItemId(arg.id)
-                .setItemName(arg.name)
-                .setChecked(true)
-                .setRequired(null);
-
-            this._fileModelTreeService.put(fileItem).subscribe(
-                null,
-                headerResponse => {
-                    this.handleResponseHeader(headerResponse)
-                });
-
-        } else {
-            this.selectedMapsetId = undefined;
-        }
-    }
-
-    private initializeMapsetsForSumission() {
-        let scope$ = this;
-        scope$.nullMapsetName = "<none>"
-        this._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
-            EntityType.Mapsets)).subscribe(nameIds => {
-
-                scope$.mapsetNameIdList = [new NameId("0", scope$.nullMapsetName, EntityType.Mapsets)]
-                if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.mapsetNameIdList = scope$.mapsetNameIdList.concat(nameIds);
-                    scope$.selectedMapsetId = nameIds[0].id;
-                }
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Rettrieving mapsets: "
-                    + m.message))
-            });
 
     }
 
