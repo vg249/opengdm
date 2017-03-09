@@ -3,9 +3,10 @@ import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {ProcessType} from "../model/type-process";
 import {FileItem} from "../model/file-item";
-import {EntityType} from "../model/type-entity";
+import {EntityType, EntitySubType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {CvFilterType} from "../model/cv-filter-type";
+import {EntityFilter} from "../model/type-entity-filter";
 
 
 @Component({
@@ -35,10 +36,17 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
     } // ctor
 
+    private entityType: EntityType = null;
+    private entityFilter: EntityFilter = null;
+    private entityFilterValue: string = null;
+    private entitySubType: EntitySubType = null;
+    private cvFilterType: CvFilterType = null;
+    private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+
+
     // useg
     private nameIdList: NameId[];
     private fileItemEvents: FileItem[] = [];
-    private entityType: EntityType = EntityType.UNKNOWN
     private onItemChecked: EventEmitter<FileItem> = new EventEmitter();
     private onItemSelected: EventEmitter<FileItem> = new EventEmitter();
     private onAddMessage: EventEmitter<string> = new EventEmitter();

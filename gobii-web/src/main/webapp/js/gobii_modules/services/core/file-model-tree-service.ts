@@ -14,6 +14,7 @@ import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {TreeStatusNotification} from "../../model/tree-status-notification";
 
 
+
 @Injectable()
 export class FileModelTreeService {
 
@@ -137,7 +138,7 @@ export class FileModelTreeService {
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
                             .setCategoryType(ExtractorCategoryType.LEAF)
                             .setEntityType(EntityType.Contacts)
-                            .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
+                            .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                             .setEntityName(Labels.instance().entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR])
                             .setCardinality(CardinalityType.ZERO_OR_ONE)
                         )
@@ -279,7 +280,7 @@ export class FileModelTreeService {
                     GobiiExtractFilterType.BY_SAMPLE,
                     GobiiExtractFilterType.BY_MARKER];
 
-                remainingExtractorTypes.splice(remainingExtractorTypes.indexOf(fileItem.getGobiiExtractFilterType()));
+                remainingExtractorTypes.splice(remainingExtractorTypes.indexOf(fileItem.getGobiiExtractFilterType()),1);
 
                 let fileModelNode: FileModelNode = null;
                 for (let idx: number = 0; idx < remainingExtractorTypes.length && fileModelNode == null; idx++) {

@@ -26,6 +26,7 @@ import {TreeModule, SharedModule, TreeNode} from 'primeng/primeng';
 import {StatusDisplayTreeComponent} from "../views/status-display-tree.component";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
+import {NameIdService} from "../services/core/name-id-service";
 
 
 @NgModule({
@@ -58,7 +59,8 @@ import {NameIdListBoxComponent} from "../views/name-id-list-box.component";
         StatusDisplayTreeComponent],
     providers: [AuthenticationService,
         DtoRequestService,
-        FileModelTreeService],
+        FileModelTreeService,
+        NameIdService],
     bootstrap: [ExtractorRoot]
 })
 

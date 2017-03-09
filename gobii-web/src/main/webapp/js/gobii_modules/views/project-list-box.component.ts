@@ -8,16 +8,15 @@ import {EntityType, EntitySubType} from "../model/type-entity";
 import {EntityFilter} from "../model/type-entity-filter";
 import {CvFilterType} from "../model/cv-filter-type";
 import {Header} from "../model/payload/header";
+import {NameIdRequestParams} from "../model/name-id-request-params";
 
 @Component({
     selector: 'project-list-box',
-    inputs: ['primaryInvestigatorId', 'nameIdList','nameIdListPIs','gobiiExtractFilterType'],
+    inputs: ['primaryInvestigatorId', 'nameIdList', 'nameIdListPIs', 'gobiiExtractFilterType'],
     outputs: ['onProjectSelected', 'onAddHeaderStatus'],
     template: `<name-id-list-box
                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                    [entityType]="entityTypeForTemplates.Projects"
-                    [entityFilter] = "entityFilterForTemplates.BYTYPEID"
-                    [entityFilterValue] = "primaryInvestigatorId"
+                    [nameIdRequestParams] = "nameIdRequestParamsProject"
                     (onNameIdSelected) = "handleProjectSelected($event)"
                     (onError) = "handleHeaderStatus($event)">
                 </name-id-list-box>
@@ -39,20 +38,17 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     // *** You cannot use an Enum directly as a template type parameter, so we need
     //     to assign them to properties
-    private entityTypeForTemplates = EntityType;
-    private entityFilterForTemplates = EntityFilter;
-    private entitySubTypeForTemplates = EntitySubType;
-    private cvFilterTypeForTemplates = CvFilterType;
+    private nameIdRequestParamsProject: NameIdRequestParams;
 
 
     // useg    privatre
-    private project:Project;
-    private nameIdList:NameId[];
-    private nameIdListPIs:NameId[];
-    private primaryInvestigatorId:string;
-    private primaryInvestigatorName:string;
-    private onProjectSelected:EventEmitter<string> = new EventEmitter();
-    private onAddHeaderStatus:EventEmitter<Header> = new EventEmitter();
+    private project: Project;
+    private nameIdList: NameId[];
+    private nameIdListPIs: NameId[];
+    private primaryInvestigatorId: string;
+    private primaryInvestigatorName: string;
+    private onProjectSelected: EventEmitter<string> = new EventEmitter();
+    private onAddHeaderStatus: EventEmitter<Header> = new EventEmitter();
 
     private handleProjectSelected(arg) {
         let selectedProjectId = arg.id;
@@ -60,17 +56,21 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
         this.onProjectSelected.emit(selectedProjectId);
     }
 
-    private handleHeaderStatus(arg:Header) {
+    private handleHeaderStatus(arg: Header) {
         this.onAddHeaderStatus.emit(arg);
     }
 
 
-    constructor(private _dtoRequestServiceProject:DtoRequestService<Project>) {
+    constructor(private _dtoRequestServiceProject: DtoRequestService<Project>) {
+
+        this.nameIdRequestParamsProject = NameIdRequestParams
+            .build(GobiiExtractFilterType.WHOLE_DATASET, EntityType.Projects)
+            .setEntityFilter(EntityFilter.BYTYPEID);
 
 
     } // ctor
 
-    private setProjectDetails(projectId:string):void {
+    private setProjectDetails(projectId: string): void {
         let scope$ = this;
         this._dtoRequestServiceProject.get(new DtoRequestItemProject(Number(projectId)))
             .subscribe(projects => {
@@ -85,17 +85,18 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
                 });
     }
 
-    ngOnInit():any {
+    ngOnInit(): any {
 
-        let foo:string = "foo";
+        let foo: string = "foo";
+
     }
 
     private setPiName() {
 
         this.primaryInvestigatorName = undefined;
-        if( this.primaryInvestigatorId && this.nameIdListPIs) {
+        if (this.primaryInvestigatorId && this.nameIdListPIs) {
             this.nameIdListPIs.forEach(n => {
-                if(n.id === this.primaryInvestigatorId) {
+                if (n.id === this.primaryInvestigatorId) {
                     this.primaryInvestigatorName = n.name;
 
                 }
@@ -103,11 +104,21 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
         }
     }
 
-    ngOnChanges(changes:{[propName:string]:SimpleChange}) {
+    ngOnChanges(changes: {[propName: string]: SimpleChange}) {
+
+        let foo:string = "foo";
+
+        if (changes['gobiiExtractFilterType'] && changes['gobiiExtractFilterType'].currentValue) {
+
+            if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+
+                this.nameIdRequestParamsProject.setGobiiExtractFilterType(changes['gobiiExtractFilterType'].currentValue);
+            }
+        }
 
         if (changes['primaryInvestigatorId'] && changes['primaryInvestigatorId'].currentValue) {
             this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
-            
+            this.nameIdRequestParamsProject.setEntityFilterValue(this.primaryInvestigatorId);
         }
 
         if (changes['nameIdList']) {

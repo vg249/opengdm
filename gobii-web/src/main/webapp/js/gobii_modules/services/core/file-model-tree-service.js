@@ -140,7 +140,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                                 .addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, currentParent)
                                 .setCategoryType(file_model_node_1.ExtractorCategoryType.LEAF)
                                 .setEntityType(type_entity_1.EntityType.Contacts)
-                                .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
+                                .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                                 .setEntityName(entity_labels_1.Labels.instance().entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR])
                                 .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_ONE))
                                 .addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, currentParent)
@@ -233,7 +233,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             var remainingExtractorTypes = [type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET,
                                 type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE,
                                 type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER];
-                            remainingExtractorTypes.splice(remainingExtractorTypes.indexOf(fileItem.getGobiiExtractFilterType()));
+                            remainingExtractorTypes.splice(remainingExtractorTypes.indexOf(fileItem.getGobiiExtractFilterType()), 1);
                             var fileModelNode_1 = null;
                             for (var idx = 0; idx < remainingExtractorTypes.length && fileModelNode_1 == null; idx++) {
                                 var currentGobiiExtractFilterType = remainingExtractorTypes[idx];

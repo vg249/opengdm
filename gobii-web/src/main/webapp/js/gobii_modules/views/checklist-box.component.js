@@ -39,8 +39,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             CheckListBoxComponent = (function () {
                 function CheckListBoxComponent(_dtoRequestServiceNameId) {
                     this._dtoRequestServiceNameId = _dtoRequestServiceNameId;
+                    this.entityType = null;
+                    this.entityFilter = null;
+                    this.entityFilterValue = null;
+                    this.entitySubType = null;
+                    this.cvFilterType = null;
+                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.fileItemEvents = [];
-                    this.entityType = type_entity_1.EntityType.UNKNOWN;
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
                     this.onAddMessage = new core_1.EventEmitter();

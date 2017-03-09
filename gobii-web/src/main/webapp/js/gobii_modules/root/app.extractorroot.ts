@@ -27,6 +27,7 @@ import forEach = require("core-js/fn/array/for-each");
 import {platform} from "os";
 import {Header} from "../model/payload/header";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
+import {NameIdRequestParams} from "../model/name-id-request-params";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -67,12 +68,9 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                     <legend class="the-legend">Submit As</legend>
                         <name-id-list-box
                             [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                            [nameIdRequestParams]="nameIdRequestParamsContactsSubmitter"
                             [notifyOnInit]="true"
-                            [entityType]="entityTypeForTemplates.Contacts"
-                            [entityFilter] = "entityFilterForTemplates.NONE"
-                            [entitySubType] = "entitySubTypeForTemplates.CONTACT_SUBMITED_BY"
-                            [cvFilterType] = "cvFilterTypeForTemplates.UNKNOWN"
-                            (onError) = "handleResponseHeader($event)">
+                            (onError) = "handleHeaderStatusMessage($event)">
                         </name-id-list-box>
                     </fieldset>
                         
@@ -83,11 +81,9 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                             <label class="the-label">Principle Investigator:</label><BR>
                             <name-id-list-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                [entityType]="entityTypeForTemplates.Contacts"
-                                [entityFilter] = "entityFilterForTemplates.BYTYPENAME"
-                                [entitySubType] = "entitySubTypeForTemplates.CONTACT_PRINCIPLE_INVESTIGATOR"
-                                [cvFilterType] = "cvFilterTypeForTemplates.UNKNOWN"
-                                (onNameIdSelected)="handleContactForPiSelected($event)">
+                                [nameIdRequestParams]="nameIdRequestParamsContactsPi"
+                                (onNameIdSelected)="handleContactForPiSelected($event)"
+                                (onError) = "handleHeaderStatusMessage($event)">
                             </name-id-list-box>
                             
                         </div>
@@ -109,9 +105,8 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                             <name-id-list-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [notifyOnInit]="true"
-                                [entityType]="entityTypeForTemplates.CvTerms"
-                                [entityFilter] = "entityFilterForTemplates.BYTYPENAME"
-                                [cvFilterType] = "cvFilterTypeForTemplates.DATASET_TYPE">
+                                [nameIdRequestParams]="nameIdRequestParamsDatasetType"
+                                (onError) = "handleHeaderStatusMessage($event)">
                             </name-id-list-box>
                         </div>
 
@@ -195,7 +190,8 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                            
                                 <name-id-list-box
                                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                    [entityType]="entityTypeForTemplates.Mapsets">
+                                    [nameIdRequestParams]="nameIdRequestParamsMapsets"
+                                    (onError) = "handleHeaderStatusMessage($event)">
                                 </name-id-list-box>
                             </fieldset>
                         </form>
@@ -255,6 +251,11 @@ export class ExtractorRoot implements OnInit {
     private entitySubTypeForTemplates = EntitySubType;
     private cvFilterTypeForTemplates = CvFilterType;
 
+    private nameIdRequestParamsContactsSubmitter: NameIdRequestParams;
+    private nameIdRequestParamsContactsPi: NameIdRequestParams;
+    private nameIdRequestParamsMapsets: NameIdRequestParams;
+    private nameIdRequestParamsDatasetType: NameIdRequestParams;
+
 
     // ************************************************************************
 
@@ -269,6 +270,27 @@ export class ExtractorRoot implements OnInit {
                 private _dtoRequestServiceNameIds: DtoRequestService<NameId[]>,
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private _fileModelTreeService: FileModelTreeService) {
+
+
+        this.nameIdRequestParamsContactsSubmitter = NameIdRequestParams
+            .build(GobiiExtractFilterType.WHOLE_DATASET, EntityType.Contacts)
+            .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY);
+
+
+        this.nameIdRequestParamsContactsPi = NameIdRequestParams
+            .build(GobiiExtractFilterType.WHOLE_DATASET, EntityType.Contacts)
+            .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
+
+
+        this.nameIdRequestParamsDatasetType = NameIdRequestParams
+            .build(GobiiExtractFilterType.WHOLE_DATASET, EntityType.CvTerms)
+            .setCvFilterType(CvFilterType.DATASET_TYPE)
+            .setEntityFilter(EntityFilter.BYTYPENAME);
+
+
+        this.nameIdRequestParamsMapsets = NameIdRequestParams
+            .build(GobiiExtractFilterType.WHOLE_DATASET, EntityType.Mapsets);
+
 
     }
 
@@ -350,6 +372,7 @@ export class ExtractorRoot implements OnInit {
     private handleExportTypeSelected(arg: GobiiExtractFilterType) {
 
         let foo: string = "foo";
+
 
         this.gobiiExtractFilterType = arg;
 
@@ -594,7 +617,7 @@ export class ExtractorRoot implements OnInit {
         this.selectedPlatformId = arg.id;
     }
 
-    private handlePlatformChecked(fileItemEvent:FileItem) {
+    private handlePlatformChecked(fileItemEvent: FileItem) {
 
 
         this._fileModelTreeService.put(fileItemEvent).subscribe(

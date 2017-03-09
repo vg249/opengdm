@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../services/app/dto-request-item-project", "../model/type-extractor-filter", "../model/type-entity", "../model/type-entity-filter", "../model/cv-filter-type"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../services/app/dto-request-item-project", "../model/type-extractor-filter", "../model/type-entity", "../model/type-entity-filter", "../model/name-id-request-params"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, dto_request_item_project_1, type_extractor_filter_1, type_entity_1, type_entity_filter_1, cv_filter_type_1, ProjectListBoxComponent;
+    var core_1, dto_request_service_1, dto_request_item_project_1, type_extractor_filter_1, type_entity_1, type_entity_filter_1, name_id_request_params_1, ProjectListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -31,8 +31,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
             function (type_entity_filter_1_1) {
                 type_entity_filter_1 = type_entity_filter_1_1;
             },
-            function (cv_filter_type_1_1) {
-                cv_filter_type_1 = cv_filter_type_1_1;
+            function (name_id_request_params_1_1) {
+                name_id_request_params_1 = name_id_request_params_1_1;
             }
         ],
         execute: function () {
@@ -40,14 +40,11 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                 function ProjectListBoxComponent(_dtoRequestServiceProject) {
                     this._dtoRequestServiceProject = _dtoRequestServiceProject;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
-                    // *** You cannot use an Enum directly as a template type parameter, so we need
-                    //     to assign them to properties
-                    this.entityTypeForTemplates = type_entity_1.EntityType;
-                    this.entityFilterForTemplates = type_entity_filter_1.EntityFilter;
-                    this.entitySubTypeForTemplates = type_entity_1.EntitySubType;
-                    this.cvFilterTypeForTemplates = cv_filter_type_1.CvFilterType;
                     this.onProjectSelected = new core_1.EventEmitter();
                     this.onAddHeaderStatus = new core_1.EventEmitter();
+                    this.nameIdRequestParamsProject = name_id_request_params_1.NameIdRequestParams
+                        .build(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
+                        .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID);
                 } // ctor
                 ProjectListBoxComponent.prototype.handleProjectSelected = function (arg) {
                     var selectedProjectId = arg.id;
@@ -85,8 +82,15 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     }
                 };
                 ProjectListBoxComponent.prototype.ngOnChanges = function (changes) {
+                    var foo = "foo";
+                    if (changes['gobiiExtractFilterType'] && changes['gobiiExtractFilterType'].currentValue) {
+                        if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+                            this.nameIdRequestParamsProject.setGobiiExtractFilterType(changes['gobiiExtractFilterType'].currentValue);
+                        }
+                    }
                     if (changes['primaryInvestigatorId'] && changes['primaryInvestigatorId'].currentValue) {
                         this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
+                        this.nameIdRequestParamsProject.setEntityFilterValue(this.primaryInvestigatorId);
                     }
                     if (changes['nameIdList']) {
                         if (changes['nameIdList'].currentValue) {
@@ -108,7 +112,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     selector: 'project-list-box',
                     inputs: ['primaryInvestigatorId', 'nameIdList', 'nameIdListPIs', 'gobiiExtractFilterType'],
                     outputs: ['onProjectSelected', 'onAddHeaderStatus'],
-                    template: "<name-id-list-box\n                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                    [entityType]=\"entityTypeForTemplates.Projects\"\n                    [entityFilter] = \"entityFilterForTemplates.BYTYPEID\"\n                    [entityFilterValue] = \"primaryInvestigatorId\"\n                    (onNameIdSelected) = \"handleProjectSelected($event)\"\n                    (onError) = \"handleHeaderStatus($event)\">\n                </name-id-list-box>\n\t\t        \n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        <b>Name:</b> {{project.projectName}}<BR>\n                        <b>Description:</b> {{project.projectDescription}}<BR>\n                        <b>Principle Investigator:</b> {{primaryInvestigatorName}}\n                      </fieldset> \n                </div>\t\t        \n" // end template
+                    template: "<name-id-list-box\n                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                    [nameIdRequestParams] = \"nameIdRequestParamsProject\"\n                    (onNameIdSelected) = \"handleProjectSelected($event)\"\n                    (onError) = \"handleHeaderStatus($event)\">\n                </name-id-list-box>\n\t\t        \n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        <b>Name:</b> {{project.projectName}}<BR>\n                        <b>Description:</b> {{project.projectDescription}}<BR>\n                        <b>Principle Investigator:</b> {{primaryInvestigatorName}}\n                      </fieldset> \n                </div>\t\t        \n" // end template
                 }),
                 __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService])
             ], ProjectListBoxComponent);
