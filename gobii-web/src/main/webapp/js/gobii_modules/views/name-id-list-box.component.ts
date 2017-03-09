@@ -17,6 +17,7 @@ import {Guid} from "../model/guid";
 @Component({
     selector: 'name-id-list-box',
     inputs: ['gobiiExtractFilterType',
+        'notifyOnInit',
         'entityType',
         'entityFilter',
         'entityFilterValue',
@@ -55,7 +56,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
 
         let returnVal: boolean = false;
 
-        if (this.entityFilter === EntityFilter.NONE ) {
+        if (this.entityFilter === EntityFilter.NONE) {
 
             this.entityFilter = null;
             this.entityFilterValue = null;
@@ -88,7 +89,9 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
                 if (nameIds && ( nameIds.length > 0 )) {
                     scope$.nameIdList = nameIds;
                     scope$.selectedNameId = nameIds[0].id;
-                    this.updateTreeService(nameIds[0]);
+                    if (this.notifyOnInit) {
+                        this.updateTreeService(nameIds[0]);
+                    }
                 } else {
                     scope$.nameIdList = [new NameId("0", "<none>", scope$.entityType)];
                 }
@@ -101,6 +104,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges {
     // useg
     private nameIdList: NameId[];
 
+    private notifyOnInit: boolean = false;
     // DtoRequestItemNameIds expects the value to be null if it's not set (not "UNKNOWN")
     private entityType: EntityType = null;
     private entityFilter: EntityFilter = null;

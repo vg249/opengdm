@@ -54,6 +54,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                     //this.uniqueId  = Guid.generateUUID();
                     this._dtoRequestService = _dtoRequestService;
                     this._fileModelTreeService = _fileModelTreeService;
+                    this.notifyOnInit = false;
                     // DtoRequestItemNameIds expects the value to be null if it's not set (not "UNKNOWN")
                     this.entityType = null;
                     this.entityFilter = null;
@@ -97,7 +98,9 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.nameIdList = nameIds;
                             scope$.selectedNameId = nameIds[0].id;
-                            _this.updateTreeService(nameIds[0]);
+                            if (_this.notifyOnInit) {
+                                _this.updateTreeService(nameIds[0]);
+                            }
                         }
                         else {
                             scope$.nameIdList = [new name_id_1.NameId("0", "<none>", scope$.entityType)];
@@ -166,6 +169,7 @@ System.register(["@angular/core", "../model/name-id", "../services/core/dto-requ
                 core_1.Component({
                     selector: 'name-id-list-box',
                     inputs: ['gobiiExtractFilterType',
+                        'notifyOnInit',
                         'entityType',
                         'entityFilter',
                         'entityFilterValue',

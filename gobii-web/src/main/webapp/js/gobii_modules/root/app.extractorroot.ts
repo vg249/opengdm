@@ -67,6 +67,7 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                     <legend class="the-legend">Submit As</legend>
                         <name-id-list-box
                             [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                            [notifyOnInit]="true"
                             [entityType]="entityTypeForTemplates.Contacts"
                             [entityFilter] = "entityFilterForTemplates.NONE"
                             [entitySubType] = "entitySubTypeForTemplates.CONTACT_SUBMITED_BY"
@@ -189,8 +190,10 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                                 ></export-format>
                                 <BR>
                            
-                                <mapsets-list-box [nameIdList]="mapsetNameIdList" 
-                                    (onMapsetSelected)="handleMapsetSelected($event)"></mapsets-list-box>
+                                <name-id-list-box
+                                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                    [entityType]="entityTypeForTemplates.Mapsets">
+                                </name-id-list-box>
                             </fieldset>
                         </form>
                         
