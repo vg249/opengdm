@@ -110,7 +110,12 @@ export class FileItem {
     }
 
     setGobiiExtractFilterType(value: GobiiExtractFilterType): FileItem {
-        this._gobiiExtractFilterType = value;
+
+        if( value != null ) {
+            this._gobiiExtractFilterType = value;
+        } else {
+            this._gobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+        }
         return this;
     }
 
@@ -119,7 +124,13 @@ export class FileItem {
     }
 
     setProcessType(value: ProcessType): FileItem {
-        this._processType = value;
+
+        if( value != null ) {
+            this._processType = value;
+        } else {
+            this._processType = ProcessType.UNKNOWN;
+        }
+
         return this;
     }
 
@@ -129,7 +140,12 @@ export class FileItem {
     }
 
     setExtractorItemType(value: ExtractorItemType): FileItem {
-        this._extractorItemType = value;
+
+        if( value != null ) {
+            this._extractorItemType = value;
+        } else {
+            this._extractorItemType = ExtractorItemType.UNKNOWN;
+        }
         return this;
     }
 
@@ -138,7 +154,12 @@ export class FileItem {
     }
 
     setEntityType(value: EntityType): FileItem {
-        this._entityType = value;
+
+        if (value != null ) {
+            this._entityType = value;
+        } else {
+            this._entityType = EntityType.UNKNOWN;
+        }
         return this;
     }
 
@@ -147,7 +168,13 @@ export class FileItem {
     }
 
     setEntitySubType(value: EntitySubType): FileItem {
-        this._entitySubType = value;
+
+        if( value != null ) {
+            this._entitySubType = value;
+        } else {
+            this._entitySubType = EntitySubType.UNKNOWN;
+        }
+
         return this;
     }
 
@@ -156,7 +183,11 @@ export class FileItem {
     }
 
     setCvFilterType(value: CvFilterType): FileItem {
-        this._cvFilterType = value;
+        if( value != null ) {
+            this._cvFilterType = value;
+        } else {
+            this._cvFilterType = CvFilterType.UNKNOWN;
+        }
         return this;
     }
 

@@ -70,6 +70,7 @@ export class FileModelTreeService {
             submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
                 .setCategoryType(ExtractorCategoryType.LEAF)
                 .setEntityType(EntityType.Contacts)
+                .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
                 .setEntityName(Labels.instance().entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY])
                 .setCardinality(CardinalityType.ONE_ONLY)
             );
@@ -136,6 +137,7 @@ export class FileModelTreeService {
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
                             .setCategoryType(ExtractorCategoryType.LEAF)
                             .setEntityType(EntityType.Contacts)
+                            .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
                             .setEntityName(Labels.instance().entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR])
                             .setCardinality(CardinalityType.ZERO_OR_ONE)
                         )
@@ -223,7 +225,8 @@ export class FileModelTreeService {
 
         if (fileItem.getGobiiExtractFilterType() != GobiiExtractFilterType.UNKNOWN) {
 
-            let fileModelNode: FileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(), fileItem.getEntityType(), fileItem.getCvFilterType());
+            let fileModelNode: FileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(),
+                fileItem);
 
             if (fileModelNode != null) {
 
@@ -289,7 +292,7 @@ export class FileModelTreeService {
                 for( let idx:number = 0; idx < remainingExtractorTypes.length && fileModelNode == null; idx++) {
 
                     let currentGobiiExtractFilterType:GobiiExtractFilterType = remainingExtractorTypes[idx];
-                    fileModelNode = this.findFileModelNode(currentGobiiExtractFilterType, fileItem.getEntityType(), fileItem.getCvFilterType());
+                    fileModelNode = this.findFileModelNode(currentGobiiExtractFilterType, fileItem);
                     if( fileModelNode != null ) {
                         fileItem.setGobiiExtractFilterType(currentGobiiExtractFilterType);
                     }
@@ -319,7 +322,7 @@ export class FileModelTreeService {
     }
 
 
-    findFileModelNode(gobiiExtractFilterType: GobiiExtractFilterType, entityType: EntityType, cvFilter: CvFilterType) {
+    findFileModelNode(gobiiExtractFilterType: GobiiExtractFilterType, fileItem:FileItem) {
 
         let fileModelNodes: FileModelNode[] = this.getFileModelNodes(gobiiExtractFilterType);
 
@@ -327,7 +330,10 @@ export class FileModelTreeService {
 
         for (let idx: number = 0; ( idx < fileModelNodes.length) && (returnVal == null ); idx++) {
             let currentTemplate: FileModelNode = fileModelNodes[idx];
-            returnVal = this.findTemplateByCriteria(currentTemplate, entityType, cvFilter);
+            returnVal = this.findTemplateByCriteria(currentTemplate,
+                fileItem.getEntityType(),
+                fileItem.getEntitySubType(),
+                fileItem.getCvFilterType());
         }
 
         return returnVal;
@@ -337,6 +343,7 @@ export class FileModelTreeService {
 
     findTemplateByCriteria(fileModelNode: FileModelNode,
                            entityType: EntityType,
+                           entitySubType:EntitySubType,
                            cvFilterType: CvFilterType): FileModelNode {
 
         let returnVal: FileModelNode = null;
@@ -346,13 +353,15 @@ export class FileModelTreeService {
             for (let idx: number = 0; ( idx < fileModelNode.getChildren().length) && (returnVal == null ); idx++) {
 
                 let currentTemplate: FileModelNode = fileModelNode.getChildren()[idx];
-                returnVal = this.findTemplateByCriteria(currentTemplate, entityType, cvFilterType);
+                returnVal = this.findTemplateByCriteria(currentTemplate, entityType,entitySubType, cvFilterType);
             }
         }
 
         if (returnVal === null) {
 
-            if (entityType == fileModelNode.getEntityType() && cvFilterType == fileModelNode.getCvFilterType()) {
+            if (entityType == fileModelNode.getEntityType()
+                && entitySubType == fileModelNode.getEntitySubType()
+                && cvFilterType == fileModelNode.getCvFilterType()) {
 
                 returnVal = fileModelNode;
             }

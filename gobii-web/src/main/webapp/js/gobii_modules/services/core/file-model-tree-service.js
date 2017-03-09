@@ -89,6 +89,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         submissionItemsForAll.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, null)
                             .setCategoryType(file_model_node_1.ExtractorCategoryType.LEAF)
                             .setEntityType(type_entity_1.EntityType.Contacts)
+                            .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
                             .setEntityName(entity_labels_1.Labels.instance().entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_SUBMITED_BY])
                             .setCardinality(file_model_node_1.CardinalityType.ONE_ONLY));
                         submissionItemsForAll.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.EXPORT_FORMAT, null)
@@ -139,6 +140,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                                 .addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, currentParent)
                                 .setCategoryType(file_model_node_1.ExtractorCategoryType.LEAF)
                                 .setEntityType(type_entity_1.EntityType.Contacts)
+                                .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
                                 .setEntityName(entity_labels_1.Labels.instance().entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR])
                                 .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_ONE))
                                 .addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, currentParent)
@@ -196,7 +198,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                 FileModelTreeService.prototype.mutate = function (fileItem) {
                     var returnVal = null;
                     if (fileItem.getGobiiExtractFilterType() != type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN) {
-                        var fileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(), fileItem.getEntityType(), fileItem.getCvFilterType());
+                        var fileModelNode = this.findFileModelNode(fileItem.getGobiiExtractFilterType(), fileItem);
                         if (fileModelNode != null) {
                             if (fileItem.getProcessType() === type_process_1.ProcessType.CREATE || fileItem.getProcessType() === type_process_1.ProcessType.UPDATE) {
                                 this.placeNodeInModel(fileModelNode, fileItem);
@@ -239,7 +241,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             var fileModelNode_1 = null;
                             for (var idx = 0; idx < remainingExtractorTypes.length && fileModelNode_1 == null; idx++) {
                                 var currentGobiiExtractFilterType = remainingExtractorTypes[idx];
-                                fileModelNode_1 = this.findFileModelNode(currentGobiiExtractFilterType, fileItem.getEntityType(), fileItem.getCvFilterType());
+                                fileModelNode_1 = this.findFileModelNode(currentGobiiExtractFilterType, fileItem);
                                 if (fileModelNode_1 != null) {
                                     fileItem.setGobiiExtractFilterType(currentGobiiExtractFilterType);
                                 }
@@ -257,25 +259,27 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                     } // if-else extractor filter type is not set
                     return returnVal;
                 };
-                FileModelTreeService.prototype.findFileModelNode = function (gobiiExtractFilterType, entityType, cvFilter) {
+                FileModelTreeService.prototype.findFileModelNode = function (gobiiExtractFilterType, fileItem) {
                     var fileModelNodes = this.getFileModelNodes(gobiiExtractFilterType);
                     var returnVal = null;
                     for (var idx = 0; (idx < fileModelNodes.length) && (returnVal == null); idx++) {
                         var currentTemplate = fileModelNodes[idx];
-                        returnVal = this.findTemplateByCriteria(currentTemplate, entityType, cvFilter);
+                        returnVal = this.findTemplateByCriteria(currentTemplate, fileItem.getEntityType(), fileItem.getEntitySubType(), fileItem.getCvFilterType());
                     }
                     return returnVal;
                 };
-                FileModelTreeService.prototype.findTemplateByCriteria = function (fileModelNode, entityType, cvFilterType) {
+                FileModelTreeService.prototype.findTemplateByCriteria = function (fileModelNode, entityType, entitySubType, cvFilterType) {
                     var returnVal = null;
                     if (fileModelNode.getChildren() != null) {
                         for (var idx = 0; (idx < fileModelNode.getChildren().length) && (returnVal == null); idx++) {
                             var currentTemplate = fileModelNode.getChildren()[idx];
-                            returnVal = this.findTemplateByCriteria(currentTemplate, entityType, cvFilterType);
+                            returnVal = this.findTemplateByCriteria(currentTemplate, entityType, entitySubType, cvFilterType);
                         }
                     }
                     if (returnVal === null) {
-                        if (entityType == fileModelNode.getEntityType() && cvFilterType == fileModelNode.getCvFilterType()) {
+                        if (entityType == fileModelNode.getEntityType()
+                            && entitySubType == fileModelNode.getEntitySubType()
+                            && cvFilterType == fileModelNode.getCvFilterType()) {
                             returnVal = fileModelNode;
                         }
                     }

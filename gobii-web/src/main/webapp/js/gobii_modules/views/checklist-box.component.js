@@ -53,17 +53,29 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
                     itemToChange.setProcessType(arg.currentTarget.checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE);
                     itemToChange.setChecked(arg.currentTarget.checked);
-                    if (itemToChange.getChecked() === true) {
-                        this.checkedFileItemHistory.push(itemToChange);
-                    }
-                    else {
-                        var idx = this.checkedFileItemHistory.indexOf(itemToChange);
-                        if (idx) {
-                            this.checkedFileItemHistory.splice(idx);
-                        }
-                    }
+                    this.updateCheckedItemHistory(itemToChange);
                     this.onItemChecked.emit(itemToChange);
                 }; // handleItemChecked()
+                CheckListBoxComponent.prototype.updateCheckedItemHistory = function (fileItem) {
+                    var historyFileItem = this
+                        .checkedFileItemHistory
+                        .find(function (fi) {
+                        return (fi.getEntityType() === fileItem.getEntityType()
+                            && fi.getItemId() === fileItem.getItemId()
+                            && fi.getItemName() === fileItem.getItemName());
+                    });
+                    if (fileItem.getChecked() === true) {
+                        if (historyFileItem == null) {
+                            this.checkedFileItemHistory.push(fileItem);
+                        }
+                    }
+                    else {
+                        if (historyFileItem != null) {
+                            var idx = this.checkedFileItemHistory.indexOf(historyFileItem);
+                            this.checkedFileItemHistory.splice(idx, 1);
+                        }
+                    }
+                };
                 CheckListBoxComponent.prototype.wasItemPreviouslyChecked = function (fileItem) {
                     var checkedFileItem = this.checkedFileItemHistory.find(function (fi) {
                         return fi.getEntityType() === fileItem.getEntityType()
@@ -131,6 +143,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             if (itemToChange) {
                                 itemToChange.setProcessType(this.eventedFileItem.getProcessType());
                                 itemToChange.setChecked(this.eventedFileItem.getChecked());
+                                this.updateCheckedItemHistory(itemToChange);
                             }
                         }
                     }

@@ -1,9 +1,12 @@
-System.register(["./guid", "./type-entity", "./cv-filter-type", "./file-model-node"], function (exports_1, context_1) {
+System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var guid_1, type_entity_1, cv_filter_type_1, file_model_node_1, FileItem;
+    var type_process_1, guid_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, file_model_node_1, FileItem;
     return {
         setters: [
+            function (type_process_1_1) {
+                type_process_1 = type_process_1_1;
+            },
             function (guid_1_1) {
                 guid_1 = guid_1_1;
             },
@@ -12,6 +15,9 @@ System.register(["./guid", "./type-entity", "./cv-filter-type", "./file-model-no
             },
             function (cv_filter_type_1_1) {
                 cv_filter_type_1 = cv_filter_type_1_1;
+            },
+            function (type_extractor_filter_1_1) {
+                type_extractor_filter_1 = type_extractor_filter_1_1;
             },
             function (file_model_node_1_1) {
                 file_model_node_1 = file_model_node_1_1;
@@ -86,42 +92,72 @@ System.register(["./guid", "./type-entity", "./cv-filter-type", "./file-model-no
                     return this._gobiiExtractFilterType;
                 };
                 FileItem.prototype.setGobiiExtractFilterType = function (value) {
-                    this._gobiiExtractFilterType = value;
+                    if (value != null) {
+                        this._gobiiExtractFilterType = value;
+                    }
+                    else {
+                        this._gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
+                    }
                     return this;
                 };
                 FileItem.prototype.getProcessType = function () {
                     return this._processType;
                 };
                 FileItem.prototype.setProcessType = function (value) {
-                    this._processType = value;
+                    if (value != null) {
+                        this._processType = value;
+                    }
+                    else {
+                        this._processType = type_process_1.ProcessType.UNKNOWN;
+                    }
                     return this;
                 };
                 FileItem.prototype.getExtractorItemType = function () {
                     return this._extractorItemType;
                 };
                 FileItem.prototype.setExtractorItemType = function (value) {
-                    this._extractorItemType = value;
+                    if (value != null) {
+                        this._extractorItemType = value;
+                    }
+                    else {
+                        this._extractorItemType = file_model_node_1.ExtractorItemType.UNKNOWN;
+                    }
                     return this;
                 };
                 FileItem.prototype.getEntityType = function () {
                     return this._entityType;
                 };
                 FileItem.prototype.setEntityType = function (value) {
-                    this._entityType = value;
+                    if (value != null) {
+                        this._entityType = value;
+                    }
+                    else {
+                        this._entityType = type_entity_1.EntityType.UNKNOWN;
+                    }
                     return this;
                 };
                 FileItem.prototype.getEntitySubType = function () {
                     return this._entitySubType;
                 };
                 FileItem.prototype.setEntitySubType = function (value) {
-                    this._entitySubType = value;
+                    if (value != null) {
+                        this._entitySubType = value;
+                    }
+                    else {
+                        this._entitySubType = type_entity_1.EntitySubType.UNKNOWN;
+                    }
                     return this;
                 };
                 FileItem.prototype.getCvFilterType = function () {
                     return this._cvFilterType;
                 };
                 FileItem.prototype.setCvFilterType = function (value) {
-                    this._cvFilterType = value;
+                    if (value != null) {
+                        this._cvFilterType = value;
+                    }
+                    else {
+                        this._cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
+                    }
                     return this;
                 };
                 FileItem.prototype.getItemId = function () {
