@@ -589,14 +589,20 @@ export class ExtractorRoot implements OnInit {
 // ********************************************** PLATFORM SELECTION
     private platformsNameIdList: NameId[];
     private selectedPlatformId: string;
-    private checkedPlatformId: string;
 
     private handlePlatformSelected(arg) {
         this.selectedPlatformId = arg.id;
     }
 
-    private handlePlatformChecked(arg) {
-        this.checkedPlatformId = arg.id;
+    private handlePlatformChecked(fileItemEvent:FileItem) {
+
+
+        this._fileModelTreeService.put(fileItemEvent).subscribe(
+            null,
+            headerResponse => {
+                this.handleHeaderStatusMessage(headerResponse)
+            });
+
     }
 
     private platformFileItemEventChange: FileItem;

@@ -294,8 +294,11 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handlePlatformSelected = function (arg) {
                     this.selectedPlatformId = arg.id;
                 };
-                ExtractorRoot.prototype.handlePlatformChecked = function (arg) {
-                    this.checkedPlatformId = arg.id;
+                ExtractorRoot.prototype.handlePlatformChecked = function (fileItemEvent) {
+                    var _this = this;
+                    this._fileModelTreeService.put(fileItemEvent).subscribe(null, function (headerResponse) {
+                        _this.handleHeaderStatusMessage(headerResponse);
+                    });
                 };
                 ExtractorRoot.prototype.initializePlatforms = function () {
                     var scope$ = this;
