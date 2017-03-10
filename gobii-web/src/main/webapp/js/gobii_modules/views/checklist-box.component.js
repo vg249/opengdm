@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../model/type-process", "../model/file-item", "../model/type-entity", "../model/type-extractor-filter", "../model/cv-filter-type"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-process", "../model/file-item", "../model/type-extractor-filter", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../services/core/name-id-service", "../model/file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,14 +10,11 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, type_process_1, file_item_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, CheckListBoxComponent;
+    var core_1, type_process_1, file_item_1, type_extractor_filter_1, cv_filter_type_1, file_model_tree_service_1, name_id_service_1, file_model_node_1, CheckListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
-            },
-            function (dto_request_service_1_1) {
-                dto_request_service_1 = dto_request_service_1_1;
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
@@ -25,31 +22,35 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             function (file_item_1_1) {
                 file_item_1 = file_item_1_1;
             },
-            function (type_entity_1_1) {
-                type_entity_1 = type_entity_1_1;
-            },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
             },
             function (cv_filter_type_1_1) {
                 cv_filter_type_1 = cv_filter_type_1_1;
+            },
+            function (file_model_tree_service_1_1) {
+                file_model_tree_service_1 = file_model_tree_service_1_1;
+            },
+            function (name_id_service_1_1) {
+                name_id_service_1 = name_id_service_1_1;
+            },
+            function (file_model_node_1_1) {
+                file_model_node_1 = file_model_node_1_1;
             }
         ],
         execute: function () {
             CheckListBoxComponent = (function () {
-                function CheckListBoxComponent(_dtoRequestServiceNameId) {
-                    this._dtoRequestServiceNameId = _dtoRequestServiceNameId;
-                    this.entityType = null;
-                    this.entityFilter = null;
-                    this.entityFilterValue = null;
-                    this.entitySubType = null;
-                    this.cvFilterType = null;
+                function CheckListBoxComponent(_fileModelTreeService, _nameIdService, differs) {
+                    this._fileModelTreeService = _fileModelTreeService;
+                    this._nameIdService = _nameIdService;
+                    this.differs = differs;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
+                    this.onError = new core_1.EventEmitter();
                     this.fileItemEvents = [];
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
-                    this.onAddMessage = new core_1.EventEmitter();
                     this.checkedFileItemHistory = [];
+                    this.differ = differs.find({}).create(null);
                 } // ctor
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var itemToChange = this.fileItemEvents.filter(function (e) {
@@ -60,6 +61,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     itemToChange.setChecked(arg.currentTarget.checked);
                     this.updateCheckedItemHistory(itemToChange);
                     this.onItemChecked.emit(itemToChange);
+                    this.updateTreeService(itemToChange);
                 }; // handleItemChecked()
                 CheckListBoxComponent.prototype.updateCheckedItemHistory = function (fileItem) {
                     var historyFileItem = this
@@ -89,43 +91,70 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     });
                     return checkedFileItem != null;
                 };
-                CheckListBoxComponent.prototype.handleAddMessage = function (arg) {
-                    this.onAddMessage.emit(arg);
-                };
                 CheckListBoxComponent.prototype.handleItemSelected = function (arg) {
                     if (this.previousSelectedItem) {
                         this.previousSelectedItem.style = "";
                     }
                     arg.currentTarget.style = "background-color:#b3d9ff";
                     this.previousSelectedItem = arg.currentTarget;
-                    var fileItemEvent = file_item_1.FileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.READ)
-                        .setEntityType(this.entityType)
-                        .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
-                        .setItemId(arg.currentTarget.children[0].value)
-                        .setItemName(arg.currentTarget.children[0].name)
-                        .setChecked(false)
-                        .setRequired(false);
-                    this.onItemSelected.emit(fileItemEvent);
+                    var selectedFileItem = this.fileItemEvents.filter(function (e) {
+                        return e.getItemId() === arg.currentTarget.value;
+                    })[0];
+                    // let fileItemEvent: FileItem = FileItem.build(
+                    //     GobiiExtractFilterType.UNKNOWN,
+                    //     ProcessType.READ)
+                    //     .setEntityType(this.nameIdRequestParams.getEntityType())
+                    //     .setCvFilterType(CvFilterType.UNKNOWN)
+                    //     .setItemId(arg.currentTarget.children[0].value)
+                    //     .setItemName(arg.currentTarget.children[0].name)
+                    //     .setChecked(false)
+                    //     .setRequired(false);
+                    if (selectedFileItem) {
+                        this.onItemSelected.emit(selectedFileItem);
+                    }
+                };
+                CheckListBoxComponent.prototype.initializeNameIds = function () {
+                    var _this = this;
+                    var scope$ = this;
+                    this._nameIdService.get(this.nameIdRequestParams)
+                        .subscribe(function (nameIds) {
+                        if (nameIds && (nameIds.length > 0)) {
+                            scope$.nameIdList = nameIds;
+                            scope$.setList(scope$.nameIdList);
+                        }
+                    }, function (responseHeader) {
+                        _this.handleHeaderStatus(responseHeader);
+                    });
+                };
+                CheckListBoxComponent.prototype.updateTreeService = function (fileItem) {
+                    var _this = this;
+                    this._fileModelTreeService.put(fileItem)
+                        .subscribe(null, function (headerResponse) {
+                        _this.handleHeaderStatus(headerResponse);
+                    });
+                };
+                CheckListBoxComponent.prototype.handleHeaderStatus = function (headerStatusMessage) {
+                    this.onError.emit(headerStatusMessage);
                 };
                 CheckListBoxComponent.prototype.setList = function (nameIdList) {
+                    var _this = this;
                     // we can get this event whenver the item is clicked, not necessarily when the checkbox
                     var scope$ = this;
                     scope$.nameIdList = nameIdList;
                     if (scope$.nameIdList && (scope$.nameIdList.length > 0)) {
-                        scope$.entityType = scope$.nameIdList[0].entityType;
                         scope$.fileItemEvents = [];
                         scope$.nameIdList.forEach(function (n) {
-                            var currentFileeItem = file_item_1.FileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.CREATE)
-                                .setEntityType(scope$.entityType)
+                            var currentFileItem = file_item_1.FileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                                .setEntityType(_this.nameIdRequestParams.getEntityType())
                                 .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                                 .setItemId(n.id)
                                 .setItemName(n.name)
                                 .setChecked(false)
                                 .setRequired(false);
-                            if (scope$.wasItemPreviouslyChecked(currentFileeItem)) {
-                                currentFileeItem.setChecked(true);
+                            if (scope$.wasItemPreviouslyChecked(currentFileItem)) {
+                                currentFileItem.setChecked(true);
                             }
-                            scope$.fileItemEvents.push(currentFileeItem);
+                            scope$.fileItemEvents.push(currentFileItem);
                         });
                     }
                     else {
@@ -133,6 +162,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     }
                 }; // setList()
                 CheckListBoxComponent.prototype.ngOnInit = function () {
+                    if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
+                        this.initializeNameIds();
+                    }
                 };
                 CheckListBoxComponent.prototype.ngOnChanges = function (changes) {
                     var _this = this;
@@ -152,12 +184,28 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             }
                         }
                     }
-                    else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
-                        this.setList(changes['nameIdList'].currentValue);
-                    }
-                    else if (changes['entityType'] && changes['entityType'].currentValue) {
-                        var enrityTypeString = changes['entityType'].currentValue;
-                        this.entityType = type_entity_1.EntityType[enrityTypeString];
+                    if (changes['gobiiExtractFilterType']
+                        && (changes['gobiiExtractFilterType'].currentValue != null)
+                        && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
+                        if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+                            this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
+                            this._fileModelTreeService
+                                .fileItemNotifications()
+                                .subscribe(function (fileItem) {
+                                if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
+                                    && fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+                                    _this.initializeNameIds();
+                                }
+                            });
+                        } // if we have a new filter type
+                    } // if filter type changed
+                };
+                CheckListBoxComponent.prototype.ngDoCheck = function () {
+                    var changes = this.differ.diff(this.nameIdRequestParams);
+                    if (changes) {
+                        if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
+                            this.initializeNameIds();
+                        }
                     }
                 };
                 return CheckListBoxComponent;
@@ -165,11 +213,15 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             CheckListBoxComponent = __decorate([
                 core_1.Component({
                     selector: 'checklist-box',
-                    inputs: ['fileItemEventChange', 'nameIdList'],
-                    outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage'],
+                    inputs: ['fileItemEventChange',
+                        'gobiiExtractFilterType',
+                        'nameIdRequestParams'],
+                    outputs: ['onItemSelected', 'onItemChecked', 'onError'],
                     template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let fileItemEvent of fileItemEvents\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                [checked]=\"fileItemEvent.getChecked()\"\n                                value={{fileItemEvent.getItemId()}} \n                                name=\"{{fileItemEvent.getItemName()}}\">&nbsp;{{fileItemEvent.getItemName()}}\n                        </div>            \n                    </div>\n                </form>" // end template
                 }),
-                __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService])
+                __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService,
+                    name_id_service_1.NameIdService,
+                    core_1.KeyValueDiffers])
             ], CheckListBoxComponent);
             exports_1("CheckListBoxComponent", CheckListBoxComponent);
         }

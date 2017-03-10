@@ -1,4 +1,4 @@
-import {Component, OnInit, OnChanges, SimpleChange, EventEmitter} from "@angular/core";
+import {Component, OnInit, OnChanges, SimpleChange, EventEmitter, KeyValueDiffers} from "@angular/core";
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
@@ -11,18 +11,22 @@ import {Analysis} from "../model/analysis";
 import {EntityFilter} from "../model/type-entity-filter";
 import {CvFilterType, CvFilters} from "../model/cv-filter-type";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
+import {HeaderStatusMessage} from "../model/dto-header-status-message";
+import {GobiiExtractFilterType} from "../model/type-extractor-filter";
+import {NameIdRequestParams} from "../model/name-id-request-params";
 
 
 @Component({
     selector: 'dataset-checklist-box',
-    inputs: ['experimentId', 'fileItemEventChange'],
-    outputs: ['onItemChecked', 'onAddMessage'],
+    inputs: ['experimentId', 'fileItemEventChange','gobiiExtractFilterType'],
+    outputs: ['onItemChecked', 'onAddStatusMessage'],
     template: `<checklist-box
+                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
                     [fileItemEventChange] = "datasetFileItemEventChange"
-                    [nameIdList] = "dataSetsNameIdList"
+                    [nameIdRequestParams] = "nameIdRequestParamsDataset"
                     (onItemSelected)="handleItemSelected($event)"
                     (onItemChecked)="handleItemChecked($event)"
-                    (onAddMessage) = "handleAddMessage($event)">
+                    (onError) = "handleAddStatusMessage($event)">
                 </checklist-box>
                 <div *ngIf="dataSet">
                     <BR>
@@ -51,19 +55,26 @@ import {FileModelTreeService} from "../services/core/file-model-tree-service";
 
 export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
-    constructor(private _dtoRequestServiceNameId: DtoRequestService<NameId[]>,
-                private _dtoRequestServiceDataSetDetail: DtoRequestService<DataSet>,
+    constructor(private _dtoRequestServiceDataSetDetail: DtoRequestService<DataSet>,
                 private _dtoRequestServiceAnalysisDetail: DtoRequestService<Analysis>,
                 private _fileModelTreeService: FileModelTreeService) {
+
+
+
+        this.nameIdRequestParamsDataset = NameIdRequestParams
+            .build("Datasets-by-experiment-id",
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.DataSets)
+            .setEntityFilter(EntityFilter.BYTYPEID);
 
     } // ctor
 
     // useg
-    private dataSetsNameIdList: NameId[];
-    private fileItemEvents: FileItem[] = [];
+    private gobiiExtractFilterType:GobiiExtractFilterType;
+    private nameIdRequestParamsDataset: NameIdRequestParams;
     private experimentId: string;
     private onItemChecked: EventEmitter<FileItem> = new EventEmitter();
-    private onAddMessage: EventEmitter<string> = new EventEmitter();
+    private onAddStatusMessage: EventEmitter<HeaderStatusMessage> = new EventEmitter();
     private dataSet: DataSet;
     private analysisNames: string[] = [];
     private analysisTypes: string[] = [];
@@ -71,18 +82,16 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private datasetFileItemEventChange: FileItem;
 
 
-
-
-    private handleItemChecked(arg:FileItem) {
+    private handleItemChecked(arg: FileItem) {
 
         arg.setRequired(false);
         this.onItemChecked.emit(arg);
 
     } // handleItemChecked()
 
-    private handleAddMessage(arg) {
+    private handleAddStatusMessage(arg: HeaderStatusMessage) {
 
-        this.onAddMessage.emit(arg);
+        this.onAddStatusMessage.emit(arg);
     }
 
     private handleItemSelected(arg) {
@@ -90,52 +99,52 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
         this.setDatasetDetails(selectedDataSetId);
     }
 
-    private setList(): void {
-
-        // we can get this event whenver the item is clicked, not necessarily when the checkbox
-        let scope$ = this;
-
-        scope$.dataSetsNameIdList = [];
-        scope$.fileItemEvents = [];
-        scope$.setDatasetDetails(undefined);
-
-        if (scope$.experimentId) {
-
-            this._dtoRequestServiceNameId.get(new DtoRequestItemNameIds(
-                EntityType.DataSets,
-                EntityFilter.BYTYPEID,
-                this.experimentId)).subscribe(nameIds => {
-                    if (nameIds && ( nameIds.length > 0 )) {
-
-                        scope$.dataSetsNameIdList = nameIds;
-                        // scope$.fileItemEvents = [];
-                        // scope$.dataSetsNameIdList.forEach(n => {
-                        //     scope$.fileItemEvents.push(new FileItem(
-                        //         ProcessType.CREATE,
-                        //         n.id,
-                        //         n.name,
-                        //         false
-                        //     ));
-                        // });
-
-                        scope$.setDatasetDetails(Number(scope$.dataSetsNameIdList[0].id));
-
-                    } else {
-                        scope$.dataSetsNameIdList = [new NameId("0", "<none>", EntityType.DataSets)];
-                        scope$.setDatasetDetails(undefined);
-                    }
-                },
-                dtoHeaderResponse => {
-                    dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving dataset names by experiment id: "
-                        + ": "
-                        + m.message))
-                });
-
-        }  else {
-            scope$.dataSetsNameIdList = [];
-        }// if we have an experiment id
-
-    } // setList()
+    // private setList(): void {
+    //
+    //     // we can get this event whenver the item is clicked, not necessarily when the checkbox
+    //     let scope$ = this;
+    //
+    //     scope$.dataSetsNameIdList = [];
+    //     scope$.fileItemEvents = [];
+    //     scope$.setDatasetDetails(undefined);
+    //
+    //     if (scope$.experimentId) {
+    //
+    //         this._dtoRequestServiceNameId.get(new DtoRequestItemNameIds(
+    //             EntityType.DataSets,
+    //             EntityFilter.BYTYPEID,
+    //             this.experimentId)).subscribe(nameIds => {
+    //                 if (nameIds && ( nameIds.length > 0 )) {
+    //
+    //                     scope$.dataSetsNameIdList = nameIds;
+    //                     // scope$.fileItemEvents = [];
+    //                     // scope$.dataSetsNameIdList.forEach(n => {
+    //                     //     scope$.fileItemEvents.push(new FileItem(
+    //                     //         ProcessType.CREATE,
+    //                     //         n.id,
+    //                     //         n.name,
+    //                     //         false
+    //                     //     ));
+    //                     // });
+    //
+    //                     scope$.setDatasetDetails(Number(scope$.dataSetsNameIdList[0].id));
+    //
+    //                 } else {
+    //                     scope$.dataSetsNameIdList = [new NameId("0", "<none>", EntityType.DataSets)];
+    //                     scope$.setDatasetDetails(undefined);
+    //                 }
+    //             },
+    //             dtoHeaderResponse => {
+    //                 dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving dataset names by experiment id: "
+    //                     + ": "
+    //                     + m.message))
+    //             });
+    //
+    //     }  else {
+    //         scope$.dataSetsNameIdList = [];
+    //     }// if we have an experiment id
+    //
+    // } // setList()
 
     private setDatasetDetails(dataSetId: number): void {
 
@@ -171,16 +180,16 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
                                                     } // if we have an analysis type id
                                                 },
-                                                dtoHeaderResponse => {
-                                                    dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
+                                                headerStatusMessage => {
+                                                    scope$.handleAddStatusMessage(headerStatusMessage)
                                                 });
                                     }
                                 }
                             );
                         }
                     },
-                    dtoHeaderResponse => {
-                        dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
+                    headerStatusMessage => {
+                        scope$.handleAddStatusMessage(headerStatusMessage)
                     });
         } else {
 
@@ -200,21 +209,24 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                 this.datasetFileItemEventChange = fileItem;
             });
 
+        if( this.experimentId != null ) {
+            this.nameIdRequestParamsDataset.setEntityFilterValue(this.experimentId);
+        }
 
-        let scope$ = this;
-        scope$._dtoRequestServiceNameId
-            .get(new DtoRequestItemNameIds(EntityType.CvTerms,
-                EntityFilter.BYTYPENAME,
-                CvFilters.get(CvFilterType.ANALYSIS_TYPE)))
-            .subscribe(nameIdList => {
-                    scope$.nameIdListAnalysisTypes = nameIdList;
-                    if (this.experimentId) {
-                        this.setList();
-                    }
-                },
-                dtoHeaderResponse => {
-                    dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
-                });
+        //let scope$ = this;
+        // scope$._dtoRequestServiceNameId
+        //     .get(new DtoRequestItemNameIds(EntityType.CvTerms,
+        //         EntityFilter.BYTYPENAME,
+        //         CvFilters.get(CvFilterType.ANALYSIS_TYPE)))
+        //     .subscribe(nameIdList => {
+        //             scope$.nameIdListAnalysisTypes = nameIdList;
+        //             if (this.experimentId) {
+        //                 this.setList();
+        //             }
+        //         },
+        //         dtoHeaderResponse => {
+        //             dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
+        //         });
 
     }
 
@@ -222,7 +234,8 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
         if (changes['experimentId']) {
             this.experimentId = changes['experimentId'].currentValue;
-            this.setList();
+            this.nameIdRequestParamsDataset.setEntityFilterValue(this.experimentId);
+            //this.setList();
         }
 
     }

@@ -126,10 +126,11 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
                             <BR>
                             <label class="the-label">Platforms:</label><BR>
                             <checklist-box
-                                [nameIdList] = "platformsNameIdList"
+                                [nameIdRequestParams] = "nameIdRequestParamsPlatforms"
+                                [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 (onItemSelected)="handlePlatformSelected($event)"
                                 (onItemChecked)="handlePlatformChecked($event)"
-                                (onAddMessage) = "handleAddMessage($event)">
+                                (onAddStatusMessage) = "handleHeaderStatusMessage($event)">
                             </checklist-box>
                          </div>
 
@@ -139,9 +140,10 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
                             <BR>
                             <label class="the-label">Data Sets</label><BR>
                             <dataset-checklist-box
+                                [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [experimentId] = "selectedExperimentId" 
                                 (onItemChecked)="handleCheckedDataSetItem($event)"
-                                (onAddMessage) = "handleAddMessage($event)">
+                                (onAddStatusMessage) = "handleHeaderStatusMessage($event)">
                             </dataset-checklist-box>
                         </div>
                     </fieldset>
@@ -244,15 +246,11 @@ export class ExtractorRoot implements OnInit {
 
     // *** You cannot use an Enum directly as a template type parameter, so we need
     //     to assign them to properties
-    private entityTypeForTemplates = EntityType;
-    private entityFilterForTemplates = EntityFilter;
-    private entitySubTypeForTemplates = EntitySubType;
-    private cvFilterTypeForTemplates = CvFilterType;
-
     private nameIdRequestParamsContactsSubmitter: NameIdRequestParams;
     private nameIdRequestParamsContactsPi: NameIdRequestParams;
     private nameIdRequestParamsMapsets: NameIdRequestParams;
     private nameIdRequestParamsDatasetType: NameIdRequestParams;
+    private nameIdRequestParamsPlatforms: NameIdRequestParams;
 
 
     // ************************************************************************
@@ -297,6 +295,10 @@ export class ExtractorRoot implements OnInit {
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Mapsets);
 
+        this.nameIdRequestParamsPlatforms = NameIdRequestParams
+            .build("Platforms",
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.Platforms);
 
     }
 

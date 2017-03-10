@@ -1,4 +1,4 @@
-import {Component, OnInit, OnChanges, SimpleChange, EventEmitter, Input} from "@angular/core";
+import {Component, OnInit, OnChanges, SimpleChange, EventEmitter, Input, DoCheck, KeyValueDiffers} from "@angular/core";
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {ProcessType} from "../model/type-process";
@@ -7,12 +7,19 @@ import {EntityType, EntitySubType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {CvFilterType} from "../model/cv-filter-type";
 import {EntityFilter} from "../model/type-entity-filter";
+import {NameIdRequestParams} from "../model/name-id-request-params";
+import {HeaderStatusMessage} from "../model/dto-header-status-message";
+import {FileModelTreeService} from "../services/core/file-model-tree-service";
+import {NameIdService} from "../services/core/name-id-service";
+import {ExtractorItemType} from "../model/file-model-node";
 
 
 @Component({
     selector: 'checklist-box',
-    inputs: ['fileItemEventChange', 'nameIdList'],
-    outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage'],
+    inputs: ['fileItemEventChange',
+        'gobiiExtractFilterType',
+        'nameIdRequestParams'],
+    outputs: ['onItemSelected', 'onItemChecked', 'onError'],
     template: `<form>
                     <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
                         <div *ngFor="let fileItemEvent of fileItemEvents" 
@@ -30,18 +37,19 @@ import {EntityFilter} from "../model/type-entity-filter";
 })
 
 
-export class CheckListBoxComponent implements OnInit,OnChanges {
+export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
 
-    constructor(private _dtoRequestServiceNameId: DtoRequestService<NameId[]>) {
+    differ: any;
+    constructor(private _fileModelTreeService: FileModelTreeService,
+                private _nameIdService: NameIdService,
+                private differs: KeyValueDiffers) {
 
+        this.differ = differs.find({}).create(null);
     } // ctor
 
-    private entityType: EntityType = null;
-    private entityFilter: EntityFilter = null;
-    private entityFilterValue: string = null;
-    private entitySubType: EntitySubType = null;
-    private cvFilterType: CvFilterType = null;
+    private nameIdRequestParams: NameIdRequestParams;
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+    private onError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
 
 
     // useg
@@ -49,7 +57,6 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
     private fileItemEvents: FileItem[] = [];
     private onItemChecked: EventEmitter<FileItem> = new EventEmitter();
     private onItemSelected: EventEmitter<FileItem> = new EventEmitter();
-    private onAddMessage: EventEmitter<string> = new EventEmitter();
     private checkedFileItemHistory: FileItem[] = [];
 
     private handleItemChecked(arg) {
@@ -66,6 +73,8 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
         this.updateCheckedItemHistory(itemToChange);
 
         this.onItemChecked.emit(itemToChange);
+
+        this.updateTreeService(itemToChange);
 
     } // handleItemChecked()
 
@@ -106,10 +115,6 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
         return checkedFileItem != null;
     }
 
-    private handleAddMessage(arg) {
-        this.onAddMessage.emit(arg);
-    }
-
     private previousSelectedItem: any;
 
     private handleItemSelected(arg) {
@@ -120,19 +125,58 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
         arg.currentTarget.style = "background-color:#b3d9ff";
         this.previousSelectedItem = arg.currentTarget;
 
-        let fileItemEvent: FileItem = FileItem.build(
-            GobiiExtractFilterType.UNKNOWN,
-            ProcessType.READ)
-            .setEntityType(this.entityType)
-            .setCvFilterType(CvFilterType.UNKNOWN)
-            .setItemId(arg.currentTarget.children[0].value)
-            .setItemName(arg.currentTarget.children[0].name)
-            .setChecked(false)
-            .setRequired(false);
+        let selectedFileItem: FileItem =
+            this.fileItemEvents.filter(e => {
+                return e.getItemId() === arg.currentTarget.value;
+            })[0];
 
-        this.onItemSelected.emit(fileItemEvent);
+
+        // let fileItemEvent: FileItem = FileItem.build(
+        //     GobiiExtractFilterType.UNKNOWN,
+        //     ProcessType.READ)
+        //     .setEntityType(this.nameIdRequestParams.getEntityType())
+        //     .setCvFilterType(CvFilterType.UNKNOWN)
+        //     .setItemId(arg.currentTarget.children[0].value)
+        //     .setItemName(arg.currentTarget.children[0].name)
+        //     .setChecked(false)
+        //     .setRequired(false);
+
+        if(selectedFileItem) {
+            this.onItemSelected.emit(selectedFileItem);
+        }
 
     }
+
+    private initializeNameIds() {
+        let scope$ = this;
+        this._nameIdService.get(this.nameIdRequestParams)
+            .subscribe(nameIds => {
+                    if (nameIds && ( nameIds.length > 0 )) {
+                        scope$.nameIdList = nameIds;
+                        scope$.setList(scope$.nameIdList);
+                    }
+                },
+                responseHeader => {
+                    this.handleHeaderStatus(responseHeader);
+                });
+    }
+
+
+    private updateTreeService(fileItem:FileItem) {
+
+        this._fileModelTreeService.put(fileItem)
+            .subscribe(
+                null,
+                headerResponse => {
+                    this.handleHeaderStatus(headerResponse)
+                });
+    }
+
+    private handleHeaderStatus(headerStatusMessage: HeaderStatusMessage) {
+
+        this.onError.emit(headerStatusMessage);
+    }
+
 
     public setList(nameIdList: NameId[]): void {
 
@@ -143,15 +187,13 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
 
         if (scope$.nameIdList && ( scope$.nameIdList.length > 0 )) {
 
-            scope$.entityType = scope$.nameIdList[0].entityType;
-
             scope$.fileItemEvents = [];
             scope$.nameIdList.forEach(n => {
-                let currentFileeItem: FileItem =
+                let currentFileItem: FileItem =
                     FileItem.build(
-                        GobiiExtractFilterType.UNKNOWN,
+                        this.gobiiExtractFilterType,
                         ProcessType.CREATE)
-                        .setEntityType(scope$.entityType)
+                        .setEntityType(this.nameIdRequestParams.getEntityType())
                         .setCvFilterType(CvFilterType.UNKNOWN)
                         .setItemId(n.id)
                         .setItemName(n.name)
@@ -159,28 +201,28 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
                         .setRequired(false);
 
 
-                if (scope$.wasItemPreviouslyChecked(currentFileeItem)) {
-                    currentFileeItem.setChecked(true);
+                if (scope$.wasItemPreviouslyChecked(currentFileItem)) {
+                    currentFileItem.setChecked(true);
                 }
 
-                scope$.fileItemEvents.push(currentFileeItem);
+                scope$.fileItemEvents.push(currentFileItem);
             });
 
         } else {
             scope$.fileItemEvents = [];
             // scope$.nameIdList = [new NameId("0", "<none>", this.entityType)];
         }
-
-
     } // setList()
 
 
     ngOnInit(): any {
 
+        if (this._nameIdService.validateRequest(this.nameIdRequestParams) ) {
+            this.initializeNameIds();
+        }
     }
 
     private eventedFileItem: FileItem;
-
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
         let bar: string = "foo";
@@ -204,14 +246,44 @@ export class CheckListBoxComponent implements OnInit,OnChanges {
                     this.updateCheckedItemHistory(itemToChange);
                 }
             }
-        } else if (changes['nameIdList'] && changes['nameIdList'].currentValue) {
 
-            this.setList(changes['nameIdList'].currentValue);
+        }
 
-        } else if (changes['entityType'] && changes['entityType'].currentValue) {
+        if (changes['gobiiExtractFilterType']
+            && ( changes['gobiiExtractFilterType'].currentValue != null )
+            && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
 
-            let enrityTypeString: string = changes['entityType'].currentValue;
-            this.entityType = EntityType[enrityTypeString];
+            if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+
+
+                this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
+
+                this._fileModelTreeService
+                    .fileItemNotifications()
+                    .subscribe(fileItem => {
+                        if (fileItem.getProcessType() === ProcessType.NOTIFY
+                            && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+
+                            this.initializeNameIds();
+
+                        }
+                    });
+
+            } // if we have a new filter type
+
+        } // if filter type changed
+
+    }
+
+    ngDoCheck(): void {
+
+        var changes = this.differ.diff(this.nameIdRequestParams);
+
+        if(changes) {
+            if (this._nameIdService.validateRequest(this.nameIdRequestParams) ) {
+                this.initializeNameIds();
+            }
         }
     }
+
 }
