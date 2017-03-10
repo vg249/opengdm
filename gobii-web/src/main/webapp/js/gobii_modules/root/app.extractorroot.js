@@ -110,6 +110,44 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     // ********************************************** EXPERIMENT ID
                     this.displayExperimentDetail = false;
                     // ********************************************************************
+                    // ********************************************** PLATFORM SELECTION
+                    //     private platformsNameIdList: NameId[];
+                    //     private selectedPlatformId: string;
+                    //
+                    //     private handlePlatformSelected(arg) {
+                    //         this.selectedPlatformId = arg.id;
+                    //     }
+                    //
+                    //     private handlePlatformChecked(fileItemEvent: FileItem) {
+                    //
+                    //
+                    //         this._fileModelTreeService.put(fileItemEvent).subscribe(
+                    //             null,
+                    //             headerResponse => {
+                    //                 this.handleHeaderStatusMessage(headerResponse)
+                    //             });
+                    //
+                    //     }
+                    //
+                    //     private initializePlatforms() {
+                    //         let scope$ = this;
+                    //         scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+                    //             EntityType.Platforms,
+                    //             EntityFilter.NONE)).subscribe(nameIds => {
+                    //
+                    //                 if (nameIds && ( nameIds.length > 0 )) {
+                    //                     scope$.platformsNameIdList = nameIds;
+                    //                     scope$.selectedPlatformId = scope$.platformsNameIdList[0].id;
+                    //                 } else {
+                    //                     scope$.platformsNameIdList = [new NameId("0", "ERROR NO PLATFORMS", EntityType.Platforms)];
+                    //                 }
+                    //             },
+                    //             dtoHeaderResponse => {
+                    //                 dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving PlatformTypes: "
+                    //                     + m.message))
+                    //             });
+                    //     }
+                    // ********************************************************************
                     // ********************************************** DATASET ID
                     this.displayDataSetDetail = false;
                     this.changeTrigger = 0;
@@ -191,7 +229,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.displaySampleMarkerBox = false;
                     }
                     else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
-                        this.initializePlatforms();
+                        //            this.initializePlatforms();
                         this.displaySelectorPi = true;
                         this.displaySelectorProject = true;
                         this.displaySelectorDataType = true;
@@ -203,7 +241,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.displaySampleMarkerBox = false;
                     }
                     else if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
-                        this.initializePlatforms();
+                        //            this.initializePlatforms();
                         this.displaySelectorDataType = true;
                         this.displaySelectorPlatform = true;
                         this.displaySampleMarkerBox = true;
@@ -301,30 +339,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         scope$.experimentNameIdList = [new name_id_1.NameId("0", "<none>", type_entity_1.EntityType.Experiments)];
                         scope$.selectedExperimentId = undefined;
                     }
-                };
-                ExtractorRoot.prototype.handlePlatformSelected = function (arg) {
-                    this.selectedPlatformId = arg.id;
-                };
-                ExtractorRoot.prototype.handlePlatformChecked = function (fileItemEvent) {
-                    var _this = this;
-                    this._fileModelTreeService.put(fileItemEvent).subscribe(null, function (headerResponse) {
-                        _this.handleHeaderStatusMessage(headerResponse);
-                    });
-                };
-                ExtractorRoot.prototype.initializePlatforms = function () {
-                    var scope$ = this;
-                    scope$._dtoRequestServiceNameIds.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(type_entity_1.EntityType.Platforms, type_entity_filter_1.EntityFilter.NONE)).subscribe(function (nameIds) {
-                        if (nameIds && (nameIds.length > 0)) {
-                            scope$.platformsNameIdList = nameIds;
-                            scope$.selectedPlatformId = scope$.platformsNameIdList[0].id;
-                        }
-                        else {
-                            scope$.platformsNameIdList = [new name_id_1.NameId("0", "ERROR NO PLATFORMS", type_entity_1.EntityType.Platforms)];
-                        }
-                    }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retrieving PlatformTypes: "
-                            + m.message); });
-                    });
                 };
                 ExtractorRoot.prototype.handleAddMessage = function (arg) {
                     this.messages.push(arg);

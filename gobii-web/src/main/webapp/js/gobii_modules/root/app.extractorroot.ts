@@ -401,7 +401,7 @@ export class ExtractorRoot implements OnInit {
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
 
-            this.initializePlatforms();
+//            this.initializePlatforms();
 
             this.displaySelectorPi = true;
             this.displaySelectorProject = true;
@@ -417,7 +417,7 @@ export class ExtractorRoot implements OnInit {
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
-            this.initializePlatforms();
+//            this.initializePlatforms();
 
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
@@ -616,42 +616,42 @@ export class ExtractorRoot implements OnInit {
 
 // ********************************************************************
 // ********************************************** PLATFORM SELECTION
-    private platformsNameIdList: NameId[];
-    private selectedPlatformId: string;
-
-    private handlePlatformSelected(arg) {
-        this.selectedPlatformId = arg.id;
-    }
-
-    private handlePlatformChecked(fileItemEvent: FileItem) {
-
-
-        this._fileModelTreeService.put(fileItemEvent).subscribe(
-            null,
-            headerResponse => {
-                this.handleHeaderStatusMessage(headerResponse)
-            });
-
-    }
-
-    private initializePlatforms() {
-        let scope$ = this;
-        scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
-            EntityType.Platforms,
-            EntityFilter.NONE)).subscribe(nameIds => {
-
-                if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.platformsNameIdList = nameIds;
-                    scope$.selectedPlatformId = scope$.platformsNameIdList[0].id;
-                } else {
-                    scope$.platformsNameIdList = [new NameId("0", "ERROR NO PLATFORMS", EntityType.Platforms)];
-                }
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving PlatformTypes: "
-                    + m.message))
-            });
-    }
+//     private platformsNameIdList: NameId[];
+//     private selectedPlatformId: string;
+//
+//     private handlePlatformSelected(arg) {
+//         this.selectedPlatformId = arg.id;
+//     }
+//
+//     private handlePlatformChecked(fileItemEvent: FileItem) {
+//
+//
+//         this._fileModelTreeService.put(fileItemEvent).subscribe(
+//             null,
+//             headerResponse => {
+//                 this.handleHeaderStatusMessage(headerResponse)
+//             });
+//
+//     }
+//
+//     private initializePlatforms() {
+//         let scope$ = this;
+//         scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
+//             EntityType.Platforms,
+//             EntityFilter.NONE)).subscribe(nameIds => {
+//
+//                 if (nameIds && ( nameIds.length > 0 )) {
+//                     scope$.platformsNameIdList = nameIds;
+//                     scope$.selectedPlatformId = scope$.platformsNameIdList[0].id;
+//                 } else {
+//                     scope$.platformsNameIdList = [new NameId("0", "ERROR NO PLATFORMS", EntityType.Platforms)];
+//                 }
+//             },
+//             dtoHeaderResponse => {
+//                 dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving PlatformTypes: "
+//                     + m.message))
+//             });
+//     }
 
 // ********************************************************************
 // ********************************************** DATASET ID
