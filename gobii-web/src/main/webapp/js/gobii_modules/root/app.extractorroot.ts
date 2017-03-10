@@ -126,7 +126,6 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
                             <BR>
                             <label class="the-label">Platforms:</label><BR>
                             <checklist-box
-                                [fileItemEventChange] = "platformFileItemEventChange"
                                 [nameIdList] = "platformsNameIdList"
                                 (onItemSelected)="handlePlatformSelected($event)"
                                 (onItemChecked)="handlePlatformChecked($event)"
@@ -140,7 +139,6 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
                             <BR>
                             <label class="the-label">Data Sets</label><BR>
                             <dataset-checklist-box
-                                [fileItemEventChange] = "datasetFileItemEventChange"
                                 [experimentId] = "selectedExperimentId" 
                                 (onItemChecked)="handleCheckedDataSetItem($event)"
                                 (onAddMessage) = "handleAddMessage($event)">
@@ -273,23 +271,31 @@ export class ExtractorRoot implements OnInit {
 
 
         this.nameIdRequestParamsContactsSubmitter = NameIdRequestParams
-            .build(GobiiExtractFilterType.WHOLE_DATASET, EntityType.Contacts)
+            .build("Contact-Submitted",
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.Contacts)
             .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY);
 
 
         this.nameIdRequestParamsContactsPi = NameIdRequestParams
-            .build(GobiiExtractFilterType.WHOLE_DATASET, EntityType.Contacts)
+            .build("Contact-PI",
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.Contacts)
             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
 
 
         this.nameIdRequestParamsDatasetType = NameIdRequestParams
-            .build(GobiiExtractFilterType.WHOLE_DATASET, EntityType.CvTerms)
+            .build("Cv-DataType",
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.CvTerms)
             .setCvFilterType(CvFilterType.DATASET_TYPE)
             .setEntityFilter(EntityFilter.BYTYPENAME);
 
 
         this.nameIdRequestParamsMapsets = NameIdRequestParams
-            .build(GobiiExtractFilterType.WHOLE_DATASET, EntityType.Mapsets);
+            .build("Mapsets",
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.Mapsets);
 
 
     }
@@ -628,9 +634,6 @@ export class ExtractorRoot implements OnInit {
 
     }
 
-    private platformFileItemEventChange: FileItem;
-
-
     private initializePlatforms() {
         let scope$ = this;
         scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
@@ -735,7 +738,6 @@ export class ExtractorRoot implements OnInit {
 
     }
 
-    //private datasetFileItemEventChange: FileItem;
     private changeTrigger: number = 0;
 
     private handleExtractDataSetUnchecked(arg: FileItem) {
@@ -755,7 +757,6 @@ export class ExtractorRoot implements OnInit {
             this.gobiiDatasetExtracts.splice(idxToRemove, 1);
         }
 
-        // this.datasetFileItemEventChange = arg;
         this.treeFileItemEvent = FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
 
     }

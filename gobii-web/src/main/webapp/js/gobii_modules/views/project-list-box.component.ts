@@ -64,7 +64,9 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
     constructor(private _dtoRequestServiceProject: DtoRequestService<Project>) {
 
         this.nameIdRequestParamsProject = NameIdRequestParams
-            .build(GobiiExtractFilterType.WHOLE_DATASET, EntityType.Projects)
+            .build( "Projects",
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.Projects)
             .setEntityFilter(EntityFilter.BYTYPEID);
 
 

@@ -22,13 +22,15 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
              * Created by Phil on 3/9/2017.
              */
             NameIdRequestParams = (function () {
-                function NameIdRequestParams(_entityType, _entityFilter, _entityFilterValue, _entitySubType, _cvFilterType, _gobiiExtractFilterType) {
-                    if (_entityType === void 0) { _entityType = null; }
-                    if (_entityFilter === void 0) { _entityFilter = null; }
+                function NameIdRequestParams(_queryName, _entityType, _entityFilter, _entityFilterValue, _entitySubType, _cvFilterType, _gobiiExtractFilterType) {
+                    if (_queryName === void 0) { _queryName = null; }
+                    if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
+                    if (_entityFilter === void 0) { _entityFilter = type_entity_filter_1.EntityFilter.NONE; }
                     if (_entityFilterValue === void 0) { _entityFilterValue = null; }
-                    if (_entitySubType === void 0) { _entitySubType = null; }
-                    if (_cvFilterType === void 0) { _cvFilterType = null; }
+                    if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
+                    if (_cvFilterType === void 0) { _cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN; }
                     if (_gobiiExtractFilterType === void 0) { _gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN; }
+                    this._queryName = _queryName;
                     this._entityType = _entityType;
                     this._entityFilter = _entityFilter;
                     this._entityFilterValue = _entityFilterValue;
@@ -36,8 +38,8 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     this._cvFilterType = _cvFilterType;
                     this._gobiiExtractFilterType = _gobiiExtractFilterType;
                 }
-                NameIdRequestParams.build = function (gobiiExtractFilterType, entityType) {
-                    return (new NameIdRequestParams(entityType, type_entity_filter_1.EntityFilter.NONE, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType));
+                NameIdRequestParams.build = function (queryName, gobiiExtractFilterType, entityType) {
+                    return (new NameIdRequestParams(queryName, entityType, type_entity_filter_1.EntityFilter.NONE, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType));
                 };
                 NameIdRequestParams.prototype.getEntityType = function () {
                     return this._entityType;
@@ -80,6 +82,9 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                 NameIdRequestParams.prototype.setGobiiExtractFilterType = function (value) {
                     this._gobiiExtractFilterType = value;
                     return this;
+                };
+                NameIdRequestParams.prototype.getQueryName = function () {
+                    return this._queryName;
                 };
                 return NameIdRequestParams;
             }());

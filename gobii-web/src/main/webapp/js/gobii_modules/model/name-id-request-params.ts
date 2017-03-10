@@ -8,23 +8,26 @@ import {GobiiExtractFilterType} from "./type-extractor-filter";
 
 export class NameIdRequestParams {
 
-    private constructor(private _entityType: EntityType = null,
-                        private _entityFilter: EntityFilter = null,
+    private constructor(private _queryName: string = null,
+                        private _entityType: EntityType = EntityType.UNKNOWN,
+                        private _entityFilter: EntityFilter = EntityFilter.NONE,
                         private _entityFilterValue: string = null,
-                        private _entitySubType: EntitySubType = null,
-                        private _cvFilterType: CvFilterType = null,
+                        private _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
+                        private _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
                         private _gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN) {
 
     }
 
-    public static build(gobiiExtractFilterType: GobiiExtractFilterType,
-    entityType:EntityType): NameIdRequestParams {
-        return( new NameIdRequestParams(entityType,
-        EntityFilter.NONE,
-        null,
-        EntitySubType.UNKNOWN,
-        CvFilterType.UNKNOWN,
-        gobiiExtractFilterType));
+    public static build(queryName:string,
+                        gobiiExtractFilterType: GobiiExtractFilterType,
+                        entityType: EntityType): NameIdRequestParams {
+        return ( new NameIdRequestParams(queryName,
+            entityType,
+            EntityFilter.NONE,
+            null,
+            EntitySubType.UNKNOWN,
+            CvFilterType.UNKNOWN,
+            gobiiExtractFilterType));
     }
 
 
@@ -80,5 +83,10 @@ export class NameIdRequestParams {
     setGobiiExtractFilterType(value: GobiiExtractFilterType): NameIdRequestParams {
         this._gobiiExtractFilterType = value;
         return this;
+    }
+
+
+    getQueryName(): string {
+        return this._queryName;
     }
 }

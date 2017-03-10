@@ -61,7 +61,6 @@ System.register(["@angular/core", "../../model/name-id", "./dto-request.service"
                     var foo = "bar";
                     var returnVal = false;
                     if (nameIdRequestParams.getEntityFilter() === type_entity_filter_1.EntityFilter.NONE) {
-                        nameIdRequestParams.setEntityFilter(null);
                         nameIdRequestParams.setEntityFilterValue(null);
                         returnVal = true;
                     }
@@ -82,7 +81,7 @@ System.register(["@angular/core", "../../model/name-id", "./dto-request.service"
                 NameIdService.prototype.get = function (nameIdRequestParams) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
-                        _this._dtoRequestService.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(nameIdRequestParams.getEntityType(), nameIdRequestParams.getEntityFilter(), nameIdRequestParams.getEntityFilterValue()))
+                        _this._dtoRequestService.get(new dto_request_item_nameids_1.DtoRequestItemNameIds(nameIdRequestParams.getEntityType(), nameIdRequestParams.getEntityFilter() === type_entity_filter_1.EntityFilter.NONE ? null : nameIdRequestParams.getEntityFilter(), nameIdRequestParams.getEntityFilterValue()))
                             .subscribe(function (nameIds) {
                             var nameIdsToReturn = null;
                             if (nameIds && (nameIds.length > 0)) {

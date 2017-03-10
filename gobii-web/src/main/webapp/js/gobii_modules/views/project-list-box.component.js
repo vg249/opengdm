@@ -43,7 +43,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     this.onProjectSelected = new core_1.EventEmitter();
                     this.onAddHeaderStatus = new core_1.EventEmitter();
                     this.nameIdRequestParamsProject = name_id_request_params_1.NameIdRequestParams
-                        .build(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
+                        .build("Projects", type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID);
                 } // ctor
                 ProjectListBoxComponent.prototype.handleProjectSelected = function (arg) {

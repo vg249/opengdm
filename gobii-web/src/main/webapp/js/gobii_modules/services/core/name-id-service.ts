@@ -43,7 +43,6 @@ export class NameIdService {
 
         if (nameIdRequestParams.getEntityFilter() === EntityFilter.NONE) {
 
-            nameIdRequestParams.setEntityFilter(null);
             nameIdRequestParams.setEntityFilterValue(null);
             returnVal = true;
 
@@ -73,7 +72,7 @@ export class NameIdService {
 
                 this._dtoRequestService.get(new DtoRequestItemNameIds(
                     nameIdRequestParams.getEntityType(),
-                    nameIdRequestParams.getEntityFilter(),
+                    nameIdRequestParams.getEntityFilter() === EntityFilter.NONE ? null : nameIdRequestParams.getEntityFilter(),
                     nameIdRequestParams.getEntityFilterValue()))
                     .subscribe(nameIds => {
                         let nameIdsToReturn: NameId[] = null;
