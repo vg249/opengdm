@@ -210,7 +210,6 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
                             <BR>
                                 <input type="button" 
                                 value="Submit"
-                                 [disabled]="(gobiiDatasetExtracts.length === 0)"
                                 (click)="handleExtractSubmission()" >
                             
                         </fieldset>
