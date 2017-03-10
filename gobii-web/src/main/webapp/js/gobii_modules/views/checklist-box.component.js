@@ -97,8 +97,9 @@ System.register(["@angular/core", "../model/type-process", "../model/file-item",
                     }
                     arg.currentTarget.style = "background-color:#b3d9ff";
                     this.previousSelectedItem = arg.currentTarget;
+                    var idValue = arg.currentTarget.children[0].value;
                     var selectedFileItem = this.fileItemEvents.filter(function (e) {
-                        return e.getItemId() === arg.currentTarget.value;
+                        return e.getItemId() === idValue;
                     })[0];
                     // let fileItemEvent: FileItem = FileItem.build(
                     //     GobiiExtractFilterType.UNKNOWN,
@@ -206,6 +207,9 @@ System.register(["@angular/core", "../model/type-process", "../model/file-item",
                         if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
                             this.initializeNameIds();
                         }
+                        else {
+                            this.setList([]);
+                        }
                     }
                 };
                 return CheckListBoxComponent;
@@ -216,7 +220,9 @@ System.register(["@angular/core", "../model/type-process", "../model/file-item",
                     inputs: ['fileItemEventChange',
                         'gobiiExtractFilterType',
                         'nameIdRequestParams'],
-                    outputs: ['onItemSelected', 'onItemChecked', 'onError'],
+                    outputs: ['onItemSelected',
+                        'onItemChecked',
+                        'onError'],
                     template: "<form>\n                    <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                        <div *ngFor=\"let fileItemEvent of fileItemEvents\" \n                            (click)=handleItemSelected($event) \n                            (hover)=handleItemHover($event)>\n                            <input  type=\"checkbox\" \n                                (click)=handleItemChecked($event)\n                                [checked]=\"fileItemEvent.getChecked()\"\n                                value={{fileItemEvent.getItemId()}} \n                                name=\"{{fileItemEvent.getItemName()}}\">&nbsp;{{fileItemEvent.getItemName()}}\n                        </div>            \n                    </div>\n                </form>" // end template
                 }),
                 __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService,

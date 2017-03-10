@@ -128,8 +128,6 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
                             <checklist-box
                                 [nameIdRequestParams] = "nameIdRequestParamsPlatforms"
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                (onItemSelected)="handlePlatformSelected($event)"
-                                (onItemChecked)="handlePlatformChecked($event)"
                                 (onAddStatusMessage) = "handleHeaderStatusMessage($event)">
                             </checklist-box>
                          </div>
@@ -142,7 +140,6 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
                             <dataset-checklist-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [experimentId] = "selectedExperimentId" 
-                                (onItemChecked)="handleCheckedDataSetItem($event)"
                                 (onAddStatusMessage) = "handleHeaderStatusMessage($event)">
                             </dataset-checklist-box>
                         </div>
@@ -287,7 +284,8 @@ export class ExtractorRoot implements OnInit {
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.CvTerms)
             .setCvFilterType(CvFilterType.DATASET_TYPE)
-            .setEntityFilter(EntityFilter.BYTYPENAME);
+            .setEntityFilter(EntityFilter.BYTYPENAME)
+            .setEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE));
 
 
         this.nameIdRequestParamsMapsets = NameIdRequestParams

@@ -24,9 +24,8 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
                     [fileItemEventChange] = "datasetFileItemEventChange"
                     [nameIdRequestParams] = "nameIdRequestParamsDataset"
-                    (onItemSelected)="handleItemSelected($event)"
-                    (onItemChecked)="handleItemChecked($event)"
-                    (onError) = "handleAddStatusMessage($event)">
+                    (onError) = "handleAddStatusMessage($event)"
+                    (onItemSelected)="handleItemSelected($event)">
                 </checklist-box>
                 <div *ngIf="dataSet">
                     <BR>
@@ -91,6 +90,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     private handleAddStatusMessage(arg: HeaderStatusMessage) {
 
+        let foo:string = "foo";
         this.onAddStatusMessage.emit(arg);
     }
 

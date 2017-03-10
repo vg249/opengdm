@@ -19,7 +19,9 @@ import {ExtractorItemType} from "../model/file-model-node";
     inputs: ['fileItemEventChange',
         'gobiiExtractFilterType',
         'nameIdRequestParams'],
-    outputs: ['onItemSelected', 'onItemChecked', 'onError'],
+    outputs: ['onItemSelected',
+        'onItemChecked',
+        'onError'],
     template: `<form>
                     <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
                         <div *ngFor="let fileItemEvent of fileItemEvents" 
@@ -40,6 +42,7 @@ import {ExtractorItemType} from "../model/file-model-node";
 export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
 
     differ: any;
+
     constructor(private _fileModelTreeService: FileModelTreeService,
                 private _nameIdService: NameIdService,
                 private differs: KeyValueDiffers) {
@@ -125,9 +128,10 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
         arg.currentTarget.style = "background-color:#b3d9ff";
         this.previousSelectedItem = arg.currentTarget;
 
+        let idValue:string = arg.currentTarget.children[0].value;
         let selectedFileItem: FileItem =
             this.fileItemEvents.filter(e => {
-                return e.getItemId() === arg.currentTarget.value;
+                return e.getItemId() === idValue;
             })[0];
 
 
@@ -141,7 +145,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
         //     .setChecked(false)
         //     .setRequired(false);
 
-        if(selectedFileItem) {
+        if (selectedFileItem) {
             this.onItemSelected.emit(selectedFileItem);
         }
 
@@ -162,7 +166,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
     }
 
 
-    private updateTreeService(fileItem:FileItem) {
+    private updateTreeService(fileItem: FileItem) {
 
         this._fileModelTreeService.put(fileItem)
             .subscribe(
@@ -217,12 +221,13 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
 
     ngOnInit(): any {
 
-        if (this._nameIdService.validateRequest(this.nameIdRequestParams) ) {
+        if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
             this.initializeNameIds();
         }
     }
 
     private eventedFileItem: FileItem;
+
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
         let bar: string = "foo";
@@ -279,9 +284,11 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
 
         var changes = this.differ.diff(this.nameIdRequestParams);
 
-        if(changes) {
-            if (this._nameIdService.validateRequest(this.nameIdRequestParams) ) {
+        if (changes) {
+            if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
                 this.initializeNameIds();
+            } else {
+                this.setList([]);
             }
         }
     }
