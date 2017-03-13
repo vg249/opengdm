@@ -2,7 +2,7 @@ import {Component, OnInit, OnChanges, SimpleChange, EventEmitter, Input, DoCheck
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {ProcessType} from "../model/type-process";
-import {GobiiFileItem} from "../model/file-item";
+import {GobiiFileItem} from "../model/gobii-file-item";
 import {EntityType, EntitySubType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {CvFilterType} from "../model/cv-filter-type";

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-process", "../model/file-item", "../model/type-extractor-filter", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../services/core/name-id-service", "../model/file-model-node"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-process", "../model/gobii-file-item", "../model/type-extractor-filter", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../services/core/name-id-service", "../model/file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-process", "../model/file-item",
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_process_1, file_item_1, type_extractor_filter_1, cv_filter_type_1, file_model_tree_service_1, name_id_service_1, file_model_node_1, CheckListBoxComponent;
+    var core_1, type_process_1, gobii_file_item_1, type_extractor_filter_1, cv_filter_type_1, file_model_tree_service_1, name_id_service_1, file_model_node_1, CheckListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -19,8 +19,8 @@ System.register(["@angular/core", "../model/type-process", "../model/file-item",
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
             },
-            function (file_item_1_1) {
-                file_item_1 = file_item_1_1;
+            function (gobii_file_item_1_1) {
+                gobii_file_item_1 = gobii_file_item_1_1;
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
@@ -145,7 +145,7 @@ System.register(["@angular/core", "../model/type-process", "../model/file-item",
                     if (scope$.nameIdList && (scope$.nameIdList.length > 0)) {
                         scope$.fileItemEvents = [];
                         scope$.nameIdList.forEach(function (n) {
-                            var currentFileItem = file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                            var currentFileItem = gobii_file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                 .setEntityType(_this.nameIdRequestParams.getEntityType())
                                 .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                                 .setItemId(n.id)

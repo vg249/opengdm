@@ -1,7 +1,7 @@
 import {EntityType, EntitySubType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {GobiiTreeNode} from "./GobiiTreeNode";
-import {GobiiFileItem} from "./file-item";
+import {GobiiFileItem} from "./gobii-file-item";
 import {Guid} from "./guid";
 
 export enum ExtractorItemType {

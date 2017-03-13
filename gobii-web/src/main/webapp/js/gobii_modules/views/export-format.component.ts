@@ -1,7 +1,7 @@
 import {Component, OnInit, EventEmitter, OnChanges, SimpleChange} from '@angular/core';
 import {GobiiExtractFormat} from "../model/type-extract-format";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
-import {GobiiFileItem} from "../model/file-item";
+import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
 import {ExtractorItemType} from "../model/file-model-node";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";

@@ -194,4 +194,4 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
         }
     };
 });
-//# sourceMappingURL=file-item.js.map
+//# sourceMappingURL=gobii-file-item.js.map

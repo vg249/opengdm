@@ -3,7 +3,7 @@ import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {EntityType} from "../model/type-entity";
-import {GobiiFileItem} from "../model/file-item";
+import {GobiiFileItem} from "../model/gobii-file-item";
 import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
 import {DataSet} from "../model/dataset";
 import {DtoRequestItemAnalysis} from "../services/app/dto-request-item-analysis";

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/file-model-node", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-tree-event", "../model/type-process", "../model/type-extract-format", "../model/dto-header-status-message", "./entity-labels"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/file-model-node", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-tree-event", "../model/type-process", "../model/type-extract-format", "../model/dto-header-status-message", "./entity-labels"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,14 +10,14 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, file_item_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, file_model_node_1, cv_filter_type_1, file_model_tree_service_1, file_model_tree_event_1, type_process_1, type_extract_format_1, dto_header_status_message_1, entity_labels_1, StatusDisplayTreeComponent;
+    var core_1, gobii_file_item_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, file_model_node_1, cv_filter_type_1, file_model_tree_service_1, file_model_tree_event_1, type_process_1, type_extract_format_1, dto_header_status_message_1, entity_labels_1, StatusDisplayTreeComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (file_item_1_1) {
-                file_item_1 = file_item_1_1;
+            function (gobii_file_item_1_1) {
+                gobii_file_item_1 = gobii_file_item_1_1;
             },
             function (GobiiTreeNode_1_1) {
                 GobiiTreeNode_1 = GobiiTreeNode_1_1;
@@ -123,7 +123,7 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                     }
                 };
                 StatusDisplayTreeComponent.prototype.makeFileItemFromTreeNode = function (gobiiTreeNode, checked) {
-                    var returnVal = file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, (checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE))
+                    var returnVal = gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, (checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE))
                         .setEntityType(gobiiTreeNode.entityType)
                         .setCvFilterType(gobiiTreeNode.cvFilterType)
                         .setItemId(null)
@@ -421,7 +421,7 @@ System.register(["@angular/core", "../model/file-item", "../model/GobiiTreeNode"
                             this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
                             this.setUpRequredItems(this.gobiiExtractFilterType);
                             //this.onTreeReady.emit( new HeaderStatusMessage("","","") );
-                            this._fileModelTreeService.put(file_item_1.GobiiFileItem
+                            this._fileModelTreeService.put(gobii_file_item_1.GobiiFileItem
                                 .build(this.gobiiExtractFilterType, type_process_1.ProcessType.NOTIFY)
                                 .setExtractorItemType(file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY)).subscribe(null, function (headerResponse) {
                                 _this.handleAddStatusMessage(headerResponse);

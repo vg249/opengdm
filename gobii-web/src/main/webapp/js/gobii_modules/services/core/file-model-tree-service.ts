@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {GobiiFileItem} from "../../model/file-item";
+import {GobiiFileItem} from "../../model/gobii-file-item";
 import {FileModelState, FileModelTreeEvent} from "../../model/file-model-tree-event";
 import {FileModelNode, ExtractorItemType, ExtractorCategoryType, CardinalityType} from "../../model/file-model-node";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";

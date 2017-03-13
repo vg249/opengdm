@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-extract-format", "../services/core/file-model-tree-service", "../model/file-item", "../model/type-process", "../model/file-model-node"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extract-format", "../services/core/file-model-tree-service", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extract_format_1, file_model_tree_service_1, file_item_1, type_process_1, file_model_node_1, ExportFormatComponent;
+    var core_1, type_extract_format_1, file_model_tree_service_1, gobii_file_item_1, type_process_1, file_model_node_1, ExportFormatComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -22,8 +22,8 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
             function (file_model_tree_service_1_1) {
                 file_model_tree_service_1 = file_model_tree_service_1_1;
             },
-            function (file_item_1_1) {
-                file_item_1 = file_item_1_1;
+            function (gobii_file_item_1_1) {
+                gobii_file_item_1 = gobii_file_item_1_1;
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
@@ -111,7 +111,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
                 ExportFormatComponent.prototype.updateTreeService = function (arg) {
                     var _this = this;
                     this.selectedExtractFormat = arg;
-                    var extractFilterTypeFileItem = file_item_1.GobiiFileItem
+                    var extractFilterTypeFileItem = gobii_file_item_1.GobiiFileItem
                         .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
                         .setItemId(type_extract_format_1.GobiiExtractFormat[arg])

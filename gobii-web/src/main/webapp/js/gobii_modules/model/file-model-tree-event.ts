@@ -1,4 +1,4 @@
-import {GobiiFileItem} from "./file-item";
+import {GobiiFileItem} from "./gobii-file-item";
 import {FileModelNode} from "./file-model-node";
 
 export enum FileModelState {

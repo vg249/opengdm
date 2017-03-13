@@ -5,7 +5,7 @@ import {EntityType, EntitySubType} from "../model/type-entity";
 import {CvFilterType, CvFilters} from "../model/cv-filter-type";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {EntityFilter} from "../model/type-entity-filter";
-import {GobiiFileItem} from "../model/file-item";
+import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";

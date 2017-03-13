@@ -1,5 +1,5 @@
 import {Component, OnInit, SimpleChange, EventEmitter} from "@angular/core";
-import {GobiiFileItem} from "../model/file-item";
+import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
 import {EntityType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";

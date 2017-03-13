@@ -3,7 +3,7 @@ import {Component, OnInit} from "@angular/core";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract";
 import {ProcessType} from "../model/type-process";
-import {GobiiFileItem} from "../model/file-item";
+import {GobiiFileItem} from "../model/gobii-file-item";
 import {ServerConfig} from "../model/server-config";
 import {EntityType, EntitySubType} from "../model/type-entity";
 import {NameId} from "../model/name-id";

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/gobii-file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,14 +10,14 @@ System.register(["@angular/core", "../model/file-item", "../model/type-process",
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, NameIdListBoxComponent;
+    var core_1, gobii_file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (file_item_1_1) {
-                file_item_1 = file_item_1_1;
+            function (gobii_file_item_1_1) {
+                gobii_file_item_1 = gobii_file_item_1_1;
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
@@ -76,7 +76,7 @@ System.register(["@angular/core", "../model/file-item", "../model/type-process",
                 NameIdListBoxComponent.prototype.updateTreeService = function (nameId) {
                     var _this = this;
                     this.onNameIdSelected.emit(nameId);
-                    var fileItem = file_item_1.GobiiFileItem
+                    var fileItem = gobii_file_item_1.GobiiFileItem
                         .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
                         .setEntityType(this.nameIdRequestParams.getEntityType())
                         .setEntitySubType(this.nameIdRequestParams.getEntitySubType())
