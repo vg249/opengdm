@@ -98,6 +98,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck  {
 
         let fileItem: GobiiFileItem = GobiiFileItem
             .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+            .setExtractorItemType(ExtractorItemType.ENTITY)
             .setEntityType(this.nameIdRequestParams.getEntityType())
             .setEntitySubType(this.nameIdRequestParams.getEntitySubType())
             .setCvFilterType(this.nameIdRequestParams.getCvFilterType())

@@ -71,7 +71,6 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
-                    this.fileModelNodeTree = new Map();
                     // has to be in ctor because if you put it in ngOnInit(), there can be ngOnChange events
                     // before ngOnInit() is called.
                     this._fileModelTreeService
@@ -124,6 +123,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                 };
                 StatusDisplayTreeComponent.prototype.makeFileItemFromTreeNode = function (gobiiTreeNode, checked) {
                     var returnVal = gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, (checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE))
+                        .setExtractorItemType(gobiiTreeNode.entityType ? file_model_node_1.ExtractorItemType.ENTITY : file_model_node_1.ExtractorItemType.UNKNOWN)
                         .setEntityType(gobiiTreeNode.entityType)
                         .setCvFilterType(gobiiTreeNode.cvFilterType)
                         .setItemId(null)
@@ -376,7 +376,9 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         returnVal.entityType = fileModelNode.getEntityType();
                         returnVal.label = fileModelNode.getEntityName();
                     }
-                    else if (fileModelNode.getItemType() === file_model_node_1.ExtractorItemType.CATEGORY) {
+                    else if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER
+                        || fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.MODEL_CONTAINER) {
+                        //        } else if (fileModelNode.getItemType() === ExtractorItemType.CATEGORY) {
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
                         if (fileModelNode.getEntityType() != null
                             && fileModelNode.getEntityType() != type_entity_1.EntityType.UNKNOWN) {

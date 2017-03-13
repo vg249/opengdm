@@ -53,7 +53,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             .subscribe(fileModelTreeEvent => {
 
 
-                if( fileModelTreeEvent.fileModelState != FileModelState.MISMATCHED_EXTRACTOR_FILTER_TYPE ) {
+                if (fileModelTreeEvent.fileModelState != FileModelState.MISMATCHED_EXTRACTOR_FILTER_TYPE) {
 
                     if (fileModelTreeEvent.fileItem.getProcessType() === ProcessType.CREATE
                         || fileModelTreeEvent.fileItem.getProcessType() === ProcessType.UPDATE) {
@@ -129,6 +129,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         let returnVal: GobiiFileItem = GobiiFileItem.build(
             this.gobiiExtractFilterType,
             (checked ? ProcessType.CREATE : ProcessType.DELETE))
+            .setExtractorItemType(gobiiTreeNode.entityType ? ExtractorItemType.ENTITY : ExtractorItemType.UNKNOWN)
             .setEntityType(gobiiTreeNode.entityType)
             .setCvFilterType(gobiiTreeNode.cvFilterType)
             .setItemId(null)
@@ -527,8 +528,11 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             returnVal.entityType = fileModelNode.getEntityType();
             returnVal.label = fileModelNode.getEntityName();
 
+            //.MODEL_CONTAINER
 
-        } else if (fileModelNode.getItemType() === ExtractorItemType.CATEGORY) {
+        } else if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER
+            || fileModelNode.getCategoryType() === ExtractorCategoryType.MODEL_CONTAINER) {
+//        } else if (fileModelNode.getItemType() === ExtractorItemType.CATEGORY) {
 
             returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
 
@@ -585,9 +589,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     onItemSelected: EventEmitter < GobiiFileItem > = new EventEmitter();
 
 
-    fileModelNodeTree: Map < GobiiExtractFilterType, Array < FileModelNode >> =
-        new Map<GobiiExtractFilterType,Array<FileModelNode>>();
-
     ngOnChanges(changes: {
         [propName: string
             ]: SimpleChange
@@ -628,10 +629,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 this.setUpRequredItems(this.gobiiExtractFilterType);
                 //this.onTreeReady.emit( new HeaderStatusMessage("","","") );
 
-                this._fileModelTreeService.put( GobiiFileItem
-                    .build(this.gobiiExtractFilterType,ProcessType.NOTIFY)
+                this._fileModelTreeService.put(GobiiFileItem
+                    .build(this.gobiiExtractFilterType, ProcessType.NOTIFY)
                     .setExtractorItemType(ExtractorItemType.STATUS_DISPLAY_TREE_READY)).subscribe(
-                        null,
+                    null,
                     headerResponse => {
                         this.handleAddStatusMessage(headerResponse)
                     }

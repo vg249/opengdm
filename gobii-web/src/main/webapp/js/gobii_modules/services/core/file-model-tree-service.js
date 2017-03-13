@@ -97,19 +97,22 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             .setCategoryName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.EXPORT_FORMAT])
                             .setEntityName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.EXPORT_FORMAT])
                             .setCardinality(file_model_node_1.CardinalityType.ONE_ONLY));
-                        submissionItemsForAll.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.CATEGORY, null)
+                        //            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.CATEGORY, null)
+                        submissionItemsForAll.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, null)
                             .setCategoryType(file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER)
                             .setEntityType(type_entity_1.EntityType.Mapsets)
-                            .setCategoryName(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.Mapsets])
+                            .setEntityName(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.Mapsets])
                             .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_ONE));
                         // **** SET UP EXTRACT BY DATASET  **********************************************************************
                         // -- Data set type
                         var submissionItemsForDataSet = [];
                         submissionItemsForDataSet = submissionItemsForDataSet.concat(submissionItemsForAll);
-                        submissionItemsForDataSet.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.CATEGORY, null)
+                        submissionItemsForDataSet.push(
+                        //                FileModelNode.build(ExtractorItemType.CATEGORY, null)
+                        file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, null)
                             .setCategoryType(file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER)
                             .setEntityType(type_entity_1.EntityType.DataSets)
-                            .setCategoryName(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.DataSets])
+                            .setEntityName(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.DataSets])
                             .setCardinality(file_model_node_1.CardinalityType.ONE_OR_MORE));
                         this.fileModelNodeTree.set(type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, submissionItemsForDataSet);
                         // **** SET UP EXTRACT BY SAMPLES  **********************************************************************
@@ -124,17 +127,17 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             .setCardinality(file_model_node_1.CardinalityType.ONE_ONLY));
                         // -- Platforms
                         var currentParent = null;
-                        submissionItemsForBySample.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.CATEGORY, null)
+                        submissionItemsForBySample.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, null)
                             .setCategoryType(file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER)
                             .setEntityType(type_entity_1.EntityType.Platforms)
-                            .setCategoryName(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.Platforms])
+                            .setEntityName(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.Platforms])
                             .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE));
                         // -- Samples
                         submissionItemsForBySample
                             .push(currentParent =
-                            file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.CATEGORY, null)
+                            file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, null)
                                 .setCategoryType(file_model_node_1.ExtractorCategoryType.MODEL_CONTAINER)
-                                .setCategoryName("Sample Crieria")
+                                .setEntityName("Sample Crieria")
                                 .setCardinality(file_model_node_1.CardinalityType.ONE_OR_MORE)
                                 .setAlternatePeerTypes([type_entity_1.EntityType.Projects, type_entity_1.EntityType.Contacts])
                                 .addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, currentParent)
@@ -166,9 +169,9 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             .setCardinality(file_model_node_1.CardinalityType.ONE_ONLY));
                         submissionItemsForByMarkers
                             .push(currentParent =
-                            file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.CATEGORY, null)
+                            file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, null)
                                 .setCategoryType(file_model_node_1.ExtractorCategoryType.MODEL_CONTAINER)
-                                .setCategoryName("Markers Crieria")
+                                .setEntityName("Markers Crieria")
                                 .setCardinality(file_model_node_1.CardinalityType.ONE_OR_MORE)
                                 .setAlternatePeerTypes([type_entity_1.EntityType.Platforms])
                                 .addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, currentParent)
@@ -177,7 +180,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                                 .setEntityName(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.Platforms])
                                 .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE))
                                 .addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.MARKER_LIST, currentParent)
-                                .setCategoryType(file_model_node_1.ExtractorCategoryType.CATEGORY_CONTAINER)
+                                .setCategoryType(file_model_node_1.ExtractorCategoryType.LEAF)
                                 .setEntityName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST])
                                 .setCategoryName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST])
                                 .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE)));
@@ -260,20 +263,21 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                     var returnVal = null;
                     for (var idx = 0; (idx < fileModelNodes.length) && (returnVal == null); idx++) {
                         var currentTemplate = fileModelNodes[idx];
-                        returnVal = this.findTemplateByCriteria(currentTemplate, fileItem.getEntityType(), fileItem.getEntitySubType(), fileItem.getCvFilterType());
+                        returnVal = this.findTemplateByCriteria(currentTemplate, fileItem.getExtractorItemType(), fileItem.getEntityType(), fileItem.getEntitySubType(), fileItem.getCvFilterType());
                     }
                     return returnVal;
                 };
-                FileModelTreeService.prototype.findTemplateByCriteria = function (fileModelNode, entityType, entitySubType, cvFilterType) {
+                FileModelTreeService.prototype.findTemplateByCriteria = function (fileModelNode, extractorItemType, entityType, entitySubType, cvFilterType) {
                     var returnVal = null;
                     if (fileModelNode.getChildren() != null) {
                         for (var idx = 0; (idx < fileModelNode.getChildren().length) && (returnVal == null); idx++) {
                             var currentTemplate = fileModelNode.getChildren()[idx];
-                            returnVal = this.findTemplateByCriteria(currentTemplate, entityType, entitySubType, cvFilterType);
+                            returnVal = this.findTemplateByCriteria(currentTemplate, extractorItemType, entityType, entitySubType, cvFilterType);
                         }
                     }
                     if (returnVal === null) {
-                        if (entityType == fileModelNode.getEntityType()
+                        if (extractorItemType == fileModelNode.getItemType()
+                            && entityType == fileModelNode.getEntityType()
                             && entitySubType == fileModelNode.getEntitySubType()
                             && cvFilterType == fileModelNode.getCvFilterType()) {
                             returnVal = fileModelNode;

@@ -17,13 +17,12 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
         execute: function () {
             (function (ExtractorItemType) {
                 ExtractorItemType[ExtractorItemType["UNKNOWN"] = 0] = "UNKNOWN";
-                ExtractorItemType[ExtractorItemType["CATEGORY"] = 1] = "CATEGORY";
-                ExtractorItemType[ExtractorItemType["ENTITY"] = 2] = "ENTITY";
-                ExtractorItemType[ExtractorItemType["MARKER_LIST"] = 3] = "MARKER_LIST";
-                ExtractorItemType[ExtractorItemType["SAMPLE_LIST"] = 4] = "SAMPLE_LIST";
-                ExtractorItemType[ExtractorItemType["EXPORT_FORMAT"] = 5] = "EXPORT_FORMAT";
-                ExtractorItemType[ExtractorItemType["CROP_TYPE"] = 6] = "CROP_TYPE";
-                ExtractorItemType[ExtractorItemType["STATUS_DISPLAY_TREE_READY"] = 7] = "STATUS_DISPLAY_TREE_READY";
+                ExtractorItemType[ExtractorItemType["ENTITY"] = 1] = "ENTITY";
+                ExtractorItemType[ExtractorItemType["MARKER_LIST"] = 2] = "MARKER_LIST";
+                ExtractorItemType[ExtractorItemType["SAMPLE_LIST"] = 3] = "SAMPLE_LIST";
+                ExtractorItemType[ExtractorItemType["EXPORT_FORMAT"] = 4] = "EXPORT_FORMAT";
+                ExtractorItemType[ExtractorItemType["CROP_TYPE"] = 5] = "CROP_TYPE";
+                ExtractorItemType[ExtractorItemType["STATUS_DISPLAY_TREE_READY"] = 6] = "STATUS_DISPLAY_TREE_READY";
             })(ExtractorItemType || (ExtractorItemType = {}));
             exports_1("ExtractorItemType", ExtractorItemType);
             (function (ExtractorCategoryType) {

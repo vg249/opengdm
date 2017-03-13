@@ -1,9 +1,11 @@
 import {Component, OnInit, SimpleChange, EventEmitter} from "@angular/core";
 import {SampleMarkerList} from "../model/sample-marker-list";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
+import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 
 @Component({
     selector: 'sample-marker-box',
+    inputs: ['gobiiExtractFilterType'],
     outputs: ['onMarkerSamplesCompleted', 'onSampleMarkerError'],
     template: `<div class="container-fluid">
             
@@ -19,6 +21,7 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
                     
                     <div class="col-md-8">
                         <uploader
+                        [gobiiExtractFilterType] = "gobiiExtractFilterType"
                         (onUploaderError)="handleStatusHeaderMessage($event)"></uploader>
                     </div> 
                     
@@ -47,6 +50,7 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
 export class SampleMarkerBoxComponent implements OnInit {
 
 
+    private gobiiExtractFilterType:GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     private onSampleMarkerError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
     private onMarkerSamplesCompleted: EventEmitter<SampleMarkerList> = new EventEmitter();
     // private handleUserSelected(arg) {

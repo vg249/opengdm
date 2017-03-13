@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/sample-marker-list"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/sample-marker-list", "../model/type-extractor-filter"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7,7 +7,7 @@ System.register(["@angular/core", "../model/sample-marker-list"], function (expo
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, sample_marker_list_1, SampleMarkerBoxComponent;
+    var core_1, sample_marker_list_1, type_extractor_filter_1, SampleMarkerBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -15,11 +15,15 @@ System.register(["@angular/core", "../model/sample-marker-list"], function (expo
             },
             function (sample_marker_list_1_1) {
                 sample_marker_list_1 = sample_marker_list_1_1;
+            },
+            function (type_extractor_filter_1_1) {
+                type_extractor_filter_1 = type_extractor_filter_1_1;
             }
         ],
         execute: function () {
             SampleMarkerBoxComponent = (function () {
                 function SampleMarkerBoxComponent() {
+                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onSampleMarkerError = new core_1.EventEmitter();
                     this.onMarkerSamplesCompleted = new core_1.EventEmitter();
                 }
@@ -45,8 +49,9 @@ System.register(["@angular/core", "../model/sample-marker-list"], function (expo
             SampleMarkerBoxComponent = __decorate([
                 core_1.Component({
                     selector: 'sample-marker-box',
+                    inputs: ['gobiiExtractFilterType'],
                     outputs: ['onMarkerSamplesCompleted', 'onSampleMarkerError'],
-                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\"> \n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"uploadFile\" \n                            checked=\"checked\">&nbsp;File\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <uploader\n                        (onUploaderError)=\"handleStatusHeaderMessage($event)\"></uploader>\n                    </div> \n                    \n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\">\n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"pasteList\" >&nbsp;List\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"></text-area>\n                    </div> \n                    \n                 </div>\n                 \n"
+                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\"> \n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"uploadFile\" \n                            checked=\"checked\">&nbsp;File\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <uploader\n                        [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                        (onUploaderError)=\"handleStatusHeaderMessage($event)\"></uploader>\n                    </div> \n                    \n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\">\n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"pasteList\" >&nbsp;List\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"></text-area>\n                    </div> \n                    \n                 </div>\n                 \n"
                 })
             ], SampleMarkerBoxComponent);
             exports_1("SampleMarkerBoxComponent", SampleMarkerBoxComponent);

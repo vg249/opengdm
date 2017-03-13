@@ -197,6 +197,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
                     GobiiFileItem.build(
                         this.gobiiExtractFilterType,
                         ProcessType.CREATE)
+                        .setExtractorItemType(ExtractorItemType.ENTITY)
                         .setEntityType(this.nameIdRequestParams.getEntityType())
                         .setCvFilterType(CvFilterType.UNKNOWN)
                         .setItemId(n.id)

@@ -10,11 +10,16 @@ import {Header} from "../model/payload/header";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {FileName} from "../model/file_name";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
+import {GobiiFileItem} from "../model/gobii-file-item";
+import {GobiiExtractFilterType} from "../model/type-extractor-filter";
+import {ProcessType} from "../model/type-process";
+import {ExtractorItemType} from "../model/file-model-node";
 
 const URL = 'gobii/v1/uploadfile?gobiiExtractFilterType=BY_MARKER';
 
 @Component({
     selector: 'uploader',
+    inputs: ['gobiiExtractFilterType'],
     outputs: ['onUploaderError'],
     template: `<style>
     .my-drop-zone { border: dotted 3px lightgray; }
@@ -146,6 +151,7 @@ const URL = 'gobii/v1/uploadfile?gobiiExtractFilterType=BY_MARKER';
 export class UploaderComponent implements OnInit {
 
     private onUploaderError:EventEmitter<HeaderStatusMessage> = new EventEmitter();
+    private gobiiExtractFilterType:GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
     constructor(private _authenticationService: AuthenticationService,
                 private _fileModelTreeService: FileModelTreeService) {
@@ -173,21 +179,22 @@ export class UploaderComponent implements OnInit {
         }
         this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
 
-            // if( status == 200 ) {
-            //     _fileModelTreeService.put(GobiiFileItem
-            //         )
-            //         .subscribe(null,
-            //         headerStatusMessage => {
-            //             this.onUploaderError.emit(new HeaderStatusMessage(headerStatusMessage,null,null) );
-            //         });
-            // } else {
-            //
-            //     this.onUploaderError.emit(new HeaderStatusMessage(response,null,null) );
-            //
-            // }
+            if( status == 200 ) {
+                _fileModelTreeService.put(GobiiFileItem
+                        .build(this.gobiiExtractFilterType,ProcessType.CREATE)
+                        .setExtractorItemType(ExtractorItemType.MARKER_LIST)
+                        .setItemId(item.file.name)
+                        .setItemName(item.file.name))
+                    .subscribe(null,
+                    headerStatusMessage => {
+                        this.onUploaderError.emit(new HeaderStatusMessage(headerStatusMessage,null,null) );
+                    });
+            } else {
 
-            // var responsePath = JSON.parse(response);
-            // console.log(response, responsePath);// the url will be in the response
+                this.onUploaderError.emit(new HeaderStatusMessage(response,null,null) );
+
+            }
+
         };
     } // ctor
 

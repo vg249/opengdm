@@ -14,7 +14,6 @@ import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {TreeStatusNotification} from "../../model/tree-status-notification";
 
 
-
 @Injectable()
 export class FileModelTreeService {
 
@@ -83,10 +82,11 @@ export class FileModelTreeService {
                 .setCardinality(CardinalityType.ONE_ONLY)
             );
 
-            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.CATEGORY, null)
+//            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.CATEGORY, null)
+            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
                 .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                 .setEntityType(EntityType.Mapsets)
-                .setCategoryName(Labels.instance().entityNodeLabels[EntityType.Mapsets])
+                .setEntityName(Labels.instance().entityNodeLabels[EntityType.Mapsets])
                 .setCardinality(CardinalityType.ZERO_OR_ONE)
             );
 
@@ -96,10 +96,11 @@ export class FileModelTreeService {
             let submissionItemsForDataSet: FileModelNode[] = [];
             submissionItemsForDataSet = submissionItemsForDataSet.concat(submissionItemsForAll);
             submissionItemsForDataSet.push(
-                FileModelNode.build(ExtractorItemType.CATEGORY, null)
+//                FileModelNode.build(ExtractorItemType.CATEGORY, null)
+                FileModelNode.build(ExtractorItemType.ENTITY, null)
                     .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                     .setEntityType(EntityType.DataSets)
-                    .setCategoryName(Labels.instance().entityNodeLabels[EntityType.DataSets])
+                    .setEntityName(Labels.instance().entityNodeLabels[EntityType.DataSets])
                     .setCardinality(CardinalityType.ONE_OR_MORE));
 
             this.fileModelNodeTree.set(GobiiExtractFilterType.WHOLE_DATASET, submissionItemsForDataSet);
@@ -119,10 +120,10 @@ export class FileModelTreeService {
 
             // -- Platforms
             let currentParent: FileModelNode = null;
-            submissionItemsForBySample.push(FileModelNode.build(ExtractorItemType.CATEGORY, null)
+            submissionItemsForBySample.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
                 .setCategoryType(ExtractorCategoryType.ENTITY_CONTAINER)
                 .setEntityType(EntityType.Platforms)
-                .setCategoryName(Labels.instance().entityNodeLabels[EntityType.Platforms])
+                .setEntityName(Labels.instance().entityNodeLabels[EntityType.Platforms])
                 .setCardinality(CardinalityType.ZERO_OR_MORE)
             );
 
@@ -130,9 +131,9 @@ export class FileModelTreeService {
             // -- Samples
             submissionItemsForBySample
                 .push(currentParent =
-                    FileModelNode.build(ExtractorItemType.CATEGORY, null)
+                    FileModelNode.build(ExtractorItemType.ENTITY, null)
                         .setCategoryType(ExtractorCategoryType.MODEL_CONTAINER)
-                        .setCategoryName("Sample Crieria")
+                        .setEntityName("Sample Crieria")
                         .setCardinality(CardinalityType.ONE_OR_MORE)
                         .setAlternatePeerTypes([EntityType.Projects, EntityType.Contacts])
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
@@ -175,9 +176,9 @@ export class FileModelTreeService {
 
             submissionItemsForByMarkers
                 .push(currentParent =
-                    FileModelNode.build(ExtractorItemType.CATEGORY, null)
+                    FileModelNode.build(ExtractorItemType.ENTITY, null)
                         .setCategoryType(ExtractorCategoryType.MODEL_CONTAINER)
-                        .setCategoryName("Markers Crieria")
+                        .setEntityName("Markers Crieria")
                         .setCardinality(CardinalityType.ONE_OR_MORE)
                         .setAlternatePeerTypes([EntityType.Platforms])
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
@@ -187,7 +188,7 @@ export class FileModelTreeService {
                             .setCardinality(CardinalityType.ZERO_OR_MORE)
                         )
                         .addChild(FileModelNode.build(ExtractorItemType.MARKER_LIST, currentParent)
-                            .setCategoryType(ExtractorCategoryType.CATEGORY_CONTAINER)
+                            .setCategoryType(ExtractorCategoryType.LEAF)
                             .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST])
                             .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST])
                             .setCardinality(CardinalityType.ZERO_OR_MORE)
@@ -280,7 +281,7 @@ export class FileModelTreeService {
                     GobiiExtractFilterType.BY_SAMPLE,
                     GobiiExtractFilterType.BY_MARKER];
 
-                remainingExtractorTypes.splice(remainingExtractorTypes.indexOf(fileItem.getGobiiExtractFilterType()),1);
+                remainingExtractorTypes.splice(remainingExtractorTypes.indexOf(fileItem.getGobiiExtractFilterType()), 1);
 
                 let fileModelNode: FileModelNode = null;
                 for (let idx: number = 0; idx < remainingExtractorTypes.length && fileModelNode == null; idx++) {
@@ -325,6 +326,7 @@ export class FileModelTreeService {
         for (let idx: number = 0; ( idx < fileModelNodes.length) && (returnVal == null ); idx++) {
             let currentTemplate: FileModelNode = fileModelNodes[idx];
             returnVal = this.findTemplateByCriteria(currentTemplate,
+                fileItem.getExtractorItemType(),
                 fileItem.getEntityType(),
                 fileItem.getEntitySubType(),
                 fileItem.getCvFilterType());
@@ -336,6 +338,7 @@ export class FileModelTreeService {
 
 
     findTemplateByCriteria(fileModelNode: FileModelNode,
+                           extractorItemType: ExtractorItemType,
                            entityType: EntityType,
                            entitySubType: EntitySubType,
                            cvFilterType: CvFilterType): FileModelNode {
@@ -347,13 +350,18 @@ export class FileModelTreeService {
             for (let idx: number = 0; ( idx < fileModelNode.getChildren().length) && (returnVal == null ); idx++) {
 
                 let currentTemplate: FileModelNode = fileModelNode.getChildren()[idx];
-                returnVal = this.findTemplateByCriteria(currentTemplate, entityType, entitySubType, cvFilterType);
+                returnVal = this.findTemplateByCriteria(currentTemplate,
+                    extractorItemType,
+                    entityType,
+                    entitySubType,
+                    cvFilterType);
             }
         }
 
         if (returnVal === null) {
 
-            if (entityType == fileModelNode.getEntityType()
+            if (extractorItemType == fileModelNode.getItemType()
+                && entityType == fileModelNode.getEntityType()
                 && entitySubType == fileModelNode.getEntitySubType()
                 && cvFilterType == fileModelNode.getCvFilterType()) {
 

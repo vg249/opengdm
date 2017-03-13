@@ -161,6 +161,7 @@ import {FileName} from "../model/file_name";
                                  </sample-list-type>
                                 <hr style="width: 100%; color: black; height: 1px; background-color:black;" />
                                 <sample-marker-box 
+                                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                     (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)"
                                     (onSampleMarkerError)="handleHeaderStatusMessage($event)">
                                 </sample-marker-box>
@@ -171,6 +172,7 @@ import {FileName} from "../model/file_name";
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Markers</legend>
                                 <sample-marker-box 
+                                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                     (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)"
                                     (onSampleMarkerError)="handleHeaderStatusMessage($event)">
                                 </sample-marker-box>
@@ -706,62 +708,6 @@ export class ExtractorRoot implements OnInit {
 
     private selectedDatasetId: string;
     private selectedDatasetName: string;
-
-    private handleCheckedDataSetItem(arg: GobiiFileItem) {
-
-
-        this.selectedDatasetId = arg.getItemId();
-
-        if (ProcessType.CREATE == arg.getProcessType()) {
-
-            this.makeDatasetExtract();
-
-        } else {
-
-            let indexOfEventToRemove: number = this.datasetFileItemEvents.indexOf(arg);
-            this.datasetFileItemEvents.splice(indexOfEventToRemove, 1);
-
-            this.gobiiDatasetExtracts =
-                this.gobiiDatasetExtracts
-                    .filter((item: GobiiDataSetExtract) => {
-                        return item.getdataSetId() != Number(arg.getItemId())
-                    });
-        } // if-else we're adding
-
-        //this.treeFileItemEvent = GobiiFileItem.fromFileItem(arg);
-        let fileItemEvent: GobiiFileItem = GobiiFileItem.fromFileItem(arg, this.gobiiExtractFilterType);
-
-
-        this._fileModelTreeService.put(fileItemEvent).subscribe(
-            null,
-            headerResponse => {
-                this.handleResponseHeader(headerResponse)
-            });
-
-    }
-
-    private changeTrigger: number = 0;
-
-    private handleExtractDataSetUnchecked(arg: GobiiFileItem) {
-        // this.changeTrigger++;
-        // this.dataSetIdToUncheck = Number(arg.itemId);
-
-
-        this.datasetFileItemEvents.push(arg);
-        let dataSetExtractsToRemove: GobiiDataSetExtract[] = this.gobiiDatasetExtracts
-            .filter(e => {
-                return e.getdataSetId() === Number(arg.getItemId())
-            });
-
-        if (dataSetExtractsToRemove.length > 0) {
-            let idxToRemove = this.gobiiDatasetExtracts.indexOf(dataSetExtractsToRemove[0]);
-
-            this.gobiiDatasetExtracts.splice(idxToRemove, 1);
-        }
-
-        this.treeFileItemEvent = GobiiFileItem.fromFileItem(arg, this.gobiiExtractFilterType);
-
-    }
 
 
 // ********************************************************************

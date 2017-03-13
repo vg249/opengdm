@@ -6,7 +6,6 @@ import {Guid} from "./guid";
 
 export enum ExtractorItemType {
     UNKNOWN,
-    CATEGORY,
     ENTITY,
     MARKER_LIST,
     SAMPLE_LIST,

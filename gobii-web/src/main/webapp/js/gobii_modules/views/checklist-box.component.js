@@ -146,6 +146,7 @@ System.register(["@angular/core", "../model/type-process", "../model/gobii-file-
                         scope$.fileItemEvents = [];
                         scope$.nameIdList.forEach(function (n) {
                             var currentFileItem = gobii_file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                                .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
                                 .setEntityType(_this.nameIdRequestParams.getEntityType())
                                 .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                                 .setItemId(n.id)
