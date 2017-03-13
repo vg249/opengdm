@@ -390,17 +390,19 @@ export class ExtractorRoot implements OnInit {
                 if (fileItem.getProcessType() === ProcessType.NOTIFY
                     && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
 
-                    let jobId:string = FileName.makeUniqueFileId();
+                    let jobId: string = FileName.makeUniqueFileId();
 
                     this._fileModelTreeService
                         .put(GobiiFileItem
-                            .build(arg,ProcessType.CREATE)
+                            .build(arg, ProcessType.CREATE)
                             .setExtractorItemType(ExtractorItemType.JOB_ID)
                             .setItemId(jobId)
                             .setItemName(jobId))
                         .subscribe(
                             null,
-                            headerStatusMessage => {this.handleHeaderStatusMessage(headerStatusMessage)}
+                            headerStatusMessage => {
+                                this.handleHeaderStatusMessage(headerStatusMessage)
+                            }
                         );
                 }
             });
@@ -775,8 +777,17 @@ export class ExtractorRoot implements OnInit {
         let gobiiDataSetExtracts: GobiiDataSetExtract[] = [];
         let mapsetIds: number[] = [];
         let submitterContactid: number = null;
+        let jobId: string = null;
         scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(
             fileItems => {
+
+                let fileItemJobId: GobiiFileItem = fileItems.find(item => {
+                    return item.getExtractorItemType() === ExtractorItemType.JOB_ID
+                });
+
+                if (fileItemJobId != null) {
+                    jobId = fileItemJobId.getItemId();
+                }
 
                 let submitterFileItem: GobiiFileItem = fileItems.find(item => {
                     return (item.getEntityType() === EntityType.Contacts)
@@ -848,7 +859,7 @@ export class ExtractorRoot implements OnInit {
         );
 
 
-        let fileName: string = FileName.makeUniqueFileId();
+        let fileName: string = jobId;
 
         let extractorInstructionFilesDTORequest: ExtractorInstructionFilesDTO =
             new ExtractorInstructionFilesDTO(gobiiExtractorInstructions,

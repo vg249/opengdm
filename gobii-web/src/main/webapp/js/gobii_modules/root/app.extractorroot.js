@@ -230,7 +230,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                 .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)
                                 .setItemId(jobId)
                                 .setItemName(jobId))
-                                .subscribe(null, function (headerStatusMessage) { _this.handleHeaderStatusMessage(headerStatusMessage); });
+                                .subscribe(null, function (headerStatusMessage) {
+                                _this.handleHeaderStatusMessage(headerStatusMessage);
+                            });
                         }
                     });
                     this.gobiiExtractFilterType = arg;
@@ -405,7 +407,14 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     var gobiiDataSetExtracts = [];
                     var mapsetIds = [];
                     var submitterContactid = null;
+                    var jobId = null;
                     scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(function (fileItems) {
+                        var fileItemJobId = fileItems.find(function (item) {
+                            return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.JOB_ID;
+                        });
+                        if (fileItemJobId != null) {
+                            jobId = fileItemJobId.getItemId();
+                        }
                         var submitterFileItem = fileItems.find(function (item) {
                             return (item.getEntityType() === type_entity_1.EntityType.Contacts)
                                 && (item.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_SUBMITED_BY);
@@ -443,7 +452,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         });
                     });
                     gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction(gobiiDataSetExtracts, submitterContactid, null, mapsetIds));
-                    var fileName = file_name_1.FileName.makeUniqueFileId();
+                    var fileName = jobId;
                     var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName);
                     var extractorInstructionFilesDTOResponse = null;
                     this._dtoRequestServiceExtractorFile.post(new dto_request_item_extractor_submission_1.DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))

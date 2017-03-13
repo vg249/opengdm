@@ -175,8 +175,17 @@ export class UploaderComponent implements OnInit {
 
         this.uploader.onBeforeUploadItem = (fileItem:FileItem) => {
 
-            fileItem.file.name = FileName.makeUniqueFileId();
+            this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(
+                fileItems => {
+                    let fileItemJobId: GobiiFileItem = fileItems.find(item => {
+                        return item.getExtractorItemType() === ExtractorItemType.JOB_ID
+                    });
+
+                    let jobId:string = fileItemJobId.getItemId();
+                    fileItem.file.name = FileName.makeFileNameFromJobId(this.gobiiExtractFilterType,jobId);
+                });
         }
+
         this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
 
             if( status == 200 ) {

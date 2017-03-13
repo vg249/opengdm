@@ -1,3 +1,4 @@
+import {GobiiExtractFilterType} from "./type-extractor-filter";
 export class FileName {
 
     public static makeUniqueFileId(): string {
@@ -19,4 +20,21 @@ export class FileName {
         return returnVal;
 
     };
+
+    public static makeFileNameFromJobId(gobiiExtractFilterType:GobiiExtractFilterType, jobId:string): string {
+
+        let returnVal:string;
+
+        let suffix = null;
+
+        if( gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ) {
+            suffix = "_markers";
+        } else {
+            suffix = "_samples";
+        }
+
+        returnVal = jobId + suffix;
+
+        return returnVal;
+    }
 }   

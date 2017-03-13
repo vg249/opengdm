@@ -37,8 +37,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
     private final String INSTRUCTION_FILE_EXT = ".json";
     private final String DATA_FILE_EXT = ".txt";
-    private final String MARKER_FILE_SEGMENT = "_markers";
-    private final String SAMPLE_FILE_SEGMENT = "_samples";
 
     @Autowired
     private ExtractorInstructionsDAO extractorInstructionsDAO;
@@ -59,13 +57,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
             this.createDirectories(instructionFileDirectory);
 
             String fqpn = instructionFileDirectory + jobId;
-            if( gobiiExtractFilterType == GobiiExtractFilterType.BY_MARKER ) {
-                fqpn += MARKER_FILE_SEGMENT;
-            } else if ( gobiiExtractFilterType == GobiiExtractFilterType.BY_SAMPLE ) {
-                fqpn += SAMPLE_FILE_SEGMENT;
-            } else {
-                throw new GobiiDaoException("Data file support is not provided for extract filter type " + gobiiExtractFilterType);
-            }
+
 
             fqpn += DATA_FILE_EXT;
 

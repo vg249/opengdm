@@ -71,7 +71,13 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                     fileUploaderOptions.headers.push(authHeader);
                     this.uploader = new ng2_file_upload_1.FileUploader(fileUploaderOptions);
                     this.uploader.onBeforeUploadItem = function (fileItem) {
-                        fileItem.file.name = file_name_1.FileName.makeUniqueFileId();
+                        _this._fileModelTreeService.getFileItems(_this.gobiiExtractFilterType).subscribe(function (fileItems) {
+                            var fileItemJobId = fileItems.find(function (item) {
+                                return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.JOB_ID;
+                            });
+                            var jobId = fileItemJobId.getItemId();
+                            fileItem.file.name = file_name_1.FileName.makeFileNameFromJobId(_this.gobiiExtractFilterType, jobId);
+                        });
                     };
                     this.uploader.onCompleteItem = function (item, response, status, headers) {
                         if (status == 200) {
