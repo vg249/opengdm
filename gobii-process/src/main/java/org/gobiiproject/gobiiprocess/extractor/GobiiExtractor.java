@@ -186,41 +186,32 @@ public class GobiiExtractor {
 				
 				switch(extract.getGobiiFileType()){
 
-				case FLAPJACK:
-					String genoOutFile=extractDir+"DS"+dataSetId+".genotype";
-					String mapOutFile=extractDir+"DS"+dataSetId+".map";
-					lastErrorFile=errorFile;
-					//Always regenerate requests - may have different parameters
-					FlapjackTransformer.generateMapFile(extendedMarkerFile, sampleFile, chrLengthFile, dataSetId, tempFolder, mapOutFile, errorFile);
-					HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
-					FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
-					HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
-					break;
-				
-				case HAPMAP:
-					String hapmapOutFile = extractDir+"DS"+dataSetId+".hmp.txt";
-					HapmapTransformer hapmapTransformer = new HapmapTransformer();
-					System.out.println("Executing HapMap creation");
-					if (hapmapTransformer.generateFile(markerFile,
-							                           sampleFile,
-							                           mapsetFile,
-							                           genoFile,
-							                           hapmapOutFile,
-							                           errorFile)) {
-						rm(genoFile);
-						rmIfExist(chrLengthFile);
+					case FLAPJACK:
+						String genoOutFile=extractDir+"DS"+dataSetId+".genotype";
+						String mapOutFile=extractDir+"DS"+dataSetId+".map";
+						lastErrorFile=errorFile;
+						//Always regenerate requests - may have different parameters
+						FlapjackTransformer.generateMapFile(extendedMarkerFile, sampleFile, chrLengthFile, dataSetId, tempFolder, mapOutFile, errorFile);
+						HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+						FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
+						HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+						HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+						break;
+					case HAPMAP:
+						String hapmapOutFile = extractDir+"DS"+dataSetId+".hmp.txt";
+						HapmapTransformer hapmapTransformer = new HapmapTransformer();
+						ErrorLogger.logDebug("GobiiExtractor","Executing Hapmap Generation");
+						success &= hapmapTransformer.generateFile(markerFile, sampleFile, mapsetFile, genoFile, hapmapOutFile, errorFile);
 						HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
-					}
-					else {
-						ErrorLogger.logError("Extractor","Exception in HapMap creation");
-						HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
-					}
-					break;
-
+						HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+						break;
 					default:
 						ErrorLogger.logError("Extractor","Unknown Extract Type "+extract.getGobiiFileType());
 						HelperFunctions.sendEmail(extract.getDataSetName()+" "+extract.getGobiiFileType()+" Extract",null,false,errorFile,configuration,inst.getContactEmail());
+						HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
 				}
+				rmIfExist(genoFile);
+				rmIfExist(chrLengthFile);
 				rmIfExist(markerPosFile);
 				rmIfExist(extendedMarkerFile);
 				rmIfExist(mapsetFile);
