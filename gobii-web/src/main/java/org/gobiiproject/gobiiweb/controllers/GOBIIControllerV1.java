@@ -16,6 +16,7 @@ import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
+import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -1086,7 +1087,6 @@ public class GOBIIControllerV1 {
                     UriFactory.resourceByUriIdParam(request.getContextPath(),
                             ServiceRequestId.URL_DATASETS),
                     dataSetDTOS);
-
 
 
         } catch (GobiiException e) {
@@ -3422,10 +3422,13 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** FILE UPLOAD
     // *********************************************
-    @RequestMapping(value = "/uploadfile", method = RequestMethod.POST)
+    @RequestMapping(value = "/uploadfile",
+            params = {"gobiiExtractFilterType"},
+            method = RequestMethod.POST)
     public
     @ResponseBody
-    String uploadFileHandler(@RequestParam("file") MultipartFile file,
+    String uploadFileHandler(@RequestParam("gobiiExtractFilterType") String gobiiExtractFilterType,
+                             @RequestParam("file") MultipartFile file,
                              HttpServletRequest request,
                              HttpServletResponse response) {
 
@@ -3437,30 +3440,38 @@ public class GOBIIControllerV1 {
         if (!file.isEmpty()) {
             try {
 
-                byte[] bytes = file.getBytes();
+                byte[] byteArray = file.getBytes();
 
-                // Creating the directory to store file
-                String rootPath = System.getProperty("catalina.home");
-                File dir = new File(rootPath + File.separator + "tmpFiles");
-                if (!dir.exists())
-                    dir.mkdirs();
+                String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+                String jobId = file.getOriginalFilename();
+                GobiiExtractFilterType gobiiExtractFilterTypeParsed = GobiiExtractFilterType.valueOf(gobiiExtractFilterType);
+                this.extractorInstructionFilesService.writeDataFile(cropType, gobiiExtractFilterTypeParsed, jobId, byteArray);
 
-                // Create the file on server
-                File serverFile = new File(dir.getAbsolutePath()
-                        + File.separator + name);
-                BufferedOutputStream stream = new BufferedOutputStream(
-                        new FileOutputStream(serverFile));
-                stream.write(bytes);
-                stream.close();
+//                // Creating the directory to store file
+//                String rootPath = System.getProperty("catalina.home");
+//                File dir = new File(rootPath + File.separator + "tmpFiles");
+//                if (!dir.exists())
+//                    dir.mkdirs();
+//
+//                // Create the file on server
+//                File serverFile = new File(dir.getAbsolutePath()
+//                        + File.separator + name);
+//                BufferedOutputStream stream = new BufferedOutputStream(
+//                        new FileOutputStream(serverFile));
+//                stream.write(byteArray);
+//                stream.close();
 
 //                logger.info("Server File Location="
 //                        + serverFile.getAbsolutePath());
 
                 return "You successfully uploaded file=" + name;
             } catch (Exception e) {
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return "You failed to upload " + name + " => " + e.getMessage();
             }
         } else {
+
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return "You failed to upload because the file was empty.";
         }
     }

@@ -20,6 +20,7 @@ System.register(["@angular/core", "../model/sample-marker-list"], function (expo
         execute: function () {
             SampleMarkerBoxComponent = (function () {
                 function SampleMarkerBoxComponent() {
+                    this.onSampleMarkerError = new core_1.EventEmitter();
                     this.onMarkerSamplesCompleted = new core_1.EventEmitter();
                 }
                 // private handleUserSelected(arg) {
@@ -33,6 +34,9 @@ System.register(["@angular/core", "../model/sample-marker-list"], function (expo
                     var sampleMarkerList = new sample_marker_list_1.SampleMarkerList(true, arg, null);
                     this.onMarkerSamplesCompleted.emit(sampleMarkerList);
                 };
+                SampleMarkerBoxComponent.prototype.handleStatusHeaderMessage = function (statusMessage) {
+                    this.onSampleMarkerError.emit(statusMessage);
+                };
                 SampleMarkerBoxComponent.prototype.ngOnInit = function () {
                     return null;
                 };
@@ -41,8 +45,8 @@ System.register(["@angular/core", "../model/sample-marker-list"], function (expo
             SampleMarkerBoxComponent = __decorate([
                 core_1.Component({
                     selector: 'sample-marker-box',
-                    outputs: ['onMarkerSamplesCompleted'],
-                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\"> \n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"uploadFile\" \n                            checked=\"checked\">&nbsp;File\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <uploader></uploader>\n                    </div> \n                    \n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\">\n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"pasteList\" >&nbsp;List\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"></text-area>\n                    </div> \n                    \n                 </div>\n                 \n"
+                    outputs: ['onMarkerSamplesCompleted', 'onSampleMarkerError'],
+                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\"> \n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"uploadFile\" \n                            checked=\"checked\">&nbsp;File\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <uploader\n                        (onUploaderError)=\"handleStatusHeaderMessage($event)\"></uploader>\n                    </div> \n                    \n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\">\n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"pasteList\" >&nbsp;List\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"></text-area>\n                    </div> \n                    \n                 </div>\n                 \n"
                 })
             ], SampleMarkerBoxComponent);
             exports_1("SampleMarkerBoxComponent", SampleMarkerBoxComponent);

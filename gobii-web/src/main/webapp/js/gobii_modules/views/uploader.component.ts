@@ -2,17 +2,18 @@ import {Component, OnInit, SimpleChange, EventEmitter} from "@angular/core";
 import {
     FileSelectDirective,
     FileDropDirective,
-    FileUploader, FileUploaderOptions, Headers
+    FileUploader, FileUploaderOptions, Headers, FileItem
 } from 'ng2-file-upload';
 import {AuthenticationService} from "../services/core/authentication.service";
 import {HeaderNames} from "../model/header-names";
 import {Header} from "../model/payload/header";
+import {HeaderStatusMessage} from "../model/dto-header-status-message";
 
-const URL = 'gobii/v1/uploadfile';
+const URL = 'gobii/v1/uploadfile?gobiiExtractFilterType=BY_MARKER';
 
 @Component({
     selector: 'uploader',
-    // outputs: ['onItemUnChecked', 'onItemSelected'],
+    outputs: ['onUploaderError'],
     template: `<style>
     .my-drop-zone { border: dotted 3px lightgray; }
     .nv-file-over { border: dotted 3px red; } /* Default class applied to drop zones on over */
@@ -142,6 +143,7 @@ const URL = 'gobii/v1/uploadfile';
 
 export class UploaderComponent implements OnInit {
 
+    private onUploaderError:EventEmitter<HeaderStatusMessage> = new EventEmitter();
 
     constructor(private _authenticationService: AuthenticationService) {
 
@@ -162,6 +164,19 @@ export class UploaderComponent implements OnInit {
 
         this.uploader = new FileUploader(fileUploaderOptions);
 
+        this.uploader.onBeforeUploadItem = (fileItem:FileItem) => {
+
+            fileItem.file.name = "foo";
+        }
+        this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+
+            if( status != 200 ) {
+                this.onUploaderError.emit(new HeaderStatusMessage(response,null,null) );
+            }
+
+            // var responsePath = JSON.parse(response);
+            // console.log(response, responsePath);// the url will be in the response
+        };
     } // ctor
 
 

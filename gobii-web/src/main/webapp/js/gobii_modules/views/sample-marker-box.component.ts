@@ -1,9 +1,10 @@
 import {Component, OnInit, SimpleChange, EventEmitter} from "@angular/core";
 import {SampleMarkerList} from "../model/sample-marker-list";
+import {HeaderStatusMessage} from "../model/dto-header-status-message";
 
 @Component({
     selector: 'sample-marker-box',
-    outputs: ['onMarkerSamplesCompleted'],
+    outputs: ['onMarkerSamplesCompleted', 'onSampleMarkerError'],
     template: `<div class="container-fluid">
             
                 <div class="row">
@@ -17,7 +18,8 @@ import {SampleMarkerList} from "../model/sample-marker-list";
                     </div> 
                     
                     <div class="col-md-8">
-                        <uploader></uploader>
+                        <uploader
+                        (onUploaderError)="handleStatusHeaderMessage($event)"></uploader>
                     </div> 
                     
                  </div>
@@ -45,7 +47,8 @@ import {SampleMarkerList} from "../model/sample-marker-list";
 export class SampleMarkerBoxComponent implements OnInit {
 
 
-    private onMarkerSamplesCompleted:EventEmitter<SampleMarkerList> = new EventEmitter();
+    private onSampleMarkerError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
+    private onMarkerSamplesCompleted: EventEmitter<SampleMarkerList> = new EventEmitter();
     // private handleUserSelected(arg) {
     //     this.onUserSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
     // }
@@ -56,9 +59,14 @@ export class SampleMarkerBoxComponent implements OnInit {
 
     private handleTextBoxDataSubmitted(arg) {
 
-        let sampleMarkerList:SampleMarkerList = new SampleMarkerList(true,arg,null);
+        let sampleMarkerList: SampleMarkerList = new SampleMarkerList(true, arg, null);
         this.onMarkerSamplesCompleted.emit(sampleMarkerList);
 
+    }
+
+    private handleStatusHeaderMessage(statusMessage: HeaderStatusMessage) {
+
+        this.onSampleMarkerError.emit(statusMessage);
     }
 
 

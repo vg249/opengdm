@@ -36,12 +36,50 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
     Logger LOGGER = LoggerFactory.getLogger(DtoMapExtractorInstructionsImpl.class);
 
     private final String INSTRUCTION_FILE_EXT = ".json";
+    private final String DATA_FILE_EXT = ".txt";
+    private final String MARKER_FILE_SEGMENT = "_markers";
+    private final String SAMPLE_FILE_SEGMENT = "_samples";
 
     @Autowired
     private ExtractorInstructionsDAO extractorInstructionsDAO;
 
     @Autowired
     DtoMapContact dtoMapContact;
+
+
+    @Override
+    public void writeDataFile(String cropType, GobiiExtractFilterType gobiiExtractFilterType, String jobId, byte[] byteArray) throws GobiiException {
+        ConfigSettings configSettings = new ConfigSettings();
+
+        try {
+
+            String instructionFileDirectory = configSettings.getProcessingPath(cropType,
+                    GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS);
+
+            this.createDirectories(instructionFileDirectory);
+
+            String fqpn = instructionFileDirectory + jobId;
+            if( gobiiExtractFilterType == GobiiExtractFilterType.BY_MARKER ) {
+                fqpn += MARKER_FILE_SEGMENT;
+            } else if ( gobiiExtractFilterType == GobiiExtractFilterType.BY_SAMPLE ) {
+                fqpn += SAMPLE_FILE_SEGMENT;
+            } else {
+                throw new GobiiDaoException("Data file support is not provided for extract filter type " + gobiiExtractFilterType);
+            }
+
+            fqpn += DATA_FILE_EXT;
+
+            this.extractorInstructionsDAO.writePlainFile(fqpn, byteArray);
+
+
+        } catch (GobiiException e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw e;
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiException(e);
+        }
+    }
 
     private void createDirectories(String instructionFileDirectory) throws GobiiDaoException {
 
@@ -203,7 +241,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                 "The specified extraction type is unknown: "
                                         + currentGobiiDataSetExtract.getGobiiExtractFilterType());
                     }
-
 
 
                     if (!extractorInstructionsDAO.doesPathExist(extractorFileDestinationLocation)) {

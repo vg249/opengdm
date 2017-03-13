@@ -160,7 +160,8 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
                                  </sample-list-type>
                                 <hr style="width: 100%; color: black; height: 1px; background-color:black;" />
                                 <sample-marker-box 
-                                    (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)">
+                                    (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)"
+                                    (onSampleMarkerError)="handleHeaderStatusMessage($event)">
                                 </sample-marker-box>
                             </fieldset>
                         </div>
@@ -169,7 +170,8 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Markers</legend>
                                 <sample-marker-box 
-                                    (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)">
+                                    (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)"
+                                    (onSampleMarkerError)="handleHeaderStatusMessage($event)">
                                 </sample-marker-box>
                             </fieldset>
                         </div>
