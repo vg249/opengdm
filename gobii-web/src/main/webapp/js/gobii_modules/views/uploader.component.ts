@@ -8,6 +8,8 @@ import {AuthenticationService} from "../services/core/authentication.service";
 import {HeaderNames} from "../model/header-names";
 import {Header} from "../model/payload/header";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
+import {FileName} from "../model/file_name";
+import {FileModelTreeService} from "../services/core/file-model-tree-service";
 
 const URL = 'gobii/v1/uploadfile?gobiiExtractFilterType=BY_MARKER';
 
@@ -145,7 +147,8 @@ export class UploaderComponent implements OnInit {
 
     private onUploaderError:EventEmitter<HeaderStatusMessage> = new EventEmitter();
 
-    constructor(private _authenticationService: AuthenticationService) {
+    constructor(private _authenticationService: AuthenticationService,
+                private _fileModelTreeService: FileModelTreeService) {
 
         let fileUploaderOptions: FileUploaderOptions = {}
         fileUploaderOptions.url = URL;
@@ -166,13 +169,22 @@ export class UploaderComponent implements OnInit {
 
         this.uploader.onBeforeUploadItem = (fileItem:FileItem) => {
 
-            fileItem.file.name = "foo";
+            fileItem.file.name = FileName.makeUnique();
         }
         this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
 
-            if( status != 200 ) {
-                this.onUploaderError.emit(new HeaderStatusMessage(response,null,null) );
-            }
+            // if( status == 200 ) {
+            //     _fileModelTreeService.put(FileItem
+            //         )
+            //         .subscribe(null,
+            //         headerStatusMessage => {
+            //             this.onUploaderError.emit(new HeaderStatusMessage(headerStatusMessage,null,null) );
+            //         });
+            // } else {
+            //
+            //     this.onUploaderError.emit(new HeaderStatusMessage(response,null,null) );
+            //
+            // }
 
             // var responsePath = JSON.parse(response);
             // console.log(response, responsePath);// the url will be in the response

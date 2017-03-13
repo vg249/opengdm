@@ -28,6 +28,7 @@ import {platform} from "os";
 import {Header} from "../model/payload/header";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {NameIdRequestParams} from "../model/name-id-request-params";
+import {FileName} from "../model/file_name";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -880,19 +881,7 @@ export class ExtractorRoot implements OnInit {
         );
 
 
-        let date: Date = new Date();
-        let fileName: string = "extractor_"
-            + date.getFullYear()
-            + "_"
-            + (date.getMonth() + 1)
-            + "_"
-            + date.getDay()
-            + "_"
-            + date.getHours()
-            + "_"
-            + date.getMinutes()
-            + "_"
-            + date.getSeconds();
+        let fileName: string = FileName.makeUnique();
 
         let extractorInstructionFilesDTORequest: ExtractorInstructionFilesDTO =
             new ExtractorInstructionFilesDTO(gobiiExtractorInstructions,
