@@ -7,6 +7,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiidao.entity.pojos.Contact;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
@@ -254,7 +255,42 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
+
+        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        /*** check if entity already exist in the database ***/
+
+        RestUri restUriOrganization = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_ORGANIZATION);
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriOrganization);
+        PayloadEnvelope<OrganizationDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(OrganizationDTO.class);
+
+        checkStatus(resultEnvelope);
+
+        List<OrganizationDTO> organizationDTOSList = resultEnvelope.getPayload().getData();
+
+        for (OrganizationDTO currentOrganizationDTO : organizationDTOSList) {
+
+            if (currentOrganizationDTO.getName().equals(dbPkeysurrogateValue)) {
+
+                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+
+                /*** set fkey dbpkey for entity ***/
+
+                setFKeyDbPKeyForExistingEntity(fkeys, OrganizationDTO.class, currentOrganizationDTO);
+
+                return currentOrganizationDTO.getId();
+
+            }
+
+        }
+
+
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+
         OrganizationDTO newOrganizationDTO = new OrganizationDTO();
+
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
 
         for (int j=0; j<propKeyList.getLength(); j++) {
 
@@ -275,26 +311,11 @@ public class GobiiTestData {
         newOrganizationDTO.setModifiedDate(new Date());
         newOrganizationDTO.setStatusId(1);
 
-        if(fkeys != null && fkeys.getLength() > 0){
+        setFKeyDbPKeyForNewEntity(fkeys, OrganizationDTO.class, newOrganizationDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-            for (int i=0; i<fkeys.getLength(); i++) {
+        System.out.println("Calling the web service...\n");
 
-                Element currentFkeyElement = (Element) fkeys.item(i);
-
-                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
-
-                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
-
-                Field field = OrganizationDTO.class.getDeclaredField(fkproperty);
-                field.setAccessible(true);
-                field.set(newOrganizationDTO, fKeyDbPkey);
-
-            }
-
-        }
-
-
-        // create organization
+        /*** create organization ***/
 
         PayloadEnvelope<OrganizationDTO> payloadEnvelope = new PayloadEnvelope<>(newOrganizationDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
@@ -309,6 +330,7 @@ public class GobiiTestData {
 
         returnVal = organizationDTOResponse.getOrganizationId();
 
+        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
 
         return  returnVal;
 
@@ -321,7 +343,38 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
+        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        /*** check if entity already exist in the database ***/
+
+        RestUri restUriContact = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .contactsByQueryParams();
+        restUriContact.setParamValue("email", dbPkeysurrogateValue);
+        GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriContact);
+        PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(ContactDTO.class);
+
+        checkStatus(resultEnvelope);
+
+        if (resultEnvelope.getPayload().getData().size() > 0) {
+
+            ContactDTO currentContactDTO = resultEnvelope.getPayload().getData().get(0);
+
+            System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+
+            /*** set fkey dbpkey for entity ***/
+
+            setFKeyDbPKeyForExistingEntity(fkeys, ContactDTO.class, currentContactDTO);
+
+            return currentContactDTO.getId();
+
+        }
+
+
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+
         ContactDTO newContactDTO = new ContactDTO();
+
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
 
         // get roles
         RestUri rolesUri = ClientContext.getInstance(null, false)
@@ -375,23 +428,11 @@ public class GobiiTestData {
         newContactDTO.setModifiedBy(1);
         newContactDTO.setModifiedDate(new Date());
 
-        if(fkeys != null && fkeys.getLength() > 0) {
+        setFKeyDbPKeyForNewEntity(fkeys, ContactDTO.class, newContactDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-            for (int i=0; i<fkeys.getLength(); i++) {
+        System.out.println("Calling the web service...\n");
 
-                Element currentFkeyElement = (Element) fkeys.item(i);
-
-                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
-
-                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
-
-                Field field = ContactDTO.class.getDeclaredField(fkproperty);
-                field.setAccessible(true);
-                field.set(newContactDTO, fKeyDbPkey);
-
-            }
-
-        }
+        /*** create contact ***/
 
         PayloadEnvelope<ContactDTO> payloadEnvelopeContact = new PayloadEnvelope<>(newContactDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceContact = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
@@ -417,7 +458,40 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
+        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        /*** check if entity already exist in the database ***/
+
+        RestUri restUriPlatform = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_PLATFORM);
+        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriPlatform);
+        PayloadEnvelope<PlatformDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(PlatformDTO.class);
+
+        checkStatus(resultEnvelope);
+
+        List<PlatformDTO> platformDTOSList = resultEnvelope.getPayload().getData();
+
+        for (PlatformDTO currentPlatformDTO : platformDTOSList) {
+
+            if (currentPlatformDTO.getPlatformName().equals(dbPkeysurrogateValue)) {
+
+                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+
+                /*** set fkey dbpkey for entity ***/
+
+                setFKeyDbPKeyForExistingEntity(fkeys, PlatformDTO.class, currentPlatformDTO);
+
+                return currentPlatformDTO.getId();
+
+            }
+
+        }
+
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+
         PlatformDTO newPlatformDTO = new PlatformDTO();
+
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
 
         Element propertiesElement = null;
 
@@ -471,24 +545,12 @@ public class GobiiTestData {
         newPlatformDTO.setModifiedDate(new Date());
         newPlatformDTO.setModifiedBy(1);
 
-        if(fkeys != null && fkeys.getLength() > 0) {
+        setFKeyDbPKeyForNewEntity(fkeys, PlatformDTO.class, newPlatformDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-            for (int i=0; i<fkeys.getLength(); i++) {
 
-                Element currentFkeyElement = (Element) fkeys.item(i);
+        System.out.println("Calling the web service...\n");
 
-                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
-
-                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
-
-                Field field = PlatformDTO.class.getDeclaredField(fkproperty);
-                field.setAccessible(true);
-                field.set(newPlatformDTO, fKeyDbPkey);
-
-            }
-
-        }
-
+        /*** create platform ***/
 
         PayloadEnvelope<PlatformDTO> payloadEnvelopePlatform = new PayloadEnvelope<>(newPlatformDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourcePlatform = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
@@ -513,7 +575,42 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
+
+        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        /*** check if entity already exist in the database ***/
+
+        RestUri restUriProtocol = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_PROTOCOL);
+        GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriProtocol);
+        PayloadEnvelope<ProtocolDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(ProtocolDTO.class);
+
+        checkStatus(resultEnvelope);
+
+        List<ProtocolDTO> protocolDTOSList = resultEnvelope.getPayload().getData();
+
+        for (ProtocolDTO currentProtocolDTO : protocolDTOSList) {
+
+            if (currentProtocolDTO.getName().equals(dbPkeysurrogateValue)) {
+
+                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+
+                /*** set fkey dbpkey for entity ***/
+
+                setFKeyDbPKeyForExistingEntity(fkeys, ProtocolDTO.class, currentProtocolDTO);
+
+                return currentProtocolDTO.getId();
+
+            }
+
+        }
+
+
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+
         ProtocolDTO newProtocolDTO = new ProtocolDTO();
+
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
 
         Element propsElement = null;
 
@@ -555,23 +652,13 @@ public class GobiiTestData {
         newProtocolDTO.setModifiedDate(new Date());
         newProtocolDTO.setModifiedBy(1);
 
-        if(fkeys != null && fkeys.getLength() > 0) {
 
-            for (int i=0; i<fkeys.getLength(); i++) {
+        setFKeyDbPKeyForNewEntity(fkeys, ProtocolDTO.class, newProtocolDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-                Element currentFkeyElement = (Element) fkeys.item(i);
 
-                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
+        System.out.println("Calling the web service...\n");
 
-                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
-
-                Field field = ProtocolDTO.class.getDeclaredField(fkproperty);
-                field.setAccessible(true);
-                field.set(newProtocolDTO, fKeyDbPkey);
-
-            }
-
-        }
+        /*** create protocol ***/
 
         PayloadEnvelope<ProtocolDTO> payloadEnvelopeProtocol = new PayloadEnvelope<>(newProtocolDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResourceProtocol = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
@@ -598,8 +685,6 @@ public class GobiiTestData {
 
         VendorProtocolDTO newVendorProtocolDTO = new VendorProtocolDTO();
 
-        Element propsElement = null;
-
         for (int j=0; j<propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
@@ -614,25 +699,41 @@ public class GobiiTestData {
 
         }
 
-        if(fkeys != null && fkeys.getLength() > 0) {
+        setFKeyDbPKeyForNewEntity(fkeys, VendorProtocolDTO.class, newVendorProtocolDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-            for (int i=0; i<fkeys.getLength(); i++) {
+        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        /*** check if entity already exist in the database ***/
 
-                Element currentFkeyElement = (Element) fkeys.item(i);
+        RestUri restUriOrganizationForGetById = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceByUriIdParam(ServiceRequestId.URL_ORGANIZATION);
+        restUriOrganizationForGetById.setParamValue("id", newVendorProtocolDTO.getOrganizationId().toString());
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriOrganizationForGetById);
+        PayloadEnvelope<OrganizationDTO> resultEnvelopeForGetById = gobiiEnvelopeRestResourceForGetById.get(OrganizationDTO.class);
 
-                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
+        checkStatus(resultEnvelopeForGetById);
 
-                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
+        OrganizationDTO currentOrganizationDTO = resultEnvelopeForGetById.getPayload().getData().get(0);
 
-                Field field = VendorProtocolDTO.class.getDeclaredField(fkproperty);
-                field.setAccessible(true);
-                field.set(newVendorProtocolDTO, fKeyDbPkey);
+        for (VendorProtocolDTO vendorProtocolDTO : currentOrganizationDTO.getVendorProtocols()) {
+
+            if (vendorProtocolDTO.getProtocolId().equals(newVendorProtocolDTO.getProtocolId())) {
+
+                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+
+                return vendorProtocolDTO.getId();
 
             }
 
         }
 
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
 
+
+        System.out.println("Calling the web service...\n");
+
+        /*** create vendor protcol ***/
         // get organization/vendor
 
         RestUri restUriForGetOrganizationById = ClientContext.getInstance(null, false)
@@ -682,7 +783,41 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
+
+        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        /*** check if entity already exist in the database ***/
+
+        RestUri restUriReference = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_REFERENCE);
+        GobiiEnvelopeRestResource<ReferenceDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriReference);
+        PayloadEnvelope<ReferenceDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(ReferenceDTO.class);
+
+        checkStatus(resultEnvelope);
+
+        List<ReferenceDTO> referenceDTOSList = resultEnvelope.getPayload().getData();
+
+        for (ReferenceDTO currentReferenceDTO : referenceDTOSList) {
+
+            if (currentReferenceDTO.getName().equals(dbPkeysurrogateValue)) {
+
+                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+
+                /*** set fkey dbpkey for entity ***/
+
+                setFKeyDbPKeyForExistingEntity(fkeys, ReferenceDTO.class, currentReferenceDTO);
+
+                return currentReferenceDTO.getId();
+
+            }
+
+        }
+
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+
         ReferenceDTO newReferenceDTO = new ReferenceDTO();
+
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
 
         for (int j=0; j<propKeyList.getLength(); j++) {
 
@@ -703,23 +838,12 @@ public class GobiiTestData {
         newReferenceDTO.setModifiedDate(new Date());
         newReferenceDTO.setModifiedBy(1);
 
-        if(fkeys != null && fkeys.getLength() > 0) {
+        setFKeyDbPKeyForNewEntity(fkeys, ReferenceDTO.class, newReferenceDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-            for (int i=0; i<fkeys.getLength(); i++) {
 
-                Element currentFkeyElement = (Element) fkeys.item(i);
+        System.out.println("Calling the web service...\n");
 
-                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
-
-                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
-
-                Field field = ReferenceDTO.class.getDeclaredField(fkproperty);
-                field.setAccessible(true);
-                field.set(newReferenceDTO, fKeyDbPkey);
-
-            }
-
-        }
+        /*** create reference ***/
 
         PayloadEnvelope<ReferenceDTO> payloadEnvelopeReference = new PayloadEnvelope<>(newReferenceDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ReferenceDTO> gobiiEnvelopeRestResourceReference = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
@@ -735,6 +859,8 @@ public class GobiiTestData {
 
         returnVal = referenceDTOResponse.getReferenceId();
 
+        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+
         return  returnVal;
 
     }
@@ -744,7 +870,41 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
+
+        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        /*** check if entity already exist in the database ***/
+
+        RestUri restUriMapset = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_MAPSET);
+        GobiiEnvelopeRestResource<MapsetDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriMapset);
+        PayloadEnvelope<MapsetDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(MapsetDTO.class);
+
+        checkStatus(resultEnvelope);
+
+        List<MapsetDTO> mapsetDTOSList = resultEnvelope.getPayload().getData();
+
+        for (MapsetDTO currentMapsetDTO : mapsetDTOSList) {
+
+            if (currentMapsetDTO.getName().equals(dbPkeysurrogateValue)) {
+
+                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+
+                /*** set fkey dbpkey for entity ***/
+
+                setFKeyDbPKeyForExistingEntity(fkeys, MapsetDTO.class, currentMapsetDTO);
+
+                return currentMapsetDTO.getId();
+
+            }
+
+        }
+
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+
         MapsetDTO newMapsetDTO = new MapsetDTO();
+
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
 
         Element propertiesElement = null;
 
@@ -793,30 +953,20 @@ public class GobiiTestData {
                 field.set(newMapsetDTO, processTypes(propKey.getTextContent(), field.getType()));
 
             }
-        }
+            }
 
         newMapsetDTO.setCreatedDate(new Date());
         newMapsetDTO.setCreatedBy(1);
         newMapsetDTO.setModifiedDate(new Date());
         newMapsetDTO.setModifiedBy(1);
 
-        if(fkeys != null && fkeys.getLength() > 0) {
 
-            for (int i=0; i<fkeys.getLength(); i++) {
+        setFKeyDbPKeyForNewEntity(fkeys, MapsetDTO.class, newMapsetDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-                Element currentFkeyElement = (Element) fkeys.item(i);
 
-                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
+        System.out.println("Calling the web service...\n");
 
-                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
-
-                Field field = MapsetDTO.class.getDeclaredField(fkproperty);
-                field.setAccessible(true);
-                field.set(newMapsetDTO, fKeyDbPkey);
-
-            }
-
-        }
+        /*** create mapset ***/
 
         PayloadEnvelope<MapsetDTO> payloadEnvelopeMapset = new PayloadEnvelope<>(newMapsetDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<MapsetDTO> gobiiEnvelopeRestResourceMapset = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
@@ -832,6 +982,8 @@ public class GobiiTestData {
 
         returnVal = mapsetDTOResponse.getMapsetId();
 
+        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+
         return returnVal;
 
     }
@@ -841,7 +993,41 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
+
+        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        /*** check if entity already exist in the database ***/
+
+        RestUri restUriProject = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_PROJECTS);
+        GobiiEnvelopeRestResource<ProjectDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriProject);
+        PayloadEnvelope<ProjectDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(ProjectDTO.class);
+
+        checkStatus(resultEnvelope);
+
+        List<ProjectDTO> projectDTOSList = resultEnvelope.getPayload().getData();
+
+        for (ProjectDTO currentProjectDTO : projectDTOSList) {
+
+            if (currentProjectDTO.getProjectName().equals(dbPkeysurrogateValue)) {
+
+                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+
+                /*** set fkey dbpkey for entity ***/
+
+                setFKeyDbPKeyForExistingEntity(fkeys, ProjectDTO.class, currentProjectDTO);
+
+                return currentProjectDTO.getId();
+
+            }
+
+        }
+
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+
         ProjectDTO newProjectDTO = new ProjectDTO();
+
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
 
         for (int j=0; j<propKeyList.getLength(); j++) {
 
@@ -862,23 +1048,11 @@ public class GobiiTestData {
         newProjectDTO.setModifiedDate(new Date());
         newProjectDTO.setModifiedBy(1);
 
-        if(fkeys != null && fkeys.getLength() > 0) {
+        setFKeyDbPKeyForNewEntity(fkeys, ProjectDTO.class, newProjectDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-            for (int i=0; i<fkeys.getLength(); i++) {
+        System.out.println("Calling the web service...\n");
 
-                Element currentFkeyElement = (Element) fkeys.item(i);
-
-                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
-
-                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
-
-                Field field = ProjectDTO.class.getDeclaredField(fkproperty);
-                field.setAccessible(true);
-                field.set(newProjectDTO, fKeyDbPkey);
-
-            }
-
-        }
+        /*** create project ***/
 
         PayloadEnvelope<ProjectDTO> payloadEnvelopeProject = new PayloadEnvelope<>(newProjectDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ProjectDTO> gobiiEnvelopeRestResourceProject = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
@@ -894,6 +1068,8 @@ public class GobiiTestData {
 
         returnVal = projectDTOResponse.getProjectId();
 
+        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+
         return returnVal;
 
     }
@@ -903,7 +1079,42 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
+
+        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        /*** check if entity already exist in the database ***/
+
+        RestUri restUriManifest = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_MANIFEST);
+        GobiiEnvelopeRestResource<ManifestDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriManifest);
+        PayloadEnvelope<ManifestDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(ManifestDTO.class);
+
+        checkStatus(resultEnvelope);
+
+        List<ManifestDTO> manifestDTOSList = resultEnvelope.getPayload().getData();
+
+        for (ManifestDTO currentManifestDTO : manifestDTOSList) {
+
+            if (currentManifestDTO.getName().equals(dbPkeysurrogateValue)) {
+
+                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+
+                /*** set fkey dbpkey for entity ***/
+
+                setFKeyDbPKeyForExistingEntity(fkeys, ManifestDTO.class, currentManifestDTO);
+
+                return currentManifestDTO.getId();
+
+            }
+
+        }
+
+
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+
         ManifestDTO newManifestDTO = new ManifestDTO();
+
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
 
         for (int j=0; j<propKeyList.getLength(); j++) {
 
@@ -924,23 +1135,14 @@ public class GobiiTestData {
         newManifestDTO.setModifiedDate(new Date());
         newManifestDTO.setModifiedBy(1);
 
-        if(fkeys != null && fkeys.getLength() > 0) {
 
-            for (int i=0; i<fkeys.getLength(); i++) {
+        setFKeyDbPKeyForNewEntity(fkeys, ManifestDTO.class, newManifestDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-                Element currentFkeyElement = (Element) fkeys.item(i);
 
-                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
+        System.out.println("Calling the web service...\n");
 
-                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
+        /*** create manifest ***/
 
-                Field field = ManifestDTO.class.getDeclaredField(fkproperty);
-                field.setAccessible(true);
-                field.set(newManifestDTO, fKeyDbPkey);
-
-            }
-
-        }
 
         PayloadEnvelope<ManifestDTO> payloadEnvelopeManifest = new PayloadEnvelope<>(newManifestDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ManifestDTO> gobiiEnvelopeRestResourceManifest = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
@@ -966,7 +1168,42 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
+
+        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        /*** check if entity already exist in the database ***/
+
+        RestUri restUriExperiment = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_EXPERIMENTS);
+        GobiiEnvelopeRestResource<ExperimentDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriExperiment);
+        PayloadEnvelope<ExperimentDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(ExperimentDTO.class);
+
+        checkStatus(resultEnvelope);
+
+        List<ExperimentDTO> experimentDTOSList = resultEnvelope.getPayload().getData();
+
+        for (ExperimentDTO currentExperimentDTO : experimentDTOSList) {
+
+            if (currentExperimentDTO.getExperimentName().equals(dbPkeysurrogateValue)) {
+
+                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+
+                /*** set fkey dbpkey for entity ***/
+
+                setFKeyDbPKeyForExistingEntity(fkeys, ExperimentDTO.class, currentExperimentDTO);
+
+                return currentExperimentDTO.getId();
+
+            }
+
+        }
+
+
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+
         ExperimentDTO newExperimentDTO = new ExperimentDTO();
+
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
 
         for (int j=0; j<propKeyList.getLength(); j++) {
 
@@ -986,23 +1223,13 @@ public class GobiiTestData {
         newExperimentDTO.setModifiedDate(new Date());
         newExperimentDTO.setModifiedBy(1);
 
-        if(fkeys != null && fkeys.getLength() > 0) {
 
-            for (int i=0; i<fkeys.getLength(); i++) {
+        setFKeyDbPKeyForNewEntity(fkeys, ExperimentDTO.class, newExperimentDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-                Element currentFkeyElement = (Element) fkeys.item(i);
 
-                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
+        System.out.println("Calling the web service...\n");
 
-                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
-
-                Field field = ExperimentDTO.class.getDeclaredField(fkproperty);
-                field.setAccessible(true);
-                field.set(newExperimentDTO, fKeyDbPkey);
-
-            }
-
-        }
+        /*** create experiment ***/
 
         PayloadEnvelope<ExperimentDTO> payloadEnvelopeExperiment = new PayloadEnvelope<>(newExperimentDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ExperimentDTO> gobiiEnvelopeRestResourceExperiment = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
@@ -1018,6 +1245,8 @@ public class GobiiTestData {
 
         returnVal = experimentDTOResponse.getExperimentId();
 
+        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+
         return returnVal;
 
     }
@@ -1027,7 +1256,42 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
+
+        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        /*** check if entity already exist in the database ***/
+
+        RestUri restUriAnalysis = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_ANALYSIS);
+        GobiiEnvelopeRestResource<AnalysisDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriAnalysis);
+        PayloadEnvelope<AnalysisDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(AnalysisDTO.class);
+
+        checkStatus(resultEnvelope);
+
+        List<AnalysisDTO> analysisDTOSList = resultEnvelope.getPayload().getData();
+
+        for (AnalysisDTO currentAnalysisDTO : analysisDTOSList) {
+
+            if (currentAnalysisDTO.getAnalysisName().equals(dbPkeysurrogateValue)) {
+
+                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+
+                /*** set fkey dbpkey for entity ***/
+
+                setFKeyDbPKeyForExistingEntity(fkeys, AnalysisDTO.class, currentAnalysisDTO);
+
+                return currentAnalysisDTO.getId();
+
+            }
+
+        }
+
+
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+
         AnalysisDTO newAnalysisDTO = new AnalysisDTO();
+
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
 
         Element paramElement = null;
 
@@ -1080,23 +1344,13 @@ public class GobiiTestData {
         newAnalysisDTO.setModifiedDate(new Date());
         newAnalysisDTO.setModifiedBy(1);
 
-        if(fkeys != null && fkeys.getLength() > 0) {
 
-            for (int i=0; i<fkeys.getLength(); i++) {
+        setFKeyDbPKeyForNewEntity(fkeys, AnalysisDTO.class, newAnalysisDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-                Element currentFkeyElement = (Element) fkeys.item(i);
 
-                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
+        System.out.println("Calling the web service...\n");
 
-                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
-
-                Field field = AnalysisDTO.class.getDeclaredField(fkproperty);
-                field.setAccessible(true);
-                field.set(newAnalysisDTO, fKeyDbPkey);
-
-            }
-
-        }
+        /*** create analysis ***/
 
         PayloadEnvelope<AnalysisDTO> payloadEnvelopeAnalysis = new PayloadEnvelope<>(newAnalysisDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<AnalysisDTO> gobiiEnvelopeRestResourceAnalysis = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
@@ -1123,7 +1377,42 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
+
+        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        /*** check if entity already exist in the database ***/
+
+        RestUri restUriDataset = ClientContext.getInstance(null, false)
+                .getUriFactory()
+                .resourceColl(ServiceRequestId.URL_DATASETS);
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriDataset);
+        PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResourceGet.get(DataSetDTO.class);
+
+        checkStatus(resultEnvelope);
+
+        List<DataSetDTO> datasetDTOSList = resultEnvelope.getPayload().getData();
+
+        for (DataSetDTO currentDatasetDTO : datasetDTOSList) {
+
+            if (currentDatasetDTO.getName().equals(dbPkeysurrogateValue)) {
+
+                System.out.println("\n" +entityName + "("+dbPkeysurrogateValue+") already exists in the database. Return current entity ID.\n");
+
+                /*** set fkey dbpkey for entity ***/
+
+                setFKeyDbPKeyForExistingEntity(fkeys, DataSetDTO.class, currentDatasetDTO);
+
+                return currentDatasetDTO.getId();
+
+            }
+
+        }
+
+
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+
         DataSetDTO newDataSetDTO = new DataSetDTO();
+
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
 
         /*** get cv's from dataset_type group ***/
 
@@ -1174,23 +1463,13 @@ public class GobiiTestData {
         newDataSetDTO.setModifiedDate(new Date());
         newDataSetDTO.setModifiedBy(1);
 
-        if(fkeys != null && fkeys.getLength() > 0) {
 
-            for (int i=0; i<fkeys.getLength(); i++) {
+        setFKeyDbPKeyForNewEntity(fkeys, DataSetDTO.class, newDataSetDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-                Element currentFkeyElement = (Element) fkeys.item(i);
 
-                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
+        System.out.println("Calling the web service...\n");
 
-                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
-
-                Field field = DataSetDTO.class.getDeclaredField(fkproperty);
-                field.setAccessible(true);
-                field.set(newDataSetDTO, fKeyDbPkey);
-
-            }
-
-        }
+        /*** create dataset ***/
 
         PayloadEnvelope<DataSetDTO> payloadEnvelopeDataSet = new PayloadEnvelope<>(newDataSetDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
@@ -1212,8 +1491,6 @@ public class GobiiTestData {
     }
 
     private static Integer createEntity(Element parentElement, String entityName, NodeList fKeys, String dbPkeysurrogateValue, XPath xPath, Document document) throws Exception {
-
-        System.out.println("\n Creating " + entityName + " ("+ dbPkeysurrogateValue +") in the database...\n");
 
         Integer returnVal = null;
 
@@ -1305,6 +1582,54 @@ public class GobiiTestData {
 
 
         return returnVal;
+
+    }
+
+
+    private static void setFKeyDbPKeyForNewEntity(NodeList fkeys, Class currentClass, Object currentDTO, Element parentElement, String dbPkeysurrogateValue,
+                                      Document document, XPath xPath) throws Exception {
+
+        if(fkeys != null && fkeys.getLength() > 0) {
+
+            for (int i=0; i<fkeys.getLength(); i++) {
+
+                Element currentFkeyElement = (Element) fkeys.item(i);
+
+                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
+
+                Integer fKeyDbPkey = getFKeyDbPKey(currentFkeyElement, parentElement, dbPkeysurrogateValue, document, xPath);
+
+                Field field = currentClass.getDeclaredField(fkproperty);
+                field.setAccessible(true);
+                field.set(currentDTO, fKeyDbPkey);
+
+            }
+
+        }
+
+    }
+
+
+    private static void setFKeyDbPKeyForExistingEntity(NodeList fkeys, Class currentClass, Object currentDTO) throws Exception {
+
+        if(fkeys != null && fkeys.getLength() > 0) {
+
+            for (int i=0; i<fkeys.getLength(); i++) {
+
+                Element currentFkeyElement = (Element) fkeys.item(i);
+
+                String fkproperty = currentFkeyElement.getAttribute("fkproperty");
+
+                Field field = currentClass.getDeclaredField(fkproperty);
+                field.setAccessible(true);
+
+                Element currentFkeydbPKeyElement = (Element) currentFkeyElement.getElementsByTagName("DbPKey").item(0);
+
+                currentFkeydbPKeyElement.setTextContent(field.get(currentDTO).toString());
+
+            }
+
+        }
 
     }
 

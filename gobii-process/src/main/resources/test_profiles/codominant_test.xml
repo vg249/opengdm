@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-
 <GobiiTestData>
 	<Entities>
 		<Organizations DbPKeysurrogate="Name">
@@ -46,7 +45,7 @@
 					<PlatformDescription>sim_SSR</PlatformDescription>
 					<StatusId>1</StatusId>
 					<TypeId>SSR</TypeId>
-					<Properties></Properties>
+					<Properties/>
 				</Properties>
 			</Platform>
 		</Platforms>
@@ -64,8 +63,8 @@
 					<Description>sim_SSR</Description>
 					<TypeId>1</TypeId>
 					<Status>1</Status>
-					<Props></Props>
-					<VendorProtocols></VendorProtocols>
+					<Props/>
+					<VendorProtocols/>
 				</Properties>
 			</Protocol>
 		</Protocols>
@@ -99,7 +98,7 @@
 					<Description>sim_codominant</Description>
 					<MapType>Physical</MapType>
 					<StatusId>1</StatusId>
-					<Properties></Properties>
+					<Properties/>
 				</Properties>
 			</Mapset>
 		</Mapsets>
@@ -156,7 +155,7 @@
 					<SourceVersion>sim_none_sourceversion</SourceVersion>
 					<SourceUri>sim_none_sourceuri</SourceUri>
 					<StatusId>1</StatusId>
-					<Parameters></Parameters>
+					<Parameters/>
 				</Properties>
 			</Analysis>
 		</Analyses>
@@ -181,8 +180,8 @@
 					<QualityFile>sim_codominant_qualityfile</QualityFile>
 					<StatusId>1</StatusId>
 					<TypeId>Co_dominant_non_nucleotide</TypeId>
-					<AnalysesIds></AnalysesIds>
-					<Scores></Scores>
+					<AnalysesIds/>
+					<Scores/>
 				</Properties>
 			</Dataset>
 		</Datasets>
@@ -192,31 +191,30 @@
 		<Scenario>
 			<Name>Codominant</Name>
 			<Files>
-				<Instruction></Instruction>
-				<Data></Data>
+				<Instruction/>
+				<Data/>
 			</Files>
 
 			<DbFkey entity="Contact">
-				<DbPKeySurrogate></DbPKeySurrogate>
-				<DbPKey></DbPKey>
+				<DbPKeySurrogate/>
+				<DbPKey/>
 			</DbFkey>
 
 			<DbFkey entity="Project">
-				<DbPKeySurrogate></DbPKeySurrogate>
-				<DbPKey></DbPKey>
+				<DbPKeySurrogate/>
+				<DbPKey/>
 			</DbFkey>
 
 			<DbFkey entity="Experiment">
-				<DbPKeySurrogate></DbPKeySurrogate>
-				<DbPKey></DbPKey>
+				<DbPKeySurrogate/>
+				<DbPKey/>
 			</DbFkey>
 
 			<DbFkey entity="Dataset">
-				<DbPKeySurrogate></DbPKeySurrogate>
-				<DbPKey></DbPKey>
+				<DbPKeySurrogate/>
+				<DbPKey/>
 			</DbFkey>
 		</Scenario>
 	</Scenarios>
 
 </GobiiTestData>
-
