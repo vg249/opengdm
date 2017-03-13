@@ -7,7 +7,6 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiidao.entity.pojos.Contact;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
@@ -256,7 +255,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriOrganization = ClientContext.getInstance(null, false)
@@ -286,11 +285,11 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
 
         OrganizationDTO newOrganizationDTO = new OrganizationDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
         for (int j=0; j<propKeyList.getLength(); j++) {
 
@@ -343,7 +342,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriContact = ClientContext.getInstance(null, false)
@@ -370,11 +369,11 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
 
         ContactDTO newContactDTO = new ContactDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
         // get roles
         RestUri rolesUri = ClientContext.getInstance(null, false)
@@ -447,6 +446,7 @@ public class GobiiTestData {
 
         returnVal = contactDTOResponse.getContactId();
 
+        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
 
         return returnVal;
 
@@ -458,7 +458,7 @@ public class GobiiTestData {
 
         Integer returnVal = null;
 
-        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriPlatform = ClientContext.getInstance(null, false)
@@ -487,11 +487,11 @@ public class GobiiTestData {
 
         }
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
 
         PlatformDTO newPlatformDTO = new PlatformDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
         Element propertiesElement = null;
 
@@ -566,6 +566,8 @@ public class GobiiTestData {
 
         returnVal = platformDTOResponse.getPlatformId();
 
+        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+
         return returnVal;
 
     }
@@ -576,7 +578,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriProtocol = ClientContext.getInstance(null, false)
@@ -606,11 +608,11 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
 
         ProtocolDTO newProtocolDTO = new ProtocolDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
         Element propsElement = null;
 
@@ -674,6 +676,8 @@ public class GobiiTestData {
 
         returnVal = protocolDTOResponse.getProtocolId();
 
+        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+
         return returnVal;
 
     }
@@ -701,7 +705,7 @@ public class GobiiTestData {
 
         setFKeyDbPKeyForNewEntity(fkeys, VendorProtocolDTO.class, newVendorProtocolDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriOrganizationForGetById = ClientContext.getInstance(null, false)
@@ -727,8 +731,8 @@ public class GobiiTestData {
 
         }
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
 
         System.out.println("Calling the web service...\n");
@@ -774,6 +778,8 @@ public class GobiiTestData {
 
         }
 
+        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+
         return returnVal;
 
     }
@@ -784,7 +790,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriReference = ClientContext.getInstance(null, false)
@@ -813,11 +819,11 @@ public class GobiiTestData {
 
         }
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
 
         ReferenceDTO newReferenceDTO = new ReferenceDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
         for (int j=0; j<propKeyList.getLength(); j++) {
 
@@ -871,7 +877,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriMapset = ClientContext.getInstance(null, false)
@@ -900,11 +906,11 @@ public class GobiiTestData {
 
         }
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
 
         MapsetDTO newMapsetDTO = new MapsetDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
         Element propertiesElement = null;
 
@@ -994,7 +1000,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriProject = ClientContext.getInstance(null, false)
@@ -1023,11 +1029,11 @@ public class GobiiTestData {
 
         }
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
 
         ProjectDTO newProjectDTO = new ProjectDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
         for (int j=0; j<propKeyList.getLength(); j++) {
 
@@ -1080,7 +1086,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriManifest = ClientContext.getInstance(null, false)
@@ -1110,11 +1116,11 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
 
         ManifestDTO newManifestDTO = new ManifestDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
         for (int j=0; j<propKeyList.getLength(); j++) {
 
@@ -1158,6 +1164,8 @@ public class GobiiTestData {
 
         returnVal = manifestDTOResponse.getManifestId();
 
+        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+
         return returnVal;
 
 
@@ -1169,7 +1177,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriExperiment = ClientContext.getInstance(null, false)
@@ -1199,11 +1207,11 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
 
         ExperimentDTO newExperimentDTO = new ExperimentDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
         for (int j=0; j<propKeyList.getLength(); j++) {
 
@@ -1257,7 +1265,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriAnalysis = ClientContext.getInstance(null, false)
@@ -1287,11 +1295,11 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
 
         AnalysisDTO newAnalysisDTO = new AnalysisDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
         Element paramElement = null;
 
@@ -1366,6 +1374,8 @@ public class GobiiTestData {
 
         returnVal = analysisDTOResponse.getAnalysisId();
 
+        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
+
         return returnVal;
 
 
@@ -1378,7 +1388,7 @@ public class GobiiTestData {
         Integer returnVal = null;
 
 
-        System.out.println("\n Checking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
+        System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
         RestUri restUriDataset = ClientContext.getInstance(null, false)
@@ -1408,11 +1418,11 @@ public class GobiiTestData {
         }
 
 
-        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\n Creating new record...\n");
+        System.out.println("\n"+entityName+"("+dbPkeysurrogateValue+") doesn't exist in the database.\nCreating new record...\n");
 
         DataSetDTO newDataSetDTO = new DataSetDTO();
 
-        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...\n");
+        System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
         /*** get cv's from dataset_type group ***/
 
@@ -1484,6 +1494,8 @@ public class GobiiTestData {
         DataSetDTO dataSetDTOResponse = dataSetDTOResponseEnvelope.getPayload().getData().get(0);
 
         returnVal = dataSetDTOResponse.getDataSetId();
+
+        System.out.println(entityName + "("+dbPkeysurrogateValue+") is successfully created!\n");
 
         return returnVal;
 
@@ -1690,9 +1702,6 @@ public class GobiiTestData {
 
             String dbPkeysurrogateValue = props.getElementsByTagName(DBPKeysurrogateName).item(0).getTextContent();
 
-            Random rn = new Random();
-//            Integer returnEntityId = rn.nextInt();
-
             Element dbPKey = (Element) element.getElementsByTagName("DbPKey").item(0);
 
             NodeList fkeys = element.getElementsByTagName("Fkey");
@@ -1767,7 +1776,7 @@ public class GobiiTestData {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
 
-        File fXmlFile = new File("src/main/resources/test_profiles/codominant_test.xml");
+        File fXmlFile = new File("src/main/resources/test_profiles/vcf_test.xml");
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document document = documentBuilder.parse(fXmlFile);
 
