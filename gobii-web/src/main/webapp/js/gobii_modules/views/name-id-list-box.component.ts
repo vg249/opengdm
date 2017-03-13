@@ -5,7 +5,7 @@ import {EntityType, EntitySubType} from "../model/type-entity";
 import {CvFilterType, CvFilters} from "../model/cv-filter-type";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {EntityFilter} from "../model/type-entity-filter";
-import {FileItem} from "../model/file-item";
+import {GobiiFileItem} from "../model/file-item";
 import {ProcessType} from "../model/type-process";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
@@ -96,7 +96,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck  {
 
         this.onNameIdSelected.emit(nameId);
 
-        let fileItem: FileItem = FileItem
+        let fileItem: GobiiFileItem = GobiiFileItem
             .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
             .setEntityType(this.nameIdRequestParams.getEntityType())
             .setEntitySubType(this.nameIdRequestParams.getEntitySubType())

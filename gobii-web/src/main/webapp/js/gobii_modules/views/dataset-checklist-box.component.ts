@@ -3,7 +3,7 @@ import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {EntityType} from "../model/type-entity";
-import {FileItem} from "../model/file-item";
+import {GobiiFileItem} from "../model/file-item";
 import {DtoRequestItemDataSet} from "../services/app/dto-request-item-dataset";
 import {DataSet} from "../model/dataset";
 import {DtoRequestItemAnalysis} from "../services/app/dto-request-item-analysis";
@@ -72,16 +72,16 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private gobiiExtractFilterType:GobiiExtractFilterType;
     private nameIdRequestParamsDataset: NameIdRequestParams;
     private experimentId: string;
-    private onItemChecked: EventEmitter<FileItem> = new EventEmitter();
+    private onItemChecked: EventEmitter<GobiiFileItem> = new EventEmitter();
     private onAddStatusMessage: EventEmitter<HeaderStatusMessage> = new EventEmitter();
     private dataSet: DataSet;
     private analysisNames: string[] = [];
     private analysisTypes: string[] = [];
     private nameIdListAnalysisTypes: NameId[];
-    private datasetFileItemEventChange: FileItem;
+    private datasetFileItemEventChange: GobiiFileItem;
 
 
-    private handleItemChecked(arg: FileItem) {
+    private handleItemChecked(arg: GobiiFileItem) {
 
         arg.setRequired(false);
         this.onItemChecked.emit(arg);
@@ -119,7 +119,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     //                     scope$.dataSetsNameIdList = nameIds;
     //                     // scope$.fileItemEvents = [];
     //                     // scope$.dataSetsNameIdList.forEach(n => {
-    //                     //     scope$.fileItemEvents.push(new FileItem(
+    //                     //     scope$.fileItemEvents.push(new GobiiFileItem(
     //                     //         ProcessType.CREATE,
     //                     //         n.id,
     //                     //         n.name,

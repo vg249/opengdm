@@ -101,7 +101,7 @@ System.register(["@angular/core", "../model/type-process", "../model/file-item",
                     var selectedFileItem = this.fileItemEvents.filter(function (e) {
                         return e.getItemId() === idValue;
                     })[0];
-                    // let fileItemEvent: FileItem = FileItem.build(
+                    // let fileItemEvent: GobiiFileItem = GobiiFileItem.build(
                     //     GobiiExtractFilterType.UNKNOWN,
                     //     ProcessType.READ)
                     //     .setEntityType(this.nameIdRequestParams.getEntityType())
@@ -145,7 +145,7 @@ System.register(["@angular/core", "../model/type-process", "../model/file-item",
                     if (scope$.nameIdList && (scope$.nameIdList.length > 0)) {
                         scope$.fileItemEvents = [];
                         scope$.nameIdList.forEach(function (n) {
-                            var currentFileItem = file_item_1.FileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                            var currentFileItem = file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                 .setEntityType(_this.nameIdRequestParams.getEntityType())
                                 .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                                 .setItemId(n.id)

@@ -1,4 +1,4 @@
-import {FileItem} from "./file-item";
+import {GobiiFileItem} from "./file-item";
 import {FileModelNode} from "./file-model-node";
 
 export enum FileModelState {
@@ -12,7 +12,7 @@ export enum FileModelState {
 
 export class FileModelTreeEvent {
 
-    constructor(public fileItem: FileItem,
+    constructor(public fileItem: GobiiFileItem,
                 public fileModelNode: FileModelNode,
                 public fileModelState: FileModelState,
                 public message: string) {

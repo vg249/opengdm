@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild, OnChanges, SimpleChange, EventEmitter} from "@angular/core";
 import {TreeNode, Message, MenuItem} from "primeng/components/common/api";
-import {FileItem} from "../model/file-item";
+import {GobiiFileItem} from "../model/file-item";
 import {GobiiTreeNode} from "../model/GobiiTreeNode";
 import {EntityType, EntitySubType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
@@ -108,7 +108,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         let unselectedTreeNode: GobiiTreeNode = event.node;
 
-        let fileItem: FileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, false);
+        let fileItem: GobiiFileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, false);
 
         // if the item is required, take no action and in fact make it selected again
         if (!fileItem.getRequired()) {
@@ -124,9 +124,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     }
 
-    makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, checked: boolean): FileItem {
+    makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, checked: boolean): GobiiFileItem {
 
-        let returnVal: FileItem = FileItem.build(
+        let returnVal: GobiiFileItem = GobiiFileItem.build(
             this.gobiiExtractFilterType,
             (checked ? ProcessType.CREATE : ProcessType.DELETE))
             .setEntityType(gobiiTreeNode.entityType)
@@ -261,7 +261,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-    addEntityNameToNode(fileModelNode: FileModelNode, gobiiTreeNode: GobiiTreeNode, eventedFileItem: FileItem) {
+    addEntityNameToNode(fileModelNode: FileModelNode, gobiiTreeNode: GobiiTreeNode, eventedFileItem: GobiiFileItem) {
 
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
             gobiiTreeNode.label = eventedFileItem.getItemName();
@@ -449,7 +449,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                 if (parentTreeNode != null) {
 
-                    let existingFileModelItem: FileItem = fileModelTreeEvent
+                    let existingFileModelItem: GobiiFileItem = fileModelTreeEvent
                         .fileModelNode
                         .getFileItems()
                         .find(item => {
@@ -581,8 +581,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
-    onItemChecked: EventEmitter < FileItem > = new EventEmitter();
-    onItemSelected: EventEmitter < FileItem > = new EventEmitter();
+    onItemChecked: EventEmitter < GobiiFileItem > = new EventEmitter();
+    onItemSelected: EventEmitter < GobiiFileItem > = new EventEmitter();
 
 
     fileModelNodeTree: Map < GobiiExtractFilterType, Array < FileModelNode >> =
@@ -595,7 +595,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
 
-            let itemChangedEvent: FileItem = changes['fileItemEventChange'].currentValue;
+            let itemChangedEvent: GobiiFileItem = changes['fileItemEventChange'].currentValue;
 
 
 //            this.placeNodeInModel(itemChangedEvent);
@@ -628,7 +628,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 this.setUpRequredItems(this.gobiiExtractFilterType);
                 //this.onTreeReady.emit( new HeaderStatusMessage("","","") );
 
-                this._fileModelTreeService.put( FileItem
+                this._fileModelTreeService.put( GobiiFileItem
                     .build(this.gobiiExtractFilterType,ProcessType.NOTIFY)
                     .setExtractorItemType(ExtractorItemType.STATUS_DISPLAY_TREE_READY)).subscribe(
                         null,

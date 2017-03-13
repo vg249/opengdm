@@ -53,7 +53,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
                     // being built, so there is just enough enough latency in the web service call that the tree
                     // is there when the fileItem is posted to the tree model service. I have providen this
                     // because in the commented out code below, I make a call to the same webservice then
-                    // post the FileItem for the format, and lo and behold, the tree is there and gets properly
+                    // post the GobiiFileItem for the format, and lo and behold, the tree is there and gets properly
                     // initialized with the format type. The only to make this is work is to post the format change
                     // to the model service _after_ the tree calls oncomplete. If we want to encapsulate all the
                     // service communication in the child components, the tree service will have to accommodate
@@ -111,7 +111,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
                 ExportFormatComponent.prototype.updateTreeService = function (arg) {
                     var _this = this;
                     this.selectedExtractFormat = arg;
-                    var extractFilterTypeFileItem = file_item_1.FileItem
+                    var extractFilterTypeFileItem = file_item_1.GobiiFileItem
                         .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
                         .setItemId(type_extract_format_1.GobiiExtractFormat[arg])

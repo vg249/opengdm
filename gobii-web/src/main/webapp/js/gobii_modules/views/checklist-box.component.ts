@@ -2,7 +2,7 @@ import {Component, OnInit, OnChanges, SimpleChange, EventEmitter, Input, DoCheck
 import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {ProcessType} from "../model/type-process";
-import {FileItem} from "../model/file-item";
+import {GobiiFileItem} from "../model/file-item";
 import {EntityType, EntitySubType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {CvFilterType} from "../model/cv-filter-type";
@@ -57,14 +57,14 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
 
     // useg
     private nameIdList: NameId[];
-    private fileItemEvents: FileItem[] = [];
-    private onItemChecked: EventEmitter<FileItem> = new EventEmitter();
-    private onItemSelected: EventEmitter<FileItem> = new EventEmitter();
-    private checkedFileItemHistory: FileItem[] = [];
+    private fileItemEvents: GobiiFileItem[] = [];
+    private onItemChecked: EventEmitter<GobiiFileItem> = new EventEmitter();
+    private onItemSelected: EventEmitter<GobiiFileItem> = new EventEmitter();
+    private checkedFileItemHistory: GobiiFileItem[] = [];
 
     private handleItemChecked(arg) {
 
-        let itemToChange: FileItem =
+        let itemToChange: GobiiFileItem =
             this.fileItemEvents.filter(e => {
                 return e.getItemId() === arg.currentTarget.value;
             })[0];
@@ -81,9 +81,9 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
 
     } // handleItemChecked()
 
-    private updateCheckedItemHistory(fileItem: FileItem) {
+    private updateCheckedItemHistory(fileItem: GobiiFileItem) {
 
-        let historyFileItem: FileItem = this
+        let historyFileItem: GobiiFileItem = this
             .checkedFileItemHistory
             .find(fi => {
                 return ( fi.getEntityType() === fileItem.getEntityType()
@@ -107,9 +107,9 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
         }
     }
 
-    private wasItemPreviouslyChecked(fileItem: FileItem): boolean {
+    private wasItemPreviouslyChecked(fileItem: GobiiFileItem): boolean {
 
-        let checkedFileItem: FileItem = this.checkedFileItemHistory.find(fi => {
+        let checkedFileItem: GobiiFileItem = this.checkedFileItemHistory.find(fi => {
             return fi.getEntityType() === fileItem.getEntityType()
                 && fi.getItemId() === fileItem.getItemId()
                 && fi.getItemName() === fileItem.getItemName()
@@ -129,13 +129,13 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
         this.previousSelectedItem = arg.currentTarget;
 
         let idValue:string = arg.currentTarget.children[0].value;
-        let selectedFileItem: FileItem =
+        let selectedFileItem: GobiiFileItem =
             this.fileItemEvents.filter(e => {
                 return e.getItemId() === idValue;
             })[0];
 
 
-        // let fileItemEvent: FileItem = FileItem.build(
+        // let fileItemEvent: GobiiFileItem = GobiiFileItem.build(
         //     GobiiExtractFilterType.UNKNOWN,
         //     ProcessType.READ)
         //     .setEntityType(this.nameIdRequestParams.getEntityType())
@@ -166,7 +166,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
     }
 
 
-    private updateTreeService(fileItem: FileItem) {
+    private updateTreeService(fileItem: GobiiFileItem) {
 
         this._fileModelTreeService.put(fileItem)
             .subscribe(
@@ -193,8 +193,8 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
 
             scope$.fileItemEvents = [];
             scope$.nameIdList.forEach(n => {
-                let currentFileItem: FileItem =
-                    FileItem.build(
+                let currentFileItem: GobiiFileItem =
+                    GobiiFileItem.build(
                         this.gobiiExtractFilterType,
                         ProcessType.CREATE)
                         .setEntityType(this.nameIdRequestParams.getEntityType())
@@ -226,7 +226,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
         }
     }
 
-    private eventedFileItem: FileItem;
+    private eventedFileItem: GobiiFileItem;
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
@@ -237,7 +237,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
             this.eventedFileItem = changes['fileItemEventChange'].currentValue;
 
             if (this.eventedFileItem) {
-                let itemToChange: FileItem =
+                let itemToChange: GobiiFileItem =
                     this.fileItemEvents.find(e => {
                         return e.getEntityType() == this.eventedFileItem.getEntityType()
                             // && e.getItemId() == this.eventedFileItem.getItemId() -- the tree does not cash item IDs

@@ -58,7 +58,7 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                     };
                     this.uploader.onCompleteItem = function (item, response, status, headers) {
                         // if( status == 200 ) {
-                        //     _fileModelTreeService.put(FileItem
+                        //     _fileModelTreeService.put(GobiiFileItem
                         //         )
                         //         .subscribe(null,
                         //         headerStatusMessage => {

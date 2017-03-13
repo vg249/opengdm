@@ -3,7 +3,7 @@ import {Component, OnInit} from "@angular/core";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extract";
 import {ProcessType} from "../model/type-process";
-import {FileItem} from "../model/file-item";
+import {GobiiFileItem} from "../model/file-item";
 import {ServerConfig} from "../model/server-config";
 import {EntityType, EntitySubType} from "../model/type-entity";
 import {NameId} from "../model/name-id";
@@ -254,9 +254,9 @@ export class ExtractorRoot implements OnInit {
 
     // ************************************************************************
 
-    private treeFileItemEvent: FileItem;
+    private treeFileItemEvent: GobiiFileItem;
 //    private selectedExportTypeEvent:GobiiExtractFilterType;
-    private datasetFileItemEvents: FileItem[] = [];
+    private datasetFileItemEvents: GobiiFileItem[] = [];
     private gobiiDatasetExtracts: GobiiDataSetExtract[] = [];
     private messages: string[] = [];
 
@@ -385,7 +385,7 @@ export class ExtractorRoot implements OnInit {
         this.gobiiExtractFilterType = arg;
 
 
-//        let extractorFilterItemType: FileItem = FileItem.bui(this.gobiiExtractFilterType)
+//        let extractorFilterItemType: GobiiFileItem = GobiiFileItem.bui(this.gobiiExtractFilterType)
 
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
@@ -444,7 +444,7 @@ export class ExtractorRoot implements OnInit {
 //     private handleContactForSubmissionSelected(arg: NameId) {
 //         this.selectedContactIdForSubmitter = arg.id;
 //
-//         let fileItem: FileItem = FileItem
+//         let fileItem: GobiiFileItem = GobiiFileItem
 //             .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
 //             .setEntityType(EntityType.Contacts)
 //             .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
@@ -521,7 +521,7 @@ export class ExtractorRoot implements OnInit {
 
         this.selectedExtractFormat = arg;
 
-        let extractFilterTypeFileItem: FileItem = FileItem
+        let extractFilterTypeFileItem: GobiiFileItem = GobiiFileItem
             .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
             .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
             .setItemId(GobiiExtractFormat[arg])
@@ -625,7 +625,7 @@ export class ExtractorRoot implements OnInit {
 //         this.selectedPlatformId = arg.id;
 //     }
 //
-//     private handlePlatformChecked(fileItemEvent: FileItem) {
+//     private handlePlatformChecked(fileItemEvent: GobiiFileItem) {
 //
 //
 //         this._fileModelTreeService.put(fileItemEvent).subscribe(
@@ -707,7 +707,7 @@ export class ExtractorRoot implements OnInit {
     private selectedDatasetId: string;
     private selectedDatasetName: string;
 
-    private handleCheckedDataSetItem(arg: FileItem) {
+    private handleCheckedDataSetItem(arg: GobiiFileItem) {
 
 
         this.selectedDatasetId = arg.getItemId();
@@ -728,8 +728,8 @@ export class ExtractorRoot implements OnInit {
                     });
         } // if-else we're adding
 
-        //this.treeFileItemEvent = FileItem.fromFileItem(arg);
-        let fileItemEvent: FileItem = FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
+        //this.treeFileItemEvent = GobiiFileItem.fromFileItem(arg);
+        let fileItemEvent: GobiiFileItem = GobiiFileItem.fromFileItem(arg, this.gobiiExtractFilterType);
 
 
         this._fileModelTreeService.put(fileItemEvent).subscribe(
@@ -742,7 +742,7 @@ export class ExtractorRoot implements OnInit {
 
     private changeTrigger: number = 0;
 
-    private handleExtractDataSetUnchecked(arg: FileItem) {
+    private handleExtractDataSetUnchecked(arg: GobiiFileItem) {
         // this.changeTrigger++;
         // this.dataSetIdToUncheck = Number(arg.itemId);
 
@@ -759,7 +759,7 @@ export class ExtractorRoot implements OnInit {
             this.gobiiDatasetExtracts.splice(idxToRemove, 1);
         }
 
-        this.treeFileItemEvent = FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
+        this.treeFileItemEvent = GobiiFileItem.fromFileItem(arg, this.gobiiExtractFilterType);
 
     }
 
@@ -811,7 +811,7 @@ export class ExtractorRoot implements OnInit {
         scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(
             fileItems => {
 
-                let submitterFileItem: FileItem = fileItems.find(item => {
+                let submitterFileItem: GobiiFileItem = fileItems.find(item => {
                     return (item.getEntityType() === EntityType.Contacts)
                         && (item.getEntitySubType() === EntitySubType.CONTACT_SUBMITED_BY)
                 });
@@ -827,20 +827,20 @@ export class ExtractorRoot implements OnInit {
                         return Number(item.getItemId())
                     });
 
-                let exportFileItem: FileItem = fileItems.find(item => {
+                let exportFileItem: GobiiFileItem = fileItems.find(item => {
                     return item.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
                 });
                 let extractFormat: GobiiExtractFormat = GobiiExtractFormat[exportFileItem.getItemId()];
                 let gobiiFileType: GobiiFileType = GobiiFileType[GobiiExtractFormat[extractFormat]];
 
-                let dataTypeFileItem: FileItem = fileItems.find(item => {
+                let dataTypeFileItem: GobiiFileItem = fileItems.find(item => {
                     return item.getEntityType() === EntityType.CvTerms
                         && item.getCvFilterType() === CvFilterType.DATASET_TYPE
                 });
 
                 let datSetTypeName: string = dataTypeFileItem != null ? dataTypeFileItem.getItemName() : null;
 
-                let platformFileItems: FileItem[] = fileItems.filter(item => {
+                let platformFileItems: GobiiFileItem[] = fileItems.filter(item => {
                     return item.getEntityType() === EntityType.Platforms
                 });
 

@@ -76,7 +76,7 @@ System.register(["@angular/core", "../model/file-item", "../model/type-process",
                 NameIdListBoxComponent.prototype.updateTreeService = function (nameId) {
                     var _this = this;
                     this.onNameIdSelected.emit(nameId);
-                    var fileItem = file_item_1.FileItem
+                    var fileItem = file_item_1.GobiiFileItem
                         .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
                         .setEntityType(this.nameIdRequestParams.getEntityType())
                         .setEntitySubType(this.nameIdRequestParams.getEntitySubType())

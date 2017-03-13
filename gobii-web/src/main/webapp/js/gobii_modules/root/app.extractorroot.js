@@ -121,7 +121,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     //         this.selectedPlatformId = arg.id;
                     //     }
                     //
-                    //     private handlePlatformChecked(fileItemEvent: FileItem) {
+                    //     private handlePlatformChecked(fileItemEvent: GobiiFileItem) {
                     //
                     //
                     //         this._fileModelTreeService.put(fileItemEvent).subscribe(
@@ -219,7 +219,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleExportTypeSelected = function (arg) {
                     var foo = "foo";
                     this.gobiiExtractFilterType = arg;
-                    //        let extractorFilterItemType: FileItem = FileItem.bui(this.gobiiExtractFilterType)
+                    //        let extractorFilterItemType: GobiiFileItem = GobiiFileItem.bui(this.gobiiExtractFilterType)
                     if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                         this.displaySelectorPi = true;
                         this.displaySelectorProject = true;
@@ -280,7 +280,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleFormatSelected = function (arg) {
                     var _this = this;
                     this.selectedExtractFormat = arg;
-                    var extractFilterTypeFileItem = file_item_1.FileItem
+                    var extractFilterTypeFileItem = file_item_1.GobiiFileItem
                         .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
                         .setExtractorItemType(file_model_node_1.ExtractorItemType.EXPORT_FORMAT)
                         .setItemId(type_extract_format_1.GobiiExtractFormat[arg])
@@ -378,8 +378,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                 return item.getdataSetId() != Number(arg.getItemId());
                             });
                     } // if-else we're adding
-                    //this.treeFileItemEvent = FileItem.fromFileItem(arg);
-                    var fileItemEvent = file_item_1.FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
+                    //this.treeFileItemEvent = GobiiFileItem.fromFileItem(arg);
+                    var fileItemEvent = file_item_1.GobiiFileItem.fromFileItem(arg, this.gobiiExtractFilterType);
                     this._fileModelTreeService.put(fileItemEvent).subscribe(null, function (headerResponse) {
                         _this.handleResponseHeader(headerResponse);
                     });
@@ -396,7 +396,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         var idxToRemove = this.gobiiDatasetExtracts.indexOf(dataSetExtractsToRemove[0]);
                         this.gobiiDatasetExtracts.splice(idxToRemove, 1);
                     }
-                    this.treeFileItemEvent = file_item_1.FileItem.fromFileItem(arg, this.gobiiExtractFilterType);
+                    this.treeFileItemEvent = file_item_1.GobiiFileItem.fromFileItem(arg, this.gobiiExtractFilterType);
                 };
                 ExtractorRoot.prototype.handleSampleMarkerListComplete = function (arg) {
                     var sampleMarkerList = arg;

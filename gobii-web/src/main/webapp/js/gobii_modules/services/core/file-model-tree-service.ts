@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {FileItem} from "../../model/file-item";
+import {GobiiFileItem} from "../../model/file-item";
 import {FileModelState, FileModelTreeEvent} from "../../model/file-model-tree-event";
 import {FileModelNode, ExtractorItemType, ExtractorCategoryType, CardinalityType} from "../../model/file-model-node";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
@@ -39,14 +39,14 @@ export class FileModelTreeService {
 
     }
 
-    private getFileItemsFromModel(fileModelNodes: FileModelNode[]): FileItem[] {
+    private getFileItemsFromModel(fileModelNodes: FileModelNode[]): GobiiFileItem[] {
 
-        let returnVal: FileItem[] = [];
+        let returnVal: GobiiFileItem[] = [];
 
         fileModelNodes.forEach(currentModelNode => {
 
             if (currentModelNode.getChildren().length > 0) {
-                let childFileItems: FileItem[] = this.getFileItemsFromModel(currentModelNode.getChildren());
+                let childFileItems: GobiiFileItem[] = this.getFileItemsFromModel(currentModelNode.getChildren());
                 returnVal = returnVal.concat(childFileItems);
             } else {
                 returnVal = returnVal.concat(currentModelNode.getFileItems());
@@ -213,14 +213,14 @@ export class FileModelTreeService {
     }
 
 
-    private processNotification(fileItem: FileItem): FileModelTreeEvent {
+    private processNotification(fileItem: GobiiFileItem): FileModelTreeEvent {
 
         let returnVal: FileModelTreeEvent = new FileModelTreeEvent(fileItem, null, null, null);
         return returnVal;
 
     }
 
-    private mutate(fileItem: FileItem): FileModelTreeEvent {
+    private mutate(fileItem: GobiiFileItem): FileModelTreeEvent {
 
         let returnVal: FileModelTreeEvent = null;
 
@@ -316,7 +316,7 @@ export class FileModelTreeService {
     }
 
 
-    findFileModelNode(gobiiExtractFilterType: GobiiExtractFilterType, fileItem: FileItem) {
+    findFileModelNode(gobiiExtractFilterType: GobiiExtractFilterType, fileItem: GobiiFileItem) {
 
         let fileModelNodes: FileModelNode[] = this.getFileModelNodes(gobiiExtractFilterType);
 
@@ -366,7 +366,7 @@ export class FileModelTreeService {
     }
 
 
-    private placeNodeInModel(fileModelNode: FileModelNode, fileItem: FileItem) {
+    private placeNodeInModel(fileModelNode: FileModelNode, fileItem: GobiiFileItem) {
 
 
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
@@ -380,7 +380,7 @@ export class FileModelTreeService {
 
         } else if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
 
-            let existingItems: FileItem[] = fileModelNode.getFileItems().filter(
+            let existingItems: GobiiFileItem[] = fileModelNode.getFileItems().filter(
                 item => {
                     return item.getFileItemUniqueId() === fileItem.getFileItemUniqueId();
                 }
@@ -403,7 +403,7 @@ export class FileModelTreeService {
 
     } //
 
-    private removeFromModel(fileModelNode: FileModelNode, fileItem: FileItem) {
+    private removeFromModel(fileModelNode: FileModelNode, fileItem: GobiiFileItem) {
 
 
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
@@ -415,7 +415,7 @@ export class FileModelTreeService {
 
         } else if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
 
-            let existingItem: FileItem = fileModelNode.getFileItems().find(
+            let existingItem: GobiiFileItem = fileModelNode.getFileItems().find(
                 item => {
                     return item.getFileItemUniqueId() === fileItem.getFileItemUniqueId();
                 }
@@ -448,14 +448,14 @@ export class FileModelTreeService {
         return this.subjectTreeNotifications
     }
 
-    private subjectFileItemNotifications: Subject < FileItem > = new Subject<FileItem>();
+    private subjectFileItemNotifications: Subject < GobiiFileItem > = new Subject<GobiiFileItem>();
 
-    public fileItemNotifications(): Subject < FileItem > {
+    public fileItemNotifications(): Subject < GobiiFileItem > {
         return this.subjectFileItemNotifications
     }
 
 
-    public put(fileItem: FileItem): Observable < FileModelTreeEvent > {
+    public put(fileItem: GobiiFileItem): Observable < FileModelTreeEvent > {
 
         return Observable.create(observer => {
 
@@ -501,12 +501,12 @@ export class FileModelTreeService {
         });
     }
 
-    public getFileItems(gobiiExtractFilterType: GobiiExtractFilterType): Observable < FileItem[] > {
+    public getFileItems(gobiiExtractFilterType: GobiiExtractFilterType): Observable < GobiiFileItem[] > {
 
         return Observable.create(observer => {
 
             let nodesForFilterType: FileModelNode[] = this.getFileModelNodes(gobiiExtractFilterType);
-            let fileItemsForExtractorFilterType: FileItem[] = this.getFileItemsFromModel(nodesForFilterType);
+            let fileItemsForExtractorFilterType: GobiiFileItem[] = this.getFileItemsFromModel(nodesForFilterType);
             observer.next(fileItemsForExtractorFilterType);
             observer.complete();
         });

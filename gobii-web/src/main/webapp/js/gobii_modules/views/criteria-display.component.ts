@@ -1,5 +1,5 @@
 import {Component, OnInit, SimpleChange, EventEmitter} from "@angular/core";
-import {FileItem} from "../model/file-item";
+import {GobiiFileItem} from "../model/file-item";
 import {ProcessType} from "../model/type-process";
 import {EntityType} from "../model/type-entity";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
@@ -30,8 +30,8 @@ export class CriteriaDisplayComponent implements OnInit {
 
 
     // useg
-    private dataSetFileItemEvents: FileItem[] = [];
-    private onItemUnChecked: EventEmitter<FileItem> = new EventEmitter();
+    private dataSetFileItemEvents: GobiiFileItem[] = [];
+    private onItemUnChecked: EventEmitter<GobiiFileItem> = new EventEmitter();
     private onItemSelected: EventEmitter<number> = new EventEmitter();
 
     constructor() {
@@ -44,7 +44,7 @@ export class CriteriaDisplayComponent implements OnInit {
 
     // In this component, every item starts out checked; unchecking it removes it
     private handleItemUnChecked(arg) {
-        let checkEvent: FileItem = FileItem.build(
+        let checkEvent: GobiiFileItem = GobiiFileItem.build(
             GobiiExtractFilterType.UNKNOWN,
             ProcessType.DELETE)
             .setEntityType(EntityType.DataSets)
@@ -54,7 +54,7 @@ export class CriteriaDisplayComponent implements OnInit {
             .setChecked(false)
             .setRequired(false);
 
-        let itemToRemove: FileItem =
+        let itemToRemove: GobiiFileItem =
             this.dataSetFileItemEvents
                 .filter(e => {
                     return e.getItemId() === arg.currentTarget.value

@@ -174,7 +174,7 @@ export class UploaderComponent implements OnInit {
         this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
 
             // if( status == 200 ) {
-            //     _fileModelTreeService.put(FileItem
+            //     _fileModelTreeService.put(GobiiFileItem
             //         )
             //         .subscribe(null,
             //         headerStatusMessage => {

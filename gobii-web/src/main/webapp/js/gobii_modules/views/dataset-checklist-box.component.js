@@ -87,7 +87,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 //                     scope$.dataSetsNameIdList = nameIds;
                 //                     // scope$.fileItemEvents = [];
                 //                     // scope$.dataSetsNameIdList.forEach(n => {
-                //                     //     scope$.fileItemEvents.push(new FileItem(
+                //                     //     scope$.fileItemEvents.push(new GobiiFileItem(
                 //                     //         ProcessType.CREATE,
                 //                     //         n.id,
                 //                     //         n.name,

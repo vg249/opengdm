@@ -1,7 +1,7 @@
 import {EntityType, EntitySubType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {GobiiTreeNode} from "./GobiiTreeNode";
-import {FileItem} from "./file-item";
+import {GobiiFileItem} from "./file-item";
 import {Guid} from "./guid";
 
 export enum ExtractorItemType {
@@ -36,7 +36,7 @@ export class FileModelNode {
     private _entitySubType: EntitySubType = EntitySubType.UNKNOWN;
     private _entityName: string;
     private _cvFilterType: CvFilterType = CvFilterType.UNKNOWN;
-    private _fileItems: FileItem[] = [];
+    private _fileItems: GobiiFileItem[] = [];
     private _fileModelNodeUniqueId = Guid.generateUUID();
 
 
@@ -141,11 +141,11 @@ export class FileModelNode {
     }
 
 
-    getFileItems(): FileItem[] {
+    getFileItems(): GobiiFileItem[] {
         return this._fileItems;
     }
 
-    setChildFileItems(value: FileItem[]): FileModelNode {
+    setChildFileItems(value: GobiiFileItem[]): FileModelNode {
         this._fileItems = value;
         return this;
     }
