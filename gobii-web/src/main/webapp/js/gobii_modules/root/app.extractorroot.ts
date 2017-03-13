@@ -384,6 +384,27 @@ export class ExtractorRoot implements OnInit {
         let foo: string = "foo";
 
 
+        this._fileModelTreeService
+            .fileItemNotifications()
+            .subscribe(fileItem => {
+                if (fileItem.getProcessType() === ProcessType.NOTIFY
+                    && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+
+                    let jobId:string = FileName.makeUniqueFileId();
+
+                    this._fileModelTreeService
+                        .put(GobiiFileItem
+                            .build(arg,ProcessType.CREATE)
+                            .setExtractorItemType(ExtractorItemType.JOB_ID)
+                            .setItemId(jobId)
+                            .setItemName(jobId))
+                        .subscribe(
+                            null,
+                            headerStatusMessage => {this.handleHeaderStatusMessage(headerStatusMessage)}
+                        );
+                }
+            });
+
         this.gobiiExtractFilterType = arg;
 
 
@@ -827,7 +848,7 @@ export class ExtractorRoot implements OnInit {
         );
 
 
-        let fileName: string = FileName.makeUnique();
+        let fileName: string = FileName.makeUniqueFileId();
 
         let extractorInstructionFilesDTORequest: ExtractorInstructionFilesDTO =
             new ExtractorInstructionFilesDTO(gobiiExtractorInstructions,

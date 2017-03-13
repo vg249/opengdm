@@ -71,7 +71,7 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                     fileUploaderOptions.headers.push(authHeader);
                     this.uploader = new ng2_file_upload_1.FileUploader(fileUploaderOptions);
                     this.uploader.onBeforeUploadItem = function (fileItem) {
-                        fileItem.file.name = file_name_1.FileName.makeUnique();
+                        fileItem.file.name = file_name_1.FileName.makeUniqueFileId();
                     };
                     this.uploader.onCompleteItem = function (item, response, status, headers) {
                         if (status == 200) {

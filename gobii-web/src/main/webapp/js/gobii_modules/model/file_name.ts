@@ -1,10 +1,9 @@
 export class FileName {
 
-    public static makeUnique(): string {
+    public static makeUniqueFileId(): string {
 
         let date: Date = new Date();
-        let returnVal: string = "extractor_"
-            + date.getFullYear()
+        let returnVal: string = date.getFullYear()
             + "_"
             + (date.getMonth() + 1)
             + "_"

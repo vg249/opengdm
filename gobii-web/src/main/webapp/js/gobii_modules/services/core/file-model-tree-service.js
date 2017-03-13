@@ -86,6 +86,10 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         // **** FOR ALL EXTRACTION TYPES **********************************************************************
                         // **** THESE ARE ALL ROOT LEVEL NODES
                         var submissionItemsForAll = [];
+                        submissionItemsForAll.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.JOB_ID, null)
+                            .setCategoryType(file_model_node_1.ExtractorCategoryType.LEAF)
+                            .setCategoryName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.JOB_ID])
+                            .setCardinality(file_model_node_1.CardinalityType.ONE_ONLY));
                         submissionItemsForAll.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, null)
                             .setCategoryType(file_model_node_1.ExtractorCategoryType.LEAF)
                             .setEntityType(type_entity_1.EntityType.Contacts)

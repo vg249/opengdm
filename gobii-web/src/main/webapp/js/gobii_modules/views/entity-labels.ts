@@ -37,6 +37,7 @@ export class Labels {
         this.treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST] = "Marker List";
         this.treeExtractorTypeLabels[ExtractorItemType.CROP_TYPE] = "Crop Type";
         this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT] = "Format";
+        this.treeExtractorTypeLabels[ExtractorItemType.JOB_ID] = "Job ID";
 
         this.extractFormatTypeLabels[GobiiExtractFormat.HAPMAP] = "Hapmap";
         this.extractFormatTypeLabels[GobiiExtractFormat.FLAPJACK] = "Flapjack";

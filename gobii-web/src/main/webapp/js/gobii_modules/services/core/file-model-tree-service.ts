@@ -67,6 +67,12 @@ export class FileModelTreeService {
             // **** FOR ALL EXTRACTION TYPES **********************************************************************
             // **** THESE ARE ALL ROOT LEVEL NODES
             let submissionItemsForAll: FileModelNode[] = [];
+            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.JOB_ID, null)
+                .setCategoryType(ExtractorCategoryType.LEAF)
+                .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID])
+                .setCardinality(CardinalityType.ONE_ONLY)
+            );
+
             submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
                 .setCategoryType(ExtractorCategoryType.LEAF)
                 .setEntityType(EntityType.Contacts)

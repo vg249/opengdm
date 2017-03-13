@@ -216,7 +216,23 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     window.location.href = newDestination;
                 }; // handleServerSelected()
                 ExtractorRoot.prototype.handleExportTypeSelected = function (arg) {
+                    var _this = this;
                     var foo = "foo";
+                    this._fileModelTreeService
+                        .fileItemNotifications()
+                        .subscribe(function (fileItem) {
+                        if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
+                            && fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+                            var jobId = file_name_1.FileName.makeUniqueFileId();
+                            _this._fileModelTreeService
+                                .put(gobii_file_item_1.GobiiFileItem
+                                .build(arg, type_process_1.ProcessType.CREATE)
+                                .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)
+                                .setItemId(jobId)
+                                .setItemName(jobId))
+                                .subscribe(null, function (headerStatusMessage) { _this.handleHeaderStatusMessage(headerStatusMessage); });
+                        }
+                    });
                     this.gobiiExtractFilterType = arg;
                     //        let extractorFilterItemType: GobiiFileItem = GobiiFileItem.bui(this.gobiiExtractFilterType)
                     if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
@@ -427,7 +443,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         });
                     });
                     gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction(gobiiDataSetExtracts, submitterContactid, null, mapsetIds));
-                    var fileName = file_name_1.FileName.makeUnique();
+                    var fileName = file_name_1.FileName.makeUniqueFileId();
                     var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName);
                     var extractorInstructionFilesDTOResponse = null;
                     this._dtoRequestServiceExtractorFile.post(new dto_request_item_extractor_submission_1.DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))

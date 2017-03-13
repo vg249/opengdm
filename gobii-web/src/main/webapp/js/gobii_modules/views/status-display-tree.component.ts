@@ -252,6 +252,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             treeNode.icon = "fa-map-marker";
             treeNode.expandedIcon = "fa-map-marker";
             treeNode.collapsedIcon = "fa-map-marker";
+        } else if (statusTreeTemplate.getItemType() === ExtractorItemType.JOB_ID) {
+            treeNode.icon = "fa-info-circle";
+            treeNode.expandedIcon = "fa-info-circle";
+            treeNode.collapsedIcon = "fa-info-circle";
         } else {
             //     }
             // } else if (fileModelNode.getItemType() == ExtractorItemType.CATEGORY ) {
@@ -270,6 +274,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             if (eventedFileItem.getExtractorItemType() == ExtractorItemType.EXPORT_FORMAT) {
                 let gobiiExtractFormat: GobiiExtractFormat = <GobiiExtractFormat> GobiiExtractFormat[eventedFileItem.getItemId()];
                 gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + Labels.instance().extractFormatTypeLabels[gobiiExtractFormat];
+            } else if (eventedFileItem.getExtractorItemType() == ExtractorItemType.JOB_ID) {
+                gobiiTreeNode.label =  Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]
+                    + ": " + eventedFileItem.getItemId();
             } else {
                 gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
             }
@@ -436,7 +443,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                     this.handleAddStatusMessage(new HeaderStatusMessage(
                         "Error placing file item in the status tree: there is no gobii tree leaf node for model node "
-                        + fileModelTreeEvent.fileModelNode.getEntityName(),
+                        + Labels.instance().treeExtractorTypeLabels[fileModelTreeEvent.fileModelNode.getItemType()],
                         null,
                         null
                     ));
@@ -555,6 +562,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
             returnVal.label = fileModelNode.getCategoryName();
+        }  else if (fileModelNode.getItemType() == ExtractorItemType.JOB_ID) {
+
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+            returnVal.label = fileModelNode.getCategoryName();
         }
 
 
@@ -573,7 +584,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                     }
                 }
             ); // iterate child model node
-        } // if we created a tree node
+        } else {
+            this.handleAddStatusMessage(new
+                HeaderStatusMessage("Unable to make tree node for file model of type " + Labels.instance().treeExtractorTypeLabels[fileModelNode.getItemType()],null,null));
+        }// if we created a tree node
 
         return returnVal;
     }

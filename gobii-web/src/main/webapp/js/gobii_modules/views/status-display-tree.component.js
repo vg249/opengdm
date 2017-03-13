@@ -223,6 +223,11 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         treeNode.expandedIcon = "fa-map-marker";
                         treeNode.collapsedIcon = "fa-map-marker";
                     }
+                    else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.JOB_ID) {
+                        treeNode.icon = "fa-info-circle";
+                        treeNode.expandedIcon = "fa-info-circle";
+                        treeNode.collapsedIcon = "fa-info-circle";
+                    }
                     else {
                         //     }
                         // } else if (fileModelNode.getItemType() == ExtractorItemType.CATEGORY ) {
@@ -239,6 +244,10 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         if (eventedFileItem.getExtractorItemType() == file_model_node_1.ExtractorItemType.EXPORT_FORMAT) {
                             var gobiiExtractFormat = type_extract_format_1.GobiiExtractFormat[eventedFileItem.getItemId()];
                             gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + entity_labels_1.Labels.instance().extractFormatTypeLabels[gobiiExtractFormat];
+                        }
+                        else if (eventedFileItem.getExtractorItemType() == file_model_node_1.ExtractorItemType.JOB_ID) {
+                            gobiiTreeNode.label = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.JOB_ID]
+                                + ": " + eventedFileItem.getItemId();
                         }
                         else {
                             gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
@@ -316,7 +325,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                             }
                             else {
                                 this.handleAddStatusMessage(new dto_header_status_message_1.HeaderStatusMessage("Error placing file item in the status tree: there is no gobii tree leaf node for model node "
-                                    + fileModelTreeEvent.fileModelNode.getEntityName(), null, null));
+                                    + entity_labels_1.Labels.instance().treeExtractorTypeLabels[fileModelTreeEvent.fileModelNode.getItemType()], null, null));
                             } // if-else we found an existing node for the LEAF node's file item
                         }
                         else if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
@@ -398,6 +407,10 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
                         returnVal.label = fileModelNode.getCategoryName();
                     }
+                    else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.JOB_ID) {
+                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+                        returnVal.label = fileModelNode.getCategoryName();
+                    }
                     if (null != returnVal) {
                         var debug = "debug";
                         this.addIconsToNode(fileModelNode, returnVal);
@@ -408,6 +421,9 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                 returnVal.children.push(currentTreeNode);
                             }
                         }); // iterate child model node
+                    }
+                    else {
+                        this.handleAddStatusMessage(new dto_header_status_message_1.HeaderStatusMessage("Unable to make tree node for file model of type " + entity_labels_1.Labels.instance().treeExtractorTypeLabels[fileModelNode.getItemType()], null, null));
                     } // if we created a tree node
                     return returnVal;
                 };

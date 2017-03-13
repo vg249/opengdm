@@ -175,7 +175,7 @@ export class UploaderComponent implements OnInit {
 
         this.uploader.onBeforeUploadItem = (fileItem:FileItem) => {
 
-            fileItem.file.name = FileName.makeUnique();
+            fileItem.file.name = FileName.makeUniqueFileId();
         }
         this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
 

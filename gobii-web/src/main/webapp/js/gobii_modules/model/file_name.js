@@ -8,10 +8,9 @@ System.register([], function (exports_1, context_1) {
             FileName = (function () {
                 function FileName() {
                 }
-                FileName.makeUnique = function () {
+                FileName.makeUniqueFileId = function () {
                     var date = new Date();
-                    var returnVal = "extractor_"
-                        + date.getFullYear()
+                    var returnVal = date.getFullYear()
                         + "_"
                         + (date.getMonth() + 1)
                         + "_"
