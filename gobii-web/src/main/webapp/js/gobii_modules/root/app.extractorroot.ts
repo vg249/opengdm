@@ -836,6 +836,15 @@ export class ExtractorRoot implements OnInit {
                     return Number(item.getItemId())
                 });
 
+                let markerList: string[] =
+                    fileItems
+                        .filter(fi => {
+                            return fi.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM
+                        })
+                        .map(mi => {
+                            return mi.getItemId()
+                        });
+
                 if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
                     fileItems
@@ -850,8 +859,8 @@ export class ExtractorRoot implements OnInit {
                                 datsetFileItem.getItemName(),
                                 null,
                                 this.gobiiExtractFilterType,
-                                this.markerList,
-                                this.sampleList,
+                                null,
+                                null,
                                 markerFileName,
                                 this.selectedSampleListType,
                                 datSetTypeName,
@@ -864,7 +873,7 @@ export class ExtractorRoot implements OnInit {
                         null,
                         null,
                         this.gobiiExtractFilterType,
-                        this.markerList,
+                        markerList,
                         null,
                         markerFileName,
                         null,
