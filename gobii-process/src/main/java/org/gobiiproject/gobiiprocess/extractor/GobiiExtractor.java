@@ -163,8 +163,16 @@ public class GobiiExtractor {
 				String gobiiMDE;
 				switch(filterType){
 					case WHOLE_DATASET:
+
+						//Kevin's example
+						/*
+						python gobii_mde.py
+						-c postgresql://loaderusr:loaderusr@localhost:5432/extraction_test
+						--extractByDataset -m /Users/KevinPalis/Work/Datafiles/MDE_Output/marker_meta7.txt -s /Users/KevinPalis/Work/Datafiles/MDE_Output/sample_meta7.txt -p /Users/KevinPalis/Work/Datafiles/MDE_Output/project_meta7.txt -b /Users/KevinPalis/Work/Datafiles/MDE_Output/mapset_meta7.txt -v -l -D 3 -d 5
+						 */
 						gobiiMDE = "python "+ mdePath+
 								" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
+								" --extractByDataset"+
 								" -m " + markerFile +
 								" -b " + mapsetFile +
 								" -s " + sampleFile +
@@ -174,16 +182,45 @@ public class GobiiExtractor {
 								" -l -v ";
 						break;
 					case BY_MARKER:
-					    String listLocation=extractDir+extract.getListFileName();
-                        if(markerListOverrideLocation!=null) listLocation=markerListOverrideLocation;
+						/**
+						 * Kevin's example
+						 * python gobii_mde.py -c postgresql://loaderusr:loaderusr@localhost:5432/extraction_test --extractByMarkers -m /Users/KevinPalis/Work/Datafiles/MDE_Output/marker_meta8.txt -s /Users/KevinPalis/Work/Datafiles/MDE_Output/sample_meta8.txt -b /Users/KevinPalis/Work/Datafiles/MDE_Output/mapset_meta8.txt  --platformList 5,7 --datasetType 165 -v -l -D 2
+						 */
+
+						//Build optional parameter strings
+						String platformTerm,mapIdTerm,markerListLocation;
+						platformTerm=mapIdTerm=markerListLocation="";
+						if(mapId!=null) {
+							mapIdTerm=" -D "+mapId;
+						}
+						List<Integer> platforms=extract.getPlatformIds();
+						if(platforms!=null && !platforms.isEmpty()){
+							platformTerm=" --platformList " + commaFormat(platforms);
+						}
+						//List takes extra work, as it might be a <List> or a <File>
+						//Create a file out of the List if non-null, else use the <File>
+						List<String> markerList=extract.getMarkerList();
+						if(markerList!=null && !markerList.isEmpty()){
+							markerListLocation=" -x "+createTempFileForMarkerList(extractDir,markerList);
+						}
+						else if(extract.getListFileName()!=null){
+							markerListLocation=" -x "+extractDir+extract.getListFileName();
+						}
+
+						if(markerListOverrideLocation!=null) markerListLocation=" -x "+ markerListOverrideLocation;
+
+						//Actually call the thing
 						gobiiMDE = "python "+ mdePath+
 								" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
+								" --extractByMarkers"+
 								" -m " + markerFile +
 								" -b " + mapsetFile +
 								" -s " + sampleFile +
 								" -p " + projectFile +
-                                " -x " + listLocation +
-								(mapId==null?"":(" -D "+mapId))+
+                                markerListLocation +
+								" --datasetType " + extract.getGobiiDatasetType() +
+								mapIdTerm +
+								platformTerm +
 								" -l -v ";
 						break;
 					default:
@@ -435,5 +472,44 @@ public class GobiiExtractor {
 		String cropName=config.getGobiiCropType();
 		String destination=gli.getExtractDestinationDirectory();
 		return destination +"/"+cropName+"_DS-"+dsid+".log";
+	}
+
+	/**
+	 * Brute force method to create a list of object,object,object,object
+	 * @param inputList Nonempty list of elements
+	 * @return the string value of elements comma separated
+	 */
+	//Dear next guy - yeah, doing a 'one step unroll' then placing in 'comma - object; comma - object' makes more sense.
+	//Just be happy I used a StringBuilder
+	private static String commaFormat(List inputList){
+		StringBuilder sb=new StringBuilder();
+		for(Object o:inputList){
+			sb.append(o.toString());
+			sb.append(",");
+		}
+		sb.deleteCharAt(sb.length()-1);//Remove final comma
+		return sb.toString();
+	}
+
+	/**
+	 * Turns a list into a newline delimited file.
+	 * @param tmpDir File path - will append 'markerList.tmp' and return
+	 * @param markerList List to go into file, newline delimited
+	 * @return location of new file.
+	 */
+	private static String createTempFileForMarkerList(String tmpDir,List<String> markerList){
+		String tempFileLocation=tmpDir+"markerList.tmp";
+		try {
+			FileWriter f = new FileWriter(tempFileLocation);
+			for(String marker:markerList){
+				f.write(marker);
+				f.write("\n");
+			}
+			f.close();
+		}
+		catch(Exception e){
+			ErrorLogger.logError("Extractor","Could not create temp file "+tempFileLocation,e);
+		}
+		return tempFileLocation;
 	}
 }
