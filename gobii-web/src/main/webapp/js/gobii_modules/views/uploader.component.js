@@ -83,7 +83,7 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                         if (status == 200) {
                             _fileModelTreeService.put(gobii_file_item_1.GobiiFileItem
                                 .build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                                .setExtractorItemType(file_model_node_1.ExtractorItemType.MARKER_LIST)
+                                .setExtractorItemType(file_model_node_1.ExtractorItemType.MARKER_FILE)
                                 .setItemId(item.file.name)
                                 .setItemName(item.file.name))
                                 .subscribe(null, function (headerStatusMessage) {

@@ -40,7 +40,9 @@ System.register(["../model/type-entity", "../model/cv-filter-type", "../model/ty
                     this.extractorFilterTypeLabels[type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE] = "By Sample";
                     this.extractorFilterTypeLabels[type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER] = "By Marker";
                     this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_LIST] = "Sample List";
+                    this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_FILE] = "Sample File";
                     this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST] = "Marker List";
+                    this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_FILE] = "Marker File";
                     this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.CROP_TYPE] = "Crop Type";
                     this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.EXPORT_FORMAT] = "Format";
                     this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.JOB_ID] = "Job ID";

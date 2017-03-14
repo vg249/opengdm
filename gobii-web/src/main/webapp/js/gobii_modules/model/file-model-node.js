@@ -18,19 +18,19 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
             (function (ExtractorItemType) {
                 ExtractorItemType[ExtractorItemType["UNKNOWN"] = 0] = "UNKNOWN";
                 ExtractorItemType[ExtractorItemType["ENTITY"] = 1] = "ENTITY";
-                ExtractorItemType[ExtractorItemType["MARKER_LIST"] = 2] = "MARKER_LIST";
-                ExtractorItemType[ExtractorItemType["SAMPLE_LIST"] = 3] = "SAMPLE_LIST";
-                ExtractorItemType[ExtractorItemType["EXPORT_FORMAT"] = 4] = "EXPORT_FORMAT";
-                ExtractorItemType[ExtractorItemType["CROP_TYPE"] = 5] = "CROP_TYPE";
-                ExtractorItemType[ExtractorItemType["STATUS_DISPLAY_TREE_READY"] = 6] = "STATUS_DISPLAY_TREE_READY";
-                ExtractorItemType[ExtractorItemType["JOB_ID"] = 7] = "JOB_ID";
+                ExtractorItemType[ExtractorItemType["MARKER_FILE"] = 2] = "MARKER_FILE";
+                ExtractorItemType[ExtractorItemType["MARKER_LIST"] = 3] = "MARKER_LIST";
+                ExtractorItemType[ExtractorItemType["SAMPLE_LIST"] = 4] = "SAMPLE_LIST";
+                ExtractorItemType[ExtractorItemType["SAMPLE_FILE"] = 5] = "SAMPLE_FILE";
+                ExtractorItemType[ExtractorItemType["EXPORT_FORMAT"] = 6] = "EXPORT_FORMAT";
+                ExtractorItemType[ExtractorItemType["CROP_TYPE"] = 7] = "CROP_TYPE";
+                ExtractorItemType[ExtractorItemType["STATUS_DISPLAY_TREE_READY"] = 8] = "STATUS_DISPLAY_TREE_READY";
+                ExtractorItemType[ExtractorItemType["JOB_ID"] = 9] = "JOB_ID";
             })(ExtractorItemType || (ExtractorItemType = {}));
             exports_1("ExtractorItemType", ExtractorItemType);
             (function (ExtractorCategoryType) {
-                ExtractorCategoryType[ExtractorCategoryType["MODEL_CONTAINER"] = 0] = "MODEL_CONTAINER";
-                ExtractorCategoryType[ExtractorCategoryType["ENTITY_CONTAINER"] = 1] = "ENTITY_CONTAINER";
-                ExtractorCategoryType[ExtractorCategoryType["CATEGORY_CONTAINER"] = 2] = "CATEGORY_CONTAINER";
-                ExtractorCategoryType[ExtractorCategoryType["LEAF"] = 3] = "LEAF";
+                ExtractorCategoryType[ExtractorCategoryType["CONTAINER"] = 0] = "CONTAINER";
+                ExtractorCategoryType[ExtractorCategoryType["LEAF"] = 1] = "LEAF";
             })(ExtractorCategoryType || (ExtractorCategoryType = {}));
             exports_1("ExtractorCategoryType", ExtractorCategoryType);
             (function (CardinalityType) {

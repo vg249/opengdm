@@ -212,6 +212,7 @@ import {FileName} from "../model/file_name";
                                 (onAddMessage)="handleHeaderStatusMessage($event)"
                                 (onTreeReady)="handleStatusTreeReady($event)">
                             </status-display-tree>
+                            
                             <BR>
                                 <input type="button" 
                                 value="Submit"
@@ -778,6 +779,7 @@ export class ExtractorRoot implements OnInit {
         let mapsetIds: number[] = [];
         let submitterContactid: number = null;
         let jobId: string = null;
+        let markerFileName: string = null;
         scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(
             fileItems => {
 
@@ -787,6 +789,14 @@ export class ExtractorRoot implements OnInit {
 
                 if (fileItemJobId != null) {
                     jobId = fileItemJobId.getItemId();
+                }
+
+                let fileItemMarkerFile: GobiiFileItem = fileItems.find(item => {
+                    return item.getExtractorItemType() === ExtractorItemType.MARKER_FILE
+                });
+
+                if (fileItemMarkerFile != null) {
+                    markerFileName = fileItemMarkerFile.getItemId();
                 }
 
                 let submitterFileItem: GobiiFileItem = fileItems.find(item => {
@@ -826,26 +836,44 @@ export class ExtractorRoot implements OnInit {
                     return Number(item.getItemId())
                 });
 
+                if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
-                fileItems
-                    .filter(item => {
-                        return item.getEntityType() === EntityType.DataSets
-                    })
-                    .forEach(datsetFileItem => {
+                    fileItems
+                        .filter(item => {
+                            return item.getEntityType() === EntityType.DataSets
+                        })
+                        .forEach(datsetFileItem => {
 
-                        gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
-                            false,
-                            Number(datsetFileItem.getItemId()),
-                            datsetFileItem.getItemName(),
-                            null,
-                            this.gobiiExtractFilterType,
-                            this.markerList,
-                            this.sampleList,
-                            this.uploadFileName,
-                            this.selectedSampleListType,
-                            datSetTypeName,
-                            platformIds));
-                    });
+                            gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
+                                false,
+                                Number(datsetFileItem.getItemId()),
+                                datsetFileItem.getItemName(),
+                                null,
+                                this.gobiiExtractFilterType,
+                                this.markerList,
+                                this.sampleList,
+                                markerFileName,
+                                this.selectedSampleListType,
+                                datSetTypeName,
+                                platformIds));
+                        });
+                } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
+                    gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
+                        false,
+                        null,
+                        null,
+                        null,
+                        this.gobiiExtractFilterType,
+                        this.markerList,
+                        null,
+                        markerFileName,
+                        null,
+                        datSetTypeName,
+                        platformIds));
+                } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+                } else {
+                    this.handleAddMessage("Unhandled extract filter type: " + GobiiExtractFilterType[this.gobiiExtractFilterType]);
+                }
             }
         );
 

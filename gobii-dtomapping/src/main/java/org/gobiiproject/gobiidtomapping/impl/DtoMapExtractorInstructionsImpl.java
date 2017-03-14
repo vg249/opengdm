@@ -203,8 +203,9 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     } else if (currentGobiiDataSetExtract.getGobiiExtractFilterType()
                             .equals(GobiiExtractFilterType.BY_MARKER)) {
 
-                        if ((currentGobiiDataSetExtract.getMarkerList() == null) ||
-                                (currentGobiiDataSetExtract.getMarkerList().size() <= 0)) {
+                        if ((currentGobiiDataSetExtract.getListFileName() == null)
+                                && ((currentGobiiDataSetExtract.getMarkerList() == null) ||
+                                (currentGobiiDataSetExtract.getMarkerList().size() <= 0))) {
 
                             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                     GobiiValidationStatusType.MISSING_REQUIRED_VALUE,

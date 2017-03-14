@@ -218,7 +218,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         treeNode.expandedIcon = "fa-eyedropper";
                         treeNode.collapsedIcon = "fa-eyedropper";
                     }
-                    else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST) {
+                    else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE) {
                         treeNode.icon = "fa-map-marker";
                         treeNode.expandedIcon = "fa-map-marker";
                         treeNode.collapsedIcon = "fa-map-marker";
@@ -237,7 +237,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     }
                 };
                 StatusDisplayTreeComponent.prototype.addEntityNameToNode = function (fileModelNode, gobiiTreeNode, eventedFileItem) {
-                    if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
+                    if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.CONTAINER) {
                         gobiiTreeNode.label = eventedFileItem.getItemName();
                     }
                     else {
@@ -292,7 +292,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                             else {
                             } // if-else we found an existing node for the LEAF node's file item
                         }
-                        else if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
+                        else if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.CONTAINER) {
                             // there should not be a file item associated with the model because it's a container -- the file items are just for the children
                             var parentTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                             if (parentTreeNode != null) {
@@ -328,7 +328,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                     + entity_labels_1.Labels.instance().treeExtractorTypeLabels[fileModelTreeEvent.fileModelNode.getItemType()], null, null));
                             } // if-else we found an existing node for the LEAF node's file item
                         }
-                        else if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER) {
+                        else if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.CONTAINER) {
                             // there should not be a file item associated with the model because it's a container -- the file items are just for the children
                             var parentTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                             if (parentTreeNode != null) {
@@ -385,16 +385,6 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         returnVal.entityType = fileModelNode.getEntityType();
                         returnVal.label = fileModelNode.getEntityName();
                     }
-                    else if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.ENTITY_CONTAINER
-                        || fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.MODEL_CONTAINER) {
-                        //        } else if (fileModelNode.getItemType() === ExtractorItemType.CATEGORY) {
-                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
-                        if (fileModelNode.getEntityType() != null
-                            && fileModelNode.getEntityType() != type_entity_1.EntityType.UNKNOWN) {
-                            returnVal.entityType = fileModelNode.getEntityType();
-                        }
-                        returnVal.label = fileModelNode.getCategoryName();
-                    }
                     else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.EXPORT_FORMAT) {
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
                         returnVal.label = fileModelNode.getCategoryName();
@@ -403,12 +393,20 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
                         returnVal.label = fileModelNode.getCategoryName();
                     }
-                    else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.MARKER_LIST) {
+                    else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.MARKER_FILE) {
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
                         returnVal.label = fileModelNode.getCategoryName();
                     }
                     else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.JOB_ID) {
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+                        returnVal.label = fileModelNode.getCategoryName();
+                    }
+                    else {
+                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+                        if (fileModelNode.getEntityType() != null
+                            && fileModelNode.getEntityType() != type_entity_1.EntityType.UNKNOWN) {
+                            returnVal.entityType = fileModelNode.getEntityType();
+                        }
                         returnVal.label = fileModelNode.getCategoryName();
                     }
                     if (null != returnVal) {
@@ -528,7 +526,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     selector: 'status-display-tree',
                     inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
                     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
-                    template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" \n                    selectionMode=\"checkbox\" \n                    [(selection)]=\"selectedGobiiNodes\"\n                    (onNodeUnselect)=\"nodeUnselect($event)\"\n                    styleClass=\"criteria-tree\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
+                    template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" \n                    selectionMode=\"checkbox\" \n                    [(selection)]=\"selectedGobiiNodes\"\n                    (onNodeUnselect)=\"nodeUnselect($event)\"\n                    [style]=\"{'width':'100%'}\"\n                    styleClass=\"criteria-tree\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
                 }),
                 __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
             ], StatusDisplayTreeComponent);

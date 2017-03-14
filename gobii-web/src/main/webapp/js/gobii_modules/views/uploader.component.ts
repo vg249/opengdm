@@ -191,7 +191,7 @@ export class UploaderComponent implements OnInit {
             if( status == 200 ) {
                 _fileModelTreeService.put(GobiiFileItem
                         .build(this.gobiiExtractFilterType,ProcessType.CREATE)
-                        .setExtractorItemType(ExtractorItemType.MARKER_LIST)
+                        .setExtractorItemType(ExtractorItemType.MARKER_FILE)
                         .setItemId(item.file.name)
                         .setItemName(item.file.name))
                     .subscribe(null,

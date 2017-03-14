@@ -19,6 +19,7 @@ import {Header} from "../model/payload/header";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
+//width of p-tree does not take if it's in the style sheet class; you have to inline it
 @Component({
     selector: 'status-display-tree',
     inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
@@ -28,6 +29,7 @@ import {Header} from "../model/payload/header";
                     selectionMode="checkbox" 
                     [(selection)]="selectedGobiiNodes"
                     (onNodeUnselect)="nodeUnselect($event)"
+                    [style]="{'width':'100%'}"
                     styleClass="criteria-tree"></p-tree>
                     <!--<p-tree [value]="demoTreeNodes" selectionMode="checkbox" [(selection)]="selectedDemoNodes"></p-tree>-->
                     <!--<div>Selected Nodes: <span *ngFor="let file of selectedFiles2">{{file.label}} </span></div>-->
@@ -248,7 +250,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             treeNode.icon = "fa-eyedropper";
             treeNode.expandedIcon = "fa-eyedropper";
             treeNode.collapsedIcon = "fa-eyedropper";
-        } else if (statusTreeTemplate.getItemType() === ExtractorItemType.MARKER_LIST) {
+        } else if (statusTreeTemplate.getItemType() === ExtractorItemType.MARKER_FILE) {
             treeNode.icon = "fa-map-marker";
             treeNode.expandedIcon = "fa-map-marker";
             treeNode.collapsedIcon = "fa-map-marker";
@@ -268,14 +270,14 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     addEntityNameToNode(fileModelNode: FileModelNode, gobiiTreeNode: GobiiTreeNode, eventedFileItem: GobiiFileItem) {
 
-        if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
+        if (fileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER) {
             gobiiTreeNode.label = eventedFileItem.getItemName();
         } else { // coves the LEAF node use case
             if (eventedFileItem.getExtractorItemType() == ExtractorItemType.EXPORT_FORMAT) {
                 let gobiiExtractFormat: GobiiExtractFormat = <GobiiExtractFormat> GobiiExtractFormat[eventedFileItem.getItemId()];
                 gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + Labels.instance().extractFormatTypeLabels[gobiiExtractFormat];
             } else if (eventedFileItem.getExtractorItemType() == ExtractorItemType.JOB_ID) {
-                gobiiTreeNode.label =  Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]
+                gobiiTreeNode.label = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]
                     + ": " + eventedFileItem.getItemId();
             } else {
                 gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
@@ -339,7 +341,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 } // if-else we found an existing node for the LEAF node's file item
 
 
-            } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
+            } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER) {
 
                 // there should not be a file item associated with the model because it's a container -- the file items are just for the children
                 let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
@@ -451,7 +453,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 } // if-else we found an existing node for the LEAF node's file item
 
 
-            } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER) {
+            } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER) {
 
                 // there should not be a file item associated with the model because it's a container -- the file items are just for the children
                 let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
@@ -537,9 +539,23 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             //.MODEL_CONTAINER
 
-        } else if (fileModelNode.getCategoryType() === ExtractorCategoryType.ENTITY_CONTAINER
-            || fileModelNode.getCategoryType() === ExtractorCategoryType.MODEL_CONTAINER) {
-//        } else if (fileModelNode.getItemType() === ExtractorItemType.CATEGORY) {
+        }  else if (fileModelNode.getItemType() == ExtractorItemType.EXPORT_FORMAT) {
+
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+            returnVal.label = fileModelNode.getCategoryName();
+        } else if (fileModelNode.getItemType() == ExtractorItemType.SAMPLE_LIST) {
+
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+            returnVal.label = fileModelNode.getCategoryName();
+        } else if (fileModelNode.getItemType() == ExtractorItemType.MARKER_FILE) {
+
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+            returnVal.label = fileModelNode.getCategoryName();
+        } else if (fileModelNode.getItemType() == ExtractorItemType.JOB_ID) {
+
+            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+            returnVal.label = fileModelNode.getCategoryName();
+        } else {
 
             returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
 
@@ -548,23 +564,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 returnVal.entityType = fileModelNode.getEntityType();
             }
 
-            returnVal.label = fileModelNode.getCategoryName();
-
-        } else if (fileModelNode.getItemType() == ExtractorItemType.EXPORT_FORMAT) {
-
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
-            returnVal.label = fileModelNode.getCategoryName();
-        } else if (fileModelNode.getItemType() == ExtractorItemType.SAMPLE_LIST) {
-
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
-            returnVal.label = fileModelNode.getCategoryName();
-        } else if (fileModelNode.getItemType() == ExtractorItemType.MARKER_LIST) {
-
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
-            returnVal.label = fileModelNode.getCategoryName();
-        }  else if (fileModelNode.getItemType() == ExtractorItemType.JOB_ID) {
-
-            returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
             returnVal.label = fileModelNode.getCategoryName();
         }
 
@@ -586,7 +585,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             ); // iterate child model node
         } else {
             this.handleAddStatusMessage(new
-                HeaderStatusMessage("Unable to make tree node for file model of type " + Labels.instance().treeExtractorTypeLabels[fileModelNode.getItemType()],null,null));
+                HeaderStatusMessage("Unable to make tree node for file model of type " + Labels.instance().treeExtractorTypeLabels[fileModelNode.getItemType()], null, null));
         }// if we created a tree node
 
         return returnVal;

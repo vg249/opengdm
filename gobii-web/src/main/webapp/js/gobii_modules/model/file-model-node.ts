@@ -7,14 +7,16 @@ import {Guid} from "./guid";
 export enum ExtractorItemType {
     UNKNOWN,
     ENTITY,
+    MARKER_FILE,
     MARKER_LIST,
     SAMPLE_LIST,
+    SAMPLE_FILE,
     EXPORT_FORMAT,
     CROP_TYPE,
     STATUS_DISPLAY_TREE_READY,
     JOB_ID}
 
-export enum ExtractorCategoryType {MODEL_CONTAINER, ENTITY_CONTAINER, CATEGORY_CONTAINER, LEAF }
+export enum ExtractorCategoryType {CONTAINER, LEAF }
 export enum CardinalityType {ZERO_OR_ONE, ZERO_OR_MORE, ONE_ONLY, ONE_OR_MORE, MORE_THAN_ONE}
 
 
