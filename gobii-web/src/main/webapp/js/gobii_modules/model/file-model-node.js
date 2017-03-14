@@ -19,8 +19,8 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
                 ExtractorItemType[ExtractorItemType["UNKNOWN"] = 0] = "UNKNOWN";
                 ExtractorItemType[ExtractorItemType["ENTITY"] = 1] = "ENTITY";
                 ExtractorItemType[ExtractorItemType["MARKER_FILE"] = 2] = "MARKER_FILE";
-                ExtractorItemType[ExtractorItemType["MARKER_LIST"] = 3] = "MARKER_LIST";
-                ExtractorItemType[ExtractorItemType["SAMPLE_LIST"] = 4] = "SAMPLE_LIST";
+                ExtractorItemType[ExtractorItemType["MARKER_LIST_ITEM"] = 3] = "MARKER_LIST_ITEM";
+                ExtractorItemType[ExtractorItemType["SAMPLE_LIST_ITEM"] = 4] = "SAMPLE_LIST_ITEM";
                 ExtractorItemType[ExtractorItemType["SAMPLE_FILE"] = 5] = "SAMPLE_FILE";
                 ExtractorItemType[ExtractorItemType["EXPORT_FORMAT"] = 6] = "EXPORT_FORMAT";
                 ExtractorItemType[ExtractorItemType["CROP_TYPE"] = 7] = "CROP_TYPE";

@@ -25,6 +25,7 @@ export class TextAreaComponent {
     private handleTextboxDataComplete(arg) {
         let items:string[] = arg.split("\n");
         this.onTextboxDataComplete.emit(items);
+        this.textValue = '';
     }
 
 }

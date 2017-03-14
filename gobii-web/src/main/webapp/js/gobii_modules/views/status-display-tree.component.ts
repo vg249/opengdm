@@ -128,10 +128,18 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, checked: boolean): GobiiFileItem {
 
+        let fileModelNode: FileModelNode = null;
+        this._fileModelTreeService
+            .getFileModelNode(this.gobiiExtractFilterType, gobiiTreeNode.fileModelNodeId)
+            .subscribe(
+                fmn => fileModelNode = fmn,
+                hsm => this.handleAddStatusMessage(hsm));
+
+
         let returnVal: GobiiFileItem = GobiiFileItem.build(
             this.gobiiExtractFilterType,
             (checked ? ProcessType.CREATE : ProcessType.DELETE))
-            .setExtractorItemType(gobiiTreeNode.entityType ? ExtractorItemType.ENTITY : ExtractorItemType.UNKNOWN)
+            .setExtractorItemType(fileModelNode.getItemType())
             .setEntityType(gobiiTreeNode.entityType)
             .setCvFilterType(gobiiTreeNode.cvFilterType)
             .setItemId(null)
@@ -246,11 +254,15 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             treeNode.icon = "fa-columns";
             treeNode.expandedIcon = "fa-columns";
             treeNode.collapsedIcon = "fa-columns";
-        } else if (statusTreeTemplate.getItemType() === ExtractorItemType.SAMPLE_LIST) {
+        } else if (statusTreeTemplate.getItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
             treeNode.icon = "fa-eyedropper";
             treeNode.expandedIcon = "fa-eyedropper";
             treeNode.collapsedIcon = "fa-eyedropper";
         } else if (statusTreeTemplate.getItemType() === ExtractorItemType.MARKER_FILE) {
+            treeNode.icon = "fa-file-excel-o";
+            treeNode.expandedIcon = "fa-file-excel-o";
+            treeNode.collapsedIcon = "fa-file-excel-o";
+        } else if (statusTreeTemplate.getItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
             treeNode.icon = "fa-map-marker";
             treeNode.expandedIcon = "fa-map-marker";
             treeNode.collapsedIcon = "fa-map-marker";
@@ -508,7 +520,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         this.gobiiTreeNodes = [];
 
-        let fileModelNodes: FileModelNode[] = [];
+        let fileModelNodes: FileModelNode[] = []
         this._fileModelTreeService.getFileModel(gobiiExtractorFilterType).subscribe(
             f => {
                 fileModelNodes = f;
@@ -539,11 +551,11 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             //.MODEL_CONTAINER
 
-        }  else if (fileModelNode.getItemType() == ExtractorItemType.EXPORT_FORMAT) {
+        } else if (fileModelNode.getItemType() == ExtractorItemType.EXPORT_FORMAT) {
 
             returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
             returnVal.label = fileModelNode.getCategoryName();
-        } else if (fileModelNode.getItemType() == ExtractorItemType.SAMPLE_LIST) {
+        } else if (fileModelNode.getItemType() == ExtractorItemType.SAMPLE_LIST_ITEM) {
 
             returnVal = new GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
             returnVal.label = fileModelNode.getCategoryName();

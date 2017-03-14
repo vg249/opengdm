@@ -122,8 +122,13 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     }
                 };
                 StatusDisplayTreeComponent.prototype.makeFileItemFromTreeNode = function (gobiiTreeNode, checked) {
+                    var _this = this;
+                    var fileModelNode = null;
+                    this._fileModelTreeService
+                        .getFileModelNode(this.gobiiExtractFilterType, gobiiTreeNode.fileModelNodeId)
+                        .subscribe(function (fmn) { return fileModelNode = fmn; }, function (hsm) { return _this.handleAddStatusMessage(hsm); });
                     var returnVal = gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, (checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE))
-                        .setExtractorItemType(gobiiTreeNode.entityType ? file_model_node_1.ExtractorItemType.ENTITY : file_model_node_1.ExtractorItemType.UNKNOWN)
+                        .setExtractorItemType(fileModelNode.getItemType())
                         .setEntityType(gobiiTreeNode.entityType)
                         .setCvFilterType(gobiiTreeNode.cvFilterType)
                         .setItemId(null)
@@ -213,12 +218,17 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         treeNode.expandedIcon = "fa-columns";
                         treeNode.collapsedIcon = "fa-columns";
                     }
-                    else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST) {
+                    else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
                         treeNode.icon = "fa-eyedropper";
                         treeNode.expandedIcon = "fa-eyedropper";
                         treeNode.collapsedIcon = "fa-eyedropper";
                     }
                     else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE) {
+                        treeNode.icon = "fa-file-excel-o";
+                        treeNode.expandedIcon = "fa-file-excel-o";
+                        treeNode.collapsedIcon = "fa-file-excel-o";
+                    }
+                    else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM) {
                         treeNode.icon = "fa-map-marker";
                         treeNode.expandedIcon = "fa-map-marker";
                         treeNode.collapsedIcon = "fa-map-marker";
@@ -389,7 +399,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
                         returnVal.label = fileModelNode.getCategoryName();
                     }
-                    else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.SAMPLE_LIST) {
+                    else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
                         returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
                         returnVal.label = fileModelNode.getCategoryName();
                     }
