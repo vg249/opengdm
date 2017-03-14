@@ -6,7 +6,7 @@ import {CvFilterType} from "./cv-filter-type";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {ExtractorItemType} from "./file-model-node";
 
-export class FileItem {
+export class GobiiFileItem {
 
     private _fileItemUniqueId: string;
 
@@ -35,7 +35,7 @@ export class FileItem {
         this._fileItemUniqueId = Guid.generateUUID();
 
         if (this._cvFilterType === null) {
-            this._cvFilterType = CvFilterType.UKNOWN;
+            this._cvFilterType = CvFilterType.UNKNOWN;
         }
 
         if( this._extractorItemType == null ) {
@@ -53,15 +53,15 @@ export class FileItem {
     }
 
     public static build(gobiiExtractFilterType: GobiiExtractFilterType,
-                        processType: ProcessType): FileItem {
+                        processType: ProcessType): GobiiFileItem {
 
-        let returnVal: FileItem = new FileItem(
+        let returnVal: GobiiFileItem = new GobiiFileItem(
             gobiiExtractFilterType,
             processType,
             ExtractorItemType.UNKNOWN,
             EntityType.UNKNOWN,
             EntitySubType.UNKNOWN, 
-            CvFilterType.UKNOWN,
+            CvFilterType.UNKNOWN,
             null,
             null,
             null,
@@ -72,15 +72,17 @@ export class FileItem {
         return returnVal;
     }
 
+
+
     //OnChange does not see the FileItemEvent as being a new event unless it's
     //a branch new instance, even if any of the property values are different.
     //I'm sure there's a better way to do this. For example, the tree component should
     //subscribe to an observer that is fed by the root component?
-    public static fromFileItem(fileItem: FileItem, gobiiExtractFilterType: GobiiExtractFilterType): FileItem {
+    public static fromFileItem(fileItem: GobiiFileItem, gobiiExtractFilterType: GobiiExtractFilterType): GobiiFileItem {
 
         let existingUniqueId: string = fileItem._fileItemUniqueId;
 
-        let returnVal: FileItem = FileItem
+        let returnVal: GobiiFileItem = GobiiFileItem
             .build(gobiiExtractFilterType, fileItem._processType)
             .setEntityType(fileItem._entityType)
             .setCvFilterType(fileItem._cvFilterType)
@@ -94,7 +96,7 @@ export class FileItem {
         return returnVal;
     }
 
-    setFileItemUniqueId(fileItemUniqueId: string): FileItem {
+    setFileItemUniqueId(fileItemUniqueId: string): GobiiFileItem {
         this._fileItemUniqueId = fileItemUniqueId;
         return this;
     }
@@ -107,8 +109,13 @@ export class FileItem {
         return this._gobiiExtractFilterType;
     }
 
-    setGobiiExtractFilterType(value: GobiiExtractFilterType): FileItem {
-        this._gobiiExtractFilterType = value;
+    setGobiiExtractFilterType(value: GobiiExtractFilterType): GobiiFileItem {
+
+        if( value != null ) {
+            this._gobiiExtractFilterType = value;
+        } else {
+            this._gobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+        }
         return this;
     }
 
@@ -116,8 +123,14 @@ export class FileItem {
         return this._processType;
     }
 
-    setProcessType(value: ProcessType): FileItem {
-        this._processType = value;
+    setProcessType(value: ProcessType): GobiiFileItem {
+
+        if( value != null ) {
+            this._processType = value;
+        } else {
+            this._processType = ProcessType.UNKNOWN;
+        }
+
         return this;
     }
 
@@ -126,8 +139,13 @@ export class FileItem {
         return this._extractorItemType;
     }
 
-    setExtractorItemType(value: ExtractorItemType): FileItem {
-        this._extractorItemType = value;
+    setExtractorItemType(value: ExtractorItemType): GobiiFileItem {
+
+        if( value != null ) {
+            this._extractorItemType = value;
+        } else {
+            this._extractorItemType = ExtractorItemType.UNKNOWN;
+        }
         return this;
     }
 
@@ -135,8 +153,13 @@ export class FileItem {
         return this._entityType;
     }
 
-    setEntityType(value: EntityType): FileItem {
-        this._entityType = value;
+    setEntityType(value: EntityType): GobiiFileItem {
+
+        if (value != null ) {
+            this._entityType = value;
+        } else {
+            this._entityType = EntityType.UNKNOWN;
+        }
         return this;
     }
 
@@ -144,8 +167,14 @@ export class FileItem {
         return this._entitySubType;
     }
 
-    setEntitySubType(value: EntitySubType): FileItem {
-        this._entitySubType = value;
+    setEntitySubType(value: EntitySubType): GobiiFileItem {
+
+        if( value != null ) {
+            this._entitySubType = value;
+        } else {
+            this._entitySubType = EntitySubType.UNKNOWN;
+        }
+
         return this;
     }
 
@@ -153,8 +182,12 @@ export class FileItem {
         return this._cvFilterType;
     }
 
-    setCvFilterType(value: CvFilterType): FileItem {
-        this._cvFilterType = value;
+    setCvFilterType(value: CvFilterType): GobiiFileItem {
+        if( value != null ) {
+            this._cvFilterType = value;
+        } else {
+            this._cvFilterType = CvFilterType.UNKNOWN;
+        }
         return this;
     }
 
@@ -162,7 +195,7 @@ export class FileItem {
         return this._itemId;
     }
 
-    setItemId(value: string): FileItem {
+    setItemId(value: string): GobiiFileItem {
         this._itemId = value;
         return this;
     }
@@ -171,7 +204,7 @@ export class FileItem {
         return this._itemName;
     }
 
-    setItemName(value: string): FileItem {
+    setItemName(value: string): GobiiFileItem {
         this._itemName = value;
         return this;
     }
@@ -180,7 +213,7 @@ export class FileItem {
         return this._checked;
     }
 
-    setChecked(value: boolean): FileItem {
+    setChecked(value: boolean): GobiiFileItem {
         this._checked = value;
         return this;
     }
@@ -189,9 +222,9 @@ export class FileItem {
         return this._required;
     }
 
-    setRequired(value: boolean): FileItem {
+    setRequired(value: boolean): GobiiFileItem {
         this._required = value;
         return this;
     }
 
-} // FileItem()
+} // GobiiFileItem()

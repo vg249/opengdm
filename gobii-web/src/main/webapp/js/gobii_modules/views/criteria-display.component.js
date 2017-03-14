@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/file-item", "../model/type-process", "../model/type-entity", "../model/type-extractor-filter", "../model/cv-filter-type"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/gobii-file-item", "../model/type-process", "../model/type-entity", "../model/type-extractor-filter", "../model/cv-filter-type"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,14 +10,14 @@ System.register(["@angular/core", "../model/file-item", "../model/type-process",
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, file_item_1, type_process_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, CriteriaDisplayComponent;
+    var core_1, gobii_file_item_1, type_process_1, type_entity_1, type_extractor_filter_1, cv_filter_type_1, CriteriaDisplayComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (file_item_1_1) {
-                file_item_1 = file_item_1_1;
+            function (gobii_file_item_1_1) {
+                gobii_file_item_1 = gobii_file_item_1_1;
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
@@ -45,9 +45,9 @@ System.register(["@angular/core", "../model/file-item", "../model/type-process",
                 };
                 // In this component, every item starts out checked; unchecking it removes it
                 CriteriaDisplayComponent.prototype.handleItemUnChecked = function (arg) {
-                    var checkEvent = file_item_1.FileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.DELETE)
+                    var checkEvent = gobii_file_item_1.GobiiFileItem.build(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, type_process_1.ProcessType.DELETE)
                         .setEntityType(type_entity_1.EntityType.DataSets)
-                        .setCvFilterType(cv_filter_type_1.CvFilterType.UKNOWN)
+                        .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                         .setItemId(arg.currentTarget.value)
                         .setItemName(arg.currentTarget.name)
                         .setChecked(false)

@@ -15,7 +15,7 @@ System.register(["./type-entity", "./cv-filter-type"], function (exports_1, cont
             GobiiTreeNode = (function () {
                 function GobiiTreeNode(fileModelNodeId, fileItemId, required) {
                     this.entityType = type_entity_1.EntityType.UNKNOWN;
-                    this.cvFilterType = cv_filter_type_1.CvFilterType.UKNOWN;
+                    this.cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
                     this.children = [];
                     this.required = false;
                     this.fileModelNodeId = fileModelNodeId;

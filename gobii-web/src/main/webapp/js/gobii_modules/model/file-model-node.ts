@@ -1,19 +1,22 @@
 import {EntityType, EntitySubType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {GobiiTreeNode} from "./GobiiTreeNode";
-import {FileItem} from "./file-item";
+import {GobiiFileItem} from "./gobii-file-item";
 import {Guid} from "./guid";
 
 export enum ExtractorItemType {
     UNKNOWN,
-    CATEGORY,
     ENTITY,
-    MARKER_LIST,
-    SAMPLE_LIST,
+    MARKER_FILE,
+    MARKER_LIST_ITEM,
+    SAMPLE_LIST_ITEM,
+    SAMPLE_FILE,
     EXPORT_FORMAT,
-    CROP_TYPE}
+    CROP_TYPE,
+    STATUS_DISPLAY_TREE_READY,
+    JOB_ID}
 
-export enum ExtractorCategoryType {MODEL_CONTAINER, ENTITY_CONTAINER, CATEGORY_CONTAINER, LEAF }
+export enum ExtractorCategoryType {CONTAINER, LEAF }
 export enum CardinalityType {ZERO_OR_ONE, ZERO_OR_MORE, ONE_ONLY, ONE_OR_MORE, MORE_THAN_ONE}
 
 
@@ -34,8 +37,8 @@ export class FileModelNode {
     private _entityType: EntityType = EntityType.UNKNOWN;
     private _entitySubType: EntitySubType = EntitySubType.UNKNOWN;
     private _entityName: string;
-    private _cvFilterType: CvFilterType = CvFilterType.UKNOWN;
-    private _fileItems: FileItem[] = [];
+    private _cvFilterType: CvFilterType = CvFilterType.UNKNOWN;
+    private _fileItems: GobiiFileItem[] = [];
     private _fileModelNodeUniqueId = Guid.generateUUID();
 
 
@@ -140,11 +143,11 @@ export class FileModelNode {
     }
 
 
-    getFileItems(): FileItem[] {
+    getFileItems(): GobiiFileItem[] {
         return this._fileItems;
     }
 
-    setChildFileItems(value: FileItem[]): FileModelNode {
+    setChildFileItems(value: GobiiFileItem[]): FileModelNode {
         this._fileItems = value;
         return this;
     }
