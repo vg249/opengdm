@@ -355,6 +355,9 @@ public class GobiiFileReader {
 				gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
 				gobiiDataSetExtract.setDataSetId(inst.getDataSet().getId());
 				gobiiDataSetExtract.setDataSetName(inst.getDataSet().getName());
+				// It is set at the moment to facilitate the QC integration tests
+				// It needs to be discussed with the team
+				gobiiDataSetExtract.setGobiiDatasetType(inst.getDatasetType().toString());
 				Path loaderDestinationDirectoryPath = FileSystems.getDefault().getPath(dstDir.getAbsolutePath());
 				int pathDepth = loaderDestinationDirectoryPath.getNameCount();
 				Path cropDirectory = loaderDestinationDirectoryPath.subpath(0, (pathDepth - 3));
@@ -364,8 +367,11 @@ public class GobiiFileReader {
 						                                         inst.getGobiiFile().getGobiiFileType().toString().toLowerCase(),
 						                                         new StringBuilder("ds_").append(inst.getDataSetId()).toString());
 				gobiiDataSetExtract.setExtractDestinationDirectory(extractDestinationDirectoryPath.toString());
-				gobiiDataSetExtract.setGobiiJobStatus(null);  // It is going to be set by the GobiiExtractor class
+				// It is set to WHOLE_DATASET at the moment to facilitate the QC integration tests
+				// It needs to be discussed with the team
+				gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
 				gobiiDataSetExtract.setGobiiFileType(inst.getGobiiFile().getGobiiFileType());
+				gobiiDataSetExtract.setGobiiJobStatus(null);  // It is going to be set by the GobiiExtractor class
 				gobiiExtractorInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
 				ErrorLogger.logInfo("Digester","Done with the QC Subsection #2 of 3!");
 			}
@@ -472,21 +478,26 @@ public class GobiiFileReader {
 			ErrorLogger.logInfo("Digester","Entering into the QC Subsection #3 of 3...");
 			ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
 			extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
-			StringBuilder stringBuilderInstructionFileName = new StringBuilder("extractor_").append(DateUtils.makeDateIdString()).append(".json");
-			extractorInstructionFilesDTOToSend.setInstructionFileName(stringBuilderInstructionFileName.toString());
+			extractorInstructionFilesDTOToSend.setInstructionFileName(new StringBuilder("extractor_").append(DateUtils.makeDateIdString()).toString());
 			//extractorInstructionFilesDTOToSend.setId();
 			//extractorInstructionFilesDTOToSend.setJobId();
 			PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-			String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
+			ClientContext clientContext = ClientContext.getInstance(configuration, crop);
+			SystemUserDetail SystemUserDetail = (new SystemUsers()).getDetail(SystemUserNames.USER_READER.toString());
+			if(!(clientContext.login(SystemUserDetail.getUserName(), SystemUserDetail.getPassword()))) {
+				ErrorLogger.logError("Digester","Login Error:" + SystemUserDetail.getUserName() + "-" + SystemUserDetail.getPassword());
+				return;
+			}
+			String currentCropContextRoot = clientContext.getInstance(null, false).getCurrentCropContextRoot();
 			uriFactory = new UriFactory(currentCropContextRoot);
 			GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForPost = new GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS));
 			PayloadEnvelope<ExtractorInstructionFilesDTO> extractorInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForPost.post(ExtractorInstructionFilesDTO.class,
 					                                                                                                                          payloadEnvelope);
 			if (extractorInstructionFileDTOResponseEnvelope != null) {
-				ErrorLogger.logInfo("Digester","Successful Extractor Request Submission");
+				ErrorLogger.logInfo("Digester","Extractor Request Sent");
 			}
 			else {
-				ErrorLogger.logWarning("Digester","Error Submitting Extractor Request");
+				ErrorLogger.logInfo("Digester","Error Sending Extractor Request");
 			}
 			ErrorLogger.logInfo("Digester","Done with the QC Subsection #3 of 3!");
 		}
