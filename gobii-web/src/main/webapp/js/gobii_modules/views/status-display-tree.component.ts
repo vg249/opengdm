@@ -29,6 +29,7 @@ import {Header} from "../model/payload/header";
                     selectionMode="checkbox" 
                     [(selection)]="selectedGobiiNodes"
                     (onNodeUnselect)="nodeUnselect($event)"
+                    (onNodeSelect)="nodeSelect($event)"
                     [style]="{'width':'100%'}"
                     styleClass="criteria-tree"></p-tree>
                     <!--<p-tree [value]="demoTreeNodes" selectionMode="checkbox" [(selection)]="selectedDemoNodes"></p-tree>-->
@@ -102,6 +103,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
 
     nodeSelect(event) {
+
+//        let foo:string = "foo";
         //      this.msgs.push({severity: 'info', summary: 'Node Selected', detail: event.node.label});
     }
 
@@ -241,7 +244,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-    addIconsToNode(statusTreeTemplate: FileModelNode, treeNode: GobiiTreeNode) {
+    addIconsToNode(statusTreeTemplate: FileModelNode, treeNode: GobiiTreeNode, isParent:boolean) {
 
         // if( fileModelNode.getItemType() == ExtractorItemType.ENTITY ) {
 
@@ -263,9 +266,16 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             treeNode.expandedIcon = "fa-file-excel-o";
             treeNode.collapsedIcon = "fa-file-excel-o";
         } else if (statusTreeTemplate.getItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
-            treeNode.icon = "fa-map-marker";
-            treeNode.expandedIcon = "fa-map-marker";
-            treeNode.collapsedIcon = "fa-map-marker";
+
+            if( isParent ) {
+                treeNode.icon = "fa-list-ul";
+                treeNode.expandedIcon = "fa-list-ul";
+                treeNode.collapsedIcon = "fa-list-ul";
+            } else {
+                treeNode.icon = "fa-map-marker";
+                treeNode.expandedIcon = "fa-map-marker";
+                treeNode.collapsedIcon = "fa-map-marker";
+            }
         } else if (statusTreeTemplate.getItemType() === ExtractorItemType.JOB_ID) {
             treeNode.icon = "fa-info-circle";
             treeNode.expandedIcon = "fa-info-circle";
@@ -429,7 +439,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
 
                     this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, fileModelTreeEvent.fileItem);
-                    this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), gobiiTreeLeafNodeTobeMutated);
+                    this.addIconsToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated,false);
                     gobiiTreeLeafNodeTobeMutated.required = fileModelTreeEvent.fileItem.getRequired();
                     if (this.selectedGobiiNodes.indexOf(gobiiTreeLeafNodeTobeMutated) === -1) {
                         this.selectedGobiiNodes.push(gobiiTreeLeafNodeTobeMutated);
@@ -490,7 +500,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                                     fileModelTreeEvent.fileItem.getFileItemUniqueId(),
                                     fileModelTreeEvent.fileItem.getRequired());
                             newGobiiTreeNode.entityType = fileModelTreeEvent.fileItem.getEntityType();
-                            this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), newGobiiTreeNode);
+                            this.addIconsToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, false);
                             this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
                             parentTreeNode.children.push(newGobiiTreeNode);
                             parentTreeNode.expanded = true;
@@ -583,7 +593,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         if (null != returnVal) {
 
             let debug: string = "debug";
-            this.addIconsToNode(fileModelNode, returnVal);
+            this.addIconsToNode(fileModelNode, returnVal, true);
 
             returnVal.expanded = true;
             fileModelNode.getChildren().forEach(

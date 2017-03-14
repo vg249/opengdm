@@ -105,6 +105,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     // this.setUpRequredItems();
                 };
                 StatusDisplayTreeComponent.prototype.nodeSelect = function (event) {
+                    //        let foo:string = "foo";
                     //      this.msgs.push({severity: 'info', summary: 'Node Selected', detail: event.node.label});
                 };
                 StatusDisplayTreeComponent.prototype.nodeUnselect = function (event) {
@@ -207,7 +208,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         }
                     }
                 };
-                StatusDisplayTreeComponent.prototype.addIconsToNode = function (statusTreeTemplate, treeNode) {
+                StatusDisplayTreeComponent.prototype.addIconsToNode = function (statusTreeTemplate, treeNode, isParent) {
                     // if( fileModelNode.getItemType() == ExtractorItemType.ENTITY ) {
                     if (statusTreeTemplate.getEntityType() != null
                         && statusTreeTemplate.getEntityType() != type_entity_1.EntityType.UNKNOWN) {
@@ -229,9 +230,16 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         treeNode.collapsedIcon = "fa-file-excel-o";
                     }
                     else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM) {
-                        treeNode.icon = "fa-map-marker";
-                        treeNode.expandedIcon = "fa-map-marker";
-                        treeNode.collapsedIcon = "fa-map-marker";
+                        if (isParent) {
+                            treeNode.icon = "fa-list-ul";
+                            treeNode.expandedIcon = "fa-list-ul";
+                            treeNode.collapsedIcon = "fa-list-ul";
+                        }
+                        else {
+                            treeNode.icon = "fa-map-marker";
+                            treeNode.expandedIcon = "fa-map-marker";
+                            treeNode.collapsedIcon = "fa-map-marker";
+                        }
                     }
                     else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.JOB_ID) {
                         treeNode.icon = "fa-info-circle";
@@ -327,7 +335,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                             var gobiiTreeLeafNodeTobeMutated = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                             if (gobiiTreeLeafNodeTobeMutated != null) {
                                 this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, fileModelTreeEvent.fileItem);
-                                this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), gobiiTreeLeafNodeTobeMutated);
+                                this.addIconsToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, false);
                                 gobiiTreeLeafNodeTobeMutated.required = fileModelTreeEvent.fileItem.getRequired();
                                 if (this.selectedGobiiNodes.indexOf(gobiiTreeLeafNodeTobeMutated) === -1) {
                                     this.selectedGobiiNodes.push(gobiiTreeLeafNodeTobeMutated);
@@ -353,7 +361,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                     if (existingGobiiTreeNodeChild === null) {
                                         var newGobiiTreeNode = new GobiiTreeNode_1.GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(), fileModelTreeEvent.fileItem.getFileItemUniqueId(), fileModelTreeEvent.fileItem.getRequired());
                                         newGobiiTreeNode.entityType = fileModelTreeEvent.fileItem.getEntityType();
-                                        this.addEntityIconToNode(fileModelTreeEvent.fileModelNode.getEntityType(), fileModelTreeEvent.fileModelNode.getCvFilterType(), newGobiiTreeNode);
+                                        this.addIconsToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, false);
                                         this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
                                         parentTreeNode.children.push(newGobiiTreeNode);
                                         parentTreeNode.expanded = true;
@@ -421,7 +429,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     }
                     if (null != returnVal) {
                         var debug = "debug";
-                        this.addIconsToNode(fileModelNode, returnVal);
+                        this.addIconsToNode(fileModelNode, returnVal, true);
                         returnVal.expanded = true;
                         fileModelNode.getChildren().forEach(function (stt) {
                             var currentTreeNode = _this.makeTreeNodeFromTemplate(stt);
@@ -536,7 +544,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     selector: 'status-display-tree',
                     inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
                     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
-                    template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" \n                    selectionMode=\"checkbox\" \n                    [(selection)]=\"selectedGobiiNodes\"\n                    (onNodeUnselect)=\"nodeUnselect($event)\"\n                    [style]=\"{'width':'100%'}\"\n                    styleClass=\"criteria-tree\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
+                    template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" \n                    selectionMode=\"checkbox\" \n                    [(selection)]=\"selectedGobiiNodes\"\n                    (onNodeUnselect)=\"nodeUnselect($event)\"\n                    (onNodeSelect)=\"nodeSelect($event)\"\n                    [style]=\"{'width':'100%'}\"\n                    styleClass=\"criteria-tree\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
                 }),
                 __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
             ], StatusDisplayTreeComponent);
