@@ -205,10 +205,12 @@ public class GobiiExtractor {
 						HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
 						HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
 						break;
-					default:
+                    case META_DATA:
+                        HelperFunctions.sendEmail(extract.getDataSetName()+" Metadata Extract",extractDir,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
+                        HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+                    default:
 						ErrorLogger.logError("Extractor","Unknown Extract Type "+extract.getGobiiFileType());
 						HelperFunctions.sendEmail(extract.getDataSetName()+" "+extract.getGobiiFileType()+" Extract",null,false,errorFile,configuration,inst.getContactEmail());
-						HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
 				}
 				rmIfExist(genoFile);
 				rmIfExist(chrLengthFile);
