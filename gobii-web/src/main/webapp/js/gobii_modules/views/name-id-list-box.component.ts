@@ -59,25 +59,24 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     private initializeNameIds() {
 
-        if (!this.notificationSent) {
-            let scope$ = this;
-            this._nameIdService.get(this.nameIdRequestParams)
-                .subscribe(nameIds => {
-                        if (nameIds && ( nameIds.length > 0 )) {
-                            scope$.nameIdList = nameIds;
-                            scope$.selectedNameId = nameIds[0].id;
-                            if (this.notifyOnInit
-                                && !this.notificationSent
-                                && scope$.nameIdList [0].name != "<none>") {
-                                this.updateTreeService(scope$.nameIdList [0]);
-                                this.notificationSent = true;
-                            }
+        let scope$ = this;
+        this._nameIdService.get(this.nameIdRequestParams)
+            .subscribe(nameIds => {
+                    if (nameIds && ( nameIds.length > 0 )) {
+                        scope$.nameIdList = nameIds;
+                        scope$.selectedNameId = nameIds[0].id;
+                        if (this.notifyOnInit
+                            && !this.notificationSent
+                            && scope$.nameIdList [0].name != "<none>") {
+                            this.updateTreeService(scope$.nameIdList [0]);
+                            this.notificationSent = true;
                         }
-                    },
-                    responseHeader => {
-                        this.handleHeaderStatus(responseHeader);
-                    });
-        }
+                    }
+                },
+                responseHeader => {
+                    this.handleHeaderStatus(responseHeader);
+                });
+
     }
 
     // useg
