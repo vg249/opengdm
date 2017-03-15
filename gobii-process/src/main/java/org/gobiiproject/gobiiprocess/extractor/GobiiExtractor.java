@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
@@ -319,15 +320,16 @@ public class GobiiExtractor {
 						ErrorLogger.logError("Extractor","Error Sending QC Instructions Request");
 					}
 
-
-
-
 					QCInstructionsDTO qcInstructionsDTO = new QCInstructionsDTO();
 					qcInstructionsDTO.setDataFileDirectory(extractDir);
 					//String currentQCContextRoot = ClientContext.getInstance("http://gobiilab03.bti.cornell.edu:8080/kdcompute/", true);
 					//uriFactory = new UriFactory(currentCropContextRoot);
-					uriFactory = new UriFactory("http://gobiilab03.bti.cornell.edu:8080/kdcompute/");
-					GobiiEnvelopeRestResource<QCStart>restResourceForGet = new GobiiEnvelopeRestResource<>(uriFactory.resourceColl(ServiceRequestId.URL_QC_START));
+					RestUri restUri = new RestUri("http://gobiilab03.bti.cornell.edu:8080/kdcompute/qcStart");
+					restUri.addUriParam("datasetId");
+					restUri.setParamValue("datasetId", dataSetId.toString());
+					restUri.addUriParam("directory");
+					restUri.setParamValue("directory", extractDir);
+					GobiiEnvelopeRestResource<QCStart> restResourceForGet = new GobiiEnvelopeRestResource<QCStart>(restUri);
 					PayloadEnvelope<QCStart> qcStartResponseEnvelope = restResourceForGet.get(QCStart.class);
 
 					if (qcStartResponseEnvelope != null) {
