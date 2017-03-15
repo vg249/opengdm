@@ -129,14 +129,20 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
                             .setEntityName(entity_labels_1.Labels.instance().cvFilterNodeLabels[cv_filter_type_1.CvFilterType.DATASET_TYPE])
                             .setCardinality(file_model_node_1.CardinalityType.ONE_ONLY));
+                        // -- Sample List Type
+                        submissionItemsForBySample.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE, null)
+                            .setCategoryType(file_model_node_1.ExtractorCategoryType.LEAF)
+                            .setEntityName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE])
+                            .setCategoryName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE])
+                            .setCardinality(file_model_node_1.CardinalityType.ONE_ONLY));
                         // -- Platforms
-                        var currentParent = null;
                         submissionItemsForBySample.push(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, null)
                             .setCategoryType(file_model_node_1.ExtractorCategoryType.CONTAINER)
                             .setEntityType(type_entity_1.EntityType.Platforms)
                             .setEntityName(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.Platforms])
                             .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE));
-                        // -- Samples
+                        // -- Samples Criteria
+                        var currentParent = null;
                         submissionItemsForBySample
                             .push(currentParent =
                             file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, null)

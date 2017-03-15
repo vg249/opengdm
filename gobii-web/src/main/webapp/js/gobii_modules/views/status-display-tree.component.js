@@ -258,6 +258,11 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         treeNode.expandedIcon = "fa-info-circle";
                         treeNode.collapsedIcon = "fa-info-circle";
                     }
+                    else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE) {
+                        treeNode.icon = "fa-info-circle";
+                        treeNode.expandedIcon = "fa-info-circle";
+                        treeNode.collapsedIcon = "fa-info-circle";
+                    }
                     else {
                         //     }
                         // } else if (fileModelNode.getItemType() == ExtractorItemType.CATEGORY ) {

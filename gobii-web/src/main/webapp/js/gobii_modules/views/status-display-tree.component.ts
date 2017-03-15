@@ -290,6 +290,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             treeNode.icon = "fa-info-circle";
             treeNode.expandedIcon = "fa-info-circle";
             treeNode.collapsedIcon = "fa-info-circle";
+        } else if (statusTreeTemplate.getItemType() === ExtractorItemType.SAMPLE_LIST_TYPE) {
+            treeNode.icon = "fa-info-circle";
+            treeNode.expandedIcon = "fa-info-circle";
+            treeNode.collapsedIcon = "fa-info-circle";
         } else {
             //     }
             // } else if (fileModelNode.getItemType() == ExtractorItemType.CATEGORY ) {

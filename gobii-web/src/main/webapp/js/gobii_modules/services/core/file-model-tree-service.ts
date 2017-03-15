@@ -124,8 +124,15 @@ export class FileModelTreeService {
                     .setCardinality(CardinalityType.ONE_ONLY)
             );
 
+            // -- Sample List Type
+            submissionItemsForBySample.push(FileModelNode.build(ExtractorItemType.SAMPLE_LIST_TYPE, null)
+                .setCategoryType(ExtractorCategoryType.LEAF)
+                .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_TYPE])
+                .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_TYPE])
+                .setCardinality(CardinalityType.ONE_ONLY)
+            );
+
             // -- Platforms
-            let currentParent: FileModelNode = null;
             submissionItemsForBySample.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
                 .setCategoryType(ExtractorCategoryType.CONTAINER)
                 .setEntityType(EntityType.Platforms)
@@ -133,8 +140,8 @@ export class FileModelTreeService {
                 .setCardinality(CardinalityType.ZERO_OR_MORE)
             );
 
-
-            // -- Samples
+            // -- Samples Criteria
+            let currentParent: FileModelNode = null;
             submissionItemsForBySample
                 .push(currentParent =
                     FileModelNode.build(ExtractorItemType.ENTITY, null)

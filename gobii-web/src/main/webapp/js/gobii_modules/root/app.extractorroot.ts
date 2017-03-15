@@ -161,7 +161,8 @@ import {FileName} from "../model/file_name";
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                                 <legend class="the-legend">Included Samples</legend>
                                 <sample-list-type
-                                    (onSampleListTypeSelected)="handleSampleListTypeSelected($event)">
+                                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                    (onHeaderStatusMessage)="handleHeaderStatusMessage($event)">
                                  </sample-list-type>
                                 <hr style="width: 100%; color: black; height: 1px; background-color:black;" />
                                 <sample-marker-box 
@@ -414,7 +415,6 @@ export class ExtractorRoot implements OnInit {
 
         this.gobiiExtractFilterType = arg;
 
-
 //        let extractorFilterItemType: GobiiFileItem = GobiiFileItem.bui(this.gobiiExtractFilterType)
 
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
@@ -463,6 +463,9 @@ export class ExtractorRoot implements OnInit {
             this.displaySampleListTypeSelector = false;
 
         }
+
+
+
 
     }
 
@@ -727,7 +730,7 @@ export class ExtractorRoot implements OnInit {
             this.markerList,
             this.sampleList,
             this.uploadFileName,
-            this.selectedSampleListType,
+            null,
             null,
             null));
 
@@ -765,14 +768,6 @@ export class ExtractorRoot implements OnInit {
 
 
     // ********************************************************************
-    // ********************************************** Sample List Type Selection
-    private selectedSampleListType: GobiiSampleListType;
-
-    private handleSampleListTypeSelected(arg: GobiiSampleListType) {
-        this.selectedSampleListType = arg;
-    }
-
-    // ********************************************************************
     // ********************************************** Extract file submission
     private handleExtractSubmission() {
 
@@ -785,6 +780,7 @@ export class ExtractorRoot implements OnInit {
         let jobId: string = null;
         let markerFileName: string = null;
         let sampleFileName: string = null;
+        let sampleListType: GobiiSampleListType;
         scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(
             fileItems => {
 
@@ -877,6 +873,12 @@ export class ExtractorRoot implements OnInit {
                             return mi.getItemId()
                         });
 
+                let sampleListTypeFileItem: GobiiFileItem = fileItems.find(item => {
+                    return item.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_TYPE;
+                });
+
+                sampleListType = GobiiSampleListType[sampleListTypeFileItem.getItemId()];
+
                 if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
                     fileItems
@@ -894,7 +896,7 @@ export class ExtractorRoot implements OnInit {
                                 null,
                                 null,
                                 markerFileName,
-                                this.selectedSampleListType,
+                                null,
                                 datSetTypeName,
                                 platformIds));
                         });
@@ -921,7 +923,7 @@ export class ExtractorRoot implements OnInit {
                         null,
                         sampleList,
                         sampleFileName,
-                        null,
+                        sampleListType,
                         datSetTypeName,
                         platformIds));
                 } else {
