@@ -821,8 +821,18 @@ export class ExtractorRoot implements OnInit {
                 let exportFileItem: GobiiFileItem = fileItems.find(item => {
                     return item.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
                 });
+
+                // these probably should be just one enum
+                let gobiiFileType: GobiiFileType =  null;
                 let extractFormat: GobiiExtractFormat = GobiiExtractFormat[exportFileItem.getItemId()];
-                let gobiiFileType: GobiiFileType = GobiiFileType[GobiiExtractFormat[extractFormat]];
+                if( extractFormat === GobiiExtractFormat.FLAPJACK ) {
+                    gobiiFileType = GobiiFileType.FLAPJACK;
+                } else if (extractFormat === GobiiExtractFormat.HAPMAP) {
+                    gobiiFileType = GobiiFileType.HAPMAP;
+                } else if( extractFormat === GobiiExtractFormat.META_DATA_ONLY ) {
+                    gobiiFileType = GobiiFileType.META_DATA;
+                }
+
 
                 let dataTypeFileItem: GobiiFileItem = fileItems.find(item => {
                     return item.getEntityType() === EntityType.CvTerms

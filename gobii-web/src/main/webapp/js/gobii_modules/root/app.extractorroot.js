@@ -437,8 +437,18 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         var exportFileItem = fileItems.find(function (item) {
                             return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.EXPORT_FORMAT;
                         });
+                        // these probably should be just one enum
+                        var gobiiFileType = null;
                         var extractFormat = type_extract_format_1.GobiiExtractFormat[exportFileItem.getItemId()];
-                        var gobiiFileType = type_gobii_file_1.GobiiFileType[type_extract_format_1.GobiiExtractFormat[extractFormat]];
+                        if (extractFormat === type_extract_format_1.GobiiExtractFormat.FLAPJACK) {
+                            gobiiFileType = type_gobii_file_1.GobiiFileType.FLAPJACK;
+                        }
+                        else if (extractFormat === type_extract_format_1.GobiiExtractFormat.HAPMAP) {
+                            gobiiFileType = type_gobii_file_1.GobiiFileType.HAPMAP;
+                        }
+                        else if (extractFormat === type_extract_format_1.GobiiExtractFormat.META_DATA_ONLY) {
+                            gobiiFileType = type_gobii_file_1.GobiiFileType.META_DATA;
+                        }
                         var dataTypeFileItem = fileItems.find(function (item) {
                             return item.getEntityType() === type_entity_1.EntityType.CvTerms
                                 && item.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
