@@ -409,6 +409,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     var submitterContactid = null;
                     var jobId = null;
                     var markerFileName = null;
+                    var sampleFileName = null;
                     scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(function (fileItems) {
                         var fileItemJobId = fileItems.find(function (item) {
                             return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.JOB_ID;
@@ -421,6 +422,12 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         });
                         if (fileItemMarkerFile != null) {
                             markerFileName = fileItemMarkerFile.getItemId();
+                        }
+                        var fileItemSampleFile = fileItems.find(function (item) {
+                            return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE;
+                        });
+                        if (fileItemSampleFile != null) {
+                            sampleFileName = fileItemSampleFile.getItemId();
                         }
                         var submitterFileItem = fileItems.find(function (item) {
                             return (item.getEntityType() === type_entity_1.EntityType.Contacts)
@@ -467,6 +474,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             .map(function (mi) {
                             return mi.getItemId();
                         });
+                        var sampleList = fileItems
+                            .filter(function (fi) {
+                            return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM;
+                        })
+                            .map(function (mi) {
+                            return mi.getItemId();
+                        });
                         if (_this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                             fileItems
                                 .filter(function (item) {
@@ -480,6 +494,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, null, null, _this.gobiiExtractFilterType, markerList, null, markerFileName, null, datSetTypeName, platformIds));
                         }
                         else if (_this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
+                            gobiiDataSetExtracts.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, null, null, _this.gobiiExtractFilterType, null, sampleList, sampleFileName, null, datSetTypeName, platformIds));
                         }
                         else {
                             _this.handleAddMessage("Unhandled extract filter type: " + type_extractor_filter_1.GobiiExtractFilterType[_this.gobiiExtractFilterType]);

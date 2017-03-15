@@ -244,7 +244,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
-    addIconsToNode(statusTreeTemplate: FileModelNode, treeNode: GobiiTreeNode, isParent:boolean) {
+    addIconsToNode(statusTreeTemplate: FileModelNode, treeNode: GobiiTreeNode, isParent: boolean) {
 
         // if( fileModelNode.getItemType() == ExtractorItemType.ENTITY ) {
 
@@ -257,17 +257,27 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             treeNode.icon = "fa-columns";
             treeNode.expandedIcon = "fa-columns";
             treeNode.collapsedIcon = "fa-columns";
+        } else if (statusTreeTemplate.getItemType() === ExtractorItemType.SAMPLE_FILE) {
+            treeNode.icon = "fa-file-excel-o";
+            treeNode.expandedIcon = "fa-file-excel-o";
+            treeNode.collapsedIcon = "fa-file-excel-o";
         } else if (statusTreeTemplate.getItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
-            treeNode.icon = "fa-eyedropper";
-            treeNode.expandedIcon = "fa-eyedropper";
-            treeNode.collapsedIcon = "fa-eyedropper";
+            if (isParent) {
+                treeNode.icon = "fa-list-ul";
+                treeNode.expandedIcon = "fa-list-ul";
+                treeNode.collapsedIcon = "fa-list-ul";
+            } else {
+                treeNode.icon = "fa-map-marker";
+                treeNode.expandedIcon = "fa-map-marker";
+                treeNode.collapsedIcon = "fa-map-marker";
+            }
         } else if (statusTreeTemplate.getItemType() === ExtractorItemType.MARKER_FILE) {
             treeNode.icon = "fa-file-excel-o";
             treeNode.expandedIcon = "fa-file-excel-o";
             treeNode.collapsedIcon = "fa-file-excel-o";
         } else if (statusTreeTemplate.getItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
 
-            if( isParent ) {
+            if (isParent) {
                 treeNode.icon = "fa-list-ul";
                 treeNode.expandedIcon = "fa-list-ul";
                 treeNode.collapsedIcon = "fa-list-ul";
@@ -439,7 +449,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
 
                     this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, fileModelTreeEvent.fileItem);
-                    this.addIconsToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated,false);
+                    this.addIconsToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, false);
                     gobiiTreeLeafNodeTobeMutated.required = fileModelTreeEvent.fileItem.getRequired();
                     if (this.selectedGobiiNodes.indexOf(gobiiTreeLeafNodeTobeMutated) === -1) {
                         this.selectedGobiiNodes.push(gobiiTreeLeafNodeTobeMutated);

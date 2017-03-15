@@ -219,10 +219,22 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         treeNode.expandedIcon = "fa-columns";
                         treeNode.collapsedIcon = "fa-columns";
                     }
+                    else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE) {
+                        treeNode.icon = "fa-file-excel-o";
+                        treeNode.expandedIcon = "fa-file-excel-o";
+                        treeNode.collapsedIcon = "fa-file-excel-o";
+                    }
                     else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
-                        treeNode.icon = "fa-eyedropper";
-                        treeNode.expandedIcon = "fa-eyedropper";
-                        treeNode.collapsedIcon = "fa-eyedropper";
+                        if (isParent) {
+                            treeNode.icon = "fa-list-ul";
+                            treeNode.expandedIcon = "fa-list-ul";
+                            treeNode.collapsedIcon = "fa-list-ul";
+                        }
+                        else {
+                            treeNode.icon = "fa-map-marker";
+                            treeNode.expandedIcon = "fa-map-marker";
+                            treeNode.collapsedIcon = "fa-map-marker";
+                        }
                     }
                     else if (statusTreeTemplate.getItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE) {
                         treeNode.icon = "fa-file-excel-o";

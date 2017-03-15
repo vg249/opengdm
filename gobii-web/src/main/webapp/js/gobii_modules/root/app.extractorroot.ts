@@ -784,6 +784,7 @@ export class ExtractorRoot implements OnInit {
         let submitterContactid: number = null;
         let jobId: string = null;
         let markerFileName: string = null;
+        let sampleFileName: string = null;
         scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(
             fileItems => {
 
@@ -801,6 +802,14 @@ export class ExtractorRoot implements OnInit {
 
                 if (fileItemMarkerFile != null) {
                     markerFileName = fileItemMarkerFile.getItemId();
+                }
+
+                let fileItemSampleFile: GobiiFileItem = fileItems.find(item => {
+                    return item.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE
+                });
+
+                if (fileItemSampleFile != null) {
+                    sampleFileName = fileItemSampleFile.getItemId();
                 }
 
                 let submitterFileItem: GobiiFileItem = fileItems.find(item => {
@@ -859,6 +868,15 @@ export class ExtractorRoot implements OnInit {
                             return mi.getItemId()
                         });
 
+                let sampleList: string[] =
+                    fileItems
+                        .filter(fi => {
+                            return fi.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM
+                        })
+                        .map(mi => {
+                            return mi.getItemId()
+                        });
+
                 if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
                     fileItems
@@ -894,6 +912,18 @@ export class ExtractorRoot implements OnInit {
                         datSetTypeName,
                         platformIds));
                 } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+                    gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
+                        false,
+                        null,
+                        null,
+                        null,
+                        this.gobiiExtractFilterType,
+                        null,
+                        sampleList,
+                        sampleFileName,
+                        null,
+                        datSetTypeName,
+                        platformIds));
                 } else {
                     this.handleAddMessage("Unhandled extract filter type: " + GobiiExtractFilterType[this.gobiiExtractFilterType]);
                 }
