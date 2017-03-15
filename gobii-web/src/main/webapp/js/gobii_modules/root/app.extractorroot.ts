@@ -103,6 +103,8 @@ import {FileName} from "../model/file_name";
                         </div>
 
                         <div *ngIf="displaySelectorDataType">
+                            <BR>
+                            <BR>
                             <label class="the-label">Dataset Types:</label><BR>
                             <name-id-list-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
