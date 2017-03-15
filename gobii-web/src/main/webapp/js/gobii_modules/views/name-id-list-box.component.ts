@@ -31,12 +31,13 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
 
 })
 
-export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck  {
+export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     //private uniqueId:string;
 
     differ: any;
-    constructor(private _nameIdService:NameIdService,
+
+    constructor(private _nameIdService: NameIdService,
                 private _fileModelTreeService: FileModelTreeService,
                 private differs: KeyValueDiffers) {
 
@@ -45,30 +46,38 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck  {
 
     } // ctor
 
+    private notificationSent = false;
+
     ngOnInit(): any {
 
         // entityFilterValue and entityFilter must either have values or be null.
-        if (this._nameIdService.validateRequest(this.nameIdRequestParams) ) {
-            this.initializeNameIds();
-        }
+        // if (this._nameIdService.validateRequest(this.nameIdRequestParams) ) {
+        //     this.initializeNameIds();
+        // }
     }
 
 
     private initializeNameIds() {
-        let scope$ = this;
-        this._nameIdService.get(this.nameIdRequestParams)
-            .subscribe(nameIds => {
-                if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.nameIdList = nameIds;
-                    scope$.selectedNameId = nameIds[0].id;
-                    if (this.notifyOnInit && nameIds[0].name != "<none>"  ) {
-                        this.updateTreeService(nameIds[0]);
-                    }
-                }
-            },
-            responseHeader => {
-                this.handleHeaderStatus(responseHeader);
-            });
+
+        if (!this.notificationSent) {
+            let scope$ = this;
+            this._nameIdService.get(this.nameIdRequestParams)
+                .subscribe(nameIds => {
+                        if (nameIds && ( nameIds.length > 0 )) {
+                            scope$.nameIdList = nameIds;
+                            scope$.selectedNameId = nameIds[0].id;
+                            if (this.notifyOnInit
+                                && !this.notificationSent
+                                && scope$.nameIdList [0].name != "<none>") {
+                                this.updateTreeService(scope$.nameIdList [0]);
+                                this.notificationSent = true;
+                            }
+                        }
+                    },
+                    responseHeader => {
+                        this.handleHeaderStatus(responseHeader);
+                    });
+        }
     }
 
     // useg
@@ -77,7 +86,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck  {
     private notifyOnInit: boolean = false;
     // DtoRequestItemNameIds expects the value to be null if it's not set (not "UNKNOWN")
 
-    private nameIdRequestParams:NameIdRequestParams;
+    private nameIdRequestParams: NameIdRequestParams;
 
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
@@ -127,7 +136,6 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck  {
     }
 
 
-
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
         if (changes['gobiiExtractFilterType']
@@ -136,16 +144,19 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck  {
 
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
+                this.notificationSent = false;
 
                 this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
 
+                let scope$ = this;
                 this._fileModelTreeService
                     .fileItemNotifications()
                     .subscribe(fileItem => {
                         if (fileItem.getProcessType() === ProcessType.NOTIFY
                             && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
 
-                            this.initializeNameIds();
+                            scope$.initializeNameIds();
+
 
                         }
                     });
@@ -182,8 +193,8 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck  {
 
         var changes = this.differ.diff(this.nameIdRequestParams);
 
-        if(changes) {
-            if (this._nameIdService.validateRequest(this.nameIdRequestParams) ) {
+        if (changes) {
+            if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
                 this.initializeNameIds();
             }
         }
