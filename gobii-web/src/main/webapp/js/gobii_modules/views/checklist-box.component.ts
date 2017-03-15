@@ -16,8 +16,7 @@ import {ExtractorItemType} from "../model/file-model-node";
 
 @Component({
     selector: 'checklist-box',
-    inputs: ['fileItemEventChange',
-        'gobiiExtractFilterType',
+    inputs: ['gobiiExtractFilterType',
         'nameIdRequestParams'],
     outputs: ['onItemSelected',
         'onItemChecked',
@@ -128,7 +127,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
         arg.currentTarget.style = "background-color:#b3d9ff";
         this.previousSelectedItem = arg.currentTarget;
 
-        let idValue:string = arg.currentTarget.children[0].value;
+        let idValue: string = arg.currentTarget.children[0].value;
         let selectedFileItem: GobiiFileItem =
             this.fileItemEvents.filter(e => {
                 return e.getItemId() === idValue;
@@ -222,38 +221,58 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
 
     ngOnInit(): any {
 
+        this._fileModelTreeService
+            .fileItemNotifications()
+            .subscribe(eventedFileItem => {
+
+                if (eventedFileItem) {
+                    let itemToChange: GobiiFileItem =
+                        this.fileItemEvents.find(e => {
+                            return e.getEntityType() == eventedFileItem.getEntityType()
+                                && e.getItemName() == eventedFileItem.getItemName()
+                        });
+
+                    //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
+                    if (itemToChange) {
+                        itemToChange.setProcessType(eventedFileItem.getProcessType());
+                        itemToChange.setChecked(eventedFileItem.getChecked());
+                        this.updateCheckedItemHistory(itemToChange);
+                    }
+                }
+                
+            });
+        
+        
         if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
             this.initializeNameIds();
         }
     }
 
-    private eventedFileItem: GobiiFileItem;
-
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
         let bar: string = "foo";
 
-        if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
-
-            this.eventedFileItem = changes['fileItemEventChange'].currentValue;
-
-            if (this.eventedFileItem) {
-                let itemToChange: GobiiFileItem =
-                    this.fileItemEvents.find(e => {
-                        return e.getEntityType() == this.eventedFileItem.getEntityType()
-                            // && e.getItemId() == this.eventedFileItem.getItemId() -- the tree does not cash item IDs
-                            && e.getItemName() == this.eventedFileItem.getItemName()
-                    });
-
-                //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
-                if (itemToChange) {
-                    itemToChange.setProcessType(this.eventedFileItem.getProcessType());
-                    itemToChange.setChecked(this.eventedFileItem.getChecked());
-                    this.updateCheckedItemHistory(itemToChange);
-                }
-            }
-
-        }
+        // if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
+        //
+        //     this.eventedFileItem = changes['fileItemEventChange'].currentValue;
+        //
+        //     if (this.eventedFileItem) {
+        //         let itemToChange: GobiiFileItem =
+        //             this.fileItemEvents.find(e => {
+        //                 return e.getEntityType() == this.eventedFileItem.getEntityType()
+        //                     // && e.getItemId() == this.eventedFileItem.getItemId() -- the tree does not cash item IDs
+        //                     && e.getItemName() == this.eventedFileItem.getItemName()
+        //             });
+        //
+        //         //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
+        //         if (itemToChange) {
+        //             itemToChange.setProcessType(this.eventedFileItem.getProcessType());
+        //             itemToChange.setChecked(this.eventedFileItem.getChecked());
+        //             this.updateCheckedItemHistory(itemToChange);
+        //         }
+        //     }
+        //
+        // }
 
         if (changes['gobiiExtractFilterType']
             && ( changes['gobiiExtractFilterType'].currentValue != null )

@@ -22,7 +22,6 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
     outputs: ['onItemChecked', 'onAddStatusMessage'],
     template: `<checklist-box
                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                    [fileItemEventChange] = "datasetFileItemEventChange"
                     [nameIdRequestParams] = "nameIdRequestParamsDataset"
                     (onError) = "handleAddStatusMessage($event)"
                     (onItemSelected)="handleItemSelected($event)">
@@ -78,7 +77,6 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private analysisNames: string[] = [];
     private analysisTypes: string[] = [];
     private nameIdListAnalysisTypes: NameId[];
-    private datasetFileItemEventChange: GobiiFileItem;
 
 
     private handleItemChecked(arg: GobiiFileItem) {
@@ -203,30 +201,10 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     ngOnInit(): any {
 
-        this._fileModelTreeService
-            .fileItemNotifications()
-            .subscribe(fileItem => {
-                this.datasetFileItemEventChange = fileItem;
-            });
 
         if( this.experimentId != null ) {
             this.nameIdRequestParamsDataset.setEntityFilterValue(this.experimentId);
         }
-
-        //let scope$ = this;
-        // scope$._dtoRequestServiceNameId
-        //     .get(new DtoRequestItemNameIds(EntityType.CvTerms,
-        //         EntityFilter.BYTYPENAME,
-        //         CvFilters.get(CvFilterType.ANALYSIS_TYPE)))
-        //     .subscribe(nameIdList => {
-        //             scope$.nameIdListAnalysisTypes = nameIdList;
-        //             if (this.experimentId) {
-        //                 this.setList();
-        //             }
-        //         },
-        //         dtoHeaderResponse => {
-        //             dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
-        //         });
 
     }
 

@@ -164,6 +164,23 @@ System.register(["@angular/core", "../model/type-process", "../model/gobii-file-
                     }
                 }; // setList()
                 CheckListBoxComponent.prototype.ngOnInit = function () {
+                    var _this = this;
+                    this._fileModelTreeService
+                        .fileItemNotifications()
+                        .subscribe(function (eventedFileItem) {
+                        if (eventedFileItem) {
+                            var itemToChange = _this.fileItemEvents.find(function (e) {
+                                return e.getEntityType() == eventedFileItem.getEntityType()
+                                    && e.getItemName() == eventedFileItem.getItemName();
+                            });
+                            //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
+                            if (itemToChange) {
+                                itemToChange.setProcessType(eventedFileItem.getProcessType());
+                                itemToChange.setChecked(eventedFileItem.getChecked());
+                                _this.updateCheckedItemHistory(itemToChange);
+                            }
+                        }
+                    });
                     if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
                         this.initializeNameIds();
                     }
@@ -171,21 +188,27 @@ System.register(["@angular/core", "../model/type-process", "../model/gobii-file-
                 CheckListBoxComponent.prototype.ngOnChanges = function (changes) {
                     var _this = this;
                     var bar = "foo";
-                    if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
-                        this.eventedFileItem = changes['fileItemEventChange'].currentValue;
-                        if (this.eventedFileItem) {
-                            var itemToChange = this.fileItemEvents.find(function (e) {
-                                return e.getEntityType() == _this.eventedFileItem.getEntityType()
-                                    && e.getItemName() == _this.eventedFileItem.getItemName();
-                            });
-                            //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
-                            if (itemToChange) {
-                                itemToChange.setProcessType(this.eventedFileItem.getProcessType());
-                                itemToChange.setChecked(this.eventedFileItem.getChecked());
-                                this.updateCheckedItemHistory(itemToChange);
-                            }
-                        }
-                    }
+                    // if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
+                    //
+                    //     this.eventedFileItem = changes['fileItemEventChange'].currentValue;
+                    //
+                    //     if (this.eventedFileItem) {
+                    //         let itemToChange: GobiiFileItem =
+                    //             this.fileItemEvents.find(e => {
+                    //                 return e.getEntityType() == this.eventedFileItem.getEntityType()
+                    //                     // && e.getItemId() == this.eventedFileItem.getItemId() -- the tree does not cash item IDs
+                    //                     && e.getItemName() == this.eventedFileItem.getItemName()
+                    //             });
+                    //
+                    //         //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
+                    //         if (itemToChange) {
+                    //             itemToChange.setProcessType(this.eventedFileItem.getProcessType());
+                    //             itemToChange.setChecked(this.eventedFileItem.getChecked());
+                    //             this.updateCheckedItemHistory(itemToChange);
+                    //         }
+                    //     }
+                    //
+                    // }
                     if (changes['gobiiExtractFilterType']
                         && (changes['gobiiExtractFilterType'].currentValue != null)
                         && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
@@ -218,8 +241,7 @@ System.register(["@angular/core", "../model/type-process", "../model/gobii-file-
             CheckListBoxComponent = __decorate([
                 core_1.Component({
                     selector: 'checklist-box',
-                    inputs: ['fileItemEventChange',
-                        'gobiiExtractFilterType',
+                    inputs: ['gobiiExtractFilterType',
                         'nameIdRequestParams'],
                     outputs: ['onItemSelected',
                         'onItemChecked',
