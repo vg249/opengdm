@@ -191,6 +191,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
         if (scope$.nameIdList && ( scope$.nameIdList.length > 0 )) {
 
             scope$.fileItemEvents = [];
+            scope$.checkedFileItemHistory = [];
             scope$.nameIdList.forEach(n => {
                 let currentFileItem: GobiiFileItem =
                     GobiiFileItem.build(
@@ -248,31 +249,16 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
         }
     }
 
+    private resetList() {
+        if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
+            this.initializeNameIds();
+        } else {
+            this.setList([]);
+        }
+    }
+
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
-        let bar: string = "foo";
-
-        // if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
-        //
-        //     this.eventedFileItem = changes['fileItemEventChange'].currentValue;
-        //
-        //     if (this.eventedFileItem) {
-        //         let itemToChange: GobiiFileItem =
-        //             this.fileItemEvents.find(e => {
-        //                 return e.getEntityType() == this.eventedFileItem.getEntityType()
-        //                     // && e.getItemId() == this.eventedFileItem.getItemId() -- the tree does not cash item IDs
-        //                     && e.getItemName() == this.eventedFileItem.getItemName()
-        //             });
-        //
-        //         //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
-        //         if (itemToChange) {
-        //             itemToChange.setProcessType(this.eventedFileItem.getProcessType());
-        //             itemToChange.setChecked(this.eventedFileItem.getChecked());
-        //             this.updateCheckedItemHistory(itemToChange);
-        //         }
-        //     }
-        //
-        // }
 
         if (changes['gobiiExtractFilterType']
             && ( changes['gobiiExtractFilterType'].currentValue != null )
@@ -282,6 +268,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
 
 
                 this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
+                this.resetList();
 
                 this._fileModelTreeService
                     .fileItemNotifications()
@@ -289,7 +276,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
                         if (fileItem.getProcessType() === ProcessType.NOTIFY
                             && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
 
-                            this.initializeNameIds();
+                            this.resetList();
 
                         }
                     });
@@ -305,11 +292,8 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
         var changes = this.differ.diff(this.nameIdRequestParams);
 
         if (changes) {
-            if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-                this.initializeNameIds();
-            } else {
-                this.setList([]);
-            }
+
+            this.resetList();
         }
     }
 

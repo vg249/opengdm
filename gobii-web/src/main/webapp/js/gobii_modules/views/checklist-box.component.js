@@ -144,6 +144,7 @@ System.register(["@angular/core", "../model/type-process", "../model/gobii-file-
                     scope$.nameIdList = nameIdList;
                     if (scope$.nameIdList && (scope$.nameIdList.length > 0)) {
                         scope$.fileItemEvents = [];
+                        scope$.checkedFileItemHistory = [];
                         scope$.nameIdList.forEach(function (n) {
                             var currentFileItem = gobii_file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                 .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
@@ -185,41 +186,28 @@ System.register(["@angular/core", "../model/type-process", "../model/gobii-file-
                         this.initializeNameIds();
                     }
                 };
+                CheckListBoxComponent.prototype.resetList = function () {
+                    if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
+                        this.initializeNameIds();
+                    }
+                    else {
+                        this.setList([]);
+                    }
+                };
                 CheckListBoxComponent.prototype.ngOnChanges = function (changes) {
                     var _this = this;
-                    var bar = "foo";
-                    // if (changes['fileItemEventChange'] && changes['fileItemEventChange'].currentValue) {
-                    //
-                    //     this.eventedFileItem = changes['fileItemEventChange'].currentValue;
-                    //
-                    //     if (this.eventedFileItem) {
-                    //         let itemToChange: GobiiFileItem =
-                    //             this.fileItemEvents.find(e => {
-                    //                 return e.getEntityType() == this.eventedFileItem.getEntityType()
-                    //                     // && e.getItemId() == this.eventedFileItem.getItemId() -- the tree does not cash item IDs
-                    //                     && e.getItemName() == this.eventedFileItem.getItemName()
-                    //             });
-                    //
-                    //         //let indexOfItemToChange:number = this.fileItemEvents.indexOf(arg.currentTarget.name);
-                    //         if (itemToChange) {
-                    //             itemToChange.setProcessType(this.eventedFileItem.getProcessType());
-                    //             itemToChange.setChecked(this.eventedFileItem.getChecked());
-                    //             this.updateCheckedItemHistory(itemToChange);
-                    //         }
-                    //     }
-                    //
-                    // }
                     if (changes['gobiiExtractFilterType']
                         && (changes['gobiiExtractFilterType'].currentValue != null)
                         && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
                             this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
+                            this.resetList();
                             this._fileModelTreeService
                                 .fileItemNotifications()
                                 .subscribe(function (fileItem) {
                                 if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
                                     && fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                                    _this.initializeNameIds();
+                                    _this.resetList();
                                 }
                             });
                         } // if we have a new filter type
@@ -228,12 +216,7 @@ System.register(["@angular/core", "../model/type-process", "../model/gobii-file-
                 CheckListBoxComponent.prototype.ngDoCheck = function () {
                     var changes = this.differ.diff(this.nameIdRequestParams);
                     if (changes) {
-                        if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-                            this.initializeNameIds();
-                        }
-                        else {
-                            this.setList([]);
-                        }
+                        this.resetList();
                     }
                 };
                 return CheckListBoxComponent;
