@@ -23,6 +23,7 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
     template: `<checklist-box
                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
                     [nameIdRequestParams] = "nameIdRequestParamsDataset"
+                    [retainHistory] = "true"
                     (onError) = "handleAddStatusMessage($event)"
                     (onItemSelected)="handleItemSelected($event)">
                 </checklist-box>

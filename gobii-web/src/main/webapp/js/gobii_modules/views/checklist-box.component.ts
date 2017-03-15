@@ -17,7 +17,8 @@ import {ExtractorItemType} from "../model/file-model-node";
 @Component({
     selector: 'checklist-box',
     inputs: ['gobiiExtractFilterType',
-        'nameIdRequestParams'],
+        'nameIdRequestParams',
+    'retainHistory'],
     outputs: ['onItemSelected',
         'onItemChecked',
         'onError'],
@@ -49,6 +50,7 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
         this.differ = differs.find({}).create(null);
     } // ctor
 
+    private retainHistory:boolean;
     private nameIdRequestParams: NameIdRequestParams;
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     private onError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
@@ -191,7 +193,9 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
         if (scope$.nameIdList && ( scope$.nameIdList.length > 0 )) {
 
             scope$.fileItemEvents = [];
-            scope$.checkedFileItemHistory = [];
+            if( !scope$.retainHistory ) {
+                scope$.checkedFileItemHistory = [];
+            }
             scope$.nameIdList.forEach(n => {
                 let currentFileItem: GobiiFileItem =
                     GobiiFileItem.build(

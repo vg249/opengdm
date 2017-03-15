@@ -132,6 +132,7 @@ import {FileName} from "../model/file_name";
                             <checklist-box
                                 [nameIdRequestParams] = "nameIdRequestParamsPlatforms"
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                [retainHistory] = "false"
                                 (onAddStatusMessage) = "handleHeaderStatusMessage($event)">
                             </checklist-box>
                          </div>
