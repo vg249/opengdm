@@ -217,7 +217,6 @@ public class GobiiExtractor {
 				rmIfExist(chrLengthFile);
 				rmIfExist(markerPosFile);
 				rmIfExist(extendedMarkerFile);
-				rmIfExist(mapsetFile);
 				ErrorLogger.logDebug("Extractor","DataSet "+dataSetId+" Created");
 
 				// Adding "/" back to the bi-allelic data
