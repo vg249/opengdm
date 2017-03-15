@@ -258,23 +258,23 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             treeNode.expandedIcon = "fa-columns";
             treeNode.collapsedIcon = "fa-columns";
         } else if (statusTreeTemplate.getItemType() === ExtractorItemType.SAMPLE_FILE) {
-            treeNode.icon = "fa-file-excel-o";
-            treeNode.expandedIcon = "fa-file-excel-o";
-            treeNode.collapsedIcon = "fa-file-excel-o";
+            treeNode.icon = "fa-file-text-o";
+            treeNode.expandedIcon = "fa-file-text-o";
+            treeNode.collapsedIcon = "fa-file-text-o";
         } else if (statusTreeTemplate.getItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
             if (isParent) {
                 treeNode.icon = "fa-list-ul";
                 treeNode.expandedIcon = "fa-list-ul";
                 treeNode.collapsedIcon = "fa-list-ul";
             } else {
-                treeNode.icon = "fa-map-marker";
-                treeNode.expandedIcon = "fa-map-marker";
-                treeNode.collapsedIcon = "fa-map-marker";
+                treeNode.icon = "fa-eyedropper";
+                treeNode.expandedIcon = "fa-eyedropper";
+                treeNode.collapsedIcon = "fa-eyedropper";
             }
         } else if (statusTreeTemplate.getItemType() === ExtractorItemType.MARKER_FILE) {
-            treeNode.icon = "fa-file-excel-o";
-            treeNode.expandedIcon = "fa-file-excel-o";
-            treeNode.collapsedIcon = "fa-file-excel-o";
+            treeNode.icon = "fa-file-text-o";
+            treeNode.expandedIcon = "fa-file-text-o";
+            treeNode.collapsedIcon = "fa-file-text-o";
         } else if (statusTreeTemplate.getItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
 
             if (isParent) {

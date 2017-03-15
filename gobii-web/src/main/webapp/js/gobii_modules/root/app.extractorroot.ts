@@ -877,7 +877,9 @@ export class ExtractorRoot implements OnInit {
                     return item.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_TYPE;
                 });
 
-                sampleListType = GobiiSampleListType[sampleListTypeFileItem.getItemId()];
+                if( sampleListTypeFileItem != null ) {
+                    sampleListType = GobiiSampleListType[sampleListTypeFileItem.getItemId()];
+                }
 
                 if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 

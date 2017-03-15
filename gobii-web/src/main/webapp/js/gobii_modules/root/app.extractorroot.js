@@ -485,7 +485,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         var sampleListTypeFileItem = fileItems.find(function (item) {
                             return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE;
                         });
-                        sampleListType = type_extractor_sample_list_1.GobiiSampleListType[sampleListTypeFileItem.getItemId()];
+                        if (sampleListTypeFileItem != null) {
+                            sampleListType = type_extractor_sample_list_1.GobiiSampleListType[sampleListTypeFileItem.getItemId()];
+                        }
                         if (_this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
                             fileItems
                                 .filter(function (item) {
