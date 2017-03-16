@@ -1,19 +1,20 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.filesystem.ExtractorInstructionsDAO;
+import org.gobiiproject.gobiidao.filesystem.InstructionFilesDAO;
+import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.DtoMapExtractorInstructions;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -22,10 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.security.MessageDigest;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 4/12/2016.
@@ -39,7 +37,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
     private final String DATA_FILE_EXT = ".txt";
 
     @Autowired
-    private ExtractorInstructionsDAO extractorInstructionsDAO;
+    private InstructionFilesDAO extractorInstructionsDAO;
 
     @Autowired
     DtoMapContact dtoMapContact;
@@ -251,8 +249,9 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
             } // iterate instructions/files
 
             if (!extractorInstructionsDAO.doesPathExist(instructionFileFqpn)) {
+                InstructionFileAccess<List<GobiiExtractorInstruction>> instructionFileAccess = new InstructionFileAccess<>();
 
-                if (extractorInstructionsDAO.writeInstructions(instructionFileFqpn,
+                if (instructionFileAccess.writeInstructions(instructionFileFqpn,
                         returnVal.getGobiiExtractorInstructions())) {
 
                     returnVal.setJobId(extractorInstructionFilesDTO.getInstructionFileName());
@@ -306,7 +305,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 //check if file  is in InProgress
 
                 List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = extractorInstructionsDAO
-                        .getGobiiExtractorInstructionsFromFile(fileDirExtractorInProgressFqpn);
+                        .getExtractorInstructions(fileDirExtractorInProgressFqpn);
 
                 gobiiExtractorInstructionsWithStatus = setGobiiExtractorInstructionsStatus(gobiiExtractorInstructionsFromFile,
                         GobiiFileProcessDir.EXTRACTOR_INPROGRESS);
@@ -318,7 +317,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 //check if file just started
 
                 List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = extractorInstructionsDAO
-                        .getGobiiExtractorInstructionsFromFile(fileDirExtractorInstructionsFqpn);
+                        .getExtractorInstructions(fileDirExtractorInstructionsFqpn);
 
                 gobiiExtractorInstructionsWithStatus = setGobiiExtractorInstructionsStatus(gobiiExtractorInstructionsFromFile,
                         GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS);
@@ -329,7 +328,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 //check if file  is already done
 
                 List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = extractorInstructionsDAO
-                        .getGobiiExtractorInstructionsFromFile(fileDirExtractorDoneFqpn);
+                        .getExtractorInstructions(fileDirExtractorDoneFqpn);
 
                 gobiiExtractorInstructionsWithStatus = setGobiiExtractorInstructionsStatus(gobiiExtractorInstructionsFromFile,
                         GobiiFileProcessDir.EXTRACTOR_DONE);

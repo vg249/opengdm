@@ -14,12 +14,13 @@ import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
+import org.gobiiproject.gobiidao.filesystem.impl.InstructionFilesDAOImpl;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.filesystem.impl.LoaderInstructionsDAOImpl;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.CropDbConfig;
@@ -227,7 +228,8 @@ public class GobiiFileReader {
 				ArrayList<GobiiLoaderInstruction> justTheOne=new ArrayList<>();
 				justTheOne.add(inst);
 				try {
-					new LoaderInstructionsDAOImpl().writeInstructions(tmpFile, justTheOne );
+					InstructionFileAccess<List<GobiiLoaderInstruction>> instructionFileAccess = new InstructionFileAccess<>();
+					instructionFileAccess.writeInstructions(tmpFile, justTheOne );
 				} catch (GobiiDaoException e) {
 					logError("GobiiDAO","Instruction Writing Error",e);
 				}
