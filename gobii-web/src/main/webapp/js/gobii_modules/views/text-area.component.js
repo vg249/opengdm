@@ -27,6 +27,7 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 TextAreaComponent.prototype.handleTextboxDataComplete = function (arg) {
                     var items = arg.split("\n");
                     this.onTextboxDataComplete.emit(items);
+                    this.textValue = '';
                 };
                 return TextAreaComponent;
             }());

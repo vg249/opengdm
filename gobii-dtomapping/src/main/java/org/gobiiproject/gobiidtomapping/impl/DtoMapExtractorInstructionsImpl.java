@@ -36,12 +36,42 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
     Logger LOGGER = LoggerFactory.getLogger(DtoMapExtractorInstructionsImpl.class);
 
     private final String INSTRUCTION_FILE_EXT = ".json";
+    private final String DATA_FILE_EXT = ".txt";
 
     @Autowired
     private ExtractorInstructionsDAO extractorInstructionsDAO;
 
     @Autowired
     DtoMapContact dtoMapContact;
+
+
+    @Override
+    public void writeDataFile(String cropType, GobiiExtractFilterType gobiiExtractFilterType, String jobId, byte[] byteArray) throws GobiiException {
+        ConfigSettings configSettings = new ConfigSettings();
+
+        try {
+
+            String instructionFileDirectory = configSettings.getProcessingPath(cropType,
+                    GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS);
+
+            this.createDirectories(instructionFileDirectory);
+
+            String fqpn = instructionFileDirectory + jobId;
+
+
+            fqpn += DATA_FILE_EXT;
+
+            this.extractorInstructionsDAO.writePlainFile(fqpn, byteArray);
+
+
+        } catch (GobiiException e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw e;
+        } catch (Exception e) {
+            LOGGER.error("Gobii Maping Error", e);
+            throw new GobiiException(e);
+        }
+    }
 
     private void createDirectories(String instructionFileDirectory) throws GobiiDaoException {
 
@@ -173,8 +203,9 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     } else if (currentGobiiDataSetExtract.getGobiiExtractFilterType()
                             .equals(GobiiExtractFilterType.BY_MARKER)) {
 
-                        if ((currentGobiiDataSetExtract.getMarkerList() == null) ||
-                                (currentGobiiDataSetExtract.getMarkerList().size() <= 0)) {
+                        if ((currentGobiiDataSetExtract.getListFileName() == null)
+                                && ((currentGobiiDataSetExtract.getMarkerList() == null) ||
+                                (currentGobiiDataSetExtract.getMarkerList().size() <= 0))) {
 
                             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                     GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
@@ -203,7 +234,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                 "The specified extraction type is unknown: "
                                         + currentGobiiDataSetExtract.getGobiiExtractFilterType());
                     }
-
 
 
                     if (!extractorInstructionsDAO.doesPathExist(extractorFileDestinationLocation)) {
