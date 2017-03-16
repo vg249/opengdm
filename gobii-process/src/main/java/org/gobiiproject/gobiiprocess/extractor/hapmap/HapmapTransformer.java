@@ -48,14 +48,16 @@ public class HapmapTransformer {
 		Scanner mapScanner = new Scanner(mapFile);
 		Scanner genotypeScanner = new Scanner(genotypeFile);
 
-		if (sampleScanner.hasNext()) {
+		if (sampleScanner.hasNextLine()) {
 			List<String> sampleHeaders = new ArrayList<>();
 			TreeMap<Integer, ArrayList<String>> sampleData = new TreeMap<>();
-			String[] headers = sampleScanner.next().split("\\t");
+			String[] headers = sampleScanner.nextLine().split("\\t");
+			ErrorLogger.logInfo("Extractor", headers.length + " sample header columns read");
 			for (int index = 0; index < headers.length; index++) {
 				sampleHeaders.add(headers[index].trim());
 				sampleData.put(index, new ArrayList<String>());
 			}
+			int sampleRowsNumber = 0;
 			while (sampleScanner.hasNextLine()) {
 				String[] sampleRecords = sampleScanner.nextLine().split("\\t");
 				for (int index = 0; index < sampleRecords.length; index++) {
@@ -64,7 +66,9 @@ public class HapmapTransformer {
 					}
 					sampleData.get(index).add(sampleRecords[index].trim());
 				}
+				sampleRowsNumber = sampleRowsNumber + 1;
 			}
+			ErrorLogger.logInfo("Extractor", sampleRowsNumber + " sample rows read");
 			sampleScanner.close();
 			try {
 				File out = new File(outFile);
@@ -89,8 +93,9 @@ public class HapmapTransformer {
 				fileWriter.flush();
 
 				List<String> markerHeaders = new ArrayList<String>();
-				if (markerScanner.hasNext()) {
-					headers = markerScanner.next().split("\\t");
+				if (markerScanner.hasNextLine()) {
+					headers = markerScanner.nextLine().split("\\t");
+					ErrorLogger.logInfo("Extractor", headers.length + " marker header columns read");
 					for (int index = 0; index < headers.length; index++) {
 						markerHeaders.add(headers[index].trim());
 					}
@@ -114,13 +119,16 @@ public class HapmapTransformer {
 						"panelLSID",
 						"QCcode"};
 				StringBuilder stringBuilderNewLine = new StringBuilder(StringUtils.join(newMarkerHeadersLine, "\t"));
+				stringBuilderNewLine.append("\t");
 
 				// Writing the map header into the current line if the map file exists
 				if(mapScanner != null) {
-					if (mapScanner.hasNext()) {
-						String mapHeadersLine = mapScanner.next();
-						stringBuilderNewLine.append(mapHeadersLine + "\t");
+					if (mapScanner.hasNextLine()) {
+						String mapHeadersLine = mapScanner.nextLine();
+						stringBuilderNewLine.append(mapHeadersLine);
+						stringBuilderNewLine.append("\t");
 						headers = mapHeadersLine.split("\\t");
+						ErrorLogger.logInfo("Extractor", headers.length + " map header columns read");
 						List<String> mapHeaders = new ArrayList<>();
 						for (int index = 0; index < headers.length; index++) {
 							mapHeaders.add(headers[index].trim());
@@ -137,12 +145,19 @@ public class HapmapTransformer {
 				stringBuilderNewLine.append(System.lineSeparator());
 				fileWriter.write(stringBuilderNewLine.toString());
 
-				while(markerScanner.hasNextLine() && genotypeScanner.hasNextLine()){
+				if (!(markerScanner.hasNextLine())) {
+					ErrorLogger.logInfo("Extractor","Marker data file empty");
+				}
+				if (!(genotypeScanner.hasNextLine())) {
+					ErrorLogger.logInfo("Extractor","Genotype data file empty");
+				}
+
+				int processedBothRowsNumber = 0;
+				while (markerScanner.hasNextLine() && genotypeScanner.hasNextLine()) {
 					// Writing the marker data line in alignment to the marker headers
 					// into the current line.
 					// All the other (new) marker header columns not used are left blank.
-					String markerLine = markerScanner.nextLine();
-					String[] markerLineParts = markerLine.split("\\t");
+					String[] markerLineParts = markerScanner.nextLine().split("\\t");
 					stringBuilderNewLine = new StringBuilder();
 					for (String newMarkerHeader : newMarkerHeadersLine) {
 						if (markerHeaders.contains(newMarkerHeader))
@@ -157,7 +172,9 @@ public class HapmapTransformer {
 					stringBuilderNewLine.append(genotypeScanner.nextLine());
 					stringBuilderNewLine.append(System.lineSeparator());
 					fileWriter.write(stringBuilderNewLine.toString());
+					processedBothRowsNumber = processedBothRowsNumber + 1;
 				}
+				ErrorLogger.logInfo("Extractor", processedBothRowsNumber + " processed rows read");
 
 				fileWriter.close();
 				markerScanner.close();

@@ -124,8 +124,15 @@ export class FileModelTreeService {
                     .setCardinality(CardinalityType.ONE_ONLY)
             );
 
+            // -- Sample List Type
+            submissionItemsForBySample.push(FileModelNode.build(ExtractorItemType.SAMPLE_LIST_TYPE, null)
+                .setCategoryType(ExtractorCategoryType.LEAF)
+                .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_TYPE])
+                .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_TYPE])
+                .setCardinality(CardinalityType.ONE_ONLY)
+            );
+
             // -- Platforms
-            let currentParent: FileModelNode = null;
             submissionItemsForBySample.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
                 .setCategoryType(ExtractorCategoryType.CONTAINER)
                 .setEntityType(EntityType.Platforms)
@@ -133,8 +140,8 @@ export class FileModelTreeService {
                 .setCardinality(CardinalityType.ZERO_OR_MORE)
             );
 
-
-            // -- Samples
+            // -- Samples Criteria
+            let currentParent: FileModelNode = null;
             submissionItemsForBySample
                 .push(currentParent =
                     FileModelNode.build(ExtractorItemType.ENTITY, null)
@@ -154,8 +161,12 @@ export class FileModelTreeService {
                             .setEntityType(EntityType.Projects)
                             .setEntityName(Labels.instance().entityNodeLabels[EntityType.Projects])
                             .setCardinality(CardinalityType.ZERO_OR_MORE)
-                        )
-                        .addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST_ITEM, currentParent)
+                        ).addChild(FileModelNode.build(ExtractorItemType.SAMPLE_FILE, currentParent)
+                        .setCategoryType(ExtractorCategoryType.LEAF)
+                        .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE])
+                        .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE])
+                        .setCardinality(CardinalityType.ZERO_OR_MORE)
+                        ).addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST_ITEM, currentParent)
                             .setCategoryType(ExtractorCategoryType.CONTAINER)
                             .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM])
                             .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM])
@@ -197,12 +208,12 @@ export class FileModelTreeService {
                         .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE])
                         .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE])
                         .setCardinality(CardinalityType.ZERO_OR_MORE)
-                    ).addChild(FileModelNode.build(ExtractorItemType.MARKER_LIST_ITEM, currentParent)
-                        .setCategoryType(ExtractorCategoryType.CONTAINER)
-                        .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM])
-                        .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM])
-                        .setCardinality(CardinalityType.ZERO_OR_MORE)
-                    )
+                        ).addChild(FileModelNode.build(ExtractorItemType.MARKER_LIST_ITEM, currentParent)
+                            .setCategoryType(ExtractorCategoryType.CONTAINER)
+                            .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM])
+                            .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM])
+                            .setCardinality(CardinalityType.ZERO_OR_MORE)
+                        )
                 );
 
 
@@ -348,17 +359,17 @@ export class FileModelTreeService {
     }
 
 
-    findFileModelNodeByUniqueId( fileModelNodes:FileModelNode[], fileModelNodeUniqueId: string): FileModelNode {
+    findFileModelNodeByUniqueId(fileModelNodes: FileModelNode[], fileModelNodeUniqueId: string): FileModelNode {
 
         let returnVal: FileModelNode = null;
 
-        for(let idx:number = 0; (returnVal == null) && ( idx < fileModelNodes.length); idx++ ) {
+        for (let idx: number = 0; (returnVal == null) && ( idx < fileModelNodes.length); idx++) {
 
-            let currentNode:FileModelNode = fileModelNodes[idx];
-            if( currentNode.getFileModelNodeUniqueId() === fileModelNodeUniqueId ) {
+            let currentNode: FileModelNode = fileModelNodes[idx];
+            if (currentNode.getFileModelNodeUniqueId() === fileModelNodeUniqueId) {
                 returnVal = currentNode;
             } else {
-                returnVal = this.findFileModelNodeByUniqueId(currentNode.getChildren(),fileModelNodeUniqueId);
+                returnVal = this.findFileModelNodeByUniqueId(currentNode.getChildren(), fileModelNodeUniqueId);
             }
         }
 
@@ -549,12 +560,12 @@ export class FileModelTreeService {
     }
 
     public getFileModelNode(gobiiExtractFilterType: GobiiExtractFilterType,
-                                 fileModelNodeUniqueId:string): Observable < FileModelNode >  {
+                            fileModelNodeUniqueId: string): Observable < FileModelNode > {
 
         return Observable.create(observer => {
 
-            let fileModelNodes:FileModelNode[] = this.fileModelNodeTree.get(gobiiExtractFilterType);
-            let fileModeNode: FileModelNode = this.findFileModelNodeByUniqueId(fileModelNodes,fileModelNodeUniqueId);
+            let fileModelNodes: FileModelNode[] = this.fileModelNodeTree.get(gobiiExtractFilterType);
+            let fileModeNode: FileModelNode = this.findFileModelNodeByUniqueId(fileModelNodes, fileModelNodeUniqueId);
             observer.next(fileModeNode);
             observer.complete();
         });

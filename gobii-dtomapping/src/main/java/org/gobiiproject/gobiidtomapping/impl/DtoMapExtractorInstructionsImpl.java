@@ -189,8 +189,9 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             .equals(GobiiExtractFilterType.BY_SAMPLE)) {
 
 
-                        if ((currentGobiiDataSetExtract.getSampleList() == null) ||
-                                (currentGobiiDataSetExtract.getSampleList().size() <= 0)) {
+                        if ((currentGobiiDataSetExtract.getListFileName() == null)
+                                && ((currentGobiiDataSetExtract.getSampleList() == null) ||
+                                (currentGobiiDataSetExtract.getSampleList().size() <= 0))) {
 
                             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                     GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
@@ -199,6 +200,18 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                             + " but no sample list is specified");
                         }
 
+                        String uniqueSegment = currentExtractorInstruction.getContactEmail()
+                                +
+                                "_"
+                                + DateUtils.makeDateIdString();
+
+                        extractorFileDestinationLocation =
+                                extractionFileDestinationPath
+                                        + formatName
+                                        + "/"
+                                        + "sl_"
+                                        + uniqueSegment
+                                        + "/";
 
                     } else if (currentGobiiDataSetExtract.getGobiiExtractFilterType()
                             .equals(GobiiExtractFilterType.BY_MARKER)) {
