@@ -191,7 +191,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                     return c.crop === serverCrop_1;
                                 })[0];
                             scope$.currentStatus = "GOBII Server " + gobiiVersion;
-                            scope$.messages.push("Connected to database: " + scope$.selectedServerConfig.crop);
+                            scope$.handleAddMessage("Connected to database: " + scope$.selectedServerConfig.crop);
                             //scope$.initializeContactsForSumission();
                             scope$.initializeContactsForPi();
                         }
@@ -199,7 +199,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             scope$.serverConfigList = [new server_config_1.ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
                         }
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retrieving server configs: "
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retrieving server configs: "
                             + m.message); });
                     });
                 }; // initializeServerConfigs()
@@ -293,7 +293,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         }
                         scope$.initializeProjectNameIds();
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retrieving contacts for PIs: "
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retrieving contacts for PIs: "
                             + m.message); });
                     });
                 };
@@ -331,7 +331,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         }
                         _this.initializeExperimentNameIds();
                     }, function (dtoHeaderResponse) {
-                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retriving project names: "
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retriving project names: "
                             + m.message); });
                     });
                 };
@@ -354,7 +354,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                 scope$.selectedExperimentId = undefined;
                             }
                         }, function (dtoHeaderResponse) {
-                            dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.messages.push("Retreving experiment names: "
+                            dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retreving experiment names: "
                                 + m.message); });
                         });
                     }
@@ -364,7 +364,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     }
                 };
                 ExtractorRoot.prototype.handleAddMessage = function (arg) {
-                    this.messages.push(arg);
+                    this.messages.unshift(arg);
                 };
                 ExtractorRoot.prototype.handleHeaderStatusMessage = function (statusMessage) {
                     this.handleAddMessage(statusMessage.message);
@@ -514,7 +514,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this._dtoRequestServiceExtractorFile.post(new dto_request_item_extractor_submission_1.DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
                         .subscribe(function (extractorInstructionFilesDTO) {
                         extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
-                        scope$.messages.push("Extractor instruction file created on server: "
+                        scope$.handleAddMessage("Extractor instruction file created on server: "
                             + extractorInstructionFilesDTOResponse.getInstructionFileName());
                     }, function (headerResponse) {
                         scope$.handleResponseHeader(headerResponse);

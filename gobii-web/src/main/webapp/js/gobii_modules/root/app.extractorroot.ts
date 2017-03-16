@@ -266,6 +266,8 @@ export class ExtractorRoot implements OnInit {
 //    private selectedExportTypeEvent:GobiiExtractFilterType;
     private datasetFileItemEvents: GobiiFileItem[] = [];
     private gobiiDatasetExtracts: GobiiDataSetExtract[] = [];
+
+
     private messages: string[] = [];
 
 
@@ -337,7 +339,7 @@ export class ExtractorRoot implements OnInit {
                             )[0];
 
                     scope$.currentStatus = "GOBII Server " + gobiiVersion;
-                    scope$.messages.push("Connected to database: " + scope$.selectedServerConfig.crop);
+                    scope$.handleAddMessage("Connected to database: " + scope$.selectedServerConfig.crop);
                     //scope$.initializeContactsForSumission();
                     scope$.initializeContactsForPi();
 
@@ -346,7 +348,7 @@ export class ExtractorRoot implements OnInit {
                 }
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving server configs: "
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving server configs: "
                     + m.message))
             }
         )
@@ -541,7 +543,7 @@ export class ExtractorRoot implements OnInit {
 
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retrieving contacts for PIs: "
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving contacts for PIs: "
                     + m.message))
             });
     }
@@ -600,7 +602,7 @@ export class ExtractorRoot implements OnInit {
                 this.initializeExperimentNameIds();
             },
             dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retriving project names: "
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retriving project names: "
                     + m.message))
             });
     }
@@ -638,7 +640,7 @@ export class ExtractorRoot implements OnInit {
                     }
                 },
                 dtoHeaderResponse => {
-                    dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Retreving experiment names: "
+                    dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retreving experiment names: "
                         + m.message))
                 });
         } else {
@@ -694,7 +696,7 @@ export class ExtractorRoot implements OnInit {
     private dataSetIdToUncheck: number;
 
     private handleAddMessage(arg) {
-        this.messages.push(arg);
+        this.messages.unshift(arg);
     }
 
 
@@ -955,7 +957,7 @@ export class ExtractorRoot implements OnInit {
         this._dtoRequestServiceExtractorFile.post(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
             .subscribe(extractorInstructionFilesDTO => {
                     extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
-                    scope$.messages.push("Extractor instruction file created on server: "
+                    scope$.handleAddMessage("Extractor instruction file created on server: "
                         + extractorInstructionFilesDTOResponse.getInstructionFileName());
                 },
                 headerResponse => {
