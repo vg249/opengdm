@@ -516,6 +516,16 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
                         scope$.handleAddMessage("Extractor instruction file created on server: "
                             + extractorInstructionFilesDTOResponse.getInstructionFileName());
+                        var newJobId = file_name_1.FileName.makeUniqueFileId();
+                        _this._fileModelTreeService
+                            .put(gobii_file_item_1.GobiiFileItem
+                            .build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                            .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)
+                            .setItemId(newJobId)
+                            .setItemName(newJobId))
+                            .subscribe(null, function (headerStatusMessage) {
+                            _this.handleHeaderStatusMessage(headerStatusMessage);
+                        });
                     }, function (headerResponse) {
                         scope$.handleResponseHeader(headerResponse);
                     });

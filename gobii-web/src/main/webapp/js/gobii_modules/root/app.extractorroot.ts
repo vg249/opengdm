@@ -959,6 +959,20 @@ export class ExtractorRoot implements OnInit {
                     extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
                     scope$.handleAddMessage("Extractor instruction file created on server: "
                         + extractorInstructionFilesDTOResponse.getInstructionFileName());
+
+                    let newJobId: string = FileName.makeUniqueFileId();
+                    this._fileModelTreeService
+                        .put(GobiiFileItem
+                            .build(this.gobiiExtractFilterType, ProcessType.CREATE)
+                            .setExtractorItemType(ExtractorItemType.JOB_ID)
+                            .setItemId(newJobId)
+                            .setItemName(newJobId))
+                        .subscribe(
+                            null,
+                            headerStatusMessage => {
+                                this.handleHeaderStatusMessage(headerStatusMessage)
+                            }
+                        );
                 },
                 headerResponse => {
 
