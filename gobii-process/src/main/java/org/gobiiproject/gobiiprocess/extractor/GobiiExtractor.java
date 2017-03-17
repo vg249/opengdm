@@ -351,15 +351,15 @@ public class GobiiExtractor {
 					restUri.setParamValue("datasetId", dataSetId.toString());
 					restUri.addUriParam("directory");
 					restUri.setParamValue("directory", extractDir);
-					GobiiEnvelopeRestResource<QCStart> restResourceForGet = new GobiiEnvelopeRestResource<QCStart>(restUri);
-					PayloadEnvelope<QCStart> qcStartResponseEnvelope = restResourceForGet.get(QCStart.class);
+					//GobiiEnvelopeRestResource<QCStart> restResourceForGet = new GobiiEnvelopeRestResource<QCStart>(restUri);
+					//PayloadEnvelope<QCStart> qcStartResponseEnvelope = restResourceForGet.get(QCStart.class);
 
-					if (qcStartResponseEnvelope != null) {
-						ErrorLogger.logInfo("Extractor","QC Start Done");
-					}
-					else {
-						ErrorLogger.logError("Extractor","QC Start Null");
-					}
+					//if (qcStartResponseEnvelope != null) {
+					//	ErrorLogger.logInfo("Extractor","QC Start Done");
+					//}
+					//else {
+					//	ErrorLogger.logError("Extractor","QC Start Null");
+					//}
 
 					ErrorLogger.logInfo("Extractor","Done with the QC Subsection #1 of 1!");
 				}

@@ -355,9 +355,7 @@ public class GobiiFileReader {
 				gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
 				gobiiDataSetExtract.setDataSetId(inst.getDataSet().getId());
 				gobiiDataSetExtract.setDataSetName(inst.getDataSet().getName());
-				// It is set at the moment to facilitate the QC integration tests
-				// It needs to be discussed with the team
-				gobiiDataSetExtract.setGobiiDatasetType(inst.getDatasetType().toString());
+				gobiiDataSetExtract.setGobiiDatasetType(inst.getDatasetType().getName());
 				Path loaderDestinationDirectoryPath = FileSystems.getDefault().getPath(dstDir.getAbsolutePath());
 				int pathDepth = loaderDestinationDirectoryPath.getNameCount();
 				Path cropDirectory = loaderDestinationDirectoryPath.subpath(0, (pathDepth - 3));
@@ -371,7 +369,8 @@ public class GobiiFileReader {
 				// It needs to be discussed with the team
 				gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
 				gobiiDataSetExtract.setGobiiFileType(inst.getGobiiFile().getGobiiFileType());
-				gobiiDataSetExtract.setGobiiJobStatus(null);  // It is going to be set by the GobiiExtractor class
+				// It is going to be set by the GobiiExtractor class
+				gobiiDataSetExtract.setGobiiJobStatus(null);
 				gobiiExtractorInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
 				ErrorLogger.logInfo("Digester","Done with the QC Subsection #2 of 3!");
 			}
@@ -479,8 +478,6 @@ public class GobiiFileReader {
 			ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
 			extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
 			extractorInstructionFilesDTOToSend.setInstructionFileName(new StringBuilder("extractor_").append(DateUtils.makeDateIdString()).toString());
-			//extractorInstructionFilesDTOToSend.setId();
-			//extractorInstructionFilesDTOToSend.setJobId();
 			PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
 			ClientContext clientContext = ClientContext.getInstance(configuration, crop);
 			SystemUserDetail SystemUserDetail = (new SystemUsers()).getDetail(SystemUserNames.USER_READER.toString());
