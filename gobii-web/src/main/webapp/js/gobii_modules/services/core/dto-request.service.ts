@@ -153,7 +153,12 @@ export class DtoRequestService<T> {
                                     observer.error(payloadResponse);
                                 }
 
-                            }) // subscribe http
+                            },
+                                json => {
+                                    let obj = JSON.parse(json._body)
+                                    let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(obj);
+                                    observer.error(payloadResponse.header);
+                                }); // subscribe http
 
                     },
                     json => {

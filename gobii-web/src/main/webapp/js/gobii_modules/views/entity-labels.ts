@@ -27,16 +27,20 @@ export class Labels {
         this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE] = "Dataset Type";
 
         this.entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
-        this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY] = "User";
+        this.entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY] = "Submit As";
 
         this.extractorFilterTypeLabels[GobiiExtractFilterType.WHOLE_DATASET] = "By Dataset";
         this.extractorFilterTypeLabels[GobiiExtractFilterType.BY_SAMPLE] = "By Sample";
         this.extractorFilterTypeLabels[GobiiExtractFilterType.BY_MARKER] = "By Marker";
 
-        this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST] = "Sample List";
-        this.treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST] = "Marker List";
+        this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM] = "Sample List";
+        this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE] = "Sample File";
+        this.treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM] = "Marker List";
+        this.treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE] = "Marker File";
         this.treeExtractorTypeLabels[ExtractorItemType.CROP_TYPE] = "Crop Type";
         this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT] = "Format";
+        this.treeExtractorTypeLabels[ExtractorItemType.JOB_ID] = "Job ID";
+        this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_TYPE] = "Extract By";
 
         this.extractFormatTypeLabels[GobiiExtractFormat.HAPMAP] = "Hapmap";
         this.extractFormatTypeLabels[GobiiExtractFormat.FLAPJACK] = "Flapjack";
