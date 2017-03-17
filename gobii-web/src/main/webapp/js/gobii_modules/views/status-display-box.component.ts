@@ -7,9 +7,9 @@ import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extr
     inputs: ['messages'],
     //directives: [RADIO_GROUP_DIRECTIVES]
     template: `<div style="overflow:auto; height: 240px; border: 1px solid #336699; padding-left: 5px;">
-                    <ol>
-                    <li *ngFor="let message of messages">{{message}}</li>
-                    </ol>
+                    <div *ngFor="let message of messages">{{message}}
+                    <hr style="height:1px;border:none;color:#333;background-color:#333;">
+                    </div>
                 </div>
 ` // end template
 

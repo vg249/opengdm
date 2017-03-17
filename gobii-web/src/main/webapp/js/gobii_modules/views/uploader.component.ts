@@ -189,9 +189,13 @@ export class UploaderComponent implements OnInit {
         this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
 
             if( status == 200 ) {
+                let listItemType: ExtractorItemType =
+                    this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ?
+                        ExtractorItemType.MARKER_FILE : ExtractorItemType.SAMPLE_FILE;
+
                 _fileModelTreeService.put(GobiiFileItem
                         .build(this.gobiiExtractFilterType,ProcessType.CREATE)
-                        .setExtractorItemType(ExtractorItemType.MARKER_FILE)
+                        .setExtractorItemType(listItemType)
                         .setItemId(item.file.name)
                         .setItemName(item.file.name))
                     .subscribe(null,

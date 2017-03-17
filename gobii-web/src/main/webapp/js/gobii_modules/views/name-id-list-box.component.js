@@ -41,6 +41,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/type-pro
                     this._nameIdService = _nameIdService;
                     this._fileModelTreeService = _fileModelTreeService;
                     this.differs = differs;
+                    this.notificationSent = false;
                     this.notifyOnInit = false;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.selectedNameId = null;
@@ -50,9 +51,9 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/type-pro
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     // entityFilterValue and entityFilter must either have values or be null.
-                    if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-                        this.initializeNameIds();
-                    }
+                    // if (this._nameIdService.validateRequest(this.nameIdRequestParams) ) {
+                    //     this.initializeNameIds();
+                    // }
                 };
                 NameIdListBoxComponent.prototype.initializeNameIds = function () {
                     var _this = this;
@@ -62,8 +63,11 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/type-pro
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.nameIdList = nameIds;
                             scope$.selectedNameId = nameIds[0].id;
-                            if (_this.notifyOnInit && nameIds[0].name != "<none>") {
-                                _this.updateTreeService(nameIds[0]);
+                            if (_this.notifyOnInit
+                                && !_this.notificationSent
+                                && scope$.nameIdList[0].name != "<none>") {
+                                _this.updateTreeService(scope$.nameIdList[0]);
+                                _this.notificationSent = true;
                             }
                         }
                     }, function (responseHeader) {
@@ -97,18 +101,19 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/type-pro
                     this.updateTreeService(nameId);
                 };
                 NameIdListBoxComponent.prototype.ngOnChanges = function (changes) {
-                    var _this = this;
                     if (changes['gobiiExtractFilterType']
                         && (changes['gobiiExtractFilterType'].currentValue != null)
                         && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+                            this.notificationSent = false;
                             this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
+                            var scope$_1 = this;
                             this._fileModelTreeService
                                 .fileItemNotifications()
                                 .subscribe(function (fileItem) {
                                 if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
                                     && fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                                    _this.initializeNameIds();
+                                    scope$_1.initializeNameIds();
                                 }
                             });
                         } // if we have a new filter type
