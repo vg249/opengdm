@@ -16,7 +16,7 @@ public class HapmapTransformer {
 
 	public boolean generateFile(String markerFileIn,
 								String sampleFileIn,
-								String mapFileIn,
+								String mapsetFileIn,
 								String genotypeFileIn,
 								String outFile,
 								String errorFile) throws IOException {
@@ -25,17 +25,35 @@ public class HapmapTransformer {
 			ErrorLogger.logError("Extractor","Marker file not found", errorFile);
 			return false;
 		}
+		else {
+			if (!(markerFile.isFile())) {
+				ErrorLogger.logError("Extractor","Marker file not correct", errorFile);
+				return false;
+			}
+		}
 		File sampleFile = new File(sampleFileIn);
 		if (!(sampleFile.exists())) {
 			ErrorLogger.logError("Extractor","Sample file not found", errorFile);
 			return false;
 		}
-		File mapFile = null;
-		if (mapFileIn != null) {
-			mapFile = new File(mapFileIn);
-			if (!(mapFile.exists())) {
+		else {
+			if (!(sampleFile.isFile())) {
+				ErrorLogger.logError("Extractor","Sample file not correct", errorFile);
+				return false;
+			}
+		}
+		File mapsetFile = null;
+		if (mapsetFileIn != null) {
+			mapsetFile = new File(mapsetFileIn);
+			if (!(mapsetFile.exists())) {
 				ErrorLogger.logError("Extractor","Map file not found", errorFile);
 				return false;
+			}
+			else {
+				if (!(mapsetFile.isFile())) {
+					ErrorLogger.logError("Extractor","Map file not correct", errorFile);
+					return false;
+				}
 			}
 		}
 		File genotypeFile = new File(genotypeFileIn);
@@ -43,19 +61,30 @@ public class HapmapTransformer {
 			ErrorLogger.logError("Extractor","Genotype file not found", errorFile);
 			return false;
 		}
+		else {
+			if (!(genotypeFile.isFile())) {
+				ErrorLogger.logError("Extractor", "Genotype file not correct", errorFile);
+				return false;
+			}
+		}
 		Scanner markerScanner = new Scanner(markerFile);
 		Scanner sampleScanner = new Scanner(sampleFile);
-		Scanner mapScanner = new Scanner(mapFile);
+		Scanner mapsetScanner = new Scanner(mapsetFile);
 		Scanner genotypeScanner = new Scanner(genotypeFile);
 
-		if (sampleScanner.hasNext()) {
+		if (sampleScanner.hasNextLine()) {
+			///////////////////
+			// sample headers
+			///////////////////
 			List<String> sampleHeaders = new ArrayList<>();
 			TreeMap<Integer, ArrayList<String>> sampleData = new TreeMap<>();
-			String[] headers = sampleScanner.next().split("\\t");
+			String[] headers = sampleScanner.nextLine().split("\\t");
+			ErrorLogger.logInfo("Extractor", headers.length + " sample header columns read");
 			for (int index = 0; index < headers.length; index++) {
 				sampleHeaders.add(headers[index].trim());
 				sampleData.put(index, new ArrayList<String>());
 			}
+			int sampleRowsNumber = 0;
 			while (sampleScanner.hasNextLine()) {
 				String[] sampleRecords = sampleScanner.nextLine().split("\\t");
 				for (int index = 0; index < sampleRecords.length; index++) {
@@ -64,7 +93,9 @@ public class HapmapTransformer {
 					}
 					sampleData.get(index).add(sampleRecords[index].trim());
 				}
+				sampleRowsNumber = sampleRowsNumber + 1;
 			}
+			ErrorLogger.logInfo("Extractor", sampleRowsNumber + " sample rows read");
 			sampleScanner.close();
 			try {
 				File out = new File(outFile);
@@ -88,9 +119,13 @@ public class HapmapTransformer {
 				}
 				fileWriter.flush();
 
-				List<String> markerHeaders = new ArrayList<String>();
-				if (markerScanner.hasNext()) {
-					headers = markerScanner.next().split("\\t");
+				///////////////////
+				// marker headers
+				///////////////////
+				List<String> markerHeaders = new ArrayList<>();
+				if (markerScanner.hasNextLine()) {
+					headers = markerScanner.nextLine().split("\\t");
+					ErrorLogger.logInfo("Extractor", headers.length + " marker header columns read");
 					for (int index = 0; index < headers.length; index++) {
 						markerHeaders.add(headers[index].trim());
 					}
@@ -100,7 +135,7 @@ public class HapmapTransformer {
 					return false;
 				}
 
-				// Writing the new marker header into the current line
+				// Writing the new marker headers into the current line
 				String[] newMarkerHeadersLine = new String[]{
 						"marker_name",
 						"alleles",
@@ -114,16 +149,18 @@ public class HapmapTransformer {
 						"panelLSID",
 						"QCcode"};
 				StringBuilder stringBuilderNewLine = new StringBuilder(StringUtils.join(newMarkerHeadersLine, "\t"));
+				stringBuilderNewLine.append("\t");
 
-				// Writing the map header into the current line if the map file exists
-				if(mapScanner != null) {
-					if (mapScanner.hasNext()) {
-						String mapHeadersLine = mapScanner.next();
-						stringBuilderNewLine.append(mapHeadersLine + "\t");
-						headers = mapHeadersLine.split("\\t");
-						List<String> mapHeaders = new ArrayList<>();
+				/////////////////////////////////
+				// mapset headers (if existent)
+				/////////////////////////////////
+				List<String> mapsetHeaders = new ArrayList<>();
+				if (mapsetScanner != null) {
+					if (mapsetScanner.hasNextLine()) {
+						headers = mapsetScanner.nextLine().split("\\t");
+						ErrorLogger.logInfo("Extractor", headers.length + " map header columns read");
 						for (int index = 0; index < headers.length; index++) {
-							mapHeaders.add(headers[index].trim());
+							mapsetHeaders.add(headers[index].trim());
 						}
 					}
 					else {
@@ -137,17 +174,54 @@ public class HapmapTransformer {
 				stringBuilderNewLine.append(System.lineSeparator());
 				fileWriter.write(stringBuilderNewLine.toString());
 
-				while(markerScanner.hasNextLine() && genotypeScanner.hasNextLine()){
-					// Writing the marker data line in alignment to the marker headers
-					// into the current line.
-					// All the other (new) marker header columns not used are left blank.
-					String markerLine = markerScanner.nextLine();
-					String[] markerLineParts = markerLine.split("\\t");
+				if (!(markerScanner.hasNextLine())) {
+					ErrorLogger.logInfo("Extractor","Marker data file empty");
+				}
+
+				if (!(genotypeScanner.hasNextLine())) {
+					ErrorLogger.logInfo("Extractor","Genotype data file empty");
+				}
+
+				int processedBothRowsNumber = 0;
+				while (markerScanner.hasNextLine() && genotypeScanner.hasNextLine()) {
+					// Writing the marker (and mapset if existent) data line(s) in alignment
+					// to the new marker headers into the current line.
+					// All the other new marker header columns not matched are left blank.
+					String[] markerLineParts = markerScanner.nextLine().split("\\t");
+					String[] mapsetLineParts = null;
+					if (mapsetScanner != null) {
+						if (mapsetScanner.hasNextLine()) {
+							mapsetLineParts = mapsetScanner.nextLine().split("\\t");
+						}
+					}
 					stringBuilderNewLine = new StringBuilder();
 					for (String newMarkerHeader : newMarkerHeadersLine) {
+						// Old marker header to include data from marker line
 						if (markerHeaders.contains(newMarkerHeader))
 						{
 							stringBuilderNewLine.append(markerLineParts[markerHeaders.indexOf(newMarkerHeader)]);
+						}
+						// New marker header to include data from marker line or mapset line (if existent)
+						else {
+							switch (newMarkerHeader) {
+								case "alleles":
+									stringBuilderNewLine.append(markerLineParts[markerHeaders.indexOf("marker_ref")]);
+									stringBuilderNewLine.append("/");
+									stringBuilderNewLine.append(markerLineParts[markerHeaders.indexOf("marker_alts")]);
+									break;
+								case "chrom":
+									if (mapsetLineParts != null) {
+										stringBuilderNewLine.append(mapsetLineParts[mapsetHeaders.indexOf("linkage_group_name")]); }
+									break;
+								case "pos":
+									if (mapsetLineParts != null) {
+										stringBuilderNewLine.append(mapsetLineParts[mapsetHeaders.indexOf("marker_linkage_group_start")]); }
+									break;
+								case "strand":
+									stringBuilderNewLine.append(markerLineParts[markerHeaders.indexOf("marker_strand")]);
+									break;
+								default:
+							}
 						}
 						stringBuilderNewLine.append("\t");
 					}
@@ -157,11 +231,13 @@ public class HapmapTransformer {
 					stringBuilderNewLine.append(genotypeScanner.nextLine());
 					stringBuilderNewLine.append(System.lineSeparator());
 					fileWriter.write(stringBuilderNewLine.toString());
+					processedBothRowsNumber = processedBothRowsNumber + 1;
 				}
+				ErrorLogger.logInfo("Extractor", processedBothRowsNumber + " processed rows read");
 
 				fileWriter.close();
 				markerScanner.close();
-				mapScanner.close();
+				mapsetScanner.close();
 				genotypeScanner.close();
 			} catch (IOException e) {
 				ErrorLogger.logError("Extractor","Error writing " + outFile + "." + System.lineSeparator() + System.lineSeparator() + "Reason: " + e.getMessage(), errorFile);

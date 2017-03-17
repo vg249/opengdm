@@ -1,12 +1,13 @@
 package org.gobiiproject.gobiimodel.dto.instructions;
 
-public class GobiiQCComplete {
 
-    private Integer datasetId;
-    private Integer contactId;
-    private String dataFileName;
-    private String dataFileDirectory;
-    private String qualityFileName;
+public class GobiiQCComplete {
+    Integer datasetId;
+    Integer contactId;
+    String dataFileName;
+    String dataFileDirectory;
+    String qualityFileName;
+
 
     public Integer getDatasetId() {
         return datasetId;
