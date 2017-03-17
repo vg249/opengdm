@@ -29,6 +29,8 @@ import {Header} from "../model/payload/header";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {NameIdRequestParams} from "../model/name-id-request-params";
 import {FileName} from "../model/file_name";
+import {Labels} from "../views/entity-labels";
+import {TreeStatusNotification} from "../model/tree-status-notification";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -219,10 +221,13 @@ import {FileName} from "../model/file_name";
                             </status-display-tree>
                             
                             <BR>
-                                <input type="button" 
-                                value="Submit"
-                                (click)="handleExtractSubmission()" >
                             
+                            <button type="submit"
+                            [ngStyle]="submitButtonStyle"
+                            (mouseenter)="handleOnMouseOverSubmit($event,true)"
+                            (mouseleave)="handleOnMouseOverSubmit($event,false)"
+                            (click)="handleExtractSubmission()">Submit</button>
+                               
                         </fieldset>
                             
                         <div>
@@ -266,6 +271,8 @@ export class ExtractorRoot implements OnInit {
 //    private selectedExportTypeEvent:GobiiExtractFilterType;
     private datasetFileItemEvents: GobiiFileItem[] = [];
     private gobiiDatasetExtracts: GobiiDataSetExtract[] = [];
+
+    private criteriaInvalid: boolean = true;
 
 
     private messages: string[] = [];
@@ -465,8 +472,6 @@ export class ExtractorRoot implements OnInit {
             this.displaySampleListTypeSelector = false;
 
         }
-
-
 
 
     }
@@ -771,6 +776,65 @@ export class ExtractorRoot implements OnInit {
 
     // ********************************************************************
     // ********************************************** Extract file submission
+    private treeStatusNotification: TreeStatusNotification = null;
+    private submitButtonStyleDefault = {'background-color': '#eee'};
+    private buttonStyleSubmitReady = {'background-color': '#99e699'};
+    private buttonStyleSubmitNotReady = {'background-color': '#ffad99'};
+    private submitButtonStyle = this.buttonStyleSubmitNotReady;
+
+    private setSubmitButtonState(): boolean {
+
+        let returnVal: boolean = false;
+
+        if (this.treeStatusNotification.fileModelState == FileModelState.SUBMISSION_READY) {
+            this.submitButtonStyle = this.buttonStyleSubmitReady;
+            returnVal = true;
+        } else {
+            this.submitButtonStyle = this.buttonStyleSubmitNotReady;
+            returnVal = false;
+
+        }
+
+        return returnVal;
+    }
+
+    private handleOnMouseOverSubmit(arg, isEnter) {
+
+        // this.criteriaInvalid = true;
+
+        if (isEnter) {
+
+            if (!this.setSubmitButtonState()) {
+
+                this.treeStatusNotification.modelTreeValidationErrors.forEach(mtv => {
+
+                    let currentMessage: string;
+
+                    if (mtv.fileModelNode.getItemType() === ExtractorItemType.ENTITY) {
+                        currentMessage = mtv.fileModelNode.getEntityName();
+
+                    } else {
+                        currentMessage = Labels.instance().treeExtractorTypeLabels[mtv.fileModelNode.getItemType()];
+                    }
+
+                    currentMessage += ": " + mtv.message;
+
+                    this.handleAddMessage(currentMessage);
+
+                });
+            }
+        }
+
+        // else {
+        //     this.submitButtonStyle = this.submitButtonStyleDefault;
+        // }
+
+        //#eee
+
+
+        let foo: string = "foo";
+    }
+
     private handleExtractSubmission() {
 
         let scope$ = this;
@@ -831,13 +895,13 @@ export class ExtractorRoot implements OnInit {
                 });
 
                 // these probably should be just one enum
-                let gobiiFileType: GobiiFileType =  null;
+                let gobiiFileType: GobiiFileType = null;
                 let extractFormat: GobiiExtractFormat = GobiiExtractFormat[exportFileItem.getItemId()];
-                if( extractFormat === GobiiExtractFormat.FLAPJACK ) {
+                if (extractFormat === GobiiExtractFormat.FLAPJACK) {
                     gobiiFileType = GobiiFileType.FLAPJACK;
                 } else if (extractFormat === GobiiExtractFormat.HAPMAP) {
                     gobiiFileType = GobiiFileType.HAPMAP;
-                } else if( extractFormat === GobiiExtractFormat.META_DATA_ONLY ) {
+                } else if (extractFormat === GobiiExtractFormat.META_DATA_ONLY) {
                     gobiiFileType = GobiiFileType.META_DATA;
                 }
 
@@ -879,7 +943,7 @@ export class ExtractorRoot implements OnInit {
                     return item.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_TYPE;
                 });
 
-                if( sampleListTypeFileItem != null ) {
+                if (sampleListTypeFileItem != null) {
                     sampleListType = GobiiSampleListType[sampleListTypeFileItem.getItemId()];
                 }
 
@@ -981,16 +1045,17 @@ export class ExtractorRoot implements OnInit {
 
     }
 
+
     ngOnInit(): any {
 
         this._fileModelTreeService
             .treeStateNotifications()
             .subscribe(ts => {
 
-                if (ts.fileModelState == FileModelState.SUBMISSION_READY) {
-                    // Only when the tree is ready do we effectively tell the child chomponents that they can
-                    // intitialze themselves
-                }
+                if (ts.gobiiExractFilterType === this.gobiiExtractFilterType) {
+                    this.treeStatusNotification = ts;
+                    this.setSubmitButtonState();
+                } // does the fitler type match
             });
 
 

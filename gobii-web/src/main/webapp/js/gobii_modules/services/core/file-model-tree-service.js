@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/file-model-tree-event", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/type-entity", "../../model/cv-filter-type", "rxjs/Subject", "rxjs/Observable", "../../model/type-process", "../../views/entity-labels", "../../model/dto-header-status-message", "../../model/tree-status-notification"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/file-model-tree-event", "../../model/file-model-node", "../../model/type-extractor-filter", "../../model/type-entity", "../../model/cv-filter-type", "rxjs/Subject", "rxjs/Observable", "../../model/type-process", "../../views/entity-labels", "../../model/dto-header-status-message", "../../model/tree-status-notification", "../../model/cardinality-expression", "../../model/model-tree-validation-error"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, file_model_tree_event_1, file_model_node_1, type_extractor_filter_1, type_entity_1, cv_filter_type_1, Subject_1, Observable_1, type_process_1, entity_labels_1, dto_header_status_message_1, tree_status_notification_1, FileModelTreeService;
+    var core_1, file_model_tree_event_1, file_model_node_1, type_extractor_filter_1, type_entity_1, cv_filter_type_1, Subject_1, Observable_1, type_process_1, entity_labels_1, dto_header_status_message_1, tree_status_notification_1, cardinality_expression_1, model_tree_validation_error_1, FileModelTreeService;
     return {
         setters: [
             function (core_1_1) {
@@ -48,12 +48,19 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
             },
             function (tree_status_notification_1_1) {
                 tree_status_notification_1 = tree_status_notification_1_1;
+            },
+            function (cardinality_expression_1_1) {
+                cardinality_expression_1 = cardinality_expression_1_1;
+            },
+            function (model_tree_validation_error_1_1) {
+                model_tree_validation_error_1 = model_tree_validation_error_1_1;
             }
         ],
         execute: function () {
             FileModelTreeService = (function () {
                 function FileModelTreeService() {
                     this.fileModelNodeTree = new Map();
+                    this.cardinalityExpressions = new Map();
                     this.subjectTreeStateNotifications = new Subject_1.Subject();
                     this.subjectTreeNotifications = new Subject_1.Subject();
                     this.subjectFileItemNotifications = new Subject_1.Subject();
@@ -83,6 +90,22 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                 }; //
                 FileModelTreeService.prototype.getFileModelNodes = function (gobiiExtractFilterType) {
                     if (this.fileModelNodeTree.size === 0) {
+                        // ************ SET UP VALIDATORS
+                        this.cardinalityExpressions.set(file_model_node_1.CardinalityType.ZERO_OR_MORE, new cardinality_expression_1.CardinalityExpression(file_model_node_1.CardinalityType.ZERO_OR_MORE, function (n) {
+                            return n > -1;
+                        }, "There must be zero or more items"));
+                        this.cardinalityExpressions.set(file_model_node_1.CardinalityType.ZERO_OR_ONE, new cardinality_expression_1.CardinalityExpression(file_model_node_1.CardinalityType.ZERO_OR_ONE, function (n) {
+                            return n < 2;
+                        }, "There must be no more than one items "));
+                        this.cardinalityExpressions.set(file_model_node_1.CardinalityType.ONE_ONLY, new cardinality_expression_1.CardinalityExpression(file_model_node_1.CardinalityType.ONE_ONLY, function (n) {
+                            return n == 1;
+                        }, "There must be exactly one item"));
+                        this.cardinalityExpressions.set(file_model_node_1.CardinalityType.MORE_THAN_ONE, new cardinality_expression_1.CardinalityExpression(file_model_node_1.CardinalityType.MORE_THAN_ONE, function (n) {
+                            return n > 1;
+                        }, "There must more than one item"));
+                        this.cardinalityExpressions.set(file_model_node_1.CardinalityType.ONE_OR_MORE, new cardinality_expression_1.CardinalityExpression(file_model_node_1.CardinalityType.ONE_OR_MORE, function (n) {
+                            return n >= 1;
+                        }, "There must be one or more items"));
                         // **** FOR ALL EXTRACTION TYPES **********************************************************************
                         // **** THESE ARE ALL ROOT LEVEL NODES
                         var submissionItemsForAll = [];
@@ -203,12 +226,53 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         this.fileModelNodeTree
                             .set(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, submissionItemsForByMarkers);
                         if (this.validateModel() == true) {
-                            this.subjectTreeStateNotifications.next(new tree_status_notification_1.TreeStatusNotification(file_model_tree_event_1.FileModelState.READY, null));
+                            this.subjectTreeStateNotifications.next(new tree_status_notification_1.TreeStatusNotification(type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN, file_model_tree_event_1.FileModelState.READY, null));
                         }
                         else {
                         }
                     }
                     return this.fileModelNodeTree.get(gobiiExtractFilterType);
+                };
+                FileModelTreeService.prototype.validateTree = function (gobiiExtractFilterType) {
+                    var _this = this;
+                    var returnVal = [];
+                    var fileModelNodes = this.fileModelNodeTree.get(gobiiExtractFilterType);
+                    // we only iterate the first level because we just happen to know, for this purpose,
+                    // that the tree only has two levels; if we add more, this must change
+                    fileModelNodes.forEach(function (currentFileModelNode) {
+                        if (currentFileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.LEAF ||
+                            (currentFileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.CONTAINER
+                                && currentFileModelNode.getChildren().length === 0)) {
+                            var currentCardinalityExpression = _this.cardinalityExpressions
+                                .get(currentFileModelNode.getCardinality());
+                            var fileItemCount = currentFileModelNode.getFileItems().length;
+                            if (!currentCardinalityExpression.isValid(fileItemCount)) {
+                                returnVal.push(new model_tree_validation_error_1.ModelTreeValidationError(currentCardinalityExpression.message, currentFileModelNode));
+                            }
+                        }
+                        else if ((currentFileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.CONTAINER
+                            && currentFileModelNode.getCardinality() === file_model_node_1.CardinalityType.ZERO_OR_MORE)) {
+                            var atLeastOneIsSatisfied = false;
+                            for (var idx = 0; (idx < currentFileModelNode.getChildren().length) && (atLeastOneIsSatisfied === false); idx++) {
+                                var currentFileModelNodeChild = currentFileModelNode.getChildren()[idx];
+                                var currentChildCardinalityExpression = _this.cardinalityExpressions
+                                    .get(currentFileModelNodeChild.getCardinality());
+                                var childFileItemCount = currentFileModelNodeChild.getFileItems().length;
+                                atLeastOneIsSatisfied = currentChildCardinalityExpression.isValid(childFileItemCount);
+                            }
+                            if (atLeastOneIsSatisfied === false) {
+                                currentFileModelNode.getChildren().forEach(function (currentChildNode) {
+                                    var currentChildCardinalityExpression = _this.cardinalityExpressions
+                                        .get(currentChildNode.getCardinality());
+                                    returnVal.push(new model_tree_validation_error_1.ModelTreeValidationError(currentChildCardinalityExpression.message, currentChildNode));
+                                });
+                            } // if none of the required children are present
+                        }
+                        else {
+                            ; // we don't have a type like this yet?
+                        } // if-else the model node has child model nodes
+                    }); // for each first level node
+                    return returnVal;
                 };
                 FileModelTreeService.prototype.processNotification = function (fileItem) {
                     var returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, null, null, null);
@@ -381,6 +445,10 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             observer.complete();
                             _this.subjectTreeNotifications.next(fileTreeEvent);
                             _this.subjectFileItemNotifications.next(fileTreeEvent.fileItem);
+                            var modelTreeValidationErrors = _this.validateTree(fileItem.getGobiiExtractFilterType());
+                            var fileModelState = (modelTreeValidationErrors.length === 0) ? file_model_tree_event_1.FileModelState.SUBMISSION_READY : file_model_tree_event_1.FileModelState.READY;
+                            var treeStatusNotification = new tree_status_notification_1.TreeStatusNotification(fileItem.getGobiiExtractFilterType(), fileModelState, modelTreeValidationErrors);
+                            _this.subjectTreeStateNotifications.next(treeStatusNotification);
                         }
                         else {
                             var headerStatusMessage = new dto_header_status_message_1.HeaderStatusMessage("Error mutating file item in file model tree service: "
@@ -414,6 +482,16 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         var fileModelNodes = _this.fileModelNodeTree.get(gobiiExtractFilterType);
                         var fileModeNode = _this.findFileModelNodeByUniqueId(fileModelNodes, fileModelNodeUniqueId);
                         observer.next(fileModeNode);
+                        observer.complete();
+                    });
+                };
+                FileModelTreeService.prototype.getTreeState = function (gobiiExtractFilterType, fileModelNodeUniqueId) {
+                    var _this = this;
+                    return Observable_1.Observable.create(function (observer) {
+                        var modelTreeValidationErrors = _this.validateTree(gobiiExtractFilterType);
+                        var fileModelState = (modelTreeValidationErrors.length === 0) ? file_model_tree_event_1.FileModelState.SUBMISSION_READY : file_model_tree_event_1.FileModelState.READY;
+                        var treeStatusNotification = new tree_status_notification_1.TreeStatusNotification(gobiiExtractFilterType, fileModelState, modelTreeValidationErrors);
+                        observer.next(treeStatusNotification);
                         observer.complete();
                     });
                 };
