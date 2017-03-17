@@ -178,20 +178,20 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                                 .setEntityType(type_entity_1.EntityType.Contacts)
                                 .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                                 .setEntityName(entity_labels_1.Labels.instance().entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR])
-                                .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_ONE))
+                                .setCardinality(file_model_node_1.CardinalityType.ONE_ONLY))
                                 .addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, currentParent)
                                 .setCategoryType(file_model_node_1.ExtractorCategoryType.CONTAINER)
                                 .setEntityType(type_entity_1.EntityType.Projects)
                                 .setEntityName(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.Projects])
-                                .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE)).addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.SAMPLE_FILE, currentParent)
+                                .setCardinality(file_model_node_1.CardinalityType.ONE_OR_MORE)).addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.SAMPLE_FILE, currentParent)
                                 .setCategoryType(file_model_node_1.ExtractorCategoryType.LEAF)
                                 .setEntityName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_FILE])
                                 .setCategoryName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_FILE])
-                                .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE)).addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM, currentParent)
+                                .setCardinality(file_model_node_1.CardinalityType.ONE_ONLY)).addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM, currentParent)
                                 .setCategoryType(file_model_node_1.ExtractorCategoryType.CONTAINER)
                                 .setEntityName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM])
                                 .setCategoryName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM])
-                                .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE)));
+                                .setCardinality(file_model_node_1.CardinalityType.ONE_OR_MORE)));
                         this.fileModelNodeTree
                             .set(type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE, submissionItemsForBySample);
                         // **** SET UP EXTRACT BY MARKERS  **********************************************************************
@@ -203,6 +203,8 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             .setCvFilterType(cv_filter_type_1.CvFilterType.DATASET_TYPE)
                             .setEntityName(entity_labels_1.Labels.instance().cvFilterNodeLabels[cv_filter_type_1.CvFilterType.DATASET_TYPE])
                             .setCardinality(file_model_node_1.CardinalityType.ONE_ONLY));
+                        // the validation algorithm effectively OR's the children: thus the children
+                        // are ONE_OR_MORE
                         submissionItemsForByMarkers
                             .push(currentParent =
                             file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.ENTITY, null)
@@ -214,15 +216,15 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                                 .setCategoryType(file_model_node_1.ExtractorCategoryType.CONTAINER)
                                 .setEntityType(type_entity_1.EntityType.Platforms)
                                 .setEntityName(entity_labels_1.Labels.instance().entityNodeLabels[type_entity_1.EntityType.Platforms])
-                                .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE)).addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.MARKER_FILE, currentParent)
+                                .setCardinality(file_model_node_1.CardinalityType.ONE_OR_MORE)).addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.MARKER_FILE, currentParent)
                                 .setCategoryType(file_model_node_1.ExtractorCategoryType.LEAF)
                                 .setEntityName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_FILE])
                                 .setCategoryName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_FILE])
-                                .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE)).addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM, currentParent)
+                                .setCardinality(file_model_node_1.CardinalityType.ONE_OR_MORE)).addChild(file_model_node_1.FileModelNode.build(file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM, currentParent)
                                 .setCategoryType(file_model_node_1.ExtractorCategoryType.CONTAINER)
                                 .setEntityName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM])
                                 .setCategoryName(entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM])
-                                .setCardinality(file_model_node_1.CardinalityType.ZERO_OR_MORE)));
+                                .setCardinality(file_model_node_1.CardinalityType.ONE_OR_MORE)));
                         this.fileModelNodeTree
                             .set(type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER, submissionItemsForByMarkers);
                         if (this.validateModel() == true) {
@@ -250,8 +252,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                                 returnVal.push(new model_tree_validation_error_1.ModelTreeValidationError(currentCardinalityExpression.message, currentFileModelNode));
                             }
                         }
-                        else if ((currentFileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.CONTAINER
-                            && currentFileModelNode.getCardinality() === file_model_node_1.CardinalityType.ZERO_OR_MORE)) {
+                        else if (currentFileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.CONTAINER) {
                             var atLeastOneIsSatisfied = false;
                             for (var idx = 0; (idx < currentFileModelNode.getChildren().length) && (atLeastOneIsSatisfied === false); idx++) {
                                 var currentFileModelNodeChild = currentFileModelNode.getChildren()[idx];
@@ -259,6 +260,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                                     .get(currentFileModelNodeChild.getCardinality());
                                 var childFileItemCount = currentFileModelNodeChild.getFileItems().length;
                                 atLeastOneIsSatisfied = currentChildCardinalityExpression.isValid(childFileItemCount);
+                                var validatorIsWRONG = atLeastOneIsSatisfied;
                             }
                             if (atLeastOneIsSatisfied === false) {
                                 currentFileModelNode.getChildren().forEach(function (currentChildNode) {
@@ -485,7 +487,7 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                         observer.complete();
                     });
                 };
-                FileModelTreeService.prototype.getTreeState = function (gobiiExtractFilterType, fileModelNodeUniqueId) {
+                FileModelTreeService.prototype.getTreeState = function (gobiiExtractFilterType) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
                         var modelTreeValidationErrors = _this.validateTree(gobiiExtractFilterType);

@@ -205,23 +205,23 @@ export class FileModelTreeService {
                             .setEntityType(EntityType.Contacts)
                             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                             .setEntityName(Labels.instance().entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR])
-                            .setCardinality(CardinalityType.ZERO_OR_ONE)
+                            .setCardinality(CardinalityType.ONE_ONLY)
                         )
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
                             .setCategoryType(ExtractorCategoryType.CONTAINER)
                             .setEntityType(EntityType.Projects)
                             .setEntityName(Labels.instance().entityNodeLabels[EntityType.Projects])
-                            .setCardinality(CardinalityType.ZERO_OR_MORE)
+                            .setCardinality(CardinalityType.ONE_OR_MORE)
                         ).addChild(FileModelNode.build(ExtractorItemType.SAMPLE_FILE, currentParent)
                         .setCategoryType(ExtractorCategoryType.LEAF)
                         .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE])
                         .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE])
-                        .setCardinality(CardinalityType.ZERO_OR_MORE)
+                        .setCardinality(CardinalityType.ONE_ONLY)
                     ).addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST_ITEM, currentParent)
                         .setCategoryType(ExtractorCategoryType.CONTAINER)
                         .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM])
                         .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM])
-                        .setCardinality(CardinalityType.ZERO_OR_MORE)
+                        .setCardinality(CardinalityType.ONE_OR_MORE)
                     ));
 
             this.fileModelNodeTree
@@ -242,6 +242,8 @@ export class FileModelTreeService {
                     .setCardinality(CardinalityType.ONE_ONLY)
             );
 
+            // the validation algorithm effectively OR's the children: thus the children
+            // are ONE_OR_MORE
             submissionItemsForByMarkers
                 .push(currentParent =
                     FileModelNode.build(ExtractorItemType.ENTITY, null)
@@ -253,17 +255,17 @@ export class FileModelTreeService {
                             .setCategoryType(ExtractorCategoryType.CONTAINER)
                             .setEntityType(EntityType.Platforms)
                             .setEntityName(Labels.instance().entityNodeLabels[EntityType.Platforms])
-                            .setCardinality(CardinalityType.ZERO_OR_MORE)
+                            .setCardinality(CardinalityType.ONE_OR_MORE)
                         ).addChild(FileModelNode.build(ExtractorItemType.MARKER_FILE, currentParent)
                         .setCategoryType(ExtractorCategoryType.LEAF)
                         .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE])
                         .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE])
-                        .setCardinality(CardinalityType.ZERO_OR_MORE)
+                        .setCardinality(CardinalityType.ONE_OR_MORE)
                     ).addChild(FileModelNode.build(ExtractorItemType.MARKER_LIST_ITEM, currentParent)
                         .setCategoryType(ExtractorCategoryType.CONTAINER)
                         .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM])
                         .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM])
-                        .setCardinality(CardinalityType.ZERO_OR_MORE)
+                        .setCardinality(CardinalityType.ONE_OR_MORE)
                     )
                 );
 
@@ -313,8 +315,7 @@ export class FileModelTreeService {
                     ));
                 }
 
-            } else if ((currentFileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER
-                && currentFileModelNode.getCardinality() === CardinalityType.ZERO_OR_MORE )) {
+            } else if (currentFileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER) {
 
                 let atLeastOneIsSatisfied: boolean = false;
                 for (let idx: number = 0;
@@ -328,6 +329,7 @@ export class FileModelTreeService {
 
                     let childFileItemCount: number = currentFileModelNodeChild.getFileItems().length;
                     atLeastOneIsSatisfied = currentChildCardinalityExpression .isValid(childFileItemCount);
+                    let validatorIsWRONG: boolean = atLeastOneIsSatisfied;
 
                 }
 
@@ -602,17 +604,20 @@ export class FileModelTreeService {
     }
 
     private subjectTreeStateNotifications: Subject < TreeStatusNotification > = new Subject<TreeStatusNotification>();
+
     public treeStateNotifications(): Subject < TreeStatusNotification > {
         return this.subjectTreeStateNotifications;
     }
 
 
     private subjectTreeNotifications: Subject < FileModelTreeEvent > = new Subject<FileModelTreeEvent>();
+
     public treeNotifications(): Subject < FileModelTreeEvent > {
         return this.subjectTreeNotifications
     }
 
     private subjectFileItemNotifications: Subject < GobiiFileItem > = new Subject<GobiiFileItem>();
+
     public fileItemNotifications(): Subject < GobiiFileItem > {
         return this.subjectFileItemNotifications
     }
@@ -639,9 +644,9 @@ export class FileModelTreeService {
                 this.subjectTreeNotifications.next(fileTreeEvent);
                 this.subjectFileItemNotifications.next(fileTreeEvent.fileItem);
 
-                let modelTreeValidationErrors:ModelTreeValidationError[] = this.validateTree(fileItem.getGobiiExtractFilterType());
-                let fileModelState:FileModelState = ( modelTreeValidationErrors.length === 0 )? FileModelState.SUBMISSION_READY : FileModelState.READY;
-                let treeStatusNotification:TreeStatusNotification = new TreeStatusNotification(fileItem.getGobiiExtractFilterType(),fileModelState,modelTreeValidationErrors);
+                let modelTreeValidationErrors: ModelTreeValidationError[] = this.validateTree(fileItem.getGobiiExtractFilterType());
+                let fileModelState: FileModelState = ( modelTreeValidationErrors.length === 0 ) ? FileModelState.SUBMISSION_READY : FileModelState.READY;
+                let treeStatusNotification: TreeStatusNotification = new TreeStatusNotification(fileItem.getGobiiExtractFilterType(), fileModelState, modelTreeValidationErrors);
                 this.subjectTreeStateNotifications.next(treeStatusNotification);
 
 
@@ -693,14 +698,13 @@ export class FileModelTreeService {
         });
     }
 
-    public getTreeState(gobiiExtractFilterType: GobiiExtractFilterType,
-                            fileModelNodeUniqueId: string): Observable < TreeStatusNotification > {
+    public getTreeState(gobiiExtractFilterType: GobiiExtractFilterType): Observable < TreeStatusNotification > {
 
         return Observable.create(observer => {
 
-            let modelTreeValidationErrors:ModelTreeValidationError[] = this.validateTree(gobiiExtractFilterType);
-            let fileModelState:FileModelState = ( modelTreeValidationErrors.length === 0 )? FileModelState.SUBMISSION_READY : FileModelState.READY;
-            let treeStatusNotification:TreeStatusNotification = new TreeStatusNotification(gobiiExtractFilterType,fileModelState,modelTreeValidationErrors);
+            let modelTreeValidationErrors: ModelTreeValidationError[] = this.validateTree(gobiiExtractFilterType);
+            let fileModelState: FileModelState = ( modelTreeValidationErrors.length === 0 ) ? FileModelState.SUBMISSION_READY : FileModelState.READY;
+            let treeStatusNotification: TreeStatusNotification = new TreeStatusNotification(gobiiExtractFilterType, fileModelState, modelTreeValidationErrors);
 
             observer.next(treeStatusNotification);
             observer.complete();
