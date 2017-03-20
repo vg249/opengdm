@@ -365,9 +365,8 @@ public class GobiiFileReader {
 						                                         inst.getGobiiFile().getGobiiFileType().toString().toLowerCase(),
 						                                         new StringBuilder("ds_").append(inst.getDataSetId()).toString());
 				gobiiDataSetExtract.setExtractDestinationDirectory(extractDestinationDirectoryPath.toString());
-				// It is set to WHOLE_DATASET at the moment to facilitate the QC integration tests
-				// It needs to be discussed with the team
-				gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
+				// As the extract filter type is set, a posteriori, by the GobiiExtractor class, it is set as UNKOWN
+				gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.UNKNOWN);
 				gobiiDataSetExtract.setGobiiFileType(inst.getGobiiFile().getGobiiFileType());
 				// It is going to be set by the GobiiExtractor class
 				gobiiDataSetExtract.setGobiiJobStatus(null);

@@ -317,11 +317,10 @@ public class GobiiExtractor {
 					ErrorLogger.logInfo("Extractor","Entering into the QC Subsection #1 of 1...");
 					QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
 					qcInstructionsDTOToSend.setContactId(inst.getContactId());
-					qcInstructionsDTOToSend.setDataFileDirectory(extractDir);
+					qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
 					qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
 					qcInstructionsDTOToSend.setDatasetId(dataSetId);
 					qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
-					//qcInstructionsDTOToSend.setId();
 					qcInstructionsDTOToSend.setQualityFileName("Report.xls");
 					PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
 					ClientContext clientContext = ClientContext.getInstance(configuration, crop);
@@ -341,25 +340,6 @@ public class GobiiExtractor {
 					else {
 						ErrorLogger.logError("Extractor","Error Sending QC Instructions Request");
 					}
-
-					QCInstructionsDTO qcInstructionsDTO = new QCInstructionsDTO();
-					qcInstructionsDTO.setDataFileDirectory(extractDir);
-					//String currentQCContextRoot = ClientContext.getInstance("http://gobiilab03.bti.cornell.edu:8080/kdcompute/", true);
-					//uriFactory = new UriFactory(currentCropContextRoot);
-					RestUri restUri = new RestUri("http://gobiilab03.bti.cornell.edu:8080/kdcompute/qcStart");
-					restUri.addUriParam("datasetId");
-					restUri.setParamValue("datasetId", dataSetId.toString());
-					restUri.addUriParam("directory");
-					restUri.setParamValue("directory", extractDir);
-					//GobiiEnvelopeRestResource<QCStart> restResourceForGet = new GobiiEnvelopeRestResource<QCStart>(restUri);
-					//PayloadEnvelope<QCStart> qcStartResponseEnvelope = restResourceForGet.get(QCStart.class);
-
-					//if (qcStartResponseEnvelope != null) {
-					//	ErrorLogger.logInfo("Extractor","QC Start Done");
-					//}
-					//else {
-					//	ErrorLogger.logError("Extractor","QC Start Null");
-					//}
 
 					ErrorLogger.logInfo("Extractor","Done with the QC Subsection #1 of 1!");
 				}
