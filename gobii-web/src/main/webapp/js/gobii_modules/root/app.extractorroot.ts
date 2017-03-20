@@ -29,6 +29,8 @@ import {Header} from "../model/payload/header";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {NameIdRequestParams} from "../model/name-id-request-params";
 import {FileName} from "../model/file_name";
+import {Labels} from "../views/entity-labels";
+import {TreeStatusNotification} from "../model/tree-status-notification";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -83,7 +85,7 @@ import {FileName} from "../model/file_name";
                             <name-id-list-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [nameIdRequestParams]="nameIdRequestParamsContactsPi"
-                                [notifyOnInit]="true"
+                                [notifyOnInit]="false"
                                 (onNameIdSelected)="handleContactForPiSelected($event)"
                                 (onError) = "handleHeaderStatusMessage($event)">
                             </name-id-list-box>
@@ -219,10 +221,13 @@ import {FileName} from "../model/file_name";
                             </status-display-tree>
                             
                             <BR>
-                                <input type="button" 
-                                value="Submit"
-                                (click)="handleExtractSubmission()" >
                             
+                            <button type="submit"
+                            [ngStyle]="submitButtonStyle"
+                            (mouseenter)="handleOnMouseOverSubmit($event,true)"
+                            (mouseleave)="handleOnMouseOverSubmit($event,false)"
+                            (click)="handleExtractSubmission()">Submit</button>
+                               
                         </fieldset>
                             
                         <div>
@@ -266,6 +271,8 @@ export class ExtractorRoot implements OnInit {
 //    private selectedExportTypeEvent:GobiiExtractFilterType;
     private datasetFileItemEvents: GobiiFileItem[] = [];
     private gobiiDatasetExtracts: GobiiDataSetExtract[] = [];
+
+    private criteriaInvalid: boolean = true;
 
 
     private messages: string[] = [];
@@ -407,7 +414,18 @@ export class ExtractorRoot implements OnInit {
                             .setItemId(jobId)
                             .setItemName(jobId))
                         .subscribe(
-                            null,
+                            fmte => {
+                                this._fileModelTreeService
+                                    .getTreeState(this.gobiiExtractFilterType)
+                                    .subscribe(
+                                        ts => {
+                                            this.handleTreeStatusChanged(ts)
+                                        },
+                                        hsm => {
+                                            this.handleHeaderStatusMessage(hsm)
+                                        }
+                                    )
+                            },
                             headerStatusMessage => {
                                 this.handleHeaderStatusMessage(headerStatusMessage)
                             }
@@ -465,9 +483,6 @@ export class ExtractorRoot implements OnInit {
             this.displaySampleListTypeSelector = false;
 
         }
-
-
-
 
     }
 
@@ -771,213 +786,286 @@ export class ExtractorRoot implements OnInit {
 
     // ********************************************************************
     // ********************************************** Extract file submission
+    private treeStatusNotification: TreeStatusNotification = null;
+    private submitButtonStyleDefault = {'background-color': '#eee'};
+    private buttonStyleSubmitReady = {'background-color': '#99e699'};
+    private buttonStyleSubmitNotReady = {'background-color': '#ffad99'};
+    private submitButtonStyle = this.buttonStyleSubmitNotReady;
+
+    private handleTreeStatusChanged(treeStatusNotification: TreeStatusNotification) {
+
+        if (treeStatusNotification.gobiiExractFilterType === this.gobiiExtractFilterType) {
+            this.treeStatusNotification = treeStatusNotification;
+            this.setSubmitButtonState();
+        } // does the filter type match
+    }
+
+
+    private setSubmitButtonState(): boolean {
+
+        let returnVal: boolean = false;
+
+        if (this.treeStatusNotification.fileModelState == FileModelState.SUBMISSION_READY) {
+            this.submitButtonStyle = this.buttonStyleSubmitReady;
+            returnVal = true;
+        } else {
+            this.submitButtonStyle = this.buttonStyleSubmitNotReady;
+            returnVal = false;
+
+        }
+
+        return returnVal;
+    }
+
+    private handleOnMouseOverSubmit(arg, isEnter) {
+
+        // this.criteriaInvalid = true;
+
+        if (isEnter) {
+
+            this.setSubmitButtonState()
+
+            this.treeStatusNotification.modelTreeValidationErrors.forEach(mtv => {
+
+                let currentMessage: string;
+
+                if (mtv.fileModelNode.getItemType() === ExtractorItemType.ENTITY) {
+                    currentMessage = mtv.fileModelNode.getEntityName();
+
+                } else {
+                    currentMessage = Labels.instance().treeExtractorTypeLabels[mtv.fileModelNode.getItemType()];
+                }
+
+                currentMessage += ": " + mtv.message;
+
+                this.handleAddMessage(currentMessage);
+
+            });
+        }
+
+
+        // else {
+        //     this.submitButtonStyle = this.submitButtonStyleDefault;
+        // }
+
+        //#eee
+
+
+        let foo: string = "foo";
+    }
+
     private handleExtractSubmission() {
 
-        let scope$ = this;
 
-        let gobiiExtractorInstructions: GobiiExtractorInstruction[] = [];
-        let gobiiDataSetExtracts: GobiiDataSetExtract[] = [];
-        let mapsetIds: number[] = [];
-        let submitterContactid: number = null;
-        let jobId: string = null;
-        let markerFileName: string = null;
-        let sampleFileName: string = null;
-        let sampleListType: GobiiSampleListType;
-        scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(
-            fileItems => {
+        if( this.setSubmitButtonState() ) {
 
-                let fileItemJobId: GobiiFileItem = fileItems.find(item => {
-                    return item.getExtractorItemType() === ExtractorItemType.JOB_ID
-                });
+            let scope$ = this;
 
-                if (fileItemJobId != null) {
-                    jobId = fileItemJobId.getItemId();
-                }
+            let gobiiExtractorInstructions: GobiiExtractorInstruction[] = [];
+            let gobiiDataSetExtracts: GobiiDataSetExtract[] = [];
+            let mapsetIds: number[] = [];
+            let submitterContactid: number = null;
+            let jobId: string = null;
+            let markerFileName: string = null;
+            let sampleFileName: string = null;
+            let sampleListType: GobiiSampleListType;
+            scope$._fileModelTreeService.getFileItems(scope$.gobiiExtractFilterType).subscribe(
+                fileItems => {
 
-                let fileItemMarkerFile: GobiiFileItem = fileItems.find(item => {
-                    return item.getExtractorItemType() === ExtractorItemType.MARKER_FILE
-                });
+                    let fileItemJobId: GobiiFileItem = fileItems.find(item => {
+                        return item.getExtractorItemType() === ExtractorItemType.JOB_ID
+                    });
 
-                if (fileItemMarkerFile != null) {
-                    markerFileName = fileItemMarkerFile.getItemId();
-                }
+                    if (fileItemJobId != null) {
+                        jobId = fileItemJobId.getItemId();
+                    }
 
-                let fileItemSampleFile: GobiiFileItem = fileItems.find(item => {
-                    return item.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE
-                });
+                    let fileItemMarkerFile: GobiiFileItem = fileItems.find(item => {
+                        return item.getExtractorItemType() === ExtractorItemType.MARKER_FILE
+                    });
 
-                if (fileItemSampleFile != null) {
-                    sampleFileName = fileItemSampleFile.getItemId();
-                }
+                    if (fileItemMarkerFile != null) {
+                        markerFileName = fileItemMarkerFile.getItemId();
+                    }
 
-                let submitterFileItem: GobiiFileItem = fileItems.find(item => {
-                    return (item.getEntityType() === EntityType.Contacts)
-                        && (item.getEntitySubType() === EntitySubType.CONTACT_SUBMITED_BY)
-                });
+                    let fileItemSampleFile: GobiiFileItem = fileItems.find(item => {
+                        return item.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE
+                    });
 
-                submitterContactid = Number(submitterFileItem.getItemId());
+                    if (fileItemSampleFile != null) {
+                        sampleFileName = fileItemSampleFile.getItemId();
+                    }
+
+                    let submitterFileItem: GobiiFileItem = fileItems.find(item => {
+                        return (item.getEntityType() === EntityType.Contacts)
+                            && (item.getEntitySubType() === EntitySubType.CONTACT_SUBMITED_BY)
+                    });
+
+                    submitterContactid = Number(submitterFileItem.getItemId());
 
 
-                mapsetIds = fileItems
-                    .filter(item => {
-                        return item.getEntityType() === EntityType.Mapsets
-                    })
-                    .map(item => {
+                    mapsetIds = fileItems
+                        .filter(item => {
+                            return item.getEntityType() === EntityType.Mapsets
+                        })
+                        .map(item => {
+                            return Number(item.getItemId())
+                        });
+
+                    let exportFileItem: GobiiFileItem = fileItems.find(item => {
+                        return item.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
+                    });
+
+                    // these probably should be just one enum
+                    let gobiiFileType: GobiiFileType = null;
+                    let extractFormat: GobiiExtractFormat = GobiiExtractFormat[exportFileItem.getItemId()];
+                    if (extractFormat === GobiiExtractFormat.FLAPJACK) {
+                        gobiiFileType = GobiiFileType.FLAPJACK;
+                    } else if (extractFormat === GobiiExtractFormat.HAPMAP) {
+                        gobiiFileType = GobiiFileType.HAPMAP;
+                    } else if (extractFormat === GobiiExtractFormat.META_DATA_ONLY) {
+                        gobiiFileType = GobiiFileType.META_DATA;
+                    }
+
+
+                    let dataTypeFileItem: GobiiFileItem = fileItems.find(item => {
+                        return item.getEntityType() === EntityType.CvTerms
+                            && item.getCvFilterType() === CvFilterType.DATASET_TYPE
+                    });
+
+                    let datSetTypeName: string = dataTypeFileItem != null ? dataTypeFileItem.getItemName() : null;
+
+                    let platformFileItems: GobiiFileItem[] = fileItems.filter(item => {
+                        return item.getEntityType() === EntityType.Platforms
+                    });
+
+                    let platformIds: number[] = platformFileItems.map(item => {
                         return Number(item.getItemId())
                     });
 
-                let exportFileItem: GobiiFileItem = fileItems.find(item => {
-                    return item.getExtractorItemType() === ExtractorItemType.EXPORT_FORMAT
-                });
+                    let markerList: string[] =
+                        fileItems
+                            .filter(fi => {
+                                return fi.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM
+                            })
+                            .map(mi => {
+                                return mi.getItemId()
+                            });
 
-                // these probably should be just one enum
-                let gobiiFileType: GobiiFileType =  null;
-                let extractFormat: GobiiExtractFormat = GobiiExtractFormat[exportFileItem.getItemId()];
-                if( extractFormat === GobiiExtractFormat.FLAPJACK ) {
-                    gobiiFileType = GobiiFileType.FLAPJACK;
-                } else if (extractFormat === GobiiExtractFormat.HAPMAP) {
-                    gobiiFileType = GobiiFileType.HAPMAP;
-                } else if( extractFormat === GobiiExtractFormat.META_DATA_ONLY ) {
-                    gobiiFileType = GobiiFileType.META_DATA;
-                }
+                    let sampleList: string[] =
+                        fileItems
+                            .filter(fi => {
+                                return fi.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM
+                            })
+                            .map(mi => {
+                                return mi.getItemId()
+                            });
 
+                    let sampleListTypeFileItem: GobiiFileItem = fileItems.find(item => {
+                        return item.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_TYPE;
+                    });
 
-                let dataTypeFileItem: GobiiFileItem = fileItems.find(item => {
-                    return item.getEntityType() === EntityType.CvTerms
-                        && item.getCvFilterType() === CvFilterType.DATASET_TYPE
-                });
+                    if (sampleListTypeFileItem != null) {
+                        sampleListType = GobiiSampleListType[sampleListTypeFileItem.getItemId()];
+                    }
 
-                let datSetTypeName: string = dataTypeFileItem != null ? dataTypeFileItem.getItemName() : null;
+                    if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
-                let platformFileItems: GobiiFileItem[] = fileItems.filter(item => {
-                    return item.getEntityType() === EntityType.Platforms
-                });
+                        fileItems
+                            .filter(item => {
+                                return item.getEntityType() === EntityType.DataSets
+                            })
+                            .forEach(datsetFileItem => {
 
-                let platformIds: number[] = platformFileItems.map(item => {
-                    return Number(item.getItemId())
-                });
-
-                let markerList: string[] =
-                    fileItems
-                        .filter(fi => {
-                            return fi.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM
-                        })
-                        .map(mi => {
-                            return mi.getItemId()
-                        });
-
-                let sampleList: string[] =
-                    fileItems
-                        .filter(fi => {
-                            return fi.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM
-                        })
-                        .map(mi => {
-                            return mi.getItemId()
-                        });
-
-                let sampleListTypeFileItem: GobiiFileItem = fileItems.find(item => {
-                    return item.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_TYPE;
-                });
-
-                if( sampleListTypeFileItem != null ) {
-                    sampleListType = GobiiSampleListType[sampleListTypeFileItem.getItemId()];
-                }
-
-                if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
-
-                    fileItems
-                        .filter(item => {
-                            return item.getEntityType() === EntityType.DataSets
-                        })
-                        .forEach(datsetFileItem => {
-
-                            gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
-                                false,
-                                Number(datsetFileItem.getItemId()),
-                                datsetFileItem.getItemName(),
-                                null,
-                                this.gobiiExtractFilterType,
-                                null,
-                                null,
-                                markerFileName,
-                                null,
-                                datSetTypeName,
-                                platformIds));
-                        });
-                } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
-                    gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
-                        false,
-                        null,
-                        null,
-                        null,
-                        this.gobiiExtractFilterType,
-                        markerList,
-                        null,
-                        markerFileName,
-                        null,
-                        datSetTypeName,
-                        platformIds));
-                } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
-                    gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
-                        false,
-                        null,
-                        null,
-                        null,
-                        this.gobiiExtractFilterType,
-                        null,
-                        sampleList,
-                        sampleFileName,
-                        sampleListType,
-                        datSetTypeName,
-                        platformIds));
-                } else {
-                    this.handleAddMessage("Unhandled extract filter type: " + GobiiExtractFilterType[this.gobiiExtractFilterType]);
-                }
-            }
-        );
-
-
-        gobiiExtractorInstructions.push(
-            new GobiiExtractorInstruction(
-                gobiiDataSetExtracts,
-                submitterContactid,
-                null,
-                mapsetIds)
-        );
-
-
-        let fileName: string = jobId;
-
-        let extractorInstructionFilesDTORequest: ExtractorInstructionFilesDTO =
-            new ExtractorInstructionFilesDTO(gobiiExtractorInstructions,
-                fileName);
-
-        let extractorInstructionFilesDTOResponse: ExtractorInstructionFilesDTO = null;
-
-        this._dtoRequestServiceExtractorFile.post(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
-            .subscribe(extractorInstructionFilesDTO => {
-                    extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
-                    scope$.handleAddMessage("Extractor instruction file created on server: "
-                        + extractorInstructionFilesDTOResponse.getInstructionFileName());
-
-                    let newJobId: string = FileName.makeUniqueFileId();
-                    this._fileModelTreeService
-                        .put(GobiiFileItem
-                            .build(this.gobiiExtractFilterType, ProcessType.CREATE)
-                            .setExtractorItemType(ExtractorItemType.JOB_ID)
-                            .setItemId(newJobId)
-                            .setItemName(newJobId))
-                        .subscribe(
+                                gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
+                                    false,
+                                    Number(datsetFileItem.getItemId()),
+                                    datsetFileItem.getItemName(),
+                                    null,
+                                    this.gobiiExtractFilterType,
+                                    null,
+                                    null,
+                                    markerFileName,
+                                    null,
+                                    datSetTypeName,
+                                    platformIds));
+                            });
+                    } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
+                        gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
+                            false,
                             null,
-                            headerStatusMessage => {
-                                this.handleHeaderStatusMessage(headerStatusMessage)
-                            }
-                        );
-                },
-                headerResponse => {
+                            null,
+                            null,
+                            this.gobiiExtractFilterType,
+                            markerList,
+                            null,
+                            markerFileName,
+                            null,
+                            datSetTypeName,
+                            platformIds));
+                    } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+                        gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
+                            false,
+                            null,
+                            null,
+                            null,
+                            this.gobiiExtractFilterType,
+                            null,
+                            sampleList,
+                            sampleFileName,
+                            sampleListType,
+                            datSetTypeName,
+                            platformIds));
+                    } else {
+                        this.handleAddMessage("Unhandled extract filter type: " + GobiiExtractFilterType[this.gobiiExtractFilterType]);
+                    }
+                }
+            );
 
-                    scope$.handleResponseHeader(headerResponse);
-                });
+
+            gobiiExtractorInstructions.push(
+                new GobiiExtractorInstruction(
+                    gobiiDataSetExtracts,
+                    submitterContactid,
+                    null,
+                    mapsetIds)
+            );
+
+
+            let fileName: string = jobId;
+
+            let extractorInstructionFilesDTORequest: ExtractorInstructionFilesDTO =
+                new ExtractorInstructionFilesDTO(gobiiExtractorInstructions,
+                    fileName);
+
+            let extractorInstructionFilesDTOResponse: ExtractorInstructionFilesDTO = null;
+
+            this._dtoRequestServiceExtractorFile.post(new DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))
+                .subscribe(extractorInstructionFilesDTO => {
+                        extractorInstructionFilesDTOResponse = extractorInstructionFilesDTO;
+                        scope$.handleAddMessage("Extractor instruction file created on server: "
+                            + extractorInstructionFilesDTOResponse.getInstructionFileName());
+
+                        let newJobId: string = FileName.makeUniqueFileId();
+                        this._fileModelTreeService
+                            .put(GobiiFileItem
+                                .build(this.gobiiExtractFilterType, ProcessType.CREATE)
+                                .setExtractorItemType(ExtractorItemType.JOB_ID)
+                                .setItemId(newJobId)
+                                .setItemName(newJobId))
+                            .subscribe(
+                                null,
+                                headerStatusMessage => {
+                                    this.handleHeaderStatusMessage(headerStatusMessage)
+                                }
+                            );
+                    },
+                    headerResponse => {
+
+                        scope$.handleResponseHeader(headerResponse);
+                    });
+
+        } // if submission state is READY
 
     }
 
@@ -987,12 +1075,8 @@ export class ExtractorRoot implements OnInit {
             .treeStateNotifications()
             .subscribe(ts => {
 
-                if (ts.fileModelState == FileModelState.SUBMISSION_READY) {
-                    // Only when the tree is ready do we effectively tell the child chomponents that they can
-                    // intitialze themselves
-                }
+                this.handleTreeStatusChanged(ts);
             });
-
 
         this.initializeServerConfigs();
         this.handleExportTypeSelected(GobiiExtractFilterType.WHOLE_DATASET);
