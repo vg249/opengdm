@@ -20,8 +20,6 @@ import org.slf4j.LoggerFactory;
  * * A ConfigValuesFactory, which knows how to create a ConfigValues instance.
  * This form of organization enables this class to function as a dependency firewall between the actual
  * format of the data and the rest of the system.
- *
- *
  */
 public class ConfigSettings {
 
@@ -100,11 +98,11 @@ public class ConfigSettings {
         this.configValues.setCrop(gobiiCropType, isActive, serviceDomain, serviceAppRoot, servicePort);
     }
 
-    public void removeCrop(String cropId ) throws Exception {
+    public void removeCrop(String cropId) throws Exception {
         this.configValues.removeCrop(cropId);
     }
 
-    public boolean isCropDefined(String gobiiCropType ) {
+    public boolean isCropDefined(String gobiiCropType) {
         return this.configValues.isCropDefined(gobiiCropType);
     }
 
@@ -223,6 +221,55 @@ public class ConfigSettings {
         this.configValues.setIflIntegrityCheck(iflIntegrityCheck);
     }
 
+    public String getLdapSvrType() {
+        return this.getLdapSvrType();
+    }
+
+    public void setLdapSvrType(String ldapSvrType) {
+        this.setLdapSvrType(ldapSvrType);
+    }
+
+    public String getLdapSvrDomain() {
+        return this.getLdapSvrDomain();
+    }
+
+    public void setLdapSvrDomain(String ldapSvrDomain) {
+        this.setLdapSvrDomain(ldapSvrDomain);
+    }
+
+    public String getLdapUserPath() {
+        return this.getLdapUserPath();
+    }
+
+    public void setLdapUserPath(String ldapUserPath) {
+        this.setLdapUserPath(ldapUserPath);
+    }
+
+
+    public Integer getLdapServerPort() {
+        return this.getLdapServerPort();
+    }
+
+    public void setLdapServerPort(Integer ldapServerPort) {
+        this.setLdapServerPort(ldapServerPort);
+    }
+
+    public String getLdapBindUser() {
+        return this.getLdapBindUser();
+    }
+
+    public void setLdapBindUser(String ldapBindUser) {
+        this.setLdapBindUser(ldapBindUser);
+    }
+
+    public String getLdapBindPassword() {
+        return this.getLdapBindPassword();
+    }
+
+    public void setLdapBindPassword(String ldapBindPassword) {
+        this.setLdapBindPassword(ldapBindPassword);
+    }
+
     public String getFileSystemRoot() {
 
         return this.configValues.getFileSystemRoot();
@@ -249,7 +296,6 @@ public class ConfigSettings {
     public void setFileSysCropsParent(String fileSysCropsParent) {
         this.configValues.setFileSysCropsParent(fileSysCropsParent);
     }
-
 
 
 }

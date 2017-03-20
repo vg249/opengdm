@@ -70,6 +70,24 @@ class ConfigValues {
 
     @Element(required = false)
     private Integer emailServerPort = 0;
+    
+    @Element(required = false)
+    private String ldapSvrType;
+
+    @Element(required = false)
+    private String ldapUserPath;
+
+    @Element(required = false)
+    private String ldapSvrDomain;
+
+    @Element(required = false)
+    private Integer ldapServerPort = 0;
+
+    @Element(required = false)
+    private String ldapBindUser;
+
+    @Element(required = false)
+    private String ldapBindPassword;
 
     @Element(required = false)
     private boolean iflIntegrityCheck = false;
@@ -285,6 +303,54 @@ class ConfigValues {
 
     public void setEmailSvrPort(Integer emailServerPort) {
         this.emailServerPort = emailServerPort;
+    }
+
+    public String getLdapSvrType() {
+        return ldapSvrType;
+    }
+
+    public void setLdapSvrType(String ldapSvrType) {
+        this.ldapSvrType = ldapSvrType;
+    }
+
+    public String getLdapUserPath() {
+        return ldapUserPath;
+    }
+
+    public void setLdapUserPath(String ldapUserPath) {
+        this.ldapUserPath = ldapUserPath;
+    }
+
+    public String getLdapSvrDomain() {
+        return ldapSvrDomain;
+    }
+
+    public void setLdapSvrDomain(String ldapSvrDomain) {
+        this.ldapSvrDomain = ldapSvrDomain;
+    }
+
+    public Integer getLdapServerPort() {
+        return ldapServerPort;
+    }
+
+    public void setLdapServerPort(Integer ldapServerPort) {
+        this.ldapServerPort = ldapServerPort;
+    }
+
+    public String getLdapBindUser() {
+        return ldapBindUser;
+    }
+
+    public void setLdapBindUser(String ldapBindUser) {
+        this.ldapBindUser = ldapBindUser;
+    }
+
+    public String getLdapBindPassword() {
+        return ldapBindPassword;
+    }
+
+    public void setLdapBindPassword(String ldapBindPassword) {
+        this.ldapBindPassword = ldapBindPassword;
     }
 
     public boolean isIflIntegrityCheck() {
