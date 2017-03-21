@@ -197,10 +197,20 @@ public class HapmapTransformer {
 				}
 
 				int processedBothRowsNumber = 0;
+
+				int extendedMarkerRefHeaderIndex = extendedMarkerHeaders.indexOf("marker_ref");
 				int markerRefHeaderIndex = markerHeaders.indexOf("marker_ref");
+
+				int extendedMarkerAltsHeaderIndex = extendedMarkerHeaders.indexOf("marker_alts");
 				int markerAltsHeaderIndex = markerHeaders.indexOf("marker_alts");
+
 				int extendedMarkerLinkageGroupNameHeaderIndex = extendedMarkerHeaders.indexOf("linkage_group_name");
+				// The "marker.file" file does not contain the "linkage_group_name" column header
+
 				int extendedMarkerLinkageGroupStartHeaderIndex = extendedMarkerHeaders.indexOf("marker_linkage_group_start");
+				// The "marker.file" file does not contain the "marker_linkage_group_start" column header
+
+				int extendedMarkerStrandHeaderIndex = extendedMarkerHeaders.indexOf("marker_strand");
 				int markerStrandHeaderIndex = markerHeaders.indexOf("marker_strand");
 
 				while (markerScanner.hasNextLine() && genotypeScanner.hasNextLine()) {
@@ -221,13 +231,18 @@ public class HapmapTransformer {
 						{
 							stringBuilderNewLine.append(markerLineParts[markerHeaders.indexOf(newMarkerHeader)]);
 						}
-						// New marker header to include data from marker line or extended marker line (if existent)
+						// New marker header to include data from extended marker line and if no then marker line
 						else {
 							switch (newMarkerHeader) {
 								case "alleles":
-									stringBuilderNewLine.append(markerLineParts[markerRefHeaderIndex]);
-									stringBuilderNewLine.append("/");
-									stringBuilderNewLine.append(markerLineParts[markerAltsHeaderIndex]);
+									if (extendedMarkerLineParts != null) {
+										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerRefHeaderIndex]);
+										stringBuilderNewLine.append("/");
+										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerAltsHeaderIndex]); }
+									else {
+										stringBuilderNewLine.append(markerLineParts[markerRefHeaderIndex]);
+										stringBuilderNewLine.append("/");
+										stringBuilderNewLine.append(markerLineParts[markerAltsHeaderIndex]); }
 									break;
 								case "chrom":
 									if (extendedMarkerLineParts != null) {
@@ -238,7 +253,22 @@ public class HapmapTransformer {
 										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerLinkageGroupStartHeaderIndex]); }
 									break;
 								case "strand":
-									stringBuilderNewLine.append(markerLineParts[markerStrandHeaderIndex]);
+									if (extendedMarkerLineParts != null) {
+										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerStrandHeaderIndex]); }
+									else {
+										stringBuilderNewLine.append(markerLineParts[markerStrandHeaderIndex]); }
+									break;
+								case "assembly#":
+									break;
+								case "center":
+									break;
+								case "protLSID":
+									break;
+								case "assayLSID":
+									break;
+								case "panelLSID":
+									break;
+								case "QCcode":
 									break;
 								default:
 							}
