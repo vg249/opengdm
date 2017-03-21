@@ -27,6 +27,9 @@ import {AuthenticationService} from "../services/core/authentication.service";
         </div>`
 })
 
+
+// this component and the entire login mechanism (AuthGuard, etc.) are borrowed form
+// http://jasonwatmore.com/post/2016/09/29/angular-2-user-registration-and-login-example-tutorial
 export class LoginComponent implements OnInit {
     model: any = {};
     loading = false;

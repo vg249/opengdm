@@ -24,6 +24,8 @@ System.register(["@angular/core", "@angular/router", "../services/core/authentic
             }
         ],
         execute: function () {
+            // this component and the entire login mechanism (AuthGuard, etc.) are borrowed form
+            // http://jasonwatmore.com/post/2016/09/29/angular-2-user-registration-and-login-example-tutorial
             LoginComponent = (function () {
                 function LoginComponent(route, router, authenticationService) {
                     this.route = route;
