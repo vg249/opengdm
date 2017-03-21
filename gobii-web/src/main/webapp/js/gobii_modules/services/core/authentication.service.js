@@ -89,6 +89,9 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                             else {
                                 observer.error("No token was provided by server");
                             }
+                        }, function (json) {
+                            var message = json.status + ": " + json.statusText;
+                            observer.error(message);
                         }); // subscribe
                     } // observer callback
                     ); // Observer.create() 

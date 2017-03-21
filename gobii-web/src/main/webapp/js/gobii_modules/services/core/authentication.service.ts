@@ -5,6 +5,7 @@ import "rxjs/add/operator/map";
 
 import {DtoHeaderAuth} from "../../model/dto-header-auth";
 import {HttpValues} from "../../model/http-values";
+import {PayloadEnvelope} from "../../model/payload/payload-envelope";
 
 @Injectable()
 export class AuthenticationService {
@@ -83,8 +84,11 @@ export class AuthenticationService {
                         } else {
                             observer.error("No token was provided by server");
                         }
-
-                    }) // subscribe
+                    },
+                        json => {
+                            let message:string = json.status + ": " + json.statusText;
+                            observer.error(message);
+                        }); // subscribe
             } // observer callback
         ); // Observer.create() 
 
