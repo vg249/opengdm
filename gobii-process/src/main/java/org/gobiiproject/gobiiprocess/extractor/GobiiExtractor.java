@@ -205,6 +205,7 @@ public class GobiiExtractor {
 						else if(extract.getListFileName()!=null){
 							markerListLocation=" -x "+extractDir+extract.getListFileName();
 						}
+						//else if file is null and list is empty or null - > no term
 
 						if(markerListOverrideLocation!=null) markerListLocation=" -x "+ markerListOverrideLocation;
 
