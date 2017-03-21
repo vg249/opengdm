@@ -43,6 +43,7 @@
 
     </properties>
 
+
     <dependencies>
 
         <!-- gobii dependencies -->
@@ -171,6 +172,7 @@
             <version>${spring-security.crypto}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.springframework.ldap/spring-ldap-core -->
 
         <!-- Spring and Transactions -->
         <dependency>

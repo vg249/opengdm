@@ -48,12 +48,16 @@
 
     <bean:bean id="userDetailService" class="org.gobiiproject.gobidomain.services.impl.UserDetailsServiceImpl"/>
 
+
+    <!--<ldap-server url="ldap://springframework.org:389/dc=springframework,dc=org" />-->
     <authentication-manager id="restAuthenticationManager">
+        <!--<ldap-authentication-provider-->
+                <!--user-search-base="ou=people"-->
+                <!--user-search-filter="(uid={0})"-->
+                <!--group-search-base="ou=groups"-->
+                <!--group-search-filter="(member={0})">-->
+        <!--</ldap-authentication-provider>-->
         <authentication-provider user-service-ref="userDetailService">
-            <!--
-            Default password encoder is PlaintextPasswordEncoder, which fits with our hardcoded users.
-            Obviously not a good choice otherwise.
-            -->
         </authentication-provider>
     </authentication-manager>
 
