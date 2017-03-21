@@ -201,7 +201,7 @@ public class GobiiExtractor {
 						String hapmapOutFile = extractDir+"DS"+dataSetId+".hmp.txt";
 						HapmapTransformer hapmapTransformer = new HapmapTransformer();
 						ErrorLogger.logDebug("GobiiExtractor","Executing Hapmap Generation");
-						success &= hapmapTransformer.generateFile(markerFile, sampleFile, mapsetFile, genoFile, hapmapOutFile, errorFile);
+						success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
 						HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
 						HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 						break;
