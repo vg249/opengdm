@@ -12,9 +12,18 @@ import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
-import org.gobiiproject.gobiimodel.types.DataSetType;
-import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiimodel.dto.instructions.GobiiQCComplete;
+import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
+import org.gobiiproject.gobiimodel.types.*;
+import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.gobiiproject.gobiimodel.utils.email.QCMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
@@ -22,8 +31,6 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
-import org.gobiiproject.gobiimodel.types.GobiiCropType;
-import org.gobiiproject.gobiimodel.types.GobiiFileType;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
@@ -39,6 +46,8 @@ public class GobiiExtractor {
 	private static String errorLogOverride;
 	private static boolean verbose;
 	private static String rootDir="../";
+	private static UriFactory uriFactory;
+
 	public static void main(String[] args) throws Exception {
 		Options o = new Options()
          		.addOption("v", "verbose", false, "Verbose output")
@@ -169,6 +178,7 @@ public class GobiiExtractor {
 
 				//HDF5
 				String tempFolder=extractDir;
+
 				String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
 				String hdf5Extractor=pathToHDF5+"dumpdataset";
 				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
@@ -299,6 +309,39 @@ public class GobiiExtractor {
 					} else {
 						ErrorLogger.logError("Extractor","No genotype file: "+SSRFilePath.toString());
 					}
+				}
+
+				//QC - Subsection #1 of 1
+				if (inst.isQcCheck()) {
+					ErrorLogger.logInfo("Extractor", "qcCheck detected");
+					ErrorLogger.logInfo("Extractor","Entering into the QC Subsection #1 of 1...");
+					QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
+					qcInstructionsDTOToSend.setContactId(inst.getContactId());
+					qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
+					qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
+					qcInstructionsDTOToSend.setDatasetId(dataSetId);
+					qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
+					qcInstructionsDTOToSend.setQualityFileName("Report.xls");
+					PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
+					ClientContext clientContext = ClientContext.getInstance(configuration, crop);
+					SystemUserDetail SystemUserDetail = (new SystemUsers()).getDetail(SystemUserNames.USER_READER.toString());
+					if(!(clientContext.login(SystemUserDetail.getUserName(), SystemUserDetail.getPassword()))) {
+						ErrorLogger.logError("Digester","Login Error:" + SystemUserDetail.getUserName() + "-" + SystemUserDetail.getPassword());
+						return;
+					}
+					String currentCropContextRoot = clientContext.getInstance(null, false).getCurrentCropContextRoot();
+					uriFactory = new UriFactory(currentCropContextRoot);
+					GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
+					PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
+							                                                                                           payloadEnvelope);
+					if (qcInstructionFileDTOResponseEnvelope != null) {
+						ErrorLogger.logInfo("Extractor","QC Instructions Request Sent");
+					}
+					else {
+						ErrorLogger.logError("Extractor","Error Sending QC Instructions Request");
+					}
+
+					ErrorLogger.logInfo("Extractor","Done with the QC Subsection #1 of 1!");
 				}
 			}
 			HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
