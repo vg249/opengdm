@@ -191,7 +191,8 @@ public class GobiiExtractor {
 						String mapOutFile=extractDir+"DS"+dataSetId+".map";
 						lastErrorFile=errorFile;
 						//Always regenerate requests - may have different parameters
-						FlapjackTransformer.generateMapFile(extendedMarkerFile, sampleFile, chrLengthFile, dataSetId, tempFolder, mapOutFile, errorFile);
+						boolean extended=new File(extendedMarkerFile).exists();
+						FlapjackTransformer.generateMapFile(extended?extendedMarkerFile:markerFile, sampleFile, chrLengthFile, dataSetId, tempFolder, mapOutFile, errorFile,extended);
 						HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 						FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
 						HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
