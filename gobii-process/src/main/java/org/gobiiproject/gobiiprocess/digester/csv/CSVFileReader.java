@@ -5,6 +5,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigurations;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,6 +59,16 @@ public class CSVFileReader {
 	 * @param filePath location in the file system of the instruction file (can be absolute or relative.
 	 */
 	public static void parseInstructionFile(String filePath) throws FileNotFoundException, IOException, ParseException{
+		if(LoaderGlobalConfigurations.getSingleThreadFileRead()){
+			for(GobiiLoaderInstruction i:HelperFunctions.parseInstructionFile(filePath)){
+				try {
+					new CSVFileReader().processCSV(i);
+				} catch (InterruptedException e) {
+					ErrorLogger.logError("CSVFileReader","Interrupted reading instruction", e);
+				}
+			}
+			return;
+		}
 		List<GobiiLoaderInstruction> instructions=null;
 		List<Thread> threads=new LinkedList<>();
 		try{

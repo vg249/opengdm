@@ -79,6 +79,7 @@ public class GobiiFileReader {
          		.addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
          		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
          		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files");
+		LoaderGlobalConfigurations.addOptions(o);
         DigesterMessage dm = new DigesterMessage();
 		CommandLineParser parser = new DefaultParser();
         try{
@@ -88,6 +89,7 @@ public class GobiiFileReader {
             if(cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
             if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
             if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
+			LoaderGlobalConfigurations.setFromFlags(cli);
             args=cli.getArgs();//Remaining args passed through
                 
 		}catch(org.apache.commons.cli.ParseException exp ) {
