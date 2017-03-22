@@ -22,6 +22,9 @@
 
     <!--  unauthorizedEntryPoint == org.advocacydb.web.sec.UnAuthenticatedEntryPointint -->
     <!--  restAuthenticationManager == userDetailService ==  org.advocacydb.web.controllers.MyUserDetailsService -->
+
+
+
     <http realm="Protected API"
           auto-config="false"
           use-expressions="true"
@@ -46,33 +49,33 @@
 
     <bean:bean id="unaAuthenticatedEntryPoint" class="org.gobiiproject.gobiiweb.security.UnAuthenticatedEntryPoint"/>
 
-    <bean:bean id="userDetailService" class="org.gobiiproject.gobidomain.services.impl.UserDetailsServiceImpl"/>
+    <!--<bean:bean id="userDetailService" class="org.gobiiproject.gobidomain.services.impl.UserDetailsServiceImpl"/>-->
 
 
     <!--<ldap-server url="ldap://springframework.org:389/dc=springframework,dc=org" />-->
-    <authentication-manager id="restAuthenticationManager">
-        <!--<ldap-authentication-provider-->
-                <!--user-search-base="ou=people"-->
-                <!--user-search-filter="(uid={0})"-->
-                <!--group-search-base="ou=groups"-->
-                <!--group-search-filter="(member={0})">-->
-        <!--</ldap-authentication-provider>-->
-        <authentication-provider user-service-ref="userDetailService">
-        </authentication-provider>
-    </authentication-manager>
+    <!--<authentication-manager id="restAuthenticationManager">-->
+        <!--&lt;!&ndash;<ldap-authentication-provider&ndash;&gt;-->
+                <!--&lt;!&ndash;user-search-base="ou=people"&ndash;&gt;-->
+                <!--&lt;!&ndash;user-search-filter="(uid={0})"&ndash;&gt;-->
+                <!--&lt;!&ndash;group-search-base="ou=groups"&ndash;&gt;-->
+                <!--&lt;!&ndash;group-search-filter="(member={0})">&ndash;&gt;-->
+        <!--&lt;!&ndash;</ldap-authentication-provider>&ndash;&gt;-->
+        <!--<authentication-provider user-service-ref="userDetailService">-->
+        <!--</authentication-provider>-->
+    <!--</authentication-manager>-->
 
 
-    <bean:bean id="tokenManager" class="org.gobiiproject.gobidomain.security.impl.TokenManagerSingle"/>
+    <!--<bean:bean id="tokenManager" class="org.gobiiproject.gobidomain.security.impl.TokenManagerSingle"/>-->
 
-    <!--  restAuthenticationManager == userDetailService ==  org.advocacydb.web.controllers.MyUserDetailsService -->
-    <bean:bean id="authenticationService" class="org.gobiiproject.gobidomain.services.impl.AuthenticationServiceDefault">
-        <bean:constructor-arg ref="restAuthenticationManager"/>
-        <bean:constructor-arg ref="tokenManager"/>
-    </bean:bean>
+    <!--&lt;!&ndash;  restAuthenticationManager == userDetailService ==  org.advocacydb.web.controllers.MyUserDetailsService &ndash;&gt;-->
+    <!--<bean:bean id="authenticationService" class="org.gobiiproject.gobidomain.services.impl.AuthenticationServiceDefault">-->
+        <!--<bean:constructor-arg ref="restAuthenticationManager"/>-->
+        <!--<bean:constructor-arg ref="tokenManager"/>-->
+    <!--</bean:bean>-->
 
-    <bean:bean id="restAuthenticationFilter" class="org.gobiiproject.gobiiweb.security.TokenAuthenticationFilter">
-        <bean:constructor-arg ref="authenticationService"/>
-        <bean:constructor-arg value="/logout"/>
-    </bean:bean>
+    <!--<bean:bean id="restAuthenticationFilter" class="org.gobiiproject.gobiiweb.security.TokenAuthenticationFilter">-->
+        <!--<bean:constructor-arg ref="authenticationService"/>-->
+        <!--<bean:constructor-arg value="/logout"/>-->
+    <!--</bean:bean>-->
 
 </bean:beans>
