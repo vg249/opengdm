@@ -70,7 +70,7 @@ import {AuthGuard} from "../services/core/auth.guard";
         DtoRequestService,
         FileModelTreeService,
         NameIdService,
-        {provide: APP_BASE_HREF, useValue : '/gobii-dev/' }],
+        {provide: APP_BASE_HREF, useValue : './' }],
     bootstrap: [AppComponent]
 })
 

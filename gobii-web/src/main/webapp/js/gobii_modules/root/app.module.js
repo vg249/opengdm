@@ -154,7 +154,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
                         dto_request_service_1.DtoRequestService,
                         file_model_tree_service_1.FileModelTreeService,
                         name_id_service_1.NameIdService,
-                        { provide: common_1.APP_BASE_HREF, useValue: '/gobii-dev/' }],
+                        { provide: common_1.APP_BASE_HREF, useValue: './' }],
                     bootstrap: [app_component_1.AppComponent]
                 })
             ], AppModule);
