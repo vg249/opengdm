@@ -4,8 +4,8 @@ package org.gobiiproject.gobiimodel.config;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,53 +221,45 @@ public class ConfigSettings {
         this.configValues.setIflIntegrityCheck(iflIntegrityCheck);
     }
 
-    public String getLdapSvrType() {
-        return this.getLdapSvrType();
+    public GobiiAuthenticationType getGobiiAuthenticationType() {
+        return this.configValues.getGobiiAuthenticationType();
     }
 
-    public void setLdapSvrType(String ldapSvrType) {
-        this.setLdapSvrType(ldapSvrType);
+    public void setGobiiAuthenticationType(GobiiAuthenticationType gobiiAuthenticationType) {
+        this.configValues.setGobiiAuthenticationType(gobiiAuthenticationType);
     }
 
-    public String getLdapSvrDomain() {
-        return this.getLdapSvrDomain();
+    public String getLdapUrl() {
+        return this.configValues.getLdapUrl();
     }
 
-    public void setLdapSvrDomain(String ldapSvrDomain) {
-        this.setLdapSvrDomain(ldapSvrDomain);
+    public void setLdapUrl(String ldapSvrDomain) {
+        this.configValues.setLdapUrl(ldapSvrDomain);
     }
 
-    public String getLdapUserPath() {
-        return this.getLdapUserPath();
+    public String getLdapUserDnPattern() {
+        return this.configValues.getLdapUserDnPattern();
     }
 
-    public void setLdapUserPath(String ldapUserPath) {
-        this.setLdapUserPath(ldapUserPath);
+    public void setLdapUserDnPattern(String ldapUserPath) {
+        this.configValues.setLdapUserDnPattern(ldapUserPath);
     }
 
-
-    public Integer getLdapServerPort() {
-        return this.getLdapServerPort();
-    }
-
-    public void setLdapServerPort(Integer ldapServerPort) {
-        this.setLdapServerPort(ldapServerPort);
-    }
 
     public String getLdapBindUser() {
-        return this.getLdapBindUser();
+        return this.configValues.getLdapBindUser();
     }
 
     public void setLdapBindUser(String ldapBindUser) {
-        this.setLdapBindUser(ldapBindUser);
+        this.configValues.setLdapBindUser(ldapBindUser);
     }
 
     public String getLdapBindPassword() {
-        return this.getLdapBindPassword();
+        return this.configValues.getLdapBindPassword();
     }
 
     public void setLdapBindPassword(String ldapBindPassword) {
-        this.setLdapBindPassword(ldapBindPassword);
+        this.configValues.setLdapBindPassword(ldapBindPassword);
     }
 
     public String getFileSystemRoot() {

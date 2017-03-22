@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
+import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
@@ -72,16 +73,13 @@ class ConfigValues {
     private Integer emailServerPort = 0;
     
     @Element(required = false)
-    private String ldapSvrType;
+    private GobiiAuthenticationType gobiiAuthenticationType = GobiiAuthenticationType.TEST;
 
     @Element(required = false)
-    private String ldapUserPath;
+    private String ldapUserDnPattern;
 
     @Element(required = false)
-    private String ldapSvrDomain;
-
-    @Element(required = false)
-    private Integer ldapServerPort = 0;
+    private String ldapUrl;
 
     @Element(required = false)
     private String ldapBindUser;
@@ -305,36 +303,28 @@ class ConfigValues {
         this.emailServerPort = emailServerPort;
     }
 
-    public String getLdapSvrType() {
-        return ldapSvrType;
+    public GobiiAuthenticationType getGobiiAuthenticationType() {
+        return gobiiAuthenticationType;
     }
 
-    public void setLdapSvrType(String ldapSvrType) {
-        this.ldapSvrType = ldapSvrType;
+    public void setGobiiAuthenticationType(GobiiAuthenticationType gobiiAuthenticationType) {
+        this.gobiiAuthenticationType = gobiiAuthenticationType;
     }
 
-    public String getLdapUserPath() {
-        return ldapUserPath;
+    public String getLdapUserDnPattern() {
+        return ldapUserDnPattern;
     }
 
-    public void setLdapUserPath(String ldapUserPath) {
-        this.ldapUserPath = ldapUserPath;
+    public void setLdapUserDnPattern(String ldapUserDnPattern) {
+        this.ldapUserDnPattern = ldapUserDnPattern;
     }
 
-    public String getLdapSvrDomain() {
-        return ldapSvrDomain;
+    public String getLdapUrl() {
+        return ldapUrl;
     }
 
-    public void setLdapSvrDomain(String ldapSvrDomain) {
-        this.ldapSvrDomain = ldapSvrDomain;
-    }
-
-    public Integer getLdapServerPort() {
-        return ldapServerPort;
-    }
-
-    public void setLdapServerPort(Integer ldapServerPort) {
-        this.ldapServerPort = ldapServerPort;
+    public void setLdapUrl(String ldapUrl) {
+        this.ldapUrl = ldapUrl;
     }
 
     public String getLdapBindUser() {
