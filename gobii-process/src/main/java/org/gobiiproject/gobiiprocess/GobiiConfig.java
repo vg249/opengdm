@@ -219,7 +219,7 @@ public class GobiiConfig {
             setOption(options, CONFIG_SVR_CROP_MONET, false, "Server type: Monet DB", "server: monet");
 
 
-            setOption(options, CONFIG_SVR_GLOBAL_AUTH_TYPE, true, "Authentication type (LDAP | ACTIVE_DIRECTORY | TEST)", "authentication type");
+            setOption(options, CONFIG_SVR_GLOBAL_AUTH_TYPE, true, "Authentication type (LDAP | LDAP_CONNECT_WITH_MANAGER | ACTIVE_DIRECTORY | ACTIVE_DIRECTORY_CONNECT_WITH_MANAGER | TEST)", "authentication type");
             setOption(options, CONFIG_SVR_GLOBAL_LDAP_UDN, true, "LDAP User DN pattern (e.g., uid={0},ou=people) ", "User DN Pattern");
             setOption(options, CONFIG_SVR_GLOBAL_LDAP_URL, true, "Fully-qualified LDAP URL", "LDAP URL");
             setOption(options, CONFIG_SVR_GLOBAL_LDAP_BUSR, true, "User for authenticated LDAP search", "LDAP user");
@@ -674,49 +674,47 @@ public class GobiiConfig {
                 valsSet.add(gobiiAuthenticationTypeRaw);
                 configSettings.setGobiiAuthenticationType(gobiiAuthenticationType);
 
-                if (gobiiAuthenticationType != GobiiAuthenticationType.TEST) {
+                String ldapUserDnPattern = null;
+                String ldapUrl = null;
+                String ldapBindUser = null;
+                String ldapBindPassword = null;
 
-                    String ldapUserDnPattern = null;
-                    String ldapUrl = null;
-                    String ldapBindUser = null;
-                    String ldapBindPassword = null;
-
-                    if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_UDN)) {
-                        ldapUserDnPattern = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_UDN);
-                        argsSet.add(CONFIG_SVR_GLOBAL_LDAP_UDN);
-                        valsSet.add(ldapUserDnPattern);
-                    }
-
-                    if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_URL)) {
-                        ldapUrl = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_URL);
-                        argsSet.add(CONFIG_SVR_GLOBAL_LDAP_URL);
-                        valsSet.add(ldapUrl);
-                    }
-
-                    if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_BUSR)) {
-                        ldapBindUser = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_BUSR);
-                        argsSet.add(CONFIG_SVR_GLOBAL_LDAP_BUSR);
-                        valsSet.add(ldapBindUser);
-                    }
-
-                    if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_BPAS)) {
-                        ldapBindPassword = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_BPAS);
-                        argsSet.add(CONFIG_SVR_GLOBAL_LDAP_BPAS);
-                        valsSet.add(ldapBindPassword);
-                    }
-
-                    configSettings.setLdapUrl(ldapUrl);
-                    configSettings.setLdapUserDnPattern(ldapUserDnPattern);
-                    configSettings.setLdapBindUser(ldapBindUser);
-                    configSettings.setLdapBindPassword(ldapBindPassword);
-                    configSettings.commit();
-
-                    writeConfigSettingsMessage(options,
-                            propFileFqpn,
-                            argsSet,
-                            valsSet,
-                            null);
+                if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_UDN)) {
+                    ldapUserDnPattern = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_UDN);
+                    argsSet.add(CONFIG_SVR_GLOBAL_LDAP_UDN);
+                    valsSet.add(ldapUserDnPattern);
                 }
+
+                if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_URL)) {
+                    ldapUrl = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_URL);
+                    argsSet.add(CONFIG_SVR_GLOBAL_LDAP_URL);
+                    valsSet.add(ldapUrl);
+                }
+
+                if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_BUSR)) {
+                    ldapBindUser = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_BUSR);
+                    argsSet.add(CONFIG_SVR_GLOBAL_LDAP_BUSR);
+                    valsSet.add(ldapBindUser);
+                }
+
+                if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_BPAS)) {
+                    ldapBindPassword = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_BPAS);
+                    argsSet.add(CONFIG_SVR_GLOBAL_LDAP_BPAS);
+                    valsSet.add(ldapBindPassword);
+                }
+
+                configSettings.setLdapUrl(ldapUrl);
+                configSettings.setLdapUserDnPattern(ldapUserDnPattern);
+                configSettings.setLdapBindUser(ldapBindUser);
+                configSettings.setLdapBindPassword(ldapBindPassword);
+                configSettings.commit();
+
+                writeConfigSettingsMessage(options,
+                        propFileFqpn,
+                        argsSet,
+                        valsSet,
+                        null);
+
 
             } else if (commandLine.hasOption(CONFIG_SVR_GLOBAL_EMAIL) ||
                     commandLine.hasOption(CONFIG_CROP_ID)) {

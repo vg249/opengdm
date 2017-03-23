@@ -5,6 +5,8 @@ import org.gobiiproject.gobidomain.security.impl.TokenManagerSingle;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
 import org.gobiiproject.gobidomain.services.impl.AuthenticationServiceDefault;
 import org.gobiiproject.gobidomain.services.impl.UserDetailsServiceImpl;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiiweb.security.TokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -38,8 +40,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
 
-        authenticationManagerBuilder.userDetailsService(this.userDetailService());
-    }
+        ConfigSettings configSettings = new ConfigSettings();
+        GobiiAuthenticationType gobiiAuthenticationType = configSettings.getGobiiAuthenticationType();
+        if( gobiiAuthenticationType.equals(GobiiAuthenticationType.TEST ) ) {
+
+            authenticationManagerBuilder.userDetailsService(this.userDetailService());
+
+        } else if (gobiiAuthenticationType.equals(GobiiAuthenticationType.LDAP_CONNECT_WITH_MANAGER)) {
+
+            authenticationManagerBuilder
+                    .ldapAuthentication()
+                    .userSearchFilter(configSettings.getLdapUserDnPattern())
+                    .contextSource()
+                    .managerDn(configSettings.getLdapBindUser())
+                    .managerPassword(configSettings.getLdapBindPassword())
+                    .url(configSettings.getLdapUrl());
+
+        } else if (gobiiAuthenticationType.equals(GobiiAuthenticationType.LDAP)) {
+
+            authenticationManagerBuilder
+                    .ldapAuthentication()
+                    .userSearchFilter(configSettings.getLdapUserDnPattern())
+                    .contextSource()
+                    .url(configSettings.getLdapUrl());
+        }
+    } // configure()
 
 
     @Bean(name = "userDetailService")
@@ -63,3 +88,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 }
+
