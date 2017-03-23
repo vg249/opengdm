@@ -31,6 +31,7 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
@@ -41,11 +42,6 @@ import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
 public class GobiiExtractor {
 	//Paths
 	private static String  pathToHDF5, propertiesFile,pathToHDF5Files;
-	
-	private static String lastErrorFile=null;
-	private static String errorLogOverride;
-	private static boolean verbose;
-	private static String rootDir="../";
 	private static UriFactory uriFactory;
 	private static String lastErrorFile=null;
 	private static String errorLogOverride;
@@ -152,7 +148,7 @@ public class GobiiExtractor {
 
 			for(GobiiDataSetExtract extract:inst.getDataSetExtracts()){
 				GobiiExtractFilterType filterType = extract.getGobiiExtractFilterType();
-                if(filterType==null) filterType=WHOLE_DATASET;
+                if(filterType==null) filterType=GobiiExtractFilterType.WHOLE_DATASET;
                 if(markerListOverrideLocation!=null)filterType=GobiiExtractFilterType.BY_MARKER;
 				String extractDir=extract.getExtractDestinationDirectory();
 				tryExec("rm -f "+extractDir+"*");
