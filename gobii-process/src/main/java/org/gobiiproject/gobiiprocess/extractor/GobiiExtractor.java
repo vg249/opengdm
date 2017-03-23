@@ -47,16 +47,14 @@ public class GobiiExtractor {
 	private static boolean verbose;
 	private static String rootDir="../";
 	private static UriFactory uriFactory;
-
-	public static void main(String[] args) throws Exception {
-		Options o = new Options()
-	
 	private static String lastErrorFile=null;
 	private static String errorLogOverride;
 	private static boolean verbose;
 	private static String rootDir="../";
-    private static String markerListOverrideLocation=null;
+	private static String markerListOverrideLocation=null;
+
 	public static void main(String[] args) throws Exception {
+
 		Options o = new Options()
          		.addOption("v", "verbose", false, "Verbose output")
          		.addOption("e", "errlog", true, "Error log override location")
