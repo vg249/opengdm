@@ -149,7 +149,7 @@ public class HapmapTransformer {
 
 				// Writing the new marker headers into the current line
 				String[] newMarkerHeadersLine = new String[]{
-						"marker_name",
+						"rs#",
 						"alleles",
 						"chrom",
 						"pos",
@@ -198,6 +198,9 @@ public class HapmapTransformer {
 
 				int processedBothRowsNumber = 0;
 
+				int extendedMarkerNameIndex = extendedMarkerHeaders.indexOf("marker_name");
+				int markerNameIndex = markerHeaders.indexOf("marker_name");
+
 				int extendedMarkerRefHeaderIndex = extendedMarkerHeaders.indexOf("marker_ref");
 				int markerRefHeaderIndex = markerHeaders.indexOf("marker_ref");
 
@@ -227,36 +230,54 @@ public class HapmapTransformer {
 					stringBuilderNewLine = new StringBuilder();
 					for (String newMarkerHeader : newMarkerHeadersLine) {
 						// Old marker header to include data from marker line
-						if (markerHeaders.contains(newMarkerHeader))
-						{
+						if (markerHeaders.contains(newMarkerHeader)) {
 							stringBuilderNewLine.append(markerLineParts[markerHeaders.indexOf(newMarkerHeader)]);
 						}
 						// New marker header to include data from extended marker line and if no then marker line
 						else {
 							switch (newMarkerHeader) {
-								case "alleles":
+								case "rs#":
 									if (extendedMarkerLineParts != null) {
-										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerRefHeaderIndex]);
-										stringBuilderNewLine.append("/");
-										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerAltsHeaderIndex]); }
+										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerNameIndex]);
+									}
 									else {
-										stringBuilderNewLine.append(markerLineParts[markerRefHeaderIndex]);
+										stringBuilderNewLine.append(markerLineParts[markerNameIndex]);
+									}
+									break;
+								case "alleles":
+									String ref = "";
+									String alt = "";
+									if (extendedMarkerLineParts != null) {
+										ref = extendedMarkerLineParts[extendedMarkerRefHeaderIndex];
+										alt = extendedMarkerLineParts[extendedMarkerAltsHeaderIndex];
+									}
+									else {
+										ref = markerLineParts[markerRefHeaderIndex];
+										alt = markerLineParts[markerAltsHeaderIndex];
+									}
+									if ((!(ref.equals(""))) && (!(alt.equals("")))) {
+										stringBuilderNewLine.append(ref);
 										stringBuilderNewLine.append("/");
-										stringBuilderNewLine.append(markerLineParts[markerAltsHeaderIndex]); }
+										stringBuilderNewLine.append(alt);
+									}
 									break;
 								case "chrom":
 									if (extendedMarkerLineParts != null) {
-										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerLinkageGroupNameHeaderIndex]); }
+										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerLinkageGroupNameHeaderIndex]);
+									}
 									break;
 								case "pos":
 									if (extendedMarkerLineParts != null) {
-										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerLinkageGroupStartHeaderIndex]); }
+										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerLinkageGroupStartHeaderIndex]);
+									}
 									break;
 								case "strand":
 									if (extendedMarkerLineParts != null) {
-										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerStrandHeaderIndex]); }
+										stringBuilderNewLine.append(extendedMarkerLineParts[extendedMarkerStrandHeaderIndex]);
+									}
 									else {
-										stringBuilderNewLine.append(markerLineParts[markerStrandHeaderIndex]); }
+										stringBuilderNewLine.append(markerLineParts[markerStrandHeaderIndex]);
+									}
 									break;
 								case "assembly#":
 									break;

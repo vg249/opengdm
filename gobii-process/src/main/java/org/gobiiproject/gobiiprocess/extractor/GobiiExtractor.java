@@ -5,7 +5,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -183,7 +182,18 @@ public class GobiiExtractor {
 				HelperFunctions.tryExec(hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile,null,errorFile);
 				success&=ErrorLogger.success();
 				ErrorLogger.logDebug("Extractor",(success?"Success ":"Failure " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile));
-				
+				// Adding "/" back to the bi-allelic data made from HDF5
+				if (extract.getGobiiDatasetType() != null) {
+					if (extract.getGobiiDatasetType().equals(DataSetType.SSR_ALLELE_SIZE.toString())) {
+						ErrorLogger.logInfo("Extractor","Adding slashes to bi allelic data in " + genoFile);
+						if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
+							ErrorLogger.logInfo("Extractor","Added slashes to all the bi-allelic data in " + genoFile);
+						} else {
+							ErrorLogger.logError("Extractor","Not added slashes to all the bi-allelic data in " + genoFile);
+						}
+					}
+				}
+
 				switch(extract.getGobiiFileType()){
 
 					case FLAPJACK:
@@ -219,85 +229,6 @@ public class GobiiExtractor {
 				rmIfExist(markerPosFile);
 				rmIfExist(extendedMarkerFile);
 				ErrorLogger.logDebug("Extractor","DataSet "+dataSetId+" Created");
-
-				// Adding "/" back to the bi-allelic data
-				if (extract.getGobiiDatasetType() != null) {
-					if (extract.getGobiiDatasetType().equals(DataSetType.SSR_ALLELE_SIZE.toString())) {
-						Path SSRFilePath = Paths.get(extractDir+"DS"+dataSetId+".genotype");
-						File SSRFile = new File(SSRFilePath.toString());
-						if (SSRFile.exists()) {
-							Path AddedSSRFilePath = Paths.get(extractDir, "Added" + SSRFilePath.getFileName());
-							// Deleting any temporal file existent
-							rmIfExist(AddedSSRFilePath.toString());
-							File AddedSSRFile = new File(AddedSSRFilePath.toString());
-							if (AddedSSRFile.createNewFile()) {
-								Scanner scanner = new Scanner(new FileReader(SSRFile));
-								FileWriter fileWriter = new FileWriter(AddedSSRFile);
-								// Copying the header
-								if (scanner.hasNextLine()) {
-									fileWriter.write(scanner.nextLine() + System.lineSeparator());
-								}
-								Pattern pattern = Pattern.compile("^[0-9]{1,8}$");
-								while (scanner.hasNextLine()) {
-									String[] lineParts = scanner.nextLine().split("\\t");
-									// The first column does not need to be converted
-									StringBuilder addedLineStringBuilder = new StringBuilder(lineParts[0]);
-									// Converting each column from the next ones
-									for (int index = 1; index < lineParts.length; index++) {
-										addedLineStringBuilder.append("\t");
-										if (!(pattern.matcher(lineParts[index]).find())) {
-											ErrorLogger.logError("Extractor","Incorrect SSR allele size format (1): "+lineParts[index]);
-											addedLineStringBuilder.append(lineParts[index]);
-										}
-										else {
-											if ((5 <= lineParts[index].length()) && (lineParts[index].length() <= 8)) {
-												addedLineStringBuilder.append(Integer.parseInt(lineParts[index].substring(0, lineParts[index].length() - 4)));
-												addedLineStringBuilder.append("/");
-												addedLineStringBuilder.append(Integer.parseInt(lineParts[index].substring(lineParts[index].length() - 4)));
-											}
-											else {
-												if ((1 < lineParts[index].length()) && (lineParts[index].length() <= 4)) {
-													addedLineStringBuilder.append("0/");
-													addedLineStringBuilder.append(Integer.parseInt(lineParts[index]));
-												}
-												else {
-													if (lineParts[index].length() == 1) {
-														Integer digit = Integer.parseInt(lineParts[index]);
-														if (digit != 0) {
-															addedLineStringBuilder.append("0/");
-															addedLineStringBuilder.append(digit);
-														} else {
-															addedLineStringBuilder.append("N/N");
-														}
-													}
-													else {
-														ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): "+lineParts[index]);
-														addedLineStringBuilder.append(lineParts[index]);
-													}
-												}
-											}
-										}
-									}
-									addedLineStringBuilder.append(System.lineSeparator());
-									fileWriter.write(addedLineStringBuilder.toString());
-								}
-								scanner.close();
-								fileWriter.close();
-								// Deleting any original data backup file existent
-								rmIfExist(Paths.get(SSRFilePath.toString() + ".bak").toString());
-								// Backing up the original data file
-								mv(SSRFilePath.toString(), SSRFilePath.toString() + ".bak");
-								// Renaming the converted data file to the original data file name
-								mv(AddedSSRFilePath.toString(), SSRFilePath.toString());
-							}
-							else {
-								ErrorLogger.logError("Extractor","Unable to create the added SSR file: "+AddedSSRFilePath.toString());
-							}
-						} else {
-							ErrorLogger.logError("Extractor", "No genotype file: " + SSRFilePath.toString());
-						}
-					}
-				}
 			}
 			HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 		}
@@ -336,5 +267,95 @@ public class GobiiExtractor {
 		String cropName=config.getGobiiCropType();
 		String destination=gli.getExtractDestinationDirectory();
 		return destination +"/"+cropName+"_DS-"+dsid+".log";
+	}
+
+	private static boolean addSlashesToBiAllelicData(String genoFile, String extractDir, GobiiDataSetExtract extract) throws Exception {
+		Path SSRFilePath = Paths.get(genoFile);
+		File SSRFile = new File(SSRFilePath.toString());
+		if (SSRFile.exists()) {
+			Path AddedSSRFilePath = Paths.get(extractDir, (new StringBuilder ("Added")).append(SSRFilePath.getFileName()).toString());
+			// Deleting any temporal file existent
+			rmIfExist(AddedSSRFilePath.toString());
+			File AddedSSRFile = new File(AddedSSRFilePath.toString());
+			if (AddedSSRFile.createNewFile()) {
+				Scanner scanner = new Scanner(new FileReader(SSRFile));
+				FileWriter fileWriter = new FileWriter(AddedSSRFile);
+				// Copying the header
+				if (scanner.hasNextLine()) {
+					fileWriter.write((new StringBuilder (scanner.nextLine())).append(System.lineSeparator()).toString());
+				}
+				else {
+					ErrorLogger.logError("Extractor", "Genotype file emtpy");
+					return false;
+				}
+				if (!(scanner.hasNextLine())) {
+					ErrorLogger.logError("Extractor", "No genotype data");
+					return false;
+				}
+				Pattern pattern = Pattern.compile("^[0-9]{1,8}$");
+				while (scanner.hasNextLine()) {
+					String[] lineParts = scanner.nextLine().split("\\t");
+					// The first column does not need to be converted
+					StringBuilder addedLineStringBuilder = new StringBuilder(lineParts[0]);
+					// Converting each column from the next ones
+					for (int index = 1; index < lineParts.length; index++) {
+						addedLineStringBuilder.append("\t");
+						if (!(pattern.matcher(lineParts[index]).find())) {
+							ErrorLogger.logError("Extractor","Incorrect SSR allele size format (1): " + lineParts[index]);
+							addedLineStringBuilder.append(lineParts[index]);
+						}
+						else {
+							if ((5 <= lineParts[index].length()) && (lineParts[index].length() <= 8)) {
+								int leftNumber = Integer.parseInt(lineParts[index].substring(0, lineParts[index].length() - 4));
+								int rightNumber = Integer.parseInt(lineParts[index].substring(lineParts[index].length() - 4));
+								if ((leftNumber == 0) && (rightNumber == 0)) {
+									addedLineStringBuilder.append("N/N");
+								}
+								else {
+									addedLineStringBuilder.append(leftNumber);
+									addedLineStringBuilder.append("/");
+									addedLineStringBuilder.append(rightNumber);
+								}
+							}
+							else {
+								if ((1 <= lineParts[index].length()) && (lineParts[index].length() <= 4)) {
+									int number = Integer.parseInt(lineParts[index]);
+									if (number == 0) {
+										addedLineStringBuilder.append("N/N");
+									}
+									else {
+										addedLineStringBuilder.append("0/");
+										addedLineStringBuilder.append(number);
+									}
+								}
+								else {
+										ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): " + lineParts[index]);
+										addedLineStringBuilder.append(lineParts[index]);
+								}
+							}
+						}
+					}
+					addedLineStringBuilder.append(System.lineSeparator());
+					fileWriter.write(addedLineStringBuilder.toString());
+				}
+				scanner.close();
+				fileWriter.close();
+				// Deleting any original data backup file existent
+				rmIfExist(Paths.get(SSRFilePath.toString() + ".bak").toString());
+				// Backing up the original data file
+				mv(SSRFilePath.toString(), SSRFilePath.toString() + ".bak");
+				// Renaming the converted data file to the original data file name
+				mv(AddedSSRFilePath.toString(), SSRFilePath.toString());
+			}
+			else {
+				ErrorLogger.logError("Extractor","Unable to create the added SSR file: "+AddedSSRFilePath.toString());
+				return false;
+			}
+		} else {
+			ErrorLogger.logError("Extractor", "No genotype file: " + SSRFilePath.toString());
+			return false;
+		}
+
+		return true;
 	}
 }
