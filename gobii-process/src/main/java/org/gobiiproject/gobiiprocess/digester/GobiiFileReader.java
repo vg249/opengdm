@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester;
 
 import java.io.*;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,7 +15,11 @@ import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
+import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
@@ -62,6 +67,7 @@ public class GobiiFileReader {
 	private static boolean verbose;
 	private static String errorLogOverride;
 	private static String propertiesFile;
+	private static UriFactory uriFactory;
 
 	/**
 	 * Main class of Digester Jar file. Uses command line parameters to determine instruction file, and runs whole program.
@@ -191,6 +197,19 @@ public class GobiiFileReader {
 			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
 		}
 
+		//QC - Subsection #1 of 3
+		GobiiExtractorInstruction gobiiExtractorInstruction = null;
+		if (zero.isQcCheck()) {
+			ErrorLogger.logInfo("Digester", "qcCheck detected");
+			ErrorLogger.logInfo("Digester","Entering into the QC Subsection #1 of 3...");
+			gobiiExtractorInstruction = new GobiiExtractorInstruction();
+			gobiiExtractorInstruction.setContactEmail(zero.getContactEmail());
+			gobiiExtractorInstruction.setContactId(zero.getContactId());
+			gobiiExtractorInstruction.setGobiiCropType(crop);
+			gobiiExtractorInstruction.getMapsetIds().add(zero.getMapset().getId());
+			gobiiExtractorInstruction.setQcCheck(true);
+			ErrorLogger.logInfo("Digester","Done with the QC Subsection #1 of 3!");
+		}
 
 		//Section - Processing
 		ErrorLogger.logTrace("Digester","Beginning List Processing");
@@ -328,6 +347,32 @@ public class GobiiFileReader {
 				success&=HelperFunctions.tryExec("mv "+dest+" "+tmp);
 				new PGArray(tmp,dest,"alts").process();
 			}
+
+			//QC - Subsection #2 of 3
+			if (zero.isQcCheck()) {
+				ErrorLogger.logInfo("Digester","Entering into the QC Subsection #2 of 3...");
+				GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
+				gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
+				gobiiDataSetExtract.setDataSetId(inst.getDataSet().getId());
+				gobiiDataSetExtract.setDataSetName(inst.getDataSet().getName());
+				gobiiDataSetExtract.setGobiiDatasetType(inst.getDatasetType().getName());
+				Path loaderDestinationDirectoryPath = FileSystems.getDefault().getPath(dstDir.getAbsolutePath());
+				int pathDepth = loaderDestinationDirectoryPath.getNameCount();
+				Path cropDirectory = loaderDestinationDirectoryPath.subpath(0, (pathDepth - 3));
+				Path extractDestinationDirectoryPath = Paths.get(cropDirectory.toString(),
+						                                         "extractor",
+						                                         "output",
+						                                         inst.getGobiiFile().getGobiiFileType().toString().toLowerCase(),
+						                                         new StringBuilder("ds_").append(inst.getDataSetId()).toString());
+				gobiiDataSetExtract.setExtractDestinationDirectory(extractDestinationDirectoryPath.toString());
+				// As the extract filter type is set, a posteriori, by the GobiiExtractor class, it is set as UNKOWN
+				gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.UNKNOWN);
+				gobiiDataSetExtract.setGobiiFileType(inst.getGobiiFile().getGobiiFileType());
+				// It is going to be set by the GobiiExtractor class
+				gobiiDataSetExtract.setGobiiJobStatus(null);
+				gobiiExtractorInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
+				ErrorLogger.logInfo("Digester","Done with the QC Subsection #2 of 3!");
+			}
 		}
 		
 		if(success){
@@ -425,6 +470,33 @@ public class GobiiFileReader {
 			ErrorLogger.logError("MailInterface","Error Sending Mail",e);
 		}
 		HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
+
+		//QC - Subsection #3 of 3
+		if (zero.isQcCheck()) {
+			ErrorLogger.logInfo("Digester","Entering into the QC Subsection #3 of 3...");
+			ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
+			extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
+			extractorInstructionFilesDTOToSend.setInstructionFileName(new StringBuilder("extractor_").append(DateUtils.makeDateIdString()).toString());
+			PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
+			ClientContext clientContext = ClientContext.getInstance(configuration, crop);
+			SystemUserDetail SystemUserDetail = (new SystemUsers()).getDetail(SystemUserNames.USER_READER.toString());
+			if(!(clientContext.login(SystemUserDetail.getUserName(), SystemUserDetail.getPassword()))) {
+				ErrorLogger.logError("Digester","Login Error:" + SystemUserDetail.getUserName() + "-" + SystemUserDetail.getPassword());
+				return;
+			}
+			String currentCropContextRoot = clientContext.getInstance(null, false).getCurrentCropContextRoot();
+			uriFactory = new UriFactory(currentCropContextRoot);
+			GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForPost = new GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS));
+			PayloadEnvelope<ExtractorInstructionFilesDTO> extractorInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForPost.post(ExtractorInstructionFilesDTO.class,
+					                                                                                                                          payloadEnvelope);
+			if (extractorInstructionFileDTOResponseEnvelope != null) {
+				ErrorLogger.logInfo("Digester","Extractor Request Sent");
+			}
+			else {
+				ErrorLogger.logInfo("Digester","Error Sending Extractor Request");
+			}
+			ErrorLogger.logInfo("Digester","Done with the QC Subsection #3 of 3!");
+		}
 	}
 
 	/**
