@@ -103,7 +103,7 @@ public class GobiiExtractor {
 		for(GobiiExtractorInstruction inst:list){
 			String crop = inst.getGobiiCropType();
 			if(crop==null) crop=divineCrop(instructionFile);
-			Path cropPath = get(rootDir+"crops/"+crop.toLowerCase());
+			Path cropPath = Paths.get(rootDir+"crops/"+crop.toLowerCase());
 			if (!(Files.exists(cropPath) &&
 				  Files.isDirectory(cropPath))) {
 				ErrorLogger.logError("Extractor","Unknown Crop Type: "+crop);
@@ -172,19 +172,6 @@ public class GobiiExtractor {
 				//HDF5
 				String tempFolder=extractDir;
 				String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
-
-				//Adding "/" back to the bi-allelic data
-				if (extract.getGobiiDatasetType() != null) {
-					if (extract.getGobiiDatasetType().equals(DataSetType.SSR_ALLELE_SIZE.toString())) {
-						ErrorLogger.logInfo("Extractor","Adding slashes to bi allelic data in " + genoFile);
-						if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
-							ErrorLogger.logInfo("Extractor","Added slashes to all the bi-allelic data in " + genoFile);
-						} else {
-							ErrorLogger.logError("Extractor","Not added slashes to all the bi-allelic data in " + genoFile);
-						}
-					}
-				}
-
 				String hdf5Extractor=pathToHDF5+"dumpdataset";
 				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
 				// %s <orientation> <HDF5 file> <output file>
@@ -197,7 +184,18 @@ public class GobiiExtractor {
 				HelperFunctions.tryExec(hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile,null,errorFile);
 				success&=ErrorLogger.success();
 				ErrorLogger.logDebug("Extractor",(success?"Success ":"Failure " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile));
-				
+				// Adding "/" back to the bi-allelic data made from HDF5
+				if (extract.getGobiiDatasetType() != null) {
+					if (extract.getGobiiDatasetType().equals(DataSetType.SSR_ALLELE_SIZE.toString())) {
+						ErrorLogger.logInfo("Extractor","Adding slashes to bi allelic data in " + genoFile);
+						if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
+							ErrorLogger.logInfo("Extractor","Added slashes to all the bi-allelic data in " + genoFile);
+						} else {
+							ErrorLogger.logError("Extractor","Not added slashes to all the bi-allelic data in " + genoFile);
+						}
+					}
+				}
+
 				switch(extract.getGobiiFileType()){
 
 					case FLAPJACK:
@@ -286,7 +284,7 @@ public class GobiiExtractor {
 				FileWriter fileWriter = new FileWriter(AddedSSRFile);
 				// Copying the header
 				if (scanner.hasNextLine()) {
-					fileWriter.write(scanner.nextLine() + System.lineSeparator());
+					fileWriter.write((new StringBuilder (scanner.nextLine())).append(System.lineSeparator()).toString());
 				}
 				else {
 					ErrorLogger.logError("Extractor", "Genotype file emtpy");
@@ -305,7 +303,7 @@ public class GobiiExtractor {
 					for (int index = 1; index < lineParts.length; index++) {
 						addedLineStringBuilder.append("\t");
 						if (!(pattern.matcher(lineParts[index]).find())) {
-							ErrorLogger.logError("Extractor","Incorrect SSR allele size format (1): "+lineParts[index]);
+							ErrorLogger.logError("Extractor","Incorrect SSR allele size format (1): " + lineParts[index]);
 							addedLineStringBuilder.append(lineParts[index]);
 						}
 						else {
@@ -333,7 +331,7 @@ public class GobiiExtractor {
 									}
 								}
 								else {
-										ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): "+lineParts[index]);
+										ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): " + lineParts[index]);
 										addedLineStringBuilder.append(lineParts[index]);
 								}
 							}
