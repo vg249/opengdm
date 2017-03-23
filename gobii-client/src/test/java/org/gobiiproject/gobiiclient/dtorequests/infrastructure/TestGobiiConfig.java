@@ -41,7 +41,7 @@ public class TestGobiiConfig {
 
         String returnVal;
 
-        returnVal = testExecConfig.getConfigUtilCommandlineStem() + " " + arguments;
+        returnVal = testExecConfig.getConfigUtilCommandlineStem() + "\\gobiiconfig.jar" + " " + arguments;
 
         return returnVal;
     }

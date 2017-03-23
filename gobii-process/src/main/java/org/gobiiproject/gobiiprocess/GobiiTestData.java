@@ -1776,7 +1776,15 @@ public class GobiiTestData {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
 
-        File fXmlFile = new File("C:/Users/VCalaminos/Documents/gobii/gobiiproject/gobii-process/src/main/resources/test_profiles/vcf_test.xml");
+        File fXmlFile;
+        if(args.length != 1) {
+            ClassLoader classLoader = GobiiTestData.class.getClassLoader();
+            fXmlFile = new File(classLoader.getResource("test_profiles/vcf_test.xml").getFile());
+        } else {
+            fXmlFile = new File(args[0]);
+        }
+
+
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document document = documentBuilder.parse(fXmlFile);
 
