@@ -38,6 +38,7 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                     this.defaultUser = 'USER_READER';
                     this.defaultPassword = 'reader';
                     this.token = '';
+                    this.authUrl = "gobii/v1/auth";
                 }
                 AuthenticationService.prototype.getToken = function () {
                     var scope$ = this;
@@ -76,7 +77,7 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                     return Observable_1.Observable.create(function (observer) {
                         _this
                             ._http
-                            .post("load/auth", requestBody, { headers: headers })
+                            .post(scope$.authUrl, requestBody, { headers: headers })
                             .map(function (response) { return response.json(); })
                             .subscribe(function (json) {
                             var dtoHeaderAuth = dto_header_auth_1.DtoHeaderAuth

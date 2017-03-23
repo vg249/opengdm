@@ -21,7 +21,7 @@
         <jackson-xml-version>0.6.2</jackson-xml-version>
 
         <!-- Spring -->
-        <spring-framework.version>4.0.3.RELEASE</spring-framework.version>
+        <spring-framework.version>4.2.2.RELEASE</spring-framework.version>
 
         <!-- Spring Secuirty-->
         <spring-security.version>4.2.2.RELEASE</spring-security.version>

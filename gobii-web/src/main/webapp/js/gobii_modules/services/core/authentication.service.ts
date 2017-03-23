@@ -18,6 +18,8 @@ export class AuthenticationService {
     private defaultPassword:string = 'reader';
     private token:string = '';
     private _gobiiCropType:string;
+    private authUrl:string = "gobii/v1/auth";
+
 
     public getToken():Observable<string> {
 
@@ -72,7 +74,7 @@ export class AuthenticationService {
         return Observable.create(observer => {
                 this
                     ._http
-                    .post("load/auth", requestBody, {headers: headers})
+                    .post(scope$.authUrl, requestBody, {headers: headers})
                     .map(response => response.json())
                     .subscribe(json => {
                         let dtoHeaderAuth:DtoHeaderAuth = DtoHeaderAuth
