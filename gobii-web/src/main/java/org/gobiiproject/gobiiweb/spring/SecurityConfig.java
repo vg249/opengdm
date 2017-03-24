@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,33 +39,51 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return returnVal;
     }
 
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.debug(true);
+    }
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
 
         ConfigSettings configSettings = new ConfigSettings();
         GobiiAuthenticationType gobiiAuthenticationType = configSettings.getGobiiAuthenticationType();
-        if( gobiiAuthenticationType.equals(GobiiAuthenticationType.TEST ) ) {
+        if (gobiiAuthenticationType.equals(GobiiAuthenticationType.TEST)) {
 
             authenticationManagerBuilder.userDetailsService(this.userDetailService());
 
-        } else if (gobiiAuthenticationType.equals(GobiiAuthenticationType.LDAP_CONNECT_WITH_MANAGER)) {
+        } else {
 
-            authenticationManagerBuilder
-                    .ldapAuthentication()
-                    .userSearchFilter(configSettings.getLdapUserDnPattern())
-                    .contextSource()
-                    .managerDn(configSettings.getLdapBindUser())
-                    .managerPassword(configSettings.getLdapBindPassword())
-                    .url(configSettings.getLdapUrl());
+            String dnPattern = configSettings.getLdapUserDnPattern();
+            String managerUser = configSettings.getLdapBindUser();
+            String managerPassword = configSettings.getLdapBindPassword();
+            String url = configSettings.getLdapUrl();
 
-        } else if (gobiiAuthenticationType.equals(GobiiAuthenticationType.LDAP)) {
+            if (gobiiAuthenticationType.equals(GobiiAuthenticationType.LDAP_CONNECT_WITH_MANAGER)) {
 
-            authenticationManagerBuilder
-                    .ldapAuthentication()
-                    .userSearchFilter(configSettings.getLdapUserDnPattern())
-                    .contextSource()
-                    .url(configSettings.getLdapUrl());
+                authenticationManagerBuilder
+                        .ldapAuthentication()
+                        .userSearchBase("dc=mmaxcrc,dc=com")
+                        .userSearchFilter(dnPattern)
+                        .contextSource()
+                        .managerDn(managerUser)
+                        .managerPassword(managerPassword)
+                        .url(url);
+
+            } else if (gobiiAuthenticationType.equals(GobiiAuthenticationType.LDAP)) {
+
+                authenticationManagerBuilder
+                        .ldapAuthentication()
+                        .groupSearchBase("ou=People,dc=maxcrc,dc=com")
+                        //.userSearchBase()
+                        .userSearchFilter(dnPattern)
+                        .contextSource()
+                        .url(url);
+
+
+            }
         }
     } // configure()
 
