@@ -143,6 +143,19 @@ public class UriFactory {
         return returnVal;
 
     } //
+
+    public RestUri qcStart() throws Exception {
+
+        RestUri returnVal = new RestUri(this.cropContextRoot,
+                ControllerType.QC,
+                ServiceRequestId.URL_QC_START)
+                .addQueryParam("datasetId")
+                .addQueryParam("directory");
+
+        return returnVal;
+
+    } //
+
 }
 
 

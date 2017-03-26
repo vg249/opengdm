@@ -196,6 +196,7 @@ class ConfigValues {
                         boolean isActive,
                         String serviceDomain,
                         String serviceAppRoot,
+                        String serviceQCRoot,
                         Integer servicePort) throws Exception {
 
         gobiiCropType = gobiiCropType.toLowerCase();
@@ -213,6 +214,7 @@ class ConfigValues {
                 .setActive(isActive)
                 .setServiceDomain(serviceDomain)
                 .setServiceAppRoot(serviceAppRoot)
+                .setServiceQCRoot(serviceQCRoot)
                 .setServicePort(servicePort);
     }
 

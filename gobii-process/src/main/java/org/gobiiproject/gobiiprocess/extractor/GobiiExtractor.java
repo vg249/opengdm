@@ -18,15 +18,13 @@ import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiQCComplete;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.QCStartDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.email.QCMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
-import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -387,6 +385,22 @@ public class GobiiExtractor {
 					}
 					else {
 						ErrorLogger.logError("Extractor","Error Sending QC Instructions Request");
+					}
+
+					String currentQCContextRoot = clientContext.getInstance(null, false).getCurrentQCContextRoot();
+					uriFactory = new UriFactory(currentQCContextRoot);
+					RestUri restUri = uriFactory.qcStart();
+					restUri.setParamValue("datasetId", String.valueOf(dataSetId));
+					restUri.setParamValue("directory", extractDir);
+					GobiiEnvelopeRestResource<QCStartDTO> qcRestResource = new GobiiEnvelopeRestResource<QCStartDTO>(restUri);
+					PayloadEnvelope<QCStartDTO> qcStartDTOResponseEnvelope = qcRestResource.get(QCStartDTO.class);
+					if (qcStartDTOResponseEnvelope != null) {
+						ErrorLogger.logInfo("Extractor","QC Start Request Sent");
+						System.out.println("----> jobId: " + qcStartDTOResponseEnvelope.getPayload().getData().get(0).getJobId() + " <----");
+
+					}
+					else {
+						ErrorLogger.logError("Extractor","Error Sending QC Start Request");
 					}
 
 					ErrorLogger.logInfo("Extractor","Done with the QC Subsection #1 of 1!");

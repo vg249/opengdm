@@ -95,9 +95,10 @@ public class ConfigSettings {
                         boolean isActive,
                         String serviceDomain,
                         String serviceAppRoot,
+                        String serviceQCRoot,
                         Integer servicePort) throws Exception {
 
-        this.configValues.setCrop(gobiiCropType, isActive, serviceDomain, serviceAppRoot, servicePort);
+        this.configValues.setCrop(gobiiCropType, isActive, serviceDomain, serviceAppRoot, serviceQCRoot, servicePort);
     }
 
     public void removeCrop(String cropId ) throws Exception {
