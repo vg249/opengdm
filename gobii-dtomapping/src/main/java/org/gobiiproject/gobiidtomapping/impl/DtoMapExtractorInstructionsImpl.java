@@ -14,7 +14,6 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInst
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
-import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -23,10 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.security.MessageDigest;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Phil on 4/12/2016.
@@ -91,10 +87,11 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
     } // createDirectories()
 
 
-    private String makeDestinationDirectory(String userEmail,
-                                            GobiiExtractFilterType gobiiExtractFilterType,
-                                            GobiiFileType getGobiiFileType,
-                                            String parentDirectory) {
+    private String makeDestinationDirectoryName(String userEmail,
+                                                GobiiExtractFilterType gobiiExtractFilterType,
+                                                GobiiFileType getGobiiFileType,
+                                                String parentDirectory,
+                                                String jobId) {
 
         String returnVal;
 
@@ -111,7 +108,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 + "/"
                 + gobiiExtractFilterType.toString().toLowerCase()
                 + "/"
-                + DateUtils.makeDateIdString();
+                + jobId;
 
         return returnVal;
     }
@@ -255,10 +252,11 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     }
 
                     String extractionFileDestinationPath = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_OUTPUT);
-                    extractorFileDestinationLocation = this.makeDestinationDirectory(currentExtractorInstruction.getContactEmail(),
+                    extractorFileDestinationLocation = this.makeDestinationDirectoryName(currentExtractorInstruction.getContactEmail(),
                             currentGobiiDataSetExtract.getGobiiExtractFilterType(),
                             currentGobiiDataSetExtract.getGobiiFileType(),
-                            extractionFileDestinationPath);
+                            extractionFileDestinationPath,
+                            extractorInstructionFilesDTO.getInstructionFileName());
 
                     if (!extractorInstructionsDAO.doesPathExist(extractorFileDestinationLocation)) {
 
