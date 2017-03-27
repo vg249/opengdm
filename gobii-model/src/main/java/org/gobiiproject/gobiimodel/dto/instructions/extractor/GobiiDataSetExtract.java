@@ -25,9 +25,6 @@ public class GobiiDataSetExtract {
     private Integer dataSetId = null;
     String extractDestinationDirectory = null;
 
-    String sampleFileName = null;
-    String markerFileName = null;
-
 
     private GobiiExtractFilterType gobiiExtractFilterType;
 
@@ -147,20 +144,4 @@ public class GobiiDataSetExtract {
         this.gobiiJobStatus = gobiiJobStatus;
     }
 
-
-    public String getSampleFileName() {
-        return sampleFileName;
-    }
-
-    public void setSampleFileName(String sampleFileName) {
-        this.sampleFileName = sampleFileName;
-    }
-
-    public String getMarkerFileName() {
-        return markerFileName;
-    }
-
-    public void setMarkerFileName(String markerFileName) {
-        this.markerFileName = markerFileName;
-    }
 }
