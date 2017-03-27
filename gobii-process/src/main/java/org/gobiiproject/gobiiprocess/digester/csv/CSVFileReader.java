@@ -5,6 +5,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiiprocess.digester.LoaderGlobalConfigurations;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,32 +52,51 @@ public class CSVFileReader {
 	 */
 	public CSVFileReader(){//Kept for backwards compatibility
 	}
-
-	/**
-	 * Debugging test method.
-	 * Runs a specific instruction sample.
-	 * @param args Ignored
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws ParseException
-	 * @throws InterruptedException
-	 */
-	public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, InterruptedException{
-		parseInstructionFile("E:\\GOBII\\instruction_files\\sample1.json");
-	}
 	
 	/**
 	 * Parses a given instruction file, and executes the loader on every instruction found within, by passing the objects to {@link CSVFileReader#processCSV(GobiiLoaderInstruction)}.
 	 * This method can be called directly to simulate an instruction file being parsed by the reader.
 	 * @param filePath location in the file system of the instruction file (can be absolute or relative.
 	 */
-	public static void parseInstructionFile(String filePath) throws FileNotFoundException, IOException, ParseException, InterruptedException{
-			CSVFileReader reader = new CSVFileReader();
-			for(GobiiLoaderInstruction loaderInstruction:HelperFunctions.parseInstructionFile(filePath)){
-			reader.processCSV(loaderInstruction);
+	public static void parseInstructionFile(String filePath) throws FileNotFoundException, IOException, ParseException{
+		if(LoaderGlobalConfigurations.getSingleThreadFileRead()){
+			for(GobiiLoaderInstruction i:HelperFunctions.parseInstructionFile(filePath)){
+				try {
+					new CSVFileReader().processCSV(i);
+				} catch (InterruptedException e) {
+					ErrorLogger.logError("CSVFileReader","Interrupted reading instruction", e);
+				}
 			}
-			//'Done' file is an anacronism now
+			return;
 		}
+		List<GobiiLoaderInstruction> instructions=null;
+		List<Thread> threads=new LinkedList<>();
+		try{
+
+		instructions = HelperFunctions.parseInstructionFile(filePath);
+		} catch(Exception e){
+			ErrorLogger.logError("CSVFileReader",e.getMessage(),e);
+		}
+		if(instructions==null){
+			ErrorLogger.logError("CSVFileReader","No instructions parsed in instruction file at "+filePath);
+		}
+		//Create threads
+		for(GobiiLoaderInstruction loaderInstruction:instructions){
+			Thread processingThread=new Thread(new ReaderThread(loaderInstruction));
+			threads.add(processingThread);
+			processingThread.start();
+		}
+		//Wait for all threads to complete, lets just wait for all of them in order (obviously, many will be done
+		// before hand, in which case 'join' does nothing. Brilliant.
+		for(Thread t:threads){
+			try {
+				t.join();
+			}
+			catch(InterruptedException e){
+				ErrorLogger.logError("CSVFileReader","Interrupt",e);
+			}
+		}
+	}
 
 	/**
 	 * Reads the input file specified by the loader instruction and creates a digest file based on the instruction. For more detailed discussions on the resulting digest file's format
@@ -305,5 +325,25 @@ public class CSVFileReader {
 			break;
 		}
 		lr.close();
+	}
+}
+class ReaderThread implements Runnable{
+	private CSVFileReader reader;
+	private GobiiLoaderInstruction instruction;
+	public ReaderThread(GobiiLoaderInstruction instruction){
+		this(new CSVFileReader(),instruction);
+	}
+	protected ReaderThread(CSVFileReader reader,GobiiLoaderInstruction instruction){
+		this.reader=reader;
+		this.instruction=instruction;
+	}
+	@Override
+	public void run() {
+		try {
+			reader.processCSV(instruction);
+		}
+		catch(Exception e){
+			ErrorLogger.logError("ReaderThread","Error processing file read",e);
+		}
 	}
 }
