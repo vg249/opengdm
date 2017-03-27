@@ -94,7 +94,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     private handleItemSelected(arg) {
         let selectedDataSetId: number = Number(arg.itemId);
-        this.setDatasetDetails(selectedDataSetId);
+        //this.setDatasetDetails(selectedDataSetId);
     }
 
     // private setList(): void {
@@ -144,60 +144,60 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     //
     // } // setList()
 
-    private setDatasetDetails(dataSetId: number): void {
-
-        if (dataSetId) {
-            let scope$ = this;
-            scope$._dtoRequestServiceDataSetDetail.get(new DtoRequestItemDataSet(dataSetId))
-                .subscribe(dataSet => {
-
-                        if (dataSet) {
-
-                            scope$.dataSet = dataSet;
-                            scope$.analysisNames = [];
-                            scope$.analysisTypes = [];
-
-                            scope$.dataSet.analysesIds.forEach(
-                                analysisId => {
-                                    let currentAnalysisId: number = analysisId;
-                                    if (currentAnalysisId) {
-                                        scope$._dtoRequestServiceAnalysisDetail
-                                            .getResult(new DtoRequestItemAnalysis(currentAnalysisId))
-                                            .subscribe(analysis => {
-                                                    scope$.analysisNames.push(analysis.analysisName);
-                                                    if (analysis.anlaysisTypeId && scope$.nameIdListAnalysisTypes) {
-
-                                                        scope$
-                                                            .nameIdListAnalysisTypes
-                                                            .forEach(t => {
-                                                                if (Number(t.id) === analysis.anlaysisTypeId) {
-                                                                    scope$.analysisTypes.push(t.name);
-                                                                }
-                                                            });
-
-
-                                                    } // if we have an analysis type id
-                                                },
-                                                headerStatusMessage => {
-                                                    scope$.handleAddStatusMessage(headerStatusMessage)
-                                                });
-                                    }
-                                }
-                            );
-                        }
-                    },
-                    dtoHeaderResponse => {
-                        dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddStatusMessage(m));
-
-                    });
-        } else {
-
-            this.dataSet = undefined;
-            this.analysisNames = [];
-            this.analysisTypes = [];
-
-        } // if else we got a dataset id
-    } // setList()
+    // private setDatasetDetails(dataSetId: number): void {
+    //
+    //     if (dataSetId) {
+    //         let scope$ = this;
+    //         scope$._dtoRequestServiceDataSetDetail.get(new DtoRequestItemDataSet(dataSetId))
+    //             .subscribe(dataSet => {
+    //
+    //                     if (dataSet) {
+    //
+    //                         scope$.dataSet = dataSet;
+    //                         scope$.analysisNames = [];
+    //                         scope$.analysisTypes = [];
+    //
+    //                         scope$.dataSet.analysesIds.forEach(
+    //                             analysisId => {
+    //                                 let currentAnalysisId: number = analysisId;
+    //                                 if (currentAnalysisId) {
+    //                                     scope$._dtoRequestServiceAnalysisDetail
+    //                                         .getResult(new DtoRequestItemAnalysis(currentAnalysisId))
+    //                                         .subscribe(analysis => {
+    //                                                 scope$.analysisNames.push(analysis.analysisName);
+    //                                                 if (analysis.anlaysisTypeId && scope$.nameIdListAnalysisTypes) {
+    //
+    //                                                     scope$
+    //                                                         .nameIdListAnalysisTypes
+    //                                                         .forEach(t => {
+    //                                                             if (Number(t.id) === analysis.anlaysisTypeId) {
+    //                                                                 scope$.analysisTypes.push(t.name);
+    //                                                             }
+    //                                                         });
+    //
+    //
+    //                                                 } // if we have an analysis type id
+    //                                             },
+    //                                             headerStatusMessage => {
+    //                                                 scope$.handleAddStatusMessage(headerStatusMessage)
+    //                                             });
+    //                                 }
+    //                             }
+    //                         );
+    //                     }
+    //                 },
+    //                 dtoHeaderResponse => {
+    //                     dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddStatusMessage(m));
+    //
+    //                 });
+    //     } else {
+    //
+    //         this.dataSet = undefined;
+    //         this.analysisNames = [];
+    //         this.analysisTypes = [];
+    //
+    //     } // if else we got a dataset id
+    // } // setList()
 
 
     ngOnInit(): any {

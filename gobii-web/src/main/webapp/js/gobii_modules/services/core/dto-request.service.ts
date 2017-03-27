@@ -34,52 +34,6 @@ export class DtoRequestService<T> {
         return this._gobbiiVersion;
     }
 
-    public getResult(dtoRequestItem: DtoRequestItem<T>): Observable < T > {
-
-        return Observable.create(observer => {
-
-            let token: string = this._authenticationService
-                .getToken();
-            if (token) {
-
-                let headers = HttpValues.makeTokenHeaders(token);
-
-                this._http
-                    .post(dtoRequestItem.getUrl(),
-                        dtoRequestItem.getRequestBody(),
-                        {headers: headers})
-                    .map(response => response.json())
-                    .subscribe(json => {
-
-                            let headerResponse: DtoHeaderResponse = DtoHeaderResponse.fromJSON(json);
-
-                            if (headerResponse.succeeded) {
-
-                                let result = dtoRequestItem.resultFromJson(json);
-
-                                observer.next(result);
-                                observer.complete();
-                            } else {
-                                observer.error(headerResponse);
-                            }
-
-                        },
-                        json => {
-                            let obj = JSON.parse(json._body)
-                            let payloadResponse: PayloadEnvelope = PayloadEnvelope.fromJSON(obj);
-                            observer.error(payloadResponse.header);
-                        }) // subscribe http
-
-            } else {
-                let header: Header = new Header(null, null, new Status(false, [new HeaderStatusMessage("Unauthenticated", null, null)]), null);
-                observer.error(header);
-            }
-
-        }); // observable
-
-    }
-
-
     public post(dtoRequestItem: DtoRequestItem<T>): Observable < T > {
 
         return Observable.create(observer => {
