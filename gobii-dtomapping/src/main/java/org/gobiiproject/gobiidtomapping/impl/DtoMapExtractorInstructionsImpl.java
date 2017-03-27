@@ -149,6 +149,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             "instruction file name is missing");
                 }
 
+
+
                 if (LineUtils.isNullOrEmpty(currentExtractorInstruction.getGobiiCropType())) {
 
                     currentExtractorInstruction.setGobiiCropType(cropType);
@@ -183,8 +185,20 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 for (GobiiDataSetExtract currentGobiiDataSetExtract :
                         currentExtractorInstruction.getDataSetExtracts()) {
 
-                    String extractionFileDestinationPath = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_OUTPUT);
-                    String formatName = currentGobiiDataSetExtract.getGobiiFileType().toString().toLowerCase();
+                    if( currentGobiiDataSetExtract.getListFileName() != null )
+                    {
+
+                        String presumptiveListFileFqpn = instructionFileDirectory + currentGobiiDataSetExtract.getListFileName() + DATA_FILE_EXT;
+
+                        if(this.extractorInstructionsDAO.doesPathExist(presumptiveListFileFqpn))  {
+                            currentGobiiDataSetExtract.setListFileName(presumptiveListFileFqpn);
+                        }  else {
+
+                            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                                    GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                                    "The specified list file name does not exist on the server: " + presumptiveListFileFqpn);
+                        }
+                    }
 
                     if (currentGobiiDataSetExtract.getGobiiExtractFilterType()
                             .equals(GobiiExtractFilterType.WHOLE_DATASET)) {
@@ -240,6 +254,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                         + currentGobiiDataSetExtract.getGobiiExtractFilterType());
                     }
 
+                    String extractionFileDestinationPath = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_OUTPUT);
                     extractorFileDestinationLocation = this.makeDestinationDirectory(currentExtractorInstruction.getContactEmail(),
                             currentGobiiDataSetExtract.getGobiiExtractFilterType(),
                             currentGobiiDataSetExtract.getGobiiFileType(),
