@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import org.gobiiproject.gobiidao.entity.pojos.Contact;
 import org.gobiiproject.gobiidao.resultset.access.RsContactDao;
 import org.gobiiproject.gobiidao.resultset.core.ParamExtractor;
 import org.gobiiproject.gobiidao.resultset.core.ResultColumnApplicator;
@@ -77,6 +78,29 @@ public class DtoMapContactImpl implements DtoMapContact {
         }
 
         return returnVal;
+    }
+
+    public ContactDTO getContactByUsername(String username) throws Exception {
+
+        ContactDTO returnVal = new ContactDTO();
+
+        try {
+
+            ResultSet resultSet = rsContactDao.getContactDetailsByUsername(username);
+
+            if(resultSet.next()) {
+
+                ResultColumnApplicator.applyColumnValues(resultSet, returnVal);
+
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Gobii Mapping Error", e);
+            throw e;
+        }
+
+        return returnVal;
+
     }
 
     @Transactional

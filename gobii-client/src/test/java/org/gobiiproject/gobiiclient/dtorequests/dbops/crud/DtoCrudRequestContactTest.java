@@ -253,6 +253,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         newContactDTO.setOrganizationId(organizationId);
         newContactDTO.getRoles().add(1);
         newContactDTO.getRoles().add(2);
+        newContactDTO.setUserName("araquel " + UUID.randomUUID().toString());
 
         //Set up the POST request to create the contact
         PayloadEnvelope<ContactDTO> payloadEnvelope = new PayloadEnvelope<>(newContactDTO, GobiiProcessType.CREATE);
@@ -270,6 +271,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         Assert.assertNotEquals(null, contactDTOResponse);
         Assert.assertTrue(contactDTOResponse.getContactId() > 0);
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.CONTACTS, contactDTOResponse.getContactId());
+        Assert.assertNotNull(contactDTOResponse.getUserName());
 
         //Now re-retrieve with the link we got back
         Assert.assertNotNull(contactDTOResponseEnvelope.getPayload().getLinkCollection());

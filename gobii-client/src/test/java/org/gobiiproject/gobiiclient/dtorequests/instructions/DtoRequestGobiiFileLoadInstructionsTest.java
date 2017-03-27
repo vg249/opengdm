@@ -466,7 +466,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 payloadEnvelope);
 
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
-        Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
         Assert.assertTrue("The error message should say that the experiment is invalid for the given dataset",
                 loaderInstructionFileDTOResponseEnvelope.getHeader()
@@ -580,7 +579,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 payloadEnvelope);
 
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
-        Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
 
         Assert.assertTrue("The error message should say that the project is invalid for the given experiment",
@@ -679,7 +677,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 payloadEnvelope);
 
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
-        Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
         Assert.assertTrue("The error message should say that the data type is invalid for the given dataset",
             loaderInstructionFileDTOResponseEnvelope.getHeader()
@@ -807,7 +804,6 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 payloadEnvelope);
 
         Assert.assertNotEquals(null, loaderInstructionFileDTOResponseEnvelope);
-        Assert.assertTrue(TestUtils.checkAndPrintHeaderMessages(loaderInstructionFileDTOResponseEnvelope.getHeader()));
 
 
         Assert.assertTrue("The error message should say that the platform is invalid for the given experiment",
