@@ -60,11 +60,12 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                 };
                 DtoRequestService.prototype.post = function (dtoRequestItem) {
                     var _this = this;
+                    var scope$ = this;
                     return Observable_1.Observable.create(function (observer) {
                         var token = _this._authenticationService
                             .getToken();
                         if (token) {
-                            var headers = http_values_1.HttpValues.makeTokenHeaders(token);
+                            var headers = http_values_1.HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
                             _this._http
                                 .post(dtoRequestItem.getUrl(), dtoRequestItem.getRequestBody(), { headers: headers })
                                 .map(function (response) { return response.json(); })
@@ -97,7 +98,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                         var token = _this._authenticationService
                             .getToken();
                         if (token) {
-                            var headers = http_values_1.HttpValues.makeTokenHeaders(token);
+                            var headers = http_values_1.HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
                             _this._http
                                 .get(dtoRequestItem.getUrl(), { headers: headers })
                                 .map(function (response) { return response.json(); })

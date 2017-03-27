@@ -36,14 +36,17 @@ export class DtoRequestService<T> {
 
     public post(dtoRequestItem: DtoRequestItem<T>): Observable < T > {
 
+        let scope$ = this;
+
         return Observable.create(observer => {
+
 
             let token: string = this._authenticationService
                 .getToken();
 
             if (token) {
 
-                let headers = HttpValues.makeTokenHeaders(token);
+                let headers = HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
 
                 this._http
                     .post(dtoRequestItem.getUrl(),
@@ -88,7 +91,7 @@ export class DtoRequestService<T> {
 
             if (token) {
 
-                let headers = HttpValues.makeTokenHeaders(token);
+                let headers = HttpValues.makeTokenHeaders(token, scope$._authenticationService.getGobiiCropType());
 
                 this._http
                     .get(dtoRequestItem.getUrl(),
