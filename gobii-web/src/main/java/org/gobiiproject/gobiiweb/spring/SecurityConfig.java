@@ -10,6 +10,7 @@ import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiiweb.security.TokenAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,7 +20,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.GenericFilterBean;
+import sun.net.www.content.text.Generic;
 
 
 /**
@@ -39,11 +42,36 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return returnVal;
     }
 
+    // see http://stackoverflow.com/questions/30366405/how-to-disable-spring-security-for-particular-url
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.debug(true);
+        web.ignoring().antMatchers("/login",
+                "/index.html",
+                "/css/**",
+                "/images/**",
+                "/js/**");
     }
 
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+
+        // intellij complains about the derivation of BasicAuthenticationFilter.class,
+        // but it is WRONG; this works fine
+        http.addFilterAfter(this.filterBean(),BasicAuthenticationFilter.class);
+        http.
+                csrf().disable().
+                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
+                and().
+                authorizeRequests().
+                antMatchers("/gobii/v1/**").permitAll().
+                anyRequest().authenticated().
+                and().
+                anonymous().disable();
+
+    }
+
+    // for debug output from open ldap, execute: C:\OpenLDAP\slapd.exe -d -1
 
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
@@ -76,7 +104,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 authenticationManagerBuilder
                         .ldapAuthentication()
-                        .groupSearchBase("ou=People,dc=maxcrc,dc=com")
+                        //.groupSearchBase("ou=People,dc=maxcrc,dc=com")
                         //.userSearchBase()
                         .userSearchFilter(dnPattern)
                         .contextSource()

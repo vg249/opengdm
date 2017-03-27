@@ -22,19 +22,19 @@
     http://automateddeveloper.blogspot.co.uk/2014/03/securing-your-mobile-api-spring-security.html
     -->
 
-    <http realm="Protected API"
-          auto-config="false"
-          use-expressions="true"
-          create-session="stateless"
-          entry-point-ref="unaAuthenticatedEntryPoint"
-          authentication-manager-ref="restAuthenticationManager">
+    <!--<http realm="Protected API"-->
+          <!--auto-config="false"-->
+          <!--use-expressions="true"-->
+          <!--create-session="stateless"-->
+          <!--entry-point-ref="unaAuthenticatedEntryPoint"-->
+          <!--authentication-manager-ref="restAuthenticationManager">-->
 
-        <!--This disabled cross-site forgery protection. If you don't do this, you can't accept ajax requests.-->
-        <csrf disabled="true"/>
+        <!--&lt;!&ndash;This disabled cross-site forgery protection. If you don't do this, you can't accept ajax requests.&ndash;&gt;-->
+        <!--<csrf disabled="true"/>-->
 
-        <custom-filter ref="restAuthenticationFilter" position="FORM_LOGIN_FILTER"/>
-        <intercept-url pattern="/**" access="permitAll"/>
-    </http>
+        <!--<custom-filter ref="restAuthenticationFilter" position="FORM_LOGIN_FILTER"/>-->
+        <!--<intercept-url pattern="/gobii/v1/**" access="permitAll"/>-->
+    <!--</http>-->
 
 
     <bean:bean id="unaAuthenticatedEntryPoint" class="org.gobiiproject.gobiiweb.security.UnAuthenticatedEntryPoint"/>

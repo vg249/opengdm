@@ -31,9 +31,7 @@ System.register(["@angular/core", "@angular/router", "./authentication.service"]
                 }
                 AuthGuard.prototype.canActivate = function (route, state) {
                     var returnVal = false;
-                    this.authenticationService.getToken().subscribe(function (token) {
-                        returnVal = (token != null);
-                    });
+                    returnVal = (this.authenticationService.getToken() != null);
                     // not logged in so redirect to login page with the return url
                     if (!returnVal) {
                         //            this.router.navigate(['/login'], {queryParams: {returnUrl: state.url}});

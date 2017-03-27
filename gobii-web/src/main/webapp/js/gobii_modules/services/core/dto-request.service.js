@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../../model/http-values", "@angular/http", "./authentication.service", "../../model/dto-header-response", "../../model/payload/payload-envelope", "rxjs/Observable", "rxjs/add/operator/map"], function (exports_1, context_1) {
+System.register(["@angular/core", "../../model/http-values", "@angular/http", "./authentication.service", "../../model/dto-header-response", "../../model/payload/payload-envelope", "rxjs/Observable", "rxjs/add/operator/map", "../../model/payload/header", "../../model/payload/status", "../../model/dto-header-status-message"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, http_values_1, http_1, authentication_service_1, dto_header_response_1, payload_envelope_1, Observable_1, DtoRequestService;
+    var core_1, http_values_1, http_1, authentication_service_1, dto_header_response_1, payload_envelope_1, Observable_1, header_1, status_1, dto_header_status_message_1, DtoRequestService;
     return {
         setters: [
             function (core_1_1) {
@@ -35,6 +35,15 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                 Observable_1 = Observable_1_1;
             },
             function (_1) {
+            },
+            function (header_1_1) {
+                header_1 = header_1_1;
+            },
+            function (status_1_1) {
+                status_1 = status_1_1;
+            },
+            function (dto_header_status_message_1_1) {
+                dto_header_status_message_1 = dto_header_status_message_1_1;
             }
         ],
         execute: function () {
@@ -55,9 +64,9 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                 DtoRequestService.prototype.getResult = function (dtoRequestItem) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
-                        _this._authenticationService
-                            .getToken()
-                            .subscribe(function (token) {
+                        var token = _this._authenticationService
+                            .getToken();
+                        if (token) {
                             var headers = http_values_1.HttpValues.makeTokenHeaders(token);
                             _this._http
                                 .post(dtoRequestItem.getUrl(), dtoRequestItem.getRequestBody(), { headers: headers })
@@ -77,19 +86,19 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                                 var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
                                 observer.error(payloadResponse.header);
                             }); // subscribe http
-                        }, function (json) {
-                            var obj = JSON.parse(json._body);
-                            var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
-                            observer.error(payloadResponse.header);
-                        }); // subscribe get authentication token
+                        }
+                        else {
+                            var header = new header_1.Header(null, null, new status_1.Status(false, [new dto_header_status_message_1.HeaderStatusMessage("Unauthenticated", null, null)]), null);
+                            observer.error(header);
+                        }
                     }); // observable
                 };
                 DtoRequestService.prototype.post = function (dtoRequestItem) {
                     var _this = this;
                     return Observable_1.Observable.create(function (observer) {
-                        _this._authenticationService
-                            .getToken()
-                            .subscribe(function (token) {
+                        var token = _this._authenticationService
+                            .getToken();
+                        if (token) {
                             var headers = http_values_1.HttpValues.makeTokenHeaders(token);
                             _this._http
                                 .post(dtoRequestItem.getUrl(), dtoRequestItem.getRequestBody(), { headers: headers })
@@ -109,20 +118,20 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                                 var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
                                 observer.error(payloadResponse.header);
                             }); // subscribe http
-                        }, function (json) {
-                            var obj = JSON.parse(json._body);
-                            var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
-                            observer.error(payloadResponse.header);
-                        }); // subscribe get authentication token
+                        }
+                        else {
+                            var header = new header_1.Header(null, null, new status_1.Status(false, [new dto_header_status_message_1.HeaderStatusMessage("Unauthenticated", null, null)]), null);
+                            observer.error(header);
+                        }
                     }); // observable
                 };
                 DtoRequestService.prototype.get = function (dtoRequestItem) {
                     var _this = this;
                     var scope$ = this;
                     return Observable_1.Observable.create(function (observer) {
-                        _this._authenticationService
-                            .getToken()
-                            .subscribe(function (token) {
+                        var token = _this._authenticationService
+                            .getToken();
+                        if (token) {
                             var headers = http_values_1.HttpValues.makeTokenHeaders(token);
                             _this._http
                                 .get(dtoRequestItem.getUrl(), { headers: headers })
@@ -143,11 +152,11 @@ System.register(["@angular/core", "../../model/http-values", "@angular/http", ".
                                 var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
                                 observer.error(payloadResponse.header);
                             }); // subscribe http
-                        }, function (json) {
-                            var obj = JSON.parse(json._body);
-                            var payloadResponse = payload_envelope_1.PayloadEnvelope.fromJSON(obj);
-                            observer.error(payloadResponse.header);
-                        }); // subscribe get authentication token
+                        }
+                        else {
+                            var header = new header_1.Header(null, null, new status_1.Status(false, [new dto_header_status_message_1.HeaderStatusMessage("Unauthenticated", null, null)]), null);
+                            observer.error(header);
+                        }
                     }); // observable
                 };
                 return DtoRequestService;

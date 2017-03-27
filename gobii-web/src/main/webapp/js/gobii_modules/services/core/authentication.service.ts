@@ -16,35 +16,14 @@ export class AuthenticationService {
 
     private defaultUser:string = 'USER_READER';
     private defaultPassword:string = 'reader';
-    private token:string = '';
+    private token:string = null;
     private _gobiiCropType:string;
     private authUrl:string = "gobii/v1/auth";
 
 
-    public getToken():Observable<string> {
+    public getToken():string {
 
-        let scope$ = this;
-
-        return Observable.create(observer => {
-
-            if (!scope$.token) {
-
-                scope$.authenticateDefault()
-                    .subscribe(dtoHeaderAuth => {
-                            scope$.token = dtoHeaderAuth.getToken();
-                            scope$._gobiiCropType = dtoHeaderAuth.getGobiiCropType();
-                            observer.next(scope$.token);
-                            observer.complete();
-                        },
-                        error => observer.error(error));
-            } else {
-                observer.next(scope$.token);
-                observer.complete();
-
-            }// if we don't already have a token
-
-
-        }); // Observable
+        return this.token;
 
     } // getToken()
 
@@ -53,15 +32,14 @@ export class AuthenticationService {
     }
 
 
-    getGobiiCropType():string {
+    public getGobiiCropType():string {
         return this._gobiiCropType;
     }
 
-    
-    public authenticateDefault():Observable<DtoHeaderAuth> {
-        return this.authenticate(null, null);
+    private setGobiiCropType(gobiiCropType:string){
+        this._gobiiCropType =  gobiiCropType;
     }
-
+    
     public authenticate(userName:string, password:string):Observable<DtoHeaderAuth> {
 
         let loginUser = userName ? userName : this.defaultUser;
@@ -81,6 +59,7 @@ export class AuthenticationService {
                             .fromJSON(json);
                         if (dtoHeaderAuth.getToken()) {
                             scope$.setToken(dtoHeaderAuth.getToken())
+                            scope$.setGobiiCropType( dtoHeaderAuth.getGobiiCropType() );
                             observer.next(dtoHeaderAuth);
                             observer.complete();
                         } else {

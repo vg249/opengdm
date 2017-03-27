@@ -18,7 +18,7 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
 
 @Component({
     selector: 'dataset-checklist-box',
-    inputs: ['experimentId', 'fileItemEventChange','gobiiExtractFilterType'],
+    inputs: ['experimentId', 'fileItemEventChange', 'gobiiExtractFilterType'],
     outputs: ['onItemChecked', 'onAddStatusMessage'],
     template: `<checklist-box
                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
@@ -59,7 +59,6 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                 private _fileModelTreeService: FileModelTreeService) {
 
 
-
         this.nameIdRequestParamsDataset = NameIdRequestParams
             .build("Datasets-by-experiment-id",
                 GobiiExtractFilterType.WHOLE_DATASET,
@@ -69,7 +68,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     } // ctor
 
     // useg
-    private gobiiExtractFilterType:GobiiExtractFilterType;
+    private gobiiExtractFilterType: GobiiExtractFilterType;
     private nameIdRequestParamsDataset: NameIdRequestParams;
     private experimentId: string;
     private onItemChecked: EventEmitter<GobiiFileItem> = new EventEmitter();
@@ -89,7 +88,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     private handleAddStatusMessage(arg: HeaderStatusMessage) {
 
-        let foo:string = "foo";
+        let foo: string = "foo";
         this.onAddStatusMessage.emit(arg);
     }
 
@@ -187,8 +186,9 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                             );
                         }
                     },
-                    headerStatusMessage => {
-                        scope$.handleAddStatusMessage(headerStatusMessage)
+                    dtoHeaderResponse => {
+                        dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddStatusMessage(m));
+
                     });
         } else {
 
@@ -203,7 +203,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     ngOnInit(): any {
 
 
-        if( this.experimentId != null ) {
+        if (this.experimentId != null) {
             this.nameIdRequestParamsDataset.setEntityFilterValue(this.experimentId);
         }
 

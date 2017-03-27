@@ -150,8 +150,8 @@ const URL = 'gobii/v1/uploadfile?gobiiExtractFilterType=BY_MARKER';
 
 export class UploaderComponent implements OnInit {
 
-    private onUploaderError:EventEmitter<HeaderStatusMessage> = new EventEmitter();
-    private gobiiExtractFilterType:GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+    private onUploaderError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
+    private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
     constructor(private _authenticationService: AuthenticationService,
                 private _fileModelTreeService: FileModelTreeService) {
@@ -163,52 +163,55 @@ export class UploaderComponent implements OnInit {
         let authHeader: Headers = {name: '', value: ''};
         authHeader.name = HeaderNames.headerToken;
 
-        _authenticationService
-            .getToken()
-            .subscribe(token => {
-                authHeader.value = token;
-            });
+        let token: string = _authenticationService.getToken();
 
-        fileUploaderOptions.headers.push(authHeader);
+        if( token ) {
+            authHeader.value = token;
 
-        this.uploader = new FileUploader(fileUploaderOptions);
+            fileUploaderOptions.headers.push(authHeader);
 
-        this.uploader.onBeforeUploadItem = (fileItem:FileItem) => {
+            this.uploader = new FileUploader(fileUploaderOptions);
 
-            this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(
-                fileItems => {
-                    let fileItemJobId: GobiiFileItem = fileItems.find(item => {
-                        return item.getExtractorItemType() === ExtractorItemType.JOB_ID
+            this.uploader.onBeforeUploadItem = (fileItem: FileItem) => {
+
+                this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(
+                    fileItems => {
+                        let fileItemJobId: GobiiFileItem = fileItems.find(item => {
+                            return item.getExtractorItemType() === ExtractorItemType.JOB_ID
+                        });
+
+                        let jobId: string = fileItemJobId.getItemId();
+                        fileItem.file.name = FileName.makeFileNameFromJobId(this.gobiiExtractFilterType, jobId);
                     });
+            }
 
-                    let jobId:string = fileItemJobId.getItemId();
-                    fileItem.file.name = FileName.makeFileNameFromJobId(this.gobiiExtractFilterType,jobId);
-                });
-        }
+            this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
 
-        this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+                if (status == 200) {
+                    let listItemType: ExtractorItemType =
+                        this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ?
+                            ExtractorItemType.MARKER_FILE : ExtractorItemType.SAMPLE_FILE;
 
-            if( status == 200 ) {
-                let listItemType: ExtractorItemType =
-                    this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ?
-                        ExtractorItemType.MARKER_FILE : ExtractorItemType.SAMPLE_FILE;
-
-                _fileModelTreeService.put(GobiiFileItem
-                        .build(this.gobiiExtractFilterType,ProcessType.CREATE)
+                    _fileModelTreeService.put(GobiiFileItem
+                        .build(this.gobiiExtractFilterType, ProcessType.CREATE)
                         .setExtractorItemType(listItemType)
                         .setItemId(item.file.name)
                         .setItemName(item.file.name))
-                    .subscribe(null,
-                    headerStatusMessage => {
-                        this.onUploaderError.emit(new HeaderStatusMessage(headerStatusMessage,null,null) );
-                    });
-            } else {
+                        .subscribe(null,
+                            headerStatusMessage => {
+                                this.onUploaderError.emit(new HeaderStatusMessage(headerStatusMessage, null, null));
+                            });
+                } else {
 
-                this.onUploaderError.emit(new HeaderStatusMessage(response,null,null) );
+                    this.onUploaderError.emit(new HeaderStatusMessage(response, null, null));
 
-            }
+                }
 
-        };
+            };
+        } else {
+            this.onUploaderError.emit(new HeaderStatusMessage("Unauthenticated", null,null));
+        }
+
     } // ctor
 
 

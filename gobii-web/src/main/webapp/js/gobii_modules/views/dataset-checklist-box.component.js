@@ -144,8 +144,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                     }
                                 });
                             }
-                        }, function (headerStatusMessage) {
-                            scope$_1.handleAddStatusMessage(headerStatusMessage);
+                        }, function (dtoHeaderResponse) {
+                            dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$_1.handleAddStatusMessage(m); });
                         });
                     }
                     else {
