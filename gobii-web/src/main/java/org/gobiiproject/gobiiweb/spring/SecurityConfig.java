@@ -42,6 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return returnVal;
     }
 
+
+    // allow requests for static pages
     // see http://stackoverflow.com/questions/30366405/how-to-disable-spring-security-for-particular-url
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -58,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         // intellij complains about the derivation of BasicAuthenticationFilter.class,
         // but it is WRONG; this works fine
-        http.addFilterAfter(this.filterBean(),BasicAuthenticationFilter.class);
+        http.addFilterAfter(this.filterBean(), BasicAuthenticationFilter.class);
         http.
                 csrf().disable().
                 sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
@@ -73,6 +75,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     // for debug output from open ldap, execute: C:\OpenLDAP\slapd.exe -d -1
 
+    // in the server configuration, the ldap url _must_ be fully qualified with the path to the group
+    // that contains the user (e.g., ldap://localhost:389/ou=People,dc=maxcrc,dc=com); I have tried
+    // numerous ways to configure the group path in Java but there does not appear to be a way to do this;
+    // In xml configuration you set the base property of context-source, but that does not appear to be an
+    // option here.
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
 
@@ -93,7 +100,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 authenticationManagerBuilder
                         .ldapAuthentication()
-                        .userSearchBase("dc=mmaxcrc,dc=com")
                         .userSearchFilter(dnPattern)
                         .contextSource()
                         .managerDn(managerUser)
@@ -104,13 +110,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 authenticationManagerBuilder
                         .ldapAuthentication()
-                        //.groupSearchBase("ou=People,dc=maxcrc,dc=com")
-                        //.userSearchBase()
                         .userSearchFilter(dnPattern)
                         .contextSource()
                         .url(url);
-
-
             }
         }
     } // configure()
