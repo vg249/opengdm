@@ -126,6 +126,7 @@ public class HttpCore {
 
         URI uri = makeUri(this.uriFactory.RestUriFromUri(url));
         HttpPost postRequest = new HttpPost(uri);
+        this.setHttpBody(postRequest, "empty");
         returnVal = submitUriRequest(postRequest, userName, password, null);
 
         if (HttpStatus.SC_OK != returnVal.getStatusLine().getStatusCode()) {
