@@ -219,8 +219,14 @@
           class="org.gobiiproject.gobiidao.filesystem.impl.QCInstructionsDAOImpl"/>
     <bean id="dtoMapQCInstructions"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapQCInstructionsImpl"/>
-    <bean id="QCInstuctionFilesService"
+    <bean id="qcInstructionFilesService"
           class="org.gobiiproject.gobidomain.services.impl.QCInstructionFilesServiceImpl"/>
+    <bean id="qcDataDAO"
+          class="org.gobiiproject.gobiidao.filesystem.impl.QCDataDAOImpl"/>
+    <bean id="dtoMapQCData"
+          class="org.gobiiproject.gobiidtomapping.impl.DtoMapQCDataImpl"/>
+    <bean id="qcNotificationService"
+          class="org.gobiiproject.gobidomain.services.impl.QCNotificationServiceImpl"/>
 
     <!-- **** Contact Beans *************************************** -->
     <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.impl.DtoMapContactImpl"/>

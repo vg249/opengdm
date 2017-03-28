@@ -7,6 +7,7 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.services.*;
+import org.gobiiproject.gobiiapimodel.payload.Payload;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.EntityNameConverter;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
@@ -22,10 +23,7 @@ import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
-import org.gobiiproject.gobiiweb.automation.ControllerUtils;
-import org.gobiiproject.gobiiweb.automation.GobiiVersionInfo;
-import org.gobiiproject.gobiiweb.automation.PayloadReader;
-import org.gobiiproject.gobiiweb.automation.PayloadWriter;
+import org.gobiiproject.gobiiweb.automation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -99,6 +97,9 @@ public class GOBIIControllerV1 {
 
     @Autowired
     private QCInstructionFilesService qcInstructionFilesService = null;
+
+    @Autowired
+    private QCNotificationService qcNotificationService = null;
 
     @Autowired
     private LoaderFilesService loaderFilesService = null;
@@ -1493,83 +1494,6 @@ public class GOBIIControllerV1 {
         return (returnVal);
     }
 
-    // *********************************************
-    // *************************** QC INSTRUCTION METHODS
-    // *********************************************
-    @RequestMapping(value = "/instructions/qualitycontrol", method = RequestMethod.POST)
-    @ResponseBody
-    public PayloadEnvelope<QCInstructionsDTO> createQCInstruction(@RequestBody PayloadEnvelope<QCInstructionsDTO> payloadEnvelope,
-                                                                  HttpServletRequest request,
-                                                                  HttpServletResponse response) {
-
-        PayloadEnvelope<QCInstructionsDTO> returnVal = new PayloadEnvelope<>();
-        try {
-
-            PayloadReader<QCInstructionsDTO> payloadReader = new PayloadReader<>(QCInstructionsDTO.class);
-            QCInstructionsDTO qcInstructionsDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-
-            QCInstructionsDTO qcInstructionsDTONew = qcInstructionFilesService.createInstruction(cropType, qcInstructionsDTOToCreate);
-
-
-            PayloadWriter<QCInstructionsDTO> payloadWriter = new PayloadWriter<>(request,
-                    QCInstructionsDTO.class);
-
-            payloadWriter.writeSingleItemForId(returnVal,
-                    UriFactory.resourceByUriIdParam(request.getContextPath(), ServiceRequestId.URL_FILE_QC_INSTRUCTIONS),
-                    qcInstructionsDTONew,
-                    qcInstructionsDTONew.getDataFileName());
-
-        } catch (GobiiException e) {
-            returnVal.getHeader().getStatus().addException(e);
-        } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
-        }
-
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-                response,
-                HttpStatus.CREATED,
-                HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return (returnVal);
-
-    }
-
-
-    @RequestMapping(value = "/instructions/qualitycontrol/{dataFileName}", method = RequestMethod.GET)
-    @ResponseBody
-    public PayloadEnvelope<QCInstructionsDTO> getQCInstruction(@PathVariable("dataFileName") String dataFileName,
-                                                               HttpServletRequest request,
-                                                               HttpServletResponse response) {
-
-        PayloadEnvelope<QCInstructionsDTO> returnVal = new PayloadEnvelope<>();
-        try {
-
-            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            QCInstructionsDTO qcInstructionsDTONew = qcInstructionFilesService.getInstruction(cropType, dataFileName);
-
-            PayloadWriter<QCInstructionsDTO> payloadWriter = new PayloadWriter<>(request,
-                    QCInstructionsDTO.class);
-
-            payloadWriter.writeSingleItemForId(returnVal,
-                    UriFactory.resourceByUriIdParam(request.getContextPath(), ServiceRequestId.URL_FILE_QC_INSTRUCTIONS),
-                    qcInstructionsDTONew,
-                    qcInstructionsDTONew.getDataFileName());
-
-        } catch (Exception e) {
-            returnVal.getHeader().getStatus().addException(e);
-        }
-
-        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
-                response,
-                HttpStatus.CREATED,
-                HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return (returnVal);
-
-    }
-
-
     @RequestMapping(value = "/manifests", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ManifestDTO> getManifests(HttpServletRequest request,
@@ -1636,6 +1560,143 @@ public class GOBIIControllerV1 {
 
         return (returnVal);
 
+    }
+
+
+    // *********************************************
+    // *************************** QC INSTRUCTION METHODS
+    // *********************************************
+    @RequestMapping(value = "/instructions/qualitycontrol", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<QCInstructionsDTO> createQCInstruction(@RequestBody PayloadEnvelope<QCInstructionsDTO> payloadEnvelope,
+                                                                  HttpServletRequest request,
+                                                                  HttpServletResponse response) {
+
+        PayloadEnvelope<QCInstructionsDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            PayloadReader<QCInstructionsDTO> payloadReader = new PayloadReader<>(QCInstructionsDTO.class);
+            QCInstructionsDTO qcInstructionsDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+
+            QCInstructionsDTO qcInstructionsDTONew = qcInstructionFilesService.createInstruction(cropType, qcInstructionsDTOToCreate);
+
+
+            PayloadWriter<QCInstructionsDTO> payloadWriter = new PayloadWriter<>(request,
+                    QCInstructionsDTO.class);
+
+            payloadWriter.writeSingleItemForId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(), ServiceRequestId.URL_FILE_QC_INSTRUCTIONS),
+                    qcInstructionsDTONew,
+                    qcInstructionsDTONew.getDataFileName());
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/instructions/qualitycontrol/{dataFileName}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<QCInstructionsDTO> getQCInstruction(@PathVariable("dataFileName") String dataFileName,
+                                                               HttpServletRequest request,
+                                                               HttpServletResponse response) {
+
+        PayloadEnvelope<QCInstructionsDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            QCInstructionsDTO qcInstructionsDTONew = qcInstructionFilesService.getInstruction(cropType, dataFileName);
+
+            PayloadWriter<QCInstructionsDTO> payloadWriter = new PayloadWriter<>(request,
+                    QCInstructionsDTO.class);
+
+            payloadWriter.writeSingleItemForId(returnVal,
+                    UriFactory.resourceByUriIdParam(request.getContextPath(), ServiceRequestId.URL_FILE_QC_INSTRUCTIONS),
+                    qcInstructionsDTONew,
+                    qcInstructionsDTONew.getDataFileName());
+
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    // *****************************************************
+    // *************************** QC NOTIFICATION METHOD
+    // *****************************************************
+    @RequestMapping(value = "/qcNotification", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<QCDataDTO> QCData(@RequestBody PayloadEnvelope<QCDataDTO> payloadEnvelope,
+                                             HttpServletRequest request,
+                                             HttpServletResponse response) {
+
+        PayloadEnvelope<QCDataDTO> returnVal = new PayloadEnvelope<>();
+        try {
+            if (payloadEnvelope != null) {
+                if (payloadEnvelope.getPayload() != null) {
+                    Payload payload = payloadEnvelope.getPayload();
+                    if (payload.getData() != null) {
+                        List dataList = payload.getData();
+                        if (dataList.size() != 0) {
+                            PayloadReader<QCDataDTO> payloadReader = new PayloadReader<>(QCDataDTO.class);
+                            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+                            for (int index = 0; index < dataList.size(); index++) {
+                                QCDataDTO qCDataDTO = payloadReader.extractItemByIndex(payloadEnvelope, index);
+                                //qCDataDTO.getDirectory(), qCDataDTO.getDataFile();
+                            }
+                        }
+                        else {
+                            throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
+                                                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                                                        "Request payload data is empty");
+                        }
+                    }
+                    else {
+                        throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
+                                                    GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                                                    "Request payload does not contain a data collection");
+                    }
+                }
+                else {
+                    throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
+                                                GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                                                "Request payload envelope does not contain a payload member");
+                }
+            }
+            else {
+                throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
+                                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                                            "Request payload envelope is null");
+            }
+        } catch(GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch(Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return returnVal;
     }
 
     // *********************************************

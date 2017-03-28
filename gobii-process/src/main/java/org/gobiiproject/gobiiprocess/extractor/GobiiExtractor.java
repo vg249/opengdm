@@ -11,15 +11,18 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.common.RestResourceUtils;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
-import org.gobiiproject.gobiimodel.headerlesscontainer.QCStartDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
@@ -363,7 +366,7 @@ public class GobiiExtractor {
 					ErrorLogger.logInfo("Extractor","Entering into the QC Subsection #1 of 1...");
 					QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
 					qcInstructionsDTOToSend.setContactId(inst.getContactId());
-					qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
+					qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_INSTRUCTIONS));
 					qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
 					qcInstructionsDTOToSend.setDatasetId(dataSetId);
 					qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
@@ -392,16 +395,20 @@ public class GobiiExtractor {
 					RestUri restUri = uriFactory.qcStart();
 					restUri.setParamValue("datasetId", String.valueOf(dataSetId));
 					restUri.setParamValue("directory", extractDir);
-					GobiiEnvelopeRestResource<QCStartDTO> qcRestResource = new GobiiEnvelopeRestResource<QCStartDTO>(restUri);
-					PayloadEnvelope<QCStartDTO> qcStartDTOResponseEnvelope = qcRestResource.get(QCStartDTO.class);
-					if (qcStartDTOResponseEnvelope != null) {
-						ErrorLogger.logInfo("Extractor","QC Start Request Sent");
-						System.out.println("----> jobId: " + qcStartDTOResponseEnvelope.getPayload().getData().get(0).getJobId() + " <----");
+					RestResourceUtils restResourceUtils = new RestResourceUtils();
+					HttpMethodResult httpMethodResult = restResourceUtils.getHttp().get(restUri, clientContext.getUserToken());
+					JsonObject jsonObject = httpMethodResult.getPayLoad();
+					ErrorLogger.logInfo("Extractor","----> jobId: " + jsonObject.get("jobId") + " <----");
 
-					}
-					else {
-						ErrorLogger.logError("Extractor","Error Sending QC Start Request");
-					}
+
+					//GobiiEnvelopeRestResource<QCStartDTO> qcRestResource = new GobiiEnvelopeRestResource<QCStartDTO>(restUri);
+					//PayloadEnvelope<QCStartDTO> qcStartDTOResponseEnvelope = qcRestResource.get(QCStartDTO.class);
+					//if (qcStartDTOResponseEnvelope != null) {
+					//	ErrorLogger.logInfo("Extractor", "QC Start Request Sent");
+					//}
+					//else {
+					//	ErrorLogger.logError("Extractor","Error Sending QC Start Request");
+					//}
 
 					ErrorLogger.logInfo("Extractor","Done with the QC Subsection #1 of 1!");
 				}

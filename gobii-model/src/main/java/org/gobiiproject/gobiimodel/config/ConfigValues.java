@@ -42,9 +42,10 @@ class ConfigValues {
         put(GobiiFileProcessDir.LOADER_DONE, "loader/done/");
         put(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, "extractor/instructions/");
         put(GobiiFileProcessDir.EXTRACTOR_INPROGRESS, "extractor/inprogress/");
-       put(GobiiFileProcessDir.EXTRACTOR_DONE, "extractor/done/");
+        put(GobiiFileProcessDir.EXTRACTOR_DONE, "extractor/done/");
         put(GobiiFileProcessDir.EXTRACTOR_OUTPUT, "extractor/output/");
-        put(GobiiFileProcessDir.QC_NOTIFICATIONS, "qcnotifications/");
+        put(GobiiFileProcessDir.QC_INSTRUCTIONS, "qc/instructions/");
+        put(GobiiFileProcessDir.QC_NOTIFICATIONS, "qc/notifications/");
 
     }};
 

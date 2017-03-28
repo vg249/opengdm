@@ -156,6 +156,27 @@ public class UriFactory {
 
     } //
 
+    public RestUri qcStatus() throws Exception {
+
+        RestUri returnVal = new RestUri(this.cropContextRoot,
+                ControllerType.QC,
+                ServiceRequestId.URL_QC_STATUS)
+                .addQueryParam("jobid");
+
+        return returnVal;
+
+    } //
+
+    public RestUri qcDownload() throws Exception {
+
+        RestUri returnVal = new RestUri(this.cropContextRoot,
+                ControllerType.QC,
+                ServiceRequestId.URL_QC_DOWNLOAD);
+
+        return returnVal;
+
+    } //
+
 }
 
 

@@ -1,5 +1,7 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.QCInstructionsDAO;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
@@ -7,8 +9,6 @@ import org.gobiiproject.gobiidtomapping.DtoMapQCInstructions;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiQCComplete;
-import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
@@ -19,6 +19,7 @@ import org.gobiiproject.gobiimodel.utils.email.QCMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 
 /**
  * Created by Phil on 4/12/2016.
@@ -33,7 +34,7 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
     private QCInstructionsDAO qcInstructionsDAO;
 
     @Autowired
-    DtoMapContact dtoMapContact;
+    private DtoMapContact dtoMapContact;
 
     private void createDirectories(String instructionFileDirectory) throws GobiiDaoException {
 
@@ -59,7 +60,7 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
             ConfigSettings configSettings = new ConfigSettings();
 
             String instructionFileDirectory = configSettings.getProcessingPath(cropType,
-                    GobiiFileProcessDir.QC_NOTIFICATIONS);
+                    GobiiFileProcessDir.QC_INSTRUCTIONS);
 
             createDirectories(instructionFileDirectory);
 
@@ -67,10 +68,21 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
                     + qcInstructionsDTO.getDataFileName()
                     + INSTRUCTION_FILE_EXT;
 
-
             if (!qcInstructionsDAO.doesPathExist(instructionFileFqpn)) {
 
-                if(qcInstructionsDTO.getGobiiJobStatus().equals(GobiiJobStatus.STARTED)) {
+                if (qcInstructionsDTO.getGobiiJobStatus().equals(GobiiJobStatus.STARTED)) {
+
+                    String currentQCContextRoot = configSettings.getCurrentCropConfig().getServiceDomain() +
+                            configSettings.getCurrentCropConfig().getServiceDomain();
+
+                    UriFactory uriFactory = new UriFactory();
+                    RestUri restUri = new RestUri(); uriFactory.qcStart();
+                    //restUri.setParamValue("datasetId", String.valueOf(dataSetId));
+                    //restUri.setParamValue("directory", extractDir);
+                    //RestResourceUtils restResourceUtils = new RestResourceUtils();
+                    //HttpMethodResult httpMethodResult = restResourceUtils.getHttp().get(restUri, clientContext.getUserToken());
+                    //JsonObject jsonObject = httpMethodResult.getPayLoad();
+
 
                     // call the KDCompute Service here
                     // boolean isCallSuccessful;
@@ -121,7 +133,6 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
             throw new GobiiException(e);
         }
 
-
         return returnVal;
 
     } // writeInstructions
@@ -136,7 +147,7 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
             ConfigSettings configSettings = new ConfigSettings();
 
             String instructionFileDirectory = configSettings.getProcessingPath(cropType,
-                    GobiiFileProcessDir.QC_NOTIFICATIONS);
+                    GobiiFileProcessDir.QC_INSTRUCTIONS);
 
             String instructionFileFqpn = instructionFileDirectory
                     + instructionFileName
