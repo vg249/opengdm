@@ -23,7 +23,7 @@ import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
  * @date 4/14/2016
  * 
  */
-public class CSVFileReader {
+public class CSVFileReader implements CSVFileReaderInterface {
 	private static final String NEWLINE = "\n";//jdl232 - Lets make this a constant, so if we do have to change it, we can.
 	private List<String> column_keys;
 	private Map<String, String> constant_values = new HashMap<String, String>();
@@ -58,11 +58,18 @@ public class CSVFileReader {
 	 * This method can be called directly to simulate an instruction file being parsed by the reader.
 	 * @param filePath location in the file system of the instruction file (can be absolute or relative.
 	 */
-	public static void parseInstructionFile(String filePath) throws FileNotFoundException, IOException, ParseException{
+	public static void parseInstructionFile(String filePath,String tmpFileLocation, String tmpFileSeparator) throws FileNotFoundException, IOException, ParseException{
+		CSVFileReaderInterface reader;
+		if(LoaderGlobalConfigurations.getVersionOneRead()){
+			reader=new CSVFileReader(tmpFileLocation,tmpFileSeparator);
+		}
+		else{
+			reader=new CSVFileReaderV2(tmpFileLocation,tmpFileSeparator);
+		}
 		if(LoaderGlobalConfigurations.getSingleThreadFileRead()){
 			for(GobiiLoaderInstruction i:HelperFunctions.parseInstructionFile(filePath)){
 				try {
-					new CSVFileReader().processCSV(i);
+						reader.processCSV(i);
 				} catch (InterruptedException e) {
 					ErrorLogger.logError("CSVFileReader","Interrupted reading instruction", e);
 				}
@@ -82,7 +89,7 @@ public class CSVFileReader {
 		}
 		//Create threads
 		for(GobiiLoaderInstruction loaderInstruction:instructions){
-			Thread processingThread=new Thread(new ReaderThread(loaderInstruction));
+			Thread processingThread=new Thread(new ReaderThread(reader,loaderInstruction));
 			threads.add(processingThread);
 			processingThread.start();
 		}
@@ -105,6 +112,7 @@ public class CSVFileReader {
 	 * @throws IOException If an unexpected filesystem error occurs
 	 * @throws InterruptedException If interrupted (Signals, etc)
 	 */
+	@Override
 	public void processCSV(GobiiLoaderInstruction loaderInstruction) throws IOException, InterruptedException{
 		List<String> tempFiles = new ArrayList<>();
 		file_column_constant = new HashMap<>();
@@ -328,12 +336,9 @@ public class CSVFileReader {
 	}
 }
 class ReaderThread implements Runnable{
-	private CSVFileReader reader;
+	private CSVFileReaderInterface reader;
 	private GobiiLoaderInstruction instruction;
-	public ReaderThread(GobiiLoaderInstruction instruction){
-		this(new CSVFileReader(),instruction);
-	}
-	protected ReaderThread(CSVFileReader reader,GobiiLoaderInstruction instruction){
+	protected ReaderThread(CSVFileReaderInterface reader,GobiiLoaderInstruction instruction){
 		this.reader=reader;
 		this.instruction=instruction;
 	}

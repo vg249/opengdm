@@ -30,7 +30,7 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
  * @date 3/23/2017
  */
 
-public class CSVFileReaderV2 {
+public class CSVFileReaderV2 implements CSVFileReaderInterface {
 
 	private static final String NEWLINE = "\n";
 	private static final String TAB = "\t";
