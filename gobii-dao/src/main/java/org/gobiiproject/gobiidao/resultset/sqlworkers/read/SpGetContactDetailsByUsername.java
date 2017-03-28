@@ -9,12 +9,12 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * Created by Angel on 5/4/2016.
+ * Created by VCalaminos on 3/23/2017.
  */
-public class SpGetContactDetailsByContactId implements Work {
+public class SpGetContactDetailsByUsername implements Work{
 
     private Map<String,Object> parameters = null;
-    public SpGetContactDetailsByContactId(Map<String,Object> parameters ) {
+    public SpGetContactDetailsByUsername(Map<String,Object> parameters ) {
         this.parameters = parameters;
     }
 
@@ -41,10 +41,10 @@ public class SpGetContactDetailsByContactId implements Work {
                 "c.modified_date,\n" +
                 "c.username\n" +
                 " from contact c\n" +
-                " where contact_id=?\n";
+                " where username=?\n";
 
         PreparedStatement preparedStatement = dbConnection.prepareCall(sql);
-        preparedStatement.setInt(1, (Integer) parameters.get("contactId"));
+        preparedStatement.setString(1, (String) parameters.get("username"));
         resultSet = preparedStatement.executeQuery();
     } // execute()
 }
