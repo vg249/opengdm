@@ -36,7 +36,7 @@ public class GobiiDataSetExtract {
 
     private GobiiSampleListType gobiiSampleListType;
 
-    private String gobiiDatasetType;
+    private Integer gobiiDatasetTypeId;
 
     private List<Integer> platformIds = new ArrayList<>();
 
@@ -80,12 +80,12 @@ public class GobiiDataSetExtract {
         this.gobiiSampleListType = gobiiSampleListType;
     }
 
-    public String getGobiiDatasetType() {
-        return gobiiDatasetType;
+    public Integer getGobiiDatasetTypeId() {
+        return gobiiDatasetTypeId;
     }
 
-    public void setGobiiDatasetType(String gobiiDatasetType) {
-        this.gobiiDatasetType = gobiiDatasetType;
+    public void setGobiiDatasetTypeId(Integer gobiiDatasetTypeId) {
+        this.gobiiDatasetTypeId = gobiiDatasetTypeId;
     }
 
     public List<Integer> getPlatformIds() {

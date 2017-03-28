@@ -933,7 +933,7 @@ export class ExtractorRoot implements OnInit {
                             && item.getCvFilterType() === CvFilterType.DATASET_TYPE
                     });
 
-                    let datSetTypeName: string = dataTypeFileItem != null ? dataTypeFileItem.getItemName() : null;
+                    let datSetTypeId: string = dataTypeFileItem != null ? dataTypeFileItem.getItemId() : null;
 
                     let platformFileItems: GobiiFileItem[] = fileItems.filter(item => {
                         return item.getEntityType() === EntityType.Platforms
@@ -987,7 +987,7 @@ export class ExtractorRoot implements OnInit {
                                     null,
                                     markerFileName,
                                     null,
-                                    datSetTypeName,
+                                    datSetTypeId,
                                     platformIds));
                             });
                     } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
@@ -1001,7 +1001,7 @@ export class ExtractorRoot implements OnInit {
                             null,
                             markerFileName,
                             null,
-                            datSetTypeName,
+                            datSetTypeId,
                             platformIds));
                     } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
                         gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
@@ -1014,7 +1014,7 @@ export class ExtractorRoot implements OnInit {
                             sampleList,
                             sampleFileName,
                             sampleListType,
-                            datSetTypeName,
+                            datSetTypeId,
                             platformIds));
                     } else {
                         this.handleAddMessage("Unhandled extract filter type: " + GobiiExtractFilterType[this.gobiiExtractFilterType]);
