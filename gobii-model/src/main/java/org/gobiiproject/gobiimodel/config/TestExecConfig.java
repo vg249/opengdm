@@ -29,7 +29,7 @@ public class TestExecConfig {
     private String configFileTestDirectory = "/gobii-config-test";
 
     @Element(required = false)
-    private String configUtilCommandlineStem = "java -jar C:\\phil-source\\IntelliJ\\gobiiproject\\gobii-process\\target\\gobiiconfig.jar";
+    private String configUtilCommandlineStem = "java -jar C:\\phil-source\\IntelliJ\\gobiiproject\\gobii-process\\target";
 
     public String getTestCrop() {
         return testCrop;
