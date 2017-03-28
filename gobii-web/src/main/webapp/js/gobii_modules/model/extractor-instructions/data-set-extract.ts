@@ -14,7 +14,7 @@ export class GobiiDataSetExtract {
                        public sampleList: string[],
                        public listFileName: string,
                        public gobiiSampleListType: GobiiSampleListType,
-                       public gobiiDatasetType: string,
+                       public gobiiDatasetTypeId: string,
                        public platformIds: number[]) {
 
         // this.setGobiiFileType(gobiiFileType);
@@ -109,11 +109,11 @@ export class GobiiDataSetExtract {
     }
 
     public getgobiiDatasetType(): string {
-        return this.gobiiDatasetType;
+        return this.gobiiDatasetTypeId;
     }
 
     public setgobiiDatasetType(value: string) {
-        this.gobiiDatasetType = value;
+        this.gobiiDatasetTypeId = value;
     }
 
     public getplatformIds(): number[] {
@@ -139,7 +139,7 @@ export class GobiiDataSetExtract {
         returnVal.sampleList = this.sampleList;
         returnVal.listFileName = this.listFileName;
         returnVal.gobiiSampleListType = this.gobiiSampleListType;
-        returnVal.gobiiDatasetType = this.gobiiDatasetType;
+        returnVal.gobiiDatasetTypeId = this.gobiiDatasetTypeId;
         returnVal.platformIds = this.platformIds;
 
         return returnVal;
@@ -159,7 +159,7 @@ export class GobiiDataSetExtract {
                 json.sampleList,
                 json.listFileName,
                 json.gobiiSampleListType,
-                json.gobiiDatasetType,
+                json.gobiiDatasetTypeId,
                 json.platformIds);
 
         return returnVal;
