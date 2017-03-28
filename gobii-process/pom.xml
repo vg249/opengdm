@@ -191,8 +191,27 @@
                         <goals>
                             <goal>single</goal>
                         </goals>
+                    </execution>
+
+                    <!--User Authentication Execution-->
+                    <execution>
+                        <configuration>
+                            <finalName>UserAuthentication</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.UserAuthentication</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-userauthentication</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
 
                     </execution>
+
 
                 </executions>
             </plugin>

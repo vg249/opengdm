@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
+import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
@@ -70,6 +71,21 @@ class ConfigValues {
 
     @Element(required = false)
     private Integer emailServerPort = 0;
+    
+    @Element(required = false)
+    private GobiiAuthenticationType gobiiAuthenticationType = GobiiAuthenticationType.TEST;
+
+    @Element(required = false)
+    private String ldapUserDnPattern;
+
+    @Element(required = false)
+    private String ldapUrl;
+
+    @Element(required = false)
+    private String ldapBindUser;
+
+    @Element(required = false)
+    private String ldapBindPassword;
 
     @Element(required = false)
     private boolean iflIntegrityCheck = false;
@@ -285,6 +301,46 @@ class ConfigValues {
 
     public void setEmailSvrPort(Integer emailServerPort) {
         this.emailServerPort = emailServerPort;
+    }
+
+    public GobiiAuthenticationType getGobiiAuthenticationType() {
+        return gobiiAuthenticationType;
+    }
+
+    public void setGobiiAuthenticationType(GobiiAuthenticationType gobiiAuthenticationType) {
+        this.gobiiAuthenticationType = gobiiAuthenticationType;
+    }
+
+    public String getLdapUserDnPattern() {
+        return ldapUserDnPattern;
+    }
+
+    public void setLdapUserDnPattern(String ldapUserDnPattern) {
+        this.ldapUserDnPattern = ldapUserDnPattern;
+    }
+
+    public String getLdapUrl() {
+        return ldapUrl;
+    }
+
+    public void setLdapUrl(String ldapUrl) {
+        this.ldapUrl = ldapUrl;
+    }
+
+    public String getLdapBindUser() {
+        return ldapBindUser;
+    }
+
+    public void setLdapBindUser(String ldapBindUser) {
+        this.ldapBindUser = ldapBindUser;
+    }
+
+    public String getLdapBindPassword() {
+        return ldapBindPassword;
+    }
+
+    public void setLdapBindPassword(String ldapBindPassword) {
+        this.ldapBindPassword = ldapBindPassword;
     }
 
     public boolean isIflIntegrityCheck() {
