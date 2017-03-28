@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiprocess;
 
 import org.apache.commons.lang.StringUtils;
+import org.gobiiproject.gobiiapimodel.payload.Payload;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
@@ -426,6 +427,13 @@ public class GobiiTestData {
         newContactDTO.setCreatedDate(new Date());
         newContactDTO.setModifiedBy(1);
         newContactDTO.setModifiedDate(new Date());
+
+        /** check roles **/
+        if (newContactDTO.getRoles().size() <= 0) {
+
+            throw new Exception("Roles are required to create a contact. Please add role/s for Contact ("+newContactDTO.getEmail()+").");
+
+        }
 
         setFKeyDbPKeyForNewEntity(fkeys, ContactDTO.class, newContactDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
@@ -959,7 +967,7 @@ public class GobiiTestData {
                 field.set(newMapsetDTO, processTypes(propKey.getTextContent(), field.getType()));
 
             }
-            }
+        }
 
         newMapsetDTO.setCreatedDate(new Date());
         newMapsetDTO.setCreatedBy(1);
@@ -1035,6 +1043,10 @@ public class GobiiTestData {
 
         System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
+        Element propertiesElement = null;
+
+        Integer propertyCount = 0;
+
         for (int j=0; j<propKeyList.getLength(); j++) {
 
             Element propKey = (Element) propKeyList.item(j);
@@ -1043,9 +1055,23 @@ public class GobiiTestData {
 
             propKeyLocalName = processPropName(propKeyLocalName);
 
-            Field field = ProjectDTO.class.getDeclaredField(propKeyLocalName);
-            field.setAccessible(true);
-            field.set(newProjectDTO, processTypes(propKey.getTextContent(), field.getType()));
+            if (propKeyLocalName.equals("properties")) {
+
+                propertiesElement = propKey;
+                continue;
+
+            }
+
+            if (propKey.getParentNode().equals(propertiesElement)) {
+
+
+            } else {
+
+                Field field = ProjectDTO.class.getDeclaredField(propKeyLocalName);
+                field.setAccessible(true);
+                field.set(newProjectDTO, processTypes(propKey.getTextContent(), field.getType()));
+
+            }
 
         }
 
@@ -1054,19 +1080,23 @@ public class GobiiTestData {
         newProjectDTO.setModifiedDate(new Date());
         newProjectDTO.setModifiedBy(1);
 
+
         setFKeyDbPKeyForNewEntity(fkeys, ProjectDTO.class, newProjectDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
+        System.out.println(newProjectDTO.getProperties().size());
         System.out.println("Calling the web service...\n");
+
+
+        newProjectDTO.getProperties().add(new EntityPropertyDTO(null, null, "division", "foo division"));
+        newProjectDTO.getProperties().add(new EntityPropertyDTO(null, null, "study_name", "foo study name"));
+        newProjectDTO.getProperties().add(new EntityPropertyDTO(null, null, "genotyping_purpose", "foo purpose"));
 
         /*** create project ***/
 
-        PayloadEnvelope<ProjectDTO> payloadEnvelopeProject = new PayloadEnvelope<>(newProjectDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<ProjectDTO> gobiiEnvelopeRestResourceProject = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
-                        .getUriFactory()
-                        .resourceColl(ServiceRequestId.URL_PROJECTS));
-        PayloadEnvelope<ProjectDTO> projectDTOResponseEnvelope = gobiiEnvelopeRestResourceProject.post(ProjectDTO.class,
-                payloadEnvelopeProject);
-
+        RestUri projectsUri = ClientContext.getInstance(null, false).getUriFactory().resourceColl(ServiceRequestId.URL_PROJECTS);
+        GobiiEnvelopeRestResource<ProjectDTO> gobiiEnvelopeRestResourceForProjects = new GobiiEnvelopeRestResource<>(projectsUri);
+        PayloadEnvelope<ProjectDTO> payloadEnvelope = new PayloadEnvelope<>(newProjectDTO, GobiiProcessType.CREATE);
+        PayloadEnvelope<ProjectDTO> projectDTOResponseEnvelope = gobiiEnvelopeRestResourceForProjects.post(ProjectDTO.class, payloadEnvelope);
 
         checkStatus(projectDTOResponseEnvelope);
 

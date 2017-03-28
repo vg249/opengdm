@@ -35,6 +35,7 @@ public class TestGobiiTestData {
 
     private static String FILE_PATH = "C:/Users/VCalaminos/Documents/gobii/gobiiproject/gobii-process/src/main/resources/test_profiles/vcf_test.xml";
     private static TestExecConfig testExecConfig = null;
+    private static String CONFIG_FILE_LOCATION_PROP = "cfgFqpn";
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -382,11 +383,14 @@ public class TestGobiiTestData {
 
     private String makeCommandLine() {
 
+        String configFileLocation = System.getProperty(CONFIG_FILE_LOCATION_PROP);
         String returnVal;
 
         returnVal = testExecConfig.getConfigUtilCommandlineStem();
 
-        returnVal = returnVal.replaceFirst("java", "java -DcfgFqpn=C:\\\\Users\\\\VCalaminos\\\\Documents\\\\gobii\\\\config\\\\gobii-web.xml ");
+        configFileLocation = configFileLocation.replace("\\", "\\\\");
+
+        returnVal = returnVal.replaceFirst("java", "java -DcfgFqpn="+configFileLocation+" ");
 
         returnVal = returnVal + "\\gobiitestdata.jar " + FILE_PATH;
 
