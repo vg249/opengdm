@@ -155,6 +155,26 @@
 
                     </execution>
 
+                    <!--gobii test data Execution -->
+                    <execution>
+                        <configuration>
+                            <finalName>gobiitestdata</finalName>
+                            <!-- MainClass in mainfest make a executable jar -->
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.gobiiproject.gobiiprocess.GobiiTestData</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                        <id>make-gobiitestdata</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                    </execution>
+
                     <!--Digester Execution-->
                     <execution>
                         <configuration>
