@@ -299,7 +299,7 @@ public class GobiiExtractor {
 
 				// Adding "/" back to the bi-allelic data made from HDF5
 				if (extract.getGobiiDatasetType() != null) {
-					if (extract.getGobiiDatasetType().equals(DataSetType.SSR_ALLELE_SIZE.toString())) {
+					if (extract.getDataSetName().toUpperCase().equals(DataSetType.SSR_ALLELE_SIZE.toString())) {
 						ErrorLogger.logInfo("Extractor","Adding slashes to bi allelic data in " + genoFile);
 						if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
 							ErrorLogger.logInfo("Extractor","Added slashes to all the bi-allelic data in " + genoFile);
@@ -532,7 +532,7 @@ public class GobiiExtractor {
 	}
 
 	/**
-	 * Determine crop type by looking at the intruction file's location for the name of a crop.
+	 * Determine crop type by looking at the intruction file's location for the name of a Socrop.
 	 * @param instructionFile
 	 * @return GobiiCropType
 	 */
