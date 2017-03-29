@@ -57,13 +57,15 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
             .fileItemNotifications()
             .subscribe(eventedFileItem => {
 
+                let foo:string ="foo";
+
                     // we need to make sure that the evented item belongs to this control
 
                     let fileItem: GobiiFileItem = this
                         .fileItemList
                         .find(fi => {
                             return fi.getFileItemUniqueId()
-                                !== fileItem.getFileItemUniqueId()
+                                !== eventedFileItem.getFileItemUniqueId()
                         });
 
                     if (undefined != fileItem) {

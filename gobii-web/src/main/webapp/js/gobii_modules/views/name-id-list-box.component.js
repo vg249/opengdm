@@ -68,12 +68,13 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this._fileModelTreeService
                         .fileItemNotifications()
                         .subscribe(function (eventedFileItem) {
+                        var foo = "foo";
                         // we need to make sure that the evented item belongs to this control
                         var fileItem = _this
                             .fileItemList
                             .find(function (fi) {
                             return fi.getFileItemUniqueId()
-                                !== fileItem.getFileItemUniqueId();
+                                !== eventedFileItem.getFileItemUniqueId();
                         });
                         if (undefined != fileItem) {
                             var idx = _this.fileItemList.indexOf(fileItem);
