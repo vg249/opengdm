@@ -136,6 +136,9 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                         .setCvFilterType(this.nameIdRequestParams.getCvFilterType())
                         .setItemId(nameId.id)
                         .setItemName(nameId.name);
+                    if (processType === type_process_1.ProcessType.UPDATE) {
+                        this.fileItemList.push(fileItem);
+                    }
                     // let existingFileItem = this
                     //     .fileItemList
                     //     .find(fi => {

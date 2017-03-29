@@ -159,6 +159,11 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
             .setItemId(nameId.id)
             .setItemName(nameId.name);
 
+
+        if( processType === ProcessType.UPDATE ) {
+            this.fileItemList.push(fileItem);
+        }
+
         // let existingFileItem = this
         //     .fileItemList
         //     .find(fi => {
