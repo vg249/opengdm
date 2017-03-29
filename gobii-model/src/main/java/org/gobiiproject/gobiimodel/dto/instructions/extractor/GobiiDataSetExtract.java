@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.instructions.extractor;
 
+import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
@@ -34,11 +35,11 @@ public class GobiiDataSetExtract {
 
     private String listFileName;
 
-    private GobiiSampleListType gobiiSampleListType;
-
-    private Integer gobiiDatasetTypeId;
+    private GobiiFilePropNameId gobiiDatasetType = new GobiiFilePropNameId();
 
     private List<Integer> platformIds = new ArrayList<>();
+
+    private GobiiSampleListType gobiiSampleListType;
 
     public GobiiExtractFilterType getGobiiExtractFilterType() {
         return gobiiExtractFilterType;
@@ -80,12 +81,12 @@ public class GobiiDataSetExtract {
         this.gobiiSampleListType = gobiiSampleListType;
     }
 
-    public Integer getGobiiDatasetTypeId() {
-        return gobiiDatasetTypeId;
+    public GobiiFilePropNameId getGobiiDatasetType() {
+        return gobiiDatasetType;
     }
 
-    public void setGobiiDatasetTypeId(Integer gobiiDatasetTypeId) {
-        this.gobiiDatasetTypeId = gobiiDatasetTypeId;
+    public void setGobiiDatasetType(GobiiFilePropNameId gobiiDatasetType) {
+        this.gobiiDatasetType = gobiiDatasetType;
     }
 
     public List<Integer> getPlatformIds() {
