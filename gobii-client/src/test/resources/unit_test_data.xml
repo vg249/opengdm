@@ -37,7 +37,7 @@
         <Platforms DbPKeysurrogate="PlatformName">
             <Platform>
                 <Keys>
-                    <DbPKey></DbPKey>
+                    <DbPKey>155</DbPKey>
                 </Keys>
                 <Properties>
                     <PlatformName>sim_GBS</PlatformName>
