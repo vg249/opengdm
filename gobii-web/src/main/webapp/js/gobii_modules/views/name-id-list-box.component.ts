@@ -15,13 +15,15 @@ import {Guid} from "../model/guid";
 import {NameIdService} from "../services/core/name-id-service";
 import {NameIdRequestParams} from "../model/name-id-request-params";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
+import {Labels} from "./entity-labels";
 
 
 @Component({
     selector: 'name-id-list-box',
     inputs: ['gobiiExtractFilterType',
         'notifyOnInit',
-        'nameIdRequestParams'],
+        'nameIdRequestParams',
+        'firstItemIsLabel'],
     outputs: ['onNameIdSelected', 'onError'],
     template: `<select name="users" (change)="handleNameIdSelected($event)" >
 			<option *ngFor="let nameId of nameIdList " 
@@ -64,8 +66,27 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
             .subscribe(nameIds => {
                     if (nameIds && ( nameIds.length > 0 )) {
                         scope$.nameIdList = nameIds;
-                        scope$.selectedNameId = nameIds[0].id;
+
+                        if (this.firstItemIsLabel) {
+                            let label: string = "Select ";
+
+                            if( scope$.nameIdRequestParams.getCvFilterType() !== CvFilterType.UNKNOWN  ) {
+                                label += Labels.instance().cvFilterNodeLabels[scope$.nameIdRequestParams.getCvFilterType()];
+                            } else if( scope$.nameIdRequestParams.getEntitySubType() !== EntitySubType.UNKNOWN ) {
+                                label += Labels.instance().entitySubtypeNodeLabels[scope$.nameIdRequestParams.getEntitySubType()];
+                            } else {
+                                label += Labels.instance().entityNodeLabels[scope$.nameIdRequestParams.getEntityType()];
+                            }
+
+                            let labelNameId = new NameId("0", label, this.nameIdRequestParams.getEntityType());
+                            scope$.nameIdList.unshift(labelNameId);
+
+                        } else {
+                            scope$.selectedNameId = nameIds[0].id;
+                        }
+
                         if (this.notifyOnInit
+                            && !this.firstItemIsLabel
                             && !this.notificationSent
                             && scope$.nameIdList [0].name != "<none>") {
                             this.updateTreeService(scope$.nameIdList [0]);
@@ -83,6 +104,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
     private nameIdList: NameId[];
 
     private notifyOnInit: boolean = false;
+    private firstItemIsLabel: boolean = false;
     // DtoRequestItemNameIds expects the value to be null if it's not set (not "UNKNOWN")
 
     private nameIdRequestParams: NameIdRequestParams;
@@ -104,22 +126,24 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
         this.onNameIdSelected.emit(nameId);
 
-        let fileItem: GobiiFileItem = GobiiFileItem
-            .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-            .setExtractorItemType(ExtractorItemType.ENTITY)
-            .setEntityType(this.nameIdRequestParams.getEntityType())
-            .setEntitySubType(this.nameIdRequestParams.getEntitySubType())
-            .setCvFilterType(this.nameIdRequestParams.getCvFilterType())
-            .setItemId(nameId.id)
-            .setItemName(nameId.name);
+        if (nameId.id !== "0") {
 
-        this._fileModelTreeService.put(fileItem)
-            .subscribe(
-                null,
-                headerResponse => {
-                    this.handleHeaderStatus(headerResponse)
-                });
+            let fileItem: GobiiFileItem = GobiiFileItem
+                .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
+                .setExtractorItemType(ExtractorItemType.ENTITY)
+                .setEntityType(this.nameIdRequestParams.getEntityType())
+                .setEntitySubType(this.nameIdRequestParams.getEntitySubType())
+                .setCvFilterType(this.nameIdRequestParams.getCvFilterType())
+                .setItemId(nameId.id)
+                .setItemName(nameId.name);
 
+            this._fileModelTreeService.put(fileItem)
+                .subscribe(
+                    null,
+                    headerResponse => {
+                        this.handleHeaderStatus(headerResponse)
+                    });
+        }
     }
 
 

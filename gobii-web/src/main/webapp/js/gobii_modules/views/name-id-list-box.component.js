@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/gobii-file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../model/type-entity", "../model/cv-filter-type", "../model/gobii-file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service", "./entity-labels"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,11 +10,20 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/type-pro
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, gobii_file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, NameIdListBoxComponent;
+    var core_1, name_id_1, type_entity_1, cv_filter_type_1, gobii_file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, entity_labels_1, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (name_id_1_1) {
+                name_id_1 = name_id_1_1;
+            },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
+            },
+            function (cv_filter_type_1_1) {
+                cv_filter_type_1 = cv_filter_type_1_1;
             },
             function (gobii_file_item_1_1) {
                 gobii_file_item_1 = gobii_file_item_1_1;
@@ -33,6 +42,9 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/type-pro
             },
             function (name_id_service_1_1) {
                 name_id_service_1 = name_id_service_1_1;
+            },
+            function (entity_labels_1_1) {
+                entity_labels_1 = entity_labels_1_1;
             }
         ],
         execute: function () {
@@ -43,6 +55,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/type-pro
                     this.differs = differs;
                     this.notificationSent = false;
                     this.notifyOnInit = false;
+                    this.firstItemIsLabel = false;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.selectedNameId = null;
                     this.onNameIdSelected = new core_1.EventEmitter();
@@ -62,8 +75,25 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/type-pro
                         .subscribe(function (nameIds) {
                         if (nameIds && (nameIds.length > 0)) {
                             scope$.nameIdList = nameIds;
-                            scope$.selectedNameId = nameIds[0].id;
+                            if (_this.firstItemIsLabel) {
+                                var label = "Select ";
+                                if (scope$.nameIdRequestParams.getCvFilterType() !== cv_filter_type_1.CvFilterType.UNKNOWN) {
+                                    label += entity_labels_1.Labels.instance().cvFilterNodeLabels[scope$.nameIdRequestParams.getCvFilterType()];
+                                }
+                                else if (scope$.nameIdRequestParams.getEntitySubType() !== type_entity_1.EntitySubType.UNKNOWN) {
+                                    label += entity_labels_1.Labels.instance().entitySubtypeNodeLabels[scope$.nameIdRequestParams.getEntitySubType()];
+                                }
+                                else {
+                                    label += entity_labels_1.Labels.instance().entityNodeLabels[scope$.nameIdRequestParams.getEntityType()];
+                                }
+                                var labelNameId = new name_id_1.NameId("0", label, _this.nameIdRequestParams.getEntityType());
+                                scope$.nameIdList.unshift(labelNameId);
+                            }
+                            else {
+                                scope$.selectedNameId = nameIds[0].id;
+                            }
                             if (_this.notifyOnInit
+                                && !_this.firstItemIsLabel
                                 && !_this.notificationSent
                                 && scope$.nameIdList[0].name != "<none>") {
                                 _this.updateTreeService(scope$.nameIdList[0]);
@@ -80,18 +110,20 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/type-pro
                 NameIdListBoxComponent.prototype.updateTreeService = function (nameId) {
                     var _this = this;
                     this.onNameIdSelected.emit(nameId);
-                    var fileItem = gobii_file_item_1.GobiiFileItem
-                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
-                        .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
-                        .setEntityType(this.nameIdRequestParams.getEntityType())
-                        .setEntitySubType(this.nameIdRequestParams.getEntitySubType())
-                        .setCvFilterType(this.nameIdRequestParams.getCvFilterType())
-                        .setItemId(nameId.id)
-                        .setItemName(nameId.name);
-                    this._fileModelTreeService.put(fileItem)
-                        .subscribe(null, function (headerResponse) {
-                        _this.handleHeaderStatus(headerResponse);
-                    });
+                    if (nameId.id !== "0") {
+                        var fileItem = gobii_file_item_1.GobiiFileItem
+                            .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
+                            .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
+                            .setEntityType(this.nameIdRequestParams.getEntityType())
+                            .setEntitySubType(this.nameIdRequestParams.getEntitySubType())
+                            .setCvFilterType(this.nameIdRequestParams.getCvFilterType())
+                            .setItemId(nameId.id)
+                            .setItemName(nameId.name);
+                        this._fileModelTreeService.put(fileItem)
+                            .subscribe(null, function (headerResponse) {
+                            _this.handleHeaderStatus(headerResponse);
+                        });
+                    }
                 };
                 NameIdListBoxComponent.prototype.handleNameIdSelected = function (arg) {
                     var nameId = this.nameIdList[arg.srcElement.selectedIndex];
@@ -149,7 +181,8 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/type-pro
                     selector: 'name-id-list-box',
                     inputs: ['gobiiExtractFilterType',
                         'notifyOnInit',
-                        'nameIdRequestParams'],
+                        'nameIdRequestParams',
+                        'firstItemIsLabel'],
                     outputs: ['onNameIdSelected', 'onError'],
                     template: "<select name=\"users\" (change)=\"handleNameIdSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
                 }),

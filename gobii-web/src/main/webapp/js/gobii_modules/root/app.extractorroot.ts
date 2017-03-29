@@ -85,7 +85,8 @@ import {TreeStatusNotification} from "../model/tree-status-notification";
                             <name-id-list-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [nameIdRequestParams]="nameIdRequestParamsContactsPi"
-                                [notifyOnInit]="false"
+                                [notifyOnInit]="!firstItemIsLabelPrincipleInvestigators"
+                                [firstItemIsLabel]="firstItemIsLabelPrincipleInvestigators"
                                 (onNameIdSelected)="handleContactForPiSelected($event)"
                                 (onError) = "handleHeaderStatusMessage($event)">
                             </name-id-list-box>
@@ -110,7 +111,8 @@ import {TreeStatusNotification} from "../model/tree-status-notification";
                             <label class="the-label">Dataset Types:</label><BR>
                             <name-id-list-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                [notifyOnInit]="true"
+                                [notifyOnInit]="false"
+                                [firstItemIsLabel] = "true"
                                 [nameIdRequestParams]="nameIdRequestParamsDatasetType"
                                 (onError) = "handleHeaderStatusMessage($event)">
                             </name-id-list-box>
@@ -385,6 +387,7 @@ export class ExtractorRoot implements OnInit {
 
     private displayAvailableDatasets: boolean = true;
     private displaySelectorPi: boolean = true;
+    private firstItemIsLabelPrincipleInvestigators: boolean = false;
     private displaySelectorProject: boolean = true;
     private displaySelectorExperiment: boolean = true;
     private displaySelectorDataType: boolean = false;
@@ -439,6 +442,7 @@ export class ExtractorRoot implements OnInit {
 
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
+            this.firstItemIsLabelPrincipleInvestigators = false;
             this.displaySelectorPi = true;
             this.displaySelectorProject = true;
             this.displaySelectorExperiment = true;
@@ -456,6 +460,7 @@ export class ExtractorRoot implements OnInit {
 //            this.initializePlatforms();
 
             this.displaySelectorPi = true;
+            this.firstItemIsLabelPrincipleInvestigators = true;
             this.displaySelectorProject = true;
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
@@ -476,6 +481,7 @@ export class ExtractorRoot implements OnInit {
             this.displaySampleMarkerBox = true;
 
             this.displaySelectorPi = false;
+            this.firstItemIsLabelPrincipleInvestigators = false;
             this.displaySelectorProject = false;
             this.displaySelectorExperiment = false;
             this.displayAvailableDatasets = false;
