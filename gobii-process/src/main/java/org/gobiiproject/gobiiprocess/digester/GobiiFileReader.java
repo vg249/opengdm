@@ -357,7 +357,7 @@ public class GobiiFileReader {
 				gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
 				gobiiDataSetExtract.setDataSetId(inst.getDataSet().getId());
 				gobiiDataSetExtract.setDataSetName(inst.getDataSet().getName());
-				gobiiDataSetExtract.setGobiiDatasetTypeId(inst.getDatasetType().getId());
+				gobiiDataSetExtract.setGobiiDatasetType(inst.getDatasetType());
 				Path loaderDestinationDirectoryPath = FileSystems.getDefault().getPath(dstDir.getAbsolutePath());
 				int pathDepth = loaderDestinationDirectoryPath.getNameCount();
 				Path cropDirectory = loaderDestinationDirectoryPath.subpath(0, (pathDepth - 3));

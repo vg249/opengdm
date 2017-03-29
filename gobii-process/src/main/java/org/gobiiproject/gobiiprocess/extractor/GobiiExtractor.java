@@ -222,7 +222,7 @@ public class GobiiExtractor {
 								" -s " + sampleFile +
 								" -p " + projectFile +
                                 markerListLocation +
-								" --datasetType " + extract.getGobiiDatasetTypeId() +
+								" --datasetType " + extract.getGobiiDatasetType().getName() +
 								mapIdTerm +
 								platformTerm +
 								" -l -v ";
@@ -255,8 +255,8 @@ public class GobiiExtractor {
 				success&=ErrorLogger.success();
 				ErrorLogger.logDebug("Extractor",(success?"Success ":"Failure " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile));
 				// Adding "/" back to the bi-allelic data made from HDF5
-				if (extract.getGobiiDatasetTypeId() != null) {
-					if (extract.getGobiiDatasetTypeId().equals(DataSetType.SSR_ALLELE_SIZE.toString())) {
+				if (extract.getGobiiDatasetType() != null) {
+					if (extract.getGobiiDatasetType().getName().toLowerCase().equals("ssr_allele_size")) {
 						ErrorLogger.logInfo("Extractor","Adding slashes to bi allelic data in " + genoFile);
 						if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
 							ErrorLogger.logInfo("Extractor","Added slashes to all the bi-allelic data in " + genoFile);
