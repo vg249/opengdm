@@ -33,6 +33,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtrac
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 
+import static java.lang.System.in;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
@@ -96,7 +97,7 @@ public class GobiiExtractor {
 		ErrorLogger.setLogFilepath(logDir);
 		String instructionFile=null;
 		if(args.length==0 ||args[0]==""){
-			Scanner s=new Scanner(System.in);
+			Scanner s=new Scanner(in);
 			System.out.println("Enter Extractor Instruction File Location:");
 			instructionFile=s.nextLine();
 		    if(instructionFile.equals("")) instructionFile="scripts//jdl232_01_pretty.json";
@@ -241,7 +242,10 @@ public class GobiiExtractor {
 						}
 
 						GobiiSampleListType type = extract.getGobiiSampleListType();
-						String sampleListTypeTerm=type==null?"":"--sampleType "+getNumericType(type);
+						String sampleListTypeTerm=(type==null)?"":"--sampleType "+getNumericType(type);
+
+						String PITerm="";
+						//TODO - HAVE A PI TERM
 
 						gobiiMDE = "python "+ mdePath+
 								" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
@@ -252,6 +256,8 @@ public class GobiiExtractor {
 								" -p " + projectFile +
 								" -Y " + samplePosFile +
 								sampleListLocation +
+								sampleListTypeTerm +
+								PITerm +
 								" --datasetType " + extract.getGobiiDatasetType() +
 								mapIdTerm +
 								platformTerm +
@@ -461,7 +467,7 @@ public class GobiiExtractor {
 			HelperFunctions.tryExec(hdf5Extractor + " " + ordering + " " + HDF5File + " " + genoFile, null, errorFile);
 		}
 		if(sampleList!=null){
-			filterBySampleList(genoFile,sampleList);
+			filterBySampleList(genoFile,sampleList,markerFast, errorFile);
 		}
 		ErrorLogger.logDebug("Extractor",(ErrorLogger.success()?"Success ":"Failure " +"Extracting with "+ordering+" "+HDF5File+" "+genoFile));
 		return genoFile;
@@ -472,8 +478,43 @@ public class GobiiExtractor {
 	 * @param filename path to extract naked matrix
 	 * @param sampleList Comma separated list of sample positions
 	 */
-	private static void filterBySampleList(String filename, String sampleList){
+	private static void filterBySampleList(String filename, String sampleList, boolean markerFast, String errorFile){
+		String tmpFile=filename+".tmp";
+		FileSystemInterface.mv(filename,tmpFile);
+		String cutString=getCutString(sampleList);
+		if(markerFast) {
+			String sedString=cutString.replaceAll(",","p;");//1,2,3 => 1p;2p;3   (p added later)
+			tryExec("sed -n "+sedString+"p",filename,errorFile,tmpFile);
+		}
+		else{
+			tryExec("cut -f"+getCutString(sampleList),filename,errorFile,tmpFile);
+		}
+	}
 
+	/**
+	 * Converts a string of 1,2,-1,4,5,6,-1,2 (Arbitrary -1's and NOT -1's into a comma delimited set of lines from 1-N
+	 * excluding positions where a -1 exists, ONE BASED.
+	 *
+	 * Note: Since input is zero-based list anyway, I probably could have removed the -1's and added 1 to every entry. This seemed derpier.
+	 *
+	 * Examples:
+	 * 0,1,2,-1,4,5 -> 1,2,3,5,6
+	 * 7,-1,7,-1,7,-1 -> 1,3,5
+	 * @param sampleList Input string
+	 * @return Output string (see above)
+	 */
+	private static String getCutString(String sampleList){
+		String[] entries=sampleList.split(",");
+		StringBuilder cutString=new StringBuilder();//Cutstring -> 1,2,4,5,6
+		int i=1;
+		for(String entry:entries){
+			if( Integer.parseInt(entry) != -1){
+				cutString.append(i+",");
+			}
+			i++;
+		}
+		cutString.deleteCharAt(cutString.length()-1);
+		return cutString.toString();
 	}
 
 
