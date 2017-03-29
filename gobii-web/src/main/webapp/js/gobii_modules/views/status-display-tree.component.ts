@@ -115,16 +115,16 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         let fileItem: GobiiFileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, false);
 
-        // if the item is required, take no action and in fact make it selected again
-        if (!fileItem.getRequired()) {
-            this._fileModelTreeService.put(fileItem).subscribe(
-                null,
-                headerResponse => {
-                    this.handleAddStatusMessage(headerResponse)
-                });
-        } else {
-            this.selectedGobiiNodes.push(unselectedTreeNode);
-        }
+        // The prevent unchecking behavior is suspended until it is proven why we need it
+//        if (!fileItem.getRequired()) {
+        this._fileModelTreeService.put(fileItem).subscribe(
+            null,
+            headerResponse => {
+                this.handleAddStatusMessage(headerResponse)
+            });
+        // } else {
+        //     this.selectedGobiiNodes.push(unselectedTreeNode);
+        // }
 
 
     }
@@ -144,6 +144,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             (checked ? ProcessType.CREATE : ProcessType.DELETE))
             .setExtractorItemType(fileModelNode.getItemType())
             .setEntityType(gobiiTreeNode.entityType)
+            .setEntitySubType(gobiiTreeNode.entitySubType)
             .setCvFilterType(gobiiTreeNode.cvFilterType)
             .setItemId(null)
             .setItemName(gobiiTreeNode.label)
@@ -342,7 +343,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         return returnVal;
     }
 
-    findTreeNodebyFileItemIdId(gobiiTreeNodes: GobiiTreeNode[], fileItemId: String): GobiiTreeNode {
+    findTreeNodebyFileItemUniqueId(gobiiTreeNodes: GobiiTreeNode[], fileItemId: String): GobiiTreeNode {
 
         let returnVal: GobiiTreeNode = null;
 
@@ -364,7 +365,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
-                let gobiiTreeNodeToBeRemoved: GobiiTreeNode = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.getFileItemUniqueId());
+                let gobiiTreeNodeToBeRemoved: GobiiTreeNode = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.getFileItemUniqueId());
 
                 if (gobiiTreeNodeToBeRemoved !== null) {
 
@@ -452,6 +453,11 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 if (gobiiTreeLeafNodeTobeMutated != null) {
 
 
+                    gobiiTreeLeafNodeTobeMutated.fileItemId = fileModelTreeEvent.fileItem.getFileItemUniqueId();
+                    gobiiTreeLeafNodeTobeMutated.entityType = fileModelTreeEvent.fileItem.getEntityType();
+                    gobiiTreeLeafNodeTobeMutated.entitySubType = fileModelTreeEvent.fileItem.getEntitySubType();
+                    gobiiTreeLeafNodeTobeMutated.cvFilterType = fileModelTreeEvent.fileItem.getCvFilterType();
+
                     this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, fileModelTreeEvent.fileItem);
                     this.addIconsToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, false);
                     gobiiTreeLeafNodeTobeMutated.required = fileModelTreeEvent.fileItem.getRequired();
@@ -505,7 +511,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                     if (existingFileModelItem !== null) {
 
 
-                        let existingGobiiTreeNodeChild: GobiiTreeNode = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, existingFileModelItem.getFileItemUniqueId());
+                        let existingGobiiTreeNodeChild: GobiiTreeNode = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes, existingFileModelItem.getFileItemUniqueId());
 
                         if (existingGobiiTreeNodeChild === null) {
 

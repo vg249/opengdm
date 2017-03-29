@@ -54,6 +54,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this._fileModelTreeService = _fileModelTreeService;
                     this.differs = differs;
                     this.notificationSent = false;
+                    this.fileItemList = [];
                     this.notifyOnInit = false;
                     this.firstItemIsLabel = false;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
@@ -63,10 +64,25 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this.differ = differs.find({}).create(null);
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
-                    // entityFilterValue and entityFilter must either have values or be null.
-                    // if (this._nameIdService.validateRequest(this.nameIdRequestParams) ) {
-                    //     this.initializeNameIds();
-                    // }
+                    var _this = this;
+                    this._fileModelTreeService
+                        .fileItemNotifications()
+                        .subscribe(function (eventedFileItem) {
+                        // we need to make sure that the evented item belongs to this control
+                        var fileItem = _this
+                            .fileItemList
+                            .find(function (fi) {
+                            return fi.getFileItemUniqueId()
+                                !== fileItem.getFileItemUniqueId();
+                        });
+                        if (undefined != fileItem) {
+                            var idx = _this.fileItemList.indexOf(fileItem);
+                            _this.fileItemList = _this.fileItemList.splice(idx, 1);
+                            _this.selectedNameId = "0";
+                        }
+                    }, function (responseHeader) {
+                        _this.handleHeaderStatus(responseHeader);
+                    });
                 };
                 NameIdListBoxComponent.prototype.initializeNameIds = function () {
                     var _this = this;
@@ -88,6 +104,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                                 }
                                 var labelNameId = new name_id_1.NameId("0", label, _this.nameIdRequestParams.getEntityType());
                                 scope$.nameIdList.unshift(labelNameId);
+                                _this.selectedNameId = "0";
                             }
                             else {
                                 scope$.selectedNameId = nameIds[0].id;
@@ -110,20 +127,28 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                 NameIdListBoxComponent.prototype.updateTreeService = function (nameId) {
                     var _this = this;
                     this.onNameIdSelected.emit(nameId);
-                    if (nameId.id !== "0") {
-                        var fileItem = gobii_file_item_1.GobiiFileItem
-                            .build(this.gobiiExtractFilterType, type_process_1.ProcessType.UPDATE)
-                            .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
-                            .setEntityType(this.nameIdRequestParams.getEntityType())
-                            .setEntitySubType(this.nameIdRequestParams.getEntitySubType())
-                            .setCvFilterType(this.nameIdRequestParams.getCvFilterType())
-                            .setItemId(nameId.id)
-                            .setItemName(nameId.name);
-                        this._fileModelTreeService.put(fileItem)
-                            .subscribe(null, function (headerResponse) {
-                            _this.handleHeaderStatus(headerResponse);
-                        });
-                    }
+                    var processType = nameId.id !== "0" ? type_process_1.ProcessType.UPDATE : type_process_1.ProcessType.DELETE;
+                    var fileItem = gobii_file_item_1.GobiiFileItem
+                        .build(this.gobiiExtractFilterType, processType)
+                        .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
+                        .setEntityType(this.nameIdRequestParams.getEntityType())
+                        .setEntitySubType(this.nameIdRequestParams.getEntitySubType())
+                        .setCvFilterType(this.nameIdRequestParams.getCvFilterType())
+                        .setItemId(nameId.id)
+                        .setItemName(nameId.name);
+                    // let existingFileItem = this
+                    //     .fileItemList
+                    //     .find(fi => {
+                    //         return fi.getItemId() === nameId.id
+                    //     });
+                    //
+                    // if (existingFileItem !== undefined) {
+                    //
+                    // }
+                    this._fileModelTreeService.put(fileItem)
+                        .subscribe(null, function (headerResponse) {
+                        _this.handleHeaderStatus(headerResponse);
+                    });
                 };
                 NameIdListBoxComponent.prototype.handleNameIdSelected = function (arg) {
                     var nameId = this.nameIdList[arg.srcElement.selectedIndex];
@@ -184,7 +209,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                         'nameIdRequestParams',
                         'firstItemIsLabel'],
                     outputs: ['onNameIdSelected', 'onError'],
-                    template: "<select name=\"users\" (change)=\"handleNameIdSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList \" \n\t\t\t\tvalue={{nameId.id}}>{{nameId.name}}</option>\n\t\t</select>\n" // end template
+                    template: "<select name=\"users\" (change)=\"handleNameIdSelected($event)\" >\n\t\t\t<option *ngFor=\"let nameId of nameIdList\" \n\t\t\t\tvalue={{nameId.id}}\n\t\t\t\t[selected]=\"nameId.id === selectedNameId\">{{nameId.name}}</option>\n\t\t</select>\n" // end template
                 }),
                 __metadata("design:paramtypes", [name_id_service_1.NameIdService,
                     file_model_tree_service_1.FileModelTreeService,

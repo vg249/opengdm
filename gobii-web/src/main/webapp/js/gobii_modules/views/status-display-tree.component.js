@@ -112,15 +112,14 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     var _this = this;
                     var unselectedTreeNode = event.node;
                     var fileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, false);
-                    // if the item is required, take no action and in fact make it selected again
-                    if (!fileItem.getRequired()) {
-                        this._fileModelTreeService.put(fileItem).subscribe(null, function (headerResponse) {
-                            _this.handleAddStatusMessage(headerResponse);
-                        });
-                    }
-                    else {
-                        this.selectedGobiiNodes.push(unselectedTreeNode);
-                    }
+                    // The prevent unchecking behavior is suspended until it is proven why we need it
+                    //        if (!fileItem.getRequired()) {
+                    this._fileModelTreeService.put(fileItem).subscribe(null, function (headerResponse) {
+                        _this.handleAddStatusMessage(headerResponse);
+                    });
+                    // } else {
+                    //     this.selectedGobiiNodes.push(unselectedTreeNode);
+                    // }
                 };
                 StatusDisplayTreeComponent.prototype.makeFileItemFromTreeNode = function (gobiiTreeNode, checked) {
                     var _this = this;
@@ -131,6 +130,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     var returnVal = gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, (checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE))
                         .setExtractorItemType(fileModelNode.getItemType())
                         .setEntityType(gobiiTreeNode.entityType)
+                        .setEntitySubType(gobiiTreeNode.entitySubType)
                         .setCvFilterType(gobiiTreeNode.cvFilterType)
                         .setItemId(null)
                         .setItemName(gobiiTreeNode.label)
@@ -303,7 +303,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     } // iterate gobii nodes
                     return returnVal;
                 };
-                StatusDisplayTreeComponent.prototype.findTreeNodebyFileItemIdId = function (gobiiTreeNodes, fileItemId) {
+                StatusDisplayTreeComponent.prototype.findTreeNodebyFileItemUniqueId = function (gobiiTreeNodes, fileItemId) {
                     var _this = this;
                     var returnVal = null;
                     gobiiTreeNodes.forEach(function (currentTreeNode) {
@@ -319,7 +319,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                 StatusDisplayTreeComponent.prototype.removeNodeFromTree = function (fileModelTreeEvent) {
                     if (fileModelTreeEvent.fileModelNode != null && fileModelTreeEvent.fileItem != null) {
                         if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.LEAF) {
-                            var gobiiTreeNodeToBeRemoved = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.getFileItemUniqueId());
+                            var gobiiTreeNodeToBeRemoved = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.getFileItemUniqueId());
                             if (gobiiTreeNodeToBeRemoved !== null) {
                                 // will need a funciton to do this correctly
                                 gobiiTreeNodeToBeRemoved.label = "name reset";
@@ -351,6 +351,10 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.LEAF) {
                             var gobiiTreeLeafNodeTobeMutated = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                             if (gobiiTreeLeafNodeTobeMutated != null) {
+                                gobiiTreeLeafNodeTobeMutated.fileItemId = fileModelTreeEvent.fileItem.getFileItemUniqueId();
+                                gobiiTreeLeafNodeTobeMutated.entityType = fileModelTreeEvent.fileItem.getEntityType();
+                                gobiiTreeLeafNodeTobeMutated.entitySubType = fileModelTreeEvent.fileItem.getEntitySubType();
+                                gobiiTreeLeafNodeTobeMutated.cvFilterType = fileModelTreeEvent.fileItem.getCvFilterType();
                                 this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, fileModelTreeEvent.fileItem);
                                 this.addIconsToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, false);
                                 gobiiTreeLeafNodeTobeMutated.required = fileModelTreeEvent.fileItem.getRequired();
@@ -374,7 +378,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                     return item.getFileItemUniqueId() === fileModelTreeEvent.fileItem.getFileItemUniqueId();
                                 });
                                 if (existingFileModelItem !== null) {
-                                    var existingGobiiTreeNodeChild = this.findTreeNodebyFileItemIdId(this.gobiiTreeNodes, existingFileModelItem.getFileItemUniqueId());
+                                    var existingGobiiTreeNodeChild = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes, existingFileModelItem.getFileItemUniqueId());
                                     if (existingGobiiTreeNodeChild === null) {
                                         var newGobiiTreeNode = new GobiiTreeNode_1.GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(), fileModelTreeEvent.fileItem.getFileItemUniqueId(), fileModelTreeEvent.fileItem.getRequired());
                                         newGobiiTreeNode.entityType = fileModelTreeEvent.fileItem.getEntityType();

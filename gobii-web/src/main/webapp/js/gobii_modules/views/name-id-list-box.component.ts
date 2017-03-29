@@ -26,8 +26,9 @@ import {Labels} from "./entity-labels";
         'firstItemIsLabel'],
     outputs: ['onNameIdSelected', 'onError'],
     template: `<select name="users" (change)="handleNameIdSelected($event)" >
-			<option *ngFor="let nameId of nameIdList " 
-				value={{nameId.id}}>{{nameId.name}}</option>
+			<option *ngFor="let nameId of nameIdList" 
+				value={{nameId.id}}
+				[selected]="nameId.id === selectedNameId">{{nameId.name}}</option>
 		</select>
 ` // end template
 
@@ -52,10 +53,29 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     ngOnInit(): any {
 
-        // entityFilterValue and entityFilter must either have values or be null.
-        // if (this._nameIdService.validateRequest(this.nameIdRequestParams) ) {
-        //     this.initializeNameIds();
-        // }
+        this._fileModelTreeService
+            .fileItemNotifications()
+            .subscribe(eventedFileItem => {
+
+                    // we need to make sure that the evented item belongs to this control
+
+                    let fileItem: GobiiFileItem = this
+                        .fileItemList
+                        .find(fi => {
+                            return fi.getFileItemUniqueId()
+                                !== fileItem.getFileItemUniqueId()
+                        });
+
+                    if (undefined != fileItem) {
+
+                        let idx: number = this.fileItemList.indexOf(fileItem);
+                        this.fileItemList = this.fileItemList.splice(idx, 1);
+                        this.selectedNameId = "0";
+                    }
+                },
+                responseHeader => {
+                    this.handleHeaderStatus(responseHeader);
+                });
     }
 
 
@@ -70,9 +90,9 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                         if (this.firstItemIsLabel) {
                             let label: string = "Select ";
 
-                            if( scope$.nameIdRequestParams.getCvFilterType() !== CvFilterType.UNKNOWN  ) {
+                            if (scope$.nameIdRequestParams.getCvFilterType() !== CvFilterType.UNKNOWN) {
                                 label += Labels.instance().cvFilterNodeLabels[scope$.nameIdRequestParams.getCvFilterType()];
-                            } else if( scope$.nameIdRequestParams.getEntitySubType() !== EntitySubType.UNKNOWN ) {
+                            } else if (scope$.nameIdRequestParams.getEntitySubType() !== EntitySubType.UNKNOWN) {
                                 label += Labels.instance().entitySubtypeNodeLabels[scope$.nameIdRequestParams.getEntitySubType()];
                             } else {
                                 label += Labels.instance().entityNodeLabels[scope$.nameIdRequestParams.getEntityType()];
@@ -80,6 +100,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
                             let labelNameId = new NameId("0", label, this.nameIdRequestParams.getEntityType());
                             scope$.nameIdList.unshift(labelNameId);
+                            this.selectedNameId = "0";
 
                         } else {
                             scope$.selectedNameId = nameIds[0].id;
@@ -102,6 +123,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     // useg
     private nameIdList: NameId[];
+    private fileItemList: GobiiFileItem[] = [];
 
     private notifyOnInit: boolean = false;
     private firstItemIsLabel: boolean = false;
@@ -122,28 +144,38 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
         this.onError.emit(headerStatusMessage);
     }
 
+
     private updateTreeService(nameId: NameId) {
 
         this.onNameIdSelected.emit(nameId);
 
-        if (nameId.id !== "0") {
+        let processType: ProcessType = nameId.id !== "0" ? ProcessType.UPDATE : ProcessType.DELETE;
+        let fileItem: GobiiFileItem = GobiiFileItem
+            .build(this.gobiiExtractFilterType, processType)
+            .setExtractorItemType(ExtractorItemType.ENTITY)
+            .setEntityType(this.nameIdRequestParams.getEntityType())
+            .setEntitySubType(this.nameIdRequestParams.getEntitySubType())
+            .setCvFilterType(this.nameIdRequestParams.getCvFilterType())
+            .setItemId(nameId.id)
+            .setItemName(nameId.name);
 
-            let fileItem: GobiiFileItem = GobiiFileItem
-                .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-                .setExtractorItemType(ExtractorItemType.ENTITY)
-                .setEntityType(this.nameIdRequestParams.getEntityType())
-                .setEntitySubType(this.nameIdRequestParams.getEntitySubType())
-                .setCvFilterType(this.nameIdRequestParams.getCvFilterType())
-                .setItemId(nameId.id)
-                .setItemName(nameId.name);
+        // let existingFileItem = this
+        //     .fileItemList
+        //     .find(fi => {
+        //         return fi.getItemId() === nameId.id
+        //     });
+        //
+        // if (existingFileItem !== undefined) {
+        //
+        // }
 
-            this._fileModelTreeService.put(fileItem)
-                .subscribe(
-                    null,
-                    headerResponse => {
-                        this.handleHeaderStatus(headerResponse)
-                    });
-        }
+        this._fileModelTreeService.put(fileItem)
+            .subscribe(
+                null,
+                headerResponse => {
+                    this.handleHeaderStatus(headerResponse)
+                });
+
     }
 
 
