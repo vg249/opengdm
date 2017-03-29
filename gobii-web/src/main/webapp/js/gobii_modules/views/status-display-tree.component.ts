@@ -317,7 +317,11 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 gobiiTreeNode.label = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]
                     + ": " + eventedFileItem.getItemId();
             } else {
-                gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
+                if( eventedFileItem.getProcessType() !== ProcessType.DELETE ) {
+                    gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
+                } else {
+                    gobiiTreeNode.label = fileModelNode.getEntityName();
+                }
             }
         }
     }
@@ -347,15 +351,16 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         let returnVal: GobiiTreeNode = null;
 
-        gobiiTreeNodes.forEach(currentTreeNode => {
+        for (let idx: number = 0; (idx < gobiiTreeNodes.length) && (returnVal === null); idx++) {
+            let currentTreeNode: GobiiTreeNode = gobiiTreeNodes[idx];
 
             if (currentTreeNode.fileItemId === fileItemId) {
                 returnVal = currentTreeNode;
             } else {
 
-                returnVal = this.findTreeNodebyModelNodeId(currentTreeNode.children, fileItemId);
+                returnVal = this.findTreeNodebyFileItemUniqueId(currentTreeNode.children, fileItemId);
             }
-        });
+        }
 
         return returnVal;
     }
@@ -370,7 +375,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 if (gobiiTreeNodeToBeRemoved !== null) {
 
                     // will need a funciton to do this correctly
-                    gobiiTreeNodeToBeRemoved.label = "name reset";
+                    this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeNodeToBeRemoved, fileModelTreeEvent.fileItem);
+
 
 
                 } else {

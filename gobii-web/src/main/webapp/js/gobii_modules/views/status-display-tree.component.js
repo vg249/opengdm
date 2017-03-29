@@ -285,7 +285,12 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                 + ": " + eventedFileItem.getItemId();
                         }
                         else {
-                            gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
+                            if (eventedFileItem.getProcessType() !== type_process_1.ProcessType.DELETE) {
+                                gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
+                            }
+                            else {
+                                gobiiTreeNode.label = fileModelNode.getEntityName();
+                            }
                         }
                     }
                 };
@@ -304,16 +309,16 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     return returnVal;
                 };
                 StatusDisplayTreeComponent.prototype.findTreeNodebyFileItemUniqueId = function (gobiiTreeNodes, fileItemId) {
-                    var _this = this;
                     var returnVal = null;
-                    gobiiTreeNodes.forEach(function (currentTreeNode) {
+                    for (var idx = 0; (idx < gobiiTreeNodes.length) && (returnVal === null); idx++) {
+                        var currentTreeNode = gobiiTreeNodes[idx];
                         if (currentTreeNode.fileItemId === fileItemId) {
                             returnVal = currentTreeNode;
                         }
                         else {
-                            returnVal = _this.findTreeNodebyModelNodeId(currentTreeNode.children, fileItemId);
+                            returnVal = this.findTreeNodebyFileItemUniqueId(currentTreeNode.children, fileItemId);
                         }
-                    });
+                    }
                     return returnVal;
                 };
                 StatusDisplayTreeComponent.prototype.removeNodeFromTree = function (fileModelTreeEvent) {
@@ -322,7 +327,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                             var gobiiTreeNodeToBeRemoved = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.getFileItemUniqueId());
                             if (gobiiTreeNodeToBeRemoved !== null) {
                                 // will need a funciton to do this correctly
-                                gobiiTreeNodeToBeRemoved.label = "name reset";
+                                this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeNodeToBeRemoved, fileModelTreeEvent.fileItem);
                             }
                             else {
                             } // if-else we found an existing node for the LEAF node's file item
