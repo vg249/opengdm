@@ -13,17 +13,14 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiQCComplete;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.email.QCMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
@@ -34,7 +31,6 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInst
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
@@ -226,7 +222,7 @@ public class GobiiExtractor {
 								" -s " + sampleFile +
 								" -p " + projectFile +
                                 markerListLocation +
-								" --datasetType " + extract.getGobiiDatasetType() +
+								" --datasetType " + extract.getGobiiDatasetType().getName() +
 								mapIdTerm +
 								platformTerm +
 								" -l -v ";
@@ -260,7 +256,7 @@ public class GobiiExtractor {
 				ErrorLogger.logDebug("Extractor",(success?"Success ":"Failure " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile));
 				// Adding "/" back to the bi-allelic data made from HDF5
 				if (extract.getGobiiDatasetType() != null) {
-					if (extract.getGobiiDatasetType().equals(DataSetType.SSR_ALLELE_SIZE.toString())) {
+					if (extract.getGobiiDatasetType().getName().toLowerCase().equals("ssr_allele_size")) {
 						ErrorLogger.logInfo("Extractor","Adding slashes to bi allelic data in " + genoFile);
 						if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
 							ErrorLogger.logInfo("Extractor","Added slashes to all the bi-allelic data in " + genoFile);

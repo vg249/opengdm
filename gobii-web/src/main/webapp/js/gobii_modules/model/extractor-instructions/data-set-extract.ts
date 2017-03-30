@@ -1,6 +1,7 @@
 import {GobiiFileType} from "../type-gobii-file"
 import {GobiiExtractFilterType} from "../type-extractor-filter";
 import {GobiiSampleListType} from "../type-extractor-sample-list";
+import {NameId} from "../name-id";
 
 export class GobiiDataSetExtract {
 
@@ -14,7 +15,7 @@ export class GobiiDataSetExtract {
                        public sampleList: string[],
                        public listFileName: string,
                        public gobiiSampleListType: GobiiSampleListType,
-                       public gobiiDatasetType: string,
+                       public gobiiDatasetType: NameId,
                        public platformIds: number[]) {
 
         // this.setGobiiFileType(gobiiFileType);
@@ -108,11 +109,11 @@ export class GobiiDataSetExtract {
         this.gobiiSampleListType = value;
     }
 
-    public getgobiiDatasetType(): string {
+    public getgobiiDatasetType(): NameId {
         return this.gobiiDatasetType;
     }
 
-    public setgobiiDatasetType(value: string) {
+    public setgobiiDatasetType(value: NameId) {
         this.gobiiDatasetType = value;
     }
 

@@ -933,7 +933,8 @@ export class ExtractorRoot implements OnInit {
                             && item.getCvFilterType() === CvFilterType.DATASET_TYPE
                     });
 
-                    let datSetTypeName: string = dataTypeFileItem != null ? dataTypeFileItem.getItemName() : null;
+                    let datasetType: NameId = dataTypeFileItem != null ? new NameId(dataTypeFileItem.getItemId(),
+                            dataTypeFileItem.getItemName(),EntityType.CvTerms) : null;
 
                     let platformFileItems: GobiiFileItem[] = fileItems.filter(item => {
                         return item.getEntityType() === EntityType.Platforms
@@ -987,7 +988,7 @@ export class ExtractorRoot implements OnInit {
                                     null,
                                     markerFileName,
                                     null,
-                                    datSetTypeName,
+                                    datasetType,
                                     platformIds));
                             });
                     } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
@@ -1001,7 +1002,7 @@ export class ExtractorRoot implements OnInit {
                             null,
                             markerFileName,
                             null,
-                            datSetTypeName,
+                            datasetType,
                             platformIds));
                     } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
                         gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
@@ -1014,7 +1015,7 @@ export class ExtractorRoot implements OnInit {
                             sampleList,
                             sampleFileName,
                             sampleListType,
-                            datSetTypeName,
+                            datasetType,
                             platformIds));
                     } else {
                         this.handleAddMessage("Unhandled extract filter type: " + GobiiExtractFilterType[this.gobiiExtractFilterType]);

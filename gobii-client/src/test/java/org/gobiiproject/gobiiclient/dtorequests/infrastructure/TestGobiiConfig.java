@@ -1,10 +1,11 @@
 package org.gobiiproject.gobiiclient.dtorequests.infrastructure;
 
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestConfiguration;
+import org.gobiiproject.gobiiclient.core.common.TestConfiguration;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.CropDbConfig;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
+import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
@@ -41,7 +42,7 @@ public class TestGobiiConfig {
 
         String returnVal;
 
-        returnVal = testExecConfig.getConfigUtilCommandlineStem() + " " + arguments;
+        returnVal = testExecConfig.getConfigUtilCommandlineStem() + "\\gobiiconfig.jar" + " " + arguments;
 
         return returnVal;
     }
@@ -155,6 +156,55 @@ public class TestGobiiConfig {
 
         Assert.assertTrue("The hash type does not match",
                 configSettings.getEmailSvrHashType().equals(hash));
+
+    }
+
+
+    @Test
+    public void testSetAuthenticationlServer() throws Exception {
+
+        String testFileFqpn = makeTestFileFqpn("setauthoptions");
+
+        String gobiiAuthenticationTypeRaw = GobiiAuthenticationType.ACTIVE_DIRECTORY.toString();
+        String ldapUserDnPattern = "dn_pattern_" + UUID.randomUUID().toString();
+        String ldapUrl = "url_" + UUID.randomUUID().toString();
+        String ldapBindUser = "bind_user_" + UUID.randomUUID().toString();
+        String ldapBindPassword = "bind_password_" + UUID.randomUUID().toString();
+
+
+        String commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -auT "
+                + gobiiAuthenticationTypeRaw
+                + " -ldUDN "
+                + ldapUserDnPattern
+                + " -ldURL "
+                + ldapUrl
+                + " -ldBUSR "
+                + ldapBindUser
+                + " -ldBPAS "
+                + ldapBindPassword);
+
+        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+        Assert.assertTrue("The authentication type does not match",
+                configSettings.getGobiiAuthenticationType().equals(GobiiAuthenticationType.ACTIVE_DIRECTORY));
+
+        Assert.assertTrue("The ldap user dn pattern does not match",
+                configSettings.getLdapUserDnPattern().equals(ldapUserDnPattern));
+
+        Assert.assertTrue("The ldap url does not match",
+                configSettings.getLdapUrl().equals(ldapUrl));
+
+        Assert.assertTrue("The ldap bind user does not match",
+                configSettings.getLdapBindUser().equals(ldapBindUser));
+
+        Assert.assertTrue("The ldap bind password does not match",
+                configSettings.getLdapBindPassword().equals(ldapBindPassword));
 
     }
 
@@ -597,7 +647,7 @@ public class TestGobiiConfig {
     }
 
 
-    @Ignore // fails on SYS_INT
+    @Ignore// fails on SYS_INT
     public void testSetLogFileLocation() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("logfilelocation");

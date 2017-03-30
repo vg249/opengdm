@@ -63,39 +63,41 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                     fileUploaderOptions.headers = [];
                     var authHeader = { name: '', value: '' };
                     authHeader.name = header_names_1.HeaderNames.headerToken;
-                    _authenticationService
-                        .getToken()
-                        .subscribe(function (token) {
+                    var token = _authenticationService.getToken();
+                    if (token) {
                         authHeader.value = token;
-                    });
-                    fileUploaderOptions.headers.push(authHeader);
-                    this.uploader = new ng2_file_upload_1.FileUploader(fileUploaderOptions);
-                    this.uploader.onBeforeUploadItem = function (fileItem) {
-                        _this._fileModelTreeService.getFileItems(_this.gobiiExtractFilterType).subscribe(function (fileItems) {
-                            var fileItemJobId = fileItems.find(function (item) {
-                                return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.JOB_ID;
+                        fileUploaderOptions.headers.push(authHeader);
+                        this.uploader = new ng2_file_upload_1.FileUploader(fileUploaderOptions);
+                        this.uploader.onBeforeUploadItem = function (fileItem) {
+                            _this._fileModelTreeService.getFileItems(_this.gobiiExtractFilterType).subscribe(function (fileItems) {
+                                var fileItemJobId = fileItems.find(function (item) {
+                                    return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.JOB_ID;
+                                });
+                                var jobId = fileItemJobId.getItemId();
+                                fileItem.file.name = file_name_1.FileName.makeFileNameFromJobId(_this.gobiiExtractFilterType, jobId);
                             });
-                            var jobId = fileItemJobId.getItemId();
-                            fileItem.file.name = file_name_1.FileName.makeFileNameFromJobId(_this.gobiiExtractFilterType, jobId);
-                        });
-                    };
-                    this.uploader.onCompleteItem = function (item, response, status, headers) {
-                        if (status == 200) {
-                            var listItemType = _this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER ?
-                                file_model_node_1.ExtractorItemType.MARKER_FILE : file_model_node_1.ExtractorItemType.SAMPLE_FILE;
-                            _fileModelTreeService.put(gobii_file_item_1.GobiiFileItem
-                                .build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                                .setExtractorItemType(listItemType)
-                                .setItemId(item.file.name)
-                                .setItemName(item.file.name))
-                                .subscribe(null, function (headerStatusMessage) {
-                                _this.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage(headerStatusMessage, null, null));
-                            });
-                        }
-                        else {
-                            _this.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage(response, null, null));
-                        }
-                    };
+                        };
+                        this.uploader.onCompleteItem = function (item, response, status, headers) {
+                            if (status == 200) {
+                                var listItemType = _this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER ?
+                                    file_model_node_1.ExtractorItemType.MARKER_FILE : file_model_node_1.ExtractorItemType.SAMPLE_FILE;
+                                _fileModelTreeService.put(gobii_file_item_1.GobiiFileItem
+                                    .build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                                    .setExtractorItemType(listItemType)
+                                    .setItemId(item.file.name)
+                                    .setItemName(item.file.name))
+                                    .subscribe(null, function (headerStatusMessage) {
+                                    _this.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage(headerStatusMessage, null, null));
+                                });
+                            }
+                            else {
+                                _this.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage(response, null, null));
+                            }
+                        };
+                    }
+                    else {
+                        this.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage("Unauthenticated", null, null));
+                    }
                 } // ctor
                 UploaderComponent.prototype.fileOverBase = function (e) {
                     this.hasBaseDropZoneOver = e;
