@@ -18,7 +18,8 @@ public class CropDbConfig {
                         String dbName,
                         Integer port,
                         String userName,
-                        String password) {
+                        String password,
+                        boolean decrypt) {
 
         this.gobiiDbType = gobiiDbType;
         this.host = host;
@@ -26,8 +27,11 @@ public class CropDbConfig {
         this.port = port;
         this.userName = userName;
         this.password = password;
+        this.decrypt = decrypt;
     }
 
+    @Element(required = false)
+    private boolean decrypt = false;
 
     @Element(required = false)
     private GobiiDbType gobiiDbType = null;
