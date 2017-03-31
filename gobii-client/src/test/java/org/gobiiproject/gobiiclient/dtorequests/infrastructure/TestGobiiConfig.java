@@ -29,6 +29,7 @@ import java.util.UUID;
 public class TestGobiiConfig {
 
 
+    private static String ecnryptionWarning = "If the key used by the Decrypter class has changed, the enrypted usernames/passwords will have to be regenerated";
     private static String FILE_PATH_DELIMETER = "/";
     private static TestExecConfig testExecConfig = null;
 
@@ -274,9 +275,8 @@ public class TestGobiiConfig {
         String commandLineToWriteDecryptionOption = makeCommandline("-wfqpn "
                 + testFileFqpn
                 + " -e true");
-
         boolean commandlineToWriteEncryptionOptionSucceded = HelperFunctions.tryExec(commandLineToWriteDecryptionOption, testFileFqpn + ".out", testFileFqpn + ".err");
-        Assert.assertTrue("Command failed: " + commandLineToWriteLdapConfig, commandlineToWriteEncryptionOptionSucceded);
+        Assert.assertTrue("Command failed: " + commandLineToWriteDecryptionOption, commandlineToWriteEncryptionOptionSucceded);
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
 
@@ -284,18 +284,18 @@ public class TestGobiiConfig {
                 configSettings.isDecrypt());
 
 
-        Assert.assertTrue("The plain ldap bind user retrieved does not match the encrypted ldap user that was written",
+        Assert.assertTrue("The plain ldap bind user retrieved does not match the encrypted ldap user that was written: " + ecnryptionWarning,
                 configSettings.getLdapBindUser().equals(ldapBindUserPlain));
 
-        Assert.assertTrue("The plain ldap bind password retrieved does not match the encrypted ldap password that was written",
+        Assert.assertTrue("The plain ldap bind password retrieved does not match the encrypted ldap password that was written: " + ecnryptionWarning,
                 configSettings.getLdapBindPassword().equals(ldapBindPasswordPlain));
 
         String ldapUserForBackendProcessRetrieved = configSettings.getLdapUserForBackendProcs(); 
-        Assert.assertTrue("The plain background run as user retrieved does not match the encrypted background run as user that was written",
+        Assert.assertTrue("The plain background run as user retrieved does not match the encrypted background run as user that was written: " + ecnryptionWarning,
                 ldapUserForBackendProcessRetrieved.equals(ldapUserForBackgroundProcessPlain));
 
         String ldapPasswordForBackendProcessRetrieved = configSettings.getLdapPasswordForBackendProcs();
-        Assert.assertTrue("The plain ldap background run as password retrieved does not match the encrypted background run as password user that was written",
+        Assert.assertTrue("The plain ldap background run as password retrieved does not match the encrypted background run as password user that was written: " + ecnryptionWarning,
                 ldapPasswordForBackendProcessRetrieved.equals(ldapPasswordForBackgroundProcessPlain));
 
     }
@@ -411,6 +411,72 @@ public class TestGobiiConfig {
     }
 
     @Test
+    public void testSetPostGresForCropEncrypted() throws Exception {
+        //-a -wfqpn "c:\gobii-config-test\testconfig.xml" -c "barcrop" -stP -soH "foohost" -soN 5433 -soU "foo userr" -soP "foo passwordPlain" -soR "foodb"
+
+        String testFileFqpn = makeTestFileFqpn("croppgsql");
+
+        String cropId = "foocrop";
+        String userPlain = "arbitraryUserId04";
+        String passwordPlain = "arbitraryPassword04";
+        String userEncrypted = "MMmn4rz4WqjfWew2+kkwssZ4jLl/ekRA0uI918BNVLQ=";
+        String passwordEncrypted = "vxI/Bh2/YLytBxLpA5ZBrIFUJejBkcv9uJlg5FrQGRw=";
+        String host = "host_" + UUID.randomUUID().toString();
+        String contextPath = "foodbname-" + UUID.randomUUID().toString();
+        Integer port = 5063;
+
+        String commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -c "
+                + cropId
+                + " -stP "
+                + " -soH "
+                + host
+                + " -soN "
+                + port.toString()
+                + " -soU "
+                + userEncrypted
+                + " -soP "
+                + passwordEncrypted
+                + " -soR "
+                + contextPath);
+
+        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+        String commandLineToWriteDecryptionOption = makeCommandline("-wfqpn "
+                + testFileFqpn
+                + " -e true");
+        boolean commandlineToWriteEncryptionOptionSucceded = HelperFunctions.tryExec(commandLineToWriteDecryptionOption, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLineToWriteDecryptionOption, commandlineToWriteEncryptionOptionSucceded);
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+        CropDbConfig cropDbConfig = configSettings.getCropConfig(cropId).getCropDbConfig(GobiiDbType.POSTGRESQL);
+        Assert.assertNotNull("The crop db config was not created: " + cropId,
+                cropDbConfig);
+
+        Assert.assertTrue("The host name does not match",
+                cropDbConfig.getHost().equals(host));
+
+        Assert.assertTrue("The port does not match: should be "
+                        + port.toString()
+                        + "; got: "
+                        + cropDbConfig.getPort(),
+                cropDbConfig.getPort().equals(port));
+
+        Assert.assertTrue("The context path not match",
+                cropDbConfig.getDbName().equals(contextPath));
+
+        Assert.assertTrue("The plain user retrieved name does not match the enrypted user written: " + ecnryptionWarning,
+                cropDbConfig.getUserName().equals(userPlain));
+
+        Assert.assertTrue("The plain password retrieved name does not match the enrypted password written: " + ecnryptionWarning,
+                cropDbConfig.getPassword().equals(passwordPlain));
+    }
+
+
+    @Test
     public void testSetMonetGresForCrop() throws Exception {
         String testFileFqpn = makeTestFileFqpn("cropmonet");
 
@@ -465,6 +531,71 @@ public class TestGobiiConfig {
                 cropDbConfig.getPassword().equals(password));
     }
 
+
+    @Test
+    public void testSetMonetGresForCropEncrypted() throws Exception {
+        String testFileFqpn = makeTestFileFqpn("cropmonet");
+
+        String cropId = "barcrop";
+        String userPlain = "arbitraryUserId05";
+        String passwordPlain = "arbitraryPassword05";
+        String userEncrypted = "MMmn4rz4WqjfWew2+kkwstTa47exiUVJDw0pL5wcwr8=";
+        String passwordEncrypted = "vxI/Bh2/YLytBxLpA5ZBrBnxWbwoLeJ6Sv4nM3n14J0=";
+        String host = "host_" + UUID.randomUUID().toString();
+        String contextPath = "foodbname-" + UUID.randomUUID().toString();
+        Integer port = 5063;
+
+        String commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -c "
+                + cropId
+                + " -stM "
+                + " -soH "
+                + host
+                + " -soN "
+                + port.toString()
+                + " -soU "
+                + userEncrypted
+                + " -soP "
+                + passwordEncrypted
+                + " -soR "
+                + contextPath);
+
+        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+        String commandLineToWriteDecryptionOption = makeCommandline("-wfqpn "
+                + testFileFqpn
+                + " -e true");
+        boolean commandlineToWriteEncryptionOptionSucceded = HelperFunctions.tryExec(commandLineToWriteDecryptionOption, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLineToWriteDecryptionOption, commandlineToWriteEncryptionOptionSucceded);
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+        CropDbConfig cropDbConfig = configSettings.getCropConfig(cropId).getCropDbConfig(GobiiDbType.MONETDB);
+        Assert.assertNotNull("The crop db config was not created: " + cropId,
+                cropDbConfig);
+
+        Assert.assertTrue("The host name does not match",
+                cropDbConfig.getHost().equals(host));
+
+        Assert.assertTrue("The port does not match: should be "
+                        + port.toString()
+                        + "; got: "
+                        + cropDbConfig.getPort(),
+                cropDbConfig.getPort().equals(port));
+
+        Assert.assertTrue("The context path not match",
+                cropDbConfig.getDbName().equals(contextPath));
+
+        Assert.assertTrue("The retrieved user name does not match the encrypted user name: " + ecnryptionWarning,
+                cropDbConfig.getUserName().equals(userPlain));
+
+        Assert.assertTrue("The retrieved password does not match the encrypted password: " + ecnryptionWarning,
+                cropDbConfig.getPassword().equals(passwordPlain));
+    }
+
+
     @Test
     public void testSetTestOptions() throws Exception {
 
@@ -480,6 +611,7 @@ public class TestGobiiConfig {
         boolean isTestSsh = false;
         String ldapUserForUnitTest = "ldapUnitTestUser_" + UUID.randomUUID().toString();
         String ldapPasswordForUnitTest = "ldapUnitTestPassword_" + UUID.randomUUID().toString();
+
 
         String commandLine = makeCommandline("-a -wfqpn "
                 + testFileFqpn
@@ -524,6 +656,82 @@ public class TestGobiiConfig {
         Assert.assertTrue("Config test value does not match: test flag", configSettings.getTestExecConfig().isTestSsh() == isTestSsh);
         Assert.assertTrue("Config test value does not match: ldap user", configSettings.getTestExecConfig().getLdapUserForUnitTest().equals(ldapUserForUnitTest));
         Assert.assertTrue("Config test value does not match: ldap password", configSettings.getTestExecConfig().getLdapPasswordForUnitTest().equals(ldapPasswordForUnitTest));
+        Assert.assertTrue("Config test value does not match: ldap password", configSettings.getTestExecConfig().getLdapPasswordForUnitTest().equals(ldapPasswordForUnitTest));
+    }
+
+    @Test
+    public void testSetTestOptionsWithEncryption() throws Exception {
+
+        String testFileFqpn = makeTestFileFqpn("testvals");
+
+        String configFileTestDirectory = "test_dir_" + UUID.randomUUID().toString();
+        String configUtilCommandlineStem = "comandstem_" + UUID.randomUUID().toString();
+        String initialConfigUrl = "configurl_" + UUID.randomUUID().toString();
+        String initialConfigUrlForSshOverride = "urlssh" + UUID.randomUUID().toString();
+        String sshOverrideHost = "hostssh_" + UUID.randomUUID().toString();
+        Integer sshOverridePort = 5;
+        String testCrop = "testcrop_" + UUID.randomUUID().toString();
+        boolean isTestSsh = false;
+
+        String ldapBindUserPlain = "arbitraryUserId03";
+        String ldapBindUserEncrypted = "MMmn4rz4WqjfWew2+kkwsg9Ncz04FPQGLxOvXdvjSfk=";
+
+        String ldapBindPasswordPlain = "arbitraryPassword03";
+        String ldapBindPasswordEncrypted = "vxI/Bh2/YLytBxLpA5ZBrN/+l5ltxdJe1ohiILwvYBA=";
+
+
+        String commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -gt "
+                + " -gtcd "
+                + configFileTestDirectory
+                + " -gtcr "
+                + testCrop
+                + " -gtcs "
+                + configUtilCommandlineStem
+                + " -gtiu "
+                + initialConfigUrl
+                + " -gtsf "
+                + (isTestSsh ? "true" : "false")
+                + " -gtsh "
+                + sshOverrideHost
+                + " -gtsp "
+                + sshOverridePort
+                + " -gtsu "
+                + initialConfigUrlForSshOverride
+                + " -gtldu "
+                + ldapBindUserEncrypted
+                + " -gtldp "
+                + ldapBindPasswordEncrypted
+        );
+
+
+        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+        String commandLineToWriteDecryptionOption = makeCommandline("-wfqpn "
+                + testFileFqpn
+                + " -e true");
+
+        boolean commandlineToWriteEncryptionOptionSucceded = HelperFunctions.tryExec(commandLineToWriteDecryptionOption, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLineToWriteDecryptionOption, commandlineToWriteEncryptionOptionSucceded);
+
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+
+        Assert.assertTrue("Config test value does not match: test directory", configSettings.getTestExecConfig().getConfigFileTestDirectory().equals(configFileTestDirectory));
+        Assert.assertTrue("Config test value does not match: commandline stem", configSettings.getTestExecConfig().getConfigUtilCommandlineStem().equals(configUtilCommandlineStem));
+        Assert.assertTrue("Config test value does not match: config URL", configSettings.getTestExecConfig().getInitialConfigUrl().equals(initialConfigUrl));
+        Assert.assertTrue("Config test value does not match: ssh override URL", configSettings.getTestExecConfig().getInitialConfigUrlForSshOverride().equals(initialConfigUrlForSshOverride));
+        Assert.assertTrue("Config test value does not match: ssh override host", configSettings.getTestExecConfig().getSshOverrideHost().equals(sshOverrideHost));
+        Assert.assertTrue("Config test value does not match: ssh override port", configSettings.getTestExecConfig().getSshOverridePort().equals(sshOverridePort));
+        Assert.assertTrue("Config test value does not match: test crop", configSettings.getTestExecConfig().getTestCrop().equals(testCrop));
+        Assert.assertTrue("Config test value does not match: test flag", configSettings.getTestExecConfig().isTestSsh() == isTestSsh);
+        Assert.assertTrue("Plain ldap unit test user retrieved does not match the encrypted user: " + ecnryptionWarning,
+                configSettings.getTestExecConfig().getLdapUserForUnitTest().equals(ldapBindUserPlain));
+        Assert.assertTrue("Plain ldap unit test password retrieved does not match the encrypted password: " + ecnryptionWarning,
+                configSettings.getTestExecConfig().getLdapPasswordForUnitTest().equals(ldapBindPasswordPlain));
     }
 
     @Test
