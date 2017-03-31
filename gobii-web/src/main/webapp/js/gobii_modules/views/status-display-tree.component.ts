@@ -113,7 +113,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         let unselectedTreeNode: GobiiTreeNode = event.node;
 
-        let fileItem: GobiiFileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, false);
+        let fileItem: GobiiFileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, ProcessType.DELETE);
 
         // The prevent unchecking behavior is suspended until it is proven why we need it
 //        if (!fileItem.getRequired()) {
@@ -129,7 +129,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     }
 
-    makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, checked: boolean): GobiiFileItem {
+    makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, processType:ProcessType): GobiiFileItem {
 
         let fileModelNode: FileModelNode = null;
         this._fileModelTreeService
@@ -138,17 +138,15 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 fmn => fileModelNode = fmn,
                 hsm => this.handleAddStatusMessage(hsm));
 
-
         let returnVal: GobiiFileItem = GobiiFileItem.build(
             this.gobiiExtractFilterType,
-            (checked ? ProcessType.CREATE : ProcessType.DELETE))
+            processType)
             .setExtractorItemType(fileModelNode.getItemType())
             .setEntityType(gobiiTreeNode.entityType)
             .setEntitySubType(gobiiTreeNode.entitySubType)
             .setCvFilterType(gobiiTreeNode.cvFilterType)
             .setItemId(null)
             .setItemName(gobiiTreeNode.label)
-            .setChecked(checked)
             .setRequired(gobiiTreeNode.required);
 
         returnVal.setFileItemUniqueId(gobiiTreeNode.fileItemId);

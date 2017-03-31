@@ -111,7 +111,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                 StatusDisplayTreeComponent.prototype.nodeUnselect = function (event) {
                     var _this = this;
                     var unselectedTreeNode = event.node;
-                    var fileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, false);
+                    var fileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, type_process_1.ProcessType.DELETE);
                     // The prevent unchecking behavior is suspended until it is proven why we need it
                     //        if (!fileItem.getRequired()) {
                     this._fileModelTreeService.put(fileItem).subscribe(null, function (headerResponse) {
@@ -121,20 +121,19 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     //     this.selectedGobiiNodes.push(unselectedTreeNode);
                     // }
                 };
-                StatusDisplayTreeComponent.prototype.makeFileItemFromTreeNode = function (gobiiTreeNode, checked) {
+                StatusDisplayTreeComponent.prototype.makeFileItemFromTreeNode = function (gobiiTreeNode, processType) {
                     var _this = this;
                     var fileModelNode = null;
                     this._fileModelTreeService
                         .getFileModelNode(this.gobiiExtractFilterType, gobiiTreeNode.fileModelNodeId)
                         .subscribe(function (fmn) { return fileModelNode = fmn; }, function (hsm) { return _this.handleAddStatusMessage(hsm); });
-                    var returnVal = gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, (checked ? type_process_1.ProcessType.CREATE : type_process_1.ProcessType.DELETE))
+                    var returnVal = gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, processType)
                         .setExtractorItemType(fileModelNode.getItemType())
                         .setEntityType(gobiiTreeNode.entityType)
                         .setEntitySubType(gobiiTreeNode.entitySubType)
                         .setCvFilterType(gobiiTreeNode.cvFilterType)
                         .setItemId(null)
                         .setItemName(gobiiTreeNode.label)
-                        .setChecked(checked)
                         .setRequired(gobiiTreeNode.required);
                     returnVal.setFileItemUniqueId(gobiiTreeNode.fileItemId);
                     return returnVal;
