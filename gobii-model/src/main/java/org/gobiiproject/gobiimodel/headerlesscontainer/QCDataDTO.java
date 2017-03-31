@@ -39,6 +39,7 @@ public class QCDataDTO extends DTOBase {
 
     public void setQualityFile(String qualityFile) { this.qualityFile = qualityFile; }
 
+    // The QC job identifier used by the KDCompute API
     public Long getContactId() { return contactId; }
 
     public void setContactId(Long contactId) { this.contactId = contactId; }

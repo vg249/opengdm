@@ -14,13 +14,10 @@ import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapNameIdParams;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
-import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
-import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
-import org.gobiiproject.gobiimodel.types.GobiiFilterType;
-import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
-import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
+import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.gobiiproject.gobiiweb.automation.*;
@@ -35,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -44,6 +40,7 @@ import java.io.FileOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -1643,7 +1640,7 @@ public class GOBIIControllerV1 {
     // *****************************************************
     @RequestMapping(value = "/qcNotification", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<QCDataDTO> QCData(@RequestBody PayloadEnvelope<QCDataDTO> payloadEnvelope,
+    public PayloadEnvelope<QCDataDTO> QCData(@RequestBody PayloadEnvelope<ArrayList<QCDataDTO>> payloadEnvelope,
                                              HttpServletRequest request,
                                              HttpServletResponse response) {
 
@@ -1653,37 +1650,14 @@ public class GOBIIControllerV1 {
                 if (payloadEnvelope.getPayload() != null) {
                     Payload payload = payloadEnvelope.getPayload();
                     if (payload.getData() != null) {
-                        List dataList = payload.getData();
-                        if (dataList.size() != 0) {
-                            PayloadReader<QCDataDTO> payloadReader = new PayloadReader<>(QCDataDTO.class);
+                        List<QCDataDTO> qcDataDTOsList = payload.getData();
+                        if (qcDataDTOsList.size() > 0) {
                             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-                            for (int index = 0; index < dataList.size(); index++) {
-                                QCDataDTO qCDataDTO = payloadReader.extractItemByIndex(payloadEnvelope, index);
-                                //qCDataDTO.getDirectory(), qCDataDTO.getDataFile();
-                            }
-                        }
-                        else {
-                            throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
-                                                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                                                        "Request payload data is empty");
+                            ConfigSettings configSettings = new ConfigSettings();
+                            QCDataDTO qcDataDTOResponse = qcNotificationService.createQCData(qcDataDTOsList, configSettings, cropType);
                         }
                     }
-                    else {
-                        throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
-                                                    GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                                                    "Request payload does not contain a data collection");
-                    }
                 }
-                else {
-                    throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
-                                                GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                                                "Request payload envelope does not contain a payload member");
-                }
-            }
-            else {
-                throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
-                                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                                            "Request payload envelope is null");
             }
         } catch(GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);

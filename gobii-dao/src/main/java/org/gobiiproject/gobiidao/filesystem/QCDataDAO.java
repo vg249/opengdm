@@ -5,7 +5,8 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.QCDataDTO;
 
 public interface QCDataDAO {
 
-    boolean writeData(QCDataDTO qcDataDTO, String newQCDataFile) throws GobiiDaoException;
+    boolean writeData(QCDataDTO qcDataDTO,
+                      String QCDataDirectory) throws GobiiDaoException;
 
     boolean doesPathExist(String pathName) throws GobiiDaoException;
 

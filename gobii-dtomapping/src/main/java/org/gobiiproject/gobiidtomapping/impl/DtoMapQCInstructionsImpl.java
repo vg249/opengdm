@@ -1,7 +1,11 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.common.RestResourceUtils;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.QCInstructionsDAO;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
@@ -38,7 +42,6 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
 
     private void createDirectories(String instructionFileDirectory) throws GobiiDaoException {
 
-
         if (null != instructionFileDirectory) {
             if (!qcInstructionsDAO.doesPathExist(instructionFileDirectory)) {
                 qcInstructionsDAO.makeDirectory(instructionFileDirectory);
@@ -68,41 +71,37 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
                     + qcInstructionsDTO.getDataFileName()
                     + INSTRUCTION_FILE_EXT;
 
-            if (!qcInstructionsDAO.doesPathExist(instructionFileFqpn)) {
+            if (!(qcInstructionsDAO.doesPathExist(instructionFileFqpn))) {
 
                 if (qcInstructionsDTO.getGobiiJobStatus().equals(GobiiJobStatus.STARTED)) {
 
-                    String currentQCContextRoot = configSettings.getCurrentCropConfig().getServiceDomain() +
-                            configSettings.getCurrentCropConfig().getServiceDomain();
-
-                    UriFactory uriFactory = new UriFactory();
-                    RestUri restUri = new RestUri(); uriFactory.qcStart();
-                    //restUri.setParamValue("datasetId", String.valueOf(dataSetId));
-                    //restUri.setParamValue("directory", extractDir);
+                    //ClientContext clientContext = ClientContext.getInstance(configSettings, cropType);
+                    //String currentQCContextRoot = clientContext.getInstance(null, false).getCurrentQCContextRoot();
+                    //UriFactory uriFactory = new UriFactory(currentQCContextRoot);
+                    //RestUri restUri = uriFactory.qcStart();
+                    //restUri.setParamValue("datasetId", String.valueOf(qcInstructionsDTO.getDatasetId()));
+                    //restUri.setParamValue("directory", qcInstructionsDTO.getDataFileDirectory());
                     //RestResourceUtils restResourceUtils = new RestResourceUtils();
                     //HttpMethodResult httpMethodResult = restResourceUtils.getHttp().get(restUri, clientContext.getUserToken());
                     //JsonObject jsonObject = httpMethodResult.getPayLoad();
-
 
                     // call the KDCompute Service here
                     // boolean isCallSuccessful;
                     // isCallSuccessful = KDStartService();
 
-                    boolean isCallSuccessful = true;
+                    //boolean isCallSuccessful = true;
 
-                    QCMessage qcMessage = new QCMessage();
+                    //QCMessage qcMessage = new QCMessage();
 
-                    MailInterface mailInterface = new MailInterface(configSettings);
+                    //MailInterface mailInterface = new MailInterface(configSettings);
 
-                    if(isCallSuccessful) {
+                    //if(isCallSuccessful) {
+                    //    qcMessage.setBody("Quality job has started: " + jsonObject.get("jobId"));
+                    //} else {
+                    //    qcMessage.setBody("Quality job failed: " + jsonObject.get("jobId"));
+                    //}
 
-                        qcMessage.setBody("Quality job has started.");
-                    } else {
-
-                        qcMessage.setBody("Quality job failed.");
-                    }
-
-                    mailInterface.send(qcMessage);
+                    //mailInterface.send(qcMessage);
 
                 } else if(qcInstructionsDTO.getGobiiJobStatus().equals(GobiiJobStatus.COMPLETED)) {
 

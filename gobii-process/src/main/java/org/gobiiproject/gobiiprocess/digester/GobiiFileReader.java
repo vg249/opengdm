@@ -356,17 +356,12 @@ public class GobiiFileReader {
 				gobiiDataSetExtract.setDataSetId(inst.getDataSet().getId());
 				gobiiDataSetExtract.setDataSetName(inst.getDataSet().getName());
 				gobiiDataSetExtract.setGobiiDatasetType(inst.getDatasetType().getName());
-				Path loaderDestinationDirectoryPath = FileSystems.getDefault().getPath(dstDir.getAbsolutePath());
-				int pathDepth = loaderDestinationDirectoryPath.getNameCount();
-				Path cropDirectory = loaderDestinationDirectoryPath.subpath(0, (pathDepth - 3));
-				Path extractDestinationDirectoryPath = Paths.get(cropDirectory.toString(),
-						                                         "extractor",
-						                                         "output",
+				Path extractDestinationDirectoryPath = Paths.get(configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_OUTPUT),
 						                                         inst.getGobiiFile().getGobiiFileType().toString().toLowerCase(),
 						                                         new StringBuilder("ds_").append(inst.getDataSetId()).toString());
 				gobiiDataSetExtract.setExtractDestinationDirectory(extractDestinationDirectoryPath.toString());
-				// As the extract filter type is set, a posteriori, by the GobiiExtractor class, it is set as UNKOWN
-				gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.UNKNOWN);
+				// According to Liz, the Gobii extract filter type is always "WHOLE_DATASET" for any QC job
+				gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
 				gobiiDataSetExtract.setGobiiFileType(inst.getGobiiFile().getGobiiFileType());
 				// It is going to be set by the GobiiExtractor class
 				gobiiDataSetExtract.setGobiiJobStatus(null);

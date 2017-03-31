@@ -1,8 +1,11 @@
 package org.gobiiproject.gobidomain.services;
 
-import org.gobiiproject.gobiimodel.config.GobiiException;
+import java.util.List;
+
+import org.gobiiproject.gobidomain.GobiiDomainException;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCDataDTO;
 
 public interface QCNotificationService {
-    QCDataDTO createQCData(String cropType, QCDataDTO qcDataDTO) throws GobiiException;
+    QCDataDTO createQCData(List<QCDataDTO> qcDataDTOsList, ConfigSettings configSetting, String cropType)  throws GobiiDomainException;
 }

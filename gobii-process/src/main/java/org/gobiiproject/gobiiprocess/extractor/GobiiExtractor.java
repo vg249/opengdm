@@ -16,7 +16,6 @@ import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
-import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
@@ -26,6 +25,8 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.gobiiproject.gobiimodel.utils.email.MailInterface;
+import org.gobiiproject.gobiimodel.utils.email.QCMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -399,24 +400,37 @@ public class GobiiExtractor {
 					HttpMethodResult httpMethodResult = restResourceUtils.getHttp().get(restUri, clientContext.getUserToken());
 					JsonObject jsonObject = httpMethodResult.getPayLoad();
 					ErrorLogger.logInfo("Extractor","----> jobId: " + jsonObject.get("jobId") + " <----");
-
-
-					//GobiiEnvelopeRestResource<QCStartDTO> qcRestResource = new GobiiEnvelopeRestResource<QCStartDTO>(restUri);
-					//PayloadEnvelope<QCStartDTO> qcStartDTOResponseEnvelope = qcRestResource.get(QCStartDTO.class);
-					//if (qcStartDTOResponseEnvelope != null) {
-					//	ErrorLogger.logInfo("Extractor", "QC Start Request Sent");
-					//}
-					//else {
-					//	ErrorLogger.logError("Extractor","Error Sending QC Start Request");
-					//}
-
+					QCMessage qcMessage = new QCMessage();
+					MailInterface mailInterface = new MailInterface(configuration);
+					if (jsonObject != null) {
+						if (jsonObject.get("jobId") != null) {
+							try {
+								Integer jobId = Integer.parseInt(jsonObject.get("jobId").toString());
+							}
+							catch (NumberFormatException e) {
+								qcMessage.setBody("Quality job failed");
+								ErrorLogger.logError("Extractor","Error Sending QC Start Request (3)");
+							}
+							finally {
+								qcMessage.setBody("Quality job has started: " + jsonObject.get("jobId"));
+								ErrorLogger.logInfo("Extractor", "QC Start Request Sent with the Job Id: " + jsonObject.get("jobId"));
+							}
+						}
+						else {
+							qcMessage.setBody("Quality job failed");
+							ErrorLogger.logError("Extractor","Error Sending QC Start Request (2)");
+						}
+					} else {
+						qcMessage.setBody("Quality job failed");
+						ErrorLogger.logError("Extractor","Error Sending QC Start Request (1)");
+					}
 					ErrorLogger.logInfo("Extractor","Done with the QC Subsection #1 of 1!");
+					mailInterface.send(qcMessage);
 				}
 			}
 			HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 		}
 	}
-
 
 	private static String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder,String posFile) throws FileNotFoundException{
 		BufferedReader br=new BufferedReader(new FileReader(posFile));
@@ -550,7 +564,6 @@ public class GobiiExtractor {
 		return crop;
 	}
 
-	
 	private static String getLogName(GobiiExtractorInstruction gli, CropConfig config, Integer dsid) {
 		return getLogName(gli.getDataSetExtracts().get(0),config,dsid);
 	 }
