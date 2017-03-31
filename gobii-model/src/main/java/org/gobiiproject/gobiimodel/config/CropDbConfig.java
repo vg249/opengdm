@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
+import org.gobiiproject.gobiimodel.security.Decrypter;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
@@ -88,7 +89,16 @@ public class CropDbConfig {
     }
 
     public String getUserName() {
-        return userName;
+
+        String returnVal = null;
+
+        if (this.decrypt) {
+            returnVal = Decrypter.decrypt(this.userName, null);
+        } else {
+            returnVal = this.userName;
+        }
+
+        return returnVal;
     }
 
     public CropDbConfig setUserName(String userName) {
@@ -97,7 +107,16 @@ public class CropDbConfig {
     }
 
     public String getPassword() {
-        return password;
+
+        String returnVal = null;
+
+        if (this.decrypt) {
+            returnVal = Decrypter.decrypt(this.password, null);
+        } else {
+            returnVal = this.password;
+        }
+
+        return returnVal;
     }
 
     public CropDbConfig setPassword(String password) {
@@ -115,5 +134,13 @@ public class CropDbConfig {
                 + this.port.toString()
                 + "/"
                 + this.dbName);
+    }
+
+    public boolean isDecrypt() {
+        return decrypt;
+    }
+
+    public void setDecrypt(boolean decrypt) {
+        this.decrypt = decrypt;
     }
 }

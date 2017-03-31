@@ -77,6 +77,10 @@ public class GobiiConfig {
     private static String CONFIG_SVR_GLOBAL_LDAP_URL = "ldURL";
     private static String CONFIG_SVR_GLOBAL_LDAP_BUSR = "ldBUSR";
     private static String CONFIG_SVR_GLOBAL_LDAP_BPAS = "ldBPAS";
+    private static String CONFIG_SVR_GLOBAL_LDAP_RUN_AS_USER = "ldraUSR";
+    private static String CONFIG_SVR_GLOBAL_LDAP_RUN_AS_PASSWORD = "ldraPAS";
+
+    private static String CONFIG_SVR_GLOBAL_LDAP_DECRYPT = "e";
 
     private static String CONFIG_TST_GLOBAL = "gt";
     private static String CONFIG_TST_GLOBAL_INTIAL_URL = "gtiu";
@@ -87,6 +91,8 @@ public class GobiiConfig {
     private static String CONFIG_TST_GLOBAL_CONFIG_DIR_TEST = "gtcd";
     private static String CONFIG_TST_GLOBAL_CONFIG_UTIL_CMD_STEM = "gtcs";
     private static String CONFIG_TST_GLOBAL_CONFIG_CROP_ID = "gtcr";
+    private static String CONFIG_TST_GLOBAL_LDAP_USER = "gtldu";
+    private static String CONFIG_TST_GLOBAL_LDAP_PASSWORD = "gtldp";
 
 
     private static String CONFIG_CROP_ID = "c";
@@ -224,7 +230,10 @@ public class GobiiConfig {
             setOption(options, CONFIG_SVR_GLOBAL_LDAP_URL, true, "Fully-qualified LDAP URL", "LDAP URL");
             setOption(options, CONFIG_SVR_GLOBAL_LDAP_BUSR, true, "User for authenticated LDAP search", "LDAP user");
             setOption(options, CONFIG_SVR_GLOBAL_LDAP_BPAS, true, "Password for authenticated LDAP search", "LDAP password");
+            setOption(options, CONFIG_SVR_GLOBAL_LDAP_RUN_AS_USER, true, "LDAP user as which background processes will run", "Background LDAP user");
+            setOption(options, CONFIG_SVR_GLOBAL_LDAP_RUN_AS_PASSWORD, true, "LDAP password with which background processes authenticate", "Background LDAP password");
 
+            setOption(options, CONFIG_SVR_GLOBAL_LDAP_DECRYPT, true, "Whether or not to decrypt ALL userids and passwords (true | false)", "decryption flag");
 
             setOption(options, CONFIG_SVR_OPTIONS_HOST, true, "Server option: hostname", "hostname");
             setOption(options, CONFIG_SVR_OPTIONS_PORT, true, "Server option: port number", "port number");
@@ -247,6 +256,8 @@ public class GobiiConfig {
             setOption(options, CONFIG_TST_GLOBAL_CONFIG_DIR_TEST, true, "directory for creating test configuration files", "test directory");
             setOption(options, CONFIG_TST_GLOBAL_CONFIG_UTIL_CMD_STEM, true, "configuration utility command to which command args are appended", "config cmd");
             setOption(options, CONFIG_TST_GLOBAL_CONFIG_CROP_ID, true, "Crop to use for automated testing", "crop id");
+            setOption(options, CONFIG_TST_GLOBAL_LDAP_USER, true, "LDAP user as which unit tests authenticate (if Authentication requires LDAP)", "LDAP test user");
+            setOption(options, CONFIG_TST_GLOBAL_LDAP_PASSWORD, true, "LDAP password with which LDAP unit test user authenticates (if Authentication requires LDAP)", "LDAP test user password");
 
             setOption(options, VALIDATE_CONFIGURATION, false, "Verify that the specified configuration has all the values necessary for the system to function (does not test that the servers exist); requires " + PROP_FILE_FQPN, "validate");
 
@@ -429,6 +440,13 @@ public class GobiiConfig {
                     System.err.println("Value is required: " + options.getOption(PROP_FILE_FQPN).getDescription());
                 }
 
+            } else if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_DECRYPT)
+                    && commandLine.hasOption(PROP_FILE_FQPN)) {
+
+                if (setDecryptionFlag(options, commandLine.getOptionValue(PROP_FILE_FQPN), commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_DECRYPT))) {
+                    exitCode = 0;
+                }
+
             } else if (commandLine.hasOption(VALIDATE_CONFIGURATION)) {
 
 
@@ -485,6 +503,60 @@ public class GobiiConfig {
         }
     }
 
+
+    private static ConfigSettings getConfigSettings(String propFileFqpn) {
+
+        ConfigSettings returnVal = null;
+
+        try {
+
+            File file = new File(propFileFqpn);
+            if (file.exists()) {
+
+                returnVal = ConfigSettings.read(propFileFqpn);
+            } else {
+                returnVal = ConfigSettings.makeNew(propFileFqpn);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return returnVal;
+
+    }
+
+
+    private static boolean setDecryptionFlag(Options options, String propFileFqpn, String flagAsString) {
+
+        boolean returnVal = false;
+
+        try {
+
+            ConfigSettings configSettings = getConfigSettings(propFileFqpn);
+
+            boolean decrypt = false;
+            if (flagAsString.toLowerCase().equals("true")) {
+                decrypt = true;
+            }
+
+            configSettings.setIsDecrypt(decrypt);
+            configSettings.commit();
+            returnVal = true;
+
+            writeConfigSettingsMessage(options,
+                    propFileFqpn,
+                    Arrays.asList(CONFIG_SVR_GLOBAL_LDAP_DECRYPT),
+                    Arrays.asList(decrypt ? "true" : "false"),
+                    null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnVal = false;
+        }
+
+        return returnVal;
+    }
+
     private static boolean setGobiiConfiguration(String propFileFqpn, Options options, CommandLine commandLine) {
 
         boolean returnVal = true;
@@ -492,15 +564,7 @@ public class GobiiConfig {
         try {
 
 
-            ConfigSettings configSettings;
-            File file = new File(propFileFqpn);
-            if (file.exists()) {
-
-                configSettings = ConfigSettings.read(propFileFqpn);
-            } else {
-                configSettings = ConfigSettings.makeNew(propFileFqpn);
-            }
-
+            ConfigSettings configSettings = getConfigSettings(propFileFqpn);
 
             if (commandLine.hasOption(CONFIG_GLOBAL_DEFAULT_CROP)) {
 
@@ -588,6 +652,8 @@ public class GobiiConfig {
                 String sshOverrideHost = null;
                 Integer sshOverridePort = null;
                 String testCrop = null;
+                String ldapTestUser = null;
+                String ldapTestPassword = null;
                 boolean isTestSsh = false;
 
                 if (commandLine.hasOption(CONFIG_TST_GLOBAL_INTIAL_URL)) {
@@ -655,6 +721,21 @@ public class GobiiConfig {
                     configSettings.getTestExecConfig().setTestCrop(testCrop);
                 }
 
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_LDAP_USER)) {
+                    ldapTestUser = commandLine.getOptionValue(CONFIG_TST_GLOBAL_LDAP_USER);
+                    argsSet.add(CONFIG_TST_GLOBAL_LDAP_USER);
+                    valsSet.add(ldapTestUser);
+                    configSettings.getTestExecConfig().setLdapUserForUnitTest(ldapTestUser);
+                }
+
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_LDAP_PASSWORD)) {
+                    ldapTestPassword = commandLine.getOptionValue(CONFIG_TST_GLOBAL_LDAP_PASSWORD);
+                    argsSet.add(CONFIG_TST_GLOBAL_LDAP_PASSWORD);
+                    valsSet.add(ldapTestPassword);
+                    configSettings.getTestExecConfig().setLdapPasswordForUnitTest(ldapTestPassword);
+                }
+
+
                 configSettings.commit();
 
                 writeConfigSettingsMessage(options,
@@ -678,6 +759,8 @@ public class GobiiConfig {
                 String ldapUrl = null;
                 String ldapBindUser = null;
                 String ldapBindPassword = null;
+                String ldapRunAsUser = null;
+                String ldapRunAsPassword = null;
 
                 if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_UDN)) {
                     ldapUserDnPattern = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_UDN);
@@ -703,10 +786,26 @@ public class GobiiConfig {
                     valsSet.add(ldapBindPassword);
                 }
 
+                if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_RUN_AS_USER)) {
+                    ldapRunAsUser = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_RUN_AS_USER);
+                    argsSet.add(CONFIG_SVR_GLOBAL_LDAP_RUN_AS_USER);
+                    valsSet.add(ldapRunAsUser);
+                }
+
+                if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_RUN_AS_PASSWORD)) {
+                    ldapRunAsPassword = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_RUN_AS_PASSWORD);
+                    argsSet.add(CONFIG_SVR_GLOBAL_LDAP_RUN_AS_PASSWORD);
+                    valsSet.add(ldapRunAsPassword);
+                }
+
+
+
                 configSettings.setLdapUrl(ldapUrl);
                 configSettings.setLdapUserDnPattern(ldapUserDnPattern);
                 configSettings.setLdapBindUser(ldapBindUser);
                 configSettings.setLdapBindPassword(ldapBindPassword);
+                configSettings.setLdapUserForBackendProcs(ldapRunAsUser);
+                configSettings.setLdapPasswordForBackendProcs(ldapRunAsPassword);
                 configSettings.commit();
 
                 writeConfigSettingsMessage(options,

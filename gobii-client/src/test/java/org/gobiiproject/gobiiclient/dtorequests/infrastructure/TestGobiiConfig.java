@@ -170,6 +170,8 @@ public class TestGobiiConfig {
         String ldapUrl = "url_" + UUID.randomUUID().toString();
         String ldapBindUser = "bind_user_" + UUID.randomUUID().toString();
         String ldapBindPassword = "bind_password_" + UUID.randomUUID().toString();
+        String ldapUserForBackgroundProcess = "run_asUser" + UUID.randomUUID().toString();
+        String ldapPasswordForBackgroundProcess = "run_asPassword" + UUID.randomUUID().toString();
 
 
         String commandLine = makeCommandline("-a -wfqpn "
@@ -183,7 +185,12 @@ public class TestGobiiConfig {
                 + " -ldBUSR "
                 + ldapBindUser
                 + " -ldBPAS "
-                + ldapBindPassword);
+                + ldapBindPassword
+                + " -ldraUSR "
+                + ldapUserForBackgroundProcess
+                + " -ldraPAS "
+                + ldapPasswordForBackgroundProcess
+        );
 
         boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
         Assert.assertTrue("Command failed: " + commandLine, succeeded);
@@ -205,6 +212,91 @@ public class TestGobiiConfig {
 
         Assert.assertTrue("The ldap bind password does not match",
                 configSettings.getLdapBindPassword().equals(ldapBindPassword));
+
+        Assert.assertTrue("The ldap background process user does not match",
+                configSettings.getLdapUserForBackendProcs().equals(ldapUserForBackgroundProcess));
+
+        Assert.assertTrue("The ldap background process password does not match",
+                configSettings.getLdapPasswordForBackendProcs().equals(ldapPasswordForBackgroundProcess));
+
+    }
+
+
+    @Test
+    public void testSetAuthenticationlServerEnryption() throws Exception {
+
+        String testFileFqpn = makeTestFileFqpn("setauthoptions");
+
+        String gobiiAuthenticationTypeRaw = GobiiAuthenticationType.ACTIVE_DIRECTORY.toString();
+        String ldapUserDnPattern = "dn_pattern_" + UUID.randomUUID().toString();
+        String ldapUrl = "url_" + UUID.randomUUID().toString();
+
+        // These have to have been set up with the encryption tool, which is held in an
+        // undisclosed location. So these are effectively hard coded. Note that these were
+        // created using a specific key, which is also not disclosed. If the key changes,
+        // these tests will fail, and the plain and encrypted values being used will have to be
+        // changed
+        String ldapBindUserPlain = "arbitraryUserId01";
+        String ldapBindUserEncrypted = "MMmn4rz4WqjfWew2+kkwss/PfLIeQf2jIyY8XvKh8So=";
+
+        String ldapBindPasswordPlain = "arbitraryPassword01";
+        String ldapBindPasswordEncrypted = "vxI/Bh2/YLytBxLpA5ZBrPY/wHrxcSBuIQxcw9sULbg=";
+
+        String ldapUserForBackgroundProcessPlain = "arbitraryUserId02";
+        String ldapUserForBackgroundProcessEncrypted = "MMmn4rz4WqjfWew2+kkwsgiEcEZHqa1Y3B9ejaKhtDU=";
+
+        String ldapPasswordForBackgroundProcessPlain = "arbitraryPassword02";
+        String ldapPasswordForBackgroundProcessEncrypted = "vxI/Bh2/YLytBxLpA5ZBrGQeX3soc1pml0zSZv9o/KA=";
+
+
+        String commandLineToWriteLdapConfig = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -auT "
+                + gobiiAuthenticationTypeRaw
+                + " -ldUDN "
+                + ldapUserDnPattern
+                + " -ldURL "
+                + ldapUrl
+                + " -ldBUSR "
+                + ldapBindUserEncrypted
+                + " -ldBPAS "
+                + ldapBindPasswordEncrypted
+                + " -ldraUSR "
+                + ldapUserForBackgroundProcessEncrypted
+                + " -ldraPAS "
+                + ldapPasswordForBackgroundProcessEncrypted
+        );
+
+        boolean commandLineToWriteLdapConfigSucceded = HelperFunctions.tryExec(commandLineToWriteLdapConfig, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLineToWriteLdapConfig, commandLineToWriteLdapConfigSucceded);
+
+
+        String commandLineToWriteDecryptionOption = makeCommandline("-wfqpn "
+                + testFileFqpn
+                + " -e true");
+
+        boolean commandlineToWriteEncryptionOptionSucceded = HelperFunctions.tryExec(commandLineToWriteDecryptionOption, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLineToWriteLdapConfig, commandlineToWriteEncryptionOptionSucceded);
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+        Assert.assertTrue("Encryption options in configuration settings is not set to true",
+                configSettings.isDecrypt());
+
+
+        Assert.assertTrue("The plain ldap bind user retrieved does not match the encrypted ldap user that was written",
+                configSettings.getLdapBindUser().equals(ldapBindUserPlain));
+
+        Assert.assertTrue("The plain ldap bind password retrieved does not match the encrypted ldap password that was written",
+                configSettings.getLdapBindPassword().equals(ldapBindPasswordPlain));
+
+        String ldapUserForBackendProcessRetrieved = configSettings.getLdapUserForBackendProcs(); 
+        Assert.assertTrue("The plain background run as user retrieved does not match the encrypted background run as user that was written",
+                ldapUserForBackendProcessRetrieved.equals(ldapUserForBackgroundProcessPlain));
+
+        String ldapPasswordForBackendProcessRetrieved = configSettings.getLdapPasswordForBackendProcs();
+        Assert.assertTrue("The plain ldap background run as password retrieved does not match the encrypted background run as password user that was written",
+                ldapPasswordForBackendProcessRetrieved.equals(ldapPasswordForBackgroundProcessPlain));
 
     }
 
@@ -386,6 +478,8 @@ public class TestGobiiConfig {
         Integer sshOverridePort = 5;
         String testCrop = "testcrop_" + UUID.randomUUID().toString();
         boolean isTestSsh = false;
+        String ldapUserForUnitTest = "ldapUnitTestUser_" + UUID.randomUUID().toString();
+        String ldapPasswordForUnitTest = "ldapUnitTestPassword_" + UUID.randomUUID().toString();
 
         String commandLine = makeCommandline("-a -wfqpn "
                 + testFileFqpn
@@ -405,7 +499,12 @@ public class TestGobiiConfig {
                 + " -gtsp "
                 + sshOverridePort
                 + " -gtsu "
-                + initialConfigUrlForSshOverride);
+                + initialConfigUrlForSshOverride
+                + " -gtldu "
+                + ldapUserForUnitTest
+                + " -gtldp "
+                + ldapPasswordForUnitTest
+        );
 
 
         boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
@@ -423,6 +522,8 @@ public class TestGobiiConfig {
         Assert.assertTrue("Config test value does not match: ssh override port", configSettings.getTestExecConfig().getSshOverridePort().equals(sshOverridePort));
         Assert.assertTrue("Config test value does not match: test crop", configSettings.getTestExecConfig().getTestCrop().equals(testCrop));
         Assert.assertTrue("Config test value does not match: test flag", configSettings.getTestExecConfig().isTestSsh() == isTestSsh);
+        Assert.assertTrue("Config test value does not match: ldap user", configSettings.getTestExecConfig().getLdapUserForUnitTest().equals(ldapUserForUnitTest));
+        Assert.assertTrue("Config test value does not match: ldap password", configSettings.getTestExecConfig().getLdapPasswordForUnitTest().equals(ldapPasswordForUnitTest));
     }
 
     @Test
@@ -541,7 +642,7 @@ public class TestGobiiConfig {
         boolean returnVal;
 
 
-        String serverType = gobiiDbType == GobiiDbType.POSTGRESQL ? " -stP " :  "-stM ";
+        String serverType = gobiiDbType == GobiiDbType.POSTGRESQL ? " -stP " : "-stM ";
 
         String commandLine = makeCommandline("-a -wfqpn "
                 + testFileFqpn
@@ -566,8 +667,8 @@ public class TestGobiiConfig {
 
     }
 
-    @Ignore // fails on SYS_INT
-    public void testSetCropActive()  throws Exception {
+    @Test // fails on SYS_INT
+    public void testSetCropActive() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("setcropactive");
 
@@ -600,7 +701,7 @@ public class TestGobiiConfig {
 
     }
 
-    @Ignore // fails on SYS_INT
+    @Test // fails on SYS_INT
     public void removeCrop() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("removecrop");
@@ -623,7 +724,7 @@ public class TestGobiiConfig {
                 configSettings.isCropDefined(cropToRemove));
     }
 
-    @Ignore // fails on SYS_INT
+    @Test // fails on SYS_INT
     public void testSetDefaultCrop() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("defaultcrop");
@@ -647,7 +748,7 @@ public class TestGobiiConfig {
     }
 
 
-    @Ignore// fails on SYS_INT
+    @Test// fails on SYS_INT
     public void testSetLogFileLocation() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("logfilelocation");
@@ -674,7 +775,7 @@ public class TestGobiiConfig {
      * It has also been verified that with this configuraiton, the web server will start and unit tests will
      * run. It has not yet been tested with the Digestor and Extractor
      */
-    @Ignore // fails on SYS_INT
+    @Test // fails on SYS_INT
     public void makeValidConfigFile() throws Exception {
 
         String testFileFqpn = makeTestFileFqpn("makecompleteconfig");
@@ -711,7 +812,6 @@ public class TestGobiiConfig {
 
         succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
         Assert.assertTrue("Command failed: " + commandLine, succeeded);
-
 
 
         // CONFIGURE THE VARIOUS SERVERS *******************************
@@ -821,7 +921,6 @@ public class TestGobiiConfig {
 
         succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
         Assert.assertTrue("Command failed: " + commandLine, succeeded);
-
 
 
         // *********************** MARK TEST INSTANCE NOT ACTIVE

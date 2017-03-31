@@ -26,7 +26,9 @@ import javax.crypto.spec.SecretKeySpec;
 public class Decrypter {
 
     private static String secretPostgresScrambleKey;
-    private static final String secretKey = "W3d0N0tL!k3S3cr3";
+
+    // the result of getSecretKey() is the value that you feed to the encrypter
+    private static final String secretKey = "wenc4+PN393s3+7l3/Ptmw==";
 
     private static String getSecretKey() {
         return getSecretKey(secretKey);
