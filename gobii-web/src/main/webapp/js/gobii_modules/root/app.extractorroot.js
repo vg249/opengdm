@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-nameids", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/type-extractor-sample-list", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-node", "../model/type-extract-format", "../model/file-model-tree-event", "../model/name-id-request-params", "../model/file_name", "../views/entity-labels"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-nameids", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/type-extractor-sample-list", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-node", "../model/type-extract-format", "../model/file-model-tree-event", "../model/name-id-request-params", "../model/file_name", "../views/entity-labels", "../services/app/dto-request-item-contact", "../services/core/authentication.service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_nameids_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, type_extractor_sample_list_1, cv_filter_type_1, file_model_tree_service_1, file_model_node_1, type_extract_format_1, file_model_tree_event_1, name_id_request_params_1, file_name_1, entity_labels_1, ExtractorRoot;
+    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_nameids_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, type_extractor_sample_list_1, cv_filter_type_1, file_model_tree_service_1, file_model_node_1, type_extract_format_1, file_model_tree_event_1, name_id_request_params_1, file_name_1, entity_labels_1, dto_request_item_contact_1, authentication_service_1, ExtractorRoot;
     return {
         setters: [
             function (core_1_1) {
@@ -87,13 +87,21 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             },
             function (entity_labels_1_1) {
                 entity_labels_1 = entity_labels_1_1;
+            },
+            function (dto_request_item_contact_1_1) {
+                dto_request_item_contact_1 = dto_request_item_contact_1_1;
+            },
+            function (authentication_service_1_1) {
+                authentication_service_1 = authentication_service_1_1;
             }
         ],
         execute: function () {
             ExtractorRoot = (function () {
-                function ExtractorRoot(_dtoRequestServiceExtractorFile, _dtoRequestServiceNameIds, _dtoRequestServiceServerConfigs, _fileModelTreeService) {
+                function ExtractorRoot(_dtoRequestServiceExtractorFile, _dtoRequestServiceNameIds, _dtoRequestServiceContact, _authenticationService, _dtoRequestServiceServerConfigs, _fileModelTreeService) {
                     this._dtoRequestServiceExtractorFile = _dtoRequestServiceExtractorFile;
                     this._dtoRequestServiceNameIds = _dtoRequestServiceNameIds;
+                    this._dtoRequestServiceContact = _dtoRequestServiceContact;
+                    this._authenticationService = _authenticationService;
                     this._dtoRequestServiceServerConfigs = _dtoRequestServiceServerConfigs;
                     this._fileModelTreeService = _fileModelTreeService;
                     this.title = 'Gobii Web';
@@ -204,7 +212,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                 })[0];
                             scope$.currentStatus = "GOBII Server " + gobiiVersion;
                             scope$.handleAddMessage("Connected to database: " + scope$.selectedServerConfig.crop);
-                            //scope$.initializeContactsForSumission();
+                            scope$.initializeContactsForSumission();
                             scope$.initializeContactsForPi();
                         }
                         else {
@@ -215,6 +223,28 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             + m.message); });
                     });
                 }; // initializeServerConfigs()
+                ExtractorRoot.prototype.initializeContactsForSumission = function () {
+                    var scope$ = this;
+                    scope$._dtoRequestServiceContact.get(new dto_request_item_contact_1.DtoRequestItemContact(dto_request_item_contact_1.ContactSearchType.BY_USERNAME, scope$._authenticationService.getUserName())).subscribe(function (contact) {
+                        if (contact && contact.contactId && contact.contactId > 0) {
+                            scope$._fileModelTreeService.put(gobii_file_item_1.GobiiFileItem.build(scope$.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                                .setEntityType(type_entity_1.EntityType.Contacts)
+                                .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
+                                .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
+                                .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
+                                .setItemName(contact.email)
+                                .setItemId(contact.contactId.toLocaleString()));
+                        }
+                        else {
+                            scope$.handleAddMessage("There is no contact associated with user " + scope$
+                                ._authenticationService.getUserName());
+                        }
+                    }, function (dtoHeaderResponse) {
+                        dtoHeaderResponse.statusMessages.forEach(function (m) { return scope$.handleAddMessage("Retrieving contacts for submission: "
+                            + m.message); });
+                    });
+                    //   _dtoRequestServiceContact
+                };
                 ExtractorRoot.prototype.handleServerSelected = function (arg) {
                     this.selectedServerConfig = arg;
                     // this._dtoRequestServiceNameIds
@@ -615,6 +645,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ,
                 __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService,
                     dto_request_service_1.DtoRequestService,
+                    dto_request_service_1.DtoRequestService,
+                    authentication_service_1.AuthenticationService,
                     dto_request_service_1.DtoRequestService,
                     file_model_tree_service_1.FileModelTreeService])
             ], ExtractorRoot);

@@ -31,6 +31,10 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
 import {FileName} from "../model/file_name";
 import {Labels} from "../views/entity-labels";
 import {TreeStatusNotification} from "../model/tree-status-notification";
+import {Contact} from "../model/contact";
+import {DtoRequestItemContact, ContactSearchType} from "../services/app/dto-request-item-contact";
+import {AuthenticationService} from "../services/core/authentication.service";
+import {FileItem} from "ng2-file-upload";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -283,6 +287,8 @@ export class ExtractorRoot implements OnInit {
 
     constructor(private _dtoRequestServiceExtractorFile: DtoRequestService<ExtractorInstructionFilesDTO>,
                 private _dtoRequestServiceNameIds: DtoRequestService<NameId[]>,
+                private _dtoRequestServiceContact: DtoRequestService<Contact>,
+                private _authenticationService: AuthenticationService,
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private _fileModelTreeService: FileModelTreeService) {
 
@@ -350,7 +356,7 @@ export class ExtractorRoot implements OnInit {
 
                     scope$.currentStatus = "GOBII Server " + gobiiVersion;
                     scope$.handleAddMessage("Connected to database: " + scope$.selectedServerConfig.crop);
-                    //scope$.initializeContactsForSumission();
+                    scope$.initializeContactsForSumission();
                     scope$.initializeContactsForPi();
 
                 } else {
@@ -364,6 +370,40 @@ export class ExtractorRoot implements OnInit {
         )
         ;
     } // initializeServerConfigs()
+
+
+    private initializeContactsForSumission() {
+
+
+        let scope$ = this;
+        scope$._dtoRequestServiceContact.get(new DtoRequestItemContact(
+            ContactSearchType.BY_USERNAME,
+            scope$._authenticationService.getUserName())).subscribe(contact => {
+
+                if (contact && contact.contactId && contact.contactId > 0) {
+
+                    scope$._fileModelTreeService.put(
+                        GobiiFileItem.build(scope$.gobiiExtractFilterType,ProcessType.CREATE)
+                            .setEntityType(EntityType.Contacts)
+                            .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
+                            .setCvFilterType(CvFilterType.UNKNOWN)
+                            .setExtractorItemType(ExtractorItemType.ENTITY)
+                            .setItemName(contact.email)
+                            .setItemId(contact.contactId.toLocaleString()))
+
+                } else {
+                    scope$.handleAddMessage("There is no contact associated with user " + scope$
+                            ._authenticationService.getUserName() );
+                }
+
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving contacts for submission: "
+                    + m.message))
+            });
+
+        //   _dtoRequestServiceContact
+    }
 
     private handleServerSelected(arg) {
         this.selectedServerConfig = arg;
@@ -864,7 +904,7 @@ export class ExtractorRoot implements OnInit {
     private handleExtractSubmission() {
 
 
-        if( this.setSubmitButtonState() ) {
+        if (this.setSubmitButtonState()) {
 
             let scope$ = this;
 
