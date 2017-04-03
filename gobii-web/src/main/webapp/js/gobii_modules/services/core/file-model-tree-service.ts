@@ -141,7 +141,7 @@ export class FileModelTreeService {
 
 //            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.CATEGORY, null)
             submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
-                .setCategoryType(ExtractorCategoryType.CONTAINER)
+                .setCategoryType(ExtractorCategoryType.LEAF)
                 .setEntityType(EntityType.Mapsets)
                 .setEntityName(Labels.instance().entityNodeLabels[EntityType.Mapsets])
                 .setCardinality(CardinalityType.ZERO_OR_ONE)

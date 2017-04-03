@@ -202,6 +202,7 @@ import {TreeStatusNotification} from "../model/tree-status-notification";
                                 <name-id-list-box
                                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                     [nameIdRequestParams]="nameIdRequestParamsMapsets"
+                                    [firstItemIsLabel]="true"
                                     (onError) = "handleHeaderStatusMessage($event)">
                                 </name-id-list-box>
                             </fieldset>
