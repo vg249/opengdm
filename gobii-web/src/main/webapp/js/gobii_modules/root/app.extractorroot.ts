@@ -71,16 +71,6 @@ import {FileItem} from "ng2-file-upload";
                 
                     <div class="col-md-4">
                     
-                    <fieldset class="well the-fieldset">
-                    <legend class="the-legend">Submit As</legend>
-                        <name-id-list-box
-                            [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                            [nameIdRequestParams]="nameIdRequestParamsContactsSubmitter"
-                            [notifyOnInit]="true"
-                            (onError) = "handleHeaderStatusMessage($event)">
-                        </name-id-list-box>
-                    </fieldset>
-                        
                      <fieldset class="well the-fieldset">
                      
                         <legend class="the-legend">Filters</legend><BR>
@@ -383,17 +373,22 @@ export class ExtractorRoot implements OnInit {
                 if (contact && contact.contactId && contact.contactId > 0) {
 
                     scope$._fileModelTreeService.put(
-                        GobiiFileItem.build(scope$.gobiiExtractFilterType,ProcessType.CREATE)
+                        GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
                             .setEntityType(EntityType.Contacts)
                             .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
                             .setCvFilterType(CvFilterType.UNKNOWN)
                             .setExtractorItemType(ExtractorItemType.ENTITY)
                             .setItemName(contact.email)
-                            .setItemId(contact.contactId.toLocaleString()))
+                            .setItemId(contact.contactId.toLocaleString())).subscribe(
+                        null,
+                        headerStatusMessage => {
+                            this.handleHeaderStatusMessage(headerStatusMessage)
+                        }
+                    );
 
                 } else {
                     scope$.handleAddMessage("There is no contact associated with user " + scope$
-                            ._authenticationService.getUserName() );
+                            ._authenticationService.getUserName());
                 }
 
             },
