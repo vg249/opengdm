@@ -62,6 +62,10 @@ import {FileItem} from "ng2-file-upload";
                         (onExportTypeSelected)="handleExportTypeSelected($event)"></export-type>
                      </div>
                      
+                    <div class="col-md-7">
+                       <p style="text-align: right; font-weight: bold;">{{loggedInUser}}</p>
+                     </div>
+                     
                 </fieldset>
            </div>
            
@@ -271,6 +275,8 @@ export class ExtractorRoot implements OnInit {
 
     private criteriaInvalid: boolean = true;
 
+    private loggedInUser: string = null;
+
 
     private messages: string[] = [];
 
@@ -365,13 +371,15 @@ export class ExtractorRoot implements OnInit {
     private initializeContactsForSumission() {
 
 
+        this.loggedInUser = this._authenticationService.getUserName();
         let scope$ = this;
         scope$._dtoRequestServiceContact.get(new DtoRequestItemContact(
             ContactSearchType.BY_USERNAME,
-            scope$._authenticationService.getUserName())).subscribe(contact => {
+            this.loggedInUser)).subscribe(contact => {
 
                 if (contact && contact.contactId && contact.contactId > 0) {
 
+                    //loggedInUser
                     scope$._fileModelTreeService.put(
                         GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
                             .setEntityType(EntityType.Contacts)
@@ -387,8 +395,7 @@ export class ExtractorRoot implements OnInit {
                     );
 
                 } else {
-                    scope$.handleAddMessage("There is no contact associated with user " + scope$
-                            ._authenticationService.getUserName());
+                    scope$.handleAddMessage("There is no contact associated with user " + this.loggedInUser);
                 }
 
             },
