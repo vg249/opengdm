@@ -533,6 +533,10 @@ export class ExtractorRoot implements OnInit {
 
         }
 
+
+        //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
+        this.initializeContactsForSumission();
+
     }
 
 // ********************************************************************

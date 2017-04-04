@@ -333,6 +333,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         this.displayIncludedDatasetsGrid = false;
                         this.displaySampleListTypeSelector = false;
                     }
+                    //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
+                    this.initializeContactsForSumission();
                 };
                 ExtractorRoot.prototype.handleContactForPiSelected = function (arg) {
                     this.selectedContactIdForPi = arg.id;
