@@ -113,15 +113,33 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         let unselectedTreeNode: GobiiTreeNode = event.node;
 
+        let itemsToRemove: GobiiFileItem[] = [];
+
+        unselectedTreeNode.children.forEach(gtn => {
+            let currentFileItem: GobiiFileItem = this.makeFileItemFromTreeNode(gtn, ProcessType.DELETE);
+            itemsToRemove.push(currentFileItem);
+
+            // since the child nodes weren't checked, we need to tell the tree controll that
+            // the children are unselected so that the parent node will end up behaving properly
+            // (i.e., be unselected)
+            let idxOfNodeToUnselect: number = this.selectedGobiiNodes.indexOf(gtn);
+            this.selectedGobiiNodes.splice(idxOfNodeToUnselect, 1);
+        });
+
         let fileItem: GobiiFileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, ProcessType.DELETE);
+        itemsToRemove.push(fileItem);
 
         // The prevent unchecking behavior is suspended until it is proven why we need it
 //        if (!fileItem.getRequired()) {
-        this._fileModelTreeService.put(fileItem).subscribe(
-            null,
-            headerResponse => {
-                this.handleAddStatusMessage(headerResponse)
-            });
+        itemsToRemove.forEach(itr => {
+            this._fileModelTreeService.put(itr).subscribe(
+                fmte => {
+
+                },
+                headerResponse => {
+                    this.handleAddStatusMessage(headerResponse)
+                });
+        })
         // } else {
         //     this.selectedGobiiNodes.push(unselectedTreeNode);
         // }
@@ -129,7 +147,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     }
 
-    makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, processType:ProcessType): GobiiFileItem {
+    makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, processType: ProcessType): GobiiFileItem {
 
         let fileModelNode: FileModelNode = null;
         this._fileModelTreeService
@@ -315,7 +333,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 gobiiTreeNode.label = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]
                     + ": " + eventedFileItem.getItemId();
             } else {
-                if( eventedFileItem.getProcessType() !== ProcessType.DELETE ) {
+                if (eventedFileItem.getProcessType() !== ProcessType.DELETE) {
                     gobiiTreeNode.label = fileModelNode.getEntityName() + ": " + eventedFileItem.getItemName();
                 } else {
                     gobiiTreeNode.label = fileModelNode.getEntityName();
@@ -375,8 +393,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                     // will need a funciton to do this correctly
                     this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeNodeToBeRemoved, fileModelTreeEvent.fileItem);
 
-
-
                 } else {
                     // error node not found?
                 } // if-else we found an existing node for the LEAF node's file item
@@ -387,6 +403,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 // there should not be a file item associated with the model because it's a container -- the file items are just for the children
                 let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                 if (parentTreeNode != null) {
+
+
                     let nodeToDelete: GobiiTreeNode = parentTreeNode.children.find(n => {
                         return n.fileItemId === fileModelTreeEvent.fileItem.getFileItemUniqueId()
                     });

@@ -111,11 +111,25 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                 StatusDisplayTreeComponent.prototype.nodeUnselect = function (event) {
                     var _this = this;
                     var unselectedTreeNode = event.node;
+                    var itemsToRemove = [];
+                    unselectedTreeNode.children.forEach(function (gtn) {
+                        var currentFileItem = _this.makeFileItemFromTreeNode(gtn, type_process_1.ProcessType.DELETE);
+                        itemsToRemove.push(currentFileItem);
+                        // since the child nodes weren't checked, we need to tell the tree controll that
+                        // the children are unselected so that the parent node will end up behaving properly
+                        // (i.e., be unselected)
+                        var idxOfNodeToUnselect = _this.selectedGobiiNodes.indexOf(gtn);
+                        _this.selectedGobiiNodes.splice(idxOfNodeToUnselect, 1);
+                    });
                     var fileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, type_process_1.ProcessType.DELETE);
+                    itemsToRemove.push(fileItem);
                     // The prevent unchecking behavior is suspended until it is proven why we need it
                     //        if (!fileItem.getRequired()) {
-                    this._fileModelTreeService.put(fileItem).subscribe(null, function (headerResponse) {
-                        _this.handleAddStatusMessage(headerResponse);
+                    itemsToRemove.forEach(function (itr) {
+                        _this._fileModelTreeService.put(itr).subscribe(function (fmte) {
+                        }, function (headerResponse) {
+                            _this.handleAddStatusMessage(headerResponse);
+                        });
                     });
                     // } else {
                     //     this.selectedGobiiNodes.push(unselectedTreeNode);
