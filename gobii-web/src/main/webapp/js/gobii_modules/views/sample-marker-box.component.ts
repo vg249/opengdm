@@ -77,17 +77,18 @@ export class SampleMarkerBoxComponent implements OnInit {
 
         items.forEach(listItem => {
 
-            this._fileModelTreeService
-                .put(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
-                    .setExtractorItemType(listItemType)
-                    .setItemId(listItem)
-                    .setItemName(listItem))
-                .subscribe(null, headerStatusMessage => {
-                    this.handleStatusHeaderMessage(headerStatusMessage)
-                });
+            if( listItem && listItem !== "") {
+
+                this._fileModelTreeService
+                    .put(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+                        .setExtractorItemType(listItemType)
+                        .setItemId(listItem)
+                        .setItemName(listItem))
+                    .subscribe(null, headerStatusMessage => {
+                        this.handleStatusHeaderMessage(headerStatusMessage)
+                    });
+            }
         });
-
-
     }
 
     private handleStatusHeaderMessage(statusMessage: HeaderStatusMessage) {

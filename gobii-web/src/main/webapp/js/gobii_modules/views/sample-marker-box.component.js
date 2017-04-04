@@ -52,14 +52,16 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                     var listItemType = this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER ?
                         file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM : file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM;
                     items.forEach(function (listItem) {
-                        _this._fileModelTreeService
-                            .put(gobii_file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                            .setExtractorItemType(listItemType)
-                            .setItemId(listItem)
-                            .setItemName(listItem))
-                            .subscribe(null, function (headerStatusMessage) {
-                            _this.handleStatusHeaderMessage(headerStatusMessage);
-                        });
+                        if (listItem && listItem !== "") {
+                            _this._fileModelTreeService
+                                .put(gobii_file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                                .setExtractorItemType(listItemType)
+                                .setItemId(listItem)
+                                .setItemName(listItem))
+                                .subscribe(null, function (headerStatusMessage) {
+                                _this.handleStatusHeaderMessage(headerStatusMessage);
+                            });
+                        }
                     });
                 };
                 SampleMarkerBoxComponent.prototype.handleStatusHeaderMessage = function (statusMessage) {
