@@ -7,5 +7,5 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCDataDTO;
 
 public interface QCNotificationService {
-    QCDataDTO createQCData(List<QCDataDTO> qcDataDTOsList, ConfigSettings configSetting, String cropType)  throws GobiiDomainException;
+    void createQCData(List<QCDataDTO> qcDataDTOsList, ConfigSettings configSetting, String cropType)  throws GobiiDomainException;
 }

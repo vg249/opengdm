@@ -32,60 +32,48 @@ public class QCNotificationServiceImpl implements QCNotificationService {
     private DtoMapQCData dtoMapQCData = null;
 
     @Override
-    public QCDataDTO createQCData(List<QCDataDTO> qcDataDTOsList,
-                                  ConfigSettings configSettings,
-                                  String cropType) throws GobiiException {
-        QCDataDTO returnVal = null;
+    public void createQCData(List<QCDataDTO> qcDataDTOsList,
+                             ConfigSettings configSettings,
+                             String cropType) throws GobiiException {
 
         try {
-            if (qcDataDTOsList == null) {
-                throw new GobiiDomainException("No QCDataDTO items list");
+            // Each one of the QCDataDTO items has the same QC job id
+            // First we need to know their QC status
+            // Then we copy the QC output files from their original directories to the user directories
+            Long qcJobID = qcDataDTOsList.get(0).getContactId();
+            ClientContext clientContext = ClientContext.getInstance(configSettings, cropType);
+            String currentQCContextRoot = clientContext.getInstance(null, false).getCurrentQCContextRoot();
+            UriFactory uriFactory = new UriFactory(currentQCContextRoot);
+            RestUri restUri = uriFactory.qcStatus();
+            restUri.setParamValue("jobid", String.valueOf(qcJobID));
+            RestResourceUtils restResourceUtils = new RestResourceUtils();
+            HttpMethodResult httpMethodResult = restResourceUtils.getHttp().get(restUri, clientContext.getUserToken());
+            JsonObject jsonObject = httpMethodResult.getPayLoad();
+            if (jsonObject == null) {
+                throw new GobiiDomainException("No JSON object");
             }
             else {
-                if (qcDataDTOsList.size() == 0) {
-                    throw new GobiiDomainException("QCDataDTO items list empty");
+                if (!(jsonObject.has("status"))) {
+                    throw new GobiiDomainException("No status data");
                 }
                 else {
-                    // Each one of the QCDataDTO items has the same QC job id
-                    // First we need to know their QC status
-                    // Then we copy the QC output files from their original directories to the user directories
-                    Long qcJobID = qcDataDTOsList.get(0).getContactId();
-                    ClientContext clientContext = ClientContext.getInstance(configSettings, cropType);
-                    String currentQCContextRoot = clientContext.getInstance(null, false).getCurrentQCContextRoot();
-                    UriFactory uriFactory = new UriFactory(currentQCContextRoot);
-                    RestUri restUri = uriFactory.qcStatus();
-                    restUri.setParamValue("jobid", String.valueOf(qcJobID));
-                    RestResourceUtils restResourceUtils = new RestResourceUtils();
-                    HttpMethodResult httpMethodResult = restResourceUtils.getHttp().get(restUri, clientContext.getUserToken());
-                    JsonObject jsonObject = httpMethodResult.getPayLoad();
-                    if (jsonObject == null) {
-                        throw new GobiiDomainException("No JSON object");
-                    } else {
-                        if (!(jsonObject.has("status"))) {
-                            throw new GobiiDomainException("No status data");
-                        }
-                        else {
-                            String status = jsonObject.get("status").toString();
-                            ErrorLogger.logInfo("Extractor","----> status: " + status + " <----");
-                            if (status.toLowerCase().equals("completed")) {
-                                String qcNotificationsDirectory = configSettings.getProcessingPath(cropType,
-                                        GobiiFileProcessDir.QC_NOTIFICATIONS);
-                                // Each one of the QCDataDTO items has the same dataset id
-                                Integer datasetId = qcDataDTOsList.get(0).getDataSetId();
-                                // The new QC data directory must have an unique timestamp for
-                                // all the QCDataDTO items
-                                String newQCDataDirectory = new StringBuilder("ds_")
-                                        .append(datasetId)
-                                        .append("_")
-                                        .append(DateUtils.makeDateIdString()).toString();
-                                Path newQCDataDirectoryPath = Paths.get(qcNotificationsDirectory, newQCDataDirectory);
-                                dtoMapQCData.createData(qcDataDTOsList, newQCDataDirectoryPath.toString());
-                                returnVal.getAllowedProcessTypes().add(GobiiProcessType.READ);
-                            }
-                            else {
-                                throw new GobiiDomainException("Job ID " + qcJobID + " not completed, its status: " + status);
-                            }
-                        }
+                    String status = jsonObject.get("status").toString();
+                    ErrorLogger.logInfo("Extractor","----> status: " + status + " <----");
+                    if (status.toLowerCase().equals("completed")) {
+                        String qcNotificationsDirectory = configSettings.getProcessingPath(cropType,
+                                                                                           GobiiFileProcessDir.QC_NOTIFICATIONS);
+                        // Each one of the QCDataDTO items has the same dataset id
+                        Long datasetId = qcDataDTOsList.get(0).getDataSetId();
+                        // The new QC data directory must have an unique timestamp for all the QCDataDTO items
+                        String newQCDataDirectory = new StringBuilder("ds_")
+                                .append(datasetId)
+                                .append("_")
+                                .append(DateUtils.makeDateIdString()).toString();
+                        Path newQCDataDirectoryPath = Paths.get(qcNotificationsDirectory, newQCDataDirectory);
+                        dtoMapQCData.createData(qcDataDTOsList, qcJobID, newQCDataDirectoryPath.toString());
+                    }
+                    else {
+                        throw new GobiiDomainException("Job ID " + qcJobID + " not completed, its status: " + status);
                     }
                 }
             }
@@ -94,9 +82,5 @@ public class QCNotificationServiceImpl implements QCNotificationService {
             LOGGER.error("Gobii service error", e);
             throw new GobiiDomainException(e);
         }
-
-        returnVal = qcDataDTOsList.get(0);
-
-        return returnVal;
     }
 }

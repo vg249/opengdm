@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface DtoMapQCData {
 
-    void createData(List<QCDataDTO> qcDataDTOsList, String newQCDataDirectory)  throws GobiiException;
+    void createData(List<QCDataDTO> qcDataDTOsList, Long qcJobID, String newQCDataDirectory)  throws GobiiException;
 
 }

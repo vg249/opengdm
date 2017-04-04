@@ -2,7 +2,7 @@ package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 public class QCDataDTO extends DTOBase {
 
-    Integer dataSetId;
+    Long dataSetId;
     String dataFile;
     String directory;
     String qualityFile;
@@ -23,9 +23,9 @@ public class QCDataDTO extends DTOBase {
 
     }
 
-    public Integer getDataSetId() { return dataSetId; }
+    public Long getDataSetId() { return dataSetId; }
 
-    public void setDataSetId(Integer dataSetId) { this.dataSetId = dataSetId; }
+    public void setDataSetId(Long dataSetId) { this.dataSetId = dataSetId; }
 
     public String getDataFile() { return dataFile; }
 

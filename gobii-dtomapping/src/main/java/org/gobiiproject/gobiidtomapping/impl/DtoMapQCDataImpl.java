@@ -33,14 +33,19 @@ public class DtoMapQCDataImpl implements DtoMapQCData {
     }
 
     @Override
-    public void createData(List<QCDataDTO> qcDataDTOsList, String newQCDataDirectory) throws GobiiException {
+    public void createData(List<QCDataDTO> qcDataDTOsList, Long qcJobID, String newQCDataDirectory) throws GobiiException {
 
         try {
             createDirectories(newQCDataDirectory);
             for (int index = 0; index < qcDataDTOsList.size(); index++) {
                 // Each QCDataDTO contains a QC output file to be copied from KDCompute to Gobii
                 QCDataDTO qcDataDTO = qcDataDTOsList.get(index);
-                qcDataDAO.writeData(qcDataDTO, newQCDataDirectory);
+                if (qcDataDTO.getContactId() == qcJobID) {
+                    qcDataDAO.writeData(qcDataDTO, newQCDataDirectory);
+                }
+                else {
+                    throw new Exception("Inconsistency between the contact id of the DataDTO item and the QC job id");
+                }
             }
         } catch (GobiiException e) {
             LOGGER.error("Gobii Maping Error", e);

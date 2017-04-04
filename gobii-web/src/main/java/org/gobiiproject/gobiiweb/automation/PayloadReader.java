@@ -3,6 +3,8 @@ package org.gobiiproject.gobiiweb.automation;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
+import java.util.List;
+
 /**
  * Created by Phil on 9/25/2016.
  */
@@ -67,9 +69,9 @@ public class PayloadReader<T> {
         return returnVal;
     }
 
-    public T extractItemByIndex(PayloadEnvelope<T> payloadEnvelope, Integer index) throws GobiiWebException {
+    public List<T> extractAllItems(PayloadEnvelope<T> payloadEnvelope) throws GobiiWebException {
 
-        T returnVal;
+        List<T> returnVal;
 
         if (null != payloadEnvelope) {
 
@@ -79,23 +81,16 @@ public class PayloadReader<T> {
 
                     if (0 < payloadEnvelope.getPayload().getData().size()) {
 
-                        if ((0 <= index) && (index < payloadEnvelope.getPayload().getData().size()))
-                        {
-                            if( payloadEnvelope.getPayload().getData().get(index).getClass() == this.dtoType) {
-                                returnVal = payloadEnvelope.getPayload().getData().get(index);
+                            if( payloadEnvelope.getPayload().getData().get(0).getClass() == this.dtoType) {
+                                returnVal = payloadEnvelope.getPayload().getData();
                             } else {
                                 throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
                                         GobiiValidationStatusType.BAD_REQUEST,
-                                        "The enclosed payload data item type (" + payloadEnvelope.getPayload().getData().get(index).getClass() +
-                                        ") in the list index " + index +
+                                        "The enclosed payload data item type (" + payloadEnvelope.getPayload().getData().get(0).getClass() +
+                                        ") in the list index " + 0 +
                                         " does not match the intended type(" + this.dtoType + ")");
                             }
-                        } else {
-                            throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
-                                    GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                                    "Request payload data does not contain an item in the list index " + index);
 
-                        }
                     } else {
                         throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
                                 GobiiValidationStatusType.MISSING_REQUIRED_VALUE,

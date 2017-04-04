@@ -7,7 +7,6 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.services.*;
-import org.gobiiproject.gobiiapimodel.payload.Payload;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.EntityNameConverter;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
@@ -40,10 +39,12 @@ import java.io.FileOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 
 /**
@@ -1570,6 +1571,7 @@ public class GOBIIControllerV1 {
                                                                   HttpServletResponse response) {
 
         PayloadEnvelope<QCInstructionsDTO> returnVal = new PayloadEnvelope<>();
+
         try {
 
             PayloadReader<QCInstructionsDTO> payloadReader = new PayloadReader<>(QCInstructionsDTO.class);
@@ -1638,30 +1640,36 @@ public class GOBIIControllerV1 {
     // *****************************************************
     // *************************** QC NOTIFICATION METHOD
     // *****************************************************
+    // This service gets the Notification data in the JSON format from the KDCompute server
+    // Yet, the KDCompute server does not need any DTO return here from the Gobii server
     @RequestMapping(value = "/qcNotification", method = RequestMethod.POST)
     @ResponseBody
-    public PayloadEnvelope<QCDataDTO> QCData(@RequestBody PayloadEnvelope<ArrayList<QCDataDTO>> payloadEnvelope,
-                                             HttpServletRequest request,
-                                             HttpServletResponse response) {
+    public void receiveQCNotification(@RequestBody PayloadEnvelope<QCDataDTO> payloadEnvelope,
+                                      HttpServletRequest request,
+                                      HttpServletResponse response) {
 
         PayloadEnvelope<QCDataDTO> returnVal = new PayloadEnvelope<>();
+
         try {
-            if (payloadEnvelope != null) {
-                if (payloadEnvelope.getPayload() != null) {
-                    Payload payload = payloadEnvelope.getPayload();
-                    if (payload.getData() != null) {
-                        List<QCDataDTO> qcDataDTOsList = payload.getData();
-                        if (qcDataDTOsList.size() > 0) {
-                            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-                            ConfigSettings configSettings = new ConfigSettings();
-                            QCDataDTO qcDataDTOResponse = qcNotificationService.createQCData(qcDataDTOsList, configSettings, cropType);
-                        }
-                    }
-                }
-            }
-        } catch(GobiiException e) {
+            PayloadReader<QCDataDTO> payloadReader = new PayloadReader<>(QCDataDTO.class);
+            List<QCDataDTO> qcDataDTOsList = payloadReader.extractAllItems(payloadEnvelope);
+            ConfigSettings configSettings = new ConfigSettings();
+
+            qcNotificationService.createQCData(qcDataDTOsList, configSettings, configSettings.getCurrentGobiiCropType());
+
+            //QCDataDTO qcDataDTONew = new QCDataDTO();
+            //qcDataDTONew.setDirectory("Barcelona6Paris1");
+            //qcDataDTONew.setContactId(new Long(999));
+            //PayloadWriter<QCDataDTO> payloadWriter = new PayloadWriter<>(request,
+            //                                                             QCDataDTO.class);
+            //payloadWriter.writeSingleItemForDefaultId(returnVal,
+            //                                          UriFactory.resourceByUriIdParam(request.getContextPath(),
+            //                                                                          ServiceRequestId.URL_QC_NOTIFICATION),
+            //                                          qcDataDTONew);
+        }
+        catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
-        } catch(Exception e) {
+        } catch (Exception e) {
             returnVal.getHeader().getStatus().addException(e);
         }
 
@@ -1670,7 +1678,7 @@ public class GOBIIControllerV1 {
                 HttpStatus.CREATED,
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
-        return returnVal;
+        //return (returnVal);
     }
 
     // *********************************************
