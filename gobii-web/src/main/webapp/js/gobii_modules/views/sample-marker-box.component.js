@@ -36,6 +36,8 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
             SampleMarkerBoxComponent = (function () {
                 function SampleMarkerBoxComponent(_fileModelTreeService) {
                     this._fileModelTreeService = _fileModelTreeService;
+                    this.uploadSelected = true;
+                    this.listSelected = false;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onSampleMarkerError = new core_1.EventEmitter();
                     this.onMarkerSamplesCompleted = new core_1.EventEmitter();
@@ -64,8 +66,16 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                         }
                     });
                 };
+                SampleMarkerBoxComponent.prototype.handleTextBoxChanged = function (event) {
+                    this.listSelected = true;
+                    this.uploadSelected = false;
+                };
                 SampleMarkerBoxComponent.prototype.handleStatusHeaderMessage = function (statusMessage) {
                     this.onSampleMarkerError.emit(statusMessage);
+                };
+                SampleMarkerBoxComponent.prototype.handleOnClickBrowse = function ($event) {
+                    this.listSelected = false;
+                    this.uploadSelected = true;
                 };
                 SampleMarkerBoxComponent.prototype.ngOnInit = function () {
                     return null;
@@ -77,7 +87,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                     selector: 'sample-marker-box',
                     inputs: ['gobiiExtractFilterType'],
                     outputs: ['onSampleMarkerError'],
-                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\"> \n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"uploadFile\" \n                            checked=\"checked\">&nbsp;File\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <uploader\n                        [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                        (onUploaderError)=\"handleStatusHeaderMessage($event)\"></uploader>\n                    </div> \n                    \n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\">\n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"pasteList\" >&nbsp;List\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"></text-area>\n                    </div> \n                    \n                 </div>\n                 \n"
+                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\"> \n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"uploadFile\" \n                            [checked]=\"uploadSelected\">&nbsp;File\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <uploader\n                        [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                        (onUploaderError)=\"handleStatusHeaderMessage($event)\"\n                        (onClickBrowse)=\"handleOnClickBrowse($event)\"></uploader>\n                    </div> \n                    \n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\">\n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"pasteList\"\n                            [checked]=\"listSelected\">&nbsp;List\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"\n                        (onTextboxClicked)=\"handleTextBoxChanged($event)\"></text-area>\n                    </div> \n                    \n                 </div>\n                 \n"
                 }),
                 __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
             ], SampleMarkerBoxComponent);

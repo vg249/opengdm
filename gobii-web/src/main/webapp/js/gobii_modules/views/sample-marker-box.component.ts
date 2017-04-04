@@ -20,13 +20,14 @@ import {ExtractorItemType} from "../model/file-model-node";
                             (change)="handleListTypeSelected($event)" 
                             name="listType" 
                             value="uploadFile" 
-                            checked="checked">&nbsp;File
+                            [checked]="uploadSelected">&nbsp;File
                     </div> 
                     
                     <div class="col-md-8">
                         <uploader
                         [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                        (onUploaderError)="handleStatusHeaderMessage($event)"></uploader>
+                        (onUploaderError)="handleStatusHeaderMessage($event)"
+                        (onClickBrowse)="handleOnClickBrowse($event)"></uploader>
                     </div> 
                     
                  </div>
@@ -37,12 +38,14 @@ import {ExtractorItemType} from "../model/file-model-node";
                         <input type="radio" 
                             (change)="handleListTypeSelected($event)" 
                             name="listType" 
-                            value="pasteList" >&nbsp;List
+                            value="pasteList"
+                            [checked]="listSelected">&nbsp;List
                     </div> 
                     
                     <div class="col-md-8">
                         <text-area
-                        (onTextboxDataComplete)="handleTextBoxDataSubmitted($event)"></text-area>
+                        (onTextboxDataComplete)="handleTextBoxDataSubmitted($event)"
+                        (onTextboxClicked)="handleTextBoxChanged($event)"></text-area>
                     </div> 
                     
                  </div>
@@ -57,6 +60,8 @@ export class SampleMarkerBoxComponent implements OnInit {
 
     }
 
+    private uploadSelected: boolean = true;
+    private listSelected: boolean = false;
 
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     private onSampleMarkerError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
@@ -77,7 +82,7 @@ export class SampleMarkerBoxComponent implements OnInit {
 
         items.forEach(listItem => {
 
-            if( listItem && listItem !== "") {
+            if (listItem && listItem !== "") {
 
                 this._fileModelTreeService
                     .put(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
@@ -91,11 +96,23 @@ export class SampleMarkerBoxComponent implements OnInit {
         });
     }
 
+    private handleTextBoxChanged(event) {
+
+        this.listSelected = true;
+        this.uploadSelected = false;
+
+    }
+
     private handleStatusHeaderMessage(statusMessage: HeaderStatusMessage) {
 
         this.onSampleMarkerError.emit(statusMessage);
     }
 
+
+    private handleOnClickBrowse($event) {
+        this.listSelected = false;
+        this.uploadSelected = true;
+    }
 
     ngOnInit(): any {
         return null;
