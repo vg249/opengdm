@@ -1,7 +1,7 @@
 package org.gobiiproject.gobiiprocess;
 
+import com.google.gson.*;
 import org.apache.commons.lang.StringUtils;
-import org.gobiiproject.gobiiapimodel.payload.Payload;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
@@ -20,8 +20,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -31,6 +29,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.text.ParseException;
@@ -1083,7 +1082,6 @@ public class GobiiTestData {
 
         setFKeyDbPKeyForNewEntity(fkeys, ProjectDTO.class, newProjectDTO, parentElement, dbPkeysurrogateValue, document, xPath);
 
-        System.out.println(newProjectDTO.getProperties().size());
         System.out.println("Calling the web service...\n");
 
 
@@ -1801,6 +1799,133 @@ public class GobiiTestData {
 
     }
 
+    private static void parseScenarios(NodeList nodeList, XPath xPath, Document document, File fXmlFile) throws  Exception{
+
+        JsonParser parser = new JsonParser();
+
+        for(int i=0; i<nodeList.getLength(); i++) {
+
+            Element currentElement = (Element) nodeList.item(i);
+
+            String scenarioName = currentElement.getElementsByTagName("Name").item(0).getTextContent();
+
+            System.out.println("Parsing scenario: " + scenarioName);
+
+            String fileExpr = "//Scenario[Name='"+scenarioName+"']/Files/Instruction";
+
+            XPathExpression xPathExpressionFiles = xPath.compile(fileExpr);
+
+            String instructionFilePath = (String) xPathExpressionFiles.evaluate(document, XPathConstants.STRING);
+
+            Object obj = parser.parse(new FileReader(instructionFilePath));
+
+            JsonArray jsonArray = (JsonArray) obj;
+
+            NodeList dbPkeys = currentElement.getElementsByTagName("DbFkey");
+
+            for(int j=0; j<dbPkeys.getLength(); j++) {
+
+                Element currentDbPkeyElement = (Element) dbPkeys.item(j);
+
+                String entityName = currentDbPkeyElement.getAttribute("entity");
+
+                Element dbPkeySurrogateElement = (Element) currentDbPkeyElement.getElementsByTagName("DbPKeySurrogate").item(0);
+
+                String dbPkeySurrogateValue = dbPkeySurrogateElement.getTextContent();
+
+                // get DbPKeysurrogate attribute of entity (ie Contacts - Email)
+
+                String expr = "//" + entityName + "s/@DbPKeysurrogate";
+
+                XPathExpression xPathExpression = xPath.compile(expr);
+
+                String refAttr = (String) xPathExpression.evaluate(document, XPathConstants.STRING);
+
+                // check if entity with the specify dbPkeysurrogate value exist in the file
+                expr = "count(//Entities/"+entityName+"s/"+entityName+"/Properties["+refAttr+"='"+dbPkeySurrogateValue+"'])";
+
+                xPathExpression = xPath.compile(expr);
+
+                Double count = (Double) xPathExpression.evaluate(document, XPathConstants.NUMBER);
+
+                if(count <= 0) {
+
+                    throw new Exception(entityName + ": " + dbPkeySurrogateValue + " does not exist in the file.");
+                }
+
+                expr = "//"+entityName+"[Properties/"+refAttr+"='"+dbPkeySurrogateValue+"']/Keys/DbPKey";
+
+                xPathExpression = xPath.compile(expr);
+
+                Element currentEntity = (Element) xPathExpression.evaluate(document, XPathConstants.NODE);
+
+                if(currentEntity.getTextContent().isEmpty()) {
+
+                    throw new Exception("The primary DB key of " + entityName + ": " + dbPkeySurrogateValue + " is not written in the file");
+                }
+
+                Element dbPkeyElement = (Element) currentDbPkeyElement.getElementsByTagName("DbPKey").item(0);
+
+                String currentEntityId = currentEntity.getTextContent();
+
+                dbPkeyElement.setTextContent(currentEntityId);
+                writeToFile(document, fXmlFile);
+
+                //write to instruction file
+
+                if(entityName.equals("Dataset")){
+
+                    entityName = "dataSet";
+
+                } else{
+                    entityName = entityName.toLowerCase();
+                }
+
+                for (int k = 0; k < jsonArray.size(); k++) {
+                    JsonObject object = (JsonObject) jsonArray.get(k);
+
+                    if(entityName.equals("contact")){
+
+                        if(object.has("contactId")){
+                            object.addProperty("contactId", currentEntityId);
+                        }
+
+                        if(object.has("contactEmail")){
+                            object.addProperty("contactEmail", dbPkeySurrogateValue);
+                        }
+
+                        continue;
+                    }
+
+                    if(entityName.equals("dataSet")) {
+                        if (object.has("dataSetId")) {
+                            object.addProperty("dataSetId", currentEntityId);
+                        }
+                    }
+
+                    JsonObject tempObject = (JsonObject) object.get(entityName);
+
+                    tempObject.addProperty("name", dbPkeySurrogateValue);
+                    tempObject.addProperty("id", currentEntityId);
+
+                    object.add(entityName, tempObject);
+
+                    jsonArray.set(k, object);
+                }
+            }
+
+            // update instruction file
+            System.out.println("\nWriting instruction file for " +scenarioName + "\n");
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String prettyJsonString = gson.toJson(jsonArray);
+
+            FileWriter instructionFileWriter = new FileWriter(instructionFilePath);
+            instructionFileWriter.write(prettyJsonString);
+            instructionFileWriter.close();
+        }
+    }
+
+
     public static void main(String[] args) throws Exception{
 
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -1809,10 +1934,11 @@ public class GobiiTestData {
         File fXmlFile;
         if(args.length != 1) {
             ClassLoader classLoader = GobiiTestData.class.getClassLoader();
-            fXmlFile = new File(classLoader.getResource("test_profiles/vcf_test.xml").getFile());
+            fXmlFile = new File(classLoader.getResource("test_profiles/codominant_test.xml").getFile());
         } else {
             fXmlFile = new File(args[0]);
         }
+
 
 
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -1834,6 +1960,17 @@ public class GobiiTestData {
         getEntities(xPath, document, fXmlFile);
 
         System.out.println("\n\n\nSuccessfully saved DbPKeys to file\n");
+
+        System.out.println("\nParsing Scenarios...\n");
+
+        String getAllScenarios = "//Scenarios/*";
+
+        xPathExpression = xPath.compile(getAllScenarios);
+
+        nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
+
+        parseScenarios(nodeList, xPath, document, fXmlFile);
+
     }
 
 }
