@@ -70,8 +70,9 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                         }
                     });
                 };
-                SampleMarkerBoxComponent.prototype.handleListTypeSelected = function () {
+                SampleMarkerBoxComponent.prototype.handleSampleMarkerChoicesExist = function () {
                     var _this = this;
+                    var returnVal = false;
                     this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(function (fileItems) {
                         var extractorItemTypeListToFind = file_model_node_1.ExtractorItemType.UNKNOWN;
                         var extractorItemTypeFileToFind = file_model_node_1.ExtractorItemType.UNKNOWN;
@@ -102,6 +103,9 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                                 _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM];
                             }
                             _this.displayChoicePrompt = true;
+                            returnVal = true;
+                        }
+                        else {
                         }
                     }, function (hsm) {
                         _this.handleStatusHeaderMessage(hsm);
@@ -111,6 +115,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                     // } else if (event.currentTarget.defaultValue == "itemFile") {
                     //
                     // }
+                    return returnVal;
                 };
                 SampleMarkerBoxComponent.prototype.handleUserChoice = function (userChoice) {
                     var _this = this;
@@ -137,13 +142,20 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                     }
                 };
                 SampleMarkerBoxComponent.prototype.handleTextBoxChanged = function (event) {
-                    this.handleListTypeSelected();
+                    // if there is no existing selected list or file, then this is just a simple setting
+                    if (this.handleSampleMarkerChoicesExist() === false) {
+                        this.listSelected = true;
+                        this.uploadSelected = false;
+                    }
+                };
+                SampleMarkerBoxComponent.prototype.handleOnClickBrowse = function ($event) {
+                    if (this.handleSampleMarkerChoicesExist() === false) {
+                        this.listSelected = false;
+                        this.uploadSelected = true;
+                    }
                 };
                 SampleMarkerBoxComponent.prototype.handleStatusHeaderMessage = function (statusMessage) {
                     this.onSampleMarkerError.emit(statusMessage);
-                };
-                SampleMarkerBoxComponent.prototype.handleOnClickBrowse = function ($event) {
-                    this.handleListTypeSelected();
                 };
                 SampleMarkerBoxComponent.prototype.ngOnInit = function () {
                     //        this.extractTypeLabel = Labels.instance().extractorFilterTypeLabels[this.gobiiExtractFilterType];
@@ -156,7 +168,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                     selector: 'sample-marker-box',
                     inputs: ['gobiiExtractFilterType'],
                     outputs: ['onSampleMarkerError'],
-                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\"> \n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"itemFile\" \n                            [checked]=\"uploadSelected\">&nbsp;File\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <uploader\n                        [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                        (onUploaderError)=\"handleStatusHeaderMessage($event)\"\n                        (onClickBrowse)=\"handleOnClickBrowse($event)\"></uploader>\n                    </div> \n                    \n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\">\n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"itemArray\"\n                            [checked]=\"listSelected\">&nbsp;List\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"\n                        (onTextboxClicked)=\"handleTextBoxChanged($event)\"></text-area>\n                    </div> \n                    \n                 </div>\n                 <div>\n                    <p-dialog header=\"{{extractTypeLabelExisting}} Already Selelected\" [(visible)]=\"displayChoicePrompt\" modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                        <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}} instead?</p>\n                            <p-footer>\n                                <div class=\"ui-dialog-buttonpane ui-widget-content ui-helper-clearfix\">\n                                    <button type=\"button\" pButton icon=\"fa-close\" (click)=\"handleUserChoice(false)\" label=\"No\"></button>\n                                    <button type=\"button\" pButton icon=\"fa-check\" (click)=\"handleUserChoice(true)\" label=\"Yes\"></button>\n                                </div>\n                            </p-footer>\n                    </p-dialog>\n                  </div>\n"
+                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\"> \n                        <input type=\"radio\" \n                            (change)=\"handleOnClickBrowse($event)\" \n                            name=\"listType\" \n                            value=\"itemFile\" \n                            [checked]=\"uploadSelected\">&nbsp;File\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <uploader\n                        [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                        (onUploaderError)=\"handleStatusHeaderMessage($event)\"\n                        (onClickBrowse)=\"handleOnClickBrowse($event)\"></uploader>\n                    </div> \n                    \n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\">\n                        <input type=\"radio\" \n                            (change)=\"handleTextBoxChanged($event)\" \n                            name=\"listType\" \n                            value=\"itemArray\"\n                            [checked]=\"listSelected\">&nbsp;List\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"\n                        (onTextboxClicked)=\"handleTextBoxChanged($event)\"></text-area>\n                    </div> \n                    \n                 </div>\n                 <div>\n                    <p-dialog header=\"{{extractTypeLabelExisting}} Already Selelected\" [(visible)]=\"displayChoicePrompt\" modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                        <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}} instead?</p>\n                            <p-footer>\n                                <div class=\"ui-dialog-buttonpane ui-widget-content ui-helper-clearfix\">\n                                    <button type=\"button\" pButton icon=\"fa-close\" (click)=\"handleUserChoice(false)\" label=\"No\"></button>\n                                    <button type=\"button\" pButton icon=\"fa-check\" (click)=\"handleUserChoice(true)\" label=\"Yes\"></button>\n                                </div>\n                            </p-footer>\n                    </p-dialog>\n                  </div>\n"
                 }),
                 __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
             ], SampleMarkerBoxComponent);

@@ -18,7 +18,7 @@ import {Labels} from "./entity-labels";
                 
                     <div class="col-md-2"> 
                         <input type="radio" 
-                            (change)="handleListTypeSelected($event)" 
+                            (change)="handleOnClickBrowse($event)" 
                             name="listType" 
                             value="itemFile" 
                             [checked]="uploadSelected">&nbsp;File
@@ -37,7 +37,7 @@ import {Labels} from "./entity-labels";
                 
                     <div class="col-md-2">
                         <input type="radio" 
-                            (change)="handleListTypeSelected($event)" 
+                            (change)="handleTextBoxChanged($event)" 
                             name="listType" 
                             value="itemArray"
                             [checked]="listSelected">&nbsp;List
@@ -115,7 +115,9 @@ export class SampleMarkerBoxComponent implements OnInit {
 
 
     private currentFileItem:GobiiFileItem;
-    handleListTypeSelected() {
+    handleSampleMarkerChoicesExist(): boolean {
+
+        let returnVal:boolean = false;
 
         this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(
             fileItems => {
@@ -158,9 +160,12 @@ export class SampleMarkerBoxComponent implements OnInit {
                     }
 
                     this.displayChoicePrompt = true;
+                    returnVal = true;
                     // it does not seem that the PrimeNG dialog really blocks in the usual sense; 
                     // so we have to chain what we do next off of the click events on the dialog.
                     // see handleUserChoice() 
+
+                } else {
 
                 }
             },
@@ -174,6 +179,8 @@ export class SampleMarkerBoxComponent implements OnInit {
         // } else if (event.currentTarget.defaultValue == "itemFile") {
         //
         // }
+
+        return returnVal;
 
     }
 
@@ -208,21 +215,24 @@ export class SampleMarkerBoxComponent implements OnInit {
 
     private handleTextBoxChanged(event) {
 
-        this.handleListTypeSelected();
+        // if there is no existing selected list or file, then this is just a simple setting
+        if ( this.handleSampleMarkerChoicesExist() === false ) {
+            this.listSelected = true;
+            this.uploadSelected= false;
+        }
+    }
 
+    private handleOnClickBrowse($event) {
 
+        if ( this.handleSampleMarkerChoicesExist() === false ) {
+            this.listSelected = false;
+            this.uploadSelected= true;
+        }
     }
 
     private handleStatusHeaderMessage(statusMessage: HeaderStatusMessage) {
 
         this.onSampleMarkerError.emit(statusMessage);
-    }
-
-
-    private handleOnClickBrowse($event) {
-
-        this.handleListTypeSelected();
-
     }
 
     ngOnInit(): any {
