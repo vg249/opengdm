@@ -42,9 +42,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 
 /**
