@@ -115,11 +115,8 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     unselectedTreeNode.children.forEach(function (gtn) {
                         var currentFileItem = _this.makeFileItemFromTreeNode(gtn, type_process_1.ProcessType.DELETE);
                         itemsToRemove.push(currentFileItem);
-                        // since the child nodes weren't checked, we need to tell the tree controll that
-                        // the children are unselected so that the parent node will end up behaving properly
-                        // (i.e., be unselected)
-                        var idxOfNodeToUnselect = _this.selectedGobiiNodes.indexOf(gtn);
-                        _this.selectedGobiiNodes.splice(idxOfNodeToUnselect, 1);
+                        //remove the nodes from selectedNodes array in the remove() function so programmatic
+                        //removals of nodes will also trigger unchecking the parent node
                     });
                     var fileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, type_process_1.ProcessType.DELETE);
                     itemsToRemove.push(fileItem);
@@ -355,6 +352,11 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                 if (nodeToDelete != null) {
                                     var idxOfNodeToDelete = parentTreeNode.children.indexOf(nodeToDelete);
                                     parentTreeNode.children.splice(idxOfNodeToDelete, 1);
+                                    if (parentTreeNode.children.length === 0) {
+                                        var idxOfSelectedNodeParentNode = this.selectedGobiiNodes.indexOf(parentTreeNode);
+                                        var deleted = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
+                                        var foo = "foo";
+                                    }
                                 }
                             }
                             else {
@@ -405,7 +407,9 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                         parentTreeNode.children.push(newGobiiTreeNode);
                                         parentTreeNode.expanded = true;
                                         this.selectedGobiiNodes.push(newGobiiTreeNode);
-                                        this.selectedGobiiNodes.push(parentTreeNode);
+                                        if (this.selectedGobiiNodes.indexOf(parentTreeNode) < 0) {
+                                            this.selectedGobiiNodes.push(parentTreeNode);
+                                        }
                                     }
                                     else {
                                     } // if-else there already exists a corresponding tree node

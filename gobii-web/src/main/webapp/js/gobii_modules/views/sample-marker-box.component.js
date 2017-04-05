@@ -45,6 +45,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onSampleMarkerError = new core_1.EventEmitter();
                     this.onMarkerSamplesCompleted = new core_1.EventEmitter();
+                    this.currentFileItems = [];
                 }
                 // private handleUserSelected(arg) {
                 //     this.onUserSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
@@ -84,22 +85,22 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                             extractorItemTypeListToFind = file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM;
                             extractorItemTypeFileToFind = file_model_node_1.ExtractorItemType.MARKER_FILE;
                         }
-                        _this.currentFileItem = fileItems.find(function (item) {
+                        _this.currentFileItems = fileItems.filter(function (item) {
                             return ((item.getExtractorItemType() === extractorItemTypeListToFind) ||
                                 (item.getExtractorItemType() === extractorItemTypeFileToFind));
                         });
-                        if (_this.currentFileItem) {
-                            _this.extractTypeLabelExisting = entity_labels_1.Labels.instance().treeExtractorTypeLabels[_this.currentFileItem.getExtractorItemType()];
-                            if (_this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
+                        if (_this.currentFileItems.length > 0) {
+                            _this.extractTypeLabelExisting = entity_labels_1.Labels.instance().treeExtractorTypeLabels[_this.currentFileItems[0].getExtractorItemType()];
+                            if (_this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
                                 _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_FILE];
                             }
-                            else if (_this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM) {
+                            else if (_this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM) {
                                 _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_FILE];
                             }
-                            else if (_this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE) {
+                            else if (_this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE) {
                                 _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM];
                             }
-                            else if (_this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE) {
+                            else if (_this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE) {
                                 _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM];
                             }
                             _this.displayChoicePrompt = true;
@@ -120,24 +121,26 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                 SampleMarkerBoxComponent.prototype.handleUserChoice = function (userChoice) {
                     var _this = this;
                     this.displayChoicePrompt = false;
-                    if (this.currentFileItem && userChoice === true) {
-                        this.currentFileItem.setProcessType(type_process_1.ProcessType.DELETE);
-                        this._fileModelTreeService
-                            .put(this.currentFileItem)
-                            .subscribe(function (fmte) {
-                            // based on what _was_ the current item, we now make the current selection the other one
-                            if (_this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM
-                                || _this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
-                                _this.listSelected = false;
-                                _this.uploadSelected = true;
-                            }
-                            else if (_this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE
-                                || _this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE) {
-                                _this.listSelected = true;
-                                _this.uploadSelected = false;
-                            }
-                        }, function (headerStatusMessage) {
-                            _this.handleStatusHeaderMessage(headerStatusMessage);
+                    if (this.currentFileItems.length > 0 && userChoice === true) {
+                        // based on what _was_ the current item, we now make the current selection the other one
+                        if (this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM
+                            || this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
+                            this.listSelected = false;
+                            this.uploadSelected = true;
+                        }
+                        else if (this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE
+                            || this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE) {
+                            this.listSelected = true;
+                            this.uploadSelected = false;
+                        }
+                        this.currentFileItems.forEach(function (currentFileItem) {
+                            currentFileItem.setProcessType(type_process_1.ProcessType.DELETE);
+                            _this._fileModelTreeService
+                                .put(currentFileItem)
+                                .subscribe(function (fmte) {
+                            }, function (headerStatusMessage) {
+                                _this.handleStatusHeaderMessage(headerStatusMessage);
+                            });
                         });
                     }
                 };

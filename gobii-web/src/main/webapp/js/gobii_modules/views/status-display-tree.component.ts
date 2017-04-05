@@ -119,11 +119,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             let currentFileItem: GobiiFileItem = this.makeFileItemFromTreeNode(gtn, ProcessType.DELETE);
             itemsToRemove.push(currentFileItem);
 
-            // since the child nodes weren't checked, we need to tell the tree controll that
-            // the children are unselected so that the parent node will end up behaving properly
-            // (i.e., be unselected)
-            let idxOfNodeToUnselect: number = this.selectedGobiiNodes.indexOf(gtn);
-            this.selectedGobiiNodes.splice(idxOfNodeToUnselect, 1);
+            //remove the nodes from selectedNodes array in the remove() function so programmatic
+            //removals of nodes will also trigger unchecking the parent node
         });
 
         let fileItem: GobiiFileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, ProcessType.DELETE);
@@ -412,6 +409,13 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                     if (nodeToDelete != null) {
                         let idxOfNodeToDelete: number = parentTreeNode.children.indexOf(nodeToDelete);
                         parentTreeNode.children.splice(idxOfNodeToDelete, 1);
+
+                        if (parentTreeNode.children.length === 0) {
+                            let idxOfSelectedNodeParentNode: number = this.selectedGobiiNodes.indexOf(parentTreeNode);
+                            let deleted: GobiiTreeNode[] = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
+                            let foo: string = "foo";
+                        }
+
                     }
 
                 } else {
@@ -547,7 +551,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                             parentTreeNode.children.push(newGobiiTreeNode);
                             parentTreeNode.expanded = true;
                             this.selectedGobiiNodes.push(newGobiiTreeNode);
-                            this.selectedGobiiNodes.push(parentTreeNode);
+
+                            if (this.selectedGobiiNodes.indexOf(parentTreeNode) < 0) {
+                                this.selectedGobiiNodes.push(parentTreeNode);
+                            }
                         } else {
                             // modify existing existingGobiiTreeNodeChild
                         } // if-else there already exists a corresponding tree node

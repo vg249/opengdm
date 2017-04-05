@@ -114,10 +114,11 @@ export class SampleMarkerBoxComponent implements OnInit {
     }
 
 
-    private currentFileItem:GobiiFileItem;
+    private currentFileItems: GobiiFileItem[] = [];
+
     handleSampleMarkerChoicesExist(): boolean {
 
-        let returnVal:boolean = false;
+        let returnVal: boolean = false;
 
         this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(
             fileItems => {
@@ -133,28 +134,28 @@ export class SampleMarkerBoxComponent implements OnInit {
                     extractorItemTypeFileToFind = ExtractorItemType.MARKER_FILE;
                 }
 
-                this.currentFileItem = fileItems.find(item => {
+                this.currentFileItems = fileItems.filter(item => {
                     return ( ( item.getExtractorItemType() === extractorItemTypeListToFind ) ||
                     (item.getExtractorItemType() === extractorItemTypeFileToFind) )
                 });
 
-                if (this.currentFileItem) {
+                if (this.currentFileItems.length > 0) {
 
-                    this.extractTypeLabelExisting = Labels.instance().treeExtractorTypeLabels[this.currentFileItem.getExtractorItemType()];
+                    this.extractTypeLabelExisting = Labels.instance().treeExtractorTypeLabels[this.currentFileItems[0].getExtractorItemType()];
 
-                    if (this.currentFileItem.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
+                    if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
 
                         this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE];
 
-                    } else if (this.currentFileItem.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
+                    } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM) {
 
                         this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE];
 
-                    } else if (this.currentFileItem.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE) {
+                    } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_FILE) {
 
                         this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM];
 
-                    } else if (this.currentFileItem.getExtractorItemType() === ExtractorItemType.MARKER_FILE) {
+                    } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_FILE) {
 
                         this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM];
                     }
@@ -184,49 +185,51 @@ export class SampleMarkerBoxComponent implements OnInit {
 
     }
 
-    handleUserChoice(userChoice:boolean) {
-        
+    handleUserChoice(userChoice: boolean) {
+
         this.displayChoicePrompt = false;
+        
+        if (this.currentFileItems.length > 0 && userChoice === true) {
 
-        if (this.currentFileItem && userChoice === true) {
+            // based on what _was_ the current item, we now make the current selection the other one
+            if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM
+                || this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
+                this.listSelected = false;
+                this.uploadSelected = true;
+            } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_FILE
+                || this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_FILE) {
+                this.listSelected = true;
+                this.uploadSelected = false;
+            }
+            
+            this.currentFileItems.forEach(currentFileItem => {
 
-            this.currentFileItem.setProcessType(ProcessType.DELETE);
-            this._fileModelTreeService
-                .put(this.currentFileItem)
-                .subscribe(fmte => {
+                currentFileItem.setProcessType(ProcessType.DELETE);
+                this._fileModelTreeService
+                    .put(currentFileItem)
+                    .subscribe(fmte => {
 
-                    // based on what _was_ the current item, we now make the current selection the other one
-                    if(this.currentFileItem.getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM
-                    || this.currentFileItem.getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM ) {
-                        this.listSelected = false;
-                        this.uploadSelected= true;
-                    } else if(this.currentFileItem.getExtractorItemType() === ExtractorItemType.MARKER_FILE
-                        || this.currentFileItem.getExtractorItemType() === ExtractorItemType.SAMPLE_FILE )  {
-                        this.listSelected = true;
-                        this.uploadSelected= false;
-                    }
-
-
-                }, headerStatusMessage => {
-                    this.handleStatusHeaderMessage(headerStatusMessage)
-                });
+                    }, headerStatusMessage => {
+                        this.handleStatusHeaderMessage(headerStatusMessage)
+                    });
+            });
         }
     }
 
     private handleTextBoxChanged(event) {
 
         // if there is no existing selected list or file, then this is just a simple setting
-        if ( this.handleSampleMarkerChoicesExist() === false ) {
+        if (this.handleSampleMarkerChoicesExist() === false) {
             this.listSelected = true;
-            this.uploadSelected= false;
+            this.uploadSelected = false;
         }
     }
 
     private handleOnClickBrowse($event) {
 
-        if ( this.handleSampleMarkerChoicesExist() === false ) {
+        if (this.handleSampleMarkerChoicesExist() === false) {
             this.listSelected = false;
-            this.uploadSelected= true;
+            this.uploadSelected = true;
         }
     }
 
