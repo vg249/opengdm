@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-extractor-filter", "../services/core/file-model-tree-service", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extractor-filter", "../services/core/file-model-tree-service", "../model/gobii-file-item", "../model/type-process", "../model/file-model-node", "./entity-labels"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, file_model_tree_service_1, gobii_file_item_1, type_process_1, file_model_node_1, SampleMarkerBoxComponent;
+    var core_1, type_extractor_filter_1, file_model_tree_service_1, gobii_file_item_1, type_process_1, file_model_node_1, entity_labels_1, SampleMarkerBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -30,12 +30,16 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
             },
             function (file_model_node_1_1) {
                 file_model_node_1 = file_model_node_1_1;
+            },
+            function (entity_labels_1_1) {
+                entity_labels_1 = entity_labels_1_1;
             }
         ],
         execute: function () {
             SampleMarkerBoxComponent = (function () {
                 function SampleMarkerBoxComponent(_fileModelTreeService) {
                     this._fileModelTreeService = _fileModelTreeService;
+                    this.displayChoicePrompt = false;
                     this.uploadSelected = true;
                     this.listSelected = false;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
@@ -66,18 +70,83 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                         }
                     });
                 };
+                SampleMarkerBoxComponent.prototype.handleListTypeSelected = function () {
+                    var _this = this;
+                    this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(function (fileItems) {
+                        var extractorItemTypeListToFind = file_model_node_1.ExtractorItemType.UNKNOWN;
+                        var extractorItemTypeFileToFind = file_model_node_1.ExtractorItemType.UNKNOWN;
+                        if (_this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
+                            extractorItemTypeListToFind = file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM;
+                            extractorItemTypeFileToFind = file_model_node_1.ExtractorItemType.SAMPLE_FILE;
+                        }
+                        else if (_this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER) {
+                            extractorItemTypeListToFind = file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM;
+                            extractorItemTypeFileToFind = file_model_node_1.ExtractorItemType.MARKER_FILE;
+                        }
+                        _this.currentFileItem = fileItems.find(function (item) {
+                            return ((item.getExtractorItemType() === extractorItemTypeListToFind) ||
+                                (item.getExtractorItemType() === extractorItemTypeFileToFind));
+                        });
+                        if (_this.currentFileItem) {
+                            _this.extractTypeLabelExisting = entity_labels_1.Labels.instance().treeExtractorTypeLabels[_this.currentFileItem.getExtractorItemType()];
+                            if (_this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
+                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_FILE];
+                            }
+                            else if (_this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM) {
+                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_FILE];
+                            }
+                            else if (_this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE) {
+                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM];
+                            }
+                            else if (_this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE) {
+                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM];
+                            }
+                            _this.displayChoicePrompt = true;
+                        }
+                    }, function (hsm) {
+                        _this.handleStatusHeaderMessage(hsm);
+                    });
+                    // if (event.currentTarget.defaultValue === "itemArray") {
+                    //
+                    // } else if (event.currentTarget.defaultValue == "itemFile") {
+                    //
+                    // }
+                };
+                SampleMarkerBoxComponent.prototype.handleUserChoice = function (userChoice) {
+                    var _this = this;
+                    this.displayChoicePrompt = false;
+                    if (this.currentFileItem && userChoice === true) {
+                        this.currentFileItem.setProcessType(type_process_1.ProcessType.DELETE);
+                        this._fileModelTreeService
+                            .put(this.currentFileItem)
+                            .subscribe(function (fmte) {
+                            // based on what _was_ the current item, we now make the current selection the other one
+                            if (_this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM
+                                || _this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
+                                _this.listSelected = false;
+                                _this.uploadSelected = true;
+                            }
+                            else if (_this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE
+                                || _this.currentFileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE) {
+                                _this.listSelected = true;
+                                _this.uploadSelected = false;
+                            }
+                        }, function (headerStatusMessage) {
+                            _this.handleStatusHeaderMessage(headerStatusMessage);
+                        });
+                    }
+                };
                 SampleMarkerBoxComponent.prototype.handleTextBoxChanged = function (event) {
-                    this.listSelected = true;
-                    this.uploadSelected = false;
+                    this.handleListTypeSelected();
                 };
                 SampleMarkerBoxComponent.prototype.handleStatusHeaderMessage = function (statusMessage) {
                     this.onSampleMarkerError.emit(statusMessage);
                 };
                 SampleMarkerBoxComponent.prototype.handleOnClickBrowse = function ($event) {
-                    this.listSelected = false;
-                    this.uploadSelected = true;
+                    this.handleListTypeSelected();
                 };
                 SampleMarkerBoxComponent.prototype.ngOnInit = function () {
+                    //        this.extractTypeLabel = Labels.instance().extractorFilterTypeLabels[this.gobiiExtractFilterType];
                     return null;
                 };
                 return SampleMarkerBoxComponent;
@@ -87,7 +156,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                     selector: 'sample-marker-box',
                     inputs: ['gobiiExtractFilterType'],
                     outputs: ['onSampleMarkerError'],
-                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\"> \n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"uploadFile\" \n                            [checked]=\"uploadSelected\">&nbsp;File\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <uploader\n                        [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                        (onUploaderError)=\"handleStatusHeaderMessage($event)\"\n                        (onClickBrowse)=\"handleOnClickBrowse($event)\"></uploader>\n                    </div> \n                    \n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\">\n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"pasteList\"\n                            [checked]=\"listSelected\">&nbsp;List\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"\n                        (onTextboxClicked)=\"handleTextBoxChanged($event)\"></text-area>\n                    </div> \n                    \n                 </div>\n                 \n"
+                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\"> \n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"itemFile\" \n                            [checked]=\"uploadSelected\">&nbsp;File\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <uploader\n                        [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                        (onUploaderError)=\"handleStatusHeaderMessage($event)\"\n                        (onClickBrowse)=\"handleOnClickBrowse($event)\"></uploader>\n                    </div> \n                    \n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div class=\"col-md-2\">\n                        <input type=\"radio\" \n                            (change)=\"handleListTypeSelected($event)\" \n                            name=\"listType\" \n                            value=\"itemArray\"\n                            [checked]=\"listSelected\">&nbsp;List\n                    </div> \n                    \n                    <div class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"\n                        (onTextboxClicked)=\"handleTextBoxChanged($event)\"></text-area>\n                    </div> \n                    \n                 </div>\n                 <div>\n                    <p-dialog header=\"{{extractTypeLabelExisting}} Already Selelected\" [(visible)]=\"displayChoicePrompt\" modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                        <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}} instead?</p>\n                            <p-footer>\n                                <div class=\"ui-dialog-buttonpane ui-widget-content ui-helper-clearfix\">\n                                    <button type=\"button\" pButton icon=\"fa-close\" (click)=\"handleUserChoice(false)\" label=\"No\"></button>\n                                    <button type=\"button\" pButton icon=\"fa-check\" (click)=\"handleUserChoice(true)\" label=\"Yes\"></button>\n                                </div>\n                            </p-footer>\n                    </p-dialog>\n                  </div>\n"
                 }),
                 __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
             ], SampleMarkerBoxComponent);
