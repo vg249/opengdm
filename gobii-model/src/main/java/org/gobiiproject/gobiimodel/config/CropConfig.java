@@ -9,6 +9,7 @@ import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.Root;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,8 @@ public class CropConfig {
                       String serviceAppRoot,
                       String serviceQCRoot,
                       Integer servicePort,
-                      boolean isActive) {
+                      boolean isActive,
+                      boolean decrypt) {
 
         this.gobiiCropType = gobiiCropType;
         this.serviceDomain = serviceDomain;
@@ -158,5 +160,9 @@ public class CropConfig {
         CropDbConfig returnVal = this.cropDbConfigsByDbType.get(gobiiDbType);
         return returnVal;
     } // getCropDbConfig()
+
+    public Collection<CropDbConfig> getCropConfigs() {
+        return this.cropDbConfigsByDbType.values();
+    }
 
 }

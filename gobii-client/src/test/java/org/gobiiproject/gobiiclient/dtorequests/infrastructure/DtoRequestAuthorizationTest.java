@@ -7,9 +7,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
-import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.core.common.Authenticator;
 //import org.gobiiproject.gobiimodel.dto.response.HeaderAuth;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
@@ -63,6 +64,8 @@ public class DtoRequestAuthorizationTest {
                 .build();
 
         HttpPost returnVal = new HttpPost(uri);
+
+        returnVal.setEntity(new StringEntity("empty"));
 
         returnVal.addHeader("Content-Type", "application/json");
         returnVal.addHeader("Accept", "application/json");

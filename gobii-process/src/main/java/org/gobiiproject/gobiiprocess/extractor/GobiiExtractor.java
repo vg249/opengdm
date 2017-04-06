@@ -30,6 +30,7 @@ import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.email.QCMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
+import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -37,7 +38,6 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInst
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
@@ -229,7 +229,7 @@ public class GobiiExtractor {
 								" -s " + sampleFile +
 								" -p " + projectFile +
                                 markerListLocation +
-								" --datasetType " + extract.getGobiiDatasetType() +
+								" --datasetType " + extract.getGobiiDatasetType().getName() +
 								mapIdTerm +
 								platformTerm +
 								" -l -v ";
@@ -247,120 +247,67 @@ public class GobiiExtractor {
 
 				//HDF5
 				String tempFolder=extractDir;
-				GobiiFileType fileType = extract.getGobiiFileType();
-				boolean markerFast=(fileType == GobiiFileType.HAPMAP);
 
-				String genoFile;
-				switch(filterType) {
-					case WHOLE_DATASET:
-						genoFile = getHDF5Genotype(markerFast, errorFile, dataSetId, tempFolder);
-						break;
-					case BY_MARKER:
-						genoFile = getHDF5GenoFromMarkerList(markerFast, errorFile, tempFolder, markerPosFile);
-						break;
-                    default:
-                        genoFile="";
-                        ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
-                        break;
+				String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
+				String hdf5Extractor=pathToHDF5+"dumpdataset";
+				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
+				// %s <orientation> <HDF5 file> <output file>
+				boolean markerFast=false;
+				if(extract.getGobiiFileType()==GobiiFileType.HAPMAP)markerFast=true;
+				String ordering="samples-fast";
+				if(markerFast)ordering="markers-fast";
+				ErrorLogger.logDebug("Extractor","HDF5 Ordering is "+ordering);
+				ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile);
+				HelperFunctions.tryExec(hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile,null,errorFile);
+				success&=ErrorLogger.success();
+				ErrorLogger.logDebug("Extractor",(success?"Success ":"Failure " + hdf5Extractor+" "+ordering+" "+HDF5File+" "+genoFile));
+				// Adding "/" back to the bi-allelic data made from HDF5
+				if (extract.getGobiiDatasetType() != null) {
+					if (extract.getGobiiDatasetType().getName().toLowerCase().equals("ssr_allele_size")) {
+						ErrorLogger.logInfo("Extractor","Adding slashes to bi allelic data in " + genoFile);
+						if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
+							ErrorLogger.logInfo("Extractor","Added slashes to all the bi-allelic data in " + genoFile);
+						} else {
+							ErrorLogger.logError("Extractor","Not added slashes to all the bi-allelic data in " + genoFile);
+						}
+					}
 				}
 
 				switch(extract.getGobiiFileType()){
 
-				case FLAPJACK:
-					String genoOutFile = flapjackExtract(success, configuration, inst, extract, extractDir, markerFile, extendedMarkerFile, sampleFile, chrLengthFile, errorFile, dataSetId, tempFolder, genoFile);
-					HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
-					break;
-
-				case HAPMAP:
-					String hapmapOutFile = hapmapExtract(extractorScriptPath, extractDir, extendedMarkerFile, sampleFile, projectFile, chrLengthFile, errorFile, dataSetId, genoFile);
-					HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
-					break;
-
-					default:
+					case FLAPJACK:
+						String genoOutFile=extractDir+"DS"+dataSetId+".genotype";
+						String mapOutFile=extractDir+"DS"+dataSetId+".map";
+						lastErrorFile=errorFile;
+						//Always regenerate requests - may have different parameters
+						boolean extended=new File(extendedMarkerFile).exists();
+						FlapjackTransformer.generateMapFile(extended?extendedMarkerFile:markerFile, sampleFile, chrLengthFile, dataSetId, tempFolder, mapOutFile, errorFile,extended);
+						HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+						FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
+						HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+						HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
+						break;
+					case HAPMAP:
+						String hapmapOutFile = extractDir+"DS"+dataSetId+".hmp.txt";
+						HapmapTransformer hapmapTransformer = new HapmapTransformer();
+						ErrorLogger.logDebug("GobiiExtractor","Executing Hapmap Generation");
+						success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
+						HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
+						HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
+						break;
+                    case META_DATA:
+                        HelperFunctions.sendEmail(extract.getDataSetName()+" Metadata Extract",extractDir,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
+                        HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
+                        break;
+                    default:
 						ErrorLogger.logError("Extractor","Unknown Extract Type "+extract.getGobiiFileType());
 						HelperFunctions.sendEmail(extract.getDataSetName()+" "+extract.getGobiiFileType()+" Extract",null,false,errorFile,configuration,inst.getContactEmail());
 				}
+				rmIfExist(genoFile);
+				rmIfExist(chrLengthFile);
 				rmIfExist(markerPosFile);
 				rmIfExist(extendedMarkerFile);
-				rmIfExist(mapsetFile);
 				ErrorLogger.logDebug("Extractor","DataSet "+dataSetId+" Created");
-
-				// Adding "/" back to the bi-allelic data
-				if (extract.getGobiiDatasetType().equals(DataSetType.SSR_ALLELE_SIZE.toString())) {
-					Path SSRFilePath = Paths.get(extractDir+"DS"+dataSetId+".genotype");
-					File SSRFile = new File(SSRFilePath.toString());
-					if (SSRFile.exists()) {
-						Path AddedSSRFilePath = Paths.get(extractDir, "Added" + SSRFilePath.getFileName());
-						// Deleting any temporal file existent
-						rmIfExist(AddedSSRFilePath.toString());
-						File AddedSSRFile = new File(AddedSSRFilePath.toString());
-						if (AddedSSRFile.createNewFile()) {
-							Scanner scanner = new Scanner(new FileReader(SSRFile));
-							FileWriter fileWriter = new FileWriter(AddedSSRFile);
-							// Copying the header
-							if (scanner.hasNextLine()) {
-								fileWriter.write(scanner.nextLine() + System.lineSeparator());
-							}
-							Pattern pattern = Pattern.compile("^[0-9]{1,8}$");
-							while (scanner.hasNextLine()) {
-								String[] lineParts = scanner.nextLine().split("\\t");
-								// The first column does not need to be converted
-								StringBuilder addedLineStringBuilder = new StringBuilder(lineParts[0]);
-								// Converting each column from the next ones
-								for (int index = 1; index < lineParts.length; index++) {
-									addedLineStringBuilder.append("\t");
-									if (!(pattern.matcher(lineParts[index]).find())) {
-										ErrorLogger.logError("Extractor","Incorrect SSR allele size format (1): "+lineParts[index]);
-										addedLineStringBuilder.append(lineParts[index]);
-									}
-									else {
-										if ((5 <= lineParts[index].length()) && (lineParts[index].length() <= 8)) {
-											addedLineStringBuilder.append(Integer.parseInt(lineParts[index].substring(0, lineParts[index].length() - 4)));
-											addedLineStringBuilder.append("/");
-											addedLineStringBuilder.append(Integer.parseInt(lineParts[index].substring(lineParts[index].length() - 4)));
-										}
-										else {
-											if ((1 < lineParts[index].length()) && (lineParts[index].length() <= 4)) {
-												addedLineStringBuilder.append("0/");
-												addedLineStringBuilder.append(Integer.parseInt(lineParts[index]));
-											}
-											else {
-												if (lineParts[index].length() == 1) {
-													Integer digit = Integer.parseInt(lineParts[index]);
-													if (digit != 0) {
-														addedLineStringBuilder.append("0/");
-														addedLineStringBuilder.append(digit);
-													} else {
-														addedLineStringBuilder.append("N/N");
-													}
-												}
-												else {
-													ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): "+lineParts[index]);
-													addedLineStringBuilder.append(lineParts[index]);
-												}
-											}
-										}
-									}
-								}
-								addedLineStringBuilder.append(System.lineSeparator());
-								fileWriter.write(addedLineStringBuilder.toString());
-							}
-							scanner.close();
-							fileWriter.close();
-							// Deleting any original data backup file existent
-							rmIfExist(Paths.get(SSRFilePath.toString() + ".bak").toString());
-							// Backing up the original data file
-							mv(SSRFilePath.toString(), SSRFilePath.toString() + ".bak");
-							// Renaming the converted data file to the original data file name
-							mv(AddedSSRFilePath.toString(), SSRFilePath.toString());
-						}
-						else {
-							ErrorLogger.logError("Extractor","Unable to create the added SSR file: "+AddedSSRFilePath.toString());
-						}
-					} else {
-						ErrorLogger.logError("Extractor","No genotype file: "+SSRFilePath.toString());
-					}
-				}
 
 				//QC - Subsection #1 of 1
 				if (inst.isQcCheck()) {
@@ -537,36 +484,6 @@ public class GobiiExtractor {
 		return genoFile;
 	}
 
-	private static String flapjackExtract(boolean success, ConfigSettings configuration, GobiiExtractorInstruction inst, GobiiDataSetExtract extract, String extractDir, String markerFile, String extendedMarkerFile, String sampleFile, String chrLengthFile, String errorFile, Integer dataSetId, String tempFolder, String genoFile) {
-		String genoOutFile=extractDir+"DS"+dataSetId+".genotype";
-		String mapOutFile=extractDir+"DS"+dataSetId+".map";
-		lastErrorFile=errorFile;
-		//Always regenerate requests - may have different parameters
-		FlapjackTransformer.generateMapFile(extendedMarkerFile, sampleFile, chrLengthFile, dataSetId, tempFolder, mapOutFile, errorFile);
-		HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&& ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
-		FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
-		return genoOutFile;
-	}
-
-	private static String hapmapExtract(String extractorScriptPath, String extractDir, String extendedMarkerFile, String sampleFile, String projectFile, String chrLengthFile, String errorFile, Integer dataSetId, String genoFile) {
-		String hapmapOutFile = extractDir+"DS"+dataSetId+".hmp.txt";
-		try{
-            System.out.println("Executing HapMap creation");
-            String hapmapTransform="python "+extractorScriptPath+"HapmapExtractor.py"+
-                    " -k "+extendedMarkerFile+
-                    " -s "+sampleFile+
-                    " -p "+projectFile+
-                    " -m "+genoFile+
-                    " -o "+hapmapOutFile;
-            //HapmapTransformer.generateFile(markerFile,sampleFile,projectFile,tempFolder,hapmapOutFile,errorFile);
-            HelperFunctions.tryExec(hapmapTransform, null, errorFile);
-            rm(genoFile);
-            rmIfExist(chrLengthFile);
-        }catch(Exception e){
-            ErrorLogger.logError("Extractor","Exception in HapMap creation",e);
-        }
-		return hapmapOutFile;
-	}
 
 	public static List<GobiiExtractorInstruction> parseExtractorInstructionFile(String filename){
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -641,6 +558,96 @@ public class GobiiExtractor {
 			ErrorLogger.logError("Extractor","Could not create temp file "+tempFileLocation,e);
 		}
 		return tempFileLocation;
+	}
+
+	private static boolean addSlashesToBiAllelicData(String genoFile, String extractDir, GobiiDataSetExtract extract) throws Exception {
+		Path SSRFilePath = Paths.get(genoFile);
+		File SSRFile = new File(SSRFilePath.toString());
+		if (SSRFile.exists()) {
+			Path AddedSSRFilePath = Paths.get(extractDir, (new StringBuilder ("Added")).append(SSRFilePath.getFileName()).toString());
+			// Deleting any temporal file existent
+			rmIfExist(AddedSSRFilePath.toString());
+			File AddedSSRFile = new File(AddedSSRFilePath.toString());
+			if (AddedSSRFile.createNewFile()) {
+				Scanner scanner = new Scanner(new FileReader(SSRFile));
+				FileWriter fileWriter = new FileWriter(AddedSSRFile);
+				// Copying the header
+				if (scanner.hasNextLine()) {
+					fileWriter.write((new StringBuilder (scanner.nextLine())).append(System.lineSeparator()).toString());
+				}
+				else {
+					ErrorLogger.logError("Extractor", "Genotype file emtpy");
+					return false;
+				}
+				if (!(scanner.hasNextLine())) {
+					ErrorLogger.logError("Extractor", "No genotype data");
+					return false;
+				}
+				Pattern pattern = Pattern.compile("^[0-9]{1,8}$");
+				while (scanner.hasNextLine()) {
+					String[] lineParts = scanner.nextLine().split("\\t");
+					// The first column does not need to be converted
+					StringBuilder addedLineStringBuilder = new StringBuilder(lineParts[0]);
+					// Converting each column from the next ones
+					for (int index = 1; index < lineParts.length; index++) {
+						addedLineStringBuilder.append("\t");
+						if (!(pattern.matcher(lineParts[index]).find())) {
+							ErrorLogger.logError("Extractor","Incorrect SSR allele size format (1): " + lineParts[index]);
+							addedLineStringBuilder.append(lineParts[index]);
+						}
+						else {
+							if ((5 <= lineParts[index].length()) && (lineParts[index].length() <= 8)) {
+								int leftNumber = Integer.parseInt(lineParts[index].substring(0, lineParts[index].length() - 4));
+								int rightNumber = Integer.parseInt(lineParts[index].substring(lineParts[index].length() - 4));
+								if ((leftNumber == 0) && (rightNumber == 0)) {
+									addedLineStringBuilder.append("N/N");
+								}
+								else {
+									addedLineStringBuilder.append(leftNumber);
+									addedLineStringBuilder.append("/");
+									addedLineStringBuilder.append(rightNumber);
+								}
+							}
+							else {
+								if ((1 <= lineParts[index].length()) && (lineParts[index].length() <= 4)) {
+									int number = Integer.parseInt(lineParts[index]);
+									if (number == 0) {
+										addedLineStringBuilder.append("N/N");
+									}
+									else {
+										addedLineStringBuilder.append("0/");
+										addedLineStringBuilder.append(number);
+									}
+								}
+								else {
+										ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): " + lineParts[index]);
+										addedLineStringBuilder.append(lineParts[index]);
+								}
+							}
+						}
+					}
+					addedLineStringBuilder.append(System.lineSeparator());
+					fileWriter.write(addedLineStringBuilder.toString());
+				}
+				scanner.close();
+				fileWriter.close();
+				// Deleting any original data backup file existent
+				rmIfExist(Paths.get(SSRFilePath.toString() + ".bak").toString());
+				// Backing up the original data file
+				mv(SSRFilePath.toString(), SSRFilePath.toString() + ".bak");
+				// Renaming the converted data file to the original data file name
+				mv(AddedSSRFilePath.toString(), SSRFilePath.toString());
+			}
+			else {
+				ErrorLogger.logError("Extractor","Unable to create the added SSR file: "+AddedSSRFilePath.toString());
+				return false;
+			}
+		} else {
+			ErrorLogger.logError("Extractor", "No genotype file: " + SSRFilePath.toString());
+			return false;
+		}
+
+		return true;
 	}
 
 	private static Long getQCStart(String currentQCContextRoot, String userToken, int datasetId, String directory) {

@@ -37,25 +37,11 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                     this._http = _http;
                     this.defaultUser = 'USER_READER';
                     this.defaultPassword = 'reader';
-                    this.token = '';
+                    this.token = null;
+                    this.authUrl = "gobii/v1/auth";
                 }
                 AuthenticationService.prototype.getToken = function () {
-                    var scope$ = this;
-                    return Observable_1.Observable.create(function (observer) {
-                        if (!scope$.token) {
-                            scope$.authenticateDefault()
-                                .subscribe(function (dtoHeaderAuth) {
-                                scope$.token = dtoHeaderAuth.getToken();
-                                scope$._gobiiCropType = dtoHeaderAuth.getGobiiCropType();
-                                observer.next(scope$.token);
-                                observer.complete();
-                            }, function (error) { return observer.error(error); });
-                        }
-                        else {
-                            observer.next(scope$.token);
-                            observer.complete();
-                        } // if we don't already have a token
-                    }); // Observable
+                    return this.token;
                 }; // getToken()
                 AuthenticationService.prototype.setToken = function (token) {
                     this.token = token;
@@ -63,8 +49,8 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                 AuthenticationService.prototype.getGobiiCropType = function () {
                     return this._gobiiCropType;
                 };
-                AuthenticationService.prototype.authenticateDefault = function () {
-                    return this.authenticate(null, null);
+                AuthenticationService.prototype.setGobiiCropType = function (gobiiCropType) {
+                    this._gobiiCropType = gobiiCropType;
                 };
                 AuthenticationService.prototype.authenticate = function (userName, password) {
                     var _this = this;
@@ -76,19 +62,23 @@ System.register(["@angular/core", "@angular/http", "rxjs/Observable", "rxjs/add/
                     return Observable_1.Observable.create(function (observer) {
                         _this
                             ._http
-                            .post("load/auth", requestBody, { headers: headers })
+                            .post(scope$.authUrl, requestBody, { headers: headers })
                             .map(function (response) { return response.json(); })
                             .subscribe(function (json) {
                             var dtoHeaderAuth = dto_header_auth_1.DtoHeaderAuth
                                 .fromJSON(json);
                             if (dtoHeaderAuth.getToken()) {
                                 scope$.setToken(dtoHeaderAuth.getToken());
+                                scope$.setGobiiCropType(dtoHeaderAuth.getGobiiCropType());
                                 observer.next(dtoHeaderAuth);
                                 observer.complete();
                             }
                             else {
                                 observer.error("No token was provided by server");
                             }
+                        }, function (json) {
+                            var message = json.status + ": " + json.statusText;
+                            observer.error(message);
                         }); // subscribe
                     } // observer callback
                     ); // Observer.create() 

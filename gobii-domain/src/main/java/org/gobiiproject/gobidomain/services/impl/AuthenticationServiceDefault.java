@@ -68,7 +68,6 @@ public class AuthenticationServiceDefault implements AuthenticationService {
 
 	@Override
 	public boolean checkToken(String token) {
-		System.out.println(" *** AuthenticationServiceImpl.checkToken");
 
 		UserDetails userDetails = tokenManager.getUserDetails(token);
 		if (userDetails == null) {
