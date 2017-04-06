@@ -78,7 +78,7 @@ public class CSVFileReader implements CSVFileReaderInterface {
 
 		List<Thread> threads=new LinkedList<>();
 		if(instructions==null){
-			ErrorLogger.logError("CSVFileReader","No instructions parsed in instruction file at "+filePath);
+			ErrorLogger.logError("CSVFileReader","No instructions passed in");
 		}
 		//Create threads
 		for(GobiiLoaderInstruction loaderInstruction:instructions){
