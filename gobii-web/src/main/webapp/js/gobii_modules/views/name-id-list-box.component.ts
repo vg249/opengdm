@@ -231,11 +231,11 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
             return fi.getItemId() === this.selectedFileItemId
         });
 
-        gobiiFileItem.setProcessType(ProcessType.UPDATE);
-
-        this.currentSelection = gobiiFileItem;
-
-        this.updateTreeService(gobiiFileItem);
+        if( gobiiFileItem.getItemId() != "0") {
+            gobiiFileItem.setProcessType(ProcessType.UPDATE);
+            this.currentSelection = gobiiFileItem;
+            this.updateTreeService(gobiiFileItem);
+        }
     }
 
 

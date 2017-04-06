@@ -186,9 +186,11 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     var gobiiFileItem = this.fileItemList.find(function (fi) {
                         return fi.getItemId() === _this.selectedFileItemId;
                     });
-                    gobiiFileItem.setProcessType(type_process_1.ProcessType.UPDATE);
-                    this.currentSelection = gobiiFileItem;
-                    this.updateTreeService(gobiiFileItem);
+                    if (gobiiFileItem.getItemId() != "0") {
+                        gobiiFileItem.setProcessType(type_process_1.ProcessType.UPDATE);
+                        this.currentSelection = gobiiFileItem;
+                        this.updateTreeService(gobiiFileItem);
+                    }
                 };
                 NameIdListBoxComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['gobiiExtractFilterType']
