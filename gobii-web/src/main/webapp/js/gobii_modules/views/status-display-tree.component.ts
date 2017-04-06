@@ -378,6 +378,24 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         return returnVal;
     }
 
+    removeItemFromSelectedNodes(gobiiTreeNode: GobiiTreeNode) {
+
+        let selectedNode: GobiiTreeNode = this.selectedGobiiNodes.find(stn => {
+            return stn.fileItemId === gobiiTreeNode.fileItemId
+        });
+
+        if (selectedNode) {
+
+            let idxOfSelectedNodeParentNode: number = this.selectedGobiiNodes.indexOf(selectedNode);
+            if (idxOfSelectedNodeParentNode >= 0) {
+                let deleted: GobiiTreeNode[] = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
+                let foo: string = "foo";
+            }
+        }
+
+
+    }
+
     removeNodeFromTree(fileModelTreeEvent: FileModelTreeEvent) {
         if (fileModelTreeEvent.fileModelNode != null && fileModelTreeEvent.fileItem != null) {
 
@@ -389,10 +407,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                     // will need a funciton to do this correctly
                     this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeNodeToBeRemoved, fileModelTreeEvent.fileItem);
-                    let idxOfSelectedNodeParentNode: number = this.selectedGobiiNodes.indexOf(gobiiTreeNodeToBeRemoved);
-                    let deleted: GobiiTreeNode[] = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
-
-
+                    this.removeItemFromSelectedNodes(gobiiTreeNodeToBeRemoved);
                 } else {
                     // error node not found?
                 } // if-else we found an existing node for the LEAF node's file item
@@ -414,9 +429,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                         parentTreeNode.children.splice(idxOfNodeToDelete, 1);
 
                         if (parentTreeNode.children.length === 0) {
-                            let idxOfSelectedNodeParentNode: number = this.selectedGobiiNodes.indexOf(parentTreeNode);
-                            let deleted: GobiiTreeNode[] = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
-                            let foo: string = "foo";
+                            this.removeItemFromSelectedNodes(parentTreeNode);
                         }
 
                     }

@@ -85,6 +85,7 @@ import {FileItem} from "ng2-file-upload";
                                 [nameIdRequestParams]="nameIdRequestParamsContactsPi"
                                 [notifyOnInit]="!firstItemIsLabelPrincipleInvestigators"
                                 [firstItemIsLabel]="firstItemIsLabelPrincipleInvestigators"
+                                [doTreeNotifications] = "firstItemIsLabelPrincipleInvestigators"
                                 (onNameIdSelected)="handleContactForPiSelected($event)"
                                 (onError) = "handleHeaderStatusMessage($event)">
                             </name-id-list-box>

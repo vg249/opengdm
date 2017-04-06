@@ -331,6 +331,18 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     }
                     return returnVal;
                 };
+                StatusDisplayTreeComponent.prototype.removeItemFromSelectedNodes = function (gobiiTreeNode) {
+                    var selectedNode = this.selectedGobiiNodes.find(function (stn) {
+                        return stn.fileItemId === gobiiTreeNode.fileItemId;
+                    });
+                    if (selectedNode) {
+                        var idxOfSelectedNodeParentNode = this.selectedGobiiNodes.indexOf(selectedNode);
+                        if (idxOfSelectedNodeParentNode >= 0) {
+                            var deleted = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
+                            var foo = "foo";
+                        }
+                    }
+                };
                 StatusDisplayTreeComponent.prototype.removeNodeFromTree = function (fileModelTreeEvent) {
                     if (fileModelTreeEvent.fileModelNode != null && fileModelTreeEvent.fileItem != null) {
                         if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.LEAF) {
@@ -338,8 +350,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                             if (gobiiTreeNodeToBeRemoved !== null) {
                                 // will need a funciton to do this correctly
                                 this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeNodeToBeRemoved, fileModelTreeEvent.fileItem);
-                                var idxOfSelectedNodeParentNode = this.selectedGobiiNodes.indexOf(gobiiTreeNodeToBeRemoved);
-                                var deleted = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
+                                this.removeItemFromSelectedNodes(gobiiTreeNodeToBeRemoved);
                             }
                             else {
                             } // if-else we found an existing node for the LEAF node's file item
@@ -355,9 +366,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                     var idxOfNodeToDelete = parentTreeNode.children.indexOf(nodeToDelete);
                                     parentTreeNode.children.splice(idxOfNodeToDelete, 1);
                                     if (parentTreeNode.children.length === 0) {
-                                        var idxOfSelectedNodeParentNode = this.selectedGobiiNodes.indexOf(parentTreeNode);
-                                        var deleted = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
-                                        var foo = "foo";
+                                        this.removeItemFromSelectedNodes(parentTreeNode);
                                     }
                                 }
                             }

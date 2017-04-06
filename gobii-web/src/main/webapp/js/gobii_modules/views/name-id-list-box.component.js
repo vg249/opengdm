@@ -58,6 +58,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this.fileItemList = [];
                     this.notifyOnInit = false;
                     this.firstItemIsLabel = false;
+                    this.doTreeNotifications = true;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.selectedFileItemId = null;
                     this.onNameIdSelected = new core_1.EventEmitter();
@@ -71,7 +72,9 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this._fileModelTreeService
                         .fileItemNotifications()
                         .subscribe(function (eventedFileItem) {
-                        _this.updateSelectedItem(eventedFileItem);
+                        if (_this.doTreeNotifications) {
+                            _this.updateSelectedItem(eventedFileItem);
+                        }
                     }, function (responseHeader) {
                         _this.handleHeaderStatus(responseHeader);
                     });
@@ -87,10 +90,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                         return fi.getFileItemUniqueId()
                             === eventedFileItem.getFileItemUniqueId();
                     })) {
-                        var bar = "foo";
-                        if (eventedFileItem.getProcessType() === type_process_1.ProcessType.DELETE) {
-                            // let idx: number = this.fileItemList.indexOf(fileItem);
-                            // this.fileItemList = this.fileItemList.splice(idx, 1);
+                        if (this.firstItemIsLabel && (eventedFileItem.getProcessType() === type_process_1.ProcessType.DELETE)) {
                             this.selectedFileItemId = "0";
                         }
                         else {
@@ -155,25 +155,12 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     var _this = this;
                     this.onNameIdSelected
                         .emit(new name_id_1.NameId(eventedfileItem.getItemId(), eventedfileItem.getItemName(), eventedfileItem.getEntityType()));
-                    // let processType: ProcessType = eventedfileItem.getItemId() !== "0" ? ProcessType.UPDATE : ProcessType.DELETE;
-                    // eventedfileItem.setProcessType(processType);
-                    // if (processType === ProcessType.UPDATE) {
-                    //     this.fileItemList.push(fileItem);
-                    // }
-                    //
-                    // let existingFileItem = this
-                    //     .fileItemList
-                    //     .find(fi => {
-                    //         return fi.getItemId() === nameId.id
-                    //     });
-                    //
-                    // if (existingFileItem !== undefined) {
-                    //
-                    // }
-                    this._fileModelTreeService.put(eventedfileItem)
-                        .subscribe(null, function (headerResponse) {
-                        _this.handleHeaderStatus(headerResponse);
-                    });
+                    if (this.doTreeNotifications) {
+                        this._fileModelTreeService.put(eventedfileItem)
+                            .subscribe(null, function (headerResponse) {
+                            _this.handleHeaderStatus(headerResponse);
+                        });
+                    }
                 };
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
                     var _this = this;
@@ -188,9 +175,9 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     });
                     if (gobiiFileItem.getItemId() != "0") {
                         gobiiFileItem.setProcessType(type_process_1.ProcessType.UPDATE);
-                        this.currentSelection = gobiiFileItem;
                         this.updateTreeService(gobiiFileItem);
                     }
+                    this.currentSelection = gobiiFileItem;
                 };
                 NameIdListBoxComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['gobiiExtractFilterType']
@@ -214,10 +201,6 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                         && (changes['nameIdRequestParams'].currentValue != null)
                         && (changes['nameIdRequestParams'].currentValue != undefined)) {
                     }
-                    // we may have gotten a filterValue now so we init if we do
-                    // if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-                    //     this.initializeFileItems();
-                    // }
                 }; // ngonChanges
                 // angular change detection does not do deep comparison of objects that are
                 // template properties. So we need to do some specialized change detection
@@ -242,7 +225,8 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     inputs: ['gobiiExtractFilterType',
                         'notifyOnInit',
                         'nameIdRequestParams',
-                        'firstItemIsLabel'],
+                        'firstItemIsLabel',
+                        'doTreeNotifications'],
                     outputs: ['onNameIdSelected', 'onError'],
                     template: "<select [(ngModel)]=\"selectedFileItemId\" (change)=\"handleFileItemSelected($event)\" >\n\t\t\t        <option *ngFor=\"let fileItem of fileItemList\" \n\t\t\t\t        [value]=\"fileItem.getItemId()\">{{fileItem.getItemName()}}</option>\n\t\t        </select>\n" // end template
                 }),

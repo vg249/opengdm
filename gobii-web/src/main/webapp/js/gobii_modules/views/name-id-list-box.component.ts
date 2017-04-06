@@ -23,7 +23,8 @@ import {Labels} from "./entity-labels";
     inputs: ['gobiiExtractFilterType',
         'notifyOnInit',
         'nameIdRequestParams',
-        'firstItemIsLabel'],
+        'firstItemIsLabel',
+        'doTreeNotifications'],
     outputs: ['onNameIdSelected', 'onError'],
     template: `<select [(ngModel)]="selectedFileItemId" (change)="handleFileItemSelected($event)" >
 			        <option *ngFor="let fileItem of fileItemList" 
@@ -56,7 +57,9 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
         this._fileModelTreeService
             .fileItemNotifications()
             .subscribe(eventedFileItem => {
-                    this.updateSelectedItem(eventedFileItem);
+                    if (this.doTreeNotifications) {
+                        this.updateSelectedItem(eventedFileItem);
+                    }
                 },
                 responseHeader => {
                     this.handleHeaderStatus(responseHeader);
@@ -77,10 +80,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                         === eventedFileItem.getFileItemUniqueId()
                 })) {
 
-            let bar: string = "foo";
-            if (eventedFileItem.getProcessType() === ProcessType.DELETE) {
-                // let idx: number = this.fileItemList.indexOf(fileItem);
-                // this.fileItemList = this.fileItemList.splice(idx, 1);
+            if (this.firstItemIsLabel && (eventedFileItem.getProcessType() === ProcessType.DELETE)) {
                 this.selectedFileItemId = "0";
             } else {
                 this.selectedFileItemId = eventedFileItem.getItemId();
@@ -163,6 +163,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     private notifyOnInit: boolean = false;
     private firstItemIsLabel: boolean = false;
+    private doTreeNotifications: boolean = true;
     // DtoRequestItemNameIds expects the value to be null if it's not set (not "UNKNOWN")
 
     private nameIdRequestParams: NameIdRequestParams;
@@ -187,34 +188,20 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                 eventedfileItem.getItemName(),
                 eventedfileItem.getEntityType()));
 
-        // let processType: ProcessType = eventedfileItem.getItemId() !== "0" ? ProcessType.UPDATE : ProcessType.DELETE;
-        // eventedfileItem.setProcessType(processType);
-
-        // if (processType === ProcessType.UPDATE) {
-        //     this.fileItemList.push(fileItem);
-        // }
-        //
-        // let existingFileItem = this
-        //     .fileItemList
-        //     .find(fi => {
-        //         return fi.getItemId() === nameId.id
-        //     });
-        //
-        // if (existingFileItem !== undefined) {
-        //
-        // }
-
-        this._fileModelTreeService.put(eventedfileItem)
-            .subscribe(
-                null,
-                headerResponse => {
-                    this.handleHeaderStatus(headerResponse)
-                });
+        if (this.doTreeNotifications) {
+            this._fileModelTreeService.put(eventedfileItem)
+                .subscribe(
+                    null,
+                    headerResponse => {
+                        this.handleHeaderStatus(headerResponse)
+                    });
+        }
 
     }
 
 
     private currentSelection: GobiiFileItem = null;
+
     private handleFileItemSelected(arg) {
 
         let foo: string = "foo";
@@ -231,11 +218,13 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
             return fi.getItemId() === this.selectedFileItemId
         });
 
-        if( gobiiFileItem.getItemId() != "0") {
+        if (gobiiFileItem.getItemId() != "0") {
             gobiiFileItem.setProcessType(ProcessType.UPDATE);
-            this.currentSelection = gobiiFileItem;
             this.updateTreeService(gobiiFileItem);
         }
+
+        this.currentSelection = gobiiFileItem;
+
     }
 
 
@@ -274,13 +263,6 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
             && ( changes['nameIdRequestParams'].currentValue != undefined )) {
 
         }
-
-
-        // we may have gotten a filterValue now so we init if we do
-        // if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-        //     this.initializeFileItems();
-        // }
-
 
     } // ngonChanges
 
