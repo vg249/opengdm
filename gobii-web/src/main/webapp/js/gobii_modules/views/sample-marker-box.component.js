@@ -40,10 +40,9 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                 function SampleMarkerBoxComponent(_fileModelTreeService) {
                     this._fileModelTreeService = _fileModelTreeService;
                     this.displayChoicePrompt = false;
-                    this.displayListBox = false;
+                    this.selectedListType = "itemFile";
                     this.displayUploader = true;
-                    this.uploadSelected = true;
-                    this.listSelected = false;
+                    this.displayListBox = false;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onSampleMarkerError = new core_1.EventEmitter();
                     this.onMarkerSamplesCompleted = new core_1.EventEmitter();
@@ -100,7 +99,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                                 _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_FILE];
                             }
                             else if (_this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE) {
-                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM];
+                                _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM];
                             }
                             else if (_this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE) {
                                 _this.extractTypeLabelProposed = entity_labels_1.Labels.instance().treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM];
@@ -127,17 +126,15 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                         // based on what _was_ the current item, we now make the current selection the other one
                         if (this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM
                             || this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
-                            this.listSelected = false;
-                            this.uploadSelected = true;
                             this.displayListBox = false;
                             this.displayUploader = true;
+                            this.selectedListType = "itemFile";
                         }
                         else if (this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE
                             || this.currentFileItems[0].getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE) {
-                            this.listSelected = true;
-                            this.uploadSelected = false;
                             this.displayListBox = true;
                             this.displayUploader = false;
+                            this.selectedListType = "itemArray";
                         }
                         this.currentFileItems.forEach(function (currentFileItem) {
                             currentFileItem.setProcessType(type_process_1.ProcessType.DELETE);
@@ -149,20 +146,30 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                             });
                         });
                     }
+                    else {
+                        // we leave things as they are; hwoever, because the user clicked a radio button,
+                        // we have to reset it to match the currently diusplayed list selector
+                        if (this.selectedListType === "itemFile") {
+                            this.displayListBox = true;
+                            this.displayUploader = false;
+                            this.selectedListType = "itemArray";
+                        }
+                        else if (this.selectedListType === "itemArray") {
+                            this.displayListBox = false;
+                            this.displayUploader = true;
+                            this.selectedListType = "itemFile";
+                        }
+                    } // if-else user answered "yes"
                 };
                 SampleMarkerBoxComponent.prototype.handleTextBoxChanged = function (event) {
                     // if there is no existing selected list or file, then this is just a simple setting
                     if (this.handleSampleMarkerChoicesExist() === false) {
-                        this.listSelected = true;
-                        this.uploadSelected = false;
                         this.displayListBox = true;
                         this.displayUploader = false;
                     }
                 };
                 SampleMarkerBoxComponent.prototype.handleOnClickBrowse = function ($event) {
                     if (this.handleSampleMarkerChoicesExist() === false) {
-                        this.listSelected = false;
-                        this.uploadSelected = true;
                         this.displayListBox = false;
                         this.displayUploader = true;
                     }
@@ -181,7 +188,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                     selector: 'sample-marker-box',
                     inputs: ['gobiiExtractFilterType'],
                     outputs: ['onSampleMarkerError'],
-                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                      <form>\n                          <label class=\"the-legend\">File:&nbsp;</label>\n                            <input type=\"radio\" \n                                (change)=\"handleOnClickBrowse($event)\" \n                                name=\"listType\" \n                                value=\"itemFile\" \n                                [checked]=\"uploadSelected\">\n                          <label class=\"the-legend\">List:&nbsp;</label>\n                            <input type=\"radio\" \n                                (change)=\"handleTextBoxChanged($event)\" \n                                name=\"listType\" \n                                value=\"itemArray\"\n                                [checked]=\"listSelected\">\n                        </form>\n\n                    \n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div *ngIf=\"displayUploader\" class=\"col-md-8\">\n                        <uploader\n                        [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                        (onUploaderError)=\"handleStatusHeaderMessage($event)\"\n                        (onClickBrowse)=\"handleOnClickBrowse($event)\"></uploader>\n                    </div> \n                    \n                    <div *ngIf=\"displayListBox\" class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"\n                        (onTextboxClicked)=\"handleTextBoxChanged($event)\"></text-area>\n                    </div> \n                    \n                 </div>\n                 <div>\n                    <p-dialog header=\"{{extractTypeLabelExisting}} Already Selelected\" [(visible)]=\"displayChoicePrompt\" modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                        <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}} instead?</p>\n                            <p-footer>\n                                <div class=\"ui-dialog-buttonpane ui-widget-content ui-helper-clearfix\">\n                                    <button type=\"button\" pButton icon=\"fa-close\" (click)=\"handleUserChoice(false)\" label=\"No\"></button>\n                                    <button type=\"button\" pButton icon=\"fa-check\" (click)=\"handleUserChoice(true)\" label=\"Yes\"></button>\n                                </div>\n                            </p-footer>\n                    </p-dialog>\n                  </div>\n"
+                    template: "<div class=\"container-fluid\">\n            \n                <div class=\"row\">\n\n                          <label class=\"the-legend\">File:&nbsp;</label>\n                            <input type=\"radio\" \n                                (click)=\"handleOnClickBrowse($event)\" \n                                name=\"listType\" \n                                value=\"itemFile\"\n                                [(ngModel)]=\"selectedListType\">\n                          <label class=\"the-legend\">List:&nbsp;</label>\n                            <input type=\"radio\" \n                                (click)=\"handleTextBoxChanged($event)\" \n                                name=\"listType\" \n                                value=\"itemArray\"\n                                [(ngModel)]=\"selectedListType\">\n                 </div>\n                 \n                <div class=\"row\">\n                \n                    <div *ngIf=\"displayUploader\" class=\"col-md-8\">\n                        <uploader\n                        [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                        (onUploaderError)=\"handleStatusHeaderMessage($event)\"></uploader>\n                    </div> \n                    \n                    <div *ngIf=\"displayListBox\" class=\"col-md-8\">\n                        <text-area\n                        (onTextboxDataComplete)=\"handleTextBoxDataSubmitted($event)\"></text-area>\n                    </div> \n                    \n                 </div>\n                 <div>\n                    <p-dialog header=\"{{extractTypeLabelExisting}} Already Selelected\" [(visible)]=\"displayChoicePrompt\" modal=\"modal\" width=\"300\" height=\"300\" responsive=\"true\">\n                        <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}} instead?</p>\n                            <p-footer>\n                                <div class=\"ui-dialog-buttonpane ui-widget-content ui-helper-clearfix\">\n                                    <button type=\"button\" pButton icon=\"fa-close\" (click)=\"handleUserChoice(false)\" label=\"No\"></button>\n                                    <button type=\"button\" pButton icon=\"fa-check\" (click)=\"handleUserChoice(true)\" label=\"Yes\"></button>\n                                </div>\n                            </p-footer>\n                    </p-dialog>\n                  </div>\n"
                 }),
                 __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
             ], SampleMarkerBoxComponent);

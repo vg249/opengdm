@@ -15,22 +15,19 @@ import {Labels} from "./entity-labels";
     template: `<div class="container-fluid">
             
                 <div class="row">
-                      <form>
+
                           <label class="the-legend">File:&nbsp;</label>
                             <input type="radio" 
-                                (change)="handleOnClickBrowse($event)" 
+                                (click)="handleOnClickBrowse($event)" 
                                 name="listType" 
-                                value="itemFile" 
-                                [checked]="uploadSelected">
+                                value="itemFile"
+                                [(ngModel)]="selectedListType">
                           <label class="the-legend">List:&nbsp;</label>
                             <input type="radio" 
-                                (change)="handleTextBoxChanged($event)" 
+                                (click)="handleTextBoxChanged($event)" 
                                 name="listType" 
                                 value="itemArray"
-                                [checked]="listSelected">
-                        </form>
-
-                    
+                                [(ngModel)]="selectedListType">
                  </div>
                  
                 <div class="row">
@@ -38,14 +35,12 @@ import {Labels} from "./entity-labels";
                     <div *ngIf="displayUploader" class="col-md-8">
                         <uploader
                         [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                        (onUploaderError)="handleStatusHeaderMessage($event)"
-                        (onClickBrowse)="handleOnClickBrowse($event)"></uploader>
+                        (onUploaderError)="handleStatusHeaderMessage($event)"></uploader>
                     </div> 
                     
                     <div *ngIf="displayListBox" class="col-md-8">
                         <text-area
-                        (onTextboxDataComplete)="handleTextBoxDataSubmitted($event)"
-                        (onTextboxClicked)="handleTextBoxChanged($event)"></text-area>
+                        (onTextboxDataComplete)="handleTextBoxDataSubmitted($event)"></text-area>
                     </div> 
                     
                  </div>
@@ -71,11 +66,10 @@ export class SampleMarkerBoxComponent implements OnInit {
     }
 
     private displayChoicePrompt: boolean = false;
-    private displayListBox:boolean = false;
-    private displayUploader:boolean = true;
+    private selectedListType: string = "itemFile";
 
-    private uploadSelected: boolean = true;
-    private listSelected: boolean = false;
+    private displayUploader: boolean = true;
+    private displayListBox: boolean = false;
 
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     private onSampleMarkerError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
@@ -154,7 +148,7 @@ export class SampleMarkerBoxComponent implements OnInit {
 
                     } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_FILE) {
 
-                        this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM];
+                        this.extractTypeLabelProposed = Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM];
 
                     } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_FILE) {
 
@@ -189,30 +183,28 @@ export class SampleMarkerBoxComponent implements OnInit {
     handleUserChoice(userChoice: boolean) {
 
         this.displayChoicePrompt = false;
-        
+
         if (this.currentFileItems.length > 0 && userChoice === true) {
 
             // based on what _was_ the current item, we now make the current selection the other one
             if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_LIST_ITEM
                 || this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_LIST_ITEM) {
 
-                this.listSelected = false;
-                this.uploadSelected = true;
-
                 this.displayListBox = false;
                 this.displayUploader = true;
+
+                this.selectedListType = "itemFile";
 
             } else if (this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.MARKER_FILE
                 || this.currentFileItems[0].getExtractorItemType() === ExtractorItemType.SAMPLE_FILE) {
 
-                this.listSelected = true;
-                this.uploadSelected = false;
-
                 this.displayListBox = true;
                 this.displayUploader = false;
 
+                this.selectedListType = "itemArray";
+
             }
-            
+
             this.currentFileItems.forEach(currentFileItem => {
 
                 currentFileItem.setProcessType(ProcessType.DELETE);
@@ -224,7 +216,26 @@ export class SampleMarkerBoxComponent implements OnInit {
                         this.handleStatusHeaderMessage(headerStatusMessage)
                     });
             });
-        }
+        } else {
+            // we leave things as they are; hwoever, because the user clicked a radio button,
+            // we have to reset it to match the currently diusplayed list selector
+            if (this.selectedListType === "itemFile") {
+
+                this.displayListBox = true;
+                this.displayUploader = false;
+
+                this.selectedListType = "itemArray"
+
+            } else if (this.selectedListType === "itemArray") {
+
+                this.displayListBox = false;
+                this.displayUploader = true;
+
+                this.selectedListType = "itemFile"
+
+            }
+
+        } // if-else user answered "yes"
     }
 
     private handleTextBoxChanged(event) {
@@ -232,11 +243,11 @@ export class SampleMarkerBoxComponent implements OnInit {
         // if there is no existing selected list or file, then this is just a simple setting
         if (this.handleSampleMarkerChoicesExist() === false) {
 
-            this.listSelected = true;
-            this.uploadSelected = false;
-
             this.displayListBox = true;
             this.displayUploader = false;
+
+            // this.displayListBox = true;
+            // this.displayUploader = false;
 
         }
     }
@@ -245,11 +256,11 @@ export class SampleMarkerBoxComponent implements OnInit {
 
         if (this.handleSampleMarkerChoicesExist() === false) {
 
-            this.listSelected = false;
-            this.uploadSelected = true;
-
             this.displayListBox = false;
             this.displayUploader = true;
+
+            // this.displayListBox = false;
+            // this.displayUploader = true;
 
         }
     }
