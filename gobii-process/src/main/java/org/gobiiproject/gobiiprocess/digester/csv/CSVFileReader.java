@@ -56,9 +56,8 @@ public class CSVFileReader implements CSVFileReaderInterface {
 	/**
 	 * Parses a given instruction file, and executes the loader on every instruction found within, by passing the objects to {@link CSVFileReader#processCSV(GobiiLoaderInstruction)}.
 	 * This method can be called directly to simulate an instruction file being parsed by the reader.
-	 * @param filePath location in the file system of the instruction file (can be absolute or relative.
 	 */
-	public static void parseInstructionFile(String filePath,String tmpFileLocation, String tmpFileSeparator) throws FileNotFoundException, IOException, ParseException{
+	public static void parseInstructionFile(List<GobiiLoaderInstruction> instructions,String tmpFileLocation, String tmpFileSeparator) throws FileNotFoundException, IOException, ParseException{
 		CSVFileReaderInterface reader;
 		if(LoaderGlobalConfigurations.getVersionOneRead()){
 			reader=new CSVFileReader(tmpFileLocation,tmpFileSeparator);
@@ -67,7 +66,7 @@ public class CSVFileReader implements CSVFileReaderInterface {
 			reader=new CSVFileReaderV2(tmpFileLocation,tmpFileSeparator);
 		}
 		if(LoaderGlobalConfigurations.getSingleThreadFileRead()){
-			for(GobiiLoaderInstruction i:HelperFunctions.parseInstructionFile(filePath)){
+			for(GobiiLoaderInstruction i:instructions){
 				try {
 						reader.processCSV(i);
 				} catch (InterruptedException e) {
@@ -76,14 +75,8 @@ public class CSVFileReader implements CSVFileReaderInterface {
 			}
 			return;
 		}
-		List<GobiiLoaderInstruction> instructions=null;
-		List<Thread> threads=new LinkedList<>();
-		try{
 
-		instructions = HelperFunctions.parseInstructionFile(filePath);
-		} catch(Exception e){
-			ErrorLogger.logError("CSVFileReader",e.getMessage(),e);
-		}
+		List<Thread> threads=new LinkedList<>();
 		if(instructions==null){
 			ErrorLogger.logError("CSVFileReader","No instructions parsed in instruction file at "+filePath);
 		}

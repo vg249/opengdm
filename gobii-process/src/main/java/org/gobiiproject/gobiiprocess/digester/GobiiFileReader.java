@@ -213,9 +213,7 @@ public class GobiiFileReader {
 			ErrorLogger.logInfo("Digester","Done with the QC Subsection #1 of 3!");
 		}
 
-		//Section - Processing
-		ErrorLogger.logTrace("Digester","Beginning List Processing");
-		success=true;
+		//Pre-processing - make sure all files exist, find the cannonical dataset id
 		for(GobiiLoaderInstruction inst:list){
 			if(inst==null){
 				logError("Digester","Missing or malformed instruction in " + instructionFile );
@@ -234,30 +232,34 @@ public class GobiiFileReader {
 				logError("Digester","Instruction " + instructionFile + " Table " + inst.getTable() + " has missing file format" );
 				continue;
 			}
-			
-			switch(inst.getGobiiFile().getGobiiFileType()){
+
+
+		//Section - Processing
+		ErrorLogger.logTrace("Digester","Beginning List Processing");
+		success=true;
+		switch(zero.getGobiiFile().getGobiiFileType()){ //All instructions should have the same file type
 			case VCF:
 				//INTENTIONAL FALLTHROUGH
 			case GENERIC:
-				CSVFileReader reader = new CSVFileReader(dstDir.getAbsolutePath(),"/");
-				reader.processCSV(inst);
+				CSVFileReader.parseInstructionFile(list,dstDir.getAbsolutePath(),zero.getGobiiFile().getDelimiter());
 				break;
-
 			case HAPMAP: //This is currently not used by the loaderUI
-				String tmpFile=new File(dstDir,inst.getTable()+".tmp").getAbsolutePath();//DestinationDirectory plus table name
-				ArrayList<GobiiLoaderInstruction> justTheOne=new ArrayList<>();
-				justTheOne.add(inst);
-				try {
-					new LoaderInstructionsDAOImpl().writeInstructions(tmpFile, justTheOne );
-				} catch (GobiiDaoException e) {
-					logError("GobiiDAO","Instruction Writing Error",e);
+				for(GobiiLoaderInstruction inst:list) {
+					String tmpFile = new File(dstDir, inst.getTable() + ".tmp").getAbsolutePath();//DestinationDirectory plus table name
+					ArrayList<GobiiLoaderInstruction> justTheOne = new ArrayList<>();
+					justTheOne.add(inst);
+					try {
+						new LoaderInstructionsDAOImpl().writeInstructions(tmpFile, justTheOne);
+					} catch (GobiiDaoException e) {
+						logError("GobiiDAO", "Instruction Writing Error", e);
+					}
+					HelperFunctions.tryExec(loaderScriptPath + "etc/parse_hmp.pl" + " " + tmpFile, null, errorPath);
 				}
-				HelperFunctions.tryExec(loaderScriptPath+"etc/parse_hmp.pl"+" "+tmpFile, null, errorPath);
 				break;
 			default:
-				System.err.println("Unable to deal with file type " + inst.getGobiiFile().getGobiiFileType());
+				System.err.println("Unable to deal with file type " + zero.getGobiiFile().getGobiiFileType());
 				break;
-			}
+		}
 
 			//Section - Matrix Post-processing
 			//Dataset is the first non-empty dataset type
