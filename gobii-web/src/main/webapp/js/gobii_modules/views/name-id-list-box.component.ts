@@ -134,11 +134,14 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                             scope$.fileItemList.unshift(labelFileItem);
                             scope$.selectedFileItemId = "0";
 
+
                         } else {
                             scope$.selectedFileItemId = scope$.fileItemList[0].getItemId();
                             //scope$.selectedFileItemId = "0";
 
                         }
+
+                        scope$.currentSelection = scope$.fileItemList[0];
 
                         if (this.notifyOnInit
                             && !this.firstItemIsLabel
@@ -184,8 +187,8 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                 eventedfileItem.getItemName(),
                 eventedfileItem.getEntityType()));
 
-        let processType: ProcessType = eventedfileItem.getItemId() !== "0" ? ProcessType.UPDATE : ProcessType.DELETE;
-        eventedfileItem.setProcessType(processType);
+        // let processType: ProcessType = eventedfileItem.getItemId() !== "0" ? ProcessType.UPDATE : ProcessType.DELETE;
+        // eventedfileItem.setProcessType(processType);
 
         // if (processType === ProcessType.UPDATE) {
         //     this.fileItemList.push(fileItem);
@@ -211,13 +214,26 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
     }
 
 
+    private currentSelection: GobiiFileItem = null;
     private handleFileItemSelected(arg) {
+
+        let foo: string = "foo";
+
+
+        if (this.currentSelection.getItemId() !== "0") {
+            this.currentSelection.setProcessType(ProcessType.DELETE);
+            this.updateTreeService(this.currentSelection);
+        }
+
 
 //        let gobiiFileItem: GobiiFileItem = this.fileItemList[arg.srcElement.selectedIndex]
         let gobiiFileItem: GobiiFileItem = this.fileItemList.find(fi => {
             return fi.getItemId() === this.selectedFileItemId
         });
 
+        gobiiFileItem.setProcessType(ProcessType.UPDATE);
+
+        this.currentSelection = gobiiFileItem;
 
         this.updateTreeService(gobiiFileItem);
     }

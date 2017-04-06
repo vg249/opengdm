@@ -62,6 +62,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this.selectedFileItemId = null;
                     this.onNameIdSelected = new core_1.EventEmitter();
                     this.onError = new core_1.EventEmitter();
+                    this.currentSelection = null;
                     this.differ = differs.find({}).create(null);
                 } // ctor
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
@@ -134,6 +135,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                             else {
                                 scope$.selectedFileItemId = scope$.fileItemList[0].getItemId();
                             }
+                            scope$.currentSelection = scope$.fileItemList[0];
                             if (_this.notifyOnInit
                                 && !_this.firstItemIsLabel
                                 && !_this.notificationSent
@@ -153,8 +155,8 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     var _this = this;
                     this.onNameIdSelected
                         .emit(new name_id_1.NameId(eventedfileItem.getItemId(), eventedfileItem.getItemName(), eventedfileItem.getEntityType()));
-                    var processType = eventedfileItem.getItemId() !== "0" ? type_process_1.ProcessType.UPDATE : type_process_1.ProcessType.DELETE;
-                    eventedfileItem.setProcessType(processType);
+                    // let processType: ProcessType = eventedfileItem.getItemId() !== "0" ? ProcessType.UPDATE : ProcessType.DELETE;
+                    // eventedfileItem.setProcessType(processType);
                     // if (processType === ProcessType.UPDATE) {
                     //     this.fileItemList.push(fileItem);
                     // }
@@ -175,10 +177,17 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                 };
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
                     var _this = this;
+                    var foo = "foo";
+                    if (this.currentSelection.getItemId() !== "0") {
+                        this.currentSelection.setProcessType(type_process_1.ProcessType.DELETE);
+                        this.updateTreeService(this.currentSelection);
+                    }
                     //        let gobiiFileItem: GobiiFileItem = this.fileItemList[arg.srcElement.selectedIndex]
                     var gobiiFileItem = this.fileItemList.find(function (fi) {
                         return fi.getItemId() === _this.selectedFileItemId;
                     });
+                    gobiiFileItem.setProcessType(type_process_1.ProcessType.UPDATE);
+                    this.currentSelection = gobiiFileItem;
                     this.updateTreeService(gobiiFileItem);
                 };
                 NameIdListBoxComponent.prototype.ngOnChanges = function (changes) {

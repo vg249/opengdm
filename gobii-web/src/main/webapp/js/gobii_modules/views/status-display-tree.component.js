@@ -338,6 +338,8 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                             if (gobiiTreeNodeToBeRemoved !== null) {
                                 // will need a funciton to do this correctly
                                 this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeNodeToBeRemoved, fileModelTreeEvent.fileItem);
+                                var idxOfSelectedNodeParentNode = this.selectedGobiiNodes.indexOf(gobiiTreeNodeToBeRemoved);
+                                var deleted = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
                             }
                             else {
                             } // if-else we found an existing node for the LEAF node's file item

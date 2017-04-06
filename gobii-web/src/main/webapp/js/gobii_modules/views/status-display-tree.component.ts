@@ -389,6 +389,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                     // will need a funciton to do this correctly
                     this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeNodeToBeRemoved, fileModelTreeEvent.fileItem);
+                    let idxOfSelectedNodeParentNode: number = this.selectedGobiiNodes.indexOf(gobiiTreeNodeToBeRemoved);
+                    let deleted: GobiiTreeNode[] = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
+
 
                 } else {
                     // error node not found?
