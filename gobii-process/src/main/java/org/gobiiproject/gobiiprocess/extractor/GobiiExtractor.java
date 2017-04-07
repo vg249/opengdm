@@ -409,6 +409,7 @@ public class GobiiExtractor {
 		}
 	}
 
+
 	private static String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder,String posFile) throws FileNotFoundException{
 		BufferedReader br=new BufferedReader(new FileReader(posFile));
         StringBuilder genoFileString=new StringBuilder();
@@ -510,6 +511,7 @@ public class GobiiExtractor {
 		String crop=upper.substring(fromIndex,upper.indexOf('/',fromIndex));
 		return crop;
 	}
+
 
 	private static String getLogName(GobiiExtractorInstruction gli, CropConfig config, Integer dsid) {
 		return getLogName(gli.getDataSetExtracts().get(0),config,dsid);
