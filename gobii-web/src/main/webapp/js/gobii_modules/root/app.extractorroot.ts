@@ -35,6 +35,7 @@ import {Contact} from "../model/contact";
 import {DtoRequestItemContact, ContactSearchType} from "../services/app/dto-request-item-contact";
 import {AuthenticationService} from "../services/core/authentication.service";
 import {FileItem} from "ng2-file-upload";
+import {isNullOrUndefined} from "util";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -99,7 +100,6 @@ import {FileItem} from "ng2-file-upload";
                             <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi"
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [nameIdList]="projectNameIdList"
-                                [nameIdListPIs]="contactNameIdListForPi"
                                 (onProjectSelected)="handleProjectSelected($event)"
                                 (onAddHeaderStatus)="handleHeaderStatusMessage($event)"></project-list-box>
                         </div>
@@ -260,7 +260,6 @@ export class ExtractorRoot implements OnInit {
 
     // *** You cannot use an Enum directly as a template type parameter, so we need
     //     to assign them to properties
-    private nameIdRequestParamsContactsSubmitter: NameIdRequestParams;
     private nameIdRequestParamsContactsPi: NameIdRequestParams;
     private nameIdRequestParamsMapsets: NameIdRequestParams;
     private nameIdRequestParamsDatasetType: NameIdRequestParams;
@@ -288,14 +287,6 @@ export class ExtractorRoot implements OnInit {
                 private _authenticationService: AuthenticationService,
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private _fileModelTreeService: FileModelTreeService) {
-
-
-        this.nameIdRequestParamsContactsSubmitter = NameIdRequestParams
-            .build("Contact-Submitted",
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Contacts)
-            .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY);
-
 
         this.nameIdRequestParamsContactsPi = NameIdRequestParams
             .build("Contact-PI",
@@ -540,49 +531,6 @@ export class ExtractorRoot implements OnInit {
 
     }
 
-// ********************************************************************
-// ********************************************** SUBMISSION-USER SELECTION
-//     private contactNameIdListForSubmitter: NameId[];
-//     private selectedContactIdForSubmitter: string;
-//
-//     private handleContactForSubmissionSelected(arg: NameId) {
-//         this.selectedContactIdForSubmitter = arg.id;
-//
-//         let fileItem: GobiiFileItem = GobiiFileItem
-//             .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
-//             .setEntityType(EntityType.Contacts)
-//             .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
-//             .setItemId(arg.id)
-//             .setItemName(arg.name);
-//
-//         this._fileModelTreeService.put(fileItem)
-//             .subscribe(
-//                 null,
-//                 headerResponse => {
-//                     this.handleResponseHeader(headerResponse)
-//                 });
-//
-//     }
-
-    // private initializeContactsForSumission() {
-    //     let scope$ = this;
-    //     this._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
-    //         EntityType.Contacts)).subscribe(nameIds => {
-    //             if (nameIds && ( nameIds.length > 0 )) {
-    //                 scope$.contactNameIdListForSubmitter = nameIds
-    //                 scope$.selectedContactIdForSubmitter = nameIds[0].id;
-    //                 this.handleContactForSubmissionSelected(nameIds[0]);
-    //             } else {
-    //                 scope$.contactNameIdListForSubmitter = [new NameId("0", "ERROR NO USERS", EntityType.Contacts)];
-    //             }
-    //         },
-    //         dtoHeaderResponse => {
-    //             dtoHeaderResponse.statusMessages.forEach(m => scope$.messages.push("Rettrieving contacts: "
-    //                 + m.message))
-    //         });
-    //
-    // }
-
 
 // ********************************************************************
 // ********************************************** PI USER SELECTION
@@ -695,14 +643,23 @@ export class ExtractorRoot implements OnInit {
     private initializeExperimentNameIds() {
 
         let scope$ = this;
-        if (this.selectedProjectId) {
+        if (this.selectedProjectId != undefined) {
+
             this._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
                 EntityType.Experiments,
                 EntityFilter.BYTYPEID,
                 this.selectedProjectId)).subscribe(nameIds => {
-                    if (nameIds && ( nameIds.length > 0 )) {
-                        scope$.experimentNameIdList = nameIds;
-                        scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
+
+                    if (this.selectedProjectId != undefined) {
+
+                        if (nameIds && ( nameIds.length > 0 )) {
+                            scope$.experimentNameIdList = nameIds;
+                            scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
+                        } else {
+                            scope$.experimentNameIdList = [new NameId("0", "<none>", EntityType.Experiments)];
+                            scope$.selectedExperimentId = undefined;
+                        }
+
                     } else {
                         scope$.experimentNameIdList = [new NameId("0", "<none>", EntityType.Experiments)];
                         scope$.selectedExperimentId = undefined;
@@ -716,6 +673,7 @@ export class ExtractorRoot implements OnInit {
             scope$.experimentNameIdList = [new NameId("0", "<none>", EntityType.Experiments)];
             scope$.selectedExperimentId = undefined;
         }
+
 
     }
 
