@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../model/type-entity", "../model/cv-filter-type", "../model/gobii-file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service", "./entity-labels"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../model/type-entity", "../model/cv-filter-type", "../model/gobii-file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service", "./entity-labels", "../model/type-event-origin"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, type_entity_1, cv_filter_type_1, gobii_file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, entity_labels_1, NameIdListBoxComponent;
+    var core_1, name_id_1, type_entity_1, cv_filter_type_1, gobii_file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, entity_labels_1, type_event_origin_1, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -45,6 +45,9 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
             },
             function (entity_labels_1_1) {
                 entity_labels_1 = entity_labels_1_1;
+            },
+            function (type_event_origin_1_1) {
+                type_event_origin_1 = type_event_origin_1_1;
             }
         ],
         execute: function () {
@@ -90,11 +93,15 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                         return fi.getFileItemUniqueId()
                             === eventedFileItem.getFileItemUniqueId();
                     })) {
-                        if (this.firstItemIsLabel && (eventedFileItem.getProcessType() === type_process_1.ProcessType.DELETE)) {
-                            this.selectedFileItemId = "0";
-                        }
-                        else {
-                            this.selectedFileItemId = eventedFileItem.getItemId();
+                        if ((eventedFileItem.getGobiiEventOrigin() === type_event_origin_1.GobiiUIEventOrigin.CRITERIA_TREE)) {
+                            if (this.firstItemIsLabel &&
+                                (eventedFileItem.getProcessType() === type_process_1.ProcessType.DELETE)) {
+                                this.selectedFileItemId = "0";
+                            }
+                            else {
+                                this.selectedFileItemId = eventedFileItem.getItemId();
+                            }
+                            this.currentSelection = this.fileItemList[this.selectedFileItemId];
                         }
                     }
                 };

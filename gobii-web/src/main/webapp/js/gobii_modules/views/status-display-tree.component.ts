@@ -16,6 +16,7 @@ import {GobiiExtractFormat} from "../model/type-extract-format";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {Labels} from "./entity-labels";
 import {Header} from "../model/payload/header";
+import {GobiiUIEventOrigin} from "../model/type-event-origin";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
@@ -124,6 +125,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         });
 
         let fileItem: GobiiFileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, ProcessType.DELETE);
+        fileItem.setGobiiEventOrigin(GobiiUIEventOrigin.CRITERIA_TREE);
         itemsToRemove.push(fileItem);
 
         // The prevent unchecking behavior is suspended until it is proven why we need it

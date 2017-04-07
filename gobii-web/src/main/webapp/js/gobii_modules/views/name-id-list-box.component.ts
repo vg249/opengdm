@@ -16,6 +16,7 @@ import {NameIdService} from "../services/core/name-id-service";
 import {NameIdRequestParams} from "../model/name-id-request-params";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {Labels} from "./entity-labels";
+import {GobiiUIEventOrigin} from "../model/type-event-origin";
 
 
 @Component({
@@ -80,10 +81,14 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                         === eventedFileItem.getFileItemUniqueId()
                 })) {
 
-            if (this.firstItemIsLabel && (eventedFileItem.getProcessType() === ProcessType.DELETE)) {
-                this.selectedFileItemId = "0";
-            } else {
-                this.selectedFileItemId = eventedFileItem.getItemId();
+            if ((eventedFileItem.getGobiiEventOrigin() === GobiiUIEventOrigin.CRITERIA_TREE)) {
+                if (this.firstItemIsLabel &&
+                    (eventedFileItem.getProcessType() === ProcessType.DELETE)) {
+                    this.selectedFileItemId = "0";
+                } else {
+                    this.selectedFileItemId = eventedFileItem.getItemId();
+                }
+                this.currentSelection = this.fileItemList[this.selectedFileItemId];
             }
         }
     }
