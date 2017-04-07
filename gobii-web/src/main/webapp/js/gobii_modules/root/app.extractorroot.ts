@@ -123,9 +123,11 @@ import {isNullOrUndefined} from "util";
                             <label class="the-label">Experiment:</label><BR>
                                <name-id-list-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                [notifyOnInit]="false"
+                                [notifyOnInit]="true"
+                                [doTreeNotifications]= "false"
                                 [firstItemIsLabel] = "false"
                                 [nameIdRequestParams]="nameIdRequestParamsExperiments"
+                                (onNameIdSelected) = "handleExperimentSelected($event)"
                                 (onError) = "handleHeaderStatusMessage($event)">
                             </name-id-list-box>
                             
@@ -552,9 +554,9 @@ export class ExtractorRoot implements OnInit {
     private selectedExperimentId: string;
     private selectedExperimentDetailId: string;
 
-    private handleExperimentSelected(arg) {
-        this.selectedExperimentId = arg;
-        this.selectedExperimentDetailId = arg;
+    private handleExperimentSelected(arg:NameId) {
+        this.selectedExperimentId = arg.id;
+        this.selectedExperimentDetailId = arg.id;
         this.displayExperimentDetail = true;
 
         //console.log("selected contact itemId:" + arg);

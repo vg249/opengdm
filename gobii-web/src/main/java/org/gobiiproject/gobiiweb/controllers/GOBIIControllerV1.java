@@ -616,7 +616,7 @@ public class GOBIIControllerV1 {
             }
 
 
-            if( contactDTO != null ) {
+            if (contactDTO != null) {
                 payloadWriter.writeSingleItemForDefaultId(returnVal,
                         UriFactory.resourceByUriIdParam(request.getContextPath(),
                                 ServiceRequestId.URL_CONTACTS),
@@ -1897,7 +1897,10 @@ public class GOBIIControllerV1 {
 
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.NONE,
-                            "Unsupported filter for list request: " + filterType);
+                            "Unsupported filter for list request: "
+                                    + filterType
+                                    + " for entity "
+                                    + gobiiEntityNameType);
                 }
 
                 if (!LineUtils.isNullOrEmpty(filterValue)) {
@@ -1911,7 +1914,9 @@ public class GOBIIControllerV1 {
                                     "Value for "
                                             + filterType
                                             + " value is not a number: "
-                                            + filterValue);
+                                            + filterValue
+                                            + " for entity "
+                                            + gobiiEntityNameType);
                         }
 
                     } else if (GobiiFilterType.BYTYPENAME == gobiiFilterType) {
@@ -1924,13 +1929,18 @@ public class GOBIIControllerV1 {
                                 "Unable to do type checking on filter value for filter type "
                                         + filterType
                                         + " with value "
-                                        + filterValue);
+                                        + filterValue
+                                        + " for entity "
+                                        + gobiiEntityNameType);
                     }
 
                 } else {
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.NONE,
-                            "A value was not supplied for filter: " + filterType);
+                            "A value was not supplied for filter: "
+                                    + filterType
+                                    + " for entity "
+                                    + gobiiEntityNameType);
                 }
             }
 
