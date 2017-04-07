@@ -3,6 +3,8 @@ package org.gobiiproject.gobiiweb.automation;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
 
+import java.util.List;
+
 /**
  * Created by Phil on 9/25/2016.
  */
@@ -67,4 +69,54 @@ public class PayloadReader<T> {
         return returnVal;
     }
 
+    public List<T> extractAllItems(PayloadEnvelope<T> payloadEnvelope) throws GobiiWebException {
+
+        List<T> returnVal;
+
+        if (null != payloadEnvelope) {
+
+            if (null != payloadEnvelope.getPayload()) {
+
+                if (null != payloadEnvelope.getPayload().getData()) {
+
+                    if (0 < payloadEnvelope.getPayload().getData().size()) {
+
+                            if( payloadEnvelope.getPayload().getData().get(0).getClass() == this.dtoType) {
+                                returnVal = payloadEnvelope.getPayload().getData();
+                            } else {
+                                throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
+                                        GobiiValidationStatusType.BAD_REQUEST,
+                                        "The enclosed payload data item type (" + payloadEnvelope.getPayload().getData().get(0).getClass() +
+                                        ") in the list index " + 0 +
+                                        " does not match the intended type(" + this.dtoType + ")");
+                            }
+
+                    } else {
+                        throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
+                                GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                                "Request payload data does not contain exactly any item");
+                    }
+
+                } else {
+                    throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
+                            GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                            "Request payload does not contain a data collection");
+
+                }
+
+            } else {
+                throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
+                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                        "Request payload envelope does not contain a payload member");
+            }
+
+
+        } else {
+            throw new GobiiWebException(GobiiStatusLevel.VALIDATION,
+                    GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                    "Request payload envelope is null");
+        }
+
+        return returnVal;
+    }
 }

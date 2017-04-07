@@ -18,7 +18,7 @@ public class QCInstructionsDTO extends DTOBase {
     public QCInstructionsDTO() {
     }
 
-//    GobiiQCComplete gobiiQCComplete = new GobiiQCComplete();
+    GobiiQCComplete gobiiQCComplete = new GobiiQCComplete();
 
     @Override
     public Integer getId() {
@@ -30,13 +30,13 @@ public class QCInstructionsDTO extends DTOBase {
 
     }
 
-//    public GobiiQCComplete getGobiiQCComplete() {
-//        return gobiiQCComplete;
-//    }
+    public GobiiQCComplete getGobiiQCComplete() {
+        return gobiiQCComplete;
+    }
 
-//    public void setGobiiQCComplete(GobiiQCComplete gobiiQCComplete) {
-//        this.gobiiQCComplete = gobiiQCComplete;
-//    }
+    public void setGobiiQCComplete(GobiiQCComplete gobiiQCComplete) {
+        this.gobiiQCComplete = gobiiQCComplete;
+    }
 
     public GobiiJobStatus getGobiiJobStatus() { return gobiiJobStatus; }
 

@@ -93,9 +93,10 @@ public class ConfigSettings {
                         boolean isActive,
                         String serviceDomain,
                         String serviceAppRoot,
+                        String serviceQCRoot,
                         Integer servicePort) throws Exception {
 
-        this.configValues.setCrop(gobiiCropType, isActive, serviceDomain, serviceAppRoot, servicePort);
+        this.configValues.setCrop(gobiiCropType, isActive, serviceDomain, serviceAppRoot, serviceQCRoot, servicePort);
     }
 
     public void removeCrop(String cropId) throws Exception {
@@ -297,17 +298,16 @@ public class ConfigSettings {
         this.configValues.setDecrypt(isDecrypt);
     }
 
-    public void setLdapUserForBackendProcs(String ldapUserForBackendProcs) {
-        this.configValues.setLdapUserForBackendProcs(ldapUserForBackendProcs);
-    }
-
-
     public String getLdapUserForBackendProcs() {
         return this.configValues.getLdapUserForBackendProcs();
     }
 
     public String getLdapPasswordForBackendProcs() {
         return this.configValues.getLdapPasswordForBackendProcs();
+    }
+
+    public void setLdapUserForBackendProcs(String ldapUserForBackendProcs) {
+        this.configValues.setLdapUserForBackendProcs(ldapUserForBackendProcs);
     }
 
     public void setLdapPasswordForBackendProcs(String ldapPassworedForBackendProcs) {
