@@ -15,6 +15,7 @@ import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -186,7 +187,7 @@ public class DtoCrudRequestProtocolTest implements DtoCrudRequestTest{
 
 
 
-    @Test
+    @Ignore
     @Override
     public void getList() throws Exception {
 

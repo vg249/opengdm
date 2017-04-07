@@ -680,7 +680,7 @@ public class GobiiExtractor {
 			do {
 				// Let's give a bit processing time to the KDCompute before (re-)sending a qcStatus request
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(4000);
 				} catch(InterruptedException ex) {
 					Thread.currentThread().interrupt();
 					ErrorLogger.logError("Extractor","qcStatus: " + ex.getMessage());

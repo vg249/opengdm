@@ -571,7 +571,7 @@ public class GobiiConfig {
                 String defaultCrop = commandLine.getOptionValue(CONFIG_GLOBAL_DEFAULT_CROP);
 
                 if (!configSettings.isCropDefined(defaultCrop)) {
-                    configSettings.setCrop(defaultCrop, true, null, null, null);
+                    configSettings.setCrop(defaultCrop, true, null, null, null, null);
                 }
 
                 configSettings.setDefaultGobiiCropType(defaultCrop);
@@ -888,7 +888,7 @@ public class GobiiConfig {
 
 
                     if (!configSettings.isCropDefined(cropId)) {
-                        configSettings.setCrop(cropId, true, null, null, null);
+                        configSettings.setCrop(cropId, true, null, null, null, null);
                     }
 
                     CropConfig cropConfig = configSettings.getCropConfig(cropId);

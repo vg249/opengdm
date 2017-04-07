@@ -39,7 +39,7 @@ export class AuthenticationService {
     private setGobiiCropType(gobiiCropType:string){
         this._gobiiCropType =  gobiiCropType;
     }
-
+    
     public authenticate(userName:string, password:string):Observable<DtoHeaderAuth> {
 
         let loginUser = userName ? userName : this.defaultUser;
