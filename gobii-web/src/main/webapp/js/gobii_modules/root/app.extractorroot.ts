@@ -99,7 +99,6 @@ import {isNullOrUndefined} from "util";
                             <label class="the-label">Project:</label><BR>
                             <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi"
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                [nameIdList]="projectNameIdList"
                                 (onProjectSelected)="handleProjectSelected($event)"
                                 (onAddHeaderStatus)="handleHeaderStatusMessage($event)"></project-list-box>
                         </div>
@@ -344,8 +343,6 @@ export class ExtractorRoot implements OnInit {
 
                     scope$.currentStatus = "GOBII Server " + gobiiVersion;
                     scope$.handleAddMessage("Connected to database: " + scope$.selectedServerConfig.crop);
-                    scope$.initializeContactsForSumission();
-                    scope$.initializeContactsForPi();
 
                 } else {
                     scope$.serverConfigList = [new ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
@@ -358,46 +355,6 @@ export class ExtractorRoot implements OnInit {
         )
         ;
     } // initializeServerConfigs()
-
-
-    private initializeContactsForSumission() {
-
-
-        this.loggedInUser = this._authenticationService.getUserName();
-        let scope$ = this;
-        scope$._dtoRequestServiceContact.get(new DtoRequestItemContact(
-            ContactSearchType.BY_USERNAME,
-            this.loggedInUser)).subscribe(contact => {
-
-                if (contact && contact.contactId && contact.contactId > 0) {
-
-                    //loggedInUser
-                    scope$._fileModelTreeService.put(
-                        GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
-                            .setEntityType(EntityType.Contacts)
-                            .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
-                            .setCvFilterType(CvFilterType.UNKNOWN)
-                            .setExtractorItemType(ExtractorItemType.ENTITY)
-                            .setItemName(contact.email)
-                            .setItemId(contact.contactId.toLocaleString())).subscribe(
-                        null,
-                        headerStatusMessage => {
-                            this.handleHeaderStatusMessage(headerStatusMessage)
-                        }
-                    );
-
-                } else {
-                    scope$.handleAddMessage("There is no contact associated with user " + this.loggedInUser);
-                }
-
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving contacts for submission: "
-                    + m.message))
-            });
-
-        //   _dtoRequestServiceContact
-    }
 
     private handleServerSelected(arg) {
         this.selectedServerConfig = arg;
@@ -527,42 +484,18 @@ export class ExtractorRoot implements OnInit {
 
 
         //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
-        this.initializeContactsForSumission();
+
 
     }
 
 
 // ********************************************************************
 // ********************************************** PI USER SELECTION
-    private contactNameIdListForPi: NameId[];
     private selectedContactIdForPi: string;
 
     private handleContactForPiSelected(arg) {
         this.selectedContactIdForPi = arg.id;
-        this.initializeProjectNameIds();
         //console.log("selected contact itemId:" + arg);
-    }
-
-    private initializeContactsForPi() {
-        let scope$ = this;
-        scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
-            EntityType.Contacts,
-            EntityFilter.NONE)).subscribe(nameIds => {
-
-                if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.contactNameIdListForPi = nameIds;
-                    scope$.selectedContactIdForPi = scope$.contactNameIdListForPi[0].id;
-                } else {
-                    scope$.contactNameIdListForPi = [new NameId("0", "ERROR NO USERS", EntityType.Contacts)];
-                }
-
-                scope$.initializeProjectNameIds();
-
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving contacts for PIs: "
-                    + m.message))
-            });
     }
 
 // ********************************************************************
@@ -591,7 +524,6 @@ export class ExtractorRoot implements OnInit {
 
 // ********************************************************************
 // ********************************************** PROJECT ID
-    private projectNameIdList: NameId[];
     private selectedProjectId: string;
 
     private handleProjectSelected(arg) {
@@ -601,28 +533,6 @@ export class ExtractorRoot implements OnInit {
         this.initializeExperimentNameIds();
     }
 
-    private initializeProjectNameIds() {
-        let scope$ = this;
-        scope$._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
-            EntityType.Projects,
-            EntityFilter.BYTYPEID,
-            this.selectedContactIdForPi)).subscribe(nameIds => {
-
-                if (nameIds && ( nameIds.length > 0 )) {
-                    scope$.projectNameIdList = nameIds;
-                    scope$.selectedProjectId = nameIds[0].id;
-                } else {
-                    scope$.projectNameIdList = [new NameId("0", "<none>", EntityType.Projects)];
-                    scope$.selectedProjectId = undefined;
-                }
-
-                this.initializeExperimentNameIds();
-            },
-            dtoHeaderResponse => {
-                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retriving project names: "
-                    + m.message))
-            });
-    }
 
 // ********************************************************************
 // ********************************************** EXPERIMENT ID

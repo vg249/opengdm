@@ -12,7 +12,7 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
 
 @Component({
     selector: 'project-list-box',
-    inputs: ['primaryInvestigatorId', 'nameIdList', 'gobiiExtractFilterType'],
+    inputs: ['primaryInvestigatorId', 'gobiiExtractFilterType'],
     outputs: ['onProjectSelected', 'onAddHeaderStatus'],
     template: `<name-id-list-box
                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
@@ -45,7 +45,6 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
 
     // useg    privatre
     private project: Project;
-    private nameIdList: NameId[];
     private primaryInvestigatorId: string;
     private primaryInvestigatorName: string;
     private onProjectSelected: EventEmitter<string> = new EventEmitter();
@@ -110,11 +109,5 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
             this.nameIdRequestParamsProject.setEntityFilterValue(this.primaryInvestigatorId);
         }
 
-        if (changes['nameIdList']) {
-            if (changes['nameIdList'].currentValue) {
-                this.nameIdList = changes['nameIdList'].currentValue;
-                this.setProjectDetails(this.nameIdList[0].id);
-            }
-        }
     }
 }

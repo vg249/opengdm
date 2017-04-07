@@ -80,19 +80,13 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                         this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
                         this.nameIdRequestParamsProject.setEntityFilterValue(this.primaryInvestigatorId);
                     }
-                    if (changes['nameIdList']) {
-                        if (changes['nameIdList'].currentValue) {
-                            this.nameIdList = changes['nameIdList'].currentValue;
-                            this.setProjectDetails(this.nameIdList[0].id);
-                        }
-                    }
                 };
                 return ProjectListBoxComponent;
             }());
             ProjectListBoxComponent = __decorate([
                 core_1.Component({
                     selector: 'project-list-box',
-                    inputs: ['primaryInvestigatorId', 'nameIdList', 'gobiiExtractFilterType'],
+                    inputs: ['primaryInvestigatorId', 'gobiiExtractFilterType'],
                     outputs: ['onProjectSelected', 'onAddHeaderStatus'],
                     template: "<name-id-list-box\n                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                    [notifyOnInit]=\"false\"\n                    [nameIdRequestParams] = \"nameIdRequestParamsProject\"\n                    [doTreeNotifications] = \"false\"\n                    (onNameIdSelected) = \"handleProjectSelected($event)\"\n                    (onError) = \"handleHeaderStatus($event)\">\n                </name-id-list-box>\n\t\t        \n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        <b>Name:</b> {{project.projectName}}<BR>\n                        <b>Description:</b> {{project.projectDescription}}<BR>\n                        <b>Principle Investigator:</b> {{primaryInvestigatorName}}\n                      </fieldset> \n                </div>\t\t        \n" // end template
                 }),
