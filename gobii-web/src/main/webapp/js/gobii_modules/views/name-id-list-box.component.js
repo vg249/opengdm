@@ -56,7 +56,6 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this._nameIdService = _nameIdService;
                     this._fileModelTreeService = _fileModelTreeService;
                     this.differs = differs;
-                    this.notificationSent = false;
                     // useg
                     this.fileItemList = [];
                     this.notifyOnInit = false;
@@ -69,6 +68,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this.currentSelection = null;
                     this.differ = differs.find({}).create(null);
                 } // ctor
+                // private notificationSent = false;
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     var _this = this;
                     var scope$ = this;
@@ -144,11 +144,8 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                             }
                             scope$.currentSelection = scope$.fileItemList[0];
                             if (_this.notifyOnInit
-                                && !_this.firstItemIsLabel
-                                && !_this.notificationSent
-                                && scope$.fileItemList[0].getItemName() != "<none>") {
+                                && !_this.firstItemIsLabel) {
                                 _this.updateTreeService(scope$.fileItemList[0]);
-                                _this.notificationSent = true;
                             }
                         }
                     }, function (responseHeader) {
@@ -162,11 +159,13 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     var _this = this;
                     this.onNameIdSelected
                         .emit(new name_id_1.NameId(eventedfileItem.getItemId(), eventedfileItem.getItemName(), eventedfileItem.getEntityType()));
-                    if (this.doTreeNotifications) {
-                        this._fileModelTreeService.put(eventedfileItem)
-                            .subscribe(null, function (headerResponse) {
-                            _this.handleHeaderStatus(headerResponse);
-                        });
+                    if (eventedfileItem.getItemId() != "0") {
+                        if (this.doTreeNotifications) {
+                            this._fileModelTreeService.put(eventedfileItem)
+                                .subscribe(null, function (headerResponse) {
+                                _this.handleHeaderStatus(headerResponse);
+                            });
+                        }
                     }
                 };
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
@@ -191,7 +190,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                         && (changes['gobiiExtractFilterType'].currentValue != null)
                         && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
-                            this.notificationSent = false;
+                            //this.notificationSent = false;
                             this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
                             var scope$_1 = this;
                             this._fileModelTreeService

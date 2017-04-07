@@ -50,7 +50,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     } // ctor
 
-    private notificationSent = false;
+    // private notificationSent = false;
 
     ngOnInit(): any {
 
@@ -150,10 +150,11 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
                         if (this.notifyOnInit
                             && !this.firstItemIsLabel
-                            && !this.notificationSent
-                            && scope$.fileItemList [0].getItemName() != "<none>") {
+//                            && !this.notificationSent
+//                            && scope$.fileItemList [0].getItemName() != "<none>"
+                        ) {
                             this.updateTreeService(scope$.fileItemList[0]);
-                            this.notificationSent = true;
+//                            this.notificationSent = true;
                         }
                     }
                 },
@@ -193,13 +194,15 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                 eventedfileItem.getItemName(),
                 eventedfileItem.getEntityType()));
 
-        if (this.doTreeNotifications) {
-            this._fileModelTreeService.put(eventedfileItem)
-                .subscribe(
-                    null,
-                    headerResponse => {
-                        this.handleHeaderStatus(headerResponse)
-                    });
+        if( eventedfileItem.getItemId() != "0") {
+            if (this.doTreeNotifications) {
+                this._fileModelTreeService.put(eventedfileItem)
+                    .subscribe(
+                        null,
+                        headerResponse => {
+                            this.handleHeaderStatus(headerResponse)
+                        });
+            }
         }
 
     }
@@ -241,7 +244,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
-                this.notificationSent = false;
+                //this.notificationSent = false;
 
                 this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
 

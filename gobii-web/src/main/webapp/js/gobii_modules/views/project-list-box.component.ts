@@ -16,9 +16,9 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
     outputs: ['onProjectSelected', 'onAddHeaderStatus'],
     template: `<name-id-list-box
                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                    [notifyOnInit]="false"
-                    [nameIdRequestParams] = "nameIdRequestParamsProject"
+                    [notifyOnInit]="true"
                     [doTreeNotifications] = "false"
+                    [nameIdRequestParams] = "nameIdRequestParamsProject"
                     (onNameIdSelected) = "handleProjectSelected($event)"
                     (onError) = "handleHeaderStatus($event)">
                 </name-id-list-box>

@@ -121,10 +121,14 @@ import {isNullOrUndefined} from "util";
                             <BR>
                             <BR>
                             <label class="the-label">Experiment:</label><BR>
-                            <experiment-list-box [projectId] = "selectedProjectId"
-                                [nameIdList] = "experimentNameIdList"
-                                (onExperimentSelected)="handleExperimentSelected($event)"
-                                (onAddMessage)="handleAddMessage($event)"></experiment-list-box>
+                               <name-id-list-box
+                                [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                [notifyOnInit]="false"
+                                [firstItemIsLabel] = "false"
+                                [nameIdRequestParams]="nameIdRequestParamsExperiments"
+                                (onError) = "handleHeaderStatusMessage($event)">
+                            </name-id-list-box>
+                            
                         </div>
 
                         <div *ngIf="displaySelectorPlatform">
@@ -260,6 +264,7 @@ export class ExtractorRoot implements OnInit {
     // *** You cannot use an Enum directly as a template type parameter, so we need
     //     to assign them to properties
     private nameIdRequestParamsContactsPi: NameIdRequestParams;
+    private nameIdRequestParamsExperiments: NameIdRequestParams;
     private nameIdRequestParamsMapsets: NameIdRequestParams;
     private nameIdRequestParamsDatasetType: NameIdRequestParams;
     private nameIdRequestParamsPlatforms: NameIdRequestParams;
@@ -293,6 +298,11 @@ export class ExtractorRoot implements OnInit {
                 EntityType.Contacts)
             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
 
+        this.nameIdRequestParamsExperiments = NameIdRequestParams
+            .build("Experiments",
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.Experiments)
+            .setEntityFilter(EntityFilter.BYTYPEID);
 
         this.nameIdRequestParamsDatasetType = NameIdRequestParams
             .build("Cv-DataType",
@@ -530,7 +540,7 @@ export class ExtractorRoot implements OnInit {
         this.selectedProjectId = arg;
         this.displayExperimentDetail = false;
         this.displayDataSetDetail = false;
-        this.initializeExperimentNameIds();
+        this.nameIdRequestParamsExperiments.setEntityFilterValue(this.selectedProjectId);
     }
 
 
@@ -550,42 +560,7 @@ export class ExtractorRoot implements OnInit {
         //console.log("selected contact itemId:" + arg);
     }
 
-    private initializeExperimentNameIds() {
 
-        let scope$ = this;
-        if (this.selectedProjectId != undefined) {
-
-            this._dtoRequestServiceNameIds.get(new DtoRequestItemNameIds(
-                EntityType.Experiments,
-                EntityFilter.BYTYPEID,
-                this.selectedProjectId)).subscribe(nameIds => {
-
-                    if (this.selectedProjectId != undefined) {
-
-                        if (nameIds && ( nameIds.length > 0 )) {
-                            scope$.experimentNameIdList = nameIds;
-                            scope$.selectedExperimentId = scope$.experimentNameIdList[0].id;
-                        } else {
-                            scope$.experimentNameIdList = [new NameId("0", "<none>", EntityType.Experiments)];
-                            scope$.selectedExperimentId = undefined;
-                        }
-
-                    } else {
-                        scope$.experimentNameIdList = [new NameId("0", "<none>", EntityType.Experiments)];
-                        scope$.selectedExperimentId = undefined;
-                    }
-                },
-                dtoHeaderResponse => {
-                    dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retreving experiment names: "
-                        + m.message))
-                });
-        } else {
-            scope$.experimentNameIdList = [new NameId("0", "<none>", EntityType.Experiments)];
-            scope$.selectedExperimentId = undefined;
-        }
-
-
-    }
 
 
 // ********************************************************************
