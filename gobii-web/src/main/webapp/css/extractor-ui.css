@@ -1,6 +1,7 @@
 
 /* Styles from original angular demo */
-h2 { 
+
+h2 {
   color: #444;
   font-family: Arial, Helvetica, sans-serif;   
   font-weight: lighter;
@@ -29,8 +30,11 @@ button:disabled {
   color: #aaa; 
   cursor: auto;
 }
+
+
 /* everywhere else */
-* { 
+
+* {
   font-family: Arial, Helvetica, sans-serif; 
 }
 
@@ -38,12 +42,14 @@ button:disabled {
 /* Changes specifically for extractor UI*/
 
 /* apparently you can */
+
 .row {
     margin-top: 15px;
     margin-bottom: 15px;
 }
 
-/* make sidebar nav vertical */ 
+/* make sidebar nav vertical */
+
 @media (min-width: 768px) {
   .sidebar-nav .navbar .navbar-collapse {
     padding: 0;
@@ -87,3 +93,4 @@ button:disabled {
     padding: .25em;
     white-space: nowrap;
 }
+
