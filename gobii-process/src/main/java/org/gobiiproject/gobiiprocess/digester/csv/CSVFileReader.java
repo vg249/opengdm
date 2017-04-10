@@ -59,16 +59,11 @@ public class CSVFileReader implements CSVFileReaderInterface {
 	 */
 	public static void parseInstructionFile(List<GobiiLoaderInstruction> instructions,String tmpFileLocation, String tmpFileSeparator) throws FileNotFoundException, IOException, ParseException{
 		CSVFileReaderInterface reader;
-		if(LoaderGlobalConfigurations.getVersionOneRead()){
-			reader=new CSVFileReader(tmpFileLocation,tmpFileSeparator);
-		}
-		else{
-			reader=new CSVFileReaderV2(tmpFileLocation,tmpFileSeparator);
-		}
 		if(LoaderGlobalConfigurations.getSingleThreadFileRead()){
 			for(GobiiLoaderInstruction i:instructions){
 				try {
-						reader.processCSV(i);
+					reader=getInterface(tmpFileLocation,tmpFileSeparator,LoaderGlobalConfigurations.getVersionOneRead());
+					reader.processCSV(i);
 				} catch (InterruptedException e) {
 					ErrorLogger.logError("CSVFileReader","Interrupted reading instruction", e);
 				}
@@ -82,6 +77,7 @@ public class CSVFileReader implements CSVFileReaderInterface {
 		}
 		//Create threads
 		for(GobiiLoaderInstruction loaderInstruction:instructions){
+			reader=getInterface(tmpFileLocation,tmpFileSeparator,LoaderGlobalConfigurations.getVersionOneRead());
 			Thread processingThread=new Thread(new ReaderThread(reader,loaderInstruction));
 			threads.add(processingThread);
 			processingThread.start();
@@ -95,6 +91,14 @@ public class CSVFileReader implements CSVFileReaderInterface {
 			catch(InterruptedException e){
 				ErrorLogger.logError("CSVFileReader","Interrupt",e);
 			}
+		}
+	}
+	private static CSVFileReaderInterface getInterface(String tmpFileLocation,String tmpFileSeparator,boolean oldVersion){
+		if(oldVersion){
+			return new CSVFileReader(tmpFileLocation,tmpFileSeparator);
+		}
+		else{
+			return new CSVFileReaderV2(tmpFileLocation,tmpFileSeparator);
 		}
 	}
 
