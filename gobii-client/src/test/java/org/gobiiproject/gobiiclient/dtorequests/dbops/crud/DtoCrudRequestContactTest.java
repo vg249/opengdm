@@ -216,7 +216,7 @@ public class DtoCrudRequestContactTest implements DtoCrudRequestTest {
         RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
                 .contactsByQueryParams();
-        restUriContact.setParamValue("email", "user.gobii@gobii.com");
+        restUriContact.setParamValue("email", "user1.gobii@gobii.org");
         GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
         PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(ContactDTO.class);
