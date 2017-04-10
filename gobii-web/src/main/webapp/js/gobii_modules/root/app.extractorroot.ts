@@ -353,6 +353,7 @@ export class ExtractorRoot implements OnInit {
                                 }
                             )[0];
 
+                    scope$.initializeSubmissionContact();
                     scope$.currentStatus = "GOBII Server " + gobiiVersion;
                     scope$.handleAddMessage("Connected to database: " + scope$.selectedServerConfig.crop);
 
@@ -367,6 +368,45 @@ export class ExtractorRoot implements OnInit {
         )
         ;
     } // initializeServerConfigs()
+
+    private initializeSubmissionContact() {
+
+
+        this.loggedInUser = this._authenticationService.getUserName();
+        let scope$ = this;
+        scope$._dtoRequestServiceContact.get(new DtoRequestItemContact(
+            ContactSearchType.BY_USERNAME,
+            this.loggedInUser)).subscribe(contact => {
+
+                if (contact && contact.contactId && contact.contactId > 0) {
+
+                    //loggedInUser
+                    scope$._fileModelTreeService.put(
+                        GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
+                            .setEntityType(EntityType.Contacts)
+                            .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
+                            .setCvFilterType(CvFilterType.UNKNOWN)
+                            .setExtractorItemType(ExtractorItemType.ENTITY)
+                            .setItemName(contact.email)
+                            .setItemId(contact.contactId.toLocaleString())).subscribe(
+                        null,
+                        headerStatusMessage => {
+                            this.handleHeaderStatusMessage(headerStatusMessage)
+                        }
+                    );
+
+                } else {
+                    scope$.handleAddMessage("There is no contact associated with user " + this.loggedInUser);
+                }
+
+            },
+            dtoHeaderResponse => {
+                dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage("Retrieving contacts for submission: "
+                    + m.message))
+            });
+
+        //   _dtoRequestServiceContact
+    }
 
     private handleServerSelected(arg) {
         this.selectedServerConfig = arg;
@@ -494,6 +534,7 @@ export class ExtractorRoot implements OnInit {
 
         }
 
+        this.initializeSubmissionContact();
 
         //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
 
@@ -554,15 +595,13 @@ export class ExtractorRoot implements OnInit {
     private selectedExperimentId: string;
     private selectedExperimentDetailId: string;
 
-    private handleExperimentSelected(arg:NameId) {
+    private handleExperimentSelected(arg: NameId) {
         this.selectedExperimentId = arg.id;
         this.selectedExperimentDetailId = arg.id;
         this.displayExperimentDetail = true;
 
         //console.log("selected contact itemId:" + arg);
     }
-
-
 
 
 // ********************************************************************
