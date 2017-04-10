@@ -1,26 +1,33 @@
 package org.gobiiproject.gobiiprocess.extractor;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.common.RestResourceUtils;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.gobiiproject.gobiimodel.utils.email.MailInterface;
+import org.gobiiproject.gobiimodel.utils.email.QCMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
@@ -240,7 +247,6 @@ public class GobiiExtractor {
 
 				//HDF5
 				String tempFolder=extractDir;
-				
 				String genoFile=tempFolder+"DS-"+dataSetId+".genotype";
 				String hdf5Extractor=pathToHDF5+"dumpdataset";
 				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
@@ -305,33 +311,96 @@ public class GobiiExtractor {
 				//QC - Subsection #1 of 1
 				if (inst.isQcCheck()) {
 					ErrorLogger.logInfo("Extractor", "qcCheck detected");
-					ErrorLogger.logInfo("Extractor","Entering into the QC Subsection #1 of 1...");
+					ErrorLogger.logInfo("Extractor", "Entering into the QC Subsection #1 of 1...");
 					QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
 					qcInstructionsDTOToSend.setContactId(inst.getContactId());
-					qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
-					qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
+					qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_INSTRUCTIONS));
+					qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_")
+							.append(DateUtils.makeDateIdString()).toString());
 					qcInstructionsDTOToSend.setDatasetId(dataSetId);
-					qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
-					qcInstructionsDTOToSend.setQualityFileName("Report.xls");
+					qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.STARTED);
+					qcInstructionsDTOToSend.setQualityFileName("");
 					PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
 					ClientContext clientContext = ClientContext.getInstance(configuration, crop);
 					SystemUserDetail SystemUserDetail = (new SystemUsers()).getDetail(SystemUserNames.USER_READER.toString());
-					if(!(clientContext.login(SystemUserDetail.getUserName(), SystemUserDetail.getPassword()))) {
-						ErrorLogger.logError("Digester","Login Error:" + SystemUserDetail.getUserName() + "-" + SystemUserDetail.getPassword());
+					if (!(clientContext.login(SystemUserDetail.getUserName(), SystemUserDetail.getPassword()))) {
+						ErrorLogger.logError("Digester", "Login Error:" + SystemUserDetail.getUserName() + "-" + SystemUserDetail.getPassword());
 						return;
-					}
-					String currentCropContextRoot = clientContext.getInstance(null, false).getCurrentCropContextRoot();
-					uriFactory = new UriFactory(currentCropContextRoot);
-					GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
-					PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
-							                                                                                           payloadEnvelope);
-					if (qcInstructionFileDTOResponseEnvelope != null) {
-						ErrorLogger.logInfo("Extractor","QC Instructions Request Sent");
-					}
-					else {
-						ErrorLogger.logError("Extractor","Error Sending QC Instructions Request");
-					}
+					} else {
+						String currentCropContextRoot = clientContext.getInstance(null, false).getCurrentCropContextRoot();
+						uriFactory = new UriFactory(currentCropContextRoot);
+						GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
+						PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
+								payloadEnvelope);
+						if (qcInstructionFileDTOResponseEnvelope != null) {
+							ErrorLogger.logInfo("Extractor", "QC Instructions Request Sent");
+						} else {
+							ErrorLogger.logError("Extractor", "Error Sending QC Instructions Request");
+						}
 
+						String currentQCContextRoot = clientContext.getInstance(null, false).getCurrentQCContextRoot();
+						String userToken = clientContext.getInstance(null, false).getUserToken();
+						Long qcJobId = getQCStart(currentQCContextRoot, userToken, dataSetId, extractDir);
+						if (qcJobId != null) {
+							ErrorLogger.logInfo("Extractor", "Launched qcJobId: " + qcJobId);
+							MailInterface mailInterface = new MailInterface(configuration);
+							QCMessage qcMessage = new QCMessage();
+							qcMessage.qcStart(inst.getContactEmail(), dataSetId, qcJobId);
+							mailInterface.send(qcMessage);
+
+							String currentCropDomain = clientContext.getInstance(null, false).getCurrentCropDomain();
+							Integer currentCropPort = clientContext.getInstance(null, false).getCurrentCropPort();
+							StringBuilder kDCComputeUrl = new StringBuilder("http://")
+									.append(currentCropDomain)
+									.append(":")
+									.append(currentCropPort)
+									.append(currentQCContextRoot);
+
+							String qcNotificationsSubdirectory = configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS);
+							String newQCDataDirectory = new StringBuilder("ds_")
+									.append(dataSetId)
+									.append("_")
+									.append(DateUtils.makeDateIdString()).toString();
+							Path downloadDirectoryPath = Paths.get(qcNotificationsSubdirectory, newQCDataDirectory);
+							File downloadDirectory = new File(downloadDirectoryPath.toString());
+							downloadDirectory.mkdir();
+
+							String qcStatus = getQCStatus(currentQCContextRoot, clientContext.getUserToken(), qcJobId, kDCComputeUrl.toString(), downloadDirectoryPath.toString());
+							if (qcStatus != null) {
+								// Liz wants to have a copy of all the extraction data in the QC output data directory
+								String[] extractDirectoryFiles = new File(extractDir).list();
+								for (String file : extractDirectoryFiles) {
+									InputStream fileInputStream = new FileInputStream(new File(extractDir, file));
+									OutputStream fileOutputStream = new FileOutputStream(new File(downloadDirectoryPath.toString(), file));
+									byte[] buffer = new byte[1024];
+									int length;
+									while ((length = fileInputStream.read(buffer)) > 0){
+										fileOutputStream.write(buffer, 0, length);
+									}
+									fileInputStream.close();
+									fileOutputStream.close();
+									ErrorLogger.logInfo("Extractor", new StringBuilder("File copied ")
+											.append(file)
+											.append(" from ")
+											.append(extractDir)
+											.append(" to ")
+											.append(downloadDirectoryPath.toString()).toString());
+								}
+								ErrorLogger.logInfo("Extractor", new StringBuilder("The status of the QC job #")
+										.append(qcJobId)
+										.append(" is ")
+										.append(qcStatus).toString());
+								boolean qcSuccess = qcStatus.equals("COMPLETED");
+								qcMessage.qcStatus(inst.getContactEmail(), qcJobId, qcSuccess, downloadDirectoryPath.toString());
+								mailInterface.send(qcMessage);
+							} else {
+								ErrorLogger.logError("Extractor", "Error in getting the status of a QC job");
+							}
+						} else {
+							ErrorLogger.logError("Extractor", "Error in starting a new QC job");
+						}
+
+					}
 					ErrorLogger.logInfo("Extractor","Done with the QC Subsection #1 of 1!");
 				}
 			}
@@ -442,7 +511,7 @@ public class GobiiExtractor {
 		return crop;
 	}
 
-	
+
 	private static String getLogName(GobiiExtractorInstruction gli, CropConfig config, Integer dsid) {
 		return getLogName(gli.getDataSetExtracts().get(0),config,dsid);
 	 }
@@ -581,4 +650,150 @@ public class GobiiExtractor {
 
 		return true;
 	}
+
+	private static Long getQCStart(String currentQCContextRoot, String userToken, int datasetId, String directory) {
+		Long jobId = null;
+		try {
+			UriFactory uriFactory = new UriFactory(currentQCContextRoot);
+			RestUri restUri = uriFactory.qcStart();
+			restUri.setParamValue("datasetId", String.valueOf(datasetId));
+			restUri.setParamValue("directory", directory);
+			RestResourceUtils restResourceUtils = new RestResourceUtils();
+			HttpMethodResult httpMethodResult = restResourceUtils.getHttp().get(restUri, userToken);
+			JsonObject jsonObject = httpMethodResult.getPayLoad();
+			jobId = jsonObject.get("jobId").getAsLong();
+		}
+		catch (Exception e) {
+			ErrorLogger.logError("Extractor","qcStart: " + e.getMessage());
+		}
+
+		return jobId;
+	}
+
+	private static String getQCStatus(String currentQCContextRoot, String userToken, Long qcJobId, String kDComputeUrlIn, String downloadDirectory) {
+		String status = null;
+		try {
+			UriFactory uriFactory = new UriFactory(currentQCContextRoot);
+			RestUri restUri = uriFactory.qcStatus();
+			restUri.setParamValue("jobid", String.valueOf(qcJobId));
+			RestResourceUtils restResourceUtils = new RestResourceUtils();
+			JsonObject payLoad = null;
+			do {
+				// Let's give a bit processing time to the KDCompute before (re-)sending a qcStatus request
+				try {
+					Thread.sleep(4000);
+				} catch(InterruptedException ex) {
+					Thread.currentThread().interrupt();
+					ErrorLogger.logError("Extractor","qcStatus: " + ex.getMessage());
+				}
+				HttpMethodResult httpMethodResult = restResourceUtils.getHttp().get(restUri, userToken);
+				payLoad = httpMethodResult.getPayLoad();
+				status = payLoad.get("status").getAsString();
+			} while ((status.equals("NEW")) || (status.equals("RUNNING")));
+			if ((status.equals("COMPLETED")) || (status.equals("FAILED"))) {
+				JsonObject resultsUrls = payLoad.get("resultsUrls").getAsJsonObject();
+				Set<Map.Entry<String, JsonElement>> entrySet = resultsUrls.entrySet();
+				for (Map.Entry<String,JsonElement> entry : entrySet) {
+					StringBuilder kDComputeUrl = new StringBuilder(kDComputeUrlIn);
+					String downloadLink = entry.getValue().getAsString().substring(1);
+					kDComputeUrl.append(downloadLink);
+					if (!(getQCDownload(kDComputeUrl.toString(), downloadDirectory))) {
+						throw (new Exception("Error in QC file download"));
+					}
+				}
+			}
+			else {
+				// The status has three possible values here: "CANCELLED", "UNKNOWN", and null
+				throw (new Exception(status));
+			}
+		}
+		catch (Exception e) {
+			ErrorLogger.logError("Extractor","qcStatus: " + e.getMessage());
+		}
+
+		return status;
+	}
+
+	private static boolean getQCDownload(String fileURL, String downloadDirectory) throws Exception {
+		boolean success = false;
+		try {
+			URL url = new URL(fileURL);
+			HttpURLConnection httpConn = (HttpURLConnection)url.openConnection();
+			int responseCode = httpConn.getResponseCode();
+			if (responseCode == HttpURLConnection.HTTP_OK) {
+				String fileName = "";
+				String disposition = httpConn.getHeaderField("Content-Disposition");
+				String contentType = httpConn.getContentType();
+				int contentLength = httpConn.getContentLength();
+				if (disposition != null) {
+					int index = disposition.indexOf("filename=");
+					if (index > 0) {
+						fileName = disposition.substring(index + 10,
+								disposition.length() - 1);
+					}
+				}
+				else {
+					fileName = fileURL.substring(fileURL.lastIndexOf(File.separator) + 1,
+							fileURL.length());
+				}
+				ErrorLogger.logInfo("Extractor","Content-Type = " + contentType);
+				ErrorLogger.logInfo("Extractor","Content-Disposition = " + disposition);
+				ErrorLogger.logInfo("Extractor","Content-Length = " + contentLength);
+				ErrorLogger.logInfo("Extractor","fileName = " + fileName);
+				InputStream inputStream = httpConn.getInputStream();
+				String downloadFile = downloadDirectory + File.separator + fileName;
+				FileOutputStream fileOutputStream = new FileOutputStream(downloadFile);
+				int bytesRead = -1;
+				byte[] buffer = new byte[4096];
+				while ((bytesRead = inputStream.read(buffer)) != -1) {
+					fileOutputStream.write(buffer, 0, bytesRead); }
+				fileOutputStream.close();
+				inputStream.close();
+				success = true;
+				ErrorLogger.logInfo("Extractor", new StringBuilder("File downloaded: ").append(downloadFile).toString());
+			}
+			else {
+				ErrorLogger.logError("Extractor","No file to download. Server replied HTTP code: " + responseCode);
+			}
+			httpConn.disconnect();
+		}
+		catch (Exception e) {
+			ErrorLogger.logError("Extractor","qcDownload: " + e.getMessage());
+		}
+
+		return success;
+	}
+
+	private static void sendQCJobEmail(ConfigSettings configSettings, String contactEmail, int datasetId, Long qcJobID) {
+		StringBuilder qcJobName = new StringBuilder("The QC job #")
+				.append(qcJobID)
+				.append(" targeting the data set #")
+				.append(datasetId);
+		HelperFunctions.sendEmail(qcJobName.toString(), "", true, "errorLogLoc", configSettings, contactEmail);
+	}
+
+	private static void sendQCDataEmail(ConfigSettings configSettings, Long qcJobID, boolean qcSuccess, String qcDataDirectory) {
+		QCMessage qcMessage = new QCMessage();
+		MailInterface mailInterface = new MailInterface(configSettings);
+		StringBuilder body = new StringBuilder("The QC job #")
+				 .append(qcJobID)
+				 .append(" was ");
+		if (qcSuccess) {
+			body.append("successful.<br/>");
+		}
+		else {
+			body.append("failed.<br/>");
+		}
+		body.append("The data of the QC job #")
+				.append(qcJobID)
+				.append(" are in ")
+				.append(qcDataDirectory);
+		qcMessage.setBody(body.toString());
+		try {
+			mailInterface.send(qcMessage);
+		} catch (Exception e) {
+			ErrorLogger.logError("Extractor", "Error in sending a QC data email");
+		}
+	}
+
 }

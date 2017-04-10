@@ -9,6 +9,7 @@ import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.Root;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,9 @@ public class CropConfig {
     private String serviceAppRoot;
 
     @Element(required = false)
+    private String serviceQCRoot;
+
+    @Element(required = false)
     private Integer servicePort;
 
     @Element(required = false)
@@ -47,12 +51,15 @@ public class CropConfig {
     public CropConfig(String gobiiCropType,
                       String serviceDomain,
                       String serviceAppRoot,
+                      String serviceQCRoot,
                       Integer servicePort,
-                      boolean isActive) {
+                      boolean isActive,
+                      boolean decrypt) {
 
         this.gobiiCropType = gobiiCropType;
         this.serviceDomain = serviceDomain;
         this.serviceAppRoot = serviceAppRoot;
+        this.serviceQCRoot = serviceQCRoot;
         this.servicePort = servicePort;
         this.isActive = isActive;
 
@@ -126,6 +133,15 @@ public class CropConfig {
         return this;
     }
 
+    public String getServiceQCRoot() {
+        return LineUtils.terminateDirectoryPath(this.serviceQCRoot);
+    }
+
+    public CropConfig setServiceQCRoot(String serviceQCRoot) {
+        this.serviceQCRoot = serviceQCRoot;
+        return this;
+    }
+
     public String getGobiiCropType() {
         return gobiiCropType;
     }
@@ -144,5 +160,9 @@ public class CropConfig {
         CropDbConfig returnVal = this.cropDbConfigsByDbType.get(gobiiDbType);
         return returnVal;
     } // getCropDbConfig()
+
+    public Collection<CropDbConfig> getCropConfigs() {
+        return this.cropDbConfigsByDbType.values();
+    }
 
 }
