@@ -34,9 +34,6 @@ public class CropConfig {
     private String serviceAppRoot;
 
     @Element(required = false)
-    private String serviceQCRoot;
-
-    @Element(required = false)
     private Integer servicePort;
 
     @Element(required = false)
@@ -51,7 +48,6 @@ public class CropConfig {
     public CropConfig(String gobiiCropType,
                       String serviceDomain,
                       String serviceAppRoot,
-                      String serviceQCRoot,
                       Integer servicePort,
                       boolean isActive,
                       boolean decrypt) {
@@ -59,7 +55,6 @@ public class CropConfig {
         this.gobiiCropType = gobiiCropType;
         this.serviceDomain = serviceDomain;
         this.serviceAppRoot = serviceAppRoot;
-        this.serviceQCRoot = serviceQCRoot;
         this.servicePort = servicePort;
         this.isActive = isActive;
 
@@ -130,15 +125,6 @@ public class CropConfig {
 
     public CropConfig setServiceAppRoot(String serviceAppRoot) {
         this.serviceAppRoot = serviceAppRoot;
-        return this;
-    }
-
-    public String getServiceQCRoot() {
-        return LineUtils.terminateDirectoryPath(this.serviceQCRoot);
-    }
-
-    public CropConfig setServiceQCRoot(String serviceQCRoot) {
-        this.serviceQCRoot = serviceQCRoot;
         return this;
     }
 

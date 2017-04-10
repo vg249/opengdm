@@ -5,8 +5,7 @@ package org.gobiiproject.gobiiapimodel.types;
  */
 public enum ControllerType {
     GOBII("gobii/v1/"),
-    BRAPI("brapi/v1/"),
-    QC("");
+    BRAPI("brapi/v1/");
 
     private String controllerPath;
     ControllerType(String controllerPath) {

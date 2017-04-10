@@ -46,8 +46,7 @@ class ConfigValues {
         put(GobiiFileProcessDir.EXTRACTOR_INPROGRESS, "extractor/inprogress/");
         put(GobiiFileProcessDir.EXTRACTOR_DONE, "extractor/done/");
         put(GobiiFileProcessDir.EXTRACTOR_OUTPUT, "extractor/output/");
-        put(GobiiFileProcessDir.QC_INSTRUCTIONS, "qc/instructions/");
-        put(GobiiFileProcessDir.QC_NOTIFICATIONS, "qc/notifications/");
+        put(GobiiFileProcessDir.QC_NOTIFICATIONS, "qcnotifications/");
 
     }};
 
@@ -223,7 +222,6 @@ class ConfigValues {
                         boolean isActive,
                         String serviceDomain,
                         String serviceAppRoot,
-                        String serviceQCRoot,
                         Integer servicePort) throws Exception {
 
         gobiiCropType = gobiiCropType.toLowerCase();
@@ -241,7 +239,6 @@ class ConfigValues {
                 .setActive(isActive)
                 .setServiceDomain(serviceDomain)
                 .setServiceAppRoot(serviceAppRoot)
-                .setServiceQCRoot(serviceQCRoot)
                 .setServicePort(servicePort);
     }
 

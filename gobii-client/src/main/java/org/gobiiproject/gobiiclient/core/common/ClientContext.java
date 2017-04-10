@@ -276,10 +276,6 @@ public final class ClientContext {
         return this.getServerConfigByCropType(this.currentGobiiCropType).getContextRoot();
     }
 
-    public String getCurrentQCContextRoot() throws Exception {
-        return this.getServerConfigByCropType(this.currentGobiiCropType).getQCContextRoot();
-    }
-
     public String getCropContextRoot(String cropType) throws Exception {
 
         String returnVal;

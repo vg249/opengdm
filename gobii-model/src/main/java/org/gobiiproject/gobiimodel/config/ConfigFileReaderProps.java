@@ -45,7 +45,6 @@ public class ConfigFileReaderProps {
 
     private final String CROP_SUFFIX_SERVICE_DOMAIN = "servicedomain";
     private final String CROP_SUFFIX_SERVICE_APPROOT = "serviceapproot";
-    private final String CROP_SUFFIX_SERVICE_QCROOT = "serviceqcroot";
     private final String CROP_SUFFIX_SERVICE_PORT = "serviceport";
     private final String CROP_SUFFIX_USER_FILE_LOCLOCATION = "usrfloc";
     private final String CROP_SUFFIX_LOADR_FILE_LOCATION = "ldrfloc";
@@ -179,7 +178,6 @@ public class ConfigFileReaderProps {
 
             String serviceDomain = this.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_DOMAIN);
             String serviceAppRoot = this.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_APPROOT);
-            String serviceQCRoot = this.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_QCROOT);
             Integer servicePort = Integer.parseInt(this.getPropValue(currentPrefix + CROP_SUFFIX_SERVICE_PORT));
             String isActiveString = this.getPropValue(currentPrefix + CROP_SUFFIX_INTERMEDIATE_FILE_ACTIVE);
             boolean isActive = isActiveString.toLowerCase().equals("true");
@@ -187,7 +185,6 @@ public class ConfigFileReaderProps {
             CropConfig currentCropConfig = new CropConfig(currentGobiiCropType,
                     serviceDomain,
                     serviceAppRoot,
-                    serviceQCRoot,
                     servicePort,
                     isActive,
                     false);

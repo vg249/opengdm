@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- This class encapsulates the configuration properties that are returned to web clients via
+ This class encapsualtes the configuration properties that are returned to web clients via
  web services. For most intents and purposes, it is superfluous. However, for security purposes
  we use it to prevent sensitive configuration data from being sent through web services: it forces
  careful decisions to be made by the author of the web service that returns this data to the web
@@ -28,7 +28,6 @@ public class ServerConfig {
         this.port = cropConfig.getServicePort();
         this.domain = cropConfig.getServiceDomain();
         this.contextRoot = cropConfig.getServiceAppRoot();
-        this.qcContextRoot = cropConfig.getServiceQCRoot();
         this.gobiiCropType = cropConfig.getGobiiCropType();
 
         fileLocations
@@ -53,9 +52,6 @@ public class ServerConfig {
 
     @Element(required = false)
     private String contextRoot;
-
-    @Element(required = false)
-    private String qcContextRoot;
 
     @Element(required = false)
     private String gobiiCropType;
@@ -85,14 +81,6 @@ public class ServerConfig {
 
     public void setContextRoot(String contextRoot) {
         this.contextRoot = contextRoot;
-    }
-
-    public String getQCContextRoot() {
-        return qcContextRoot;
-    }
-
-    public void setQCContextRoot(String qcContextRoot) {
-        this.qcContextRoot = qcContextRoot;
     }
 
     public String getGobiiCropType() {

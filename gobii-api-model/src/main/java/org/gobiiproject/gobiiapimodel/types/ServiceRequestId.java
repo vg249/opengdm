@@ -41,12 +41,7 @@ public enum ServiceRequestId {
     URL_OBSERVATION_VARIABLES("observationVariables"),
     URL_PROTOCOL("protocols"),
     URL_VENDORS("vendors"),
-    URL_FILE_QC_INSTRUCTIONS("instructions/qualitycontrol"),
-    URL_QC_NOTIFICATION("qcNotification"),
-    // The following services are reserved to the KDCompute API
-    URL_QC_START("qcStart"),
-    URL_QC_STATUS("qcStatus"),
-    URL_QC_DOWNLOAD("qcDownload");
+    URL_FILE_QC_INSTRUCTIONS("/instructions/qualitycontrol") ;
 
 
     private String requestPath;
