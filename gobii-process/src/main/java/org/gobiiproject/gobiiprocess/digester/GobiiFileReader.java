@@ -241,7 +241,7 @@ public class GobiiFileReader {
 			case VCF:
 				//INTENTIONAL FALLTHROUGH
 			case GENERIC:
-				CSVFileReader.parseInstructionFile(list, dstDir.getAbsolutePath(), zero.getGobiiFile().getDelimiter());
+				CSVFileReader.parseInstructionFile(list, dstDir.getAbsolutePath(), "/");
 				break;
 			case HAPMAP: //This is currently not used by the loaderUI
 				for (GobiiLoaderInstruction instruction : list) {
