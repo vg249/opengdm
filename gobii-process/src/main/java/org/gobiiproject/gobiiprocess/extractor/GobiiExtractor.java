@@ -115,14 +115,11 @@ public class GobiiExtractor {
 		GobiiExtractorInstruction zero=list.get(0);
 		String logDir=configuration.getFileSystemLog();
 		if(logDir!=null) {
-			String jobUser=zero.getContactEmail();
-			String datasetName=zero.getGobiiCropType();
-			List<GobiiDataSetExtract> zeroExtracts=zero.getDataSetExtracts();
-			if(zeroExtracts!=null && zeroExtracts.size()!=0) datasetName+="_"+zeroExtracts.get(0).getDataSetName();
-			String logFile=logDir+"/"+jobUser.substring(0,jobUser.indexOf('@'))+"_"+datasetName+".log";
+			String instructionName=new File(instructionFile).getName();
+			instructionName=instructionName.substring(0,instructionName.lastIndexOf('.'));
+			String logFile=logDir+"/"+instructionName+".log";
 			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
 			ErrorLogger.setLogFilepath(logFile);
-			//dm.addPath("Error Log",logFile);
 			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
 		}
 

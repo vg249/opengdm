@@ -309,15 +309,20 @@ public class HapmapTransformer {
 
 				fileWriter.close();
 				markerScanner.close();
-				extendedMarkerScanner.close();
+				if(extendedMarkerScanner!=null){
+					extendedMarkerScanner.close();
+				}
 				genotypeScanner.close();
 			} catch (IOException e) {
-				ErrorLogger.logError("Extractor","Error writing " + outFile + "." + System.lineSeparator() + System.lineSeparator() + "Reason: " + e.getMessage(), errorFile);
+				ErrorLogger.logError("Hapmap Transformer", "Error writing " + outFile,e);
 				return false;
+			}
+			catch(Exception e){
+				ErrorLogger.logError("Hapmap Transformer","Unexpected exception in Hapmap Transformer",e);
 			}
 		}
 		else {
-			ErrorLogger.logError("Extractor","Sample data file empty", errorFile);
+			ErrorLogger.logError("Hapmap Transformer","Sample data file empty", errorFile);
 			return false;
 		}
 
