@@ -93,8 +93,7 @@ public class GobiiExtractor {
 			logError("Extractor","Failure to read Configurations",e);
 			return;
 		}
-		String logDir=configuration.getFileSystemLog();
-		ErrorLogger.setLogFilepath(logDir);
+
 		String instructionFile=null;
 		if(args.length==0 ||args[0]==""){
 			Scanner s=new Scanner(in);
@@ -112,6 +111,23 @@ public class GobiiExtractor {
 			ErrorLogger.logError("Extractor","No instruction for file "+instructionFile);
 			return;
 		}
+
+		GobiiExtractorInstruction zero=list.get(0);
+		String logDir=configuration.getFileSystemLog();
+		if(logDir!=null) {
+			String jobUser=zero.getContactEmail();
+			String datasetName=zero.getGobiiCropType();
+			List<GobiiDataSetExtract> zeroExtracts=zero.getDataSetExtracts();
+			if(zeroExtracts!=null && zeroExtracts.size()!=0) datasetName+="_"+zeroExtracts.get(0).getDataSetName();
+			String logFile=logDir+"/"+jobUser.substring(0,jobUser.indexOf('@'))+"_"+datasetName+".log";
+			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
+			ErrorLogger.setLogFilepath(logFile);
+			//dm.addPath("Error Log",logFile);
+			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
+		}
+
+
+
 		for(GobiiExtractorInstruction inst:list){
 			String crop = inst.getGobiiCropType();
 			if(crop==null) crop=divineCrop(instructionFile);
