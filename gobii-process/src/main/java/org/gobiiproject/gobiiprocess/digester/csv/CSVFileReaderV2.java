@@ -293,7 +293,8 @@ public class CSVFileReaderV2 implements CSVFileReaderInterface {
 			case AUTOINCREMENT:
 				appendTabToOutput(outputLine, column);
 				outputLine.append(entry.getValue());
-				entry.setValue(entry.getValue() + 1);
+				String increment=(Integer.parseInt(entry.getValue())+1)+"";
+				entry.setValue(increment);
 				break;
 			case CSV_ROW:
 				appendTabToOutput(outputLine, column);
