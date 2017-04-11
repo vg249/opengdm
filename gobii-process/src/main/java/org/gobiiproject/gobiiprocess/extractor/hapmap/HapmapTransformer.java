@@ -87,7 +87,7 @@ public class HapmapTransformer {
 			///////////////////
 			List<String> sampleHeaders = new ArrayList<>();
 			TreeMap<Integer, ArrayList<String>> sampleData = new TreeMap<>();
-			String[] headers = sampleScanner.nextLine().split("\\t");
+			String[] headers = sampleScanner.nextLine().split("\\t",-1);
 			ErrorLogger.logInfo("Extractor", headers.length + " sample header columns read");
 			for (int index = 0; index < headers.length; index++) {
 				sampleHeaders.add(headers[index].trim());
@@ -95,7 +95,7 @@ public class HapmapTransformer {
 			}
 			int sampleRowsNumber = 0;
 			while (sampleScanner.hasNextLine()) {
-				String[] sampleRecords = sampleScanner.nextLine().split("\\t");
+				String[] sampleRecords = sampleScanner.nextLine().split("\\t",-1);
 				for (int index = 0; index < sampleRecords.length; index++) {
 					if (!(sampleData.containsKey(index))) {
 						sampleData.put(index, new ArrayList<String>());
@@ -137,7 +137,7 @@ public class HapmapTransformer {
 				///////////////////
 				List<String> markerHeaders = new ArrayList<>();
 				if (markerScanner.hasNextLine()) {
-					headers = markerScanner.nextLine().split("\\t");
+					headers = markerScanner.nextLine().split("\\t",-1);
 					ErrorLogger.logInfo("Extractor", headers.length + " marker header columns read");
 					for (int index = 0; index < headers.length; index++) {
 						markerHeaders.add(headers[index].trim());
@@ -170,7 +170,7 @@ public class HapmapTransformer {
 				List<String> extendedMarkerHeaders = new ArrayList<>();
 				if (extendedMarkerScanner != null) {
 					if (extendedMarkerScanner.hasNextLine()) {
-						headers = extendedMarkerScanner.nextLine().split("\\t");
+						headers = extendedMarkerScanner.nextLine().split("\\t",-1);
 						ErrorLogger.logInfo("Extractor", headers.length + " extended marker header columns read");
 						for (int index = 0; index < headers.length; index++) {
 							extendedMarkerHeaders.add(headers[index].trim());
@@ -221,11 +221,11 @@ public class HapmapTransformer {
 					// Writing the marker (and extended marker if existent) data line(s)
 					// in alignment to the new marker headers into the current line.
 					// All the other new marker header columns not matched are left blank.
-					String[] markerLineParts = markerScanner.nextLine().split("\\t");
+					String[] markerLineParts = markerScanner.nextLine().split("\\t",-1);
 					String[] extendedMarkerLineParts = null;
 					if (extendedMarkerScanner != null) {
 						if (extendedMarkerScanner.hasNextLine()) {
-							extendedMarkerLineParts = extendedMarkerScanner.nextLine().split("\\t");
+							extendedMarkerLineParts = extendedMarkerScanner.nextLine().split("\\t",-1);
 						}
 					}
 					stringBuilderNewLine = new StringBuilder();
