@@ -151,7 +151,7 @@ public class GobiiExtractor {
 				GobiiExtractFilterType filterType = extract.getGobiiExtractFilterType();
                 if(filterType==null) filterType=GobiiExtractFilterType.WHOLE_DATASET;
                 if(markerListOverrideLocation!=null)filterType=GobiiExtractFilterType.BY_MARKER;
-				String extractDir=extract.getExtractDestinationDirectory();
+				String extractDir=extract.getExtractDestinationDirectory()+"/";
 				tryExec("rm -f "+extractDir+"*");
 				//TODO: Fix underlying permissions issues
 				//tryExec("chmod -R 777 " +extractDir.substring(0, extractDir.lastIndexOf('/')));

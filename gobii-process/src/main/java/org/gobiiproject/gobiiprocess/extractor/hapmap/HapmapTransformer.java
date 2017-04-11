@@ -77,7 +77,8 @@ public class HapmapTransformer {
 
 		Scanner markerScanner = new Scanner(markerFile);
 		Scanner sampleScanner = new Scanner(sampleFile);
-		Scanner extendedMarkerScanner = new Scanner(extendedMarkerFile);
+		Scanner extendedMarkerScanner=null;
+		if(extendedMarkerFile!=null && extendedMarkerFile.exists()) extendedMarkerScanner= new Scanner(extendedMarkerFile);
 		Scanner genotypeScanner = new Scanner(genotypeFile);
 
 		if (sampleScanner.hasNextLine()) {
