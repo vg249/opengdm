@@ -248,10 +248,10 @@ public class GobiiExtractor {
 						//Create a file out of the List if non-null, else use the <File>
 						List<String> sampleList=extract.getSampleList();
 						if(sampleList!=null && !sampleList.isEmpty()){
-							sampleListLocation=" -y "+createTempFileForMarkerList(extractDir,sampleList);
+							sampleListLocation=" -Y "+createTempFileForMarkerList(extractDir,sampleList);
 						}
 						else if(extract.getListFileName()!=null){
-							sampleListLocation=" -y "+extractDir+extract.getListFileName();
+							sampleListLocation=" -Y "+extractDir+extract.getListFileName();
 						}
 
 						GobiiSampleListType type = extract.getGobiiSampleListType();
@@ -267,7 +267,6 @@ public class GobiiExtractor {
 								" -b " + mapsetFile +
 								" -s " + sampleFile +
 								" -p " + projectFile +
-								" -Y " + samplePosFile +
 								sampleListLocation +
 								sampleListTypeTerm +
 								PITerm +
@@ -281,7 +280,7 @@ public class GobiiExtractor {
 						ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
 						break;
 				}
-
+				samplePosFile=sampleFile+".pos";
 				String errorFile=getLogName(extract,cropConfig,extract.getDataSetId());
 				ErrorLogger.logInfo("Extractor","Executing MDEs");
 				tryExec(gobiiMDE, extractDir+"mdeOut", errorFile);
