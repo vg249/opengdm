@@ -220,10 +220,10 @@ public class GobiiExtractor {
 						//Create a file out of the List if non-null, else use the <File>
 						List<String> markerList=extract.getMarkerList();
 						if(markerList!=null && !markerList.isEmpty()){
-							markerListLocation=" -x "+createTempFileForMarkerList(extractDir,markerList);
+							markerListLocation=" -X "+createTempFileForMarkerList(extractDir,markerList);
 						}
 						else if(extract.getListFileName()!=null){
-							markerListLocation=" -x "+extractDir+extract.getListFileName();
+							markerListLocation=" -X "+extractDir+extract.getListFileName();
 						}
 						//else if file is null and list is empty or null - > no term
 
