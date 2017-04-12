@@ -323,8 +323,8 @@ public class GobiiExtractor {
 
 				switch(extract.getGobiiFileType()){
 					case FLAPJACK:
-						String genoOutFile=extractDir+"DS"+dataSetId+".genotype";
-						String mapOutFile=extractDir+"DS"+dataSetId+".map";
+						String genoOutFile=extractDir+"Dataset.genotype";
+						String mapOutFile=extractDir+"Dataset.map";
 						lastErrorFile=errorFile;
 						//Always regenerate requests - may have different parameters
 						boolean extended=new File(extendedMarkerFile).exists();
@@ -335,7 +335,7 @@ public class GobiiExtractor {
 						HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 						break;
 					case HAPMAP:
-						String hapmapOutFile = extractDir+"DS"+dataSetId+".hmp.txt";
+						String hapmapOutFile = extractDir+"Dataset.hmp.txt";
 						HapmapTransformer hapmapTransformer = new HapmapTransformer();
 						ErrorLogger.logDebug("GobiiExtractor","Executing Hapmap Generation");
 						success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
