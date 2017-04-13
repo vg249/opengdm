@@ -12,7 +12,7 @@ import {GobiiExtractFilterType} from "../model/type-extractor-filter";
                       <form>
                           <label class="the-legend">Extract By:&nbsp;</label>
                             <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="WHOLE_DATASET" checked="checked">
-                            <label  for="WHOLE_DATASET" class="the-legend">Data Set</label>
+                            <label  for="WHOLE_DATASET" class="the-legend">Dataset</label>
                             <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="BY_SAMPLE">
                             <label for="BY_SAMPLE" class="the-legend">Sample</label>
                             <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="BY_MARKER">
