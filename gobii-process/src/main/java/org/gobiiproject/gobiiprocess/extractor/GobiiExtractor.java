@@ -303,6 +303,7 @@ public class GobiiExtractor {
 						break;
 					case BY_SAMPLE:
 						genoFile = getHDF5GenoFromSampleList(markerFast,errorFile,tempFolder,markerPosFile,samplePosFile);
+                        break;
 					default:
 						genoFile="";
 						ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
@@ -327,7 +328,7 @@ public class GobiiExtractor {
 						String mapOutFile=extractDir+"Dataset.map";
 						lastErrorFile=errorFile;
 						//Always regenerate requests - may have different parameters
-						boolean extended=new File(extendedMarkerFile).exists();
+						boolean extended=HelperFunctions.checkFileExistance(extendedMarkerFile);
 						FlapjackTransformer.generateMapFile(extended?extendedMarkerFile:markerFile, sampleFile, chrLengthFile, dataSetId, tempFolder, mapOutFile, errorFile,extended);
 						HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 						FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
