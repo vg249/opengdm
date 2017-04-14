@@ -51,19 +51,46 @@ import {isNullOrUndefined} from "util";
                 <img src="images/gobii_logo.png" alt="GOBii Project"/>
 
                 <fieldset class="well the-fieldset">
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <crops-list-box
                             [serverConfigList]="serverConfigList"
                             [selectedServerConfig]="selectedServerConfig"
                             (onServerSelected)="handleServerSelected($event)"></crops-list-box>
                     </div>
                     
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                        <export-type
                         (onExportTypeSelected)="handleExportTypeSelected($event)"></export-type>
                      </div>
+                    
+
+                        <div class="col-md-4">
+                        <div class = "well">
+                            <table>
+                                <tr>
+                                    <td colspan="2">
+                                        <export-format
+                                         [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                         (onFormatSelected)="handleFormatSelected($event)">
+                                          </export-format>
+                              </td>
+                              <td style="vertical-align: top;">
+                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                                     <name-id-list-box
+                                        [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                        [nameIdRequestParams]="nameIdRequestParamsMapsets"
+                                        [firstItemIsLabel]="true"
+                                        (onError) = "handleHeaderStatusMessage($event)">
+                                    </name-id-list-box>
+                              </td>
+                              </tr>
+                              </table>
+                              
+                        </div>
+                        </div>
+    
                      
-                    <div class="col-md-7">
+                    <div class="col-md-2">
                        <p style="text-align: right; font-weight: bold;">{{loggedInUser}}</p>
                      </div>
                      
@@ -197,18 +224,8 @@ import {isNullOrUndefined} from "util";
                            <fieldset class="well the-fieldset">
                                 <legend class="the-legend">Extract</legend>
                            
-                                <export-format
-                                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                    (onFormatSelected)="handleFormatSelected($event)"
-                                ></export-format>
                                 <BR>
                            
-                                <name-id-list-box
-                                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                    [nameIdRequestParams]="nameIdRequestParamsMapsets"
-                                    [firstItemIsLabel]="true"
-                                    (onError) = "handleHeaderStatusMessage($event)">
-                                </name-id-list-box>
                             </fieldset>
                         </form>
                         
