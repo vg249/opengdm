@@ -120,7 +120,7 @@ import {isNullOrUndefined} from "util";
                             
                         </div>
                         
-                        <div *ngIf="displaySelectorProject">
+                        <div *ngIf="displaySelectorProject" >
                             <BR>
                             <BR>
                             <label class="the-label">Project:</label><BR>
@@ -130,7 +130,7 @@ import {isNullOrUndefined} from "util";
                                 (onAddHeaderStatus)="handleHeaderStatusMessage($event)"></project-list-box>
                         </div>
 
-                        <div *ngIf="displaySelectorDataType">
+                        <div *ngIf="displaySelectorDataType" >
                             <BR>
                             <BR>
                             <label class="the-label">Dataset Types:</label><BR>
@@ -185,12 +185,6 @@ import {isNullOrUndefined} from "util";
                         </div>
                     </fieldset>
                        
-                       
-                    </div>  <!-- outer grid column 1-->
-                
-                
-                
-                    <div class="col-md-4"> 
 
                         <div *ngIf="displaySampleListTypeSelector">
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
@@ -218,22 +212,12 @@ import {isNullOrUndefined} from "util";
                                 </sample-marker-box>
                             </fieldset>
                         </div>
-
-                        
-                        <form>
-                           <fieldset class="well the-fieldset">
-                                <legend class="the-legend">Extract</legend>
-                           
-                                <BR>
-                           
-                            </fieldset>
-                        </form>
-                        
-                        
-                    </div>  <!-- outer grid column 2-->
-                    
-                    
-                    <div class="col-md-4">
+                       
+                    </div>  <!-- outer grid column 1-->
+                
+                
+                
+                    <div class="col-md-4"> 
 
                         <fieldset class="well the-fieldset" style="vertical-align: bottom;">
                             <legend class="the-legend">Extraction Criteria Summary</legend>
@@ -253,6 +237,12 @@ import {isNullOrUndefined} from "util";
                             (click)="handleExtractSubmission()">Submit</button>
                                
                         </fieldset>
+
+                    </div>  <!-- outer grid column 2-->
+                    
+                    
+                    <div class="col-md-4">
+
                             
                         <div>
                             <fieldset class="well the-fieldset" style="vertical-align: bottom;">
