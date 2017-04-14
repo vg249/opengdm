@@ -152,7 +152,7 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
                     inputs: ['gobiiExtractFilterType'],
                     //directives: [RADIO_GROUP_DIRECTIVES]
                     //  directives: [Alert]
-                    template: "\n    \t\t  <label class=\"the-label\">Select Format:</label><BR>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleFormatSelected($event)\" name=\"format\" value=\"HAPMAP\" checked=\"checked\">Hapmap<br>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleFormatSelected($event)\" name=\"format\" value=\"FLAPJACK\">FlapJack<br>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleFormatSelected($event)\" name=\"format\" value=\"META_DATA_ONLY\">{{metaDataExtractname}}<br>\n\t" // end template
+                    template: " \n    \t\t  <label class=\"the-label\">Select Format:</label><BR>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleFormatSelected($event)\" name=\"format\" value=\"HAPMAP\" checked=\"checked\">Hapmap<br>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleFormatSelected($event)\" name=\"format\" value=\"FLAPJACK\">FlapJack<br>\n              &nbsp;&nbsp;&nbsp;<input type=\"radio\" (change)=\"handleFormatSelected($event)\" name=\"format\" value=\"META_DATA_ONLY\">{{metaDataExtractname}}<br>\n\t" // end template
                 }),
                 __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
             ], ExportFormatComponent);

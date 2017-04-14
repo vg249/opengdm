@@ -50,24 +50,59 @@ import {isNullOrUndefined} from "util";
            <div class = "panel-heading">
                 <img src="images/gobii_logo.png" alt="GOBii Project"/>
 
-                <fieldset class="well the-fieldset">
-                    <div class="col-md-2">
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Connected to {{currentStatus}}</h3>
+                      </div>
+                      <div class="panel-body">
+                    
+                    <div class="col-md-1">
+                    
                         <crops-list-box
                             [serverConfigList]="serverConfigList"
                             [selectedServerConfig]="selectedServerConfig"
                             (onServerSelected)="handleServerSelected($event)"></crops-list-box>
-                    </div>
-                    
-                    <div class="col-md-3">
+                     </div>
+                                                
+                    <div class="col-md-5">
                        <export-type
                         (onExportTypeSelected)="handleExportTypeSelected($event)"></export-type>
                      </div>
+                    
+
+                        <div class="col-md-4">
+                        <div class = "well">
+                            <table>
+                                <tr>
+                                    <td colspan="2">
+                                        <export-format
+                                         [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                         (onFormatSelected)="handleFormatSelected($event)">
+                                          </export-format>
+                              </td>
+                              <td style="vertical-align: top;">
+                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                                     <name-id-list-box
+                                        [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                        [nameIdRequestParams]="nameIdRequestParamsMapsets"
+                                        [firstItemIsLabel]="true"
+                                        (onError) = "handleHeaderStatusMessage($event)">
+                                    </name-id-list-box>
+                              </td>
+                              </tr>
+                              </table>
+                              
+                        </div>
+                        </div>
+    
                      
-                    <div class="col-md-7">
+                    <div class="col-md-2">
                        <p style="text-align: right; font-weight: bold;">{{loggedInUser}}</p>
                      </div>
                      
-                </fieldset>
+                    </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
+
            </div>
            
             <div class="container-fluid">
@@ -76,10 +111,13 @@ import {isNullOrUndefined} from "util";
                 
                     <div class="col-md-4">
                     
-                     <fieldset class="well the-fieldset">
-                     
-                        <legend class="the-legend">Filters</legend><BR>
-                        <div *ngIf="displaySelectorPi">
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Filters</h3>
+                      </div>
+                      <div class="panel-body">
+
+                          <div *ngIf="displaySelectorPi">
                             <label class="the-label">Principle Investigator:</label><BR>
                             <name-id-list-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
@@ -93,7 +131,7 @@ import {isNullOrUndefined} from "util";
                             
                         </div>
                         
-                        <div *ngIf="displaySelectorProject">
+                        <div *ngIf="displaySelectorProject" >
                             <BR>
                             <BR>
                             <label class="the-label">Project:</label><BR>
@@ -103,7 +141,7 @@ import {isNullOrUndefined} from "util";
                                 (onAddHeaderStatus)="handleHeaderStatusMessage($event)"></project-list-box>
                         </div>
 
-                        <div *ngIf="displaySelectorDataType">
+                        <div *ngIf="displaySelectorDataType" >
                             <BR>
                             <BR>
                             <label class="the-label">Dataset Types:</label><BR>
@@ -156,18 +194,16 @@ import {isNullOrUndefined} from "util";
                                 (onAddStatusMessage) = "handleHeaderStatusMessage($event)">
                             </dataset-checklist-box>
                         </div>
-                    </fieldset>
+                    </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
                        
-                       
-                    </div>  <!-- outer grid column 1-->
-                
-                
-                
-                    <div class="col-md-4"> 
 
                         <div *ngIf="displaySampleListTypeSelector">
-                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Included Samples</legend>
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Included Samples</h3>
+                      </div>
+                      <div class="panel-body">
                                 <sample-list-type
                                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                     (onHeaderStatusMessage)="handleHeaderStatusMessage($event)">
@@ -178,48 +214,36 @@ import {isNullOrUndefined} from "util";
                                     (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)"
                                     (onSampleMarkerError)="handleHeaderStatusMessage($event)">
                                 </sample-marker-box>
-                            </fieldset>
+                    </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
                         </div>
                         
                         <div *ngIf="displaySampleMarkerBox">
-                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Included Markers</legend>
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Included Markers</h3>
+                      </div>
+                      <div class="panel-body">
                                 <sample-marker-box 
                                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                     (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)"
                                     (onSampleMarkerError)="handleHeaderStatusMessage($event)">
                                 </sample-marker-box>
-                            </fieldset>
+                    </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
                         </div>
+                       
+                    </div>  <!-- outer grid column 1-->
+                
+                
+                
+                    <div class="col-md-4"> 
 
-                        
-                        <form>
-                           <fieldset class="well the-fieldset">
-                                <legend class="the-legend">Extract</legend>
-                           
-                                <export-format
-                                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                    (onFormatSelected)="handleFormatSelected($event)"
-                                ></export-format>
-                                <BR>
-                           
-                                <name-id-list-box
-                                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                    [nameIdRequestParams]="nameIdRequestParamsMapsets"
-                                    [firstItemIsLabel]="true"
-                                    (onError) = "handleHeaderStatusMessage($event)">
-                                </name-id-list-box>
-                            </fieldset>
-                        </form>
-                        
-                        
-                    </div>  <!-- outer grid column 2-->
-                    
-                    
-                    <div class="col-md-4">
-
-                        <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                            <legend class="the-legend">Extraction Criteria Summary</legend>
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Extraction Criteria</h3>
+                      </div>
+                      <div class="panel-body">
                             <status-display-tree
                                 [fileItemEventChange] = "treeFileItemEvent"
                                 [gobiiExtractFilterTypeEvent] = "gobiiExtractFilterType"
@@ -235,13 +259,24 @@ import {isNullOrUndefined} from "util";
                             (mouseleave)="handleOnMouseOverSubmit($event,false)"
                             (click)="handleExtractSubmission()">Submit</button>
                                
-                        </fieldset>
+                    </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
+
+                    </div>  <!-- outer grid column 2-->
+                    
+                    
+                    <div class="col-md-4">
+
                             
                         <div>
-                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Status: {{currentStatus}}</legend>
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Status Messages</h3>
+                      </div>
+                      <div class="panel-body">
                                 <status-display [messages] = "messages"></status-display>
-                            </fieldset>
+                    </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
                         </div>
                             
                                    

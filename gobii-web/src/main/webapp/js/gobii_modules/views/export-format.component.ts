@@ -18,7 +18,7 @@ import {EntityType} from "../model/type-entity";
     inputs: ['gobiiExtractFilterType'],
     //directives: [RADIO_GROUP_DIRECTIVES]
 //  directives: [Alert]
-    template: `
+    template: ` 
     		  <label class="the-label">Select Format:</label><BR>
               &nbsp;&nbsp;&nbsp;<input type="radio" (change)="handleFormatSelected($event)" name="format" value="HAPMAP" checked="checked">Hapmap<br>
               &nbsp;&nbsp;&nbsp;<input type="radio" (change)="handleFormatSelected($event)" name="format" value="FLAPJACK">FlapJack<br>
