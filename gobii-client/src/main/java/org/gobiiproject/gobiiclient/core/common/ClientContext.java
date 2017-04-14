@@ -177,17 +177,13 @@ public final class ClientContext {
         String authPath = ServiceRequestId.URL_AUTH.getRequestUrl(context, ControllerType.GOBII);
         HttpCore httpCore = new HttpCore(host, port, null);
 
-        SystemUsers systemUsers = new SystemUsers();
-        SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-        returnVal.userToken = httpCore.getTokenForUser(authPath, userDetail.getUserName(), userDetail.getPassword());
-
         // now get the settings
         String settingsPath = ServiceRequestId.URL_CONFIGSETTINGS.getRequestUrl(context,ControllerType.GOBII);
 
         RestUri configSettingsUri = new UriFactory(null).RestUriFromUri(settingsPath);
-        HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri, returnVal.userToken);
-        GobiiPayloadResponse<ConfigSettingsDTO> gobiiPayloadResponse = new GobiiPayloadResponse<>(configSettingsUri);
+        HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri, null);
 
+        GobiiPayloadResponse<ConfigSettingsDTO> gobiiPayloadResponse = new GobiiPayloadResponse<>(configSettingsUri);
         PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiPayloadResponse.getPayloadFromResponse(ConfigSettingsDTO.class,
                 RestMethodTypes.GET,
                 HttpStatus.SC_OK,
