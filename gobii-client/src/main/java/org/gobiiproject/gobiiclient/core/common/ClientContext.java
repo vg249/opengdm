@@ -13,9 +13,6 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
-import org.gobiiproject.gobiimodel.types.SystemUserDetail;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
-import org.gobiiproject.gobiimodel.types.SystemUsers;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,7 +129,7 @@ public final class ClientContext {
                                 + "; url must be in this format: http://host:port/context-root");
                     }
 
-                    clientContext = (new ClientContext()).makeFromServer(url);
+                    clientContext = (new ClientContext()).initServerConfigsFromAnonymousAccess(url);
 
                 } else {
                     throw new Exception("initConfigFromServer is specfied, but the gobiiUrl parameter is null or empty");
@@ -151,7 +148,7 @@ public final class ClientContext {
         return clientContext;
     }
 
-    private ClientContext makeFromServer(URL url) throws Exception {
+    private ClientContext initServerConfigsFromAnonymousAccess(URL url) throws Exception {
 
         ClientContext returnVal = new ClientContext();
 
@@ -172,12 +169,8 @@ public final class ClientContext {
             throw new Exception("The specified URL does not contain a valid port id: " + url.toString());
         }
 
-        // first authenticate
-        // you can't use login() from here -- it assumes that ClientContext has already been constructed
-        String authPath = ServiceRequestId.URL_AUTH.getRequestUrl(context, ControllerType.GOBII);
+        // The /configsettings resource does not require authentication
         HttpCore httpCore = new HttpCore(host, port, null);
-
-        // now get the settings
         String settingsPath = ServiceRequestId.URL_CONFIGSETTINGS.getRequestUrl(context,ControllerType.GOBII);
 
         RestUri configSettingsUri = new UriFactory(null).RestUriFromUri(settingsPath);
