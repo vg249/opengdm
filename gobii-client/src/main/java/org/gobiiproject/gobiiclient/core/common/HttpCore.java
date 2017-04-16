@@ -179,7 +179,8 @@ public class HttpCore {
 
         if (HttpStatus.SC_NOT_FOUND != responseCode &&
                 HttpStatus.SC_BAD_REQUEST != responseCode &&
-                HttpStatus.SC_METHOD_NOT_ALLOWED != responseCode) {
+                HttpStatus.SC_METHOD_NOT_ALLOWED != responseCode &&
+                HttpStatus.SC_UNAUTHORIZED != responseCode) {
 
             InputStream inputStream = httpResponse.getEntity().getContent();
             BufferedReader bufferedReader = new BufferedReader(
@@ -235,7 +236,7 @@ public class HttpCore {
 
             System.out.println("Response: ");
 
-            if( httpMethodResult.getPayLoad() != null ) {
+            if (httpMethodResult.getPayLoad() != null) {
                 System.out.println(httpMethodResult.getPayLoad().toString());
             } else {
                 System.out.println("Null payload");

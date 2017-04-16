@@ -73,7 +73,6 @@ public class DtoRequestAuthenticationTest {
 //        DtoRequestProcessor<AnalysisDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
 
 
-
     }
 
     private String makeUrl(CropConfig cropConfig) throws Exception {
@@ -168,10 +167,12 @@ public class DtoRequestAuthenticationTest {
             );
 
 
-
             // create a new factory with correct context root and re-do the request
             // this should now work
-            String currentCropContextRootForCropOne = ClientContext.getInstance(null, false).getCropContextRoot(cropIdOne);
+            ClientContext.getInstance(null, false)
+                    .login(userDetail.getUserName(), userDetail.getPassword());
+            String currentCropContextRootForCropOne =   ClientContext.getInstance(null, false).getCropContextRoot(cropIdOne);
+
             uriFactory = new UriFactory(currentCropContextRootForCropOne);
             restUriContact = uriFactory
                     .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
