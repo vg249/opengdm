@@ -4,6 +4,7 @@ import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiPayloadResponse;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -65,7 +66,7 @@ public final class ClientContext {
 
 
     public synchronized static ClientContext getInstance(ConfigSettings configSettings,
-                                                         String cropType) throws Exception {
+                                                         String cropType, GobiiAutoLoginType gobiiAutoLoginType) throws Exception {
 
         if (null == clientContext) {
 
@@ -99,6 +100,28 @@ public final class ClientContext {
 
                 clientContext.serverConfigs.put(currentCropConfig.getGobiiCropType(),
                         currentServerConfig);
+            }
+
+            if (gobiiAutoLoginType != GobiiAutoLoginType.UNKNOWN) {
+
+                String userName = null;
+                String password = null;
+
+                if (gobiiAutoLoginType == GobiiAutoLoginType.USER_RUN_AS) {
+
+                    userName = configSettings.getLdapUserForBackendProcs();
+                    password = configSettings.getLdapPasswordForBackendProcs();
+
+                } else if (gobiiAutoLoginType == GobiiAutoLoginType.USER_TEST) {
+                    userName = configSettings.getTestExecConfig().getLdapUserForUnitTest();
+                    password = configSettings.getTestExecConfig().getLdapPasswordForUnitTest();
+                } else {
+                    throw new Exception("Unknown gobiiAutoLoginType: " + gobiiAutoLoginType.toString());
+                }
+
+                if (!LineUtils.isNullOrEmpty(userName) && !LineUtils.isNullOrEmpty(password)) {
+                    clientContext.login(userName,password);
+                }
             }
         }
 
@@ -171,7 +194,7 @@ public final class ClientContext {
 
         // The /configsettings resource does not require authentication
         HttpCore httpCore = new HttpCore(host, port, null);
-        String settingsPath = ServiceRequestId.URL_CONFIGSETTINGS.getRequestUrl(context,ControllerType.GOBII);
+        String settingsPath = ServiceRequestId.URL_CONFIGSETTINGS.getRequestUrl(context, ControllerType.GOBII);
 
         RestUri configSettingsUri = new UriFactory(null).RestUriFromUri(settingsPath);
         HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri, null);
@@ -319,7 +342,7 @@ public final class ClientContext {
         try {
             String authUrl = ServiceRequestId.URL_AUTH
                     .getRequestUrl(this.getCurrentCropContextRoot(),
-                    ControllerType.GOBII);
+                            ControllerType.GOBII);
 
             HttpCore httpCore = new HttpCore(this.getCurrentCropDomain(),
                     this.getCurrentCropPort(),

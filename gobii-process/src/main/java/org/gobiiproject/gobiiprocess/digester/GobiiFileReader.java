@@ -32,6 +32,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.*;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.email.DigesterMessage;
 import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
@@ -480,10 +481,10 @@ public class GobiiFileReader {
 			extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(gobiiExtractorInstruction);
 			extractorInstructionFilesDTOToSend.setInstructionFileName(new StringBuilder("extractor_").append(DateUtils.makeDateIdString()).toString());
 			PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-			ClientContext clientContext = ClientContext.getInstance(configuration, crop);
-			SystemUserDetail SystemUserDetail = (new SystemUsers()).getDetail(SystemUserNames.USER_READER.toString());
-			if(!(clientContext.login(SystemUserDetail.getUserName(), SystemUserDetail.getPassword()))) {
-				ErrorLogger.logError("Digester","Login Error:" + SystemUserDetail.getUserName() + "-" + SystemUserDetail.getPassword());
+
+			ClientContext clientContext = ClientContext.getInstance(configuration, crop,GobiiAutoLoginType.USER_RUN_AS);
+			if(LineUtils.isNullOrEmpty(clientContext.getUserToken())) {
+				ErrorLogger.logError("Digester","Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
 				return;
 			}
 			String currentCropContextRoot = clientContext.getInstance(null, false).getCurrentCropContextRoot();
@@ -681,13 +682,11 @@ public class GobiiFileReader {
 		try{
 			// set up authentication and so forth
 			// you'll need to get the current from the instruction file
-			ClientContext context=ClientContext.getInstance(config,cropName);
+			ClientContext context=ClientContext.getInstance(config,cropName,GobiiAutoLoginType.USER_RUN_AS);
 			//context.setCurrentClientCrop(cropName);
-			SystemUsers systemUsers = new SystemUsers();
-			SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
 
-			if(! context.login(userDetail.getUserName(), userDetail.getPassword())){
-				logError("Digester","Login error for login:"+userDetail.getUserName()+ "-"+userDetail.getPassword());
+			if( LineUtils.isNullOrEmpty( context.getUserToken())){
+				logError("Digester","Unable to login with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
 				return;
 			}
 
