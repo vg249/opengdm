@@ -208,7 +208,7 @@ export class FileModelTreeService {
                             .setCardinality(CardinalityType.ONE_ONLY)
                         )
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
-                            .setCategoryType(ExtractorCategoryType.CONTAINER)
+                            .setCategoryType(ExtractorCategoryType.LEAF)
                             .setEntityType(EntityType.Projects)
                             .setEntityName(Labels.instance().entityNodeLabels[EntityType.Projects])
                             .setCardinality(CardinalityType.ONE_OR_MORE)

@@ -21,7 +21,7 @@ import {NameIdLabelType} from "../model/name-id-label-type";
     template: `<name-id-list-box
                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
                     [notifyOnInit]="true"
-                    [doTreeNotifications] = "false"
+                    [doTreeNotifications] = "reinitProjectList"
                     [nameIdRequestParams] = "nameIdRequestParamsProject"
                     (onNameIdSelected) = "handleProjectSelected($event)"
                     (onError) = "handleHeaderStatus($event)">
