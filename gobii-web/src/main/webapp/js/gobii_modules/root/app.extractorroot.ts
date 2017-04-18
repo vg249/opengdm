@@ -36,6 +36,7 @@ import {DtoRequestItemContact, ContactSearchType} from "../services/app/dto-requ
 import {AuthenticationService} from "../services/core/authentication.service";
 import {FileItem} from "ng2-file-upload";
 import {isNullOrUndefined} from "util";
+import {NameIdLabelType} from "../model/name-id-label-type";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -85,8 +86,6 @@ import {isNullOrUndefined} from "util";
                                      <name-id-list-box
                                         [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                         [nameIdRequestParams]="nameIdRequestParamsMapsets"
-                                        [firstItemIsLabel]="true"
-                                        [initialSelectTextOverride]="'No'"
                                         (onError) = "handleHeaderStatusMessage($event)">
                                     </name-id-list-box>
                               </td>
@@ -123,10 +122,8 @@ import {isNullOrUndefined} from "util";
                             <name-id-list-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [nameIdRequestParams]="nameIdRequestParamsContactsPi"
-                                [notifyOnInit]="!firstItemIsLabelPrincipleInvestigators"
-                                [firstItemIsLabel]="firstItemIsLabelPrincipleInvestigators"
-                                [doTreeNotifications] = "firstItemIsLabelPrincipleInvestigators"
-                                [initialSelectTextOverride]="'All'"
+                                [notifyOnInit]="!doPrincipleInvestigatorTreeNotifications"
+                                [doTreeNotifications] = "doPrincipleInvestigatorTreeNotifications"
                                 (onNameIdSelected)="handleContactForPiSelected($event)"
                                 (onError) = "handleHeaderStatusMessage($event)">
                             </name-id-list-box>
@@ -151,7 +148,6 @@ import {isNullOrUndefined} from "util";
                             <name-id-list-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [notifyOnInit]="false"
-                                [firstItemIsLabel] = "true"
                                 [nameIdRequestParams]="nameIdRequestParamsDatasetType"
                                 (onError) = "handleHeaderStatusMessage($event)">
                             </name-id-list-box>
@@ -166,7 +162,6 @@ import {isNullOrUndefined} from "util";
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [notifyOnInit]="true"
                                 [doTreeNotifications]= "false"
-                                [firstItemIsLabel] = "false"
                                 [nameIdRequestParams]="nameIdRequestParamsExperiments"
                                 (onNameIdSelected) = "handleExperimentSelected($event)"
                                 (onError) = "handleHeaderStatusMessage($event)">
@@ -350,13 +345,16 @@ export class ExtractorRoot implements OnInit {
                 EntityType.CvTerms)
             .setCvFilterType(CvFilterType.DATASET_TYPE)
             .setEntityFilter(EntityFilter.BYTYPENAME)
-            .setEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE));
+            .setEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
+            .setMameIdLabelType(NameIdLabelType.SELECT_A);
+
 
 
         this.nameIdRequestParamsMapsets = NameIdRequestParams
             .build("Mapsets",
                 GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Mapsets);
+                EntityType.Mapsets)
+            .setMameIdLabelType(NameIdLabelType.NO);
 
         this.nameIdRequestParamsPlatforms = NameIdRequestParams
             .build("Platforms",
@@ -469,7 +467,7 @@ export class ExtractorRoot implements OnInit {
 
     private displayAvailableDatasets: boolean = true;
     private displaySelectorPi: boolean = true;
-    private firstItemIsLabelPrincipleInvestigators: boolean = false;
+    private doPrincipleInvestigatorTreeNotifications: boolean = false;
     private displaySelectorProject: boolean = true;
     private displaySelectorExperiment: boolean = true;
     private displaySelectorDataType: boolean = false;
@@ -525,7 +523,8 @@ export class ExtractorRoot implements OnInit {
 
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
-            this.firstItemIsLabelPrincipleInvestigators = false;
+            this.doPrincipleInvestigatorTreeNotifications = false;
+            this.nameIdRequestParamsContactsPi.setMameIdLabelType(NameIdLabelType.UNKNOWN);
             this.displaySelectorPi = true;
             this.displaySelectorProject = true;
             this.displaySelectorExperiment = true;
@@ -544,7 +543,8 @@ export class ExtractorRoot implements OnInit {
 //            this.initializePlatforms();
 
             this.displaySelectorPi = true;
-            this.firstItemIsLabelPrincipleInvestigators = true;
+            this.doPrincipleInvestigatorTreeNotifications = true;
+            this.nameIdRequestParamsContactsPi.setMameIdLabelType(NameIdLabelType.ALL);
             this.displaySelectorProject = true;
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
@@ -566,7 +566,8 @@ export class ExtractorRoot implements OnInit {
             this.displaySampleMarkerBox = true;
 
             this.displaySelectorPi = false;
-            this.firstItemIsLabelPrincipleInvestigators = false;
+            this.doPrincipleInvestigatorTreeNotifications = false;
+            this.nameIdRequestParamsContactsPi.setMameIdLabelType(NameIdLabelType.UNKNOWN);
             this.displaySelectorProject = false;
             this.displaySelectorExperiment = false;
             this.displayAvailableDatasets = false;

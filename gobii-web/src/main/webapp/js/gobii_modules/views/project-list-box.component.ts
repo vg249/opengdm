@@ -9,6 +9,7 @@ import {EntityFilter} from "../model/type-entity-filter";
 import {CvFilterType} from "../model/cv-filter-type";
 import {Header} from "../model/payload/header";
 import {NameIdRequestParams} from "../model/name-id-request-params";
+import {NameIdLabelType} from "../model/name-id-label-type";
 
 @Component({
     selector: 'project-list-box',
@@ -21,9 +22,7 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
                     [notifyOnInit]="true"
                     [doTreeNotifications] = "false"
-                    [firstItemIsLabel] = "reinitProjectList"
                     [nameIdRequestParams] = "nameIdRequestParamsProject"
-                     [initialSelectTextOverride]="'All'"
                     (onNameIdSelected) = "handleProjectSelected($event)"
                     (onError) = "handleHeaderStatus($event)">
                 </name-id-list-box>
@@ -54,7 +53,7 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
     private primaryInvestigatorName: string;
     private onProjectSelected: EventEmitter<string> = new EventEmitter();
     private onAddHeaderStatus: EventEmitter<Header> = new EventEmitter();
-    private reinitProjectList:boolean = false;
+    private reinitProjectList: boolean = false;
 
     private handleProjectSelected(arg) {
         let selectedProjectId = arg.id;
@@ -69,11 +68,13 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
 
     constructor(private _dtoRequestServiceProject: DtoRequestService<Project>) {
 
+
         this.nameIdRequestParamsProject = NameIdRequestParams
-            .build( "Projects",
+            .build("Projects",
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Projects)
-            .setEntityFilter(EntityFilter.BYTYPEID);
+            .setEntityFilter(EntityFilter.BYTYPEID)
+            .setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
 
 
     } // ctor
@@ -100,7 +101,7 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
-        let foo:string = "foo";
+        let foo: string = "foo";
 
         if (changes['gobiiExtractFilterType'] && changes['gobiiExtractFilterType'].currentValue) {
 
@@ -114,6 +115,8 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
             this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
             this.nameIdRequestParamsProject.setEntityFilterValue(this.primaryInvestigatorId);
         }
+
+        this.nameIdRequestParamsProject.setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
 
     }
 }
