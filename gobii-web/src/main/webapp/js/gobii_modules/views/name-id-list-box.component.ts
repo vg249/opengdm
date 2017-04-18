@@ -22,6 +22,7 @@ import {GobiiUIEventOrigin} from "../model/type-event-origin";
 @Component({
     selector: 'name-id-list-box',
     inputs: ['gobiiExtractFilterType',
+        'initialSelectTextOverride',
         'notifyOnInit',
         'nameIdRequestParams',
         'firstItemIsLabel',
@@ -123,7 +124,13 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                         });
 
                         if (this.firstItemIsLabel) {
+
+
                             let label: string = "Select ";
+
+                            if( scope$.initialSelectTextOverride ) {
+                                label = scope$.initialSelectTextOverride + " ";
+                            }
 
                             if (scope$.nameIdRequestParams.getCvFilterType() !== CvFilterType.UNKNOWN) {
                                 label += Labels.instance().cvFilterNodeLabels[scope$.nameIdRequestParams.getCvFilterType()];
@@ -170,6 +177,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
     private notifyOnInit: boolean = false;
     private firstItemIsLabel: boolean = false;
     private doTreeNotifications: boolean = true;
+    private initialSelectTextOverride:string = undefined;
     // DtoRequestItemNameIds expects the value to be null if it's not set (not "UNKNOWN")
 
     private nameIdRequestParams: NameIdRequestParams;

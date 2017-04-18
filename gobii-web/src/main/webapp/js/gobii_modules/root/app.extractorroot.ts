@@ -86,6 +86,7 @@ import {isNullOrUndefined} from "util";
                                         [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                         [nameIdRequestParams]="nameIdRequestParamsMapsets"
                                         [firstItemIsLabel]="true"
+                                        [initialSelectTextOverride]="'No'"
                                         (onError) = "handleHeaderStatusMessage($event)">
                                     </name-id-list-box>
                               </td>
@@ -125,6 +126,7 @@ import {isNullOrUndefined} from "util";
                                 [notifyOnInit]="!firstItemIsLabelPrincipleInvestigators"
                                 [firstItemIsLabel]="firstItemIsLabelPrincipleInvestigators"
                                 [doTreeNotifications] = "firstItemIsLabelPrincipleInvestigators"
+                                [initialSelectTextOverride]="'All'"
                                 (onNameIdSelected)="handleContactForPiSelected($event)"
                                 (onError) = "handleHeaderStatusMessage($event)">
                             </name-id-list-box>

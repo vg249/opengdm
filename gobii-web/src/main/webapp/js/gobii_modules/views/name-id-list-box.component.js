@@ -61,6 +61,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this.notifyOnInit = false;
                     this.firstItemIsLabel = false;
                     this.doTreeNotifications = true;
+                    this.initialSelectTextOverride = undefined;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.selectedFileItemId = null;
                     this.onNameIdSelected = new core_1.EventEmitter();
@@ -126,6 +127,9 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                             });
                             if (_this.firstItemIsLabel) {
                                 var label = "Select ";
+                                if (scope$.initialSelectTextOverride) {
+                                    label = scope$.initialSelectTextOverride + " ";
+                                }
                                 if (scope$.nameIdRequestParams.getCvFilterType() !== cv_filter_type_1.CvFilterType.UNKNOWN) {
                                     label += entity_labels_1.Labels.instance().cvFilterNodeLabels[scope$.nameIdRequestParams.getCvFilterType()];
                                 }
@@ -229,6 +233,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                 core_1.Component({
                     selector: 'name-id-list-box',
                     inputs: ['gobiiExtractFilterType',
+                        'initialSelectTextOverride',
                         'notifyOnInit',
                         'nameIdRequestParams',
                         'firstItemIsLabel',

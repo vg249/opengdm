@@ -19,6 +19,7 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
                     [notifyOnInit]="true"
                     [doTreeNotifications] = "false"
                     [nameIdRequestParams] = "nameIdRequestParamsProject"
+                     [initialSelectTextOverride]="'All'"
                     (onNameIdSelected) = "handleProjectSelected($event)"
                     (onError) = "handleHeaderStatus($event)">
                 </name-id-list-box>
