@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.dto.instructions.extractor;
 
+import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
@@ -25,9 +26,6 @@ public class GobiiDataSetExtract {
     private Integer dataSetId = null;
     String extractDestinationDirectory = null;
 
-    String sampleFileName = null;
-    String markerFileName = null;
-
 
     private GobiiExtractFilterType gobiiExtractFilterType;
 
@@ -37,11 +35,11 @@ public class GobiiDataSetExtract {
 
     private String listFileName;
 
-    private GobiiSampleListType gobiiSampleListType;
-
-    private String gobiiDatasetType;
+    private GobiiFilePropNameId gobiiDatasetType = new GobiiFilePropNameId();
 
     private List<Integer> platformIds = new ArrayList<>();
+
+    private GobiiSampleListType gobiiSampleListType;
 
     public GobiiExtractFilterType getGobiiExtractFilterType() {
         return gobiiExtractFilterType;
@@ -83,11 +81,11 @@ public class GobiiDataSetExtract {
         this.gobiiSampleListType = gobiiSampleListType;
     }
 
-    public String getGobiiDatasetType() {
+    public GobiiFilePropNameId getGobiiDatasetType() {
         return gobiiDatasetType;
     }
 
-    public void setGobiiDatasetType(String gobiiDatasetType) {
+    public void setGobiiDatasetType(GobiiFilePropNameId gobiiDatasetType) {
         this.gobiiDatasetType = gobiiDatasetType;
     }
 
@@ -147,20 +145,4 @@ public class GobiiDataSetExtract {
         this.gobiiJobStatus = gobiiJobStatus;
     }
 
-
-    public String getSampleFileName() {
-        return sampleFileName;
-    }
-
-    public void setSampleFileName(String sampleFileName) {
-        this.sampleFileName = sampleFileName;
-    }
-
-    public String getMarkerFileName() {
-        return markerFileName;
-    }
-
-    public void setMarkerFileName(String markerFileName) {
-        this.markerFileName = markerFileName;
-    }
 }

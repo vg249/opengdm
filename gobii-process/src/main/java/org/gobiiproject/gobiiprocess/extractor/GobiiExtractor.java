@@ -13,17 +13,15 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiQCComplete;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiimodel.utils.email.QCMessage;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
@@ -33,9 +31,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtrac
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 
-import static java.lang.System.in;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
@@ -96,8 +92,8 @@ public class GobiiExtractor {
 		String logDir=configuration.getFileSystemLog();
 		ErrorLogger.setLogFilepath(logDir);
 		String instructionFile=null;
-		if(args.length==0 ||args[0]==""){
-			Scanner s=new Scanner(in);
+		if(args.length==0 ||args[0].equals("")){
+			Scanner s=new Scanner(System.in);
 			System.out.println("Enter Extractor Instruction File Location:");
 			instructionFile=s.nextLine();
 		    if(instructionFile.equals("")) instructionFile="scripts//jdl232_01_pretty.json";
@@ -137,7 +133,7 @@ public class GobiiExtractor {
 
 			Integer mapId;
 			List<Integer> mapIds=inst.getMapsetIds();
-			if(mapIds.isEmpty() || mapIds.get(0).equals(null)){
+			if(mapIds.isEmpty() || mapIds.get(0)==null){
 				mapId=null;
 			}else if(mapIds.size()>1){
 				logError("Extraction Instruction","Too many map IDs for extractor. Expected one, recieved "+mapIds.size());
@@ -162,10 +158,9 @@ public class GobiiExtractor {
 				String sampleFile=extractDir+"sample.file";
 				String projectFile=extractDir+"summary.file";
 				String chrLengthFile = markerFile+".chr";
-				Path mdePath = FileSystems.getDefault().getPath(new StringBuilder(extractorScriptPath).append("postgres/gobii_mde/gobii_mde.py").toString());
-				if (!(mdePath.toFile().exists() &&
-					  mdePath.toFile().isFile())) {
-					ErrorLogger.logDebug("Extractor", new StringBuilder(mdePath.toString()).append(" does not exist!").toString());
+				Path mdePath = FileSystems.getDefault().getPath(extractorScriptPath+"postgres/gobii_mde/gobii_mde.py");
+				if (!mdePath.toFile().isFile()) {
+					ErrorLogger.logDebug("Extractor", mdePath+" does not exist!");
 					return;
 				}
 
@@ -225,7 +220,7 @@ public class GobiiExtractor {
 								" -s " + sampleFile +
 								" -p " + projectFile +
                                 markerListLocation +
-								" --datasetType " + extract.getGobiiDatasetType() +
+								" --datasetType " + extract.getGobiiDatasetType().getName() +
 								mapIdTerm +
 								platformTerm +
 								" -l -v ";
@@ -299,7 +294,7 @@ public class GobiiExtractor {
 
 				// Adding "/" back to the bi-allelic data made from HDF5
 				if (extract.getGobiiDatasetType() != null) {
-					if (extract.getDataSetName().toUpperCase().equals(DataSetType.SSR_ALLELE_SIZE.toString())) {
+					if (extract.getGobiiDatasetType().getName().toLowerCase().equals("ssr_allele_size")) {
 						ErrorLogger.logInfo("Extractor","Adding slashes to bi allelic data in " + genoFile);
 						if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
 							ErrorLogger.logInfo("Extractor","Added slashes to all the bi-allelic data in " + genoFile);
@@ -356,10 +351,9 @@ public class GobiiExtractor {
 					qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
 					qcInstructionsDTOToSend.setQualityFileName("Report.xls");
 					PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
-					ClientContext clientContext = ClientContext.getInstance(configuration, crop);
-					SystemUserDetail SystemUserDetail = (new SystemUsers()).getDetail(SystemUserNames.USER_READER.toString());
-					if(!(clientContext.login(SystemUserDetail.getUserName(), SystemUserDetail.getPassword()))) {
-						ErrorLogger.logError("Digester","Login Error:" + SystemUserDetail.getUserName() + "-" + SystemUserDetail.getPassword());
+					ClientContext clientContext = ClientContext.getInstance(configuration, crop,GobiiAutoLoginType.USER_RUN_AS);
+					if( LineUtils.isNullOrEmpty(clientContext.getUserToken())) {
+						ErrorLogger.logError("Digester","Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
 						return;
 					}
 					String currentCropContextRoot = clientContext.getInstance(null, false).getCurrentCropContextRoot();
@@ -532,7 +526,7 @@ public class GobiiExtractor {
 	}
 
 	/**
-	 * Determine crop type by looking at the intruction file's location for the name of a Socrop.
+	 * Determine crop type by looking at the instruction file's location for the name of a Socrop.
 	 * @param instructionFile
 	 * @return GobiiCropType
 	 */

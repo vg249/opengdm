@@ -126,6 +126,7 @@ public class HttpCore {
 
         URI uri = makeUri(this.uriFactory.RestUriFromUri(url));
         HttpPost postRequest = new HttpPost(uri);
+        this.setHttpBody(postRequest, "empty");
         returnVal = submitUriRequest(postRequest, userName, password, null);
 
         if (HttpStatus.SC_OK != returnVal.getStatusLine().getStatusCode()) {
@@ -178,7 +179,8 @@ public class HttpCore {
 
         if (HttpStatus.SC_NOT_FOUND != responseCode &&
                 HttpStatus.SC_BAD_REQUEST != responseCode &&
-                HttpStatus.SC_METHOD_NOT_ALLOWED != responseCode) {
+                HttpStatus.SC_METHOD_NOT_ALLOWED != responseCode &&
+                HttpStatus.SC_UNAUTHORIZED != responseCode) {
 
             InputStream inputStream = httpResponse.getEntity().getContent();
             BufferedReader bufferedReader = new BufferedReader(
