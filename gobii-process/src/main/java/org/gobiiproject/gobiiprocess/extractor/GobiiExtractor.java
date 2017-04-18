@@ -21,6 +21,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
@@ -314,10 +315,9 @@ public class GobiiExtractor {
 					qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
 					qcInstructionsDTOToSend.setQualityFileName("Report.xls");
 					PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
-					ClientContext clientContext = ClientContext.getInstance(configuration, crop);
-					SystemUserDetail SystemUserDetail = (new SystemUsers()).getDetail(SystemUserNames.USER_READER.toString());
-					if(!(clientContext.login(SystemUserDetail.getUserName(), SystemUserDetail.getPassword()))) {
-						ErrorLogger.logError("Digester","Login Error:" + SystemUserDetail.getUserName() + "-" + SystemUserDetail.getPassword());
+					ClientContext clientContext = ClientContext.getInstance(configuration, crop,GobiiAutoLoginType.USER_RUN_AS);
+					if( LineUtils.isNullOrEmpty(clientContext.getUserToken())) {
+						ErrorLogger.logError("Digester","Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
 						return;
 					}
 					String currentCropContextRoot = clientContext.getInstance(null, false).getCurrentCropContextRoot();
