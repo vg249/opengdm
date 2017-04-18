@@ -42,6 +42,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onProjectSelected = new core_1.EventEmitter();
                     this.onAddHeaderStatus = new core_1.EventEmitter();
+                    this.reinitProjectList = false;
                     this.nameIdRequestParamsProject = name_id_request_params_1.NameIdRequestParams
                         .build("Projects", type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID);
@@ -86,9 +87,12 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
             ProjectListBoxComponent = __decorate([
                 core_1.Component({
                     selector: 'project-list-box',
-                    inputs: ['primaryInvestigatorId', 'gobiiExtractFilterType'],
-                    outputs: ['onProjectSelected', 'onAddHeaderStatus'],
-                    template: "<name-id-list-box\n                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                    [notifyOnInit]=\"true\"\n                    [doTreeNotifications] = \"false\"\n                    [nameIdRequestParams] = \"nameIdRequestParamsProject\"\n                     [initialSelectTextOverride]=\"'All'\"\n                    (onNameIdSelected) = \"handleProjectSelected($event)\"\n                    (onError) = \"handleHeaderStatus($event)\">\n                </name-id-list-box>\n\t\t        \n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        <b>Name:</b> {{project.projectName}}<BR>\n                        <b>Description:</b> {{project.projectDescription}}<BR>\n                        <b>Principle Investigator:</b> {{primaryInvestigatorName}}\n                      </fieldset> \n                </div>\t\t        \n" // end template
+                    inputs: ['primaryInvestigatorId',
+                        'gobiiExtractFilterType',
+                        'reinitProjectList'],
+                    outputs: ['onProjectSelected',
+                        'onAddHeaderStatus'],
+                    template: "<name-id-list-box\n                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                    [notifyOnInit]=\"true\"\n                    [doTreeNotifications] = \"false\"\n                    [firstItemIsLabel] = \"reinitProjectList\"\n                    [nameIdRequestParams] = \"nameIdRequestParamsProject\"\n                     [initialSelectTextOverride]=\"'All'\"\n                    (onNameIdSelected) = \"handleProjectSelected($event)\"\n                    (onError) = \"handleHeaderStatus($event)\">\n                </name-id-list-box>\n\t\t        \n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        <b>Name:</b> {{project.projectName}}<BR>\n                        <b>Description:</b> {{project.projectDescription}}<BR>\n                        <b>Principle Investigator:</b> {{primaryInvestigatorName}}\n                      </fieldset> \n                </div>\t\t        \n" // end template
                 }),
                 __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService])
             ], ProjectListBoxComponent);

@@ -139,6 +139,7 @@ import {isNullOrUndefined} from "util";
                             <label class="the-label">Project:</label><BR>
                             <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi"
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                [reinitProjectList] = "reinitProjectList"
                                 (onProjectSelected)="handleProjectSelected($event)"
                                 (onAddHeaderStatus)="handleHeaderStatusMessage($event)"></project-list-box>
                         </div>
@@ -476,6 +477,7 @@ export class ExtractorRoot implements OnInit {
     private displayIncludedDatasetsGrid: boolean = true;
     private displaySampleListTypeSelector: boolean = false;
     private displaySampleMarkerBox: boolean = false;
+    private reinitProjectList: boolean = false;
     private gobiiExtractFilterType: GobiiExtractFilterType;
 
     private handleExportTypeSelected(arg: GobiiExtractFilterType) {
@@ -534,6 +536,7 @@ export class ExtractorRoot implements OnInit {
             this.displaySelectorPlatform = false;
             this.displaySampleListTypeSelector = false;
             this.displaySampleMarkerBox = false;
+            this.reinitProjectList = false;
 
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
@@ -552,6 +555,7 @@ export class ExtractorRoot implements OnInit {
             this.displayIncludedDatasetsGrid = false;
             this.displaySampleMarkerBox = false;
 
+            this.reinitProjectList = true;
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
@@ -568,6 +572,9 @@ export class ExtractorRoot implements OnInit {
             this.displayAvailableDatasets = false;
             this.displayIncludedDatasetsGrid = false;
             this.displaySampleListTypeSelector = false;
+
+            this.reinitProjectList = false;
+
 
         }
 

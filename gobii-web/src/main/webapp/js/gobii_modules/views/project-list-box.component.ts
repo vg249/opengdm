@@ -12,12 +12,16 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
 
 @Component({
     selector: 'project-list-box',
-    inputs: ['primaryInvestigatorId', 'gobiiExtractFilterType'],
-    outputs: ['onProjectSelected', 'onAddHeaderStatus'],
+    inputs: ['primaryInvestigatorId',
+        'gobiiExtractFilterType',
+        'reinitProjectList'],
+    outputs: ['onProjectSelected',
+        'onAddHeaderStatus'],
     template: `<name-id-list-box
                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
                     [notifyOnInit]="true"
                     [doTreeNotifications] = "false"
+                    [firstItemIsLabel] = "reinitProjectList"
                     [nameIdRequestParams] = "nameIdRequestParamsProject"
                      [initialSelectTextOverride]="'All'"
                     (onNameIdSelected) = "handleProjectSelected($event)"
@@ -50,6 +54,7 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
     private primaryInvestigatorName: string;
     private onProjectSelected: EventEmitter<string> = new EventEmitter();
     private onAddHeaderStatus: EventEmitter<Header> = new EventEmitter();
+    private reinitProjectList:boolean = false;
 
     private handleProjectSelected(arg) {
         let selectedProjectId = arg.id;
