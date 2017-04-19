@@ -20,10 +20,8 @@ public class GobiiDataSetExtract {
     //Combine data sets into a single output file (Unused/unsupported)
     private boolean accolate = false;
     //Descriptive name of the data set. Used in reporting
-    private String dataSetName = null;
     private GobiiJobStatus gobiiJobStatus;
     //Internal ID of the data set. Used for internal lookups.
-    private Integer dataSetId = null;
     String extractDestinationDirectory = null;
 
 
@@ -34,6 +32,7 @@ public class GobiiDataSetExtract {
     private GobiiFilePropNameId gobiiDatasetType = new GobiiFilePropNameId();
     private GobiiFilePropNameId principleInvestigator = new GobiiFilePropNameId();
     private GobiiFilePropNameId project = new GobiiFilePropNameId();
+    private GobiiFilePropNameId dataSet = new GobiiFilePropNameId();
     private List<Integer> platformIds = new ArrayList<>();
     private GobiiSampleListType gobiiSampleListType;
 
@@ -110,22 +109,6 @@ public class GobiiDataSetExtract {
         this.accolate = accolate;
     }
 
-    public String getDataSetName() {
-        return dataSetName;
-    }
-
-    public void setDataSetName(String dataSetName) {
-        this.dataSetName = dataSetName;
-    }
-
-    public Integer getDataSetId() {
-        return dataSetId;
-    }
-
-    public void setDataSetId(Integer dataSetId) {
-        this.dataSetId = dataSetId;
-    }
-
     public String getExtractDestinationDirectory() {
         return extractDestinationDirectory;
     }
@@ -158,4 +141,13 @@ public class GobiiDataSetExtract {
     public void setProject(GobiiFilePropNameId project) {
         this.project = project;
     }
+
+    public GobiiFilePropNameId getDataSet() {
+        return dataSet;
+    }
+
+    public void setDataSet(GobiiFilePropNameId dataSet) {
+        this.dataSet = dataSet;
+    }
+
 }

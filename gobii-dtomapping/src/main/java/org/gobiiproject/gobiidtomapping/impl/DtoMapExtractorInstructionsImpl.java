@@ -200,19 +200,11 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     if (currentGobiiDataSetExtract.getGobiiExtractFilterType()
                             .equals(GobiiExtractFilterType.WHOLE_DATASET)) {
                         // check that we have all required values
-                        if (LineUtils.isNullOrEmpty(currentGobiiDataSetExtract.getDataSetName())) {
+                        if (currentGobiiDataSetExtract.getDataSet() == null) {
                             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                     GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                                    "DataSet name is missing");
+                                    "DataSet is missing");
                         }
-
-                        if (LineUtils.isNullOrEmpty(Integer.toString(currentGobiiDataSetExtract.getDataSetId()))) {
-                            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                                    GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                                    "Dataset ID is missing");
-
-                        }
-
 
                     } else if (currentGobiiDataSetExtract.getGobiiExtractFilterType()
                             .equals(GobiiExtractFilterType.BY_SAMPLE)) {

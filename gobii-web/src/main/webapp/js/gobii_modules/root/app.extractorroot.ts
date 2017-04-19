@@ -720,10 +720,11 @@ export class ExtractorRoot implements OnInit {
 
     private makeDatasetExtract() {
 
+        let dataSet: NameId = new NameId(this.selectedDatasetId,
+            this.selectedDatasetName, EntityType.DataSets);
+
         this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(GobiiFileType.GENERIC,
             false,
-            Number(this.selectedDatasetId),
-            this.selectedDatasetName,
             null,
             this.gobiiExtractFilterType,
             this.markerList,
@@ -733,7 +734,8 @@ export class ExtractorRoot implements OnInit {
             null,
             null,
             null,
-            null));
+            null,
+            dataSet));
 
     }
 
@@ -925,14 +927,14 @@ export class ExtractorRoot implements OnInit {
                             && item.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR
                     });
                     let principleInvestigator: NameId = principleInvestigatorFileItem != null ? new NameId(principleInvestigatorFileItem.getItemId(),
-                            principleInvestigatorFileItem.getItemName(), EntityType.CvTerms) : null;
+                            principleInvestigatorFileItem.getItemName(), EntityType.Contacts) : null;
 
 
                     let projectFileItem: GobiiFileItem = fileItems.find(item => {
                         return item.getEntityType() === EntityType.Projects
                     });
                     let project: NameId = projectFileItem != null ? new NameId(projectFileItem.getItemId(),
-                            projectFileItem.getItemName(), EntityType.CvTerms) : null;
+                            projectFileItem.getItemName(), EntityType.Projects) : null;
 
 
                     let platformFileItems: GobiiFileItem[] = fileItems.filter(item => {
@@ -977,10 +979,12 @@ export class ExtractorRoot implements OnInit {
                             })
                             .forEach(datsetFileItem => {
 
+                                let dataSet: NameId = new NameId(datsetFileItem.getItemId(),
+                                        datsetFileItem.getItemName(), EntityType.CvTerms) ;
+
+
                                 gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
                                     false,
-                                    Number(datsetFileItem.getItemId()),
-                                    datsetFileItem.getItemName(),
                                     null,
                                     this.gobiiExtractFilterType,
                                     null,
@@ -990,13 +994,12 @@ export class ExtractorRoot implements OnInit {
                                     datasetType,
                                     platformIds,
                                     null,
-                                    null));
+                                    null,
+                                    dataSet));
                             });
                     } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
                         gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
                             false,
-                            null,
-                            null,
                             null,
                             this.gobiiExtractFilterType,
                             markerList,
@@ -1006,12 +1009,11 @@ export class ExtractorRoot implements OnInit {
                             datasetType,
                             platformIds,
                             null,
+                            null,
                             null));
                     } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
                         gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
                             false,
-                            null,
-                            null,
                             null,
                             this.gobiiExtractFilterType,
                             null,
@@ -1021,7 +1023,8 @@ export class ExtractorRoot implements OnInit {
                             datasetType,
                             platformIds,
                             principleInvestigator,
-                            project));
+                            project,
+                            null));
                     } else {
                         this.handleAddMessage("Unhandled extract filter type: " + GobiiExtractFilterType[this.gobiiExtractFilterType]);
                     }

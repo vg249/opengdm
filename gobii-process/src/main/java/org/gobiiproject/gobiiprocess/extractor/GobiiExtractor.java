@@ -182,7 +182,7 @@ public class GobiiExtractor {
 								" -s " + sampleFile +
 								" -p " + projectFile +
 								(mapId==null?"":(" -D "+mapId))+
-								" -d " + extract.getDataSetId() +
+								" -d " + extract.getDataSet().getId() +
 								" -l -v ";
 						break;
 					case BY_MARKER:
@@ -233,11 +233,11 @@ public class GobiiExtractor {
 						ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
 				}
 
-				String errorFile=getLogName(extract,cropConfig,extract.getDataSetId());
+				String errorFile=getLogName(extract,cropConfig,extract.getDataSet().getId());
 				ErrorLogger.logInfo("Extractor","Executing MDEs");
 				ErrorLogger.logDebug("Extractor",gobiiMDE);
 				tryExec(gobiiMDE, extractDir+"mdeOut", errorFile);
-				Integer dataSetId=extract.getDataSetId();
+				Integer dataSetId=extract.getDataSet().getId();
 
 				//HDF5
 				String tempFolder=extractDir;
@@ -276,9 +276,9 @@ public class GobiiExtractor {
 						//Always regenerate requests - may have different parameters
 						boolean extended=new File(extendedMarkerFile).exists();
 						FlapjackTransformer.generateMapFile(extended?extendedMarkerFile:markerFile, sampleFile, chrLengthFile, dataSetId, tempFolder, mapOutFile, errorFile,extended);
-						HelperFunctions.sendEmail(extract.getDataSetName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+						HelperFunctions.sendEmail(extract.getDataSet().getName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 						FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
-						HelperFunctions.sendEmail(extract.getDataSetName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+						HelperFunctions.sendEmail(extract.getDataSet().getName()+ " Genotype Extract", genoOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 						HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 						break;
 					case HAPMAP:
@@ -286,16 +286,16 @@ public class GobiiExtractor {
 						HapmapTransformer hapmapTransformer = new HapmapTransformer();
 						ErrorLogger.logDebug("GobiiExtractor","Executing Hapmap Generation");
 						success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
-						HelperFunctions.sendEmail(extract.getDataSetName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
+						HelperFunctions.sendEmail(extract.getDataSet().getName()+" Hapmap Extract",hapmapOutFile,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
 						HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 						break;
                     case META_DATA:
-                        HelperFunctions.sendEmail(extract.getDataSetName()+" Metadata Extract",extractDir,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
+                        HelperFunctions.sendEmail(extract.getDataSet().getName()+" Metadata Extract",extractDir,success&&ErrorLogger.success(),errorFile,configuration,inst.getContactEmail());
                         HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
                         break;
                     default:
 						ErrorLogger.logError("Extractor","Unknown Extract Type "+extract.getGobiiFileType());
-						HelperFunctions.sendEmail(extract.getDataSetName()+" "+extract.getGobiiFileType()+" Extract",null,false,errorFile,configuration,inst.getContactEmail());
+						HelperFunctions.sendEmail(extract.getDataSet().getName()+" "+extract.getGobiiFileType()+" Extract",null,false,errorFile,configuration,inst.getContactEmail());
 				}
 				rmIfExist(genoFile);
 				rmIfExist(chrLengthFile);
