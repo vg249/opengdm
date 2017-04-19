@@ -147,7 +147,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 }
 
 
-
                 if (LineUtils.isNullOrEmpty(currentExtractorInstruction.getGobiiCropType())) {
 
                     currentExtractorInstruction.setGobiiCropType(cropType);
@@ -179,17 +178,20 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                 String extractorFileDestinationLocation = null;
 
-                for (GobiiDataSetExtract currentGobiiDataSetExtract :
-                        currentExtractorInstruction.getDataSetExtracts()) {
 
-                    if( currentGobiiDataSetExtract.getListFileName() != null )
-                    {
+                for (Integer idx = 0;
+                     idx < currentExtractorInstruction.getDataSetExtracts().size();
+                     idx++) {
+
+                    GobiiDataSetExtract currentGobiiDataSetExtract = currentExtractorInstruction.getDataSetExtracts().get(idx);
+
+                    if (currentGobiiDataSetExtract.getListFileName() != null) {
 
                         String presumptiveListFileFqpn = instructionFileDirectory + currentGobiiDataSetExtract.getListFileName() + DATA_FILE_EXT;
 
-                        if(this.extractorInstructionsDAO.doesPathExist(presumptiveListFileFqpn))  {
+                        if (this.extractorInstructionsDAO.doesPathExist(presumptiveListFileFqpn)) {
                             currentGobiiDataSetExtract.setListFileName(presumptiveListFileFqpn);
-                        }  else {
+                        } else {
 
                             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                     GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
@@ -257,6 +259,10 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             currentGobiiDataSetExtract.getGobiiFileType(),
                             extractionFileDestinationPath,
                             extractorInstructionFilesDTO.getInstructionFileName());
+
+                    if (currentExtractorInstruction.getDataSetExtracts().size() > 1) {
+                        extractorFileDestinationLocation += "/" + idx.toString();
+                    }
 
                     if (!extractorInstructionsDAO.doesPathExist(extractorFileDestinationLocation)) {
 
