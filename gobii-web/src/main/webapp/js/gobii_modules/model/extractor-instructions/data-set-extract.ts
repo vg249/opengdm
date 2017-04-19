@@ -144,6 +144,8 @@ export class GobiiDataSetExtract {
         returnVal.gobiiSampleListType = this.gobiiSampleListType;
         returnVal.gobiiDatasetType = this.gobiiDatasetType;
         returnVal.platformIds = this.platformIds;
+        returnVal.principleInvestigator = this.principleInvestigator;
+        returnVal.project = this.project;
 
         return returnVal;
     }

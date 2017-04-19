@@ -115,6 +115,8 @@ System.register([], function (exports_1, context_1) {
                     returnVal.gobiiSampleListType = this.gobiiSampleListType;
                     returnVal.gobiiDatasetType = this.gobiiDatasetType;
                     returnVal.platformIds = this.platformIds;
+                    returnVal.principleInvestigator = this.principleInvestigator;
+                    returnVal.project = this.project;
                     return returnVal;
                 };
                 GobiiDataSetExtract.fromJson = function (json) {
