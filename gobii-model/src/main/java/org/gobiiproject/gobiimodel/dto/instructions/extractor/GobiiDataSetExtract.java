@@ -28,18 +28,15 @@ public class GobiiDataSetExtract {
 
 
     private GobiiExtractFilterType gobiiExtractFilterType;
-
     private List<String> markerList = new ArrayList<>();
-
     private List<String> sampleList = new ArrayList<>();
-
     private String listFileName;
-
     private GobiiFilePropNameId gobiiDatasetType = new GobiiFilePropNameId();
-
+    private GobiiFilePropNameId principleInvestigator = new GobiiFilePropNameId();
+    private GobiiFilePropNameId project = new GobiiFilePropNameId();
     private List<Integer> platformIds = new ArrayList<>();
-
     private GobiiSampleListType gobiiSampleListType;
+
 
     public GobiiExtractFilterType getGobiiExtractFilterType() {
         return gobiiExtractFilterType;
@@ -145,4 +142,20 @@ public class GobiiDataSetExtract {
         this.gobiiJobStatus = gobiiJobStatus;
     }
 
+
+    public GobiiFilePropNameId getPrincipleInvestigator() {
+        return principleInvestigator;
+    }
+
+    public void setPrincipleInvestigator(GobiiFilePropNameId principleInvestigator) {
+        this.principleInvestigator = principleInvestigator;
+    }
+
+    public GobiiFilePropNameId getProject() {
+        return project;
+    }
+
+    public void setProject(GobiiFilePropNameId project) {
+        this.project = project;
+    }
 }

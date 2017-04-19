@@ -16,7 +16,9 @@ export class GobiiDataSetExtract {
                        public listFileName: string,
                        public gobiiSampleListType: GobiiSampleListType,
                        public gobiiDatasetType: NameId,
-                       public platformIds: number[]) {
+                       public platformIds: number[],
+                       public principleInvestigator: NameId,
+                       public  project: NameId) {
 
         // this.setGobiiFileType(gobiiFileType);
         // this.setAccolate(accolate);
@@ -161,7 +163,9 @@ export class GobiiDataSetExtract {
                 json.listFileName,
                 json.gobiiSampleListType,
                 json.gobiiDatasetType,
-                json.platformIds);
+                json.platformIds,
+                json.principleInvestigator,
+                json.project);
 
         return returnVal;
     }
