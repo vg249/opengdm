@@ -66,6 +66,8 @@ public class CSVFileReader implements CSVFileReaderInterface {
 					reader.processCSV(i);
 				} catch (InterruptedException e) {
 					ErrorLogger.logError("CSVFileReader","Interrupted reading instruction", e);
+				}catch(Exception e){
+					ErrorLogger.logError("CSVFileReader","Unexpected Exception in reader",e);
 				}
 			}
 			return;
