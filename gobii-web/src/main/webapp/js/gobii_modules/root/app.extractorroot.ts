@@ -209,7 +209,6 @@ import {NameIdLabelType} from "../model/name-id-label-type";
                                 <hr style="width: 100%; color: black; height: 1px; background-color:black;" />
                                 <sample-marker-box 
                                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                    (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)"
                                     (onSampleMarkerError)="handleHeaderStatusMessage($event)">
                                 </sample-marker-box>
                     </div> <!-- panel body -->
@@ -224,7 +223,6 @@ import {NameIdLabelType} from "../model/name-id-label-type";
                       <div class="panel-body">
                                 <sample-marker-box 
                                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                    (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)"
                                     (onSampleMarkerError)="handleHeaderStatusMessage($event)">
                                 </sample-marker-box>
                     </div> <!-- panel body -->
@@ -718,58 +716,10 @@ export class ExtractorRoot implements OnInit {
 
     }
 
-    private makeDatasetExtract() {
-
-        let dataSet: NameId = new NameId(this.selectedDatasetId,
-            this.selectedDatasetName, EntityType.DataSets);
-
-        this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(GobiiFileType.GENERIC,
-            false,
-            null,
-            this.gobiiExtractFilterType,
-            this.markerList,
-            this.sampleList,
-            this.uploadFileName,
-            null,
-            null,
-            null,
-            null,
-            null,
-            dataSet));
-
-    }
-
-
-    private selectedDatasetId: string;
-    private selectedDatasetName: string;
 
 
 // ********************************************************************
 // ********************************************** MARKER/SAMPLE selection
-    private markerList: string[] = null;
-    private sampleList: string[] = null;
-    private uploadFileName: string = null;
-
-    private handleSampleMarkerListComplete(arg: SampleMarkerList) {
-
-        let sampleMarkerList: SampleMarkerList = arg;
-
-
-        if (sampleMarkerList.isArray) {
-            if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
-                this.sampleList = sampleMarkerList.items;
-
-            } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
-                this.markerList = sampleMarkerList.items;
-            }
-        } else {
-            this.uploadFileName = sampleMarkerList.uploadFileName;
-        }
-
-        this.makeDatasetExtract();
-    }
-
-
     // ********************************************************************
     // ********************************************** Extract file submission
     private treeStatusNotification: TreeStatusNotification = null;
