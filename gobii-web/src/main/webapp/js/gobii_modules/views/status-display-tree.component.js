@@ -160,6 +160,10 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     if (event.node) {
                     }
                 };
+                StatusDisplayTreeComponent.prototype.nodeCollapse = function (event) {
+                    if (event.node) {
+                    }
+                };
                 StatusDisplayTreeComponent.prototype.viewFile = function (file) {
                     //      this.msgs.push({severity: 'info', summary: 'Node Selected with Right Click', detail: file.label});
                 };
@@ -177,6 +181,16 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     this.gobiiTreeNodes.forEach(function (node) {
                         _this.expandRecursive(node, false);
                     });
+                };
+                StatusDisplayTreeComponent.prototype.addCountToContainerNode = function (node) {
+                    var foo = "foo";
+                    var parenPosition = node.label.indexOf("(");
+                    if (parenPosition > 0) {
+                        node.label = node.label.substring(0, parenPosition);
+                    }
+                    if (node.children.length > 0) {
+                        node.label += " (" + node.children.length + ")";
+                    }
                 };
                 StatusDisplayTreeComponent.prototype.expandRecursive = function (node, isExpand) {
                     var _this = this;
@@ -370,12 +384,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                 if (nodeToDelete != null) {
                                     var idxOfNodeToDelete = parentTreeNode.children.indexOf(nodeToDelete);
                                     parentTreeNode.children.splice(idxOfNodeToDelete, 1);
-                                    if (parentTreeNode.children.length < this.containerCollapseThreshold) {
-                                        parentTreeNode.expanded = true;
-                                    }
-                                    else {
-                                        parentTreeNode.expanded = false;
-                                    }
+                                    this.addCountToContainerNode(parentTreeNode);
                                     if (parentTreeNode.children.length === 0) {
                                         this.removeItemFromSelectedNodes(parentTreeNode);
                                     }
@@ -429,6 +438,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                         parentTreeNode.children.push(newGobiiTreeNode);
                                         parentTreeNode.expanded = true;
                                         this.selectedGobiiNodes.push(newGobiiTreeNode);
+                                        this.addCountToContainerNode(parentTreeNode);
                                         if (parentTreeNode.children.length >= this.containerCollapseThreshold) {
                                             parentTreeNode.expanded = false;
                                         }
@@ -615,7 +625,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     selector: 'status-display-tree',
                     inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
                     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
-                    template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" \n                    selectionMode=\"checkbox\" \n                    [(selection)]=\"selectedGobiiNodes\"\n                    (onNodeUnselect)=\"nodeUnselect($event)\"\n                    (onNodeSelect)=\"nodeSelect($event)\"\n                    [style]=\"{'width':'100%'}\"\n                    styleClass=\"criteria-tree\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
+                    template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" \n                    selectionMode=\"checkbox\" \n                    [(selection)]=\"selectedGobiiNodes\"\n                    (onNodeUnselect)=\"nodeUnselect($event)\"\n                    (onNodeSelect)=\"nodeSelect($event)\"\n                    (onNodeExpand)=\"nodeExpand($event)\"\n                    (onNodeCollapse)=\"nodeCollapse($event)\"\n                    [style]=\"{'width':'100%'}\"\n                    styleClass=\"criteria-tree\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
                 }),
                 __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
             ], StatusDisplayTreeComponent);

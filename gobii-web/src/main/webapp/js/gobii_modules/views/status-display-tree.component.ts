@@ -31,6 +31,8 @@ import {GobiiUIEventOrigin} from "../model/type-event-origin";
                     [(selection)]="selectedGobiiNodes"
                     (onNodeUnselect)="nodeUnselect($event)"
                     (onNodeSelect)="nodeSelect($event)"
+                    (onNodeExpand)="nodeExpand($event)"
+                    (onNodeCollapse)="nodeCollapse($event)"
                     [style]="{'width':'100%'}"
                     styleClass="criteria-tree"></p-tree>
                     <!--<p-tree [value]="demoTreeNodes" selectionMode="checkbox" [(selection)]="selectedDemoNodes"></p-tree>-->
@@ -178,8 +180,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     nodeExpand(event) {
         if (event.node) {
-            //in a real application, make a call to a remote url to load children of the current node and add the new nodes as children
-            //this.nodeService.getLazyFiles().then(nodes => event.node.children = nodes);
+        }
+    }
+
+    nodeCollapse(event) {
+        if (event.node) {
+
         }
     }
 
@@ -203,6 +209,22 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         });
     }
 
+    addCountToContainerNode(node: TreeNode) {
+        let foo: string = "foo";
+
+        let parenPosition: number = node.label.indexOf("(");
+        if (parenPosition > 0 ) {
+            node.label = node.label.substring(0, parenPosition);
+        }
+
+        if (node.children.length > 0) {
+
+            node.label += " (" + node.children.length + ")";
+
+        }
+
+
+    }
 
     expandRecursive(node: TreeNode, isExpand: boolean) {
         node.expanded = isExpand;
@@ -431,12 +453,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                         let idxOfNodeToDelete: number = parentTreeNode.children.indexOf(nodeToDelete);
                         parentTreeNode.children.splice(idxOfNodeToDelete, 1);
 
-                        if( parentTreeNode.children.length < this.containerCollapseThreshold ) {
-                            parentTreeNode.expanded = true;
-                        } else {
-                            parentTreeNode.expanded = false;
-                        }
-
+                        this.addCountToContainerNode(parentTreeNode);
 
                         if (parentTreeNode.children.length === 0) {
                             this.removeItemFromSelectedNodes(parentTreeNode);
@@ -578,8 +595,11 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                             parentTreeNode.expanded = true;
                             this.selectedGobiiNodes.push(newGobiiTreeNode);
 
-                            if( parentTreeNode.children.length >= this.containerCollapseThreshold ) {
+                            this.addCountToContainerNode(parentTreeNode);
+
+                            if (parentTreeNode.children.length >= this.containerCollapseThreshold) {
                                 parentTreeNode.expanded = false;
+
                             } else {
                                 parentTreeNode.expanded = true;
                             }
