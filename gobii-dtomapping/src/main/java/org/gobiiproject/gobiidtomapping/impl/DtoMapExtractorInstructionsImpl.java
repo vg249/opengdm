@@ -211,22 +211,21 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     } else if (currentGobiiDataSetExtract.getGobiiExtractFilterType()
                             .equals(GobiiExtractFilterType.BY_SAMPLE)) {
 
-                        /****  COMMENTED OUT TO NOT CHECK SAMPLE FILE OR SAMPLE LIST IF PI OR PROJECT IS PROVIDED
-                         * TO-DO: ADD CHECKING IF PI OR PROJECT IS NOT NULL
-                         *
-                            if ((currentGobiiDataSetExtract.getListFileName() == null)
-                                    && ((currentGobiiDataSetExtract.getSampleList() == null) ||
-                                    (currentGobiiDataSetExtract.getSampleList().size() <= 0))) {
+                        if((currentGobiiDataSetExtract.getProject() == null)
+                                && (currentGobiiDataSetExtract.getPrincipleInvestigator() == null)
+                                && (currentGobiiDataSetExtract.getListFileName() == null)
+                                && ((currentGobiiDataSetExtract.getSampleList() == null) ||
+                                    (currentGobiiDataSetExtract.getSampleList().size() <= 0 ))){
 
-                                throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
-                                        GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
-                                        "The specified extract type is "
-                                                + currentGobiiDataSetExtract.getGobiiExtractFilterType()
-                                                + " but no sample list is specified");
-                            }
+                            throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
+                                    GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
+                                    "The specified extract type is "
+                                        + currentGobiiDataSetExtract.getGobiiExtractFilterType()
+                                        + ". Please provide at least one of the following: " +
+                                            "Principle Investigator, Project, Sample list, or sample file.");
 
-                        *****/
 
+                        }
 
                     } else if (currentGobiiDataSetExtract.getGobiiExtractFilterType()
                             .equals(GobiiExtractFilterType.BY_MARKER)) {
