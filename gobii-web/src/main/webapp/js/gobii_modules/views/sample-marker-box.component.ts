@@ -42,8 +42,12 @@ import {Labels} from "./entity-labels";
                         <text-area
                         (onTextboxDataComplete)="handleTextBoxDataSubmitted($event)"></text-area>
                     </div> 
+                    <div *ngIf="displayListBox" class="col-md-4">
+                          <p class="text-warning">{{maxListItems}} maximum</p>
+                    </div> 
                     
                  </div>
+                
                  <div>
                     <p-dialog header="{{extractTypeLabelExisting}} Already Selelected" [(visible)]="displayChoicePrompt" modal="modal" width="300" height="300" responsive="true">
                         <p>A {{extractTypeLabelExisting}} is already selected. Do you want to remove it and specify a {{extractTypeLabelProposed}} instead?</p>
@@ -65,6 +69,7 @@ export class SampleMarkerBoxComponent implements OnInit {
 
     }
 
+    private maxListItems:number = 200;
     private displayChoicePrompt: boolean = false;
     private selectedListType: string = "itemFile";
 
