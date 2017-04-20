@@ -39,6 +39,7 @@ import {GobiiUIEventOrigin} from "../model/type-event-origin";
 })
 export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
+    private containerCollapseThreshold = 10;
     private onAddMessage: EventEmitter<HeaderStatusMessage> = new EventEmitter();
     private onTreeReady: EventEmitter<HeaderStatusMessage> = new EventEmitter();
 
@@ -430,6 +431,13 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                         let idxOfNodeToDelete: number = parentTreeNode.children.indexOf(nodeToDelete);
                         parentTreeNode.children.splice(idxOfNodeToDelete, 1);
 
+                        if( parentTreeNode.children.length < this.containerCollapseThreshold ) {
+                            parentTreeNode.expanded = true;
+                        } else {
+                            parentTreeNode.expanded = false;
+                        }
+
+
                         if (parentTreeNode.children.length === 0) {
                             this.removeItemFromSelectedNodes(parentTreeNode);
                         }
@@ -570,9 +578,16 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                             parentTreeNode.expanded = true;
                             this.selectedGobiiNodes.push(newGobiiTreeNode);
 
+                            if( parentTreeNode.children.length >= this.containerCollapseThreshold ) {
+                                parentTreeNode.expanded = false;
+                            } else {
+                                parentTreeNode.expanded = true;
+                            }
+
                             if (this.selectedGobiiNodes.indexOf(parentTreeNode) < 0) {
                                 this.selectedGobiiNodes.push(parentTreeNode);
                             }
+
                         } else {
                             // modify existing existingGobiiTreeNodeChild
                         } // if-else there already exists a corresponding tree node

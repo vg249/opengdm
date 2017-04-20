@@ -61,6 +61,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                 function StatusDisplayTreeComponent(_fileModelTreeService) {
                     var _this = this;
                     this._fileModelTreeService = _fileModelTreeService;
+                    this.containerCollapseThreshold = 10;
                     this.onAddMessage = new core_1.EventEmitter();
                     this.onTreeReady = new core_1.EventEmitter();
                     // *****************************************************************
@@ -369,6 +370,12 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                 if (nodeToDelete != null) {
                                     var idxOfNodeToDelete = parentTreeNode.children.indexOf(nodeToDelete);
                                     parentTreeNode.children.splice(idxOfNodeToDelete, 1);
+                                    if (parentTreeNode.children.length < this.containerCollapseThreshold) {
+                                        parentTreeNode.expanded = true;
+                                    }
+                                    else {
+                                        parentTreeNode.expanded = false;
+                                    }
                                     if (parentTreeNode.children.length === 0) {
                                         this.removeItemFromSelectedNodes(parentTreeNode);
                                     }
@@ -422,6 +429,12 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                         parentTreeNode.children.push(newGobiiTreeNode);
                                         parentTreeNode.expanded = true;
                                         this.selectedGobiiNodes.push(newGobiiTreeNode);
+                                        if (parentTreeNode.children.length >= this.containerCollapseThreshold) {
+                                            parentTreeNode.expanded = false;
+                                        }
+                                        else {
+                                            parentTreeNode.expanded = true;
+                                        }
                                         if (this.selectedGobiiNodes.indexOf(parentTreeNode) < 0) {
                                             this.selectedGobiiNodes.push(parentTreeNode);
                                         }
