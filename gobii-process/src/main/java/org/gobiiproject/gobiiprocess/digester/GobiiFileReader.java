@@ -15,6 +15,7 @@ import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
@@ -356,8 +357,7 @@ public class GobiiFileReader {
 				ErrorLogger.logInfo("Digester","Entering into the QC Subsection #2 of 3...");
 				GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
 				gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
-				gobiiDataSetExtract.setDataSetId(inst.getDataSet().getId());
-				gobiiDataSetExtract.setDataSetName(inst.getDataSet().getName());
+				gobiiDataSetExtract.setDataSet(inst.getDataSet());
 				gobiiDataSetExtract.setGobiiDatasetType(inst.getDatasetType());
 				Path loaderDestinationDirectoryPath = FileSystems.getDefault().getPath(dstDir.getAbsolutePath());
 				int pathDepth = loaderDestinationDirectoryPath.getNameCount();
