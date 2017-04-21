@@ -115,7 +115,7 @@ public class GobiiFileReader {
 		boolean success=true;
 		Map<String,File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
 		List<String> loaderInstructionList=new ArrayList<String>(); //Ordered list of loader instructions to execute, Keys to loaderInstructionMap
-		DataSetType dst=null;
+		String dst=null;
 		DataSetOrientationType dso=null;
 		
 		ConfigSettings configuration=null;
@@ -265,9 +265,9 @@ public class GobiiFileReader {
 			//Dataset is the first non-empty dataset type
 			for(GobiiFileColumn gfc:inst.getGobiiFileColumns()){
 				if(gfc.getDataSetType()!=null){
-					dst=gfc.getDataSetType();
+					dst=getDatasetType(inst,gfc);
 					if(inst.getGobiiFile().getGobiiFileType().equals(GobiiFileType.VCF)){
-						dst=VCF;
+						dst="VCF";
 					}
 					if(gfc.getDataSetOrientationType()!=null)dso=gfc.getDataSetOrientationType();
 					break;
@@ -280,24 +280,24 @@ public class GobiiFileReader {
 				String fromFile=HelperFunctions.getDestinationFile(inst);
 				String toFile=HelperFunctions.getDestinationFile(inst)+".2";
 				boolean hasFunction=false;
-				switch(dst){
-				case NUCLEOTIDE_2_LETTER:
+				switch(dst.toUpperCase()){
+				case "NUCLEOTIDE_2_LETTER":
 						function="python "+loaderScriptPath+"etc/SNPSepRemoval.py";
 						functionStripsHeader=true;
 						break;
-					case IUPAC:
+					case "IUPAC":
 						function=loaderScriptPath+"etc/IUPACmatrix_to_bi.pl tab";
 						break;
-					case SSR_ALLELE_SIZE:
+					case "SSR_ALLELE_SIZE":
 						//No Translation Needed. Done before GOBII
 						break;
-					case DOMINANT_NON_NUCLEOTIDE:
+					case "DOMINANT_NON_NUCLEOTIDE":
 						//No Translation Needed. Done before GOBII
 						break;
-					case CO_DOMINANT_NON_NUCLEOTIDE:
+					case "CO_DOMINANT_NON_NUCLEOTIDE":
 						//No Translation Needed. Done before GOBII
 						break;
-					case VCF:
+					case "VCF":
 						hasFunction=true;
 						File markerFile=loaderInstructionMap.get(MARKER_TABNAME);
 						String markerFilename=markerFile.getAbsolutePath();
@@ -309,7 +309,7 @@ public class GobiiFileReader {
 							ErrorLogger.logError("VCFTransformer", "Failure loading dataset",e);
 						}
 							break;
-					default:System.err.println("Unknown type "+dst.toString());break;
+					default:ErrorLogger.logError("GobiiFileReader","Unknown Data type "+dst.toString());break;
 				}
 				if(function!=null){
 					hasFunction=true;
@@ -440,13 +440,13 @@ public class GobiiFileReader {
 				String loadHDF5=pathToHDF5+"loadHDF5";
 				dm.addPath("matrix directory",pathToHDF5Files);
 				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
-				int size=0;
-				switch(dst){		
-					case NUCLEOTIDE_2_LETTER: case IUPAC:case VCF:
+				int size=8;
+				switch(dst.toUpperCase()){
+					case "NUCLEOTIDE_2_LETTER": case "IUPAC":case "VCF":
 						size=2;break;
-					case SSR_ALLELE_SIZE:size=8;break;
-					case CO_DOMINANT_NON_NUCLEOTIDE:
-					case DOMINANT_NON_NUCLEOTIDE:size=1;break;
+					case "SSR_ALLELE_SIZE":size=8;break;
+					case "CO_DOMINANT_NON_NUCLEOTIDE":
+					case "DOMINANT_NON_NUCLEOTIDE":size=1;break;
 					default:
 						logError("Digester","Unknown type "+dst.toString());break;
 				}
@@ -765,6 +765,23 @@ public class GobiiFileReader {
 		}
 
 		HelperFunctions.tryExec("cut -f"+refPos+","+altPos+ " "+markerFile,outFile,errorPath);
+	}
+
+	/**
+	 * Since the ENUM is deprecated
+	 * This is the best we've got.
+	 * @param gfc file column
+	 * @param i gobii loader instruction
+	 * @return String representation of the dataset type of the column
+	 */
+	private static String getDatasetType(GobiiLoaderInstruction i,GobiiFileColumn gfc){
+		DataSetType dst=gfc.getDataSetType(); //Old way
+		if(dst!=null){
+			return dst.toString();
+		}
+		else{
+			return i.getDatasetType().getName(); //Get the name from the instruction.
+		}
 	}
 
 	/**
