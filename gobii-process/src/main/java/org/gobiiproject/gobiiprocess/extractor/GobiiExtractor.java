@@ -18,13 +18,11 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiQCComplete;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.gobiiproject.gobiimodel.utils.email.QCMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
@@ -34,9 +32,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtrac
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 
-import static java.lang.System.in;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
@@ -94,8 +90,7 @@ public class GobiiExtractor {
 			logError("Extractor","Failure to read Configurations",e);
 			return;
 		}
-		String logDir=configuration.getFileSystemLog();
-		ErrorLogger.setLogFilepath(logDir);
+
 		String instructionFile=null;
 		if(args.length==0 ||args[0].equals("")){
 			Scanner s=new Scanner(System.in);
@@ -114,7 +109,6 @@ public class GobiiExtractor {
 			return;
 		}
 
-		GobiiExtractorInstruction zero=list.get(0);
 		String logDir=configuration.getFileSystemLog();
 		if(logDir!=null) {
 			String instructionName=new File(instructionFile).getName();
@@ -152,7 +146,7 @@ public class GobiiExtractor {
 
 			Integer mapId;
 			List<Integer> mapIds=inst.getMapsetIds();
-			if(mapIds.isEmpty() || mapIds.get(0).equals(null)){
+			if(mapIds.isEmpty() || mapIds.get(0)==null){
 				mapId=null;
 			}else if(mapIds.size()>1){
 				logError("Extraction Instruction","Too many map IDs for extractor. Expected one, recieved "+mapIds.size());
@@ -168,8 +162,7 @@ public class GobiiExtractor {
                 if(markerListOverrideLocation!=null)filterType=GobiiExtractFilterType.BY_MARKER;
 				String extractDir=extract.getExtractDestinationDirectory()+"/";
 				tryExec("rm -f "+extractDir+"*");
-				//TODO: Fix underlying permissions issues
-				//tryExec("chmod -R 777 " +extractDir.substring(0, extractDir.lastIndexOf('/')));
+
 				String markerFile=extractDir+"marker.file";
 				String extendedMarkerFile=markerFile+".ext";
 				String mapsetFile=extractDir+"mapset.file";
@@ -199,12 +192,6 @@ public class GobiiExtractor {
 				switch(filterType){
 					case WHOLE_DATASET:
 
-						//Kevin's example
-						/*
-						python gobii_mde.py
-						-c postgresql://loaderusr:loaderusr@localhost:5432/extraction_test
-						--extractByDataset -m /Users/KevinPalis/Work/Datafiles/MDE_Output/marker_meta7.txt -s /Users/KevinPalis/Work/Datafiles/MDE_Output/sample_meta7.txt -p /Users/KevinPalis/Work/Datafiles/MDE_Output/project_meta7.txt -b /Users/KevinPalis/Work/Datafiles/MDE_Output/mapset_meta7.txt -v -l -D 3 -d 5
-						 */
 						gobiiMDE = "python "+ mdePath+
 								" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
 								" --extractByDataset"+
@@ -264,6 +251,9 @@ public class GobiiExtractor {
 						GobiiFilePropNameId project=extract.getProject();
 						if(PI!=null){
 							PITerm=" --piId "+PI.getId();
+						}
+						if(project!=null){
+							projectTerm=" --projectId "+project.getId();
 						}
 
 						gobiiMDE = "python "+ mdePath+
