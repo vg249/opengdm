@@ -51,7 +51,7 @@ public class GobiiPayloadResponse<T> {
 
                 if(HttpStatus.SC_METHOD_NOT_ALLOWED != httpMethodResult.getResponseCode()) {
 
-                    if(HttpStatus.SC_UNAUTHORIZED != httpMethodResult.getResponseCode() ) {
+                    if( HttpStatus.SC_UNAUTHORIZED != httpMethodResult.getResponseCode() ) {
 
                         try {
 
@@ -81,7 +81,12 @@ public class GobiiPayloadResponse<T> {
                         }
 
                     } else {
-
+                        returnVal.getHeader()
+                                .getStatus()
+                                .addStatusMessage(GobiiStatusLevel.ERROR,
+                                        makeMessageFromHttpResult(restMethodType.toString(),
+                                                httpMethodResult,
+                                                "Access is not authorized: " + restMethodType.toString()));
                     }
                 } else {
                     returnVal.getHeader()

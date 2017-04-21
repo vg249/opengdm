@@ -36,6 +36,7 @@ import {DtoRequestItemContact, ContactSearchType} from "../services/app/dto-requ
 import {AuthenticationService} from "../services/core/authentication.service";
 import {FileItem} from "ng2-file-upload";
 import {isNullOrUndefined} from "util";
+import {NameIdLabelType} from "../model/name-id-label-type";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -50,24 +51,58 @@ import {isNullOrUndefined} from "util";
            <div class = "panel-heading">
                 <img src="images/gobii_logo.png" alt="GOBii Project"/>
 
-                <fieldset class="well the-fieldset">
-                    <div class="col-md-2">
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Connected to {{currentStatus}}</h3>
+                      </div>
+                      <div class="panel-body">
+                    
+                    <div class="col-md-1">
+                    
                         <crops-list-box
                             [serverConfigList]="serverConfigList"
                             [selectedServerConfig]="selectedServerConfig"
                             (onServerSelected)="handleServerSelected($event)"></crops-list-box>
-                    </div>
-                    
-                    <div class="col-md-3">
+                     </div>
+                                                
+                    <div class="col-md-5">
                        <export-type
                         (onExportTypeSelected)="handleExportTypeSelected($event)"></export-type>
                      </div>
+                    
+
+                        <div class="col-md-4">
+                        <div class = "well">
+                            <table>
+                                <tr>
+                                    <td colspan="2">
+                                        <export-format
+                                         [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                         (onFormatSelected)="handleFormatSelected($event)">
+                                          </export-format>
+                              </td>
+                              <td style="vertical-align: top;">
+                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                                     <name-id-list-box
+                                        [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                        [nameIdRequestParams]="nameIdRequestParamsMapsets"
+                                        (onError) = "handleHeaderStatusMessage($event)">
+                                    </name-id-list-box>
+                              </td>
+                              </tr>
+                              </table>
+                              
+                        </div>
+                        </div>
+    
                      
-                    <div class="col-md-7">
+                    <div class="col-md-2">
                        <p style="text-align: right; font-weight: bold;">{{loggedInUser}}</p>
                      </div>
                      
-                </fieldset>
+                    </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
+
            </div>
            
             <div class="container-fluid">
@@ -76,41 +111,43 @@ import {isNullOrUndefined} from "util";
                 
                     <div class="col-md-4">
                     
-                     <fieldset class="well the-fieldset">
-                     
-                        <legend class="the-legend">Filters</legend><BR>
-                        <div *ngIf="displaySelectorPi">
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Filters</h3>
+                      </div>
+                      <div class="panel-body">
+
+                          <div *ngIf="displaySelectorPi">
                             <label class="the-label">Principle Investigator:</label><BR>
                             <name-id-list-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [nameIdRequestParams]="nameIdRequestParamsContactsPi"
-                                [notifyOnInit]="!firstItemIsLabelPrincipleInvestigators"
-                                [firstItemIsLabel]="firstItemIsLabelPrincipleInvestigators"
-                                [doTreeNotifications] = "firstItemIsLabelPrincipleInvestigators"
+                                [notifyOnInit]="!doPrincipleInvestigatorTreeNotifications"
+                                [doTreeNotifications] = "doPrincipleInvestigatorTreeNotifications"
                                 (onNameIdSelected)="handleContactForPiSelected($event)"
                                 (onError) = "handleHeaderStatusMessage($event)">
                             </name-id-list-box>
                             
                         </div>
                         
-                        <div *ngIf="displaySelectorProject">
+                        <div *ngIf="displaySelectorProject" >
                             <BR>
                             <BR>
                             <label class="the-label">Project:</label><BR>
                             <project-list-box [primaryInvestigatorId] = "selectedContactIdForPi"
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                [reinitProjectList] = "reinitProjectList"
                                 (onProjectSelected)="handleProjectSelected($event)"
                                 (onAddHeaderStatus)="handleHeaderStatusMessage($event)"></project-list-box>
                         </div>
 
-                        <div *ngIf="displaySelectorDataType">
+                        <div *ngIf="displaySelectorDataType" >
                             <BR>
                             <BR>
                             <label class="the-label">Dataset Types:</label><BR>
                             <name-id-list-box
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [notifyOnInit]="false"
-                                [firstItemIsLabel] = "true"
                                 [nameIdRequestParams]="nameIdRequestParamsDatasetType"
                                 (onError) = "handleHeaderStatusMessage($event)">
                             </name-id-list-box>
@@ -125,7 +162,6 @@ import {isNullOrUndefined} from "util";
                                 [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                 [notifyOnInit]="true"
                                 [doTreeNotifications]= "false"
-                                [firstItemIsLabel] = "false"
                                 [nameIdRequestParams]="nameIdRequestParamsExperiments"
                                 (onNameIdSelected) = "handleExperimentSelected($event)"
                                 (onError) = "handleHeaderStatusMessage($event)">
@@ -156,18 +192,16 @@ import {isNullOrUndefined} from "util";
                                 (onAddStatusMessage) = "handleHeaderStatusMessage($event)">
                             </dataset-checklist-box>
                         </div>
-                    </fieldset>
+                    </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
                        
-                       
-                    </div>  <!-- outer grid column 1-->
-                
-                
-                
-                    <div class="col-md-4"> 
 
                         <div *ngIf="displaySampleListTypeSelector">
-                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Included Samples</legend>
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Included Samples</h3>
+                      </div>
+                      <div class="panel-body">
                                 <sample-list-type
                                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
                                     (onHeaderStatusMessage)="handleHeaderStatusMessage($event)">
@@ -175,51 +209,37 @@ import {isNullOrUndefined} from "util";
                                 <hr style="width: 100%; color: black; height: 1px; background-color:black;" />
                                 <sample-marker-box 
                                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                    (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)"
                                     (onSampleMarkerError)="handleHeaderStatusMessage($event)">
                                 </sample-marker-box>
-                            </fieldset>
+                    </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
                         </div>
                         
                         <div *ngIf="displaySampleMarkerBox">
-                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Included Markers</legend>
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Included Markers</h3>
+                      </div>
+                      <div class="panel-body">
                                 <sample-marker-box 
                                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                    (onMarkerSamplesCompleted) = "handleSampleMarkerListComplete($event)"
                                     (onSampleMarkerError)="handleHeaderStatusMessage($event)">
                                 </sample-marker-box>
-                            </fieldset>
+                    </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
                         </div>
+                       
+                    </div>  <!-- outer grid column 1-->
+                
+                
+                
+                    <div class="col-md-4"> 
 
-                        
-                        <form>
-                           <fieldset class="well the-fieldset">
-                                <legend class="the-legend">Extract</legend>
-                           
-                                <export-format
-                                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                    (onFormatSelected)="handleFormatSelected($event)"
-                                ></export-format>
-                                <BR>
-                           
-                                <name-id-list-box
-                                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                    [nameIdRequestParams]="nameIdRequestParamsMapsets"
-                                    [firstItemIsLabel]="true"
-                                    (onError) = "handleHeaderStatusMessage($event)">
-                                </name-id-list-box>
-                            </fieldset>
-                        </form>
-                        
-                        
-                    </div>  <!-- outer grid column 2-->
-                    
-                    
-                    <div class="col-md-4">
-
-                        <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                            <legend class="the-legend">Extraction Criteria Summary</legend>
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Extraction Criteria</h3>
+                      </div>
+                      <div class="panel-body">
                             <status-display-tree
                                 [fileItemEventChange] = "treeFileItemEvent"
                                 [gobiiExtractFilterTypeEvent] = "gobiiExtractFilterType"
@@ -235,13 +255,24 @@ import {isNullOrUndefined} from "util";
                             (mouseleave)="handleOnMouseOverSubmit($event,false)"
                             (click)="handleExtractSubmission()">Submit</button>
                                
-                        </fieldset>
+                    </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
+
+                    </div>  <!-- outer grid column 2-->
+                    
+                    
+                    <div class="col-md-4">
+
                             
                         <div>
-                            <fieldset class="well the-fieldset" style="vertical-align: bottom;">
-                                <legend class="the-legend">Status: {{currentStatus}}</legend>
+                    <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Status Messages</h3>
+                      </div>
+                      <div class="panel-body">
                                 <status-display [messages] = "messages"></status-display>
-                            </fieldset>
+                    </div> <!-- panel body -->
+                    </div> <!-- panel primary -->
                         </div>
                             
                                    
@@ -312,13 +343,15 @@ export class ExtractorRoot implements OnInit {
                 EntityType.CvTerms)
             .setCvFilterType(CvFilterType.DATASET_TYPE)
             .setEntityFilter(EntityFilter.BYTYPENAME)
-            .setEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE));
+            .setEntityFilterValue(CvFilters.get(CvFilterType.DATASET_TYPE))
+            .setMameIdLabelType(NameIdLabelType.SELECT_A);
 
 
         this.nameIdRequestParamsMapsets = NameIdRequestParams
             .build("Mapsets",
                 GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Mapsets);
+                EntityType.Mapsets)
+            .setMameIdLabelType(NameIdLabelType.NO);
 
         this.nameIdRequestParamsPlatforms = NameIdRequestParams
             .build("Platforms",
@@ -431,7 +464,7 @@ export class ExtractorRoot implements OnInit {
 
     private displayAvailableDatasets: boolean = true;
     private displaySelectorPi: boolean = true;
-    private firstItemIsLabelPrincipleInvestigators: boolean = false;
+    private doPrincipleInvestigatorTreeNotifications: boolean = false;
     private displaySelectorProject: boolean = true;
     private displaySelectorExperiment: boolean = true;
     private displaySelectorDataType: boolean = false;
@@ -439,6 +472,7 @@ export class ExtractorRoot implements OnInit {
     private displayIncludedDatasetsGrid: boolean = true;
     private displaySampleListTypeSelector: boolean = false;
     private displaySampleMarkerBox: boolean = false;
+    private reinitProjectList: boolean = false;
     private gobiiExtractFilterType: GobiiExtractFilterType;
 
     private handleExportTypeSelected(arg: GobiiExtractFilterType) {
@@ -486,7 +520,8 @@ export class ExtractorRoot implements OnInit {
 
         if (this.gobiiExtractFilterType === GobiiExtractFilterType.WHOLE_DATASET) {
 
-            this.firstItemIsLabelPrincipleInvestigators = false;
+            this.doPrincipleInvestigatorTreeNotifications = false;
+            this.nameIdRequestParamsContactsPi.setMameIdLabelType(NameIdLabelType.UNKNOWN);
             this.displaySelectorPi = true;
             this.displaySelectorProject = true;
             this.displaySelectorExperiment = true;
@@ -497,6 +532,7 @@ export class ExtractorRoot implements OnInit {
             this.displaySelectorPlatform = false;
             this.displaySampleListTypeSelector = false;
             this.displaySampleMarkerBox = false;
+            this.reinitProjectList = false;
 
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
@@ -504,7 +540,8 @@ export class ExtractorRoot implements OnInit {
 //            this.initializePlatforms();
 
             this.displaySelectorPi = true;
-            this.firstItemIsLabelPrincipleInvestigators = true;
+            this.doPrincipleInvestigatorTreeNotifications = true;
+            this.nameIdRequestParamsContactsPi.setMameIdLabelType(NameIdLabelType.ALL);
             this.displaySelectorProject = true;
             this.displaySelectorDataType = true;
             this.displaySelectorPlatform = true;
@@ -515,6 +552,7 @@ export class ExtractorRoot implements OnInit {
             this.displayIncludedDatasetsGrid = false;
             this.displaySampleMarkerBox = false;
 
+            this.reinitProjectList = true;
 
         } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
 
@@ -525,12 +563,16 @@ export class ExtractorRoot implements OnInit {
             this.displaySampleMarkerBox = true;
 
             this.displaySelectorPi = false;
-            this.firstItemIsLabelPrincipleInvestigators = false;
+            this.doPrincipleInvestigatorTreeNotifications = false;
+            this.nameIdRequestParamsContactsPi.setMameIdLabelType(NameIdLabelType.UNKNOWN);
             this.displaySelectorProject = false;
             this.displaySelectorExperiment = false;
             this.displayAvailableDatasets = false;
             this.displayIncludedDatasetsGrid = false;
             this.displaySampleListTypeSelector = false;
+
+            this.reinitProjectList = false;
+
 
         }
 
@@ -674,54 +716,10 @@ export class ExtractorRoot implements OnInit {
 
     }
 
-    private makeDatasetExtract() {
-
-        this.gobiiDatasetExtracts.push(new GobiiDataSetExtract(GobiiFileType.GENERIC,
-            false,
-            Number(this.selectedDatasetId),
-            this.selectedDatasetName,
-            null,
-            this.gobiiExtractFilterType,
-            this.markerList,
-            this.sampleList,
-            this.uploadFileName,
-            null,
-            null,
-            null));
-
-    }
-
-
-    private selectedDatasetId: string;
-    private selectedDatasetName: string;
 
 
 // ********************************************************************
 // ********************************************** MARKER/SAMPLE selection
-    private markerList: string[] = null;
-    private sampleList: string[] = null;
-    private uploadFileName: string = null;
-
-    private handleSampleMarkerListComplete(arg: SampleMarkerList) {
-
-        let sampleMarkerList: SampleMarkerList = arg;
-
-
-        if (sampleMarkerList.isArray) {
-            if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
-                this.sampleList = sampleMarkerList.items;
-
-            } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
-                this.markerList = sampleMarkerList.items;
-            }
-        } else {
-            this.uploadFileName = sampleMarkerList.uploadFileName;
-        }
-
-        this.makeDatasetExtract();
-    }
-
-
     // ********************************************************************
     // ********************************************** Extract file submission
     private treeStatusNotification: TreeStatusNotification = null;
@@ -870,9 +868,24 @@ export class ExtractorRoot implements OnInit {
                         return item.getEntityType() === EntityType.CvTerms
                             && item.getCvFilterType() === CvFilterType.DATASET_TYPE
                     });
-
                     let datasetType: NameId = dataTypeFileItem != null ? new NameId(dataTypeFileItem.getItemId(),
-                            dataTypeFileItem.getItemName(),EntityType.CvTerms) : null;
+                            dataTypeFileItem.getItemName(), EntityType.CvTerms) : null;
+
+
+                    let principleInvestigatorFileItem: GobiiFileItem = fileItems.find(item => {
+                        return item.getEntityType() === EntityType.Contacts
+                            && item.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR
+                    });
+                    let principleInvestigator: NameId = principleInvestigatorFileItem != null ? new NameId(principleInvestigatorFileItem.getItemId(),
+                            principleInvestigatorFileItem.getItemName(), EntityType.Contacts) : null;
+
+
+                    let projectFileItem: GobiiFileItem = fileItems.find(item => {
+                        return item.getEntityType() === EntityType.Projects
+                    });
+                    let project: NameId = projectFileItem != null ? new NameId(projectFileItem.getItemId(),
+                            projectFileItem.getItemName(), EntityType.Projects) : null;
+
 
                     let platformFileItems: GobiiFileItem[] = fileItems.filter(item => {
                         return item.getEntityType() === EntityType.Platforms
@@ -916,10 +929,12 @@ export class ExtractorRoot implements OnInit {
                             })
                             .forEach(datsetFileItem => {
 
+                                let dataSet: NameId = new NameId(datsetFileItem.getItemId(),
+                                        datsetFileItem.getItemName(), EntityType.CvTerms) ;
+
+
                                 gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
                                     false,
-                                    Number(datsetFileItem.getItemId()),
-                                    datsetFileItem.getItemName(),
                                     null,
                                     this.gobiiExtractFilterType,
                                     null,
@@ -927,13 +942,14 @@ export class ExtractorRoot implements OnInit {
                                     markerFileName,
                                     null,
                                     datasetType,
-                                    platformIds));
+                                    platformIds,
+                                    null,
+                                    null,
+                                    dataSet));
                             });
                     } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER) {
                         gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
                             false,
-                            null,
-                            null,
                             null,
                             this.gobiiExtractFilterType,
                             markerList,
@@ -941,12 +957,13 @@ export class ExtractorRoot implements OnInit {
                             markerFileName,
                             null,
                             datasetType,
-                            platformIds));
+                            platformIds,
+                            null,
+                            null,
+                            null));
                     } else if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
                         gobiiDataSetExtracts.push(new GobiiDataSetExtract(gobiiFileType,
                             false,
-                            null,
-                            null,
                             null,
                             this.gobiiExtractFilterType,
                             null,
@@ -954,7 +971,10 @@ export class ExtractorRoot implements OnInit {
                             sampleFileName,
                             sampleListType,
                             datasetType,
-                            platformIds));
+                            platformIds,
+                            principleInvestigator,
+                            project,
+                            null));
                     } else {
                         this.handleAddMessage("Unhandled extract filter type: " + GobiiExtractFilterType[this.gobiiExtractFilterType]);
                     }

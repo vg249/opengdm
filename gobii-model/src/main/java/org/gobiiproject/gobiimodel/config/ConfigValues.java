@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiimodel.config;
 
+import org.gobiiproject.gobiimodel.security.Decrypter;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -43,7 +44,7 @@ class ConfigValues {
         put(GobiiFileProcessDir.LOADER_DONE, "loader/done/");
         put(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, "extractor/instructions/");
         put(GobiiFileProcessDir.EXTRACTOR_INPROGRESS, "extractor/inprogress/");
-       put(GobiiFileProcessDir.EXTRACTOR_DONE, "extractor/done/");
+        put(GobiiFileProcessDir.EXTRACTOR_DONE, "extractor/done/");
         put(GobiiFileProcessDir.EXTRACTOR_OUTPUT, "extractor/output/");
         put(GobiiFileProcessDir.QC_NOTIFICATIONS, "qcnotifications/");
 
@@ -71,7 +72,7 @@ class ConfigValues {
 
     @Element(required = false)
     private Integer emailServerPort = 0;
-    
+
     @Element(required = false)
     private GobiiAuthenticationType gobiiAuthenticationType = GobiiAuthenticationType.TEST;
 
@@ -98,6 +99,15 @@ class ConfigValues {
 
     @Element(required = false)
     private String fileSystemLog;
+
+    @Element(required = false)
+    private boolean isDecrypt = false;
+
+    @Element(required = false)
+    private String ldapUserForBackendProcs;
+
+    @Element(required = false)
+    private String ldapPasswordForBackendProcs;
 
     public TestExecConfig getTestExecConfig() {
         return testExecConfig;
@@ -328,7 +338,20 @@ class ConfigValues {
     }
 
     public String getLdapBindUser() {
-        return ldapBindUser;
+
+        String returnVal;
+
+        if (this.isDecrypt) {
+
+            returnVal = Decrypter.decrypt(this.ldapBindUser, null);
+
+        } else {
+
+            returnVal = this.ldapBindUser;
+
+        }
+
+        return returnVal;
     }
 
     public void setLdapBindUser(String ldapBindUser) {
@@ -336,7 +359,21 @@ class ConfigValues {
     }
 
     public String getLdapBindPassword() {
-        return ldapBindPassword;
+
+        String returnVal;
+
+        if (this.isDecrypt) {
+
+            returnVal = Decrypter.decrypt(this.ldapBindPassword, null);
+
+        } else {
+
+            returnVal = this.ldapBindPassword;
+
+        }
+
+        return returnVal;
+
     }
 
     public void setLdapBindPassword(String ldapBindPassword) {
@@ -376,5 +413,62 @@ class ConfigValues {
 
     public void setFileSysCropsParent(String fileSysCropsParent) {
         this.fileSysCropsParent = fileSysCropsParent;
+    }
+
+    public boolean isDecrypt() {
+        return isDecrypt;
+    }
+
+    // note that we set isDecrypt as a global property in ConfigValues and in \
+    // each db config because the child db config objects don't have access to the
+    // parent property. Moreover, in all cases, we only decrypt in the getters.
+    // This is vital because there are multiple times that the config utility's options
+    // are set and if we decrypt when we set the values, the decrypt flag would have to have
+    // been set at the beginning of setting the config options, which is not a constraint we want
+    // to impose.
+    public void setDecrypt(boolean isDecrypt) {
+
+        this.isDecrypt = isDecrypt;
+        this.testExecConfig.setDecrypt(isDecrypt);
+
+        for (CropConfig currentCropConfig : this.cropConfigs.values()) {
+
+            for (CropDbConfig currentCropDbConfig : currentCropConfig.getCropConfigs()) {
+                currentCropDbConfig.setDecrypt(isDecrypt);
+            }
+        }
+    }
+
+    public String getLdapUserForBackendProcs() {
+
+        String returnVal;
+
+        if (this.isDecrypt) {
+            returnVal = Decrypter.decrypt(ldapUserForBackendProcs, null);
+        } else {
+            returnVal = ldapUserForBackendProcs;
+        }
+
+        return returnVal;
+    }
+
+    public void setLdapUserForBackendProcs(String ldapUserForBackendProcs) {
+        this.ldapUserForBackendProcs = ldapUserForBackendProcs;
+    }
+
+    public String getLdapPasswordForBackendProcs() {
+        String returnVal;
+
+        if (this.isDecrypt) {
+            returnVal = Decrypter.decrypt(ldapPasswordForBackendProcs, null);
+        } else {
+            returnVal = ldapPasswordForBackendProcs;
+        }
+
+        return returnVal;
+    }
+
+    public void setLdapPasswordForBackendProcs(String ldapPasswordForBackendProcs) {
+        this.ldapPasswordForBackendProcs = ldapPasswordForBackendProcs;
     }
 }

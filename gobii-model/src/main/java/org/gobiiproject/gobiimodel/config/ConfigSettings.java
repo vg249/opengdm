@@ -289,5 +289,29 @@ public class ConfigSettings {
         this.configValues.setFileSysCropsParent(fileSysCropsParent);
     }
 
+    public boolean isDecrypt() {
+        return this.configValues.isDecrypt();
+    }
 
+    public void setIsDecrypt(boolean isDecrypt) {
+        this.configValues.setDecrypt(isDecrypt);
+    }
+
+    public void setLdapUserForBackendProcs(String ldapUserForBackendProcs) {
+        this.configValues.setLdapUserForBackendProcs(ldapUserForBackendProcs);
+    }
+
+
+    public String getLdapUserForBackendProcs() {
+        return this.configValues.getLdapUserForBackendProcs();
+    }
+
+    public String getLdapPasswordForBackendProcs() {
+        return this.configValues.getLdapPasswordForBackendProcs();
+    }
+
+    public void setLdapPasswordForBackendProcs(String ldapPassworedForBackendProcs) {
+        this.configValues.setLdapPasswordForBackendProcs(ldapPassworedForBackendProcs);
+    }
+    
 }

@@ -20,9 +20,6 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
-import org.gobiiproject.gobiimodel.types.SystemUserDetail;
-import org.gobiiproject.gobiimodel.types.SystemUserNames;
-import org.gobiiproject.gobiimodel.types.SystemUsers;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -112,9 +109,13 @@ public class DtoRequestAuthenticationTest {
             ClientContext.getInstance(null, false)
                     .setCurrentClientCrop(cropIdOne);
 
-            SystemUsers systemUsers = new SystemUsers();
-            SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
-            ClientContext.getInstance(null, false).login(userDetail.getUserName(), userDetail.getPassword());
+            Assert.assertNotNull("Could not get testexecconfig", Authenticator.getTestExecConfig());
+
+            String testUser = Authenticator.getTestExecConfig().getLdapUserForUnitTest();
+            String testPassword = Authenticator.getTestExecConfig().getLdapPasswordForUnitTest();
+
+
+            ClientContext.getInstance(null, false).login(testUser, testPassword);
 
             // ****************** SECOND LOGIN
             CropConfig cropConfigTwo = activeCropConfigs.get(1);
@@ -129,7 +130,7 @@ public class DtoRequestAuthenticationTest {
             ClientContext.getInstance(null, false)
                     .setCurrentClientCrop(cropIdTwo);
 
-            ClientContext.getInstance(null, false).login(userDetail.getUserName(), userDetail.getPassword());
+            ClientContext.getInstance(null, false).login(testUser, testPassword);
 
             ClientContext.getInstance(null, false).setCurrentClientCrop(cropIdTwo);
 
@@ -169,10 +170,8 @@ public class DtoRequestAuthenticationTest {
 
             // create a new factory with correct context root and re-do the request
             // this should now work
-            ClientContext.getInstance(null, false)
-                    .login(userDetail.getUserName(), userDetail.getPassword());
-            String currentCropContextRootForCropOne =   ClientContext.getInstance(null, false).getCropContextRoot(cropIdOne);
-
+            ClientContext.getInstance(null, false).login(testUser, testPassword);
+            String currentCropContextRootForCropOne = ClientContext.getInstance(null, false).getCropContextRoot(cropIdOne);
             uriFactory = new UriFactory(currentCropContextRootForCropOne);
             restUriContact = uriFactory
                     .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
