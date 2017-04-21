@@ -57,7 +57,7 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
 
     private handleProjectSelected(arg) {
         let selectedProjectId = arg.id;
-        this.setProjectDetails(selectedProjectId);
+//        this.setProjectDetails(selectedProjectId);
         this.onProjectSelected.emit(selectedProjectId);
     }
 

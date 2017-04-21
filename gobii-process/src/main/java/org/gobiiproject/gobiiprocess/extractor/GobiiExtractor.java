@@ -90,8 +90,7 @@ public class GobiiExtractor {
 			logError("Extractor","Failure to read Configurations",e);
 			return;
 		}
-		String logDir=configuration.getFileSystemLog();
-		ErrorLogger.setLogFilepath(logDir);
+
 		String instructionFile=null;
 		if(args.length==0 ||args[0].equals("")){
 			Scanner s=new Scanner(System.in);
@@ -109,6 +108,19 @@ public class GobiiExtractor {
 			ErrorLogger.logError("Extractor","No instruction for file "+instructionFile);
 			return;
 		}
+
+		String logDir=configuration.getFileSystemLog();
+		if(logDir!=null) {
+			String instructionName=new File(instructionFile).getName();
+			instructionName=instructionName.substring(0,instructionName.lastIndexOf('.'));
+			String logFile=logDir+"/"+instructionName+".log";
+			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
+			ErrorLogger.setLogFilepath(logFile);
+			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
+		}
+
+
+
 		for(GobiiExtractorInstruction inst:list){
 			String crop = inst.getGobiiCropType();
 			if(crop==null) crop=divineCrop(instructionFile);
@@ -148,10 +160,9 @@ public class GobiiExtractor {
 				GobiiExtractFilterType filterType = extract.getGobiiExtractFilterType();
                 if(filterType==null) filterType=GobiiExtractFilterType.WHOLE_DATASET;
                 if(markerListOverrideLocation!=null)filterType=GobiiExtractFilterType.BY_MARKER;
-				String extractDir=extract.getExtractDestinationDirectory();
+				String extractDir=extract.getExtractDestinationDirectory()+"/";
 				tryExec("rm -f "+extractDir+"*");
-				//TODO: Fix underlying permissions issues
-				//tryExec("chmod -R 777 " +extractDir.substring(0, extractDir.lastIndexOf('/')));
+
 				String markerFile=extractDir+"marker.file";
 				String extendedMarkerFile=markerFile+".ext";
 				String mapsetFile=extractDir+"mapset.file";
@@ -181,12 +192,6 @@ public class GobiiExtractor {
 				switch(filterType){
 					case WHOLE_DATASET:
 
-						//Kevin's example
-						/*
-						python gobii_mde.py
-						-c postgresql://loaderusr:loaderusr@localhost:5432/extraction_test
-						--extractByDataset -m /Users/KevinPalis/Work/Datafiles/MDE_Output/marker_meta7.txt -s /Users/KevinPalis/Work/Datafiles/MDE_Output/sample_meta7.txt -p /Users/KevinPalis/Work/Datafiles/MDE_Output/project_meta7.txt -b /Users/KevinPalis/Work/Datafiles/MDE_Output/mapset_meta7.txt -v -l -D 3 -d 5
-						 */
 						gobiiMDE = "python "+ mdePath+
 								" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
 								" --extractByDataset"+
@@ -203,10 +208,10 @@ public class GobiiExtractor {
 						//Create a file out of the List if non-null, else use the <File>
 						List<String> markerList=extract.getMarkerList();
 						if(markerList!=null && !markerList.isEmpty()){
-							markerListLocation=" -x "+createTempFileForMarkerList(extractDir,markerList);
+							markerListLocation=" -X "+createTempFileForMarkerList(extractDir,markerList);
 						}
 						else if(extract.getListFileName()!=null){
-							markerListLocation=" -x "+extractDir+extract.getListFileName();
+							markerListLocation=" -X "+extractDir+extract.getListFileName();
 						}
 						//else if file is null and list is empty or null - > no term
 
@@ -221,7 +226,7 @@ public class GobiiExtractor {
 								" -s " + sampleFile +
 								" -p " + projectFile +
                                 markerListLocation +
-								" --datasetType " + extract.getGobiiDatasetType().getName() +
+								" --datasetType " + extract.getGobiiDatasetType().getId() +
 								mapIdTerm +
 								platformTerm +
 								" -l -v ";
@@ -231,10 +236,10 @@ public class GobiiExtractor {
 						//Create a file out of the List if non-null, else use the <File>
 						List<String> sampleList=extract.getSampleList();
 						if(sampleList!=null && !sampleList.isEmpty()){
-							sampleListLocation=" -y "+createTempFileForMarkerList(extractDir,sampleList);
+							sampleListLocation=" -Y "+createTempFileForMarkerList(extractDir,sampleList);
 						}
 						else if(extract.getListFileName()!=null){
-							sampleListLocation=" -y "+extractDir+extract.getListFileName();
+							sampleListLocation=" -Y "+extractDir+extract.getListFileName();
 						}
 
 						GobiiSampleListType type = extract.getGobiiSampleListType();
@@ -247,6 +252,9 @@ public class GobiiExtractor {
 						if(PI!=null){
 							PITerm=" --piId "+PI.getId();
 						}
+						if(project!=null){
+							projectTerm=" --projectId "+project.getId();
+						}
 
 						gobiiMDE = "python "+ mdePath+
 								" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
@@ -255,7 +263,6 @@ public class GobiiExtractor {
 								" -b " + mapsetFile +
 								" -s " + sampleFile +
 								" -p " + projectFile +
-								" -Y " + samplePosFile +
 								sampleListLocation +
 								sampleListTypeTerm +
 								PITerm +
@@ -270,7 +277,7 @@ public class GobiiExtractor {
 						ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
 						break;
 				}
-
+				samplePosFile=sampleFile+".pos";
 				String errorFile=getLogName(extract,cropConfig,extract.getDataSet().getId());
 				ErrorLogger.logInfo("Extractor","Executing MDEs");
 				tryExec(gobiiMDE, extractDir+"mdeOut", errorFile);
@@ -314,11 +321,11 @@ public class GobiiExtractor {
 
 				switch(extract.getGobiiFileType()){
 					case FLAPJACK:
-						String genoOutFile=extractDir+"DS"+dataSetId+".genotype";
-						String mapOutFile=extractDir+"DS"+dataSetId+".map";
+						String genoOutFile=extractDir+"Dataset.genotype";
+						String mapOutFile=extractDir+"Dataset.map";
 						lastErrorFile=errorFile;
 						//Always regenerate requests - may have different parameters
-						boolean extended=new File(extendedMarkerFile).exists();
+						boolean extended=HelperFunctions.checkFileExistance(extendedMarkerFile);
 						FlapjackTransformer.generateMapFile(extended?extendedMarkerFile:markerFile, sampleFile, chrLengthFile, dataSetId, tempFolder, mapOutFile, errorFile,extended);
 						HelperFunctions.sendEmail(extract.getDataSet().getName()+ " Map Extract", mapOutFile, success&&ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
 						FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, dataSetId, tempFolder, genoOutFile,errorFile);
@@ -326,7 +333,7 @@ public class GobiiExtractor {
 						HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 						break;
 					case HAPMAP:
-						String hapmapOutFile = extractDir+"DS"+dataSetId+".hmp.txt";
+						String hapmapOutFile = extractDir+"Dataset.hmp.txt";
 						HapmapTransformer hapmapTransformer = new HapmapTransformer();
 						ErrorLogger.logDebug("GobiiExtractor","Executing Hapmap Generation");
 						success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);

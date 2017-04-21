@@ -94,7 +94,7 @@ public class GobiiPayloadResponse<T> {
                             .addStatusMessage(GobiiStatusLevel.ERROR,
                                     makeMessageFromHttpResult(restMethodType.toString(),
                                             httpMethodResult,
-                                            "The server does not support this method: " + restMethodType.toString()));
+                                            "Unauthorized: the client may needs to re-authenticate"));
                 }
 
             } else {

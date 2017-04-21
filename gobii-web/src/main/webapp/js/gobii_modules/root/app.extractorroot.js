@@ -213,7 +213,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                 })[0];
                             scope$.initializeSubmissionContact();
                             scope$.currentStatus = "GOBII Server " + gobiiVersion;
-                            scope$.handleAddMessage("Connected to database: " + scope$.selectedServerConfig.crop);
+                            scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
                         }
                         else {
                             scope$.serverConfigList = [new server_config_1.ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];
