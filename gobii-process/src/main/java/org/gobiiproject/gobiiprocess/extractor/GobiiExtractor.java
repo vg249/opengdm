@@ -17,6 +17,7 @@ import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -239,8 +240,13 @@ public class GobiiExtractor {
 						GobiiSampleListType type = extract.getGobiiSampleListType();
 						String sampleListTypeTerm=(type==null)?"":"--sampleType "+getNumericType(type);
 
-						String PITerm="";
-						//TODO - HAVE A PI TERM
+						String PITerm,projectTerm;
+						PITerm=projectTerm="";
+						GobiiFilePropNameId PI=extract.getPrincipleInvestigator();
+						GobiiFilePropNameId project=extract.getProject();
+						if(PI!=null){
+							PITerm=" --piId "+PI.getId();
+						}
 
 						gobiiMDE = "python "+ mdePath+
 								" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
@@ -253,6 +259,7 @@ public class GobiiExtractor {
 								sampleListLocation +
 								sampleListTypeTerm +
 								PITerm +
+								projectTerm+
 								" --datasetType " + extract.getGobiiDatasetType() +
 								mapIdTerm +
 								platformTerm +
@@ -286,6 +293,7 @@ public class GobiiExtractor {
 						break;
 					case BY_SAMPLE:
 						genoFile = getHDF5GenoFromSampleList(markerFast,errorFile,tempFolder,markerPosFile,samplePosFile);
+						break;
 					default:
 						genoFile="";
 						ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
@@ -403,7 +411,7 @@ public class GobiiExtractor {
 				w.write(positionList);
 				w.close();
 				String sampleList=null;
-				if(sampR!=null && sampLine!=null){
+				if(sampLine!=null){
 					sampleList=sampLine.split("\t")[1];
 				}
 				String genoFile=getHDF5Genotype(markerFast, errorFile,dsID,tempFolder,positionListFileLoc,sampleList);
