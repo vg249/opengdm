@@ -236,7 +236,7 @@ public class HttpCore {
 
             System.out.println("Response: ");
 
-            if( httpMethodResult.getPayLoad() != null ) {
+            if (httpMethodResult.getPayLoad() != null) {
                 System.out.println(httpMethodResult.getPayLoad().toString());
             } else {
                 System.out.println("Null payload");

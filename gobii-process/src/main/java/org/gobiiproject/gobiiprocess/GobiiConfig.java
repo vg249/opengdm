@@ -1143,6 +1143,14 @@ public class GobiiConfig {
                 for (CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
 
 
+                    if (!currentCropConfig.getServiceAppRoot().toLowerCase().contains(currentCropConfig.getGobiiCropType())) {
+                        System.err.println("The context root "
+                                + currentCropConfig.getServiceAppRoot()
+                                + " does not contain the crop ID "
+                                + currentCropConfig.getGobiiCropType());
+                        returnVal = false;
+                    }
+
                     if (LineUtils.isNullOrEmpty(currentCropConfig.getGobiiCropType())) {
                         System.err.println("The crop type for the active crop  is not defined");
                         returnVal = false;

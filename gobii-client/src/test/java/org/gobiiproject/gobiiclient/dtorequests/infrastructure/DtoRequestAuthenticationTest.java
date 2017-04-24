@@ -11,8 +11,9 @@ import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiiclient.core.common.Authenticator;
-import org.gobiiproject.gobiiclient.core.common.TestConfiguration;
+import org.gobiiproject.gobiiclient.core.gobii.dtopost.DtoRequestProcessor;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.Authenticator;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestConfiguration;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
@@ -67,7 +68,6 @@ public class DtoRequestAuthenticationTest {
                 ControllerType.GOBII);
 
 //        DtoRequestProcessor<AnalysisDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
-
 
 
     }
@@ -166,7 +166,6 @@ public class DtoRequestAuthenticationTest {
                             .filter(m -> m.getMessage().contains("failed with status code 404"))
                             .count() == 1
             );
-
 
 
             // create a new factory with correct context root and re-do the request
