@@ -191,14 +191,16 @@ public class DtoRequestAuthenticationTest {
     @Test
     public void testSwitchToSecondCrop () throws Exception {
 
+
+        // these steps require physical access to a config file. Other clients do not have
+        // this access. So we need to make sure that, aside from retrieving te config URL nad the
+        // username/password, the remainder of the test does not consume the testConfiguration.
         TestConfiguration testConfiguration = new TestConfiguration();
         String initialConfigUrl = testConfiguration.getConfigSettings().getTestExecConfig().getInitialConfigUrl();
-        ClientContext.getInstance(initialConfigUrl, true);
-
         String testUser = testConfiguration.getConfigSettings().getTestExecConfig().getLdapUserForUnitTest();
         String testPassword = testConfiguration.getConfigSettings().getTestExecConfig().getLdapPasswordForUnitTest();
 
-
+        ClientContext.getInstance(initialConfigUrl, true);
         List<String> activeCrops = ClientContext.getInstance(null, false).getCropTypeTypes();
         if (activeCrops.size() > 1) {
 
@@ -215,6 +217,7 @@ public class DtoRequestAuthenticationTest {
             String cropOneToken = ClientContext.getInstance(null,true).getUserToken();
 
             // ****************** SECOND LOGIN
+
             ClientContext.getInstance(null, false)
                     .setCurrentClientCrop(cropIdTwo);
             ClientContext.getInstance(null, false).login(testUser, testPassword);
