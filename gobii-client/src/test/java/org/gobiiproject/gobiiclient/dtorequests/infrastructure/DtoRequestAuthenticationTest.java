@@ -188,5 +188,48 @@ public class DtoRequestAuthenticationTest {
 
     }
 
+    @Test
+    public void testSwitchToSecondCrop () throws Exception {
+
+
+        // these steps require physical access to a config file. Other clients do not have
+        // this access. So we need to make sure that, aside from retrieving te config URL nad the
+        // username/password, the remainder of the test does not consume the testConfiguration.
+        TestConfiguration testConfiguration = new TestConfiguration();
+        String initialConfigUrl = testConfiguration.getConfigSettings().getTestExecConfig().getInitialConfigUrl();
+        String testUser = testConfiguration.getConfigSettings().getTestExecConfig().getLdapUserForUnitTest();
+        String testPassword = testConfiguration.getConfigSettings().getTestExecConfig().getLdapPasswordForUnitTest();
+
+        ClientContext.getInstance(initialConfigUrl, true);
+        List<String> activeCrops = ClientContext.getInstance(null, false).getCropTypeTypes();
+        if (activeCrops.size() > 1) {
+
+            String cropIdOne = activeCrops.get(0);
+            String cropIdTwo = activeCrops.get(1);
+
+            // ****************** FIRST LOGIN
+            ClientContext.getInstance(null, false)
+                    .setCurrentClientCrop(cropIdOne);
+            ClientContext.getInstance(null, false).login(testUser, testPassword);
+            Assert.assertNotNull("Authentication with first crop failed: " + cropIdOne,
+                    ClientContext.getInstance(null,true).getUserToken());
+
+            String cropOneToken = ClientContext.getInstance(null,true).getUserToken();
+
+            // ****************** SECOND LOGIN
+
+            ClientContext.getInstance(null, false)
+                    .setCurrentClientCrop(cropIdTwo);
+            ClientContext.getInstance(null, false).login(testUser, testPassword);
+            Assert.assertNotNull("Authentication with second crop failed: " + cropIdTwo,
+                    ClientContext.getInstance(null,true).getUserToken());
+
+            String cropTwoToken = ClientContext.getInstance(null,true).getUserToken();
+
+            Assert.assertFalse("The tokens for the two authentications should be different: " + cropOneToken + "," + cropTwoToken,
+                    cropOneToken.equals(cropTwoToken));
+
+        }
+    }
 
 }
