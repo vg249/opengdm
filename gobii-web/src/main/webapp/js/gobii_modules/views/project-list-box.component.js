@@ -53,7 +53,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                 } // ctor
                 ProjectListBoxComponent.prototype.handleProjectSelected = function (arg) {
                     var selectedProjectId = arg.id;
-                    this.setProjectDetails(selectedProjectId);
+                    //        this.setProjectDetails(selectedProjectId);
                     this.onProjectSelected.emit(selectedProjectId);
                 };
                 ProjectListBoxComponent.prototype.handleHeaderStatus = function (arg) {

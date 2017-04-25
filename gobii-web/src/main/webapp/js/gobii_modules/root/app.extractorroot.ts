@@ -388,7 +388,7 @@ export class ExtractorRoot implements OnInit {
 
                     scope$.initializeSubmissionContact();
                     scope$.currentStatus = "GOBII Server " + gobiiVersion;
-                    scope$.handleAddMessage("Connected to database: " + scope$.selectedServerConfig.crop);
+                    scope$.handleAddMessage("Connected to crop config: " + scope$.selectedServerConfig.crop);
 
                 } else {
                     scope$.serverConfigList = [new ServerConfig("<ERROR NO SERVERS>", "<ERROR>", "<ERROR>", 0)];

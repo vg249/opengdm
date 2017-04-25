@@ -1,5 +1,6 @@
-package org.gobiiproject.gobiiclient.core.common;
+package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
+import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 
