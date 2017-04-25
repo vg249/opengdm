@@ -26,14 +26,13 @@ public class Util {
 	 * @param table
 	 * @param output
 	 */
-	static void validateResult(String tempFolderLocation, String table, String[] output) throws IOException, FileNotFoundException {
-		BufferedReader br = new BufferedReader(new FileReader(tempFolderLocation + "\\dest" + "\\digest." + table));
+	static void validateResult(String tempFolderLocation, String tableName, String[] output) throws IOException, FileNotFoundException {
+		BufferedReader br = new BufferedReader(new FileReader(tempFolderLocation + "\\dest" + "\\digest." + tableName));
 		String fileRow;
 		int i = 0;
 		while ((fileRow = br.readLine()) != null) {
 			assertEquals("Mismatch in output. \n Expected:" + output[i] + "\n Actual     :" + fileRow, output[i],
 					fileRow);
-			System.out.println(output[i] + "\n" + fileRow);
 			i++;
 		}
 		br.close();
@@ -46,7 +45,7 @@ public class Util {
 	 * @return
 	 */
 	 
-	static GobiiFileColumn createGobiiCSV_SUB_Column(Integer rCoord, Integer cCoord) {
+	static GobiiFileColumn createGobiiCSV_SUB(Integer rCoord, Integer cCoord) {
 		GobiiFileColumn fileColumn = new GobiiFileColumn();
 		fileColumn.setGobiiColumnType(GobiiColumnType.CSV_ROW);
 		fileColumn.setRCoord(rCoord);
@@ -67,7 +66,7 @@ public class Util {
 	 * @return
 	 */
 	@VisibleForTesting
-	static GobiiFileColumn createGobiiCSV_BOTH_Column(Integer rCoord, Integer cCoord) {
+	static GobiiFileColumn createGobiiCSV_BOTH(Integer rCoord, Integer cCoord) {
 		GobiiFileColumn fileColumn = new GobiiFileColumn();
 		fileColumn.setGobiiColumnType(GobiiColumnType.CSV_BOTH);
 		fileColumn.setRCoord(rCoord);
@@ -104,7 +103,7 @@ public class Util {
 	 * @return
 	 */
 	@VisibleForTesting
-	static GobiiFileColumn createGobiiCSV_ROW_Column(Integer rCoord, Integer cCoord) {
+	static GobiiFileColumn createGobiiCSV_ROW(Integer rCoord, Integer cCoord) {
 
 		GobiiFileColumn fileColumn = new GobiiFileColumn();
 		fileColumn.setGobiiColumnType(GobiiColumnType.CSV_ROW);
@@ -124,7 +123,7 @@ public class Util {
 	 * @return
 	 */
 	@VisibleForTesting
-	static GobiiFileColumn createGobiiCSV_COL_Column(Integer rCoord, Integer cCoord) {
+	static GobiiFileColumn createGobiiCSV_COL(Integer rCoord, Integer cCoord) {
 
 		GobiiFileColumn fileColumn = new GobiiFileColumn();
 		fileColumn.setGobiiColumnType(GobiiColumnType.CSV_COLUMN);
