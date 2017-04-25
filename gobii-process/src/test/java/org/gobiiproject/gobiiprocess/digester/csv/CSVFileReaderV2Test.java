@@ -24,7 +24,7 @@ import org.junit.rules.TemporaryFolder;
  */
 public class CSVFileReaderV2Test {
 
-	public static String tempFolderLocation;
+	public static String tempFolderLocation, resourceDestFolderLocation;
 
 	@ClassRule
 	public static TemporaryFolder tempFolder = new TemporaryFolder();
@@ -35,10 +35,11 @@ public class CSVFileReaderV2Test {
 		srcFolder = tempFolder.newFolder("src");
 		tempFolder.newFolder("dest");
 		tempFolderLocation = tempFolder.getRoot().getPath();
-		File resourcesDirectory = new File("src/test/resources/input.txt");
-		File source = new File(resourcesDirectory.getAbsolutePath());
+		File resourceDest = new File("src/test/resources");
+		resourceDestFolderLocation = resourceDest.getAbsolutePath();
+		File resourceSource = new File("src/test/resources/input.txt");
 		File dest= new File(srcFolder.getAbsolutePath()+"\\input.txt"); 
-		Files.copy(source.toPath(), dest.toPath());
+		Files.copy(resourceSource.toPath(), dest.toPath());
 	}
 
 	/**
@@ -73,13 +74,7 @@ public class CSVFileReaderV2Test {
 		CSVFileReaderV2 csvReader = new CSVFileReaderV2("", "");
 		csvReader.processCSV(instruction);
 
-		String output[] = { "constantName	AutoIncrement	csvRow	csvRow", 
-							"0	0	marker_name	dommarker1",
-							"0	1	dnarunname_dom_1	1", 
-							"0	2	dnarunname_dom_2	0", 
-							"0	3	dnarunname_dom_3	1",
-							"0	4	dnarunname_dom_4	1"};
-		Util.validateResult(tempFolderLocation, table, output);
+		Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
 	}
 
 	@Test
@@ -98,17 +93,7 @@ public class CSVFileReaderV2Test {
 		CSVFileReaderV2 csvReader = new CSVFileReaderV2("", "");
 		csvReader.processCSV(instruction);
 
-		String output[] = { "constantName	AutoIncrement	csvCol	csvCol", 
-							"0	0	marker_name	dnarunname_dom_1",
-							"0	1	dommarker1	1", 
-							"0	2	dommarker2	1", 
-							"0	3	dommarker3	1", 
-							"0	4	dommarker4	1",
-							"0	5	dommarker5	1", 
-							"0	6	dommarker6	1", 
-							"0	7	dommarker7	1", 
-							"0	8	dommarker8	1" };
-		Util.validateResult(tempFolderLocation, table, output);
+		Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
 	}
 
 	@Test
@@ -124,22 +109,12 @@ public class CSVFileReaderV2Test {
 		CSVFileReaderV2 csvReader = new CSVFileReaderV2("", "");
 		csvReader.processCSV(instruction);
 
-		String output[] = { "csvBoth",
-							"marker_name	dnarunname_dom_1	dnarunname_dom_2	dnarunname_dom_3	dnarunname_dom_4",
-							"dommarker1	1	0	1	1", 
-							"dommarker2	1	0	1	0", 
-							"dommarker3	1	0	1	0",
-							"dommarker4	1	0	1	1", 
-							"dommarker5	1	0	1	1", 
-							"dommarker6	1	0	1	0",
-							"dommarker7	1	0	1	1", 
-							"dommarker8	1	0	1	1"};
-		Util.validateResult(tempFolderLocation, table, output);
+		Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
 	}
 
 	@Test
 	public void testSubColumn() throws InterruptedException, IOException {
-		String table = "multipleCSV_ROW";
+		String table = "CSVSubColumn";
 		GobiiLoaderInstruction instruction = new GobiiLoaderInstruction();
 		Util.createAndSetGobiiFile(instruction, tempFolderLocation);
 		instruction.setTable(table);
@@ -152,18 +127,12 @@ public class CSVFileReaderV2Test {
 		CSVFileReaderV2 csvReader = new CSVFileReaderV2("", "");
 		csvReader.processCSV(instruction);
 
-		String output[] = { "constantName	AutoIncrement", 
-							"0	0marker_name", 
-							"0	1dnarunname_dom_1",
-							"0	2dnarunname_dom_2", 
-							"0	3dnarunname_dom_3", 
-							"0	4dnarunname_dom_4" };
-		Util.validateResult(tempFolderLocation, table, output);
+		Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
 	}
 
 	@Test
 	public void testMultipleFilesCSV_ROW() throws IOException, InterruptedException {
-		String table = "multipleCSV_ROW";
+		String table = "multiFileCSV_ROW";
 		File file2 = new File(tempFolderLocation + "\\src" + "\\file2.txt");
 		;
 		String data[] = { "marker_name	dnarunname_dom_1	dnarunname_dom_2	dnarunname_dom_3	dnarunname_dom_4",
@@ -185,18 +154,7 @@ public class CSVFileReaderV2Test {
 		CSVFileReaderV2 csvReader = new CSVFileReaderV2("", "");
 		csvReader.processCSV(instruction);
 
-		String output[] = { "constantName	AutoIncrement	csvRow", 
-							"0	0	marker_name", 
-							"0	1	dnarunname_dom_1",
-							"0	2	dnarunname_dom_2", 
-							"0	3	dnarunname_dom_3", 
-							"0	4	dnarunname_dom_4",
-							"0	5	marker_name", 
-							"0	6	dnarunname_dom_1", 
-							"0	7	dnarunname_dom_2",
-							"0	8	dnarunname_dom_3", 
-							"0	9	dnarunname_dom_4" };
-		Util.validateResult(tempFolderLocation, table, output);
+		Util.validateResult(tempFolderLocation, table, resourceDestFolderLocation);
 		file2.delete();
 	}
 

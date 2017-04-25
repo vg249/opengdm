@@ -25,17 +25,17 @@ public class Util {
 	 * @param tempFolderLocation
 	 * @param table
 	 * @param output
+	 * @param expectedOutputFolderLocation 
 	 */
-	static void validateResult(String tempFolderLocation, String tableName, String[] output) throws IOException, FileNotFoundException {
-		BufferedReader br = new BufferedReader(new FileReader(tempFolderLocation + "\\dest" + "\\digest." + tableName));
-		String fileRow;
-		int i = 0;
-		while ((fileRow = br.readLine()) != null) {
-			assertEquals("Mismatch in output. \n Expected:" + output[i] + "\n Actual     :" + fileRow, output[i],
-					fileRow);
-			i++;
+	static void validateResult(String tempFolderLocation, String tableName, String expectedOutputFolderLocation) throws IOException, FileNotFoundException {
+		BufferedReader actualOutputReader = new BufferedReader(new FileReader(tempFolderLocation + "\\dest" + "\\digest." + tableName));
+		BufferedReader expectedOutputReader = new BufferedReader(new FileReader(expectedOutputFolderLocation + "\\" + tableName + ".txt"));
+		String actualFileRow, expectedFileRow;
+		while (((actualFileRow = actualOutputReader.readLine()) != null )&&((expectedFileRow = expectedOutputReader.readLine()) != null )) {
+			assertEquals("Mismatch in output. \n Expected:" + expectedFileRow + "\n Actual     :" + actualFileRow, expectedFileRow, actualFileRow);
 		}
-		br.close();
+		actualOutputReader.close();
+		expectedOutputReader.close();
 	}
 	
 	/**
