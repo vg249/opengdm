@@ -117,16 +117,44 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         // a more systematic and elegant way
 
 
-
         let selectedGobiiTreeNode: GobiiTreeNode = event.node;
 
         selectedGobiiTreeNode.children.forEach(childNode => {
-            let idxOfNodeToDelete: number = this.selectedGobiiNodes.indexOf(childNode);
-            this.selectedGobiiNodes.splice(idxOfNodeToDelete, 1);
+            this.removeItemFromSelectedNodes(childNode);
         })
 
-        let idxOfNodeToDelete: number = this.selectedGobiiNodes.indexOf(selectedGobiiTreeNode);
-        this.selectedGobiiNodes.splice(idxOfNodeToDelete, 1);
+        this.removeItemFromSelectedNodes(selectedGobiiTreeNode);
+
+    }
+
+    getFileItemsToDeselect(parentNode: GobiiTreeNode): GobiiFileItem[] {
+
+        let returnVal: GobiiFileItem[] = [];
+
+        let parentFileItem: GobiiFileItem = this.makeFileItemFromTreeNode(parentNode, ProcessType.DELETE);
+        returnVal.push(parentFileItem);
+
+
+        parentNode.children.forEach(gtn => {
+            let currentFileItem: GobiiFileItem = this.makeFileItemFromTreeNode(gtn, ProcessType.DELETE);
+            returnVal.push(currentFileItem);
+
+            let childNodes: GobiiFileItem[] = this.getFileItemsToDeselect(gtn);
+            returnVal.push.apply(childNodes);
+
+        })
+
+
+        // fileItem.setGobiiEventOrigin(GobiiUIEventOrigin.CRITERIA_TREE);
+
+        returnVal.forEach(fi => {
+
+            if (fi.getFileItemUniqueId() != null) {
+                fi.setGobiiEventOrigin(GobiiUIEventOrigin.CRITERIA_TREE);
+            }
+        })
+
+        return returnVal;
 
     }
 
@@ -137,19 +165,19 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         if (( !unselectedTreeNode.required )) {
 
-            let itemsToRemove: GobiiFileItem[] = [];
+            let itemsToRemove: GobiiFileItem[] = this.getFileItemsToDeselect(unselectedTreeNode);
 
-            unselectedTreeNode.children.forEach(gtn => {
-                let currentFileItem: GobiiFileItem = this.makeFileItemFromTreeNode(gtn, ProcessType.DELETE);
-                itemsToRemove.push(currentFileItem);
-
-                //remove the nodes from selectedNodes array in the remove() function so programmatic
-                //removals of nodes will also trigger unchecking the parent node
-            });
-
-            let fileItem: GobiiFileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, ProcessType.DELETE);
-            fileItem.setGobiiEventOrigin(GobiiUIEventOrigin.CRITERIA_TREE);
-            itemsToRemove.push(fileItem);
+            // unselectedTreeNode.children.forEach(gtn => {
+            //     let currentFileItem: GobiiFileItem = this.makeFileItemFromTreeNode(gtn, ProcessType.DELETE);
+            //     itemsToRemove.push(currentFileItem);
+            //
+            //     //remove the nodes from selectedNodes array in the remove() function so programmatic
+            //     //removals of nodes will also trigger unchecking the parent node
+            // });
+            //
+            // let fileItem: GobiiFileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, ProcessType.DELETE);
+            // fileItem.setGobiiEventOrigin(GobiiUIEventOrigin.CRITERIA_TREE);
+            // itemsToRemove.push(fileItem);
 
             itemsToRemove.forEach(itr => {
                 this._fileModelTreeService.put(itr).subscribe(
@@ -423,13 +451,14 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     removeItemFromSelectedNodes(gobiiTreeNode: GobiiTreeNode) {
 
-        let selectedNode: GobiiTreeNode = this.selectedGobiiNodes.find(stn => {
-            return stn.fileItemId === gobiiTreeNode.fileItemId
-        });
+        // let selectedNode: GobiiTreeNode = this.selectedGobiiNodes.find(stn => {
+        //     return stn.fileItemId === gobiiTreeNode.fileItemId
+        // });
 
-        if (selectedNode) {
+//        if (selectedNode) {
+        if (gobiiTreeNode) {
 
-            let idxOfSelectedNodeParentNode: number = this.selectedGobiiNodes.indexOf(selectedNode);
+            let idxOfSelectedNodeParentNode: number = this.selectedGobiiNodes.indexOf(gobiiTreeNode);
             if (idxOfSelectedNodeParentNode >= 0) {
                 let deleted: GobiiTreeNode[] = this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
                 let foo: string = "foo";
@@ -514,11 +543,11 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                         this.selectedGobiiNodes.push(gobiiTreeLeafNodeTobeMutated);
                     }
 
-                    // if(gobiiTreeLeafNodeTobeMutated.parent !== null ) {
-                    //     if (this.selectedGobiiNodes.indexOf(gobiiTreeLeafNodeTobeMutated.parent) === -1) {
-                    //         this.selectedGobiiNodes.push(gobiiTreeLeafNodeTobeMutated.parent);
-                    //     }
-                    //}
+                    if (gobiiTreeLeafNodeTobeMutated.parent !== null) {
+                        if (this.selectedGobiiNodes.indexOf(gobiiTreeLeafNodeTobeMutated.parent) === -1) {
+                            this.selectedGobiiNodes.push(gobiiTreeLeafNodeTobeMutated.parent);
+                        }
+                    }
 
 
                 } else {
@@ -577,7 +606,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                             if (this.selectedGobiiNodes.indexOf(parentTreeNode) < 0) {
                                 this.selectedGobiiNodes.push(parentTreeNode);
                             }
-
 
 
                         } else {

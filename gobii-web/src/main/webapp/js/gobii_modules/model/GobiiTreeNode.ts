@@ -25,7 +25,7 @@ export class GobiiTreeNode implements TreeNode {
     public leaf: boolean;
     public expanded: boolean;
     public type: string;
-    public parent: TreeNode;
+    public parent: GobiiTreeNode;
     public partialSelected: boolean;
     public fileModelNodeId: string;
     public fileItemId: string;
