@@ -12,6 +12,8 @@ import {Labels} from "../../views/entity-labels";
 import {DtoHeaderResponse} from "../../model/dto-header-response";
 import {HeaderStatusMessage} from "../../model/dto-header-status-message";
 import {TreeStatusNotification} from "../../model/tree-status-notification";
+import {CardinalityExpression} from "../../model/cardinality-expression";
+import {ModelTreeValidationError} from "../../model/model-tree-validation-error";
 
 
 @Injectable()
@@ -24,6 +26,8 @@ export class FileModelTreeService {
     fileModelNodeTree: Map < GobiiExtractFilterType, Array < FileModelNode >> =
         new Map<GobiiExtractFilterType,Array<FileModelNode>>();
 
+    cardinalityExpressions: Map<CardinalityType,CardinalityExpression> =
+        new Map<CardinalityType,CardinalityExpression>();
 
     private validateModel(): boolean {
 
@@ -63,6 +67,53 @@ export class FileModelTreeService {
 
         if (this.fileModelNodeTree.size === 0) {
 
+            // ************ SET UP VALIDATORS
+            this.cardinalityExpressions.set(
+                CardinalityType.ZERO_OR_MORE,
+                new CardinalityExpression(CardinalityType.ZERO_OR_MORE,
+                    n => {
+                        return n > -1
+                    },
+                    "There must be zero or more items")
+            )
+
+            this.cardinalityExpressions.set(
+                CardinalityType.ZERO_OR_ONE,
+                new CardinalityExpression(CardinalityType.ZERO_OR_ONE,
+                    n => {
+                        return n < 2;
+                    },
+                    "There must be no more than one items ")
+            )
+
+
+            this.cardinalityExpressions.set(
+                CardinalityType.ONE_ONLY,
+                new CardinalityExpression(CardinalityType.ONE_ONLY,
+                    n => {
+                        return n == 1
+                    },
+                    "There must be exactly one item")
+            )
+
+            this.cardinalityExpressions.set(
+                CardinalityType.MORE_THAN_ONE,
+                new CardinalityExpression(CardinalityType.MORE_THAN_ONE,
+                    n => {
+                        return n > 1
+                    },
+                    "There must more than one item")
+            )
+
+            this.cardinalityExpressions.set(
+                CardinalityType.ONE_OR_MORE,
+                new CardinalityExpression(CardinalityType.ONE_OR_MORE,
+                    n => {
+                        return n >= 1
+                    },
+                    "There must be one or more items")
+            )
+
 
             // **** FOR ALL EXTRACTION TYPES **********************************************************************
             // **** THESE ARE ALL ROOT LEVEL NODES
@@ -90,7 +141,7 @@ export class FileModelTreeService {
 
 //            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.CATEGORY, null)
             submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
-                .setCategoryType(ExtractorCategoryType.CONTAINER)
+                .setCategoryType(ExtractorCategoryType.LEAF)
                 .setEntityType(EntityType.Mapsets)
                 .setEntityName(Labels.instance().entityNodeLabels[EntityType.Mapsets])
                 .setCardinality(CardinalityType.ZERO_OR_ONE)
@@ -124,8 +175,15 @@ export class FileModelTreeService {
                     .setCardinality(CardinalityType.ONE_ONLY)
             );
 
+            // -- Sample List Type
+            submissionItemsForBySample.push(FileModelNode.build(ExtractorItemType.SAMPLE_LIST_TYPE, null)
+                .setCategoryType(ExtractorCategoryType.LEAF)
+                .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_TYPE])
+                .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_TYPE])
+                .setCardinality(CardinalityType.ONE_ONLY)
+            );
+
             // -- Platforms
-            let currentParent: FileModelNode = null;
             submissionItemsForBySample.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
                 .setCategoryType(ExtractorCategoryType.CONTAINER)
                 .setEntityType(EntityType.Platforms)
@@ -133,8 +191,8 @@ export class FileModelTreeService {
                 .setCardinality(CardinalityType.ZERO_OR_MORE)
             );
 
-
-            // -- Samples
+            // -- Samples Criteria
+            let currentParent: FileModelNode = null;
             submissionItemsForBySample
                 .push(currentParent =
                     FileModelNode.build(ExtractorItemType.ENTITY, null)
@@ -147,20 +205,24 @@ export class FileModelTreeService {
                             .setEntityType(EntityType.Contacts)
                             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                             .setEntityName(Labels.instance().entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR])
-                            .setCardinality(CardinalityType.ZERO_OR_ONE)
+                            .setCardinality(CardinalityType.ONE_ONLY)
                         )
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
-                            .setCategoryType(ExtractorCategoryType.CONTAINER)
+                            .setCategoryType(ExtractorCategoryType.LEAF)
                             .setEntityType(EntityType.Projects)
                             .setEntityName(Labels.instance().entityNodeLabels[EntityType.Projects])
-                            .setCardinality(CardinalityType.ZERO_OR_MORE)
-                        )
-                        .addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST_ITEM, currentParent)
+                            .setCardinality(CardinalityType.ONE_OR_MORE)
+                        ).addChild(FileModelNode.build(ExtractorItemType.SAMPLE_FILE, currentParent)
+                            .setCategoryType(ExtractorCategoryType.LEAF)
+                            .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE])
+                            .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE])
+                            .setCardinality(CardinalityType.ONE_ONLY)
+                        ).addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST_ITEM, currentParent)
                             .setCategoryType(ExtractorCategoryType.CONTAINER)
                             .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM])
                             .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM])
-                            .setCardinality(CardinalityType.ZERO_OR_MORE)
-                        ));
+                            .setCardinality(CardinalityType.ONE_OR_MORE)
+                    ));
 
             this.fileModelNodeTree
                 .set(GobiiExtractFilterType.BY_SAMPLE,
@@ -180,6 +242,8 @@ export class FileModelTreeService {
                     .setCardinality(CardinalityType.ONE_ONLY)
             );
 
+            // the validation algorithm effectively OR's the children: thus the children
+            // are ONE_OR_MORE
             submissionItemsForByMarkers
                 .push(currentParent =
                     FileModelNode.build(ExtractorItemType.ENTITY, null)
@@ -191,17 +255,17 @@ export class FileModelTreeService {
                             .setCategoryType(ExtractorCategoryType.CONTAINER)
                             .setEntityType(EntityType.Platforms)
                             .setEntityName(Labels.instance().entityNodeLabels[EntityType.Platforms])
-                            .setCardinality(CardinalityType.ZERO_OR_MORE)
+                            .setCardinality(CardinalityType.ONE_OR_MORE)
                         ).addChild(FileModelNode.build(ExtractorItemType.MARKER_FILE, currentParent)
                         .setCategoryType(ExtractorCategoryType.LEAF)
                         .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE])
                         .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE])
-                        .setCardinality(CardinalityType.ZERO_OR_MORE)
+                        .setCardinality(CardinalityType.ONE_OR_MORE)
                     ).addChild(FileModelNode.build(ExtractorItemType.MARKER_LIST_ITEM, currentParent)
                         .setCategoryType(ExtractorCategoryType.CONTAINER)
                         .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM])
                         .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM])
-                        .setCardinality(CardinalityType.ZERO_OR_MORE)
+                        .setCardinality(CardinalityType.ONE_OR_MORE)
                     )
                 );
 
@@ -213,7 +277,7 @@ export class FileModelTreeService {
 
 
             if (this.validateModel() == true) {
-                this.subjectTreeStateNotifications.next(new TreeStatusNotification(FileModelState.READY, null));
+                this.subjectTreeStateNotifications.next(new TreeStatusNotification(GobiiExtractFilterType.UNKNOWN, FileModelState.READY, null));
             } else {
                 //raise major warning.
             }
@@ -224,6 +288,74 @@ export class FileModelTreeService {
         return this.fileModelNodeTree.get(gobiiExtractFilterType);
     }
 
+    private validateTree(gobiiExtractFilterType: GobiiExtractFilterType): ModelTreeValidationError[] {
+
+        let returnVal = [];
+
+        let fileModelNodes: FileModelNode[] = this.fileModelNodeTree.get(gobiiExtractFilterType);
+
+        // we only iterate the first level because we just happen to know, for this purpose,
+        // that the tree only has two levels; if we add more, this must change
+        fileModelNodes.forEach(currentFileModelNode => {
+
+            if (currentFileModelNode.getCategoryType() === ExtractorCategoryType.LEAF ||
+                (currentFileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER
+                && currentFileModelNode.getChildren().length === 0 )) {
+
+                let currentCardinalityExpression = this.cardinalityExpressions
+                    .get(currentFileModelNode.getCardinality());
+
+                let fileItemCount: number = currentFileModelNode.getFileItems().length;
+
+                if (!currentCardinalityExpression.isValid(fileItemCount)) {
+
+                    returnVal.push(new ModelTreeValidationError(
+                        currentCardinalityExpression.message,
+                        currentFileModelNode
+                    ));
+                }
+
+            } else if (currentFileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER) {
+
+                let atLeastOneIsSatisfied: boolean = false;
+                for (let idx: number = 0;
+                     ( idx < currentFileModelNode.getChildren().length) && (atLeastOneIsSatisfied === false);
+                     idx++) {
+
+                    let currentFileModelNodeChild = currentFileModelNode.getChildren()[idx];
+
+                    let currentChildCardinalityExpression = this.cardinalityExpressions
+                        .get(currentFileModelNodeChild.getCardinality());
+
+                    let childFileItemCount: number = currentFileModelNodeChild.getFileItems().length;
+                    atLeastOneIsSatisfied = currentChildCardinalityExpression .isValid(childFileItemCount);
+                    let validatorIsWRONG: boolean = atLeastOneIsSatisfied;
+
+                }
+
+                if (atLeastOneIsSatisfied === false) {
+
+                    currentFileModelNode.getChildren().forEach(currentChildNode => {
+
+                        let currentChildCardinalityExpression = this.cardinalityExpressions
+                            .get(currentChildNode.getCardinality());
+
+
+                        returnVal.push(new ModelTreeValidationError(
+                            currentChildCardinalityExpression.message,
+                            currentChildNode));
+                    });
+
+                } // if none of the required children are present
+
+            } else {
+                ; // we don't have a type like this yet?
+            } // if-else the model node has child model nodes
+
+        });// for each first level node
+
+        return returnVal;
+    }
 
     private processNotification(fileItem: GobiiFileItem): FileModelTreeEvent {
 
@@ -348,17 +480,17 @@ export class FileModelTreeService {
     }
 
 
-    findFileModelNodeByUniqueId( fileModelNodes:FileModelNode[], fileModelNodeUniqueId: string): FileModelNode {
+    findFileModelNodeByUniqueId(fileModelNodes: FileModelNode[], fileModelNodeUniqueId: string): FileModelNode {
 
         let returnVal: FileModelNode = null;
 
-        for(let idx:number = 0; (returnVal == null) && ( idx < fileModelNodes.length); idx++ ) {
+        for (let idx: number = 0; (returnVal == null) && ( idx < fileModelNodes.length); idx++) {
 
-            let currentNode:FileModelNode = fileModelNodes[idx];
-            if( currentNode.getFileModelNodeUniqueId() === fileModelNodeUniqueId ) {
+            let currentNode: FileModelNode = fileModelNodes[idx];
+            if (currentNode.getFileModelNodeUniqueId() === fileModelNodeUniqueId) {
                 returnVal = currentNode;
             } else {
-                returnVal = this.findFileModelNodeByUniqueId(currentNode.getChildren(),fileModelNodeUniqueId);
+                returnVal = this.findFileModelNodeByUniqueId(currentNode.getChildren(), fileModelNodeUniqueId);
             }
         }
 
@@ -490,7 +622,6 @@ export class FileModelTreeService {
         return this.subjectFileItemNotifications
     }
 
-
     public put(fileItem: GobiiFileItem): Observable < FileModelTreeEvent > {
 
         return Observable.create(observer => {
@@ -512,6 +643,13 @@ export class FileModelTreeService {
 
                 this.subjectTreeNotifications.next(fileTreeEvent);
                 this.subjectFileItemNotifications.next(fileTreeEvent.fileItem);
+
+                let modelTreeValidationErrors: ModelTreeValidationError[] = this.validateTree(fileItem.getGobiiExtractFilterType());
+                let fileModelState: FileModelState = ( modelTreeValidationErrors.length === 0 ) ? FileModelState.SUBMISSION_READY : FileModelState.READY;
+                let treeStatusNotification: TreeStatusNotification = new TreeStatusNotification(fileItem.getGobiiExtractFilterType(), fileModelState, modelTreeValidationErrors);
+                this.subjectTreeStateNotifications.next(treeStatusNotification);
+
+
             } else {
 
                 let headerStatusMessage: HeaderStatusMessage = new HeaderStatusMessage(
@@ -549,16 +687,27 @@ export class FileModelTreeService {
     }
 
     public getFileModelNode(gobiiExtractFilterType: GobiiExtractFilterType,
-                                 fileModelNodeUniqueId:string): Observable < FileModelNode >  {
+                            fileModelNodeUniqueId: string): Observable < FileModelNode > {
 
         return Observable.create(observer => {
 
-            let fileModelNodes:FileModelNode[] = this.fileModelNodeTree.get(gobiiExtractFilterType);
-            let fileModeNode: FileModelNode = this.findFileModelNodeByUniqueId(fileModelNodes,fileModelNodeUniqueId);
+            let fileModelNodes: FileModelNode[] = this.fileModelNodeTree.get(gobiiExtractFilterType);
+            let fileModeNode: FileModelNode = this.findFileModelNodeByUniqueId(fileModelNodes, fileModelNodeUniqueId);
             observer.next(fileModeNode);
             observer.complete();
         });
+    }
 
+    public getTreeState(gobiiExtractFilterType: GobiiExtractFilterType): Observable < TreeStatusNotification > {
 
+        return Observable.create(observer => {
+
+            let modelTreeValidationErrors: ModelTreeValidationError[] = this.validateTree(gobiiExtractFilterType);
+            let fileModelState: FileModelState = ( modelTreeValidationErrors.length === 0 ) ? FileModelState.SUBMISSION_READY : FileModelState.READY;
+            let treeStatusNotification: TreeStatusNotification = new TreeStatusNotification(gobiiExtractFilterType, fileModelState, modelTreeValidationErrors);
+
+            observer.next(treeStatusNotification);
+            observer.complete();
+        });
     }
 }

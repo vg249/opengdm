@@ -14,10 +14,16 @@ export enum ExtractorItemType {
     EXPORT_FORMAT,
     CROP_TYPE,
     STATUS_DISPLAY_TREE_READY,
-    JOB_ID}
+    JOB_ID,
+    SAMPLE_LIST_TYPE,
+    LABEL}
 
 export enum ExtractorCategoryType {CONTAINER, LEAF }
-export enum CardinalityType {ZERO_OR_ONE, ZERO_OR_MORE, ONE_ONLY, ONE_OR_MORE, MORE_THAN_ONE}
+export enum CardinalityType {ZERO_OR_ONE,
+ZERO_OR_MORE,
+ONE_ONLY,
+ONE_OR_MORE,
+MORE_THAN_ONE}
 
 
 export class FileModelNode {

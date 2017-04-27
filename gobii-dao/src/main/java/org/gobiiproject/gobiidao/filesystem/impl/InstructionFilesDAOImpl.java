@@ -134,7 +134,7 @@ public class InstructionFilesDAOImpl implements InstructionFilesDAO {
 
                     List<String> datasetExtractFiles =  new ArrayList<String>();
 
-                    String fileName="DS"+ Integer.toString(dataSetExtract.getDataSetId());
+                    String fileName="DS"+ Integer.toString(dataSetExtract.getDataSet().getId());
 
                     switch (dataSetExtract.getGobiiFileType()) {
                         case GENERIC:

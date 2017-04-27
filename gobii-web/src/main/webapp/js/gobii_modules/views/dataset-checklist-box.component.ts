@@ -18,12 +18,12 @@ import {NameIdRequestParams} from "../model/name-id-request-params";
 
 @Component({
     selector: 'dataset-checklist-box',
-    inputs: ['experimentId', 'fileItemEventChange','gobiiExtractFilterType'],
+    inputs: ['experimentId', 'fileItemEventChange', 'gobiiExtractFilterType'],
     outputs: ['onItemChecked', 'onAddStatusMessage'],
     template: `<checklist-box
                     [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                    [fileItemEventChange] = "datasetFileItemEventChange"
                     [nameIdRequestParams] = "nameIdRequestParamsDataset"
+                    [retainHistory] = "true"
                     (onError) = "handleAddStatusMessage($event)"
                     (onItemSelected)="handleItemSelected($event)">
                 </checklist-box>
@@ -59,7 +59,6 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
                 private _fileModelTreeService: FileModelTreeService) {
 
 
-
         this.nameIdRequestParamsDataset = NameIdRequestParams
             .build("Datasets-by-experiment-id",
                 GobiiExtractFilterType.WHOLE_DATASET,
@@ -69,7 +68,7 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     } // ctor
 
     // useg
-    private gobiiExtractFilterType:GobiiExtractFilterType;
+    private gobiiExtractFilterType: GobiiExtractFilterType;
     private nameIdRequestParamsDataset: NameIdRequestParams;
     private experimentId: string;
     private onItemChecked: EventEmitter<GobiiFileItem> = new EventEmitter();
@@ -78,7 +77,6 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     private analysisNames: string[] = [];
     private analysisTypes: string[] = [];
     private nameIdListAnalysisTypes: NameId[];
-    private datasetFileItemEventChange: GobiiFileItem;
 
 
     private handleItemChecked(arg: GobiiFileItem) {
@@ -90,13 +88,13 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
 
     private handleAddStatusMessage(arg: HeaderStatusMessage) {
 
-        let foo:string = "foo";
+        let foo: string = "foo";
         this.onAddStatusMessage.emit(arg);
     }
 
     private handleItemSelected(arg) {
         let selectedDataSetId: number = Number(arg.itemId);
-        this.setDatasetDetails(selectedDataSetId);
+        //this.setDatasetDetails(selectedDataSetId);
     }
 
     // private setList(): void {
@@ -146,87 +144,68 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     //
     // } // setList()
 
-    private setDatasetDetails(dataSetId: number): void {
-
-        if (dataSetId) {
-            let scope$ = this;
-            scope$._dtoRequestServiceDataSetDetail.get(new DtoRequestItemDataSet(dataSetId))
-                .subscribe(dataSet => {
-
-                        if (dataSet) {
-
-                            scope$.dataSet = dataSet;
-                            scope$.analysisNames = [];
-                            scope$.analysisTypes = [];
-
-                            scope$.dataSet.analysesIds.forEach(
-                                analysisId => {
-                                    let currentAnalysisId: number = analysisId;
-                                    if (currentAnalysisId) {
-                                        scope$._dtoRequestServiceAnalysisDetail
-                                            .getResult(new DtoRequestItemAnalysis(currentAnalysisId))
-                                            .subscribe(analysis => {
-                                                    scope$.analysisNames.push(analysis.analysisName);
-                                                    if (analysis.anlaysisTypeId && scope$.nameIdListAnalysisTypes) {
-
-                                                        scope$
-                                                            .nameIdListAnalysisTypes
-                                                            .forEach(t => {
-                                                                if (Number(t.id) === analysis.anlaysisTypeId) {
-                                                                    scope$.analysisTypes.push(t.name);
-                                                                }
-                                                            });
-
-
-                                                    } // if we have an analysis type id
-                                                },
-                                                headerStatusMessage => {
-                                                    scope$.handleAddStatusMessage(headerStatusMessage)
-                                                });
-                                    }
-                                }
-                            );
-                        }
-                    },
-                    headerStatusMessage => {
-                        scope$.handleAddStatusMessage(headerStatusMessage)
-                    });
-        } else {
-
-            this.dataSet = undefined;
-            this.analysisNames = [];
-            this.analysisTypes = [];
-
-        } // if else we got a dataset id
-    } // setList()
+    // private setDatasetDetails(dataSetId: number): void {
+    //
+    //     if (dataSetId) {
+    //         let scope$ = this;
+    //         scope$._dtoRequestServiceDataSetDetail.get(new DtoRequestItemDataSet(dataSetId))
+    //             .subscribe(dataSet => {
+    //
+    //                     if (dataSet) {
+    //
+    //                         scope$.dataSet = dataSet;
+    //                         scope$.analysisNames = [];
+    //                         scope$.analysisTypes = [];
+    //
+    //                         scope$.dataSet.analysesIds.forEach(
+    //                             analysisId => {
+    //                                 let currentAnalysisId: number = analysisId;
+    //                                 if (currentAnalysisId) {
+    //                                     scope$._dtoRequestServiceAnalysisDetail
+    //                                         .getResult(new DtoRequestItemAnalysis(currentAnalysisId))
+    //                                         .subscribe(analysis => {
+    //                                                 scope$.analysisNames.push(analysis.analysisName);
+    //                                                 if (analysis.anlaysisTypeId && scope$.nameIdListAnalysisTypes) {
+    //
+    //                                                     scope$
+    //                                                         .nameIdListAnalysisTypes
+    //                                                         .forEach(t => {
+    //                                                             if (Number(t.id) === analysis.anlaysisTypeId) {
+    //                                                                 scope$.analysisTypes.push(t.name);
+    //                                                             }
+    //                                                         });
+    //
+    //
+    //                                                 } // if we have an analysis type id
+    //                                             },
+    //                                             headerStatusMessage => {
+    //                                                 scope$.handleAddStatusMessage(headerStatusMessage)
+    //                                             });
+    //                                 }
+    //                             }
+    //                         );
+    //                     }
+    //                 },
+    //                 dtoHeaderResponse => {
+    //                     dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddStatusMessage(m));
+    //
+    //                 });
+    //     } else {
+    //
+    //         this.dataSet = undefined;
+    //         this.analysisNames = [];
+    //         this.analysisTypes = [];
+    //
+    //     } // if else we got a dataset id
+    // } // setList()
 
 
     ngOnInit(): any {
 
-        this._fileModelTreeService
-            .fileItemNotifications()
-            .subscribe(fileItem => {
-                this.datasetFileItemEventChange = fileItem;
-            });
 
-        if( this.experimentId != null ) {
+        if (this.experimentId != null) {
             this.nameIdRequestParamsDataset.setEntityFilterValue(this.experimentId);
         }
-
-        //let scope$ = this;
-        // scope$._dtoRequestServiceNameId
-        //     .get(new DtoRequestItemNameIds(EntityType.CvTerms,
-        //         EntityFilter.BYTYPENAME,
-        //         CvFilters.get(CvFilterType.ANALYSIS_TYPE)))
-        //     .subscribe(nameIdList => {
-        //             scope$.nameIdListAnalysisTypes = nameIdList;
-        //             if (this.experimentId) {
-        //                 this.setList();
-        //             }
-        //         },
-        //         dtoHeaderResponse => {
-        //             dtoHeaderResponse.statusMessages.forEach(m => scope$.handleAddMessage(m.message));
-        //         });
 
     }
 

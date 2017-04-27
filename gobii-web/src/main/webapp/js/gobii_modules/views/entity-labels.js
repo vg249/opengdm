@@ -29,10 +29,10 @@ System.register(["../model/type-entity", "../model/cv-filter-type", "../model/ty
                     this.extractorFilterTypeLabels = new Map();
                     this.treeExtractorTypeLabels = new Map();
                     this.extractFormatTypeLabels = new Map();
-                    this.entityNodeLabels[type_entity_1.EntityType.DataSets] = "Data Sets";
-                    this.entityNodeLabels[type_entity_1.EntityType.Platforms] = "Platforms";
-                    this.entityNodeLabels[type_entity_1.EntityType.Mapsets] = "Mapsets";
-                    this.entityNodeLabels[type_entity_1.EntityType.Projects] = "Projects";
+                    this.entityNodeLabels[type_entity_1.EntityType.DataSets] = "Data Set";
+                    this.entityNodeLabels[type_entity_1.EntityType.Platforms] = "Platform";
+                    this.entityNodeLabels[type_entity_1.EntityType.Mapsets] = "Mapset";
+                    this.entityNodeLabels[type_entity_1.EntityType.Projects] = "Project";
                     this.cvFilterNodeLabels[cv_filter_type_1.CvFilterType.DATASET_TYPE] = "Dataset Type";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR] = "Principle Investigator";
                     this.entitySubtypeNodeLabels[type_entity_1.EntitySubType.CONTACT_SUBMITED_BY] = "Submit As";
@@ -46,6 +46,7 @@ System.register(["../model/type-entity", "../model/cv-filter-type", "../model/ty
                     this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.CROP_TYPE] = "Crop Type";
                     this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.EXPORT_FORMAT] = "Format";
                     this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.JOB_ID] = "Job ID";
+                    this.treeExtractorTypeLabels[file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE] = "Extract By";
                     this.extractFormatTypeLabels[type_extract_format_1.GobiiExtractFormat.HAPMAP] = "Hapmap";
                     this.extractFormatTypeLabels[type_extract_format_1.GobiiExtractFormat.FLAPJACK] = "Flapjack";
                     this.extractFormatTypeLabels[type_extract_format_1.GobiiExtractFormat.META_DATA_ONLY] = "Meta Data";

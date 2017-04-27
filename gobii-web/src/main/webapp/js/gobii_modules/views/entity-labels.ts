@@ -19,10 +19,10 @@ export class Labels {
     }
 
     private constructor() {
-        this.entityNodeLabels[EntityType.DataSets] = "Data Sets";
-        this.entityNodeLabels[EntityType.Platforms] = "Platforms";
-        this.entityNodeLabels[EntityType.Mapsets] = "Mapsets";
-        this.entityNodeLabels[EntityType.Projects] = "Projects";
+        this.entityNodeLabels[EntityType.DataSets] = "Data Set";
+        this.entityNodeLabels[EntityType.Platforms] = "Platform";
+        this.entityNodeLabels[EntityType.Mapsets] = "Mapset";
+        this.entityNodeLabels[EntityType.Projects] = "Project";
 
         this.cvFilterNodeLabels[CvFilterType.DATASET_TYPE] = "Dataset Type";
 
@@ -40,6 +40,7 @@ export class Labels {
         this.treeExtractorTypeLabels[ExtractorItemType.CROP_TYPE] = "Crop Type";
         this.treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT] = "Format";
         this.treeExtractorTypeLabels[ExtractorItemType.JOB_ID] = "Job ID";
+        this.treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_TYPE] = "Extract By";
 
         this.extractFormatTypeLabels[GobiiExtractFormat.HAPMAP] = "Hapmap";
         this.extractFormatTypeLabels[GobiiExtractFormat.FLAPJACK] = "Flapjack";
