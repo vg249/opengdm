@@ -404,7 +404,7 @@ public class TestGobiiTestData {
         return returnVal;
     }
 
-    @Test
+    @Ignore
     public void testGobiiTestData() throws Exception {
 
         String commandline = makeCommandLine();
