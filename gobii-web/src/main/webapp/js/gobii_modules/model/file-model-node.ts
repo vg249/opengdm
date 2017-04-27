@@ -16,7 +16,8 @@ export enum ExtractorItemType {
     STATUS_DISPLAY_TREE_READY,
     JOB_ID,
     SAMPLE_LIST_TYPE,
-    LABEL}
+    LABEL,
+    CLEAR_TREE}
 
 export enum ExtractorCategoryType {CONTAINER, LEAF }
 export enum CardinalityType {ZERO_OR_ONE,
