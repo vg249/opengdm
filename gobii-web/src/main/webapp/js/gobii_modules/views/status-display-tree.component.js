@@ -175,21 +175,42 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                 };
                 StatusDisplayTreeComponent.prototype.nodeUnselect = function (event) {
                     var _this = this;
+                    // this funditonality is nearly working;
+                    // but it breaks down in the marker criteria section of the
+                    // tree. There is no more time to work on this. It must just
+                    // effectively disabled for now: you can only select and deselect
+                    // from the controls outside the tree
                     var unselectedTreeNode = event.node;
-                    if ((!unselectedTreeNode.required)) {
-                        var itemsToRemove = this.getFileItemsToDeselect(unselectedTreeNode);
+                    this.unsetPartialSelect(unselectedTreeNode);
+                    this.selectedGobiiNodes.push(unselectedTreeNode);
+                    unselectedTreeNode.children.forEach(function (tn) {
+                        _this.selectedGobiiNodes.push(tn);
+                    });
+                    /*
+                    let unselectedTreeNode: GobiiTreeNode = event.node;
+            
+                    if (( !unselectedTreeNode.required )) {
+            
+            
+                        let itemsToRemove: GobiiFileItem[] = this.getFileItemsToDeselect(unselectedTreeNode);
+            
                         this.unsetPartialSelect(unselectedTreeNode);
-                        itemsToRemove.forEach(function (itr) {
-                            _this._fileModelTreeService.put(itr).subscribe(function (fmte) {
-                            }, function (headerResponse) {
-                                _this.handleAddStatusMessage(headerResponse);
-                            });
-                        });
-                    }
-                    else {
+            
+                        itemsToRemove.forEach(itr => {
+                            this._fileModelTreeService.put(itr).subscribe(
+                                fmte => {
+            
+                                },
+                                headerResponse => {
+                                    this.handleAddStatusMessage(headerResponse)
+                                });
+                        })
+            
+                    } else {
                         // essentially disallow the selection
                         this.selectedGobiiNodes.push(unselectedTreeNode);
                     }
+                    */
                 };
                 StatusDisplayTreeComponent.prototype.makeFileItemFromTreeNode = function (gobiiTreeNode, processType) {
                     var _this = this;
@@ -687,7 +708,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     selector: 'status-display-tree',
                     inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
                     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
-                    template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" \n                    selectionMode=\"checkbox\" \n                    [(selection)]=\"selectedGobiiNodes\"\n                    (onNodeUnselect)=\"nodeUnselect($event)\"\n                    (onNodeSelect)=\"nodeSelect($event)\"\n                    (onNodeExpand)=\"nodeExpand($event)\"\n                    (onNodeCollapse)=\"nodeCollapse($event)\"\n                    [style]=\"{'width':'100%'}\"\n                    styleClass=\"criteria-tree\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
+                    template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" \n                    selectionMode=\"checkbox\" \n                    propagateSelectionUp=\"false\"\n                    propagateSelectionDown=\"false\"\n                    [(selection)]=\"selectedGobiiNodes\"\n                    (onNodeUnselect)=\"nodeUnselect($event)\"\n                    (onNodeSelect)=\"nodeSelect($event)\"\n                    (onNodeExpand)=\"nodeExpand($event)\"\n                    (onNodeCollapse)=\"nodeCollapse($event)\"\n                    [style]=\"{'width':'100%'}\"\n                    styleClass=\"criteria-tree\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
                 }),
                 __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
             ], StatusDisplayTreeComponent);

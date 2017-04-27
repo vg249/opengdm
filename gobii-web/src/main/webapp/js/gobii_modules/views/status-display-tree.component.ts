@@ -28,6 +28,8 @@ import {GobiiUIEventOrigin} from "../model/type-event-origin";
     template: ` 
                     <p-tree [value]="gobiiTreeNodes" 
                     selectionMode="checkbox" 
+                    propagateSelectionUp="false"
+                    propagateSelectionDown="false"
                     [(selection)]="selectedGobiiNodes"
                     (onNodeUnselect)="nodeUnselect($event)"
                     (onNodeSelect)="nodeSelect($event)"
@@ -198,7 +200,20 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     nodeUnselect(event) {
 
+        // this funditonality is nearly working;
+        // but it breaks down in the marker criteria section of the
+        // tree. There is no more time to work on this. It must just
+        // effectively disabled for now: you can only select and deselect
+        // from the controls outside the tree
+        let unselectedTreeNode: GobiiTreeNode = event.node;
+        this.unsetPartialSelect(unselectedTreeNode);
+        this.selectedGobiiNodes.push(unselectedTreeNode);
+        unselectedTreeNode.children.forEach(tn => {
+            this.selectedGobiiNodes.push(tn);
+        })
 
+
+        /*
         let unselectedTreeNode: GobiiTreeNode = event.node;
 
         if (( !unselectedTreeNode.required )) {
@@ -222,6 +237,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             // essentially disallow the selection
             this.selectedGobiiNodes.push(unselectedTreeNode);
         }
+        */
     }
 
     makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, processType: ProcessType): GobiiFileItem {
