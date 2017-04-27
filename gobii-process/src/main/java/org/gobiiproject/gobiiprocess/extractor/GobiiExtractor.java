@@ -179,15 +179,18 @@ public class GobiiExtractor {
 				String gobiiMDE;//Output of switch
 
 				//Common terms
-				String platformTerm,mapIdTerm,markerListLocation,sampleListLocation;
+				String platformTerm,mapIdTerm,markerListLocation,sampleListLocation,verboseTerm;
 				String samplePosFile="";//Location of sample position indices (see markerList for an example
-				platformTerm=mapIdTerm=markerListLocation=sampleListLocation="";
+				platformTerm=mapIdTerm=markerListLocation=sampleListLocation=verboseTerm="";
 				List<Integer> platforms=extract.getPlatformIds();
 				if(platforms!=null && !platforms.isEmpty()){
 					platformTerm=" --platformList " + commaFormat(platforms);
 				}
 				if(mapId!=null) {
 					mapIdTerm=" -D "+mapId;
+				}
+				if(verbose){
+					verboseTerm=" -v";
 				}
 				switch(filterType){
 					case WHOLE_DATASET:
@@ -201,7 +204,8 @@ public class GobiiExtractor {
 								" -p " + projectFile +
 								(mapId==null?"":(" -D "+mapId))+
 								" -d " + extract.getDataSet().getId() +
-								" -l -v ";
+								" -l"+
+								verboseTerm+" ";
 						break;
 					case BY_MARKER:
 						//List takes extra work, as it might be a <List> or a <File>
@@ -229,7 +233,8 @@ public class GobiiExtractor {
 								" --datasetType " + extract.getGobiiDatasetType().getId() +
 								mapIdTerm +
 								platformTerm +
-								" -l -v ";
+								" -l"+
+								verboseTerm+" ";
 						break;
 					case BY_SAMPLE:
 						//List takes extra work, as it might be a <List> or a <File>
@@ -270,7 +275,8 @@ public class GobiiExtractor {
 								" --datasetType " + extract.getGobiiDatasetType() +
 								mapIdTerm +
 								platformTerm +
-								" -l -v ";
+								" -l"+
+								verboseTerm+" ";
 						break;
 					default:
 						gobiiMDE="";
