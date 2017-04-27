@@ -89,6 +89,9 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                 _this.removeNodeFromTree(fileModelTreeEvent);
                             }
                             else if (fileModelTreeEvent.fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY) {
+                                if (fileModelTreeEvent.fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.CLEAR_TREE) {
+                                    _this.clearTree();
+                                }
                             }
                             else {
                                 var headerStatusMessage = new dto_header_status_message_1.HeaderStatusMessage("Error in status display tree processing file item type "
@@ -107,6 +110,47 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     var foo = "bar";
                     // this.makeDemoTreeNodes();
                     // this.setUpRequredItems();
+                };
+                StatusDisplayTreeComponent.prototype.findRemovableFileItems = function (treeNode) {
+                    var _this = this;
+                    var returnVal = [];
+                    if (treeNode.fileItemId && !treeNode.required) {
+                        var currentFileItem = this.makeFileItemFromTreeNode(treeNode, type_process_1.ProcessType.DELETE)
+                            .setGobiiEventOrigin(type_event_origin_1.GobiiUIEventOrigin.CRITERIA_TREE);
+                        returnVal.push(currentFileItem);
+                    }
+                    if (treeNode.children) {
+                        treeNode.children.forEach(function (tn) {
+                            var currentItemsToRemove = _this.findRemovableFileItems(tn);
+                            returnVal.push.apply(returnVal, currentItemsToRemove);
+                        });
+                    }
+                    return returnVal;
+                };
+                StatusDisplayTreeComponent.prototype.clearTree = function () {
+                    var _this = this;
+                    var itemsToRemove = [];
+                    this.gobiiTreeNodes.forEach(function (fin) {
+                        var childItemsToRemove = _this.findRemovableFileItems(fin);
+                        itemsToRemove.push.apply(itemsToRemove, childItemsToRemove);
+                    });
+                    var nodesToDeselect = this.selectedGobiiNodes.filter(function (tn) {
+                        return tn && !tn.required;
+                    });
+                    nodesToDeselect.forEach(function (tn) {
+                        var idxOfSelectedNodeParentNode = _this.selectedGobiiNodes.indexOf(tn);
+                        if (idxOfSelectedNodeParentNode >= 0) {
+                            var deleted = _this.selectedGobiiNodes.splice(idxOfSelectedNodeParentNode, 1);
+                        }
+                    });
+                    itemsToRemove.forEach(function (itr) {
+                        if (itr) {
+                            _this._fileModelTreeService.put(itr).subscribe(function (fmte) {
+                            }, function (headerResponse) {
+                                _this.handleAddStatusMessage(headerResponse);
+                            });
+                        }
+                    });
                 };
                 StatusDisplayTreeComponent.prototype.nodeSelect = function (event) {
                     // Unless a node already is checked such that it has data, we don't allow checking
@@ -187,30 +231,30 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         _this.selectedGobiiNodes.push(tn);
                     });
                     /*
-                    let unselectedTreeNode: GobiiTreeNode = event.node;
+                     let unselectedTreeNode: GobiiTreeNode = event.node;
             
-                    if (( !unselectedTreeNode.required )) {
+                     if (( !unselectedTreeNode.required )) {
             
             
-                        let itemsToRemove: GobiiFileItem[] = this.getFileItemsToDeselect(unselectedTreeNode);
+                     let itemsToRemove: GobiiFileItem[] = this.getFileItemsToDeselect(unselectedTreeNode);
             
-                        this.unsetPartialSelect(unselectedTreeNode);
+                     this.unsetPartialSelect(unselectedTreeNode);
             
-                        itemsToRemove.forEach(itr => {
-                            this._fileModelTreeService.put(itr).subscribe(
-                                fmte => {
+                     itemsToRemove.forEach(itr => {
+                     this._fileModelTreeService.put(itr).subscribe(
+                     fmte => {
             
-                                },
-                                headerResponse => {
-                                    this.handleAddStatusMessage(headerResponse)
-                                });
-                        })
+                     },
+                     headerResponse => {
+                     this.handleAddStatusMessage(headerResponse)
+                     });
+                     })
             
-                    } else {
-                        // essentially disallow the selection
-                        this.selectedGobiiNodes.push(unselectedTreeNode);
-                    }
-                    */
+                     } else {
+                     // essentially disallow the selection
+                     this.selectedGobiiNodes.push(unselectedTreeNode);
+                     }
+                     */
                 };
                 StatusDisplayTreeComponent.prototype.makeFileItemFromTreeNode = function (gobiiTreeNode, processType) {
                     var _this = this;
