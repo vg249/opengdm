@@ -109,28 +109,47 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     // this.setUpRequredItems();
                 };
                 StatusDisplayTreeComponent.prototype.nodeSelect = function (event) {
-                    //        let foo:string = "foo";
-                    //      this.msgs.push({severity: 'info', summary: 'Node Selected', detail: event.node.label});
+                    // Unless a node already is checked such that it has data, we don't allow checking
+                    // something because it has no meaning without data in it; these would typically
+                    // by CONTAINER type nodes: once they have children they're selected, and it which
+                    // point we deal with check events in nodeUnselect()
+                    // yes this is a bit of a kludge; version 4 of PrimeNG will add a selectable proeprty
+                    // to TreeNode which will enable us to approch selectability of nodes in general in
+                    // a more systematic and elegant way
+                    var _this = this;
+                    var selectedGobiiTreeNode = event.node;
+                    selectedGobiiTreeNode.children.forEach(function (childNode) {
+                        var idxOfNodeToDelete = _this.selectedGobiiNodes.indexOf(childNode);
+                        _this.selectedGobiiNodes.splice(idxOfNodeToDelete, 1);
+                    });
+                    var idxOfNodeToDelete = this.selectedGobiiNodes.indexOf(selectedGobiiTreeNode);
+                    this.selectedGobiiNodes.splice(idxOfNodeToDelete, 1);
                 };
                 StatusDisplayTreeComponent.prototype.nodeUnselect = function (event) {
                     var _this = this;
                     var unselectedTreeNode = event.node;
-                    var itemsToRemove = [];
-                    unselectedTreeNode.children.forEach(function (gtn) {
-                        var currentFileItem = _this.makeFileItemFromTreeNode(gtn, type_process_1.ProcessType.DELETE);
-                        itemsToRemove.push(currentFileItem);
-                        //remove the nodes from selectedNodes array in the remove() function so programmatic
-                        //removals of nodes will also trigger unchecking the parent node
-                    });
-                    var fileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, type_process_1.ProcessType.DELETE);
-                    fileItem.setGobiiEventOrigin(type_event_origin_1.GobiiUIEventOrigin.CRITERIA_TREE);
-                    itemsToRemove.push(fileItem);
-                    itemsToRemove.forEach(function (itr) {
-                        _this._fileModelTreeService.put(itr).subscribe(function (fmte) {
-                        }, function (headerResponse) {
-                            _this.handleAddStatusMessage(headerResponse);
+                    if ((!unselectedTreeNode.required)) {
+                        var itemsToRemove_1 = [];
+                        unselectedTreeNode.children.forEach(function (gtn) {
+                            var currentFileItem = _this.makeFileItemFromTreeNode(gtn, type_process_1.ProcessType.DELETE);
+                            itemsToRemove_1.push(currentFileItem);
+                            //remove the nodes from selectedNodes array in the remove() function so programmatic
+                            //removals of nodes will also trigger unchecking the parent node
                         });
-                    });
+                        var fileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, type_process_1.ProcessType.DELETE);
+                        fileItem.setGobiiEventOrigin(type_event_origin_1.GobiiUIEventOrigin.CRITERIA_TREE);
+                        itemsToRemove_1.push(fileItem);
+                        itemsToRemove_1.forEach(function (itr) {
+                            _this._fileModelTreeService.put(itr).subscribe(function (fmte) {
+                            }, function (headerResponse) {
+                                _this.handleAddStatusMessage(headerResponse);
+                            });
+                        });
+                    }
+                    else {
+                        // essentially disallow the selection
+                        this.selectedGobiiNodes.push(unselectedTreeNode);
+                    }
                 };
                 StatusDisplayTreeComponent.prototype.makeFileItemFromTreeNode = function (gobiiTreeNode, processType) {
                     var _this = this;
@@ -381,6 +400,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                     parentTreeNode.children.splice(idxOfNodeToDelete, 1);
                                     this.addCountToContainerNode(parentTreeNode);
                                     if (parentTreeNode.children.length === 0) {
+                                        parentTreeNode.required = true; // make it unclickable
                                         this.removeItemFromSelectedNodes(parentTreeNode);
                                     }
                                 }
@@ -403,7 +423,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                 gobiiTreeLeafNodeTobeMutated.cvFilterType = fileModelTreeEvent.fileItem.getCvFilterType();
                                 this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, fileModelTreeEvent.fileItem);
                                 this.addIconsToNode(fileModelTreeEvent.fileModelNode, gobiiTreeLeafNodeTobeMutated, false);
-                                gobiiTreeLeafNodeTobeMutated.required = fileModelTreeEvent.fileItem.getRequired();
+                                gobiiTreeLeafNodeTobeMutated.required = fileModelTreeEvent.fileModelNode.getRequired();
                                 if (this.selectedGobiiNodes.indexOf(gobiiTreeLeafNodeTobeMutated) === -1) {
                                     this.selectedGobiiNodes.push(gobiiTreeLeafNodeTobeMutated);
                                 }
@@ -426,12 +446,13 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                 if (existingFileModelItem !== null) {
                                     var existingGobiiTreeNodeChild = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes, existingFileModelItem.getFileItemUniqueId());
                                     if (existingGobiiTreeNodeChild === null) {
-                                        var newGobiiTreeNode = new GobiiTreeNode_1.GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(), fileModelTreeEvent.fileItem.getFileItemUniqueId(), fileModelTreeEvent.fileItem.getRequired());
+                                        var newGobiiTreeNode = new GobiiTreeNode_1.GobiiTreeNode(fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId(), fileModelTreeEvent.fileItem.getFileItemUniqueId(), fileModelTreeEvent.fileModelNode.getRequired());
                                         newGobiiTreeNode.entityType = fileModelTreeEvent.fileItem.getEntityType();
                                         this.addIconsToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, false);
                                         this.addEntityNameToNode(fileModelTreeEvent.fileModelNode, newGobiiTreeNode, fileModelTreeEvent.fileItem);
                                         parentTreeNode.children.push(newGobiiTreeNode);
                                         parentTreeNode.expanded = true;
+                                        parentTreeNode.required = false; //make it clickable
                                         this.selectedGobiiNodes.push(newGobiiTreeNode);
                                         this.addCountToContainerNode(parentTreeNode);
                                         if (parentTreeNode.children.length >= this.containerCollapseThreshold) {
@@ -475,28 +496,28 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     var _this = this;
                     var returnVal = null;
                     if (fileModelNode.getItemType() === file_model_node_1.ExtractorItemType.ENTITY) {
-                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, fileModelNode.getRequired());
                         returnVal.entityType = fileModelNode.getEntityType();
                         returnVal.label = fileModelNode.getEntityName();
                     }
                     else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.EXPORT_FORMAT) {
-                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, fileModelNode.getRequired());
                         returnVal.label = fileModelNode.getCategoryName();
                     }
                     else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM) {
-                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, fileModelNode.getRequired());
                         returnVal.label = fileModelNode.getCategoryName();
                     }
                     else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.MARKER_FILE) {
-                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, fileModelNode.getRequired());
                         returnVal.label = fileModelNode.getCategoryName();
                     }
                     else if (fileModelNode.getItemType() == file_model_node_1.ExtractorItemType.JOB_ID) {
-                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, fileModelNode.getRequired());
                         returnVal.label = fileModelNode.getCategoryName();
                     }
                     else {
-                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, false);
+                        returnVal = new GobiiTreeNode_1.GobiiTreeNode(fileModelNode.getFileModelNodeUniqueId(), null, fileModelNode.getRequired());
                         if (fileModelNode.getEntityType() != null
                             && fileModelNode.getEntityType() != type_entity_1.EntityType.UNKNOWN) {
                             returnVal.entityType = fileModelNode.getEntityType();
@@ -517,6 +538,9 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     else {
                         this.handleAddStatusMessage(new dto_header_status_message_1.HeaderStatusMessage("Unable to make tree node for file model of type " + entity_labels_1.Labels.instance().treeExtractorTypeLabels[fileModelNode.getItemType()], null, null));
                     } // if we created a tree node
+                    if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.CONTAINER) {
+                        returnVal.required = true; // when initially empty, containers should not be clickable
+                    }
                     return returnVal;
                 };
                 StatusDisplayTreeComponent.prototype.ngOnChanges = function (changes) {
