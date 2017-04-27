@@ -5,9 +5,11 @@ import {CvFilterType} from "./cv-filter-type";
 
 export class GobiiTreeNode implements TreeNode {
 
-    constructor(fileModelNodeId: string,
+    constructor(parent:GobiiTreeNode,
+                fileModelNodeId: string,
                 fileItemId: string,
                 required: boolean) {
+        this.parent = parent;
         this.fileModelNodeId = fileModelNodeId;
         this.fileItemId = fileItemId;
         this.required = required;
