@@ -46,6 +46,7 @@ export class FileModelNode {
     private _cvFilterType: CvFilterType = CvFilterType.UNKNOWN;
     private _fileItems: GobiiFileItem[] = [];
     private _fileModelNodeUniqueId = Guid.generateUUID();
+    private _required: boolean;
 
 
     public static build(itemType: ExtractorItemType, parent: FileModelNode): FileModelNode {
@@ -160,5 +161,15 @@ export class FileModelNode {
 
     getFileModelNodeUniqueId(): string {
         return this._fileModelNodeUniqueId;
+    }
+
+
+    getRequired(): boolean {
+        return this._required;
+    }
+
+    setRequired(value: boolean): FileModelNode {
+        this._required = value;
+        return this;
     }
 }
