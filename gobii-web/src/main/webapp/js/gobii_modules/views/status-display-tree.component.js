@@ -144,6 +144,9 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     });
                     return returnVal;
                 };
+                // we need to disable partial selection because when you click
+                // a node that's partially selected, you don't get the unselect event
+                // which breaks everything
                 StatusDisplayTreeComponent.prototype.unsetPartialSelect = function (gobiiTreeNode) {
                     var thereAreSelectedChildren = false;
                     if (gobiiTreeNode.partialSelected) {

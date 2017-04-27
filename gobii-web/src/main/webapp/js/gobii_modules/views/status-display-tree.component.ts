@@ -160,6 +160,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
 
+    // we need to disable partial selection because when you click
+    // a node that's partially selected, you don't get the unselect event
+    // which breaks everything
     unsetPartialSelect(gobiiTreeNode: GobiiTreeNode) {
 
         let thereAreSelectedChildren: boolean = false;
