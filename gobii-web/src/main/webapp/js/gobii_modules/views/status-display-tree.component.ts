@@ -131,8 +131,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         fileItem.setGobiiEventOrigin(GobiiUIEventOrigin.CRITERIA_TREE);
         itemsToRemove.push(fileItem);
 
-        // The prevent unchecking behavior is suspended until it is proven why we need it
-//        if (!fileItem.getRequired()) {
         itemsToRemove.forEach(itr => {
             this._fileModelTreeService.put(itr).subscribe(
                 fmte => {
@@ -142,11 +140,6 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                     this.handleAddStatusMessage(headerResponse)
                 });
         })
-        // } else {
-        //     this.selectedGobiiNodes.push(unselectedTreeNode);
-        // }
-
-
     }
 
     makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, processType: ProcessType): GobiiFileItem {

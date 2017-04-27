@@ -125,17 +125,12 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     var fileItem = this.makeFileItemFromTreeNode(unselectedTreeNode, type_process_1.ProcessType.DELETE);
                     fileItem.setGobiiEventOrigin(type_event_origin_1.GobiiUIEventOrigin.CRITERIA_TREE);
                     itemsToRemove.push(fileItem);
-                    // The prevent unchecking behavior is suspended until it is proven why we need it
-                    //        if (!fileItem.getRequired()) {
                     itemsToRemove.forEach(function (itr) {
                         _this._fileModelTreeService.put(itr).subscribe(function (fmte) {
                         }, function (headerResponse) {
                             _this.handleAddStatusMessage(headerResponse);
                         });
                     });
-                    // } else {
-                    //     this.selectedGobiiNodes.push(unselectedTreeNode);
-                    // }
                 };
                 StatusDisplayTreeComponent.prototype.makeFileItemFromTreeNode = function (gobiiTreeNode, processType) {
                     var _this = this;
