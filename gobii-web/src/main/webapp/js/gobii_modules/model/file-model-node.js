@@ -145,6 +145,13 @@ System.register(["./type-entity", "./cv-filter-type", "./guid"], function (expor
                 FileModelNode.prototype.getFileModelNodeUniqueId = function () {
                     return this._fileModelNodeUniqueId;
                 };
+                FileModelNode.prototype.getRequired = function () {
+                    return this._required;
+                };
+                FileModelNode.prototype.setRequired = function (value) {
+                    this._required = value;
+                    return this;
+                };
                 return FileModelNode;
             }());
             exports_1("FileModelNode", FileModelNode);
