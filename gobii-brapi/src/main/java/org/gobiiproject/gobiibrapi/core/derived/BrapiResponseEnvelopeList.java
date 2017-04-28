@@ -18,8 +18,6 @@ public class BrapiResponseEnvelopeList<T_RESPONSE_TYPE_DETAIL> {
 
     private BrapiMetaData brapiMetaData = new BrapiMetaData();
 
-    private List<T_RESPONSE_TYPE_DETAIL> data;
-
     @JsonProperty("metadata")
     public BrapiMetaData getBrapiMetaData() {
         return brapiMetaData;
@@ -30,31 +28,34 @@ public class BrapiResponseEnvelopeList<T_RESPONSE_TYPE_DETAIL> {
         this.brapiMetaData = brapiMetaData;
     }
 
-    Map<String, List<T_RESPONSE_TYPE_DETAIL>> result = new HashMap<>();
+    Map<String, Object> result = new HashMap<>();
 
     @JsonProperty(BrapiJsonKeys.RESULT)
-    public Map<String, List<T_RESPONSE_TYPE_DETAIL>> getResult() {
+    public Map<String, Object> getResult() {
         return result;
     }
 
     @JsonProperty(BrapiJsonKeys.RESULT)
-    public void setResult(Map<String, List<T_RESPONSE_TYPE_DETAIL>> result) {
+    public void setResult(Map<String, Object> result) {
         this.result = result;
     }
 
-    public List<T_RESPONSE_TYPE_DETAIL> getData() {
+    @SuppressWarnings("unchecked")
+    public List<T_RESPONSE_TYPE_DETAIL> getResultData() {
 
         List<T_RESPONSE_TYPE_DETAIL> returnVal = new ArrayList<>();
 
         if(this.result.containsKey(BrapiJsonKeys.RESULT_DATA)) {
-            returnVal = this.result.get(BrapiJsonKeys.RESULT_DATA);
+            returnVal = (List<T_RESPONSE_TYPE_DETAIL>) this.result.get(BrapiJsonKeys.RESULT_DATA);
         }
 
         return returnVal;
     }
 
-    public void setData(List<T_RESPONSE_TYPE_DETAIL> data) {
+    public void setResultData(List<T_RESPONSE_TYPE_DETAIL> data) {
 
         this.result.put(BrapiJsonKeys.RESULT_DATA,data);
     }
+
+
 }

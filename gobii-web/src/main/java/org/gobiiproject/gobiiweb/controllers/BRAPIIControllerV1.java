@@ -6,7 +6,6 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang.ObjectUtils;
 import org.gobiiproject.gobidomain.services.AnalysisService;
 import org.gobiiproject.gobidomain.services.ConfigSettingsService;
 import org.gobiiproject.gobidomain.services.ContactService;
@@ -194,7 +193,7 @@ public class BRAPIIControllerV1 {
                     .getBrapiResponseListCallsList();
 
 
-            brapiResponseEnvelopeList.setData(brapiResponseCallsItems);
+            brapiResponseEnvelopeList.setResultData(brapiResponseCallsItems);
 
 
         } catch (GobiiException e) {
@@ -240,7 +239,7 @@ public class BRAPIIControllerV1 {
 
             List<BrapiResponseStudiesSearchItem> brapiListResult = (new BrapiResponseMapStudiesSearch()).getBrapiResponseStudySearchItemsList(brapiRequestStudiesSearch);
 
-            brapiResponseEnvelopeList.setData(brapiListResult);
+            brapiResponseEnvelopeList.setResultData(brapiListResult);
 
         } catch (GobiiException e) {
 
