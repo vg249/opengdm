@@ -58,7 +58,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * This controller is only for BRAPI v1. compliant calls. It consumes the gobii-brapi module.
  *
- * BRAPI responses all containa a "metadata" and a "result" key. The "result" key's value can take
+ * BRAPI responses all contain a "metadata" and a "result" key. The "result" key's value can take
  * three forms:
  * 1) A "data" property that is an array of items of the same type (e.g., /studies-search)
  * 2) A set of arbitrary properties (i.e., a specific type in Java) (e.g., /germplasm/{id})
@@ -78,13 +78,14 @@ import javax.servlet.http.HttpServletResponse;
  * extend BrapiResponseEnvelopeList. In that case, it is of type 3). If it does not,
  * it is of type 2.
  *
- * In the calls namespace of gobii-brapi is organized as the brapi API is organized.
+ * In the calls namespace of gobii-brapi is organized as the brapi API is organized. In the descriptions
+ * below, <CallName> refers to the BRAPI call name.
  * Each call contains several sorts of classes:
  * ---- POJOs named BrapiResponse<CallName>: these are the arbitrary pojos that
  *      type-parameterize BrapiResponseEnvelopeList and BrapiResponseEnvelopeMaster
- * ---- POJOs anemed BrapiRequest<CallName>: these are POST/PUT bodies for which the
- *      relevant methods in this class have @RequestBody parameters (e.g., BrapiRequestStudiesSearch)
- * ---- POJOs named BrapiResponseMap<CallName>: Right now these clases crate dummy responses; the real
+ * ---- POJOs named BrapiRequest<CallName>: these are POST/PUT bodies for which the
+ *      relevant methods in here the controller have @RequestBody parameters (e.g., BrapiRequestStudiesSearch)
+ * ---- POJOs named BrapiResponseMap<CallName>: Right now these clases create dummy responses; the real
  *      implementations of these classes will consume classes from the gobii-domain project (i.e., the Service
  *      classes): they will get data from gobii in terms of gobii DTOs and convert the DTOs in to the
  *      BRAPI POJOs
@@ -184,8 +185,8 @@ public class BRAPIIControllerV1 {
 
         String returnVal;
 
-        BrapiResponseEnvelopeList<ObjectUtils.Null, BrapiResponseCallsItem> brapiResponseEnvelopeList =
-                new BrapiResponseEnvelopeList<>(ObjectUtils.Null.class, BrapiResponseCallsItem.class);
+        BrapiResponseEnvelopeList<BrapiResponseCallsItem> brapiResponseEnvelopeList =
+                new BrapiResponseEnvelopeList<>();
         try {
 
             BrapiResponseMapCalls brapiResponseMapCalls = new BrapiResponseMapCalls(request);
@@ -229,8 +230,8 @@ public class BRAPIIControllerV1 {
 
         String returnVal;
 
-        BrapiResponseEnvelopeList<ObjectUtils.Null, BrapiResponseStudiesSearchItem> brapiResponseEnvelopeList =
-                new BrapiResponseEnvelopeList<>(ObjectUtils.Null.class, BrapiResponseStudiesSearchItem.class);
+        BrapiResponseEnvelopeList<BrapiResponseStudiesSearchItem> brapiResponseEnvelopeList =
+                new BrapiResponseEnvelopeList<>();
 
         try {
 

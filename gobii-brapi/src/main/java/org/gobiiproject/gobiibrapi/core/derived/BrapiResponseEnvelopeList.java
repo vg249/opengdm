@@ -6,20 +6,9 @@ import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 /**
  * Created by Phil on 12/19/2016.
  */
-public class BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> {
-
-    private Class<T_RESPONSE_TYPE_MASTER> brapiResponseTypeMaster;
-    private Class<T_RESPONSE_TYPE_DETAIL> brapiResponseTypeDetail;
+public class BrapiResponseEnvelopeList<T_RESPONSE_TYPE_DETAIL> {
 
     public BrapiResponseEnvelopeList() {}
-
-    public BrapiResponseEnvelopeList(Class<T_RESPONSE_TYPE_MASTER> brapiResponseTypeMaster,
-                                     Class<T_RESPONSE_TYPE_DETAIL> brapiResponseTypeDetail) {
-
-        this.brapiResponseTypeMaster = brapiResponseTypeMaster;
-        this.brapiResponseTypeDetail = brapiResponseTypeDetail;
-    }
-
 
     private BrapiMetaData brapiMetaData = new BrapiMetaData();
 

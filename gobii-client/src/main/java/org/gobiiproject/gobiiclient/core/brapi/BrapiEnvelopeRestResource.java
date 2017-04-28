@@ -34,9 +34,9 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
         this.restResourceUtils = new RestResourceUtils();
     }
 
-    private BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> getTypedListObjFromResult(HttpMethodResult httpMethodResult) throws Exception {
+    private BrapiResponseEnvelopeList<T_RESPONSE_TYPE_DETAIL> getTypedListObjFromResult(HttpMethodResult httpMethodResult) throws Exception {
 
-        BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> returnVal;
+        BrapiResponseEnvelopeList<T_RESPONSE_TYPE_DETAIL> returnVal;
         String responseAsString = httpMethodResult.getPayLoad().toString();
         returnVal = objectMapper.readValue(responseAsString, BrapiResponseEnvelopeList.class);
 
@@ -46,7 +46,6 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
     private BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> getMasterObjFromResult(HttpMethodResult httpMethodResult) throws Exception {
 
         BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> returnVal = new BrapiResponseEnvelopeMaster<>();
-
 
 
         String metaDataAsString = httpMethodResult.getPayLoad().get(BrapiJsonKeys.METADATA).toString();
@@ -97,10 +96,10 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
 //
 //    } //
 
-    public BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> getFromListResource() throws Exception {
+    public BrapiResponseEnvelopeList<T_RESPONSE_TYPE_DETAIL> getFromListResource() throws Exception {
 
 
-        BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> returnVal;
+        BrapiResponseEnvelopeList<T_RESPONSE_TYPE_DETAIL> returnVal;
 
         HttpMethodResult httpMethodResult =
                 this.restResourceUtils.getClientContext().getHttp()
@@ -115,10 +114,10 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
     } //
 
 
-    public BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> postToListResource(T_POST_OBJ_TYPE bodyObj) throws Exception {
+    public BrapiResponseEnvelopeList<T_RESPONSE_TYPE_DETAIL> postToListResource(T_POST_OBJ_TYPE bodyObj) throws Exception {
 
 
-        BrapiResponseEnvelopeList<T_RESPONSE_TYPE_MASTER, T_RESPONSE_TYPE_DETAIL> returnVal;
+        BrapiResponseEnvelopeList<T_RESPONSE_TYPE_DETAIL> returnVal;
 
         String bodyAsString = objectMapper.writeValueAsString(bodyObj);
 

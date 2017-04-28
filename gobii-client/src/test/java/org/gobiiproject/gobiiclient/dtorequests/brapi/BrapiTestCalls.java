@@ -46,7 +46,7 @@ public class BrapiTestCalls {
                         ObjectUtils.Null.class,
                         BrapiResponseCallsItem.class);
 
-        BrapiResponseEnvelopeList<ObjectUtils.Null,BrapiResponseCallsItem> callsResult = brapiEnvelopeRestResource.getFromListResource();
+        BrapiResponseEnvelopeList<BrapiResponseCallsItem> callsResult = brapiEnvelopeRestResource.getFromListResource();
 
         BrapiTestResponseStructure.validatateBrapiResponseStructure(callsResult.getBrapiMetaData());
 

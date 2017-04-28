@@ -50,7 +50,7 @@ public class BrapiTestSearchStudies {
                         ObjectUtils.Null.class,
                         BrapiResponseStudiesSearchItem.class);
 
-        BrapiResponseEnvelopeList<ObjectUtils.Null,BrapiResponseStudiesSearchItem> studiesResult = brapiEnvelopeRestResource.postToListResource(brapiRequestStudiesSearch);
+        BrapiResponseEnvelopeList<BrapiResponseStudiesSearchItem> studiesResult = brapiEnvelopeRestResource.postToListResource(brapiRequestStudiesSearch);
 
         BrapiTestResponseStructure.validatateBrapiResponseStructure(studiesResult.getBrapiMetaData());
 
