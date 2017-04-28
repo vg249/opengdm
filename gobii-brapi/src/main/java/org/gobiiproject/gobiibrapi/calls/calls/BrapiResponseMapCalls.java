@@ -3,7 +3,6 @@ package org.gobiiproject.gobiibrapi.calls.calls;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiibrapi.core.derived.BrapiListResult;
 import org.gobiiproject.gobiibrapi.types.BrapiDataTypes;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 
@@ -55,11 +54,9 @@ public class BrapiResponseMapCalls {
         return returnVal;
     }
 
-    public BrapiListResult<BrapiResponseCallsItem> getBrapiResponseListCalls() throws Exception {
+    public List<BrapiResponseCallsItem> getBrapiResponseListCallsList() throws Exception {
 
-        BrapiListResult<BrapiResponseCallsItem> returnVal = new BrapiListResult<>(BrapiResponseCallsItem.class);
-        returnVal.setData(this.getBrapiResponseCallsItems());
-        return returnVal;
+        return this.getBrapiResponseCallsItems();
 
     }
 }

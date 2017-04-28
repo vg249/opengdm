@@ -38,7 +38,6 @@ import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearc
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
-import org.gobiiproject.gobiibrapi.core.derived.BrapiListResult;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeList;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -53,6 +52,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 
 /**
@@ -190,8 +190,8 @@ public class BRAPIIControllerV1 {
         try {
 
             BrapiResponseMapCalls brapiResponseMapCalls = new BrapiResponseMapCalls(request);
-            BrapiListResult<BrapiResponseCallsItem> brapiResponseCallsItems = brapiResponseMapCalls
-                    .getBrapiResponseListCalls();
+            List<BrapiResponseCallsItem> brapiResponseCallsItems = brapiResponseMapCalls
+                    .getBrapiResponseListCallsList();
 
 
             brapiResponseEnvelopeList.setData(brapiResponseCallsItems);
@@ -238,7 +238,7 @@ public class BRAPIIControllerV1 {
             BrapiRequestReader<BrapiRequestStudiesSearch> brapiRequestReader = new BrapiRequestReader<>(BrapiRequestStudiesSearch.class);
             BrapiRequestStudiesSearch brapiRequestStudiesSearch = brapiRequestReader.makeRequestObj(studiesRequestBody);
 
-            BrapiListResult<BrapiResponseStudiesSearchItem> brapiListResult = (new BrapiResponseMapStudiesSearch()).getBrapiResponseStudySearchItems(brapiRequestStudiesSearch);
+            List<BrapiResponseStudiesSearchItem> brapiListResult = (new BrapiResponseMapStudiesSearch()).getBrapiResponseStudySearchItemsList(brapiRequestStudiesSearch);
 
             brapiResponseEnvelopeList.setData(brapiListResult);
 

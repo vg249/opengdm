@@ -54,7 +54,7 @@ public class BrapiTestSearchStudies {
 
         BrapiTestResponseStructure.validatateBrapiResponseStructure(studiesResult.getBrapiMetaData());
 
-        Assert.assertTrue(studiesResult.getData().getData().size() > 0);
+        Assert.assertTrue(studiesResult.getData().size() > 0);
 
     }
 }

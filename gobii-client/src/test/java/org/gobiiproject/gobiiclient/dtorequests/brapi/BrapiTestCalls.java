@@ -50,7 +50,7 @@ public class BrapiTestCalls {
 
         BrapiTestResponseStructure.validatateBrapiResponseStructure(callsResult.getBrapiMetaData());
 
-        Assert.assertTrue(callsResult.getData().getData().size() > 0 );
+        Assert.assertTrue(callsResult.getData().size() > 0 );
 
     }
 }
