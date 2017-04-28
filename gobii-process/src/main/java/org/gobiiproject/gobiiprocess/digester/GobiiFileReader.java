@@ -348,7 +348,7 @@ public class GobiiFileReader {
 			loaderInstructionMap.put(instructionName, new File(HelperFunctions.getDestinationFile(inst)));
 			loaderInstructionList.add(instructionName);//TODO Hack - for ordering
 			if (LINKAGE_GROUP_TABNAME.equals(instructionName) || GERMPLASM_TABNAME.equals(instructionName) || GERMPLASM_PROP_TABNAME.equals(instructionName)) {
-				success &= HelperFunctions.tryExec(loaderScriptPath + "LGduplicates.py -i " + HelperFunctions.getDestinationFile(zero));
+				success &= HelperFunctions.tryExec(loaderScriptPath + "LGduplicates.py -i " + HelperFunctions.getDestinationFile(inst));
 			}
 			if (MARKER_TABNAME.equals(instructionName)) {//Convert 'alts' into a jsonb array
 				String dest = HelperFunctions.getDestinationFile(inst);
