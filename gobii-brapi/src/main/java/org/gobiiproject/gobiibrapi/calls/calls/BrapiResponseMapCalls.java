@@ -59,4 +59,14 @@ public class BrapiResponseMapCalls {
         return this.getBrapiResponseCallsItems();
 
     }
+
+    public BrapiResponseCalls getBrapiResponseCalls() throws Exception {
+
+        BrapiResponseCalls returnVal = new BrapiResponseCalls();
+        List<BrapiResponseCallsItem> brapiResponseCallsItems = this.getBrapiResponseListCallsList();
+        returnVal.setData(brapiResponseCallsItems);
+
+        return returnVal;
+
+    }
 }

@@ -27,7 +27,7 @@ import org.gobiiproject.gobidomain.services.PlatformService;
 import org.gobiiproject.gobidomain.services.ProjectService;
 import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCallsItem;
+import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
 import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseGermplasmByDbId;
 import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseMapGermplasmByDbId;
@@ -36,9 +36,7 @@ import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiRespo
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
-import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
-import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeList;
 import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -53,7 +51,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 
 /**
@@ -186,32 +183,32 @@ public class BRAPIIControllerV1 {
 
         String returnVal;
 
-        BrapiResponseEnvelopeList<BrapiResponseCallsItem> brapiResponseEnvelopeList =
-                new BrapiResponseEnvelopeList<>();
+        BrapiResponseEnvelopeMasterDetail<BrapiResponseCalls> brapiResponseEnvelopeMasterDetail =
+                new BrapiResponseEnvelopeMasterDetail<>();
         try {
 
             BrapiResponseMapCalls brapiResponseMapCalls = new BrapiResponseMapCalls(request);
-            List<BrapiResponseCallsItem> brapiResponseCallsItems = brapiResponseMapCalls
-                    .getBrapiResponseListCallsList();
 
+//            List<BrapiResponseCallsItem> brapiResponseCallsItems = brapiResponseMapCalls
+//                    .getBrapiResponseListCallsList();
 
-            brapiResponseEnvelopeList.setResultData(brapiResponseCallsItems);
-
+            BrapiResponseCalls brapiResponseCalls = brapiResponseMapCalls.getBrapiResponseCalls();
+            brapiResponseEnvelopeMasterDetail.setResult(brapiResponseCalls);
 
         } catch (GobiiException e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiResponseEnvelopeList.getBrapiMetaData().addStatusMessage("exception", message);
+            brapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
 
         } catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiResponseEnvelopeList.getBrapiMetaData().addStatusMessage("exception", message);
+            brapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
-        returnVal = (new ObjectMapper()).writeValueAsString(brapiResponseEnvelopeList);
+        returnVal = (new ObjectMapper()).writeValueAsString(brapiResponseEnvelopeMasterDetail);
 
 
         return returnVal;
