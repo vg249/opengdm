@@ -8,12 +8,9 @@ import java.util.List;
  */
 public class BrapiResponseMapStudiesSearch {
 
-    public List<BrapiResponseStudiesSearchItem> getBrapiJsonResponseStudySearchItems(BrapiRequestStudiesSearch brapiRequestStudiesSearch) {
+    private List<BrapiResponseStudiesSearchItem> getBrapiJsonResponseStudySearchItems(BrapiRequestStudiesSearch brapiRequestStudiesSearch) {
 
         List<BrapiResponseStudiesSearchItem> returnVal = new ArrayList<>();
-
-        //when we implement we will do the real query from the DB using these criteria
-        //brapiRequestStudiesSearch
 
         BrapiResponseStudiesSearchItem brapiResponseStudiesSearchItem = new BrapiResponseStudiesSearchItem();
         brapiResponseStudiesSearchItem.setStudyType("genotype");
@@ -25,13 +22,6 @@ public class BrapiResponseMapStudiesSearch {
         return returnVal;
     }
 
-
-
-    public List<BrapiResponseStudiesSearchItem> getBrapiResponseStudySearchItemsList(BrapiRequestStudiesSearch brapiRequestStudiesSearch) {
-
-        return getBrapiJsonResponseStudySearchItems(brapiRequestStudiesSearch);
-
-    }
 
     public BrapiResponseStudiesSearch getBrapiResponseStudySearch(BrapiRequestStudiesSearch brapiRequestStudiesSearch) {
 

@@ -9,7 +9,7 @@ import java.util.List;
 public class BrapiResponseMapObservationVariables {
 
 
-    public List<BrapiResponseObservationVariablesDetail> getObservationVariableDetails(Integer studyDbId ) throws Exception {
+    private List<BrapiResponseObservationVariablesDetail> getObservationVariableDetails(Integer studyDbId ) throws Exception {
 
         List<BrapiResponseObservationVariablesDetail> returnVal = new ArrayList<>();
 
@@ -39,21 +39,4 @@ public class BrapiResponseMapObservationVariables {
 
         return returnVal;
     }
-
-//    public BrapiResponseEnvelopeMasterDetail<BrapiResponseObservationVariablesMaster> gerObservationVariableByStudyIdResponse(Integer studyDbId) throws Exception {
-//
-//        BrapiResponseEnvelopeMasterDetail<BrapiResponseObservationVariablesMaster> returnVal = new BrapiResponseEnvelopeMasterDetail();
-//
-//        BrapiResponseObservationVariablesMaster brapiResponseObservationVariablesMaster = new BrapiResponseObservationVariablesMaster();
-//
-//        brapiResponseObservationVariablesMaster.setStudyDbId(studyDbId);
-//        brapiResponseObservationVariablesMaster.setTrialName("trialname");
-//
-//        brapiResponseObservationVariablesMaster.setData(this.getObservationVariableDetails(studyDbId));
-//
-//
-//        returnVal.setResult(brapiResponseObservationVariablesMaster);
-//
-//        return returnVal;
-//    }
 }

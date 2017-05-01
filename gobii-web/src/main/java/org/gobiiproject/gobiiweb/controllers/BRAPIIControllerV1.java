@@ -233,9 +233,8 @@ public class BRAPIIControllerV1 {
             BrapiRequestReader<BrapiRequestStudiesSearch> brapiRequestReader = new BrapiRequestReader<>(BrapiRequestStudiesSearch.class);
             BrapiRequestStudiesSearch brapiRequestStudiesSearch = brapiRequestReader.makeRequestObj(studiesRequestBody);
 
-            //List<BrapiResponseStudiesSearchItem> brapiListResult = (new BrapiResponseMapStudiesSearch()).getBrapiResponseStudySearchItemsList(brapiRequestStudiesSearch);
-
             BrapiResponseStudiesSearch brapiResponseStudySearch = (new BrapiResponseMapStudiesSearch()).getBrapiResponseStudySearch(brapiRequestStudiesSearch);
+
             BrapiResponseEnvelopeMasterDetail.setResult(brapiResponseStudySearch);
 
         } catch (GobiiException e) {

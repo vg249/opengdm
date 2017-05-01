@@ -23,7 +23,7 @@ public class BrapiResponseMapCalls {
         this.contextRoot = request.getContextPath();
     }
 
-    public List<BrapiResponseCallsItem> getBrapiResponseCallsItems() throws Exception {
+    private List<BrapiResponseCallsItem> getBrapiResponseCallsItems() throws Exception {
 
         List<BrapiResponseCallsItem> returnVal = new ArrayList<>();
 
@@ -54,16 +54,10 @@ public class BrapiResponseMapCalls {
         return returnVal;
     }
 
-    public List<BrapiResponseCallsItem> getBrapiResponseListCallsList() throws Exception {
-
-        return this.getBrapiResponseCallsItems();
-
-    }
-
     public BrapiResponseCalls getBrapiResponseCalls() throws Exception {
 
         BrapiResponseCalls returnVal = new BrapiResponseCalls();
-        List<BrapiResponseCallsItem> brapiResponseCallsItems = this.getBrapiResponseListCallsList();
+        List<BrapiResponseCallsItem> brapiResponseCallsItems = this.getBrapiResponseCallsItems();
         returnVal.setData(brapiResponseCallsItems);
 
         return returnVal;
