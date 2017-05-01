@@ -25,9 +25,24 @@ public class BrapiResponseMapStudiesSearch {
         return returnVal;
     }
 
+
+
     public List<BrapiResponseStudiesSearchItem> getBrapiResponseStudySearchItemsList(BrapiRequestStudiesSearch brapiRequestStudiesSearch) {
 
         return getBrapiJsonResponseStudySearchItems(brapiRequestStudiesSearch);
 
     }
+
+    public BrapiResponseStudiesSearch getBrapiResponseStudySearch(BrapiRequestStudiesSearch brapiRequestStudiesSearch) {
+
+        BrapiResponseStudiesSearch returnVal = new BrapiResponseStudiesSearch();
+
+        List<BrapiResponseStudiesSearchItem> searchItems = getBrapiJsonResponseStudySearchItems(brapiRequestStudiesSearch);
+
+        returnVal.setData(searchItems );
+
+        return returnVal ;
+
+    }
+
 }

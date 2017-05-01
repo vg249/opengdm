@@ -35,6 +35,7 @@ import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiRespo
 import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseObservationVariablesMaster;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
+import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeList;
@@ -230,32 +231,33 @@ public class BRAPIIControllerV1 {
 
         String returnVal;
 
-        BrapiResponseEnvelopeList<BrapiResponseStudiesSearchItem> brapiResponseEnvelopeList =
-                new BrapiResponseEnvelopeList<>();
+        BrapiResponseEnvelopeMasterDetail<BrapiResponseStudiesSearch> BrapiResponseEnvelopeMasterDetail =
+                new BrapiResponseEnvelopeMasterDetail<>();
 
         try {
 
             BrapiRequestReader<BrapiRequestStudiesSearch> brapiRequestReader = new BrapiRequestReader<>(BrapiRequestStudiesSearch.class);
             BrapiRequestStudiesSearch brapiRequestStudiesSearch = brapiRequestReader.makeRequestObj(studiesRequestBody);
 
-            List<BrapiResponseStudiesSearchItem> brapiListResult = (new BrapiResponseMapStudiesSearch()).getBrapiResponseStudySearchItemsList(brapiRequestStudiesSearch);
+            //List<BrapiResponseStudiesSearchItem> brapiListResult = (new BrapiResponseMapStudiesSearch()).getBrapiResponseStudySearchItemsList(brapiRequestStudiesSearch);
 
-            brapiResponseEnvelopeList.setResultData(brapiListResult);
+            BrapiResponseStudiesSearch brapiResponseStudySearch = (new BrapiResponseMapStudiesSearch()).getBrapiResponseStudySearch(brapiRequestStudiesSearch);
+            BrapiResponseEnvelopeMasterDetail.setResult(brapiResponseStudySearch);
 
         } catch (GobiiException e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiResponseEnvelopeList.getBrapiMetaData().addStatusMessage("exception", message);
+            BrapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
 
         }catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiResponseEnvelopeList.getBrapiMetaData().addStatusMessage("exception", message);
+            BrapiResponseEnvelopeMasterDetail.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
-        returnVal = (new ObjectMapper()).writeValueAsString(brapiResponseEnvelopeList);
+        returnVal = (new ObjectMapper()).writeValueAsString(BrapiResponseEnvelopeMasterDetail);
         return returnVal;
     }
 
