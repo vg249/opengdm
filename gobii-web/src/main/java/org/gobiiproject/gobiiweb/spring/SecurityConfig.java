@@ -55,7 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/index.html",
                 "/css/**",
                 "/images/**",
-                "/js/**");
+                "/js/**",
+                "/brapi/v1/**");
     }
 
 
