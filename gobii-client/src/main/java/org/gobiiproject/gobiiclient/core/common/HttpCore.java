@@ -37,7 +37,7 @@ public class HttpCore {
     private String host = null;
     private Integer port = null;
     private String cropId;
-    private boolean logJson = true;
+    private boolean logJson = false;
 
 
     public HttpCore(String host,
