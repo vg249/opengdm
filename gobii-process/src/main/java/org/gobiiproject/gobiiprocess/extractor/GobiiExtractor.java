@@ -192,6 +192,17 @@ public class GobiiExtractor {
 				if(verbose){
 					verboseTerm=" -v";
 				}
+
+				//Dataset can be null
+				Integer datasetId=null;
+				String datasetName="null";
+				GobiiFilePropNameId datasetPropNameId=extract.getDataSet();
+				if(datasetPropNameId!=null){
+					datasetId=datasetPropNameId.getId();
+					datasetName=datasetPropNameId.getName();
+				}
+
+
 				switch(filterType){
 					case WHOLE_DATASET:
 
@@ -203,7 +214,7 @@ public class GobiiExtractor {
 								" -s " + sampleFile +
 								" -p " + projectFile +
 								(mapId==null?"":(" -D "+mapId))+
-								" -d " + extract.getDataSet().getId() +
+								" -d " + datasetId +
 								" -l"+
 								verboseTerm+" ";
 						break;
@@ -284,15 +295,8 @@ public class GobiiExtractor {
 						break;
 				}
 				samplePosFile=sampleFile+".pos";
-				//Dataset can be null
-				Integer datasetId=null;
-				String datasetName="null";
-				GobiiFilePropNameId datasetPropNameId=extract.getDataSet();
-				if(datasetPropNameId!=null){
-					datasetId=datasetPropNameId.getId();
-					datasetName=datasetPropNameId.getName();
-				}
-				String errorFile=getLogName(extract,cropConfig,extract.getDataSet().getId());
+
+				String errorFile=getLogName(extract,cropConfig,datasetId);
 				ErrorLogger.logInfo("Extractor","Executing MDEs");
 				tryExec(gobiiMDE, extractDir+"mdeOut", errorFile);
 
@@ -321,8 +325,8 @@ public class GobiiExtractor {
 				}
 
 				// Adding "/" back to the bi-allelic data made from HDF5
-				if (extract.getGobiiDatasetType() != null) {
-					if (extract.getGobiiDatasetType().getName().toLowerCase().equals("ssr_allele_size")) {
+				if (datasetName != null) {
+					if (datasetName.toLowerCase().equals("ssr_allele_size")) {
 						ErrorLogger.logInfo("Extractor","Adding slashes to bi allelic data in " + genoFile);
 						if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
 							ErrorLogger.logInfo("Extractor","Added slashes to all the bi-allelic data in " + genoFile);
@@ -356,7 +360,7 @@ public class GobiiExtractor {
                         break;
                     default:
 						ErrorLogger.logError("Extractor","Unknown Extract Type "+extract.getGobiiFileType());
-						HelperFunctions.sendEmail(extract.getDataSet().getName()+" "+extract.getGobiiFileType()+" Extract",null,false,errorFile,configuration,inst.getContactEmail());
+						HelperFunctions.sendEmail(datasetName+" "+extract.getGobiiFileType()+" Extract",null,false,errorFile,configuration,inst.getContactEmail());
 				}
 				rmIfExist(genoFile);
 				rmIfExist(chrLengthFile);
