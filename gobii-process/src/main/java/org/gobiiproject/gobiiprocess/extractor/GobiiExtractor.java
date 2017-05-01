@@ -259,7 +259,7 @@ public class GobiiExtractor {
 						}
 
 						GobiiSampleListType type = extract.getGobiiSampleListType();
-						String sampleListTypeTerm=(type==null)?"":"--sampleType "+getNumericType(type);
+						String sampleListTypeTerm=(type==null)?"":" --sampleType "+getNumericType(type);
 
 						String PITerm,projectTerm;
 						PITerm=projectTerm="";
