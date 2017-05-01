@@ -39,6 +39,7 @@ import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSear
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeList;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMaster;
+import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -322,8 +323,8 @@ public class BRAPIIControllerV1 {
                                           HttpServletResponse response,
                                           @PathVariable Integer studyDbId) throws Exception {
 
-        BrapiResponseEnvelopeMaster<BrapiResponseObservationVariablesMaster> responseEnvelope
-                = new BrapiResponseEnvelopeMaster<>(BrapiResponseObservationVariablesMaster.class);
+        BrapiResponseEnvelopeMasterDetail<BrapiResponseObservationVariablesMaster> responseEnvelope
+                = new BrapiResponseEnvelopeMasterDetail<>();
 
         String returnVal;
 

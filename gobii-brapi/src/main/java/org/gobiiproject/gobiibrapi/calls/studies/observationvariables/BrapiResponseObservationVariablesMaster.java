@@ -1,16 +1,15 @@
 package org.gobiiproject.gobiibrapi.calls.studies.observationvariables;
 
 import org.gobiiproject.gobiibrapi.core.derived.BrapiListResult;
+import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseDataList;
 
 /**
  * Created by Phil on 12/18/2016.
  */
-public class BrapiResponseObservationVariablesMaster extends BrapiListResult<BrapiResponseObservationVariablesDetail> {
+public class BrapiResponseObservationVariablesMaster extends BrapiResponseDataList<BrapiResponseObservationVariablesDetail> {
 
 
-    public BrapiResponseObservationVariablesMaster() {
-        super(BrapiResponseObservationVariablesDetail.class);
-    }
+    public BrapiResponseObservationVariablesMaster() {}
 
 
 
