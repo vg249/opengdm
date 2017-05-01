@@ -63,24 +63,39 @@ import javax.servlet.http.HttpServletResponse;
  * 3) A set of arbitrary properties and a "data" property (e.g., /studies/{studyDbId}/observationVariables)
  *
  * Type 3) is for a master-detail scenario: you have a master record that is related to one or more detail
- * records. Type 2) is just the master. Type 3) is just the detail records.
+ * records. Type 2) is just the master. Type 1) is just the detail records.
  *
  * The classes that support this API are as follows:
  *
- * BrapiResponseEnvelopeList: This class is used for type 1). It encapsulates "metadata" and is
- * type-parmaeterized for type type of the items contained in the list. The class for which
- * it is type-parameterized is an arbitrary pojo.
+ * BrapiResponseEnvelope: This is the base class for all response envelopes: it is responsible for the metadata
+ * key of the response
  *
- * BrapiResponseEnvelopeMaster: This class is used for type 2) and 3). It is type-parameterized
- * for an arbitrary pojo. The pojo may (as in the case of BrapiResponseObservationVariablesMaster)
- * extend BrapiResponseEnvelopeList. In that case, it is of type 3). If it does not,
- * it is of type 2.
+ * BrapiResponseEnvelopeMasterDetail and BrapiResponseEnvelopeMaster derive from BrapiResponseEnvelope.
+ * They are responsible for the result key of the response.
  *
- * In the calls namespace of gobii-brapi is organized as the brapi API is organized. In the descriptions
+ * BrapiResponseEnvelopeMasterDetail: This class is used for types 1) and 3). It is
+ * type-parmaeterized for the pojo that will be the value of the result key; the pojo must extend  BrapiResponseDataList;
+ * this way, the pojo will always have a setData() method for specifying the list content of the data key.
+ *
+ *      In the case of (1):
+ *              The result pojo will be a class with no properties that derives from BrapiResponseDataList. The maping
+ *              class will use the pojo's setData() method to specify the list that will constitutes the data key
+ *              of the result key.
+ *
+ *      In the case of (3):
+ *              Thee result pojo will have its own properties; the pojo's own properties will constitute the values
+ *              of the result key; the pojos setData() method will be used to specify the list that constitutes the
+ *              data key;
+ *
+ * BrapiResponseEnvelopeMaster: This class is used for type 2). It is type-parameterized
+ * for an arbitrary pojo. Because type 2 responses do not have a data key, the pojo does
+ * _not_ extend BrapiResponseDataList. Its properties will be the values of the response's result key.
+ *
+ * The calls namespace of gobii-brapi is organized as the brapi API is organized. In the descriptions
  * below, <CallName> refers to the BRAPI call name.
  * Each call contains several sorts of classes:
  * ---- POJOs named BrapiResponse<CallName>: these are the arbitrary pojos that
- *      type-parameterize BrapiResponseEnvelopeList and BrapiResponseEnvelopeMaster
+ *      type-parameterize BrapiResponseElvelopeMasterDetail and BrapiResponseElvelopeMaster
  * ---- POJOs named BrapiRequest<CallName>: these are POST/PUT bodies for which the
  *      relevant methods in here the controller have @RequestBody parameters (e.g., BrapiRequestStudiesSearch)
  * ---- POJOs named BrapiResponseMap<CallName>: Right now these clases create dummy responses; the real
@@ -88,18 +103,19 @@ import javax.servlet.http.HttpServletResponse;
  *      classes): they will get data from gobii in terms of gobii DTOs and convert the DTOs in to the
  *      BRAPI POJOs
  *
+ * The BrapiController does the following:
+ *      0.   If there is a post body, deserializes it to the appropriate post pojo;
+ *      i.   Instantiates a BrapiResponseEnvelopeMaster or BrapiResponseEnvelopeMasterDetail;
+ *      ii.  Uses the map classes for each call to get the pojo that the call will use for its payload;
+ *      iii. Assigns the pojo to the respective respone envelope;
+ *      iv.  Serialies the content of the response envelope;
+ *      v.   Sets the reponse of the method to the serialized content.
+ *
  * Note that this controller receives and sends plain String json data. This approach is different
  * from the gobii api. The BrapiResponseEnvelopeList and BrapiResponseEnvelopeMaster are serialzied to
  * json and sent over the wire in this way rather than letting the Jackson embedded through Spring do
  * the job automatically. This approach is more traditionally the web service way of doing things.
  *
- * The current state of this controller and the supporting classes in gobii-brapi is a proof-of-concept.
- * There is more work to be done. For example, the two types of BrapiReseponseEnvelope* should extend a
- * class that has "metadata" as a property. I'm also puzzled by the fact that in
- * BrapiEnvelopeRestResource.getMasterObjFromResult() we have to pull out the json segments separately for
- * de-serialization whilst in getTypedListObjFromResult() the derserialization just works autoamtically. However,
- * what we have here is the most systematic way I could find to deal with with BRAPI's document oriented
- * response structure in a way that is systematic for a strongly typed web framework in Java.
  *
  */
 @Scope(value = "request")
