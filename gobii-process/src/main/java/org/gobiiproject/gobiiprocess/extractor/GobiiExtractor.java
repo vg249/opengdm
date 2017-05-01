@@ -368,6 +368,9 @@ public class GobiiExtractor {
 				rmIfExist(chrLengthFile);
 				rmIfExist(markerPosFile);
 				rmIfExist(extendedMarkerFile);
+				rmIfExist(extractDir+extract.getListFileName()); //remove the list
+				rmIfExist(extractDir+"mdeOut");//remove mde output file
+
 				ErrorLogger.logDebug("Extractor","DataSet "+datasetName+" Created");
 
 				//QC - Subsection #1 of 1
@@ -453,6 +456,9 @@ public class GobiiExtractor {
 		}
 		else{
 			tryExec("cat" + genotypePartFileIdentifier, genoFile, errorFile);
+		}
+		for(String tempGenoFile:genotypePartFileIdentifier.split(" ")) {
+			rmIfExist(tempGenoFile);
 		}
 		return genoFile;
 	}
