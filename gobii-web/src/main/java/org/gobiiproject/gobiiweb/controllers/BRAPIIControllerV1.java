@@ -37,8 +37,8 @@ import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearc
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
-import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseEnvelopeMaster;
-import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseEnvelopeMasterDetail;
+import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
+import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

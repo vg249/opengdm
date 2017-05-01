@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiibrapi.core.derived2;
+package org.gobiiproject.gobiibrapi.core.responsemodel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;

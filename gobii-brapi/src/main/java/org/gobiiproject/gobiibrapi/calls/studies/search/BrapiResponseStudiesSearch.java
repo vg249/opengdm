@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiibrapi.calls.studies.search;
 
-import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseObservationVariablesDetail;
-import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseDataList;
+import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseDataList;
 
 /**
  * Created by Phil on 12/18/2016.

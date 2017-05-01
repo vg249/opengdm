@@ -1,7 +1,5 @@
 package org.gobiiproject.gobiibrapi.calls.studies.observationvariables;
 
-import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseEnvelopeMasterDetail;
-
 import java.util.ArrayList;
 import java.util.List;
 
