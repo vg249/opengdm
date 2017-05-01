@@ -282,7 +282,7 @@ public class GobiiExtractor {
 								sampleListLocation +
 								sampleListTypeTerm +
 								PITerm +
-								projectTerm+
+								projectTerm +
 								" --datasetType " + extract.getGobiiDatasetType().getId() +
 								mapIdTerm +
 								platformTerm +
@@ -303,35 +303,37 @@ public class GobiiExtractor {
 
 
 				//HDF5
-				String tempFolder=extractDir;
-				GobiiFileType fileType = extract.getGobiiFileType();
-				boolean markerFast=(fileType == GobiiFileType.HAPMAP);
+				String tempFolder = extractDir;
+				String genoFile=null;
+				if(!extract.getGobiiFileType().equals(GobiiFileType.META_DATA)) {
+					GobiiFileType fileType = extract.getGobiiFileType();
+					boolean markerFast = (fileType == GobiiFileType.HAPMAP);
 
-				String genoFile;
-				switch(filterType) {
-					case WHOLE_DATASET:
-						genoFile = getHDF5Genotype(markerFast, errorFile, datasetId, tempFolder);
-						break;
-					case BY_MARKER:
-						genoFile = getHDF5GenoFromMarkerList(markerFast, errorFile, tempFolder, markerPosFile);
-						break;
-					case BY_SAMPLE:
-						genoFile = getHDF5GenoFromSampleList(markerFast,errorFile,tempFolder,markerPosFile,samplePosFile);
-						break;
-					default:
-						genoFile="";
-						ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
-						break;
-				}
+					switch (filterType) {
+						case WHOLE_DATASET:
+							genoFile = getHDF5Genotype(markerFast, errorFile, datasetId, tempFolder);
+							break;
+						case BY_MARKER:
+							genoFile = getHDF5GenoFromMarkerList(markerFast, errorFile, tempFolder, markerPosFile);
+							break;
+						case BY_SAMPLE:
+							genoFile = getHDF5GenoFromSampleList(markerFast, errorFile, tempFolder, markerPosFile, samplePosFile);
+							break;
+						default:
+							genoFile = "";
+							ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
+							break;
+					}
 
-				// Adding "/" back to the bi-allelic data made from HDF5
-				if (datasetName != null) {
-					if (datasetName.toLowerCase().equals("ssr_allele_size")) {
-						ErrorLogger.logInfo("Extractor","Adding slashes to bi allelic data in " + genoFile);
-						if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
-							ErrorLogger.logInfo("Extractor","Added slashes to all the bi-allelic data in " + genoFile);
-						} else {
-							ErrorLogger.logError("Extractor","Not added slashes to all the bi-allelic data in " + genoFile);
+					// Adding "/" back to the bi-allelic data made from HDF5
+					if (datasetName != null) {
+						if (datasetName.toLowerCase().equals("ssr_allele_size")) {
+							ErrorLogger.logInfo("Extractor", "Adding slashes to bi allelic data in " + genoFile);
+							if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
+								ErrorLogger.logInfo("Extractor", "Added slashes to all the bi-allelic data in " + genoFile);
+							} else {
+								ErrorLogger.logError("Extractor", "Not added slashes to all the bi-allelic data in " + genoFile);
+							}
 						}
 					}
 				}
