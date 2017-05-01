@@ -283,7 +283,7 @@ public class GobiiExtractor {
 								sampleListTypeTerm +
 								PITerm +
 								projectTerm+
-								" --datasetType " + extract.getGobiiDatasetType() +
+								" --datasetType " + extract.getGobiiDatasetType().getId() +
 								mapIdTerm +
 								platformTerm +
 								" -l"+
