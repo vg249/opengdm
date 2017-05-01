@@ -39,7 +39,7 @@ import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSear
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeList;
-import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMaster;
+import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -280,7 +280,7 @@ public class BRAPIIControllerV1 {
 
 
         BrapiResponseEnvelopeMaster<BrapiResponseGermplasmByDbId> responseEnvelope
-                = new BrapiResponseEnvelopeMaster<>(BrapiResponseGermplasmByDbId.class);
+                = new BrapiResponseEnvelopeMaster<>();
 
         String returnVal;
 
