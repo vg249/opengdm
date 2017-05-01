@@ -541,6 +541,7 @@ public class GobiiExtractor {
 		StringBuilder cutString=new StringBuilder();//Cutstring -> 1,2,4,5,6
 		int i=1;
 		for(String entry:entries){
+			entry.trim();
 			if( Integer.parseInt(entry) != -1){
 				cutString.append(i+",");
 			}
