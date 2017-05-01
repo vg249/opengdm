@@ -12,9 +12,9 @@ import java.util.Map;
 /**
  * Created by Phil on 12/19/2016.
  */
-public class BrapiResponseEnvelopeList<T_RESPONSE_TYPE_DETAIL> {
+public class BrapiResponseEnvelopeListDeprecated<T_RESPONSE_TYPE_DETAIL> {
 
-    public BrapiResponseEnvelopeList() {}
+    public BrapiResponseEnvelopeListDeprecated() {}
 
     private BrapiMetaData brapiMetaData = new BrapiMetaData();
 

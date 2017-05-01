@@ -6,7 +6,8 @@ import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseGermplasmByDbId;
-import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMaster;
+import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMasterDeprecated;
+import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseDataList;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.brapi.BrapiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
@@ -42,13 +43,13 @@ public class BrapiTestGermplasm {
                 .resourceByUriIdParam(ServiceRequestId.URL_GERMPLASM);
         restUriGermplasm.setParamValue("id", "1");
 
-        BrapiEnvelopeRestResource<ObjectUtils.Null, BrapiResponseGermplasmByDbId, ObjectUtils.Null> brapiEnvelopeRestResource =
+        BrapiEnvelopeRestResource<ObjectUtils.Null, BrapiResponseGermplasmByDbId, BrapiResponseDataList> brapiEnvelopeRestResource =
                 new BrapiEnvelopeRestResource<>(restUriGermplasm,
                         ObjectUtils.Null.class,
                         BrapiResponseGermplasmByDbId.class,
-                        ObjectUtils.Null.class);
+                        BrapiResponseDataList.class);
 
-        BrapiResponseEnvelopeMaster<BrapiResponseGermplasmByDbId> brapiResponseEnvelopeMaster = brapiEnvelopeRestResource.getFromMasterResource();
+        BrapiResponseEnvelopeMasterDeprecated<BrapiResponseGermplasmByDbId> brapiResponseEnvelopeMaster = brapiEnvelopeRestResource.getFromMasterResource();
 
         BrapiTestResponseStructure.validatateBrapiResponseStructure(brapiResponseEnvelopeMaster.getBrapiMetaData());
 
