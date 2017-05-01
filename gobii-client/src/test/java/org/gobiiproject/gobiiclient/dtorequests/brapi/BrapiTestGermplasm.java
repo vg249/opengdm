@@ -8,6 +8,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseGermplasmByDbId;
 import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMasterDeprecated;
 import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseDataList;
+import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.brapi.BrapiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
@@ -49,7 +50,7 @@ public class BrapiTestGermplasm {
                         BrapiResponseGermplasmByDbId.class,
                         BrapiResponseDataList.class);
 
-        BrapiResponseEnvelopeMasterDeprecated<BrapiResponseGermplasmByDbId> brapiResponseEnvelopeMaster = brapiEnvelopeRestResource.getFromMasterResource();
+        BrapiResponseEnvelopeMaster<BrapiResponseGermplasmByDbId> brapiResponseEnvelopeMaster = brapiEnvelopeRestResource.getFromMasterResource();
 
         BrapiTestResponseStructure.validatateBrapiResponseStructure(brapiResponseEnvelopeMaster.getBrapiMetaData());
 

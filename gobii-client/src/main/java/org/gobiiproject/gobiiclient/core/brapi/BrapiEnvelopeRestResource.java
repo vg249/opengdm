@@ -5,7 +5,7 @@ import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseDataList;
 import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseEnvelopeMasterDetail;
-import org.gobiiproject.gobiibrapi.core.derived.BrapiResponseEnvelopeMasterDeprecated;
+import org.gobiiproject.gobiibrapi.core.derived2.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.json.BrapiJsonKeys;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.common.RestResourceUtils;
@@ -54,9 +54,9 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
         return returnVal;
     }
 
-    private BrapiResponseEnvelopeMasterDeprecated<T_RESPONSE_TYPE_MASTER> getMasterObjFromResult(HttpMethodResult httpMethodResult) throws Exception {
+    private BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> getMasterObjFromResult(HttpMethodResult httpMethodResult) throws Exception {
 
-        BrapiResponseEnvelopeMasterDeprecated<T_RESPONSE_TYPE_MASTER> returnVal = new BrapiResponseEnvelopeMasterDeprecated<>();
+        BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> returnVal = new BrapiResponseEnvelopeMaster<>();
 
 
         String metaDataAsString = httpMethodResult.getPayLoad().get(BrapiJsonKeys.METADATA).toString();
@@ -68,44 +68,8 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
         returnVal.setResult(result);
 
 
-        //returnVal = objectMapper.readValue(responseAsString, BrapiResponseEnvelopeMaster.class);
-
         return returnVal;
     }
-
-//    public T_RESPONSE_TYPE_MASTER get() throws Exception {
-//
-//        T_RESPONSE_TYPE_MASTER returnVal;
-//
-//        HttpMethodResult httpMethodResult =
-//                this.restResourceUtils.getHttp()
-//                        .get(this.restUri,
-//                                restResourceUtils.getClientContext().getUserToken());
-//
-//        returnVal = this.getTypedListObjFromResult(httpMethodResult);
-//
-//        return returnVal;
-//    }
-//
-//    public T_RESPONSE_TYPE_MASTER post(T_POST_OBJ_TYPE bodyObj) throws Exception {
-//
-//
-//        T_RESPONSE_TYPE_MASTER returnVal;
-//
-//        String bodyAsString = objectMapper.writeValueAsString(bodyObj);
-//
-//        HttpMethodResult httpMethodResult =
-//                this.restResourceUtils.getHttp()
-//                        .post(this.restUri,
-//                                bodyAsString,
-//                                restResourceUtils.getClientContext().getUserToken());
-//
-//
-//        returnVal = this.getTypedListObjFromResult(httpMethodResult);
-//
-//        return returnVal;
-//
-//    } //
 
     public BrapiResponseEnvelopeMasterDetail<T_RESPONSE_TYPE_DETAIL> getFromListResource() throws Exception {
 
@@ -145,9 +109,9 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
 
     } //
 
-    public BrapiResponseEnvelopeMasterDeprecated<T_RESPONSE_TYPE_MASTER> getFromMasterResource() throws Exception {
+    public BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> getFromMasterResource() throws Exception {
 
-        BrapiResponseEnvelopeMasterDeprecated<T_RESPONSE_TYPE_MASTER> returnVal;
+        BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> returnVal;
 
         HttpMethodResult httpMethodResult =
                 this.restResourceUtils.getClientContext().getHttp()
