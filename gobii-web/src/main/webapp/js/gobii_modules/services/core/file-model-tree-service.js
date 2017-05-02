@@ -319,8 +319,19 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                                 returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.SUBMISSION_INCOMPLETE, null);
                             }
                             else if (fileItem.getProcessType() === type_process_1.ProcessType.DELETE) {
-                                this.removeFromModel(fileModelNode, fileItem);
-                                returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.SUBMISSION_INCOMPLETE, null);
+                                if (this.removeFromModel(fileModelNode, fileItem)) {
+                                    returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.SUBMISSION_INCOMPLETE, null);
+                                }
+                                else {
+                                    var message = "The specified file item could not be removed because it does not exist in the model";
+                                    if (fileModelNode && fileModelNode.getCategoryName()) {
+                                        message += "; model category: " + fileModelNode.getCategoryName();
+                                    }
+                                    if (fileItem && fileItem.getItemName()) {
+                                        message += "; fileitem name: " + fileItem.getItemName();
+                                    }
+                                    returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, fileModelNode, file_model_tree_event_1.FileModelState.ERROR, message);
+                                }
                             }
                             else {
                                 returnVal = new file_model_tree_event_1.FileModelTreeEvent(fileItem, null, file_model_tree_event_1.FileModelState.ERROR, "Unhandled file item process type: " + type_process_1.ProcessType[fileItem.getProcessType()]);
@@ -423,10 +434,13 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                     }
                 }; //
                 FileModelTreeService.prototype.removeFromModel = function (fileModelNode, fileItem) {
+                    var returnVal = false;
                     if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.LEAF) {
                         // a leaf should never have more than one
-                        if (fileModelNode.getFileItems()[0].getFileItemUniqueId() === fileItem.getFileItemUniqueId()) {
-                            fileModelNode.getFileItems().splice(0, 1);
+                        if (fileModelNode.getFileItems()
+                            && fileModelNode.getFileItems().length > 0
+                            && fileModelNode.getFileItems()[0].getFileItemUniqueId() === fileItem.getFileItemUniqueId()) {
+                            returnVal = (fileModelNode.getFileItems().splice(0, 1)).length > 0;
                         }
                     }
                     else if (fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.CONTAINER) {
@@ -434,10 +448,11 @@ System.register(["@angular/core", "../../model/file-model-tree-event", "../../mo
                             return item.getFileItemUniqueId() === fileItem.getFileItemUniqueId();
                         });
                         var idxOfItemToRemove = fileModelNode.getFileItems().indexOf(existingItem);
-                        fileModelNode.getFileItems().splice(idxOfItemToRemove, 1);
+                        returnVal = (fileModelNode.getFileItems().splice(idxOfItemToRemove, 1)).length > 0;
                     }
                     else {
                     }
+                    return returnVal;
                 };
                 FileModelTreeService.prototype.treeStateNotifications = function () {
                     return this.subjectTreeStateNotifications;

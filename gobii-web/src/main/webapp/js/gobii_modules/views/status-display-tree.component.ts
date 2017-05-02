@@ -103,9 +103,12 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         let returnVal: GobiiFileItem[] = [];
 
-        if (treeNode.fileItemId && !treeNode.required) {
+        if (treeNode.fileItemId
+            && !treeNode.required) {
             let currentFileItem: GobiiFileItem = this.makeFileItemFromTreeNode(treeNode, ProcessType.DELETE)
                 .setGobiiEventOrigin(GobiiUIEventOrigin.CRITERIA_TREE);
+
+
             returnVal.push(currentFileItem);
         }
 
@@ -121,6 +124,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
     clearTree() {
+
         let itemsToRemove: GobiiFileItem[] = [];
 
         this.gobiiTreeNodes.forEach(fin => {
@@ -143,7 +147,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         })
 
         itemsToRemove.forEach(itr => {
-            if( itr ) {
+            if (itr) {
                 this._fileModelTreeService.put(itr).subscribe(
                     fmte => {
 
@@ -658,10 +662,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                 } else {
 
-                    let message:string = "Error placing file item in the status tree: there is no gobii tree leaf node for model node "
+                    let message: string = "Error placing file item in the status tree: there is no gobii tree leaf node for model node "
                         + Labels.instance().treeExtractorTypeLabels[fileModelTreeEvent.fileModelNode.getItemType()];
 
-                    if(fileModelTreeEvent.fileItem && fileModelTreeEvent.fileItem.getItemName() ) {
+                    if (fileModelTreeEvent.fileItem && fileModelTreeEvent.fileItem.getItemName()) {
                         message += " for fileItem of name " + fileModelTreeEvent.fileItem.getItemName();
                     }
 
