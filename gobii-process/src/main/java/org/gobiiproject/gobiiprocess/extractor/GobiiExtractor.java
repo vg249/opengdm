@@ -493,6 +493,7 @@ public class GobiiExtractor {
 			String hdf5Extractor=pathToHDF5+"fetchmarkerlist";
 			ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+HDF5File+" "+markerList+" "+genoFile);
 			HelperFunctions.tryExec(hdf5Extractor + " " +HDF5File+" "+markerList+" "+genoFile, null, errorFile);
+			//TODO: Orientation is not respected here
 		}
 		else {
 			String hdf5Extractor=pathToHDF5+"dumpdataset";
