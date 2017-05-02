@@ -280,6 +280,7 @@ public class GobiiFileReader {
 				errorPath = getLogName(inst, cropConfig, crop, "Matrix_Processing"); //Temporary Error File Name
 				String function = null;
 				boolean functionStripsHeader = false;
+				boolean isSNPSepRemoval=false;
 				String fromFile = HelperFunctions.getDestinationFile(inst);
 				String toFile = HelperFunctions.getDestinationFile(inst) + ".2";
 				boolean hasFunction = false;
@@ -287,6 +288,7 @@ public class GobiiFileReader {
 					case "NUCLEOTIDE_2_LETTER":
 						function = "python " + loaderScriptPath + "etc/SNPSepRemoval.py";
 						functionStripsHeader = true;
+						isSNPSepRemoval=true;
 						break;
 					case "IUPAC":
 						function = loaderScriptPath + "etc/IUPACmatrix_to_bi.pl tab";
@@ -319,9 +321,14 @@ public class GobiiFileReader {
 				if (function != null) {
 					hasFunction = true;
 					//Try running script (from -> to), then replace original file with new one.
-					success &= HelperFunctions.tryExec(function + " " + fromFile + " " + toFile, null, errorPath);
+					if(isSNPSepRemoval){
+						String missingFile=loaderScriptPath + "etc/missingIndicators.txt";
+						HelperFunctions.tryExec(function + " " + fromFile + " " +missingFile+ " " + toFile, null, errorPath);
+					}
+					else {
+						HelperFunctions.tryExec(function + " " + fromFile + " " + toFile, null, errorPath);
+					}
 					rm(fromFile);
-
 				}
 				if (!hasFunction) {
 					mv(fromFile, toFile);
