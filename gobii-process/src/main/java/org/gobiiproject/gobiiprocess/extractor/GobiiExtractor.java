@@ -315,7 +315,7 @@ public class GobiiExtractor {
 								genoFile = getHDF5GenoFromSampleList(markerFast, errorFile, tempFolder, markerPosFile, samplePosFile);
 								break;
 							default:
-								genoFile = "";
+								genoFile = null;
 								ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
 								break;
 						}
@@ -332,32 +332,38 @@ public class GobiiExtractor {
 							}
 						}
 					}
-
-					switch (extract.getGobiiFileType()) {
-						case FLAPJACK:
-							String genoOutFile = extractDir + "Dataset.genotype";
-							String mapOutFile = extractDir + "Dataset.map";
-							lastErrorFile = errorFile;
-							//Always regenerate requests - may have different parameters
-							boolean extended = HelperFunctions.checkFileExistance(extendedMarkerFile);
-							FlapjackTransformer.generateMapFile(extended ? extendedMarkerFile : markerFile, sampleFile, chrLengthFile, tempFolder, mapOutFile, errorFile, extended);
-							HelperFunctions.sendEmail("Map Extract", mapOutFile, success && ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
-							FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile, errorFile);
-							HelperFunctions.sendEmail("Genotype Extract", genoOutFile, success && ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
-							break;
-						case HAPMAP:
-							String hapmapOutFile = extractDir + "Dataset.hmp.txt";
-							HapmapTransformer hapmapTransformer = new HapmapTransformer();
-							ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
-							success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
-							HelperFunctions.sendEmail("Hapmap Extract", hapmapOutFile, success && ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
-							break;
-						case META_DATA:
-							HelperFunctions.sendEmail("Metadata Extract", extractDir, success && ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
-							break;
-						default:
-							ErrorLogger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
-							HelperFunctions.sendEmail(datasetName + " " + extract.getGobiiFileType() + " Extract", null, false, errorFile, configuration, inst.getContactEmail());
+					GobiiFileType fileType=extract.getGobiiFileType();
+					if((genoFile==null) && (fileType != GobiiFileType.META_DATA)) {
+						switch (fileType) {
+							case FLAPJACK:
+								String genoOutFile = extractDir + "Dataset.genotype";
+								String mapOutFile = extractDir + "Dataset.map";
+								lastErrorFile = errorFile;
+								//Always regenerate requests - may have different parameters
+								boolean extended = HelperFunctions.checkFileExistance(extendedMarkerFile);
+								FlapjackTransformer.generateMapFile(extended ? extendedMarkerFile : markerFile, sampleFile, chrLengthFile, tempFolder, mapOutFile, errorFile, extended);
+								HelperFunctions.sendEmail("Map Extract", mapOutFile, success && ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+								FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile, errorFile);
+								HelperFunctions.sendEmail("Genotype Extract", genoOutFile, success && ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+								break;
+							case HAPMAP:
+								String hapmapOutFile = extractDir + "Dataset.hmp.txt";
+								HapmapTransformer hapmapTransformer = new HapmapTransformer();
+								ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
+								success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
+								HelperFunctions.sendEmail("Hapmap Extract", hapmapOutFile, success && ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+								break;
+							case META_DATA:
+								HelperFunctions.sendEmail("Metadata Extract", extractDir, success && ErrorLogger.success(), errorFile, configuration, inst.getContactEmail());
+								break;
+							default:
+								ErrorLogger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
+								HelperFunctions.sendEmail(datasetName + " " + extract.getGobiiFileType() + " Extract", null, false, errorFile, configuration, inst.getContactEmail());
+						}
+					}
+					else{ //We had no genotype file, so we aborted
+						ErrorLogger.logError("GobiiExtractor","No genetic data extracted. Extract failed.");
+						HelperFunctions.sendEmail("Extract", "", false, errorFile, configuration, inst.getContactEmail());
 					}
 					rmIfExist(genoFile);
 					rmIfExist(chrLengthFile);
@@ -416,6 +422,10 @@ public class GobiiExtractor {
 		return getHDF5GenoFromSampleList(markerFast,errorFile,tempFolder,posFile,null);
 	}
 	private static String getHDF5GenoFromSampleList(boolean markerFast, String errorFile, String tempFolder,String posFile, String samplePosFile) throws FileNotFoundException{
+		if(!new File(posFile).exists()){
+			ErrorLogger.logError("Genotype Matrix","No positions generated - Likely no data");
+			return null;
+		}
 		BufferedReader posR=new BufferedReader(new FileReader(posFile));
 		BufferedReader sampR=null;
 		if(samplePosFile!=null)sampR=new BufferedReader(new FileReader(samplePosFile));
