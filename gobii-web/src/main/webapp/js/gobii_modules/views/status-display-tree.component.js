@@ -266,25 +266,26 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     this._fileModelTreeService
                         .getFileModelNode(this.gobiiExtractFilterType, gobiiTreeNode.fileModelNodeId)
                         .subscribe(function (fmn) { return fileModelNode = fmn; }, function (hsm) { return _this.handleAddStatusMessage(hsm); });
-                    // let returnVal: GobiiFileItem = fileModelNode
-                    //     .getFileItems()
-                    //     .find(fi => fi.getFileItemUniqueId() === gobiiTreeNode.fileItemId);
-                    //
-                    // if (!returnVal) {
-                    //     this.handleAddStatusMessage(
-                    //         new HeaderStatusMessage("There is no file model node for tree node "
-                    //             + gobiiTreeNode.fileItemId, null, null))
-                    // }
-                    //
-                    // returnVal.setGobiiExtractFilterType(this.gobiiExtractFilterType);
-                    // returnVal.setProcessType(processType);
-                    // returnVal.setRequired(gobiiTreeNode.required);
+                    var fileItemFromModel = fileModelNode
+                        .getFileItems()
+                        .find(function (fi) { return fi.getFileItemUniqueId() === gobiiTreeNode.fileItemId; });
+                    var itemId = null;
+                    if (fileItemFromModel) {
+                        itemId = fileItemFromModel.getItemId();
+                    }
+                    // in theory we should be able ot just return the fileItem
+                    // we got from the model node. I tried this. And I set the
+                    // gobiiExtractFiltertime, process mode, and reuired value
+                    // from the tree mode. But the notification for controls
+                    // to deselect the item did not work. So we are only using
+                    // the fileitem from the model node to set the item id for
+                    // now. Sigh.
                     var returnVal = gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, processType)
                         .setExtractorItemType(fileModelNode.getItemType())
                         .setEntityType(gobiiTreeNode.entityType)
                         .setEntitySubType(gobiiTreeNode.entitySubType)
                         .setCvFilterType(gobiiTreeNode.cvFilterType)
-                        .setItemId(null)
+                        .setItemId(itemId)
                         .setItemName(gobiiTreeNode.label)
                         .setRequired(gobiiTreeNode.required);
                     returnVal.setFileItemUniqueId(gobiiTreeNode.fileItemId);

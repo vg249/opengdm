@@ -318,20 +318,23 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 fmn => fileModelNode = fmn,
                 hsm => this.handleAddStatusMessage(hsm));
 
-        // let returnVal: GobiiFileItem = fileModelNode
-        //     .getFileItems()
-        //     .find(fi => fi.getFileItemUniqueId() === gobiiTreeNode.fileItemId);
-        //
-        // if (!returnVal) {
-        //     this.handleAddStatusMessage(
-        //         new HeaderStatusMessage("There is no file model node for tree node "
-        //             + gobiiTreeNode.fileItemId, null, null))
-        // }
-        //
-        // returnVal.setGobiiExtractFilterType(this.gobiiExtractFilterType);
-        // returnVal.setProcessType(processType);
-        // returnVal.setRequired(gobiiTreeNode.required);
+        let fileItemFromModel: GobiiFileItem = fileModelNode
+            .getFileItems()
+            .find(fi => fi.getFileItemUniqueId() === gobiiTreeNode.fileItemId);
 
+        let itemId:string = null;
+        if (fileItemFromModel) {
+            itemId = fileItemFromModel.getItemId();
+
+        }
+
+        // in theory we should be able ot just return the fileItem
+        // we got from the model node. I tried this. And I set the
+        // gobiiExtractFiltertime, process mode, and reuired value
+        // from the tree mode. But the notification for controls
+        // to deselect the item did not work. So we are only using
+        // the fileitem from the model node to set the item id for
+        // now. Sigh.
         let returnVal: GobiiFileItem = GobiiFileItem.build(
             this.gobiiExtractFilterType,
             processType)
@@ -339,7 +342,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             .setEntityType(gobiiTreeNode.entityType)
             .setEntitySubType(gobiiTreeNode.entitySubType)
             .setCvFilterType(gobiiTreeNode.cvFilterType)
-            .setItemId(null)
+            .setItemId(itemId)
             .setItemName(gobiiTreeNode.label)
             .setRequired(gobiiTreeNode.required);
 
