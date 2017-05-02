@@ -274,6 +274,9 @@ public class InstructionFilesDAOImpl implements InstructionFilesDAO {
             case "vcf":
                 delimiter = "\t";
                 break;
+            case "hmp.txt":
+                delimiter = "\t";
+                break;
             default:
                 throw new GobiiDaoException("File Format not supported: " + fileFormat);
         }
