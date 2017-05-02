@@ -658,9 +658,15 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                 } else {
 
+                    let message:string = "Error placing file item in the status tree: there is no gobii tree leaf node for model node "
+                        + Labels.instance().treeExtractorTypeLabels[fileModelTreeEvent.fileModelNode.getItemType()];
+
+                    if(fileModelTreeEvent.fileItem && fileModelTreeEvent.fileItem.getItemName() ) {
+                        message += " for fileItem of name " + fileModelTreeEvent.fileItem.getItemName();
+                    }
+
                     this.handleAddStatusMessage(new HeaderStatusMessage(
-                        "Error placing file item in the status tree: there is no gobii tree leaf node for model node "
-                        + Labels.instance().treeExtractorTypeLabels[fileModelTreeEvent.fileModelNode.getItemType()],
+                        message,
                         null,
                         null
                     ));

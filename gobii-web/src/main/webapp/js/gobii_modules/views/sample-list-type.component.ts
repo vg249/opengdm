@@ -12,7 +12,7 @@ import {ExtractorItemType} from "../model/file-model-node";
 @Component({
     selector: 'sample-list-type',
     inputs: ['gobiiExtractFilterType'],
-    outputs: ['onSampleListTypeSelected', 'onHeaderStatusMessage'],
+    outputs: ['onHeaderStatusMessage'],
     template: `<label class="the-label">Export By:</label><BR>
                   <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="GERMPLASM_NAME" checked="checked">Germplasm Name<BR>
                   <input type="radio" (change)="handleExportTypeSelected($event)" name="format" value="EXTERNAL_CODE">External Code<BR>
@@ -24,10 +24,8 @@ export class SampleListTypeComponent implements OnInit, OnChanges {
     constructor(private _fileModelTreeService: FileModelTreeService) {
     } // ctor
 
-    private onSampleListTypeSelected: EventEmitter<GobiiSampleListType> = new EventEmitter();
-
     private onHeaderStatusMessage: EventEmitter<HeaderStatusMessage> = new EventEmitter();
-    private gobiiExtractFilterType:GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+    private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
     private handleExportTypeSelected(arg) {
         if (arg.srcElement.checked) {
@@ -37,14 +35,13 @@ export class SampleListTypeComponent implements OnInit, OnChanges {
             let gobiiSampleListType: GobiiSampleListType = GobiiSampleListType[radioValue];
 
             this.submitSampleListTypeToService(gobiiSampleListType);
-            this.onSampleListTypeSelected.emit(gobiiSampleListType)
 
         }
     }
 
     private submitSampleListTypeToService(gobiiSampleListType: GobiiSampleListType) {
         this._fileModelTreeService
-            .put(GobiiFileItem.build(this.gobiiExtractFilterType,ProcessType.CREATE)
+            .put(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
                 .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
                 .setItemName(GobiiSampleListType[gobiiSampleListType])
                 .setItemId(GobiiSampleListType[gobiiSampleListType]))
@@ -56,28 +53,39 @@ export class SampleListTypeComponent implements OnInit, OnChanges {
     }
 
 
-
-    ngOnInit():any {
+    ngOnInit(): any {
+        this.submitSampleListTypeToService(GobiiSampleListType.GERMPLASM_NAME);
         return null;
     }
 
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
-        this.submitSampleListTypeToService(GobiiSampleListType.GERMPLASM_NAME);
+        //this.submitSampleListTypeToService(GobiiSampleListType.GERMPLASM_NAME);
 
-        let scope$ = this;
-        this._fileModelTreeService
-            .fileItemNotifications()
-            .subscribe(fileItem => {
-                if (fileItem.getProcessType() === ProcessType.NOTIFY
-                    && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-
-                    scope$.submitSampleListTypeToService(GobiiSampleListType.GERMPLASM_NAME);
-
-
-                }
-            });
-
+        // if (changes['gobiiExtractFilterType']
+        //     && ( changes['gobiiExtractFilterType'].currentValue != null )
+        //     && ( changes['gobiiExtractFilterType'].currentValue != undefined )
+        //     && changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+        //
+        //     if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+        //
+        //         let scope$ = this;
+        //         this._fileModelTreeService
+        //             .fileItemNotifications()
+        //             .subscribe(fileItem => {
+        //                 if (fileItem.getProcessType() === ProcessType.NOTIFY
+        //                     && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+        //
+        //                     if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
+        //                         scope$.submitSampleListTypeToService(GobiiSampleListType.GERMPLASM_NAME);
+        //                     }
+        //
+        //
+        //                 }
+        //             });
+        //
+        //     } // if extract type is by sample
+        // }
     }
 }
