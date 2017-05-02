@@ -539,8 +539,12 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                                 }
                             }
                             else {
-                                this.handleAddStatusMessage(new dto_header_status_message_1.HeaderStatusMessage("Error placing file item in the status tree: there is no gobii tree leaf node for model node "
-                                    + entity_labels_1.Labels.instance().treeExtractorTypeLabels[fileModelTreeEvent.fileModelNode.getItemType()], null, null));
+                                var message = "Error placing file item in the status tree: there is no gobii tree leaf node for model node "
+                                    + entity_labels_1.Labels.instance().treeExtractorTypeLabels[fileModelTreeEvent.fileModelNode.getItemType()];
+                                if (fileModelTreeEvent.fileItem && fileModelTreeEvent.fileItem.getItemName()) {
+                                    message += " for fileItem of name " + fileModelTreeEvent.fileItem.getItemName();
+                                }
+                                this.handleAddStatusMessage(new dto_header_status_message_1.HeaderStatusMessage(message, null, null));
                             } // if-else we found an existing node for the LEAF node's file item
                         }
                         else if (fileModelTreeEvent.fileModelNode.getCategoryType() === file_model_node_1.ExtractorCategoryType.CONTAINER) {
