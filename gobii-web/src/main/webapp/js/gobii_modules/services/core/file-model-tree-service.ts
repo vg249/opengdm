@@ -418,8 +418,22 @@ export class FileModelTreeService {
 
                 } else if (fileItem.getProcessType() === ProcessType.DELETE) {
 
-                    this.removeFromModel(fileModelNode, fileItem);
-                    returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.SUBMISSION_INCOMPLETE, null);
+                    if( this.removeFromModel(fileModelNode, fileItem) ) {
+
+                        returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.SUBMISSION_INCOMPLETE, null);
+
+                    } else {
+                        let message:string = "The specified file item could not be removed because it does not exist in the model";
+
+                        if(fileModelNode && fileModelNode.getCategoryName() ) {
+                            message += "; model category: " + fileModelNode.getCategoryName();
+                        }
+                        if(fileItem && fileItem.getItemName() ) {
+                            message += "; fileitem name: " + fileItem.getItemName();
+                        }
+
+                        returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.ERROR, message);
+                    }
 
                 } else {
                     returnVal = new FileModelTreeEvent(fileItem,
@@ -589,14 +603,18 @@ export class FileModelTreeService {
 
     } //
 
-    private removeFromModel(fileModelNode: FileModelNode, fileItem: GobiiFileItem) {
+    private removeFromModel(fileModelNode: FileModelNode, fileItem: GobiiFileItem): boolean {
+
+        let returnVal: boolean = false;
 
 
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
             // a leaf should never have more than one
-            if (fileModelNode.getFileItems()[0].getFileItemUniqueId() === fileItem.getFileItemUniqueId()) {
-                fileModelNode.getFileItems().splice(0, 1);
+            if (fileModelNode.getFileItems()
+                && fileModelNode.getFileItems().length > 0
+                && fileModelNode.getFileItems()[0].getFileItemUniqueId() === fileItem.getFileItemUniqueId()) {
+                returnVal = (fileModelNode.getFileItems().splice(0, 1)).length > 0;
             }
 
         } else if (fileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER) {
@@ -609,7 +627,7 @@ export class FileModelTreeService {
 
             let idxOfItemToRemove: number = fileModelNode.getFileItems().indexOf(existingItem);
 
-            fileModelNode.getFileItems().splice(idxOfItemToRemove, 1);
+            returnVal = (fileModelNode.getFileItems().splice(idxOfItemToRemove, 1)).length > 0;
 
 
         } else {
@@ -618,6 +636,8 @@ export class FileModelTreeService {
             //     + " for checkbox event " + fileItemEvent.itemName
             //     + " could not be placed in the tree ");
         }
+
+        return returnVal;
 
     }
 
