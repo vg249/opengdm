@@ -103,10 +103,15 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         let returnVal: GobiiFileItem[] = [];
 
-        if (treeNode.fileItemId && !treeNode.required) {
+        if (treeNode.fileItemId
+            && !treeNode.required) {
             let currentFileItem: GobiiFileItem = this.makeFileItemFromTreeNode(treeNode, ProcessType.DELETE)
                 .setGobiiEventOrigin(GobiiUIEventOrigin.CRITERIA_TREE);
-            returnVal.push(currentFileItem);
+
+            if (( currentFileItem.getExtractorItemType() != ExtractorItemType.ENTITY )
+                || currentFileItem.getItemId()) {
+                returnVal.push(currentFileItem);
+            }
         }
 
         if (treeNode.children) {
@@ -121,6 +126,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
     clearTree() {
+
         let itemsToRemove: GobiiFileItem[] = [];
 
         this.gobiiTreeNodes.forEach(fin => {
@@ -143,7 +149,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         })
 
         itemsToRemove.forEach(itr => {
-            if( itr ) {
+            if (itr) {
                 this._fileModelTreeService.put(itr).subscribe(
                     fmte => {
 
@@ -304,6 +310,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, processType: ProcessType): GobiiFileItem {
 
+
         let fileModelNode: FileModelNode = null;
         this._fileModelTreeService
             .getFileModelNode(this.gobiiExtractFilterType, gobiiTreeNode.fileModelNodeId)
@@ -311,6 +318,23 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 fmn => fileModelNode = fmn,
                 hsm => this.handleAddStatusMessage(hsm));
 
+        let fileItemFromModel: GobiiFileItem = fileModelNode
+            .getFileItems()
+            .find(fi => fi.getFileItemUniqueId() === gobiiTreeNode.fileItemId);
+
+        let itemId:string = null;
+        if (fileItemFromModel) {
+            itemId = fileItemFromModel.getItemId();
+
+        }
+
+        // in theory we should be able ot just return the fileItem
+        // we got from the model node. I tried this. And I set the
+        // gobiiExtractFiltertime, process mode, and reuired value
+        // from the tree mode. But the notification for controls
+        // to deselect the item did not work. So we are only using
+        // the fileitem from the model node to set the item id for
+        // now. Sigh.
         let returnVal: GobiiFileItem = GobiiFileItem.build(
             this.gobiiExtractFilterType,
             processType)
@@ -318,7 +342,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             .setEntityType(gobiiTreeNode.entityType)
             .setEntitySubType(gobiiTreeNode.entitySubType)
             .setCvFilterType(gobiiTreeNode.cvFilterType)
-            .setItemId(null)
+            .setItemId(itemId)
             .setItemName(gobiiTreeNode.label)
             .setRequired(gobiiTreeNode.required);
 
@@ -658,10 +682,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                 } else {
 
-                    let message:string = "Error placing file item in the status tree: there is no gobii tree leaf node for model node "
+                    let message: string = "Error placing file item in the status tree: there is no gobii tree leaf node for model node "
                         + Labels.instance().treeExtractorTypeLabels[fileModelTreeEvent.fileModelNode.getItemType()];
 
-                    if(fileModelTreeEvent.fileItem && fileModelTreeEvent.fileItem.getItemName() ) {
+                    if (fileModelTreeEvent.fileItem && fileModelTreeEvent.fileItem.getItemName()) {
                         message += " for fileItem of name " + fileModelTreeEvent.fileItem.getItemName();
                     }
 
