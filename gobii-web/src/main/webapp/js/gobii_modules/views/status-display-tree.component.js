@@ -114,10 +114,14 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                 StatusDisplayTreeComponent.prototype.findRemovableFileItems = function (treeNode) {
                     var _this = this;
                     var returnVal = [];
-                    if (treeNode.fileItemId && !treeNode.required) {
+                    if (treeNode.fileItemId
+                        && !treeNode.required) {
                         var currentFileItem = this.makeFileItemFromTreeNode(treeNode, type_process_1.ProcessType.DELETE)
                             .setGobiiEventOrigin(type_event_origin_1.GobiiUIEventOrigin.CRITERIA_TREE);
-                        returnVal.push(currentFileItem);
+                        if ((currentFileItem.getExtractorItemType() != file_model_node_1.ExtractorItemType.ENTITY)
+                            || currentFileItem.getItemId()) {
+                            returnVal.push(currentFileItem);
+                        }
                     }
                     if (treeNode.children) {
                         treeNode.children.forEach(function (tn) {
@@ -262,6 +266,19 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     this._fileModelTreeService
                         .getFileModelNode(this.gobiiExtractFilterType, gobiiTreeNode.fileModelNodeId)
                         .subscribe(function (fmn) { return fileModelNode = fmn; }, function (hsm) { return _this.handleAddStatusMessage(hsm); });
+                    // let returnVal: GobiiFileItem = fileModelNode
+                    //     .getFileItems()
+                    //     .find(fi => fi.getFileItemUniqueId() === gobiiTreeNode.fileItemId);
+                    //
+                    // if (!returnVal) {
+                    //     this.handleAddStatusMessage(
+                    //         new HeaderStatusMessage("There is no file model node for tree node "
+                    //             + gobiiTreeNode.fileItemId, null, null))
+                    // }
+                    //
+                    // returnVal.setGobiiExtractFilterType(this.gobiiExtractFilterType);
+                    // returnVal.setProcessType(processType);
+                    // returnVal.setRequired(gobiiTreeNode.required);
                     var returnVal = gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, processType)
                         .setExtractorItemType(fileModelNode.getItemType())
                         .setEntityType(gobiiTreeNode.entityType)

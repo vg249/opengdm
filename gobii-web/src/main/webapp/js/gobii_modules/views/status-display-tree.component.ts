@@ -108,8 +108,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             let currentFileItem: GobiiFileItem = this.makeFileItemFromTreeNode(treeNode, ProcessType.DELETE)
                 .setGobiiEventOrigin(GobiiUIEventOrigin.CRITERIA_TREE);
 
-
-            returnVal.push(currentFileItem);
+            if (( currentFileItem.getExtractorItemType() != ExtractorItemType.ENTITY )
+                || currentFileItem.getItemId()) {
+                returnVal.push(currentFileItem);
+            }
         }
 
         if (treeNode.children) {
@@ -308,12 +310,27 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     makeFileItemFromTreeNode(gobiiTreeNode: GobiiTreeNode, processType: ProcessType): GobiiFileItem {
 
+
         let fileModelNode: FileModelNode = null;
         this._fileModelTreeService
             .getFileModelNode(this.gobiiExtractFilterType, gobiiTreeNode.fileModelNodeId)
             .subscribe(
                 fmn => fileModelNode = fmn,
                 hsm => this.handleAddStatusMessage(hsm));
+
+        // let returnVal: GobiiFileItem = fileModelNode
+        //     .getFileItems()
+        //     .find(fi => fi.getFileItemUniqueId() === gobiiTreeNode.fileItemId);
+        //
+        // if (!returnVal) {
+        //     this.handleAddStatusMessage(
+        //         new HeaderStatusMessage("There is no file model node for tree node "
+        //             + gobiiTreeNode.fileItemId, null, null))
+        // }
+        //
+        // returnVal.setGobiiExtractFilterType(this.gobiiExtractFilterType);
+        // returnVal.setProcessType(processType);
+        // returnVal.setRequired(gobiiTreeNode.required);
 
         let returnVal: GobiiFileItem = GobiiFileItem.build(
             this.gobiiExtractFilterType,
