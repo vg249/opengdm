@@ -542,8 +542,15 @@ public class GobiiExtractor {
 		StringBuilder cutString=new StringBuilder();//Cutstring -> 1,2,4,5,6
 		int i=1;
 		for(String entry:entries){
-			entry.trim();
-			if( Integer.parseInt(entry) != -1){
+			int val=-1;
+			try {
+				//For some reason, spaces are everywhere, and Integer.parseInt is not very lenient
+				String entryWithoutSpaces=entry.trim().replaceAll(" ","");
+				val=Integer.parseInt(entryWithoutSpaces);
+			}catch(Exception e){
+				ErrorLogger.logDebug("GobiiExtractor NFE",e.toString());
+			}
+			if( val != -1){
 				cutString.append(i+",");
 			}
 			i++;
