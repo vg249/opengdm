@@ -20,6 +20,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class DtoRequestFileExtractorInstructionsTest {
     }
 
 
-    @Ignore // fails on SYS_INT
+    @Test // fails on SYS_INT
     public void testSendExtractorInstructionFile() throws Exception {
 
 
