@@ -333,7 +333,7 @@ public class GobiiExtractor {
 						}
 					}
 					GobiiFileType fileType=extract.getGobiiFileType();
-					if((genoFile==null) && (fileType != GobiiFileType.META_DATA)) {
+					if(checkFileExistance(genoFile) || (fileType == GobiiFileType.META_DATA)) {
 						switch (fileType) {
 							case FLAPJACK:
 								String genoOutFile = extractDir + "Dataset.genotype";
