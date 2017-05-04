@@ -249,7 +249,7 @@ public class GobiiExtractor {
 							//Create a file out of the List if non-null, else use the <File>
 							List<String> sampleList = extract.getSampleList();
 							if (sampleList != null && !sampleList.isEmpty()) {
-								sampleListLocation = " -Y " + createTempFileForMarkerList(extractDir, sampleList);
+								sampleListLocation = " -Y " + createTempFileForMarkerList(extractDir, sampleList,"sampleList");
 							} else if (extract.getListFileName() != null) {
 								sampleListLocation = " -Y " + extractDir + extract.getListFileName();
 							}
@@ -630,8 +630,8 @@ public class GobiiExtractor {
 	 * @param markerList List to go into file, newline delimited
 	 * @return location of new file.
 	 */
-	private static String createTempFileForMarkerList(String tmpDir,List<String> markerList){
-		String tempFileLocation=tmpDir+"markerList.tmp";
+	private static String createTempFileForMarkerList(String tmpDir,List<String> markerList,String tmpFilename){
+		String tempFileLocation=tmpDir+tmpFilename+".tmp";
 		try {
 			FileWriter f = new FileWriter(tempFileLocation);
 			for(String marker:markerList){
@@ -645,8 +645,12 @@ public class GobiiExtractor {
 		}
 		return tempFileLocation;
 	}
+	private static String createTempFileForMarkerList(String tmpDir,List<String> markerList){
+		return createTempFileForMarkerList(tmpDir,markerList,"markerList");
+	}
 
-	private static boolean addSlashesToBiAllelicData(String genoFile, String extractDir, GobiiDataSetExtract extract) throws Exception {
+
+		private static boolean addSlashesToBiAllelicData(String genoFile, String extractDir, GobiiDataSetExtract extract) throws Exception {
 		Path SSRFilePath = Paths.get(genoFile);
 		File SSRFile = new File(SSRFilePath.toString());
 		if (SSRFile.exists()) {
