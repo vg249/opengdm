@@ -239,24 +239,13 @@ public class GobiiFileReader {
 		//Section - Processing
 		ErrorLogger.logTrace("Digester", "Beginning List Processing");
 		success = true;
-		switch (zero.getGobiiFile().getGobiiFileType()) { //All instructions should have the same file type
+		switch (zero.getGobiiFile().getGobiiFileType()) { //All instructions should have the same file type, all file types go through CSVFileReader(V2)
+			case HAPMAP:
+				//INTENTIONAL FALLTHROUGH
 			case VCF:
 				//INTENTIONAL FALLTHROUGH
 			case GENERIC:
 				CSVFileReader.parseInstructionFile(list, dstDir.getAbsolutePath(), "/");
-				break;
-			case HAPMAP: //This is currently not used by the loaderUI
-				for (GobiiLoaderInstruction instruction : list) {
-					String tmpFile = new File(dstDir, instruction.getTable() + ".tmp").getAbsolutePath();//DestinationDirectory plus table name
-					ArrayList<GobiiLoaderInstruction> justTheOne = new ArrayList<>();
-					justTheOne.add(instruction);
-					try {
-						new LoaderInstructionsDAOImpl().writeInstructions(tmpFile, justTheOne);
-					} catch (GobiiDaoException e) {
-						logError("GobiiDAO", "Instruction Writing Error", e);
-					}
-					HelperFunctions.tryExec(loaderScriptPath + "etc/parse_hmp.pl" + " " + tmpFile, null, errorPath);
-				}
 				break;
 			default:
 				System.err.println("Unable to deal with file type " + zero.getGobiiFile().getGobiiFileType());
