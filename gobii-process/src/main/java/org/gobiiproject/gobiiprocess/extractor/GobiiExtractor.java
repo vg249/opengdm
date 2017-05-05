@@ -408,7 +408,7 @@ public class GobiiExtractor {
 				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 			}catch(Exception e){
 					ErrorLogger.logError("GobiiExtractor","Uncaught fatal error found in program. Contact a programmer.",e);
-					HelperFunctions.sendEmail("Hi.\n\n+"+
+					HelperFunctions.sendEmail("Hi.\n\n"+
 
 							"I'm sorry, but your extract failed for reasons beyond your control.\n"+
 							"I'm going to dump a message of the error here so a programmer can determine why.\n\n\n"+
@@ -501,9 +501,8 @@ public class GobiiExtractor {
 
 		if(markerList!=null) {
 			String hdf5Extractor=pathToHDF5+"fetchmarkerlist";
-			ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+HDF5File+" "+markerList+" "+genoFile);
-			HelperFunctions.tryExec(hdf5Extractor + " " +HDF5File+" "+markerList+" "+genoFile, null, errorFile);
-			//TODO: Orientation is not respected here
+			ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ ordering +" "+HDF5File+" "+markerList+" "+genoFile);
+			HelperFunctions.tryExec(hdf5Extractor + " " + ordering+" " + HDF5File+" "+markerList+" "+genoFile, null, errorFile);
 		}
 		else {
 			String hdf5Extractor=pathToHDF5+"dumpdataset";
@@ -533,6 +532,7 @@ public class GobiiExtractor {
 		else{
 			tryExec("cut -f"+getCutString(sampleList),filename,errorFile,tmpFile);
 		}
+		rmIfExist(tmpFile);
 	}
 
 	/**
