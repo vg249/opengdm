@@ -54,6 +54,7 @@ public class GobiiExtractor {
          		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
          		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
 				.addOption("m", "markerList", true, "Fully qualified path to marker list files - (Debugging, forces marker list extract)");
+		o.addOption("kaf","keepAllFiles", false, "keep all temporary files");
         
         CommandLineParser parser = new DefaultParser();
         try{
@@ -66,6 +67,7 @@ public class GobiiExtractor {
             }
             if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
             if(cli.hasOption("markerList")) markerListOverrideLocation=cli.getOptionValue("markerList");
+			if(cli.hasOption("keepAllFiles")) FileSystemInterface.keepAllFiles(true);
             args=cli.getArgs();//Remaining args passed through
 
         }catch(org.apache.commons.cli.ParseException exp ) {
