@@ -61,18 +61,20 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
                         _this.onHeaderStatusMessage.emit(he);
                     });
                 };
+                SampleListTypeComponent.prototype.setDefault = function () {
+                    this.listType = "GERMPLASM_NAME";
+                    this.submitSampleListTypeToService(type_extractor_sample_list_1.GobiiSampleListType.GERMPLASM_NAME);
+                };
                 SampleListTypeComponent.prototype.ngOnInit = function () {
                     var _this = this;
+                    this.setDefault();
                     this._fileModelTreeService
                         .fileItemNotifications()
                         .subscribe(function (fileItem) {
-                        if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY) {
-                            if (fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                                _this.submitSampleListTypeToService(type_extractor_sample_list_1.GobiiSampleListType.GERMPLASM_NAME);
-                            }
-                            else if (fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.CLEAR_TREE) {
-                                _this.listType = "GERMPLASM_NAME";
-                            }
+                        if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
+                            && ((fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY)
+                                || (fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.CLEAR_TREE))) {
+                            _this.setDefault();
                         }
                     });
                     return null;

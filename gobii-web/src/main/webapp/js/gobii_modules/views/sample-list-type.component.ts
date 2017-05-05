@@ -31,7 +31,7 @@ export class SampleListTypeComponent implements OnInit, OnChanges {
 
     private onHeaderStatusMessage: EventEmitter<HeaderStatusMessage> = new EventEmitter();
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
-    private listType:string = "GERMPLASM_NAME";
+    private listType: string = "GERMPLASM_NAME";
 
     private handleExportTypeSelected(arg) {
         if (arg.srcElement.checked) {
@@ -59,21 +59,25 @@ export class SampleListTypeComponent implements OnInit, OnChanges {
     }
 
 
+    private setDefault() {
+        this.listType = "GERMPLASM_NAME";
+        this.submitSampleListTypeToService(GobiiSampleListType.GERMPLASM_NAME);
+    }
+
+
     ngOnInit(): any {
+
+        this.setDefault();
 
         this._fileModelTreeService
             .fileItemNotifications()
             .subscribe(fileItem => {
 
-                if (fileItem.getProcessType() === ProcessType.NOTIFY) {
-                    if (fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+                if (fileItem.getProcessType() === ProcessType.NOTIFY
+                    && (( fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY )
+                    || (fileItem.getExtractorItemType() === ExtractorItemType.CLEAR_TREE))) {
 
-                        this.submitSampleListTypeToService(GobiiSampleListType.GERMPLASM_NAME);
-
-                    } else if (fileItem.getExtractorItemType() === ExtractorItemType.CLEAR_TREE) {
-
-                        this.listType = "GERMPLASM_NAME";
-                    }
+                    this.setDefault();
                 }
             });
 
