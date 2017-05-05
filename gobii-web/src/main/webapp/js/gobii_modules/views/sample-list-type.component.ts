@@ -47,18 +47,16 @@ export class SampleListTypeComponent implements OnInit, OnChanges {
 
     private submitSampleListTypeToService(gobiiSampleListType: GobiiSampleListType) {
 
-        if( this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE ) {
 
-            this._fileModelTreeService
-                .put(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
-                    .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
-                    .setItemName(GobiiSampleListType[gobiiSampleListType])
-                    .setItemId(GobiiSampleListType[gobiiSampleListType]))
-                .subscribe(null,
-                    he => {
-                        this.onHeaderStatusMessage.emit(he)
-                    });
-        }
+        this._fileModelTreeService
+            .put(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+                .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
+                .setItemName(GobiiSampleListType[gobiiSampleListType])
+                .setItemId(GobiiSampleListType[gobiiSampleListType]))
+            .subscribe(null,
+                he => {
+                    this.onHeaderStatusMessage.emit(he)
+                });
     }
 
 
@@ -70,13 +68,12 @@ export class SampleListTypeComponent implements OnInit, OnChanges {
 
     ngOnInit(): any {
 
-        this.setDefault();
-
         this._fileModelTreeService
             .fileItemNotifications()
             .subscribe(fileItem => {
 
-                if (fileItem.getProcessType() === ProcessType.NOTIFY
+                if (fileItem.getGobiiExtractFilterType() === GobiiExtractFilterType.BY_SAMPLE
+                    && fileItem.getProcessType() === ProcessType.NOTIFY
                     && (( fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY )
                     || (fileItem.getExtractorItemType() === ExtractorItemType.CLEAR_TREE))) {
 
@@ -84,38 +81,17 @@ export class SampleListTypeComponent implements OnInit, OnChanges {
                 }
             });
 
-
         return null;
     }
 
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 
-        //this.submitSampleListTypeToService(GobiiSampleListType.GERMPLASM_NAME);
+        if (changes['gobiiExtractFilterType']
+            && ( changes['gobiiExtractFilterType'].currentValue != null )
+            && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
 
-        // if (changes['gobiiExtractFilterType']
-        //     && ( changes['gobiiExtractFilterType'].currentValue != null )
-        //     && ( changes['gobiiExtractFilterType'].currentValue != undefined )
-        //     && changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
-        //
-        //     if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
-        //
-        //         let scope$ = this;
-        //         this._fileModelTreeService
-        //             .fileItemNotifications()
-        //             .subscribe(fileItem => {
-        //                 if (fileItem.getProcessType() === ProcessType.NOTIFY
-        //                     && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-        //
-        //                     if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
-        //                         scope$.submitSampleListTypeToService(GobiiSampleListType.GERMPLASM_NAME);
-        //                     }
-        //
-        //
-        //                 }
-        //             });
-        //
-        //     } // if extract type is by sample
-        // }
+                this.setDefault();
+        }
     }
 }

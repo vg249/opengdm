@@ -52,16 +52,14 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
                 };
                 SampleListTypeComponent.prototype.submitSampleListTypeToService = function (gobiiSampleListType) {
                     var _this = this;
-                    if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
-                        this._fileModelTreeService
-                            .put(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                            .setExtractorItemType(file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE)
-                            .setItemName(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType])
-                            .setItemId(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType]))
-                            .subscribe(null, function (he) {
-                            _this.onHeaderStatusMessage.emit(he);
-                        });
-                    }
+                    this._fileModelTreeService
+                        .put(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                        .setExtractorItemType(file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE)
+                        .setItemName(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType])
+                        .setItemId(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType]))
+                        .subscribe(null, function (he) {
+                        _this.onHeaderStatusMessage.emit(he);
+                    });
                 };
                 SampleListTypeComponent.prototype.setDefault = function () {
                     this.listType = "GERMPLASM_NAME";
@@ -69,11 +67,11 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
                 };
                 SampleListTypeComponent.prototype.ngOnInit = function () {
                     var _this = this;
-                    this.setDefault();
                     this._fileModelTreeService
                         .fileItemNotifications()
                         .subscribe(function (fileItem) {
-                        if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
+                        if (fileItem.getGobiiExtractFilterType() === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE
+                            && fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
                             && ((fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY)
                                 || (fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.CLEAR_TREE))) {
                             _this.setDefault();
@@ -82,31 +80,11 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
                     return null;
                 };
                 SampleListTypeComponent.prototype.ngOnChanges = function (changes) {
-                    //this.submitSampleListTypeToService(GobiiSampleListType.GERMPLASM_NAME);
-                    // if (changes['gobiiExtractFilterType']
-                    //     && ( changes['gobiiExtractFilterType'].currentValue != null )
-                    //     && ( changes['gobiiExtractFilterType'].currentValue != undefined )
-                    //     && changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
-                    //
-                    //     if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
-                    //
-                    //         let scope$ = this;
-                    //         this._fileModelTreeService
-                    //             .fileItemNotifications()
-                    //             .subscribe(fileItem => {
-                    //                 if (fileItem.getProcessType() === ProcessType.NOTIFY
-                    //                     && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                    //
-                    //                     if (this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE) {
-                    //                         scope$.submitSampleListTypeToService(GobiiSampleListType.GERMPLASM_NAME);
-                    //                     }
-                    //
-                    //
-                    //                 }
-                    //             });
-                    //
-                    //     } // if extract type is by sample
-                    // }
+                    if (changes['gobiiExtractFilterType']
+                        && (changes['gobiiExtractFilterType'].currentValue != null)
+                        && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
+                        this.setDefault();
+                    }
                 };
                 return SampleListTypeComponent;
             }());
