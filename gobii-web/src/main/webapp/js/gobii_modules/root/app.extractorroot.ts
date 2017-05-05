@@ -37,6 +37,7 @@ import {AuthenticationService} from "../services/core/authentication.service";
 import {FileItem} from "ng2-file-upload";
 import {isNullOrUndefined} from "util";
 import {NameIdLabelType} from "../model/name-id-label-type";
+import {StatusLevel} from "../model/type-status-level";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -709,7 +710,11 @@ export class ExtractorRoot implements OnInit {
 
     private handleHeaderStatusMessage(statusMessage: HeaderStatusMessage) {
 
-        this.handleAddMessage(statusMessage.message);
+        if( ! statusMessage.statusLevel || statusMessage.statusLevel != StatusLevel.WARNING ) {
+            this.handleAddMessage(statusMessage.message);
+        } else {
+            console.log(statusMessage.message);
+        }
     }
 
     private handleResponseHeader(header: Header) {

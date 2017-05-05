@@ -52,14 +52,16 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
                 };
                 SampleListTypeComponent.prototype.submitSampleListTypeToService = function (gobiiSampleListType) {
                     var _this = this;
-                    this._fileModelTreeService
-                        .put(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                        .setExtractorItemType(file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE)
-                        .setItemName(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType])
-                        .setItemId(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType]))
-                        .subscribe(null, function (he) {
-                        _this.onHeaderStatusMessage.emit(he);
-                    });
+                    if (this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE) {
+                        this._fileModelTreeService
+                            .put(gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                            .setExtractorItemType(file_model_node_1.ExtractorItemType.SAMPLE_LIST_TYPE)
+                            .setItemName(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType])
+                            .setItemId(type_extractor_sample_list_1.GobiiSampleListType[gobiiSampleListType]))
+                            .subscribe(null, function (he) {
+                            _this.onHeaderStatusMessage.emit(he);
+                        });
+                    }
                 };
                 SampleListTypeComponent.prototype.setDefault = function () {
                     this.listType = "GERMPLASM_NAME";

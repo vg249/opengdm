@@ -46,16 +46,19 @@ export class SampleListTypeComponent implements OnInit, OnChanges {
     }
 
     private submitSampleListTypeToService(gobiiSampleListType: GobiiSampleListType) {
-        this._fileModelTreeService
-            .put(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
-                .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
-                .setItemName(GobiiSampleListType[gobiiSampleListType])
-                .setItemId(GobiiSampleListType[gobiiSampleListType]))
-            .subscribe(null,
-                he => {
-                    this.onHeaderStatusMessage.emit(he)
-                });
 
+        if( this.gobiiExtractFilterType === GobiiExtractFilterType.BY_SAMPLE ) {
+
+            this._fileModelTreeService
+                .put(GobiiFileItem.build(this.gobiiExtractFilterType, ProcessType.CREATE)
+                    .setExtractorItemType(ExtractorItemType.SAMPLE_LIST_TYPE)
+                    .setItemName(GobiiSampleListType[gobiiSampleListType])
+                    .setItemId(GobiiSampleListType[gobiiSampleListType]))
+                .subscribe(null,
+                    he => {
+                        this.onHeaderStatusMessage.emit(he)
+                    });
+        }
     }
 
 
