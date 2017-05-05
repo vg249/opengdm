@@ -18,9 +18,7 @@ import {EntityType} from "../model/type-entity";
     inputs: ['gobiiExtractFilterType'],
     //directives: [RADIO_GROUP_DIRECTIVES]
 //  directives: [Alert]
-    template: `<fieldset class="well the-fieldset" style="width: 350px">
-                  <div class="the-legend" >
-                      <form>
+    template: `<form>
                             <label class="the-legend">Select Format:&nbsp;</label>
                             <BR><input type="radio" (change)="handleFormatSelected($event)" [(ngModel)]="fileFormat" name="fileFormat" value="HAPMAP" checked="checked">
                             <label  for="HAPMAP" class="the-legend">Hapmap</label>
@@ -28,9 +26,7 @@ import {EntityType} from "../model/type-entity";
                             <label for="FLAPJACK" class="the-legend">Flapjack</label>
                             <BR><input type="radio" (change)="handleFormatSelected($event)" [(ngModel)]="fileFormat" name="fileFormat" value="META_DATA_ONLY">
                             <label  for="META_DATA_ONLY" class="the-legend">{{metaDataExtractname}}</label>
-                      </form>
-                  </div>
-                </fieldset>` // end template
+                </form>` // end template
 })
 
 export class ExportFormatComponent implements OnInit, OnChanges {
