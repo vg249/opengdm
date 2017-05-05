@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -31,6 +32,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtrac
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
@@ -423,6 +425,27 @@ public class GobiiExtractor {
 	private static String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder,String posFile) throws FileNotFoundException{
 		return getHDF5GenoFromSampleList(markerFast,errorFile,tempFolder,posFile,null);
 	}
+
+	private static HashMap<String,String> getSamplePosFromFile(String inputFile) throws FileNotFoundException {
+		HashMap<String, String> map = new HashMap<String, String>();
+		BufferedReader sampR = new BufferedReader(new FileReader(inputFile));
+		try{
+			while (sampR.ready()) {
+					String sampLine = sampR.readLine();
+					if (sampLine != null) {
+						String[] sampSplit = sampLine.split("\t");
+						if(sampSplit.length>1){
+							map.put(sampSplit[0],sampSplit[1]);
+						}
+					}
+				}
+			}
+		catch(Exception e){
+			ErrorLogger.logError("GobiiExtractor", "Unexpected error in reading sample file",e);
+		}
+		return map;
+	}
+
 	private static String getHDF5GenoFromSampleList(boolean markerFast, String errorFile, String tempFolder,String posFile, String samplePosFile) throws FileNotFoundException{
 		if(!new File(posFile).exists()){
 			ErrorLogger.logError("Genotype Matrix","No positions generated - Likely no data");
@@ -430,32 +453,46 @@ public class GobiiExtractor {
 		}
 		BufferedReader posR=new BufferedReader(new FileReader(posFile));
 		BufferedReader sampR=null;
-		if(samplePosFile!=null)sampR=new BufferedReader(new FileReader(samplePosFile));
+		boolean hasSampleList=false;
+		HashMap<String,String> samplePos=null;
+		if(checkFileExistance(samplePosFile)){
+			hasSampleList=true;
+			sampR=new BufferedReader(new FileReader(samplePosFile));
+			samplePos=getSamplePosFromFile(samplePosFile);
+		}
         StringBuilder genoFileString=new StringBuilder();
 		try{
 			posR.readLine();//header
 			if(sampR!=null)sampR.readLine();
 			while(posR.ready()) {
 				String[] line = posR.readLine().split("\t");
-				String sampLine=null;
-				if(sampR!=null) sampLine= sampR.readLine();
 				if(line.length < 2){
 					ErrorLogger.logDebug("MarkerList","Skipping line " + Arrays.deepToString(line));
 					continue;
 				}
 				int dsID=Integer.parseInt(line[0]);
+
 				String positionList=line[1].replace(',','\n');
 				String positionListFileLoc=tempFolder+"position.list";
 				FileSystemInterface.rmIfExist(positionListFileLoc);
 				FileWriter w = new FileWriter(positionListFileLoc);
 				w.write(positionList);
 				w.close();
+
 				String sampleList=null;
-				if(sampLine!=null){
-					sampleList=sampLine.split("\t")[1];
+				if(hasSampleList){
+					sampleList=samplePos.get(line[0]);
 				}
-				String genoFile=getHDF5Genotype(markerFast, errorFile,dsID,tempFolder,positionListFileLoc,sampleList);
-				genoFileString.append(" "+genoFile);
+				String genoFile=null;
+				if(!hasSampleList || (sampleList!=null)) {
+					genoFile = getHDF5Genotype(markerFast, errorFile, dsID, tempFolder, positionListFileLoc, sampleList);
+				}
+				else{
+					//We have a marker position but not a sample position. Do not create a genotype file in the first place
+				}
+				if(genoFile!=null){
+					genoFileString.append(" "+genoFile);
+				}
 			}
 		}catch(IOException e) {
 			ErrorLogger.logError("GobiiExtractor", "MarkerList reading failed", e);
@@ -529,7 +566,7 @@ public class GobiiExtractor {
 		String cutString=getCutString(sampleList);
 		if(!markerFast) {
 			String sedString=cutString.replaceAll(",","p;");//1,2,3 => 1p;2p;3   (p added later)
-			tryExec("sed -n "+sedString+"p",filename,errorFile,tmpFile);
+			tryExec("sed -n \""+sedString+"p\"",filename,errorFile,tmpFile); //Sed parameters need double quotes to be a single parameter
 		}
 		else{
 			tryExec("cut -f"+getCutString(sampleList),filename,errorFile,tmpFile);
