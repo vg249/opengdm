@@ -91,18 +91,20 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
                     // are bound, we would check whether that flag is set, and if it was, then we would send
                     // the tree notification. I _think_ that would cover all the contingencies, but it's ugly.
                     // I am not sure whether reactive forms would address this issue.
+                    this.setDefault();
                     this._fileModelTreeService
                         .fileItemNotifications()
                         .subscribe(function (fileItem) {
-                        if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY) {
-                            if (fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                                _this.updateTreeService(type_extract_format_1.GobiiExtractFormat.HAPMAP);
-                            }
-                            else if (fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.CLEAR_TREE) {
-                                _this.fileFormat = "HAPMAP";
-                            }
+                        if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY &&
+                            ((fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY)
+                                || (fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.CLEAR_TREE))) {
+                            _this.setDefault();
                         }
                     });
+                };
+                ExportFormatComponent.prototype.setDefault = function () {
+                    this.updateTreeService(type_extract_format_1.GobiiExtractFormat.HAPMAP);
+                    this.fileFormat = "HAPMAP";
                 };
                 ExportFormatComponent.prototype.handleResponseHeader = function (header) {
                     this.onError.emit(header);

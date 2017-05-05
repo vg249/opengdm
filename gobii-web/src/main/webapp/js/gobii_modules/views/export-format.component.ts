@@ -85,21 +85,24 @@ export class ExportFormatComponent implements OnInit, OnChanges {
         // are bound, we would check whether that flag is set, and if it was, then we would send
         // the tree notification. I _think_ that would cover all the contingencies, but it's ugly.
         // I am not sure whether reactive forms would address this issue.
+
+        this.setDefault();  
         this._fileModelTreeService
             .fileItemNotifications()
             .subscribe(fileItem => {
 
-                if (fileItem.getProcessType() === ProcessType.NOTIFY) {
-                    if (fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-
-                        this.updateTreeService(GobiiExtractFormat.HAPMAP);
-
-                    } else if (fileItem.getExtractorItemType() === ExtractorItemType.CLEAR_TREE) {
-
-                        this.fileFormat = "HAPMAP";
-                    }
+                if (fileItem.getProcessType() === ProcessType.NOTIFY &&
+                    ((fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY)
+                    || (fileItem.getExtractorItemType() === ExtractorItemType.CLEAR_TREE) ) ) {
+                    this.setDefault();
                 }
             });
+    }
+
+    private setDefault() {
+        this.updateTreeService(GobiiExtractFormat.HAPMAP);
+        this.fileFormat = "HAPMAP";
+
     }
 
     private handleResponseHeader(header: Header) {
