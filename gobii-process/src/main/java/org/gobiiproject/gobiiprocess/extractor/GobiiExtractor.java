@@ -566,7 +566,7 @@ public class GobiiExtractor {
 		String cutString=getCutString(sampleList);
 		if(!markerFast) {
 			String sedString=cutString.replaceAll(",","p;");//1,2,3 => 1p;2p;3   (p added later)
-			tryExec("sed -n \""+sedString+"p\"",filename,errorFile,tmpFile); //Sed parameters need double quotes to be a single parameter
+			tryExec("sed -n "+sedString+"p",filename,errorFile,tmpFile); //Sed parameters need double quotes to be a single parameter
 		}
 		else{
 			tryExec("cut -f"+getCutString(sampleList),filename,errorFile,tmpFile);
