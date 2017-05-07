@@ -831,7 +831,7 @@ export class ExtractorRoot implements OnInit {
     // because I am unable to reproduce the issue in my local testing. This method at leaset reports
     // warnings to the effect that the problem exists, but results in an extract that is free of duplicates.
     // Technically, sample and marker list item duplicates should be eliminated in the list item control,
-    // but it is also too late for that. 
+    // but it is also too late for that.
     private eliminateDuplicateEntities(extractorItemType: ExtractorItemType,
                                        entityType: EntityType,
                                        fileItems: GobiiFileItem[]): GobiiFileItem[] {
