@@ -93,7 +93,7 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
 
                 } else if(qcInstructionsDTO.getGobiiJobStatus().equals(GobiiJobStatus.COMPLETED)) {
 
-                    InstructionFileAccess<QCInstructionsDTO> instructionFileAccess = new InstructionFileAccess<>();
+                    InstructionFileAccess<QCInstructionsDTO> instructionFileAccess = new InstructionFileAccess<>(QCInstructionsDTO.class);
                     instructionFileAccess.writeInstructions(instructionFileFqpn,
                             qcInstructionsDTO);
 
@@ -143,9 +143,9 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
                     + INSTRUCTION_FILE_EXT;
 
             if (instructionFilesDao.doesPathExist(instructionFileFqpn)) {
-                InstructionFileAccess<QCInstructionsDTO> instructionFileAccess = new InstructionFileAccess<>();
+                InstructionFileAccess<QCInstructionsDTO> instructionFileAccess = new InstructionFileAccess<>(QCInstructionsDTO[].class);
 
-                returnVal = instructionFileAccess.getQCInstructions(instructionFileFqpn, QCInstructionsDTO.class);
+                returnVal = instructionFileAccess.getInstruction(instructionFileFqpn);
 
                 if (null != returnVal) {
 

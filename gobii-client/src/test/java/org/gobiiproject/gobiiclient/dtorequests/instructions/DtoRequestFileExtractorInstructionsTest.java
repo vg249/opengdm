@@ -19,7 +19,6 @@ import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -75,6 +74,7 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         // ************** DATA SET EXTRACT ONE
         GobiiDataSetExtract gobiiDataSetExtractOne = new GobiiDataSetExtract();
+        gobiiDataSetExtractOne.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
         GobiiFileType DataSetExtractOneFileType = GobiiFileType.HAPMAP;
         gobiiDataSetExtractOne.setGobiiFileType(DataSetExtractOneFileType);
         String dataSetExtractOneName = "my_foo_Dataset";
@@ -84,6 +84,7 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         // ************** DATA SET EXTRACT two
         GobiiDataSetExtract gobiiDataSetExtractTwo = new GobiiDataSetExtract();
+        gobiiDataSetExtractTwo.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
         GobiiFileType DataSetExtractFileTypeTwo = GobiiFileType.FLAPJACK;
         gobiiDataSetExtractTwo.setGobiiFileType(DataSetExtractFileTypeTwo);
         String DataSetExtractNameTwo = "my_foo_Dataset2";
@@ -109,12 +110,14 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         // column one
         gobiiDataSetExtractOne = new GobiiDataSetExtract();
+        gobiiDataSetExtractOne.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
         gobiiDataSetExtractOne.setAccolate(true);
         gobiiDataSetExtractOne.setGobiiFileType(DataSetExtractOneFileType);
         gobiiDataSetExtractOne.setDataSet(new GobiiFilePropNameId(2,"my_foo_2Dataset"));
 
         // column two
         gobiiDataSetExtractTwo = new GobiiDataSetExtract();
+        gobiiDataSetExtractTwo.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
         gobiiDataSetExtractTwo.setAccolate(true);
         gobiiDataSetExtractTwo.setGobiiFileType(DataSetExtractFileTypeTwo);
         gobiiDataSetExtractOne.setDataSet(new GobiiFilePropNameId(2,"my_foo_2Dataset2"));

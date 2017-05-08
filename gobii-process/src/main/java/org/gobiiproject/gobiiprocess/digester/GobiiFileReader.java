@@ -254,7 +254,7 @@ public class GobiiFileReader {
 					ArrayList<GobiiLoaderInstruction> justTheOne = new ArrayList<>();
 					justTheOne.add(instruction);
 					try{
-					InstructionFileAccess<List<GobiiLoaderInstruction>> instructionFileAccess = new InstructionFileAccess<>();
+					InstructionFileAccess<List<GobiiLoaderInstruction>> instructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
 					instructionFileAccess.writeInstructions(tmpFile, justTheOne);
 					} catch (GobiiDaoException e) {
 						logError("GobiiDAO", "Instruction Writing Error", e);

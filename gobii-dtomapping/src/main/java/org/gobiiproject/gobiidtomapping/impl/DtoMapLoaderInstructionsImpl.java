@@ -260,7 +260,7 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             } // iterate instructions/files
 
-            InstructionFileAccess<List<GobiiLoaderInstruction>> instructionFileAccess = new InstructionFileAccess<>();
+            InstructionFileAccess<List<GobiiLoaderInstruction>> instructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
             instructionFileAccess.writeInstructions(instructionFileFqpn,
                     returnVal.getGobiiLoaderInstructions());
 
@@ -289,9 +289,10 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             if (instructionsFilesDAO.doesPathExist(instructionFile)) {
 
-                InstructionFileAccess<GobiiLoaderInstruction> instructionFileAccessGobiiLoaderInstruction = new InstructionFileAccess<>();
+                InstructionFileAccess<GobiiLoaderInstruction> instructionFileAccessGobiiLoaderInstruction = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
                 List<GobiiLoaderInstruction> instructions =
-                        instructionFileAccessGobiiLoaderInstruction.getInstructions(instructionFile);
+                        instructionFileAccessGobiiLoaderInstruction.getInstructions(instructionFile,
+                                GobiiLoaderInstruction[].class);
 
                 if (null != instructions) {
                     returnVal.setInstructionFileName(instructionFileName);

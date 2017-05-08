@@ -3,7 +3,6 @@ package org.gobiiproject.gobiidao.filesystem.access;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,9 +19,10 @@ public class InstructionFileAccess<T> {
     private final String LOADER_FILE_EXT = ".json";
 
 
-    Class<T[]> type;
+    Class<T> instanceType;
 
-    public InstructionFileAccess() {
+    public InstructionFileAccess(Class instanceType) {
+        this.instanceType = instanceType;
     }
 
     public Boolean writeInstructions(String instructionFileFqpn,
@@ -81,7 +81,7 @@ public class InstructionFileAccess<T> {
     } // writeInstructions
 
 
-    public T getQCInstructions(String instructionFileFqpn, Class<T> instructionType) {
+    public T getInstruction(String instructionFileFqpn) {
 
         T returnVal = null;
 
@@ -93,7 +93,7 @@ public class InstructionFileAccess<T> {
 
             org.codehaus.jackson.map.ObjectMapper objectMapper = new org.codehaus.jackson.map.ObjectMapper();
 
-            returnVal = objectMapper.readValue(fileInputStream, instructionType);
+            returnVal = objectMapper.readValue(fileInputStream, instanceType);
 
         } catch (Exception e) {
             String message = e.getMessage() + "; fqpn: " + instructionFileFqpn;
@@ -104,7 +104,7 @@ public class InstructionFileAccess<T> {
 
     }
 
-    public List<T> getInstructions(String instructionFileFqpn) throws GobiiDaoException {
+    public List<T> getInstructions(String instructionFileFqpn, Class<T[]> listType) throws GobiiDaoException {
 
         List<T> returnVal = null;
 
@@ -118,7 +118,7 @@ public class InstructionFileAccess<T> {
 
             org.codehaus.jackson.map.ObjectMapper objectMapper = new org.codehaus.jackson.map.ObjectMapper();
 
-            instructions = objectMapper.readValue(fileInputStream, type);
+            instructions = objectMapper.readValue(fileInputStream, listType);
 
             returnVal = Arrays.asList(instructions);
 
