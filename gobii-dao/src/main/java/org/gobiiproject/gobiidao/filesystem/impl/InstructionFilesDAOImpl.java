@@ -91,7 +91,7 @@ public class InstructionFilesDAOImpl implements InstructionFilesDAO {
     }
 
     @Override
-    public List<GobiiExtractorInstruction> setGobiiJobStatus(boolean applyToAll, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir gobiiFileProcessDir) throws GobiiDaoException{
+    public List<GobiiExtractorInstruction> setGobiiJobStatus(boolean applyToAll, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir gobiiFileProcessDir) throws GobiiDaoException {
         List<GobiiExtractorInstruction> returnVal = instructions;
 
         GobiiJobStatus gobiiJobStatus;
@@ -114,27 +114,27 @@ public class InstructionFilesDAOImpl implements InstructionFilesDAO {
                 gobiiJobStatus = GobiiJobStatus.FAILED;
         }
 
-        if(applyToAll){
+        if (applyToAll) {
 
-            for(GobiiExtractorInstruction instruction : returnVal){
+            for (GobiiExtractorInstruction instruction : returnVal) {
 
-                for(GobiiDataSetExtract dataSetExtract: instruction.getDataSetExtracts()){
+                for (GobiiDataSetExtract dataSetExtract : instruction.getDataSetExtracts()) {
 
                     dataSetExtract.setGobiiJobStatus(gobiiJobStatus);
                 }
             }
-        }else{ //check if the output file(s) exist in the directory specified by the *extractDestinationDirectory* field of the *DataSetExtract* item in the instruction file;
+        } else { //check if the output file(s) exist in the directory specified by the *extractDestinationDirectory* field of the *DataSetExtract* item in the instruction file;
             GobiiJobStatus statusFailed = GobiiJobStatus.FAILED;
 
-            for(GobiiExtractorInstruction instruction: returnVal){
+            for (GobiiExtractorInstruction instruction : returnVal) {
 
-                for(GobiiDataSetExtract dataSetExtract: instruction.getDataSetExtracts()){
+                for (GobiiDataSetExtract dataSetExtract : instruction.getDataSetExtracts()) {
 
                     String extractDestinationDirectory = dataSetExtract.getExtractDestinationDirectory();
 
-                    List<String> datasetExtractFiles =  new ArrayList<String>();
+                    List<String> datasetExtractFiles = new ArrayList<String>();
 
-                    String fileName="DS"+ Integer.toString(dataSetExtract.getDataSet().getId());
+                    String fileName = "DS" + Integer.toString(dataSetExtract.getDataSet().getId());
 
                     switch (dataSetExtract.getGobiiFileType()) {
                         case GENERIC:
@@ -142,13 +142,13 @@ public class InstructionFilesDAOImpl implements InstructionFilesDAO {
                             break;
 
                         case HAPMAP:
-                            datasetExtractFiles.add(fileName+"hmp.txt");
+                            datasetExtractFiles.add(fileName + "hmp.txt");
                             break;
 
                         case FLAPJACK:
-                            datasetExtractFiles.add(fileName+".map");
+                            datasetExtractFiles.add(fileName + ".map");
 
-                            datasetExtractFiles.add(fileName+".genotype");
+                            datasetExtractFiles.add(fileName + ".genotype");
 
                             break;
 
@@ -161,75 +161,18 @@ public class InstructionFilesDAOImpl implements InstructionFilesDAO {
                     }
 
 
-                        for(String s: datasetExtractFiles){
+                    for (String s : datasetExtractFiles) {
 
-                            String currentExtractFile = extractDestinationDirectory+s;
+                        String currentExtractFile = extractDestinationDirectory + s;
 
-                            if(doesPathExist(currentExtractFile))dataSetExtract.setGobiiJobStatus(gobiiJobStatus);
+                        if (doesPathExist(currentExtractFile)) dataSetExtract.setGobiiJobStatus(gobiiJobStatus);
 
-                            else dataSetExtract.setGobiiJobStatus(statusFailed);
-                        }
+                        else dataSetExtract.setGobiiJobStatus(statusFailed);
+                    }
                 }
             }
         }
         return returnVal;
-    }
-
-    @Override
-    public List<GobiiExtractorInstruction> getExtractorInstructions(String instructionFileFqpn) throws GobiiDaoException {
-
-        List<GobiiExtractorInstruction> returnVal = null;
-
-        try {
-
-            GobiiExtractorInstruction[] instructions = null;
-
-            File file = new File(instructionFileFqpn);
-
-            FileInputStream fileInputStream = new FileInputStream(file);
-
-            org.codehaus.jackson.map.ObjectMapper objectMapper = new org.codehaus.jackson.map.ObjectMapper();
-
-            instructions = objectMapper.readValue(fileInputStream, GobiiExtractorInstruction[].class);
-
-            returnVal = Arrays.asList(instructions);
-
-        } catch (Exception e) {
-            String message = e.getMessage() + "; fqpn: " + instructionFileFqpn;
-
-            throw new GobiiDaoException(message);
-        }
-
-        return returnVal;
-
-    }
-
-    public List<GobiiLoaderInstruction> getLoaderInstructions(String instructionFileFqpn) throws GobiiDaoException {
-
-        List<GobiiLoaderInstruction> returnVal = null;
-
-        try {
-
-            GobiiLoaderInstruction[] instructions = null;
-
-            File file = new File(instructionFileFqpn);
-
-            FileInputStream fileInputStream = new FileInputStream(file);
-
-            org.codehaus.jackson.map.ObjectMapper objectMapper = new org.codehaus.jackson.map.ObjectMapper();
-
-            instructions = objectMapper.readValue(fileInputStream, GobiiLoaderInstruction[].class);
-
-            returnVal = Arrays.asList(instructions);
-
-        } catch (Exception e) {
-            String message = e.getMessage() + "; fqpn: " + instructionFileFqpn;
-
-            throw new GobiiDaoException(message);
-        }
-
-        return returnVal;
-
     }
 
     @Override

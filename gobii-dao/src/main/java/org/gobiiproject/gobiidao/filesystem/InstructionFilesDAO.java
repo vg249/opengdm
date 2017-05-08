@@ -17,10 +17,6 @@ public interface InstructionFilesDAO {
 
     public void writePlainFile(String fileFqpn, byte[] byteArray) throws GobiiDaoException;
 
-    List<GobiiExtractorInstruction> getExtractorInstructions(String instructionFileFqpn) throws GobiiDaoException;
-
-    List<GobiiLoaderInstruction> getLoaderInstructions(String instructionFileFqpn) throws GobiiDaoException;
-
     boolean doesPathExist(String pathName) throws GobiiDaoException;
 
     void verifyDirectoryPermissions(String pathName) throws GobiiDaoException;

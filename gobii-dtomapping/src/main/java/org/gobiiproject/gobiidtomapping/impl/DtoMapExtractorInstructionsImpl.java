@@ -3,13 +3,11 @@ package org.gobiiproject.gobiidtomapping.impl;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.InstructionFilesDAO;
 import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
-import org.gobiiproject.gobiidao.filesystem.access.InstructionFilesAccessNew;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.DtoMapExtractorInstructions;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -19,7 +17,6 @@ import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
-import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,10 +40,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
     @Autowired
     DtoMapContact dtoMapContact;
-
-    private InstructionFilesAccessNew<GobiiExtractorInstruction> gobiiExtractorInstructionInstructionFilesAccessNew
-            = new InstructionFilesAccessNew<>();
-
+    private  InstructionFileAccess<GobiiExtractorInstruction> instructionFileAccessGobiiExtractorInstruction = new InstructionFileAccess<>();
 
     @Override
     public void writeDataFile(String cropType, GobiiExtractFilterType gobiiExtractFilterType, String jobId, byte[] byteArray) throws GobiiException {
@@ -336,7 +330,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
             if (extractorInstructionsDAO.doesPathExist(fileDirExtractorInProgressFqpn)) {
                 //check if file  is in InProgress
 
-                List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = gobiiExtractorInstructionInstructionFilesAccessNew.
+                List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccessGobiiExtractorInstruction.
                         getInstructions(fileDirExtractorInProgressFqpn);
 
                 gobiiExtractorInstructionsWithStatus = setGobiiExtractorInstructionsStatus(gobiiExtractorInstructionsFromFile,
@@ -348,7 +342,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
             } else if (extractorInstructionsDAO.doesPathExist(fileDirExtractorInstructionsFqpn)) {
                 //check if file just started
 
-                List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = gobiiExtractorInstructionInstructionFilesAccessNew.
+                List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccessGobiiExtractorInstruction.
                         getInstructions(fileDirExtractorInstructionsFqpn);
 
                 gobiiExtractorInstructionsWithStatus = setGobiiExtractorInstructionsStatus(gobiiExtractorInstructionsFromFile,
@@ -359,7 +353,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
             } else if (extractorInstructionsDAO.doesPathExist(fileDirExtractorDoneFqpn)) {
                 //check if file  is already done
 
-                List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = gobiiExtractorInstructionInstructionFilesAccessNew.
+                List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccessGobiiExtractorInstruction.
                         getInstructions(fileDirExtractorDoneFqpn);
 
                 gobiiExtractorInstructionsWithStatus = setGobiiExtractorInstructionsStatus(gobiiExtractorInstructionsFromFile,

@@ -289,10 +289,9 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
             if (instructionsFilesDAO.doesPathExist(instructionFile)) {
 
-
+                InstructionFileAccess<GobiiLoaderInstruction> instructionFileAccessGobiiLoaderInstruction = new InstructionFileAccess<>();
                 List<GobiiLoaderInstruction> instructions =
-                        instructionsFilesDAO
-                                .getLoaderInstructions(instructionFile);
+                        instructionFileAccessGobiiLoaderInstruction.getInstructions(instructionFile);
 
                 if (null != instructions) {
                     returnVal.setInstructionFileName(instructionFileName);

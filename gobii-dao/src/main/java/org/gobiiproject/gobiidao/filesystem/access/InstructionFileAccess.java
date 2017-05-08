@@ -19,6 +19,12 @@ public class InstructionFileAccess<T> {
 
     private final String LOADER_FILE_EXT = ".json";
 
+
+    Class<T[]> type;
+
+    public InstructionFileAccess() {
+    }
+
     public Boolean writeInstructions(String instructionFileFqpn,
                                     T instructions) throws GobiiDaoException {
 
@@ -75,7 +81,7 @@ public class InstructionFileAccess<T> {
     } // writeInstructions
 
 
-    public T getInstructions(String instructionFileFqpn, Class<T> instructionType) {
+    public T getQCInstructions(String instructionFileFqpn, Class<T> instructionType) {
 
         T returnVal = null;
 
@@ -98,5 +104,32 @@ public class InstructionFileAccess<T> {
 
     }
 
+    public List<T> getInstructions(String instructionFileFqpn) throws GobiiDaoException {
+
+        List<T> returnVal = null;
+
+        try {
+
+            T[] instructions = null;
+
+            File file = new File(instructionFileFqpn);
+
+            FileInputStream fileInputStream = new FileInputStream(file);
+
+            org.codehaus.jackson.map.ObjectMapper objectMapper = new org.codehaus.jackson.map.ObjectMapper();
+
+            instructions = objectMapper.readValue(fileInputStream, type);
+
+            returnVal = Arrays.asList(instructions);
+
+        } catch (Exception e) {
+            String message = e.getMessage() + "; fqpn: " + instructionFileFqpn;
+
+            throw new GobiiDaoException(message);
+        }
+
+        return returnVal;
+
+    }
 
 }

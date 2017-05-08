@@ -8,7 +8,6 @@ import org.gobiiproject.gobiidtomapping.DtoMapQCInstructions;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiException;
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiQCComplete;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
@@ -19,8 +18,6 @@ import org.gobiiproject.gobiimodel.utils.email.QCMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 /**
  * Created by Phil on 4/12/2016.
@@ -148,7 +145,7 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
             if (instructionFilesDao.doesPathExist(instructionFileFqpn)) {
                 InstructionFileAccess<QCInstructionsDTO> instructionFileAccess = new InstructionFileAccess<>();
 
-                returnVal = instructionFileAccess.getInstructions(instructionFileFqpn, QCInstructionsDTO.class);
+                returnVal = instructionFileAccess.getQCInstructions(instructionFileFqpn, QCInstructionsDTO.class);
 
                 if (null != returnVal) {
 
