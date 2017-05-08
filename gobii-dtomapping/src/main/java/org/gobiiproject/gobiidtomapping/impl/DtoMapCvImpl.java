@@ -7,6 +7,7 @@ import org.gobiiproject.gobiidtomapping.DtoMapCv;
 import org.gobiiproject.gobiidtomapping.DtoMapCvGroup;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
+import org.gobiiproject.gobiimodel.headerlesscontainer.CvGroupDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,8 @@ public class DtoMapCvImpl implements DtoMapCv {
     @Autowired
     DtoMapCvGroup dtoMapCvGroup;
 
-    public final Integer GROUP_TYPE_SYSTEM = 2;
+    public final Integer GROUP_TYPE_SYSTEM = 1;
+    public final Integer GROUP_TYPE_USER = 2;
 
     @Override
     public List<CvDTO> getCvs() throws GobiiDtoMappingException {
@@ -48,7 +50,7 @@ public class DtoMapCvImpl implements DtoMapCv {
                 returnVal.add(currentCvDTO);
             }
         } catch (SQLException e) {
-            LOGGER.error("Gobii Mapping error" ,e);
+            LOGGER.error("Gobii Mapping error", e);
             throw new GobiiDtoMappingException(e);
         }
 
@@ -84,24 +86,54 @@ public class DtoMapCvImpl implements DtoMapCv {
     public CvDTO createCv(CvDTO cvDTO) throws GobiiDtoMappingException {
         CvDTO returnVal = cvDTO;
 
-        Integer groupType = dtoMapCvGroup.getGroupTypeForGroupId(cvDTO.getGroupId());
+        Integer groupIdForUserGroup = this.getUserCvGroupId(cvDTO);
 
-        if(groupType.equals(GROUP_TYPE_SYSTEM)) {
+        if (groupIdForUserGroup > 0 ) {
 
-
+            returnVal.setGroup(groupIdForUserGroup);
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             Integer cvId = rsCvDao.createCv(parameters);
             returnVal.setCvId(cvId);
 
         } else {
 
-            LOGGER.error("Cannot create cv term that belongs to a system group");
-            throw new GobiiDtoMappingException("Cannot create cv term that belongs to a cvgroup of type system");
+            throw new GobiiDtoMappingException("There is no user cvgroiup for the specified CV group: " + cvDTO.getCvId().toString());
 
         }
 
         return returnVal;
     }
+
+    private Integer getUserCvGroupId(CvDTO cvDto) throws GobiiDtoMappingException {
+
+        Integer returnVal;
+
+        if (cvDto != null) {
+
+            if (cvDto.getGroupId() != null && cvDto.getGroupId() > 0) {
+
+                CvGroupDTO cvGroupDTOCandidate = this.dtoMapCvGroup.getCvGroup(cvDto.getGroupId());
+                if (cvGroupDTOCandidate.getGroupType().equals(this.GROUP_TYPE_USER)) {
+
+                    returnVal = cvGroupDTOCandidate.getCvGroupId();
+
+                } else {
+
+                    CvGroupDTO cvGroupDTOUser = this.dtoMapCvGroup.getUserCvByGroupName(cvGroupDTOCandidate.getName());
+                    returnVal = cvGroupDTOUser.getCvGroupId();
+                }
+
+            } else {
+                throw new GobiiDtoMappingException("The input CvDTO does not have a group id");
+            }
+
+        } else {
+            throw new GobiiDtoMappingException("The input CvDTO is null");
+        }
+
+        return returnVal;
+    }
+
 
     @Override
     public CvDTO replaceCv(Integer cvId, CvDTO cvDTO) throws GobiiDtoMappingException {
@@ -110,7 +142,7 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         CvDTO currentCvDTO = getCvDetails(cvId);
 
-        if(currentCvDTO.getGroupType().equals(GROUP_TYPE_SYSTEM)) {
+        if (currentCvDTO.getGroupType().equals(GROUP_TYPE_SYSTEM)) {
 
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             parameters.put("cvId", cvId);
@@ -133,7 +165,7 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         CvDTO returnVal = cvDTO;
 
-        if(cvDTO.getGroupType().equals(GROUP_TYPE_SYSTEM)){
+        if (cvDTO.getGroupType().equals(GROUP_TYPE_SYSTEM)) {
 
             returnVal.setEntityStatus(0);
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
@@ -147,7 +179,7 @@ public class DtoMapCvImpl implements DtoMapCv {
             returnVal.setDefinition(null);
             returnVal.setRank(null);
 
-        } else{
+        } else {
 
             LOGGER.error("Cannot delete cv term that belongs to a system group");
             throw new GobiiDtoMappingException("The specified cvId ("
@@ -181,7 +213,7 @@ public class DtoMapCvImpl implements DtoMapCv {
         } catch (SQLException e) {
 
             LOGGER.error("Gobii Mapping Error", e);
-            throw  new GobiiDtoMappingException(e);
+            throw new GobiiDtoMappingException(e);
         }
 
         return returnVal;

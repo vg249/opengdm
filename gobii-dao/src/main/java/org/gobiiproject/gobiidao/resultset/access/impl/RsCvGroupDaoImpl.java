@@ -4,8 +4,10 @@ import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsCvGroupDao;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpCvGroupById;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetCvItemsByGroupId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetGroupTypeByGroupId;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpUserCvGroupByName;
 import org.hibernate.exception.SQLGrammarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +75,60 @@ public class RsCvGroupDaoImpl implements RsCvGroupDao {
             storedProcExec.doWithConnection(spGetGroupTypeByGroupId);
 
             returnVal = spGetGroupTypeByGroupId.getResultSet();
+
+
+        } catch (SQLGrammarException e) {
+
+            LOGGER.error("Error retrieving group type " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+
+        }
+
+        return returnVal;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getUserCvGroupByName(String groupName) throws GobiiDaoException {
+
+        ResultSet returnVal;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("groupName", groupName);
+            SpUserCvGroupByName spUserCvGroupByName = new SpUserCvGroupByName(parameters);
+
+            storedProcExec.doWithConnection(spUserCvGroupByName);
+
+            returnVal = spUserCvGroupByName.getResultSet();
+
+
+        } catch (SQLGrammarException e) {
+
+            LOGGER.error("Error retrieving group type " + e.getSQL(), e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+
+        }
+
+        return returnVal;
+    }
+
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public ResultSet getCvGroupById(Integer groupId) throws GobiiDaoException {
+        ResultSet returnVal;
+
+        try {
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("groupId", groupId);
+            SpCvGroupById spCvGroupById = new SpCvGroupById(parameters);
+
+            storedProcExec.doWithConnection(spCvGroupById);
+
+            returnVal = spCvGroupById.getResultSet();
 
 
         } catch (SQLGrammarException e) {
