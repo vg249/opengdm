@@ -146,9 +146,9 @@ public class ProcessMessage extends MailMessage {
      * @return this object
      */
     public ProcessMessage addPath(String type,String path){
-//    	if(new File(path).length() > 1){
+    	if(new File(path).length() > 1){
     		paths.add(new HTMLTableEntity(type,path,sizeToReadable(new File(path).length())));
-//    	}
+    	}
         return this;
     }
     
