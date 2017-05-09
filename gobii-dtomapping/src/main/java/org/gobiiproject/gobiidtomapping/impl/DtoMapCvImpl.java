@@ -8,6 +8,7 @@ import org.gobiiproject.gobiidtomapping.DtoMapCvGroup;
 import org.gobiiproject.gobiidtomapping.GobiiDtoMappingException;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.CvGroupDTO;
+import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,6 @@ public class DtoMapCvImpl implements DtoMapCv {
     @Autowired
     DtoMapCvGroup dtoMapCvGroup;
 
-    public final Integer GROUP_TYPE_SYSTEM = 1;
-    public final Integer GROUP_TYPE_USER = 2;
 
     @Override
     public List<CvDTO> getCvs() throws GobiiDtoMappingException {
@@ -97,8 +96,12 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         } else {
 
-            throw new GobiiDtoMappingException("There is no user cvgroiup for the specified CV group: " + cvDTO.getCvId().toString());
+            String message = "There is no user cvgroup for the specified CV group";
+            if( cvDTO != null && cvDTO.getGroupId() != null ) {
+                message += ": " + cvDTO.getGroupId().toString();
+            }
 
+            throw new GobiiDtoMappingException(message);
         }
 
         return returnVal;
@@ -113,7 +116,7 @@ public class DtoMapCvImpl implements DtoMapCv {
             if (cvDto.getGroupId() != null && cvDto.getGroupId() > 0) {
 
                 CvGroupDTO cvGroupDTOCandidate = this.dtoMapCvGroup.getCvGroup(cvDto.getGroupId());
-                if (cvGroupDTOCandidate.getGroupType().equals(this.GROUP_TYPE_USER)) {
+                if (cvGroupDTOCandidate.getGroupType().equals(GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId())) {
 
                     returnVal = cvGroupDTOCandidate.getCvGroupId();
 
@@ -155,13 +158,22 @@ public class DtoMapCvImpl implements DtoMapCv {
 
             } else {
 
-                LOGGER.error("There is no cv with id " + cvId.toString());
-                throw new GobiiDtoMappingException("There is no cv with id " + cvId.toString());
+                String message = "There is no cv for id";
+                if( cvDTO != null  ) {
+                    message += ": " + cvId.toString();
+                }
+
+                LOGGER.error(message);
+                throw new GobiiDtoMappingException(message);
             }
 
         } else {
 
-            throw new GobiiDtoMappingException("There is no user cvgroup for the specified CV group: " + cvDTO.getCvId().toString());
+            String message = "There is no user cvgroup for the specified CV group";
+            if( cvDTO != null && cvDTO.getGroupId() != null  ) {
+                message += ": " + cvDTO.getGroupId().toString();
+            }
+            throw new GobiiDtoMappingException(message);
 
         }
 
@@ -173,7 +185,7 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         CvDTO returnVal = cvDTO;
 
-        if (cvDTO.getGroupType().equals(GROUP_TYPE_USER)) {
+        if (cvDTO.getGroupType().equals(GobiiCvGroupType.GROUP_TYPE_USER.getGroupTypeId())) {
 
             returnVal.setEntityStatus(0);
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
@@ -189,10 +201,13 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         } else {
 
-            LOGGER.error("Cannot delete cv term that belongs to a system group");
-            throw new GobiiDtoMappingException("The specified cvId ("
-                    + cvDTO.getCvId()
-                    + ") belongs to a cvgroup of type system");
+            String message = "Cannot delete cv term that belongs to a system group";
+            if( cvDTO != null && cvDTO.getCvId() != null ) {
+                message += ": " + cvDTO.getCvId().toString();
+            }
+
+            LOGGER.error(message);
+            throw new GobiiDtoMappingException(message);
 
         }
 

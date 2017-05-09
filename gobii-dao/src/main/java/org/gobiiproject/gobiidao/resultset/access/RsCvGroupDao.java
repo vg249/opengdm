@@ -13,4 +13,5 @@ public interface RsCvGroupDao {
     ResultSet getCvsByGroupId(Integer groupId) throws GobiiDaoException;
     ResultSet getGroupTypeForGroupId(Integer groupId) throws GobiiDaoException;
     ResultSet getUserCvGroupByName(String groupName) throws GobiiDaoException;
+    ResultSet getCvGroupsForType(Integer groupType) throws GobiiDaoException;
 }
