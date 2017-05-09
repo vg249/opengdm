@@ -549,13 +549,7 @@ public class GobiiExtractor {
 		return jobName;
 	}
 
-	private static String getJobName(String cropName, GobiiDataSetExtract extract) {
-		//@Siva get confirmation on lowercase crop name?
-		cropName=cropName.charAt(0)+cropName.substring(1).toLowerCase();
-		String jobName="[GOBII - Extractor]: " + cropName + " - extraction of \"" + extract.getGobiiFileType() + "\"";
-		return jobName;
-	}
-	
+
 	private static String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder,String posFile) throws FileNotFoundException{
 		return getHDF5GenoFromSampleList(markerFast,errorFile,tempFolder,posFile,null);
 	}
