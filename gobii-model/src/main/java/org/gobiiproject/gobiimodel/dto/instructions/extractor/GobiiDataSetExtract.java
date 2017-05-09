@@ -36,6 +36,8 @@ public class GobiiDataSetExtract {
     private List<Integer> platformIds = new ArrayList<>();
     private GobiiSampleListType gobiiSampleListType;
 
+    private String contactEmail;
+    private Integer contactId;
 
     public GobiiExtractFilterType getGobiiExtractFilterType() {
         return gobiiExtractFilterType;
@@ -150,4 +152,11 @@ public class GobiiDataSetExtract {
         this.dataSet = dataSet;
     }
 
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public String getContactId() {
+        return contactEmail;
+    }
 }
