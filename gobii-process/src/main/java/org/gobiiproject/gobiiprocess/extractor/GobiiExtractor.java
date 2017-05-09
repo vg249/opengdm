@@ -98,7 +98,9 @@ public class GobiiExtractor {
 			logError("Extractor","Failure to read Configurations",e);
 			return;
 		}
+
 		ProcessMessage pm = new ProcessMessage();
+
 		MailInterface mailInterface=new MailInterface(configuration);
 		String instructionFile=null;
 		if(args.length==0 ||args[0].equals("")){
@@ -111,6 +113,8 @@ public class GobiiExtractor {
 		else{
 			instructionFile=args[0];
 		}
+		
+		startTime = System.currentTimeMillis();
 
 		startTime = System.currentTimeMillis();
 
@@ -545,6 +549,13 @@ public class GobiiExtractor {
 		return jobName;
 	}
 
+	private static String getJobName(String cropName, GobiiDataSetExtract extract) {
+		//@Siva get confirmation on lowercase crop name?
+		cropName=cropName.charAt(0)+cropName.substring(1).toLowerCase();
+		String jobName="[GOBII - Extractor]: " + cropName + " - extraction of \"" + extract.getGobiiFileType() + "\"";
+		return jobName;
+	}
+	
 	private static String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder,String posFile) throws FileNotFoundException{
 		return getHDF5GenoFromSampleList(markerFast,errorFile,tempFolder,posFile,null);
 	}
