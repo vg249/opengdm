@@ -151,6 +151,21 @@ public class ProcessMessage extends MailMessage {
     	}
         return this;
     }
+
+    /***
+     * Get destination path for instruction file (done directory)
+     * @param type type of file
+     * @param path current path to get the file length
+     * @param donePath Destination path (final path or instruction file)
+     * @return
+     */
+    public ProcessMessage addPath(String type, String path, String donePath){
+        String pathFinal = donePath + new File(path).getName();
+        if(new File(path).length() > 1){
+            paths.add(new HTMLTableEntity(type,pathFinal,sizeToReadable(new File(path).length())));
+        }
+        return this;
+    }
     
     /**
      * Set status line in HTML format. format includes font size and color
