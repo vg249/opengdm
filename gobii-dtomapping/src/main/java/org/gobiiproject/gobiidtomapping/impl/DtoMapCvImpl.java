@@ -140,20 +140,28 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         CvDTO returnVal = cvDTO;
 
-        CvDTO currentCvDTO = getCvDetails(cvId);
+        Integer groupIdForUserGroup = this.getUserCvGroupId(cvDTO);
 
-        if (currentCvDTO.getGroupType().equals(GROUP_TYPE_SYSTEM)) {
+        if (groupIdForUserGroup > 0 ) {
 
-            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
-            parameters.put("cvId", cvId);
-            rsCvDao.updateCv(parameters);
+            CvDTO currentCvDTO = getCvDetails(cvId);
+
+            if (currentCvDTO.getCvId() > 0 ) {
+
+                cvDTO.setGroup(groupIdForUserGroup);
+                cvDTO.setCvId(cvId);
+                Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+                rsCvDao.updateCv(parameters);
+
+            } else {
+
+                LOGGER.error("There is no cv with id " + cvId.toString());
+                throw new GobiiDtoMappingException("There is no cv with id " + cvId.toString());
+            }
 
         } else {
 
-            LOGGER.error("Cannot update cv term that belongs to a system group");
-            throw new GobiiDtoMappingException("The specified cvId ("
-                    + cvId
-                    + ") belongs to a cvgroup of type system");
+            throw new GobiiDtoMappingException("There is no user cvgroup for the specified CV group: " + cvDTO.getCvId().toString());
 
         }
 
@@ -165,7 +173,7 @@ public class DtoMapCvImpl implements DtoMapCv {
 
         CvDTO returnVal = cvDTO;
 
-        if (cvDTO.getGroupType().equals(GROUP_TYPE_SYSTEM)) {
+        if (cvDTO.getGroupType().equals(GROUP_TYPE_USER)) {
 
             returnVal.setEntityStatus(0);
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);

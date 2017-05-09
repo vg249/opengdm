@@ -233,9 +233,13 @@ public class DtoCrudRequestCvTest implements DtoCrudRequestTest {
 
         String newName = UUID.randomUUID().toString();
         cvDTOReceived.setTerm(newName);
+
+        cvDTOReceived.setGroupId(); // gobii_datawarehouse
+
         restResourceForGetById.setParamValue("id", cvDTOReceived.getCvId().toString());
         PayloadEnvelope<CvDTO> cvDTOResponseEnvelopeUpdate = restResourceForGetById.put(CvDTO.class,
                 new PayloadEnvelope<>(cvDTOReceived, GobiiProcessType.UPDATE));
+
 
 
         Assert.assertTrue("The error message should contain 'belongs to a cvgroup of type system'",
