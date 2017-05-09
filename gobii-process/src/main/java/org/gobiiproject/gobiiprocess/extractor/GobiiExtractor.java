@@ -46,6 +46,7 @@ public class GobiiExtractor {
 	private static boolean verbose;
 	private static String rootDir="../";
 	private static String markerListOverrideLocation=null;
+	//To calculate RunTime of Extraction
 	private static long startTime;
 	private static long endTime;
 	private static long duration;
@@ -59,7 +60,7 @@ public class GobiiExtractor {
          		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
          		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
 				.addOption("m", "markerList", true, "Fully qualified path to marker list files - (Debugging, forces marker list extract)");
-        
+
         CommandLineParser parser = new DefaultParser();
         try{
             CommandLine cli = parser.parse( o, args );
@@ -79,12 +80,12 @@ public class GobiiExtractor {
 
             System.exit(2);
         }
-		
+
      	String extractorScriptPath=rootDir+"extractors/";
     	pathToHDF5=extractorScriptPath+"hdf5/bin/";
-    	
+
     	if(propertiesFile==null)propertiesFile=rootDir+"config/gobii-web.xml";
-		
+
 		boolean success=true;
 		ConfigSettings configuration=null;
 		try {
@@ -93,7 +94,7 @@ public class GobiiExtractor {
 			logError("Extractor","Failure to read Configurations",e);
 			return;
 		}
-		ProcessMessage pm = new ProcessMessage();		
+		ProcessMessage pm = new ProcessMessage();
 		MailInterface mailInterface=new MailInterface(configuration);
 		String instructionFile=null;
 		if(args.length==0 ||args[0].equals("")){
@@ -106,7 +107,7 @@ public class GobiiExtractor {
 		else{
 			instructionFile=args[0];
 		}
-		
+
 		startTime = System.currentTimeMillis();
 
 		List<GobiiExtractorInstruction> list= parseExtractorInstructionFile(instructionFile);
@@ -527,14 +528,19 @@ public class GobiiExtractor {
 		}
 	}
 
-
+    /**
+     * To draft JobName for eMail notification
+     * @param cropName - From inst
+     * @param extract
+     * @return
+     */
 	private static String getJobName(String cropName, GobiiDataSetExtract extract) {
 		//@Siva get confirmation on lowercase crop name?
 		cropName=cropName.charAt(0)+cropName.substring(1).toLowerCase();
 		String jobName="[GOBII - Extractor]: " + cropName + " - extraction of \"" + extract.getGobiiFileType() + "\"";
 		return jobName;
 	}
-	
+
 	private static String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder,String posFile) throws FileNotFoundException{
 		return getHDF5GenoFromSampleList(markerFast,errorFile,tempFolder,posFile,null);
 	}
@@ -690,7 +696,7 @@ public class GobiiExtractor {
 	public static List<GobiiExtractorInstruction> parseExtractorInstructionFile(String filename){
 		ObjectMapper objectMapper = new ObjectMapper();
 		GobiiExtractorInstruction[] file = null;
-		 
+
 		try {
 			file = objectMapper.readValue(new FileInputStream(filename), GobiiExtractorInstruction[].class);
 		} catch (Exception e) {
@@ -713,7 +719,7 @@ public class GobiiExtractor {
 		return crop;
 	}
 
-	
+
 	private static String getLogName(GobiiExtractorInstruction gli, CropConfig config, Integer dsid) {
 		return getLogName(gli.getDataSetExtracts().get(0),config,dsid);
 	 }
