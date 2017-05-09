@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -33,6 +34,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtrac
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
@@ -60,7 +62,8 @@ public class GobiiExtractor {
          		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
          		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
 				.addOption("m", "markerList", true, "Fully qualified path to marker list files - (Debugging, forces marker list extract)");
-
+			o.addOption("kaf","keepAllFiles", false, "keep all temporary files");
+        
         CommandLineParser parser = new DefaultParser();
         try{
             CommandLine cli = parser.parse( o, args );
@@ -72,6 +75,7 @@ public class GobiiExtractor {
             }
             if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
             if(cli.hasOption("markerList")) markerListOverrideLocation=cli.getOptionValue("markerList");
+			if(cli.hasOption("keepAllFiles")) FileSystemInterface.keepAllFiles(true);
             args=cli.getArgs();//Remaining args passed through
 
         }catch(org.apache.commons.cli.ParseException exp ) {
@@ -310,7 +314,7 @@ public class GobiiExtractor {
 							List<String> sampleList = extract.getSampleList();
 							String sampleListFile="";
 							if(sampleList!=null && !sampleList.isEmpty()){
-								sampleListFile = createTempFileForMarkerList(extractDir,sampleList);
+								sampleListFile = createTempFileForMarkerList(extractDir,sampleList, "sampleList");
 							}
 							else if(extract.getListFileName()!=null){
 								sampleListFile = extractDir+extract.getListFileName();
@@ -519,7 +523,7 @@ public class GobiiExtractor {
 				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 			}catch(Exception e){
 					ErrorLogger.logError("GobiiExtractor","Uncaught fatal error found in program. Contact a programmer.",e);
-					HelperFunctions.sendEmail("Hi.\n\n+"+
+					HelperFunctions.sendEmail("Hi.\n\n"+
 
 							"I'm sorry, but your extract failed for reasons beyond your control.\n"+
 							"I'm going to dump a message of the error here so a programmer can determine why.\n\n\n"+
@@ -544,6 +548,27 @@ public class GobiiExtractor {
 	private static String getHDF5GenoFromMarkerList(boolean markerFast, String errorFile, String tempFolder,String posFile) throws FileNotFoundException{
 		return getHDF5GenoFromSampleList(markerFast,errorFile,tempFolder,posFile,null);
 	}
+
+	private static HashMap<String,String> getSamplePosFromFile(String inputFile) throws FileNotFoundException {
+		HashMap<String, String> map = new HashMap<String, String>();
+		BufferedReader sampR = new BufferedReader(new FileReader(inputFile));
+		try{
+			while (sampR.ready()) {
+					String sampLine = sampR.readLine();
+					if (sampLine != null) {
+						String[] sampSplit = sampLine.split("\t");
+						if(sampSplit.length>1){
+							map.put(sampSplit[0],sampSplit[1]);
+						}
+					}
+				}
+			}
+		catch(Exception e){
+			ErrorLogger.logError("GobiiExtractor", "Unexpected error in reading sample file",e);
+		}
+		return map;
+	}
+
 	private static String getHDF5GenoFromSampleList(boolean markerFast, String errorFile, String tempFolder,String posFile, String samplePosFile) throws FileNotFoundException{
 		if(!new File(posFile).exists()){
 			ErrorLogger.logError("Genotype Matrix","No positions generated - Likely no data");
@@ -551,32 +576,46 @@ public class GobiiExtractor {
 		}
 		BufferedReader posR=new BufferedReader(new FileReader(posFile));
 		BufferedReader sampR=null;
-		if(samplePosFile!=null)sampR=new BufferedReader(new FileReader(samplePosFile));
+		boolean hasSampleList=false;
+		HashMap<String,String> samplePos=null;
+		if(checkFileExistance(samplePosFile)){
+			hasSampleList=true;
+			sampR=new BufferedReader(new FileReader(samplePosFile));
+			samplePos=getSamplePosFromFile(samplePosFile);
+		}
         StringBuilder genoFileString=new StringBuilder();
 		try{
 			posR.readLine();//header
 			if(sampR!=null)sampR.readLine();
 			while(posR.ready()) {
 				String[] line = posR.readLine().split("\t");
-				String sampLine=null;
-				if(sampR!=null) sampLine= sampR.readLine();
 				if(line.length < 2){
 					ErrorLogger.logDebug("MarkerList","Skipping line " + Arrays.deepToString(line));
 					continue;
 				}
 				int dsID=Integer.parseInt(line[0]);
+
 				String positionList=line[1].replace(',','\n');
 				String positionListFileLoc=tempFolder+"position.list";
 				FileSystemInterface.rmIfExist(positionListFileLoc);
 				FileWriter w = new FileWriter(positionListFileLoc);
 				w.write(positionList);
 				w.close();
+
 				String sampleList=null;
-				if(sampLine!=null){
-					sampleList=sampLine.split("\t")[1];
+				if(hasSampleList){
+					sampleList=samplePos.get(line[0]);
 				}
-				String genoFile=getHDF5Genotype(markerFast, errorFile,dsID,tempFolder,positionListFileLoc,sampleList);
-				genoFileString.append(" "+genoFile);
+				String genoFile=null;
+				if(!hasSampleList || (sampleList!=null)) {
+					genoFile = getHDF5Genotype(markerFast, errorFile, dsID, tempFolder, positionListFileLoc, sampleList);
+				}
+				else{
+					//We have a marker position but not a sample position. Do not create a genotype file in the first place
+				}
+				if(genoFile!=null){
+					genoFileString.append(" "+genoFile);
+				}
 			}
 		}catch(IOException e) {
 			ErrorLogger.logError("GobiiExtractor", "MarkerList reading failed", e);
@@ -624,9 +663,8 @@ public class GobiiExtractor {
 
 		if(markerList!=null) {
 			String hdf5Extractor=pathToHDF5+"fetchmarkerlist";
-			ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+HDF5File+" "+markerList+" "+genoFile);
-			HelperFunctions.tryExec(hdf5Extractor + " " +HDF5File+" "+markerList+" "+genoFile, null, errorFile);
-			//TODO: Orientation is not respected here
+			ErrorLogger.logInfo("Extractor","Executing: " + hdf5Extractor+" "+ ordering +" "+HDF5File+" "+markerList+" "+genoFile);
+			HelperFunctions.tryExec(hdf5Extractor + " " + ordering+" " + HDF5File+" "+markerList+" "+genoFile, null, errorFile);
 		}
 		else {
 			String hdf5Extractor=pathToHDF5+"dumpdataset";
@@ -649,13 +687,14 @@ public class GobiiExtractor {
 		String tmpFile=filename+".tmp";
 		FileSystemInterface.mv(filename,tmpFile);
 		String cutString=getCutString(sampleList);
-		if(markerFast) {
+		if(!markerFast) {
 			String sedString=cutString.replaceAll(",","p;");//1,2,3 => 1p;2p;3   (p added later)
-			tryExec("sed -n "+sedString+"p",filename,errorFile,tmpFile);
+			tryExec("sed -n "+sedString+"p",filename,errorFile,tmpFile); //Sed parameters need double quotes to be a single parameter
 		}
 		else{
 			tryExec("cut -f"+getCutString(sampleList),filename,errorFile,tmpFile);
 		}
+		rmIfExist(tmpFile);
 	}
 
 	/**
@@ -753,8 +792,8 @@ public class GobiiExtractor {
 	 * @param markerList List to go into file, newline delimited
 	 * @return location of new file.
 	 */
-	private static String createTempFileForMarkerList(String tmpDir,List<String> markerList){
-		String tempFileLocation=tmpDir+"markerList.tmp";
+	private static String createTempFileForMarkerList(String tmpDir,List<String> markerList,String tmpFilename){
+		String tempFileLocation=tmpDir+tmpFilename+".tmp";
 		try {
 			FileWriter f = new FileWriter(tempFileLocation);
 			for(String marker:markerList){
@@ -768,8 +807,12 @@ public class GobiiExtractor {
 		}
 		return tempFileLocation;
 	}
+	private static String createTempFileForMarkerList(String tmpDir,List<String> markerList){
+		return createTempFileForMarkerList(tmpDir,markerList,"markerList");
+	}
 
-	private static boolean addSlashesToBiAllelicData(String genoFile, String extractDir, GobiiDataSetExtract extract) throws Exception {
+
+		private static boolean addSlashesToBiAllelicData(String genoFile, String extractDir, GobiiDataSetExtract extract) throws Exception {
 		Path SSRFilePath = Paths.get(genoFile);
 		File SSRFile = new File(SSRFilePath.toString());
 		if (SSRFile.exists()) {
