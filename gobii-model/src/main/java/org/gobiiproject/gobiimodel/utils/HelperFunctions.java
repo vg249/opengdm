@@ -364,6 +364,11 @@ public class HelperFunctions {
 	}
 
 
+	/**
+	 * convert file size in to human readable format
+	 * @param bytes
+	 * @return String
+	 */
 	public static String sizeToReadable(long bytes) {
 		int unit = 1024;
 		if (bytes < unit) return bytes + " B";
@@ -372,6 +377,11 @@ public class HelperFunctions {
 		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 
+	/**
+	 * Convert String's first character into uppercase
+	 * @param original
+	 * @return
+	 */
 	public static String uppercaseFirstLetter(String original) {
 		if (original == null || original.length() == 0) {
 			return original;
@@ -379,6 +389,11 @@ public class HelperFunctions {
 		return original.substring(0, 1).toUpperCase() + original.substring(1);
 	}
 
+	/**
+	 * Convert miliseconds to human readable time format : 00 days 00 hrs 00 minutes 00 secs
+	 * @param millis
+	 * @return
+	 */
 	public static String getDurationReadable(long millis) {
 		if(millis < 0) {
 			throw new IllegalArgumentException("Duration must be greater than zero!");

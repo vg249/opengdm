@@ -48,6 +48,7 @@ public class GobiiExtractor {
 	private static boolean verbose;
 	private static String rootDir="../";
 	private static String markerListOverrideLocation=null;
+	//To calculate RunTime of Extraction
 	private static long startTime;
 	private static long endTime;
 	private static long duration;
@@ -531,7 +532,12 @@ public class GobiiExtractor {
 		}
 	}
 
-
+    /**
+     * To draft JobName for eMail notification
+     * @param cropName - From inst
+     * @param extract
+     * @return
+     */
 	private static String getJobName(String cropName, GobiiDataSetExtract extract) {
 		//@Siva get confirmation on lowercase crop name?
 		cropName=cropName.charAt(0)+cropName.substring(1).toLowerCase();
