@@ -2,7 +2,7 @@ package org.gobiiproject.gobiiclient.dtorequests.infrastructure;
 
 import org.gobiiproject.gobiiclient.core.common.TestConfiguration;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.CropConfig;
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.CropDbConfig;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
@@ -339,24 +339,24 @@ public class TestGobiiConfig {
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
 
-        CropConfig cropConfig = configSettings.getCropConfig(cropId);
+        GobiiCropConfig gobiiCropConfig = configSettings.getCropConfig(cropId);
         Assert.assertNotNull("The crop was not created: " + cropId,
-                cropConfig);
+                gobiiCropConfig);
 
         Assert.assertTrue("The host name does not match",
-                cropConfig.getServiceDomain().equals(host));
+                gobiiCropConfig.getServiceDomain().equals(host));
 
         Assert.assertTrue("The port does not match: should be "
                         + port.toString()
                         + "; got: "
-                        + cropConfig.getServicePort(),
-                cropConfig.getServicePort().equals(port));
+                        + gobiiCropConfig.getServicePort(),
+                gobiiCropConfig.getServicePort().equals(port));
 
         Assert.assertTrue("Crop is not set to active by default",
-                cropConfig.isActive());
+                gobiiCropConfig.isActive());
 
         Assert.assertTrue("The context path not match",
-                cropConfig.getServiceAppRoot().equals(contextPathWithTerminator));
+                gobiiCropConfig.getServiceAppRoot().equals(contextPathWithTerminator));
 
     }
 
@@ -768,11 +768,11 @@ public class TestGobiiConfig {
         Assert.assertTrue("Command failed: " + createDirectoriesCommand, succeeded);
 
         ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
-        for (CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
+        for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
             for (GobiiFileProcessDir currentRelativeDirectory : EnumSet.allOf(GobiiFileProcessDir.class)) {
 
-                String currentCropDir = configSettings.getProcessingPath(currentCropConfig.getGobiiCropType(), currentRelativeDirectory);
+                String currentCropDir = configSettings.getProcessingPath(currentGobiiCropConfig.getGobiiCropType(), currentRelativeDirectory);
                 File file = new File(currentCropDir);
                 Assert.assertTrue("Crop directory was not created: " + currentCropDir, file.exists());
                 Assert.assertTrue("Crop fqpn was not created as a directory: " + currentCropDir, file.isDirectory());

@@ -19,16 +19,16 @@ public class ServerConfig {
     public ServerConfig() {
     }
 
-    public ServerConfig(CropConfig cropConfig,
+    public ServerConfig(GobiiCropConfig gobiiCropConfig,
                         String extractorInstructionsDir,
                         String loaderInstructionsDir,
                         String intermediateFilesDir,
                         String rawUserFilesDir) {
 
-        this.port = cropConfig.getServicePort();
-        this.domain = cropConfig.getServiceDomain();
-        this.contextRoot = cropConfig.getServiceAppRoot();
-        this.gobiiCropType = cropConfig.getGobiiCropType();
+        this.port = gobiiCropConfig.getServicePort();
+        this.domain = gobiiCropConfig.getServiceDomain();
+        this.contextRoot = gobiiCropConfig.getServiceAppRoot();
+        this.gobiiCropType = gobiiCropConfig.getGobiiCropType();
 
         fileLocations
                 .put(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, extractorInstructionsDir);

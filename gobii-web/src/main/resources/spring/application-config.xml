@@ -451,7 +451,7 @@
     <!--<bean id="configSettings" class="org.gobiiproject.gobiimodel.config.ConfigSettings"/>-->
     <!--&lt;!&ndash;**************** JDBC Configuraiton: RICE *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigRice"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="RICE"/>-->
@@ -475,7 +475,7 @@
 
     <!--&lt;!&ndash;**************** JDBC Configuraiton: WHEAT *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigWheat"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="WHEAT"/>-->
@@ -498,7 +498,7 @@
 
     <!--&lt;!&ndash;**************** JDBC Configuraiton: MAIZE *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigMaize"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="MAIZE"/>-->
@@ -521,7 +521,7 @@
 
     <!--&lt;!&ndash;**************** JDBC Configuraiton: DEV *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigDev"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="DEV"/>-->
@@ -544,7 +544,7 @@
 
     <!--&lt;!&ndash;**************** JDBC Configuraiton: TEST *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigTest"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="TEST"/>-->
@@ -568,7 +568,7 @@
 
     <!--&lt;!&ndash;**************** JDBC Configuraiton: SORGHUM *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigSorghum"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="SORGHUM"/>-->
@@ -591,7 +591,7 @@
 
     <!--&lt;!&ndash;**************** JDBC Configuraiton: CHICKPEA *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigChickpea"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="CHICKPEA"/>-->

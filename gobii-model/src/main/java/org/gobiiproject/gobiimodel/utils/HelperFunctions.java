@@ -12,7 +12,7 @@ import javax.mail.internet.MimeMessage;
 
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.CropConfig;
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.CropDbConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.*;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
@@ -237,7 +237,7 @@ public class HelperFunctions {
 	 }
 	 else return destination+"/"+"digest."+instruction.getTable();
  }
-	public static String getPostgresConnectionString(CropConfig config){
+	public static String getPostgresConnectionString(GobiiCropConfig config){
 	 CropDbConfig crop=config.getCropDbConfig(GobiiDbType.POSTGRESQL);
 	 String ret = "postgresql://"
 	 		+ crop.getUserName()

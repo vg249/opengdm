@@ -6,12 +6,9 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang.math.NumberUtils;
-import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.CropConfig;
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.CropDbConfig;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
@@ -611,8 +608,8 @@ public class GobiiConfig {
 
                 String cropId = commandLine.getOptionValue(CONFIG_CROP_ID);
                 if (configSettings.isCropDefined(cropId)) {
-                    CropConfig cropConfig = configSettings.getCropConfig(cropId);
-                    cropConfig.setActive(true);
+                    GobiiCropConfig gobiiCropConfig = configSettings.getCropConfig(cropId);
+                    gobiiCropConfig.setActive(true);
                 } else {
                     returnVal = false;
                     System.err.println("The specified crop does not exist: " + cropId);
@@ -625,8 +622,8 @@ public class GobiiConfig {
 
                 String cropId = commandLine.getOptionValue(CONFIG_CROP_ID);
                 if (configSettings.isCropDefined(cropId)) {
-                    CropConfig cropConfig = configSettings.getCropConfig(cropId);
-                    cropConfig.setActive(false);
+                    GobiiCropConfig gobiiCropConfig = configSettings.getCropConfig(cropId);
+                    gobiiCropConfig.setActive(false);
                 } else {
                     returnVal = false;
                     System.err.println("The specified crop does not exist: " + cropId);
@@ -896,7 +893,7 @@ public class GobiiConfig {
                         configSettings.setCrop(cropId, true, null, null, null);
                     }
 
-                    CropConfig cropConfig = configSettings.getCropConfig(cropId);
+                    GobiiCropConfig gobiiCropConfig = configSettings.getCropConfig(cropId);
 
                     String contextRoot = null;
                     if (commandLine.hasOption(CONFIG_SVR_OPTIONS_CONTEXT_ROOT)) {
@@ -910,9 +907,9 @@ public class GobiiConfig {
                         argsSet.add(CONFIG_SVR_CROP_WEB);
                         valsSet.add("");
 
-                        cropConfig.setServiceDomain(svrHost);
-                        cropConfig.setServicePort(svrPort);
-                        cropConfig.setServiceAppRoot(contextRoot);
+                        gobiiCropConfig.setServiceDomain(svrHost);
+                        gobiiCropConfig.setServicePort(svrPort);
+                        gobiiCropConfig.setServiceAppRoot(contextRoot);
 
                     } else if (commandLine.hasOption(CONFIG_SVR_CROP_POSTGRES) ||
                             (commandLine.hasOption(CONFIG_SVR_CROP_MONET))) {
@@ -929,7 +926,7 @@ public class GobiiConfig {
                         }
 
 
-                        cropConfig.setCropDbConfig(gobiiDbType,
+                        gobiiCropConfig.setCropDbConfig(gobiiDbType,
                                 svrHost,
                                 contextRoot,
                                 svrPort,
@@ -1151,54 +1148,54 @@ public class GobiiConfig {
                     returnVal = false;
                 }
 
-                for (CropConfig currentCropConfig : configSettings.getActiveCropConfigs()) {
+                for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
 
-                    if (!currentCropConfig.getServiceAppRoot().toLowerCase().contains(currentCropConfig.getGobiiCropType())) {
+                    if (!currentGobiiCropConfig.getServiceAppRoot().toLowerCase().contains(currentGobiiCropConfig.getGobiiCropType())) {
                         System.err.println("The context root "
-                                + currentCropConfig.getServiceAppRoot()
+                                + currentGobiiCropConfig.getServiceAppRoot()
                                 + " does not contain the crop ID "
-                                + currentCropConfig.getGobiiCropType());
+                                + currentGobiiCropConfig.getGobiiCropType());
                         returnVal = false;
                     }
 
-                    if (LineUtils.isNullOrEmpty(currentCropConfig.getGobiiCropType())) {
+                    if (LineUtils.isNullOrEmpty(currentGobiiCropConfig.getGobiiCropType())) {
                         System.err.println("The crop type for the active crop  is not defined");
                         returnVal = false;
                     }
 
 
-                    if (LineUtils.isNullOrEmpty(currentCropConfig.getServiceDomain())) {
-                        System.err.println("The web server host for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
+                    if (LineUtils.isNullOrEmpty(currentGobiiCropConfig.getServiceDomain())) {
+                        System.err.println("The web server host for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
 
                     }
 
 
-                    if (LineUtils.isNullOrEmpty(currentCropConfig.getServiceAppRoot())) {
-                        System.err.println("The web server context path for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
+                    if (LineUtils.isNullOrEmpty(currentGobiiCropConfig.getServiceAppRoot())) {
+                        System.err.println("The web server context path for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
 
                     }
 
 
-                    if (currentCropConfig.getServicePort() == null) {
-                        System.err.println("The web server port for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
+                    if (currentGobiiCropConfig.getServicePort() == null) {
+                        System.err.println("The web server port for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
 
                     }
 
-                    CropDbConfig cropDbConfigPostGres = currentCropConfig.getCropDbConfig(GobiiDbType.POSTGRESQL);
+                    CropDbConfig cropDbConfigPostGres = currentGobiiCropConfig.getCropDbConfig(GobiiDbType.POSTGRESQL);
                     if (cropDbConfigPostGres == null) {
-                        System.err.println("The postgresdb for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
+                        System.err.println("The postgresdb for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
                     } else {
                         returnVal = returnVal && verifyDbConfig(cropDbConfigPostGres);
                     }
 
-                    CropDbConfig cropDbConfigMonetDB = currentCropConfig.getCropDbConfig(GobiiDbType.MONETDB);
+                    CropDbConfig cropDbConfigMonetDB = currentGobiiCropConfig.getCropDbConfig(GobiiDbType.MONETDB);
                     if (cropDbConfigMonetDB == null) {
-                        System.err.println("The monetdb for the active crop (" + currentCropConfig.getGobiiCropType() + ") is not defined");
+                        System.err.println("The monetdb for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
                     } else {
                         returnVal = returnVal && verifyDbConfig(cropDbConfigMonetDB);
@@ -1435,7 +1432,7 @@ public class GobiiConfig {
                 }
 
                 if (returnVal) {
-                    for (CropConfig currentCrop : configSettings.getActiveCropConfigs()) {
+                    for (GobiiCropConfig currentCrop : configSettings.getActiveCropConfigs()) {
 
                         String warDestinationFqpn = warDestinationRoot + "gobii-" + currentCrop
                                 .getGobiiCropType()

@@ -4,16 +4,12 @@ package org.gobiiproject.gobiimodel.config;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.Root;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This class contains the web server configuration properties necessary for a given
@@ -21,7 +17,7 @@ import java.util.stream.Collectors;
  * for the specific crop.
  */
 @Root
-public class CropConfig {
+public class GobiiCropConfig {
 
 
     @Element(required = false)
@@ -42,15 +38,15 @@ public class CropConfig {
     @ElementMap(required = false)
     private Map<GobiiDbType, CropDbConfig> cropDbConfigsByDbType = new HashMap<>();
 
-    public CropConfig() {
+    public GobiiCropConfig() {
     }
 
-    public CropConfig(String gobiiCropType,
-                      String serviceDomain,
-                      String serviceAppRoot,
-                      Integer servicePort,
-                      boolean isActive,
-                      boolean decrypt) {
+    public GobiiCropConfig(String gobiiCropType,
+                           String serviceDomain,
+                           String serviceAppRoot,
+                           Integer servicePort,
+                           boolean isActive,
+                           boolean decrypt) {
 
         this.gobiiCropType = gobiiCropType;
         this.serviceDomain = serviceDomain;
@@ -84,17 +80,17 @@ public class CropConfig {
                 .setPassword(password);
     }
 
-    public CropConfig setServiceDomain(String serviceDomain) {
+    public GobiiCropConfig setServiceDomain(String serviceDomain) {
         this.serviceDomain = serviceDomain;
         return this;
     }
 
-    public CropConfig setServicePort(Integer servicePort) {
+    public GobiiCropConfig setServicePort(Integer servicePort) {
         this.servicePort = servicePort;
         return this;
     }
 
-    public CropConfig setCropDbConfigsByDbType(Map<GobiiDbType, CropDbConfig> cropDbConfigsByDbType) {
+    public GobiiCropConfig setCropDbConfigsByDbType(Map<GobiiDbType, CropDbConfig> cropDbConfigsByDbType) {
         this.cropDbConfigsByDbType = cropDbConfigsByDbType;
         return this;
     }
@@ -113,7 +109,7 @@ public class CropConfig {
         return isActive;
     }
 
-    public CropConfig setActive(boolean active) {
+    public GobiiCropConfig setActive(boolean active) {
         isActive = active;
         return this;
     }
@@ -123,7 +119,7 @@ public class CropConfig {
         return LineUtils.terminateDirectoryPath(this.serviceAppRoot);
     }
 
-    public CropConfig setServiceAppRoot(String serviceAppRoot) {
+    public GobiiCropConfig setServiceAppRoot(String serviceAppRoot) {
         this.serviceAppRoot = serviceAppRoot;
         return this;
     }
@@ -132,7 +128,7 @@ public class CropConfig {
         return gobiiCropType;
     }
 
-    public CropConfig setGobiiCropType(String gobiiCropType) {
+    public GobiiCropConfig setGobiiCropType(String gobiiCropType) {
         this.gobiiCropType = gobiiCropType;
         return this;
     }

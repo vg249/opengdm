@@ -13,12 +13,12 @@ import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
-import org.apache.commons.lang.exception.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.*;
@@ -27,12 +27,10 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
@@ -132,14 +130,14 @@ public class GobiiExtractor {
 					ErrorLogger.logError("Extractor", "Unknown Crop Type: " + crop);
 					return;
 				}
-				CropConfig cropConfig = null;
+				GobiiCropConfig gobiiCropConfig = null;
 				try {
-					cropConfig = configuration.getCropConfig(crop);
+					gobiiCropConfig = configuration.getCropConfig(crop);
 				} catch (Exception e) {
 					logError("Extractor", "Unknown exception getting crop", e);
 					return;
 				}
-				if (cropConfig == null) {
+				if (gobiiCropConfig == null) {
 					logError("Extractor", "Unknown Crop Type: " + crop + " in the Configuration File");
 					return;
 				}
@@ -208,7 +206,7 @@ public class GobiiExtractor {
 						case WHOLE_DATASET:
 
 							gobiiMDE = "python " + mdePath +
-									" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
+									" -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig) +
 									" --extractByDataset" +
 									" -m " + markerFile +
 									" -b " + mapsetFile +
@@ -235,7 +233,7 @@ public class GobiiExtractor {
 
 							//Actually call the thing
 							gobiiMDE = "python " + mdePath +
-									" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
+									" -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig) +
 									" --extractByMarkers" +
 									" -m " + markerFile +
 									" -b " + mapsetFile +
@@ -273,7 +271,7 @@ public class GobiiExtractor {
 							}
 
 							gobiiMDE = "python " + mdePath +
-									" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
+									" -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig) +
 									" --extractBySamples" +
 									" -m " + markerFile +
 									" -b " + mapsetFile +
@@ -296,7 +294,7 @@ public class GobiiExtractor {
 					}
 					samplePosFile = sampleFile + ".pos";
 
-					String errorFile = getLogName(extract, cropConfig, datasetId);
+					String errorFile = getLogName(extract, gobiiCropConfig, datasetId);
 					ErrorLogger.logInfo("Extractor", "Executing MDEs");
 					tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
 
@@ -636,11 +634,11 @@ public class GobiiExtractor {
 	}
 
 	
-	private static String getLogName(GobiiExtractorInstruction gli, CropConfig config, Integer dsid) {
+	private static String getLogName(GobiiExtractorInstruction gli, GobiiCropConfig config, Integer dsid) {
 		return getLogName(gli.getDataSetExtracts().get(0),config,dsid);
 	 }
 
-	private static String getLogName(GobiiDataSetExtract gli, CropConfig config, Integer dsid) {
+	private static String getLogName(GobiiDataSetExtract gli, GobiiCropConfig config, Integer dsid) {
 		String cropName=config.getGobiiCropType();
 		String destination=gli.getExtractDestinationDirectory();
 		return destination +"/"+cropName+"_DS-"+dsid+".log";

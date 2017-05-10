@@ -15,7 +15,7 @@ import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
@@ -24,10 +24,7 @@ import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
-import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.filesystem.impl.LoaderInstructionsDAOImpl;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.config.CropDbConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
@@ -42,7 +39,6 @@ import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
 
-import static org.gobiiproject.gobiimodel.types.DataSetType.VCF;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.parseInstructionFile;
@@ -172,20 +168,20 @@ public class GobiiFileReader {
 			logError("Digester","Unknown Crop Type: "+crop);
 			return;
 		}
-		CropConfig cropConfig= null;
+		GobiiCropConfig gobiiCropConfig = null;
 		try {
-			cropConfig = configuration.getCropConfig(crop);
+			gobiiCropConfig = configuration.getCropConfig(crop);
 		} catch (Exception e) {
 			logError("Digester","Unknown loading error",e);
 			return;
 		}
-		if (cropConfig == null) {
+		if (gobiiCropConfig == null) {
 			logError("Digester","Unknown Crop Type: "+crop+" in the Configuration File");
 			return;
 		}
 		if(pathToHDF5Files==null)pathToHDF5Files=cropPath.toString()+"/hdf5/";
 
-		String errorPath=getLogName(zero,cropConfig,crop);
+		String errorPath=getLogName(zero, gobiiCropConfig,crop);
 
 		//TODO: HACK - Job's name is 
 		String jobName = getJobName(crop,list);
@@ -266,7 +262,7 @@ public class GobiiFileReader {
 				}
 			}
 			if (dst != null && inst.getTable().equals(VARIANT_CALL_TABNAME)) {
-				errorPath = getLogName(inst, cropConfig, crop, "Matrix_Processing"); //Temporary Error File Name
+				errorPath = getLogName(inst, gobiiCropConfig, crop, "Matrix_Processing"); //Temporary Error File Name
 				String function = null;
 				boolean functionStripsHeader = false;
 				boolean isSNPSepRemoval=false;
@@ -381,9 +377,9 @@ public class GobiiFileReader {
 		
 		if(success){
 
-			errorPath=getLogName(zero, cropConfig, crop, "IFLs");
+			errorPath=getLogName(zero, gobiiCropConfig, crop, "IFLs");
 			String pathToIFL=loaderScriptPath+"postgres/gobii_ifl/gobii_ifl.py";
-			String connectionString=" -c "+HelperFunctions.getPostgresConnectionString(cropConfig);
+			String connectionString=" -c "+HelperFunctions.getPostgresConnectionString(gobiiCropConfig);
 			
 			//Load PostgreSQL
 			boolean loadedData=false;
@@ -414,7 +410,7 @@ public class GobiiFileReader {
 				ErrorLogger.logError("FileReader", "No new data was uploaded.");
 			}
 			//Load Monet/HDF5
-			errorPath=getLogName(zero, cropConfig, crop, "Matrix_Upload");
+			errorPath=getLogName(zero, gobiiCropConfig, crop, "Matrix_Upload");
 			String variantFilename="DS"+dataSetId;
 			File variantFile=loaderInstructionMap.get(VARIANT_CALL_TABNAME);
 			String markerFileLoc=pathToHDF5Files+"DS"+dataSetId+".marker_id";
@@ -427,9 +423,9 @@ public class GobiiFileReader {
 				String loadVariantMatrix=loaderScriptPath+"monet/loadVariantMatrix.py";
 				//python loadVariantMatrix.py <Dataset Name> <Dataset_Identifier.variant> <Dataset_Identifier.marker_id> <Dataset_Identifier.dnarun_id> <hostname> <port> <dbuser> <dbpass> <dbname>
 				if(false) {//TODO - Turned off MonetDB
-					CropDbConfig monetConf = cropConfig.getCropDbConfig(GobiiDbType.MONETDB);
+					CropDbConfig monetConf = gobiiCropConfig.getCropDbConfig(GobiiDbType.MONETDB);
 					String loadVariantUserPort = monetConf.getHost() + " " + monetConf.getPort() + " " + monetConf.getUserName() + " " + monetConf.getPassword() + " " + monetConf.getDbName();
-					generateIdLists(cropConfig, markerFileLoc, sampleFileLoc, dataSetId, errorPath);
+					generateIdLists(gobiiCropConfig, markerFileLoc, sampleFileLoc, dataSetId, errorPath);
 					ErrorLogger.logDebug("MonetDB", "python " + loadVariantMatrix + " DS" + dataSetId + " " + variantFile.getPath() + " " + new File(markerFileLoc).getAbsolutePath() + " " + new File(sampleFileLoc).getAbsolutePath() + " " + loadVariantUserPort);
 					HelperFunctions.tryExec("python " + loadVariantMatrix + " DS" + dataSetId + " " + variantFile.getPath() + " " + new File(markerFileLoc).getAbsolutePath() + " " + new File(sampleFileLoc).getAbsolutePath() + " " + loadVariantUserPort, null, errorPath);
 					//Clean up marker and sample data
@@ -614,7 +610,7 @@ public class GobiiFileReader {
 	 * @param config Crop configuration
 	 * @return The logfile location for this process
 	 */
-	private static String getLogName(GobiiLoaderInstruction gli,CropConfig config,String cropName){
+	private static String getLogName(GobiiLoaderInstruction gli, GobiiCropConfig config, String cropName){
 		String destination=gli.getGobiiFile().getDestination();
 		String table=gli.getTable();
 		return destination +"/"+cropName+"_Table-"+table+".log";
@@ -626,7 +622,7 @@ public class GobiiFileReader {
 	 * @param config Crop configuration
 	 * @return The logfile location for this process
 	 */
-	private static String getLogName(GobiiLoaderInstruction gli,CropConfig config,String cropName, String process){
+	private static String getLogName(GobiiLoaderInstruction gli, GobiiCropConfig config, String cropName, String process){
 		String destination=gli.getGobiiFile().getDestination();
 		return destination +"/"+cropName+"_Process-"+process+".log";
 	}
@@ -646,17 +642,17 @@ public class GobiiFileReader {
 	/**
 	 * Generates appropriate monetDB files from the MDE by reverse-digesting the data we just loaded.
      * Reason - Ensures Postgres and MonetDB are in sync
-	 * @param cropConfig Connection String
+	 * @param gobiiCropConfig Connection String
 	 * @param markerFile No header
 	 * @param dnaRunFile With header
 	 * @param dsid Because
 	 * @param errorFile temporary file to store error information in
 	 */
-	private static void generateIdLists(CropConfig cropConfig,String markerFile,String dnaRunFile,int dsid,String errorFile){
+	private static void generateIdLists(GobiiCropConfig gobiiCropConfig, String markerFile, String dnaRunFile, int dsid, String errorFile){
 		//Create files and get paths because gobii_mde must run on absolute paths, not relative ones
 		markerFile=new File(markerFile).getAbsolutePath();
 		dnaRunFile=new File(dnaRunFile).getAbsolutePath();
-		String gobiiIFL="python " + extractorScriptPath+"postgres/gobii_mde/gobii_mde.py"+" -c "+HelperFunctions.getPostgresConnectionString(cropConfig)+
+		String gobiiIFL="python " + extractorScriptPath+"postgres/gobii_mde/gobii_mde.py"+" -c "+HelperFunctions.getPostgresConnectionString(gobiiCropConfig)+
 			" -m "+markerFile+".tmp"+
 			" -s "+dnaRunFile+".tmp"+
 			" -d "+dsid;
