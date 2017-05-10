@@ -17,23 +17,11 @@ import java.util.Map;
  * for the specific crop.
  */
 @Root
-public class GobiiCropConfig {
+public class GobiiCropConfig extends ServerBase {
 
 
     @Element(required = false)
     private String gobiiCropType;
-
-    @Element(required = false)
-    private String serviceDomain;
-
-    @Element(required = false)
-    private String serviceAppRoot;
-
-    @Element(required = false)
-    private Integer servicePort;
-
-    @Element(required = false)
-    private boolean isActive;
 
     @ElementMap(required = false)
     private Map<GobiiDbType, CropDbConfig> cropDbConfigsByDbType = new HashMap<>();
@@ -48,12 +36,8 @@ public class GobiiCropConfig {
                            boolean isActive,
                            boolean decrypt) {
 
+        super(serviceDomain,serviceAppRoot,servicePort,isActive);
         this.gobiiCropType = gobiiCropType;
-        this.serviceDomain = serviceDomain;
-        this.serviceAppRoot = serviceAppRoot;
-        this.servicePort = servicePort;
-        this.isActive = isActive;
-
     }
 
     public void setCropDbConfig(GobiiDbType gobiiDbType,
@@ -81,12 +65,12 @@ public class GobiiCropConfig {
     }
 
     public GobiiCropConfig setServiceDomain(String serviceDomain) {
-        this.serviceDomain = serviceDomain;
+        super.setServiceDomain(serviceDomain);
         return this;
     }
 
     public GobiiCropConfig setServicePort(Integer servicePort) {
-        this.servicePort = servicePort;
+        super.setServicePort(servicePort);
         return this;
     }
 
@@ -95,32 +79,14 @@ public class GobiiCropConfig {
         return this;
     }
 
-    public Integer getServicePort() {
-        return servicePort;
-    }
-
-
-    public String getServiceDomain() {
-
-        return serviceDomain;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
     public GobiiCropConfig setActive(boolean active) {
-        isActive = active;
+        super.setActive(active);
         return this;
     }
 
-    public String getServiceAppRoot() {
-
-        return LineUtils.terminateDirectoryPath(this.serviceAppRoot);
-    }
 
     public GobiiCropConfig setServiceAppRoot(String serviceAppRoot) {
-        this.serviceAppRoot = serviceAppRoot;
+        super.setServiceAppRoot(serviceAppRoot);
         return this;
     }
 
