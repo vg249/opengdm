@@ -251,7 +251,7 @@ public class GobiiExtractor {
 							pm.addIdentifier("Export Type", uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase()), null);
 
 
-							pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath());
+							pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 							pm.addPath("Output Directory", extractDir);
 							pm.addPath("Error Log", logFile);
 							pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
