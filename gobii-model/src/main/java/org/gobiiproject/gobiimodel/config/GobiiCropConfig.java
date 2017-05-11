@@ -2,7 +2,6 @@ package org.gobiiproject.gobiimodel.config;
 
 
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.Root;
@@ -30,13 +29,13 @@ public class GobiiCropConfig extends ServerBase {
     }
 
     public GobiiCropConfig(String gobiiCropType,
-                           String serviceDomain,
-                           String serviceAppRoot,
-                           Integer servicePort,
+                           String host,
+                           String contextPath,
+                           Integer port,
                            boolean isActive,
                            boolean decrypt) {
 
-        super(serviceDomain,serviceAppRoot,servicePort,isActive);
+        super(host,contextPath,port,isActive);
         this.gobiiCropType = gobiiCropType;
     }
 
@@ -58,19 +57,19 @@ public class GobiiCropConfig extends ServerBase {
         cropDbConfig
                 .setGobiiDbType(gobiiDbType)
                 .setHost(host)
-                .setDbName(dbName)
+                .setContextPath(dbName)
                 .setPort(port)
                 .setUserName(userName)
                 .setPassword(password);
     }
 
-    public GobiiCropConfig setServiceDomain(String serviceDomain) {
-        super.setServiceDomain(serviceDomain);
+    public GobiiCropConfig setHost(String host) {
+        super.setHost(host);
         return this;
     }
 
-    public GobiiCropConfig setServicePort(Integer servicePort) {
-        super.setServicePort(servicePort);
+    public GobiiCropConfig setPort(Integer port) {
+        super.setPort(port);
         return this;
     }
 
@@ -85,8 +84,8 @@ public class GobiiCropConfig extends ServerBase {
     }
 
 
-    public GobiiCropConfig setServiceAppRoot(String serviceAppRoot) {
-        super.setServiceAppRoot(serviceAppRoot);
+    public GobiiCropConfig setContextPath(String contextPath) {
+        super.setContextPath(contextPath);
         return this;
     }
 

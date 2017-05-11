@@ -74,18 +74,18 @@ public class DtoRequestAuthenticationTest {
     private String makeUrl(GobiiCropConfig gobiiCropConfig) throws Exception {
 
 //        String returnVal = "http://"
-//                + gobiiCropConfig.getServiceDomain()
+//                + gobiiCropConfig.getHost()
 //                + ":"
-//                + gobiiCropConfig.getServicePort().toString()
+//                + gobiiCropConfig.getPort().toString()
 //                + "/"
 //
 
         String returnVal;
 
         URL url = new URL("http",
-                gobiiCropConfig.getServiceDomain(),
-                gobiiCropConfig.getServicePort(),
-                gobiiCropConfig.getServiceAppRoot());
+                gobiiCropConfig.getHost(),
+                gobiiCropConfig.getPort(),
+                gobiiCropConfig.getContextPath());
 
         returnVal = url.toString();
         return returnVal;

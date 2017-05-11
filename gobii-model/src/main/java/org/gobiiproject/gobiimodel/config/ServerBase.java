@@ -1,28 +1,22 @@
 package org.gobiiproject.gobiimodel.config;
 
 
-import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementMap;
 import org.simpleframework.xml.Root;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @Root
 public class ServerBase {
 
 
     @Element(required = false)
-    private String serviceDomain;
+    private String host;
 
     @Element(required = false)
-    private String serviceAppRoot;
+    private String contextPath;
 
     @Element(required = false)
-    private Integer servicePort;
+    private Integer port;
 
     @Element(required = false)
     private boolean isActive;
@@ -30,37 +24,37 @@ public class ServerBase {
     public ServerBase() {
     }
 
-    public ServerBase(String serviceDomain,
-                      String serviceAppRoot,
-                      Integer servicePort,
+    public ServerBase(String host,
+                      String contextPath,
+                      Integer port,
                       boolean isActive) {
 
-        this.serviceDomain = serviceDomain;
-        this.serviceAppRoot = serviceAppRoot;
-        this.servicePort = servicePort;
+        this.host = host;
+        this.contextPath = contextPath;
+        this.port = port;
         this.isActive = isActive;
 
     }
 
 
-    public ServerBase setServiceDomain(String serviceDomain) {
-        this.serviceDomain = serviceDomain;
+    public ServerBase setHost(String host) {
+        this.host = host;
         return this;
     }
 
-    public ServerBase setServicePort(Integer servicePort) {
-        this.servicePort = servicePort;
+    public ServerBase setPort(Integer port) {
+        this.port = port;
         return this;
     }
 
-   public Integer getServicePort() {
-        return servicePort;
+   public Integer getPort() {
+        return port;
     }
 
 
-    public String getServiceDomain() {
+    public String getHost() {
 
-        return serviceDomain;
+        return host;
     }
 
     public boolean isActive() {
@@ -72,13 +66,22 @@ public class ServerBase {
         return this;
     }
 
-    public String getServiceAppRoot() {
-
-        return LineUtils.terminateDirectoryPath(this.serviceAppRoot);
+    public String getContextPath() {
+        return this.getContextPath(true);
     }
 
-    public ServerBase setServiceAppRoot(String serviceAppRoot) {
-        this.serviceAppRoot = serviceAppRoot;
+    public String getContextPath(boolean terminate) {
+
+        String returnVal = this.contextPath;
+
+        if( terminate) {
+            returnVal = LineUtils.terminateDirectoryPath(returnVal);
+        }
+        return returnVal;
+    }
+
+    public ServerBase setContextPath(String contextPath) {
+        this.contextPath = contextPath;
         return this;
     }
 

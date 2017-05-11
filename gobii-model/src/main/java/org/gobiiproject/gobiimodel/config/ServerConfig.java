@@ -25,9 +25,9 @@ public class ServerConfig {
                         String intermediateFilesDir,
                         String rawUserFilesDir) {
 
-        this.port = gobiiCropConfig.getServicePort();
-        this.domain = gobiiCropConfig.getServiceDomain();
-        this.contextRoot = gobiiCropConfig.getServiceAppRoot();
+        this.port = gobiiCropConfig.getPort();
+        this.domain = gobiiCropConfig.getHost();
+        this.contextRoot = gobiiCropConfig.getContextPath();
         this.gobiiCropType = gobiiCropConfig.getGobiiCropType();
 
         fileLocations

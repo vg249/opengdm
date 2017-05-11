@@ -9,7 +9,7 @@ import org.simpleframework.xml.Root;
  * This class contains the properties necessary to configure a database.
  */
 @Root
-public class CropDbConfig {
+public class CropDbConfig extends ServerBase {
 
     public CropDbConfig() {
     }
@@ -22,13 +22,12 @@ public class CropDbConfig {
                         String password,
                         boolean decrypt) {
 
+        super(host,dbName,port,true);
         this.gobiiDbType = gobiiDbType;
-        this.host = host;
-        this.dbName = dbName;
-        this.port = port;
         this.userName = userName;
         this.password = password;
         this.decrypt = decrypt;
+
     }
 
     @Element(required = false)
@@ -36,15 +35,6 @@ public class CropDbConfig {
 
     @Element(required = false)
     private GobiiDbType gobiiDbType = null;
-
-    @Element(required = false)
-    private String host = null;
-
-    @Element(required = false)
-    private String dbName = null;
-
-    @Element(required = false)
-    private Integer port = null;
 
     @Element(required = false)
     private String userName = null;
@@ -62,29 +52,29 @@ public class CropDbConfig {
     }
 
     public String getHost() {
-        return host;
+        return super.getHost();
     }
 
     public CropDbConfig setHost(String host) {
-        this.host = host;
+        super.setHost(host);
         return this;
     }
 
-    public String getDbName() {
-        return dbName;
+    public String getContextPath() {
+        return super.getContextPath(false);
     }
 
-    public CropDbConfig setDbName(String dbName) {
-        this.dbName = dbName;
+    public CropDbConfig setContextPath(String dbName) {
+        super.setContextPath(dbName);
         return this;
     }
 
     public Integer getPort() {
-        return port;
+        return super.getPort();
     }
 
     public CropDbConfig setPort(Integer port) {
-        this.port = port;
+        super.setPort(port);
         return this;
     }
 
@@ -126,14 +116,16 @@ public class CropDbConfig {
 
     public String getConnectionString() {
 
-        return ("jdbc:"
+        String returnVal = "jdbc:"
                 + this.gobiiDbType.toString().toLowerCase()
                 + "://"
-                + this.host
+                + super.getHost()
                 + ":"
-                + this.port.toString()
+                + super.getPort()
                 + "/"
-                + this.dbName);
+                + this.getContextPath();
+
+        return (returnVal);
     }
 
     public boolean isDecrypt() {

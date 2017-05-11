@@ -240,9 +240,9 @@ class ConfigValues {
         gobiiCropConfig
                 .setGobiiCropType(gobiiCropType)
                 .setActive(isActive)
-                .setServiceDomain(serviceDomain)
-                .setServiceAppRoot(serviceAppRoot)
-                .setServicePort(servicePort);
+                .setHost(serviceDomain)
+                .setContextPath(serviceAppRoot)
+                .setPort(servicePort);
     }
 
     public void removeCrop(String cropId) throws Exception {

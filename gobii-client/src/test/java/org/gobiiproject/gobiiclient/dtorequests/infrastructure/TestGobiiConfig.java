@@ -344,19 +344,19 @@ public class TestGobiiConfig {
                 gobiiCropConfig);
 
         Assert.assertTrue("The host name does not match",
-                gobiiCropConfig.getServiceDomain().equals(host));
+                gobiiCropConfig.getHost().equals(host));
 
         Assert.assertTrue("The port does not match: should be "
                         + port.toString()
                         + "; got: "
-                        + gobiiCropConfig.getServicePort(),
-                gobiiCropConfig.getServicePort().equals(port));
+                        + gobiiCropConfig.getPort(),
+                gobiiCropConfig.getPort().equals(port));
 
         Assert.assertTrue("Crop is not set to active by default",
                 gobiiCropConfig.isActive());
 
         Assert.assertTrue("The context path not match",
-                gobiiCropConfig.getServiceAppRoot().equals(contextPathWithTerminator));
+                gobiiCropConfig.getContextPath().equals(contextPathWithTerminator));
 
     }
 
@@ -409,7 +409,7 @@ public class TestGobiiConfig {
                 cropDbConfig.getPort().equals(port));
 
         Assert.assertTrue("The context path not match",
-                cropDbConfig.getDbName().equals(contextPath));
+                cropDbConfig.getContextPath().equals(contextPath));
 
         Assert.assertTrue("The user name does not match",
                 cropDbConfig.getUserName().equals(user));
@@ -474,7 +474,7 @@ public class TestGobiiConfig {
                 cropDbConfig.getPort().equals(port));
 
         Assert.assertTrue("The context path not match",
-                cropDbConfig.getDbName().equals(contextPath));
+                cropDbConfig.getContextPath().equals(contextPath));
 
         Assert.assertTrue("The plain user retrieved name does not match the enrypted user written: " + ecnryptionWarning,
                 cropDbConfig.getUserName().equals(userPlain));
@@ -530,7 +530,7 @@ public class TestGobiiConfig {
                 cropDbConfig.getPort().equals(port));
 
         Assert.assertTrue("The context path not match",
-                cropDbConfig.getDbName().equals(contextPath));
+                cropDbConfig.getContextPath().equals(contextPath));
 
         Assert.assertTrue("The user name does not match",
                 cropDbConfig.getUserName().equals(user));
@@ -594,7 +594,7 @@ public class TestGobiiConfig {
                 cropDbConfig.getPort().equals(port));
 
         Assert.assertTrue("The context path not match",
-                cropDbConfig.getDbName().equals(contextPath));
+                cropDbConfig.getContextPath().equals(contextPath));
 
         Assert.assertTrue("The retrieved user name does not match the encrypted user name: " + ecnryptionWarning,
                 cropDbConfig.getUserName().equals(userPlain));

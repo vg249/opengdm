@@ -248,7 +248,7 @@ public class HelperFunctions {
 	 		+ ":"
 	 		+ crop.getPort()
 	 		+ "/"
-	 		+ crop.getDbName();
+	 		+ crop.getContextPath();
 	 return ret;
  }
 

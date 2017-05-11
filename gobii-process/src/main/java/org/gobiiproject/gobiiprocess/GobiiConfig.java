@@ -305,11 +305,11 @@ public class GobiiConfig {
                                 configSettings.setCurrentGobiiCropType(defaultCropType);
 
                                 String configServerUrl = "http://"
-                                        + configSettings.getCurrentCropConfig().getServiceDomain()
+                                        + configSettings.getCurrentCropConfig().getHost()
                                         + ":"
-                                        + configSettings.getCurrentCropConfig().getServicePort().toString()
+                                        + configSettings.getCurrentCropConfig().getPort().toString()
                                         + "/"
-                                        + configSettings.getCurrentCropConfig().getServiceAppRoot();
+                                        + configSettings.getCurrentCropConfig().getContextPath();
 
                                 String configFileContextFqpn = tomcatBaseDirectory + "/conf/context.xml";
                                 File configFileContext = new File(configFileContextFqpn);
@@ -907,9 +907,9 @@ public class GobiiConfig {
                         argsSet.add(CONFIG_SVR_CROP_WEB);
                         valsSet.add("");
 
-                        gobiiCropConfig.setServiceDomain(svrHost);
-                        gobiiCropConfig.setServicePort(svrPort);
-                        gobiiCropConfig.setServiceAppRoot(contextRoot);
+                        gobiiCropConfig.setHost(svrHost);
+                        gobiiCropConfig.setPort(svrPort);
+                        gobiiCropConfig.setContextPath(contextRoot);
 
                     } else if (commandLine.hasOption(CONFIG_SVR_CROP_POSTGRES) ||
                             (commandLine.hasOption(CONFIG_SVR_CROP_MONET))) {
@@ -1151,9 +1151,9 @@ public class GobiiConfig {
                 for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
 
-                    if (!currentGobiiCropConfig.getServiceAppRoot().toLowerCase().contains(currentGobiiCropConfig.getGobiiCropType())) {
+                    if (!currentGobiiCropConfig.getContextPath().toLowerCase().contains(currentGobiiCropConfig.getGobiiCropType())) {
                         System.err.println("The context root "
-                                + currentGobiiCropConfig.getServiceAppRoot()
+                                + currentGobiiCropConfig.getContextPath()
                                 + " does not contain the crop ID "
                                 + currentGobiiCropConfig.getGobiiCropType());
                         returnVal = false;
@@ -1165,21 +1165,21 @@ public class GobiiConfig {
                     }
 
 
-                    if (LineUtils.isNullOrEmpty(currentGobiiCropConfig.getServiceDomain())) {
+                    if (LineUtils.isNullOrEmpty(currentGobiiCropConfig.getHost())) {
                         System.err.println("The web server host for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
 
                     }
 
 
-                    if (LineUtils.isNullOrEmpty(currentGobiiCropConfig.getServiceAppRoot())) {
+                    if (LineUtils.isNullOrEmpty(currentGobiiCropConfig.getContextPath())) {
                         System.err.println("The web server context path for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
 
                     }
 
 
-                    if (currentGobiiCropConfig.getServicePort() == null) {
+                    if (currentGobiiCropConfig.getPort() == null) {
                         System.err.println("The web server port for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
 
@@ -1240,7 +1240,7 @@ public class GobiiConfig {
             returnVal = false;
         }
 
-        if (LineUtils.isNullOrEmpty(cropDbConfig.getDbName())) {
+        if (LineUtils.isNullOrEmpty(cropDbConfig.getContextPath())) {
             System.err.println("The db config for " + cropDbConfig.getGobiiDbType().toString() + " does not define a database name");
             returnVal = false;
         }
