@@ -198,7 +198,7 @@ public class ConfigFileReaderProps {
                     String currentUserName = this.getPropValue(currentDbPrefix + DB_SUFFIX_USER);
                     String currentPassword = this.getPropValue(currentDbPrefix + DB_SUFFIX_PASSWORD);
 
-                    CropDbConfig currentCropDbConfig = new CropDbConfig(
+                    GobiiCropDbConfig currentGobiiCropDbConfig = new GobiiCropDbConfig(
                             currentDbType,
                             currentHost,
                             currentDbName,
@@ -208,7 +208,7 @@ public class ConfigFileReaderProps {
                             false
                     );
 
-                    currentGobiiCropConfig.addCropDbConfig(currentDbType, currentCropDbConfig);
+                    currentGobiiCropConfig.addCropDbConfig(currentDbType, currentGobiiCropDbConfig);
                 }
 
                 cropConfigs.put(currentGobiiCropType, currentGobiiCropConfig);

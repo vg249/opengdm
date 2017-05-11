@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * This class contains the web server configuration properties necessary for a given
- * crop. In addition, it contains CropDbConfig instances for the databae configurations
+ * crop. In addition, it contains GobiiCropDbConfig instances for the databae configurations
  * for the specific crop.
  */
 @Root
@@ -23,7 +23,7 @@ public class GobiiCropConfig extends ServerBase {
     private String gobiiCropType;
 
     @ElementMap(required = false)
-    private Map<GobiiDbType, CropDbConfig> cropDbConfigsByDbType = new HashMap<>();
+    private Map<GobiiDbType, GobiiCropDbConfig> cropDbConfigsByDbType = new HashMap<>();
 
     public GobiiCropConfig() {
     }
@@ -46,15 +46,15 @@ public class GobiiCropConfig extends ServerBase {
                                 String userName,
                                 String password) {
 
-        CropDbConfig cropDbConfig = this.cropDbConfigsByDbType.get(gobiiDbType);
-        if (cropDbConfig == null) {
+        GobiiCropDbConfig gobiiCropDbConfig = this.cropDbConfigsByDbType.get(gobiiDbType);
+        if (gobiiCropDbConfig == null) {
 
-            cropDbConfig = new CropDbConfig();
-            this.cropDbConfigsByDbType.put(gobiiDbType, cropDbConfig);
+            gobiiCropDbConfig = new GobiiCropDbConfig();
+            this.cropDbConfigsByDbType.put(gobiiDbType, gobiiCropDbConfig);
 
         }
 
-        cropDbConfig
+        gobiiCropDbConfig
                 .setGobiiDbType(gobiiDbType)
                 .setHost(host)
                 .setContextPath(dbName)
@@ -73,7 +73,7 @@ public class GobiiCropConfig extends ServerBase {
         return this;
     }
 
-    public GobiiCropConfig setCropDbConfigsByDbType(Map<GobiiDbType, CropDbConfig> cropDbConfigsByDbType) {
+    public GobiiCropConfig setCropDbConfigsByDbType(Map<GobiiDbType, GobiiCropDbConfig> cropDbConfigsByDbType) {
         this.cropDbConfigsByDbType = cropDbConfigsByDbType;
         return this;
     }
@@ -98,17 +98,17 @@ public class GobiiCropConfig extends ServerBase {
         return this;
     }
 
-    public void addCropDbConfig(GobiiDbType gobiiDbTypee, CropDbConfig cropDbConfig) {
-        cropDbConfigsByDbType.put(gobiiDbTypee, cropDbConfig);
+    public void addCropDbConfig(GobiiDbType gobiiDbTypee, GobiiCropDbConfig gobiiCropDbConfig) {
+        cropDbConfigsByDbType.put(gobiiDbTypee, gobiiCropDbConfig);
 
     } // addCropDbConfig()
 
-    public CropDbConfig getCropDbConfig(GobiiDbType gobiiDbType) {
-        CropDbConfig returnVal = this.cropDbConfigsByDbType.get(gobiiDbType);
+    public GobiiCropDbConfig getCropDbConfig(GobiiDbType gobiiDbType) {
+        GobiiCropDbConfig returnVal = this.cropDbConfigsByDbType.get(gobiiDbType);
         return returnVal;
     } // getCropDbConfig()
 
-    public Collection<CropDbConfig> getCropConfigs() {
+    public Collection<GobiiCropDbConfig> getCropConfigs() {
         return this.cropDbConfigsByDbType.values();
     }
 

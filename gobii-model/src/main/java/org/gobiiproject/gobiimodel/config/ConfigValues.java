@@ -436,8 +436,8 @@ class ConfigValues {
 
         for (GobiiCropConfig currentGobiiCropConfig : this.cropConfigs.values()) {
 
-            for (CropDbConfig currentCropDbConfig : currentGobiiCropConfig.getCropConfigs()) {
-                currentCropDbConfig.setDecrypt(isDecrypt);
+            for (GobiiCropDbConfig currentGobiiCropDbConfig : currentGobiiCropConfig.getCropConfigs()) {
+                currentGobiiCropDbConfig.setDecrypt(isDecrypt);
             }
         }
     }

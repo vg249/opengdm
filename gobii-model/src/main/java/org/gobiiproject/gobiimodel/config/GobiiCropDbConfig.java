@@ -9,18 +9,18 @@ import org.simpleframework.xml.Root;
  * This class contains the properties necessary to configure a database.
  */
 @Root
-public class CropDbConfig extends ServerBase {
+public class GobiiCropDbConfig extends ServerBase {
 
-    public CropDbConfig() {
+    public GobiiCropDbConfig() {
     }
 
-    public CropDbConfig(GobiiDbType gobiiDbType,
-                        String host,
-                        String dbName,
-                        Integer port,
-                        String userName,
-                        String password,
-                        boolean decrypt) {
+    public GobiiCropDbConfig(GobiiDbType gobiiDbType,
+                             String host,
+                             String dbName,
+                             Integer port,
+                             String userName,
+                             String password,
+                             boolean decrypt) {
 
         super(host,dbName,port,true);
         this.gobiiDbType = gobiiDbType;
@@ -46,7 +46,7 @@ public class CropDbConfig extends ServerBase {
         return gobiiDbType;
     }
 
-    public CropDbConfig setGobiiDbType(GobiiDbType gobiiDbType) {
+    public GobiiCropDbConfig setGobiiDbType(GobiiDbType gobiiDbType) {
         this.gobiiDbType = gobiiDbType;
         return this;
     }
@@ -55,7 +55,7 @@ public class CropDbConfig extends ServerBase {
         return super.getHost();
     }
 
-    public CropDbConfig setHost(String host) {
+    public GobiiCropDbConfig setHost(String host) {
         super.setHost(host);
         return this;
     }
@@ -64,7 +64,7 @@ public class CropDbConfig extends ServerBase {
         return super.getContextPath(false);
     }
 
-    public CropDbConfig setContextPath(String dbName) {
+    public GobiiCropDbConfig setContextPath(String dbName) {
         super.setContextPath(dbName);
         return this;
     }
@@ -73,7 +73,7 @@ public class CropDbConfig extends ServerBase {
         return super.getPort();
     }
 
-    public CropDbConfig setPort(Integer port) {
+    public GobiiCropDbConfig setPort(Integer port) {
         super.setPort(port);
         return this;
     }
@@ -91,7 +91,7 @@ public class CropDbConfig extends ServerBase {
         return returnVal;
     }
 
-    public CropDbConfig setUserName(String userName) {
+    public GobiiCropDbConfig setUserName(String userName) {
         this.userName = userName;
         return this;
     }
@@ -109,7 +109,7 @@ public class CropDbConfig extends ServerBase {
         return returnVal;
     }
 
-    public CropDbConfig setPassword(String password) {
+    public GobiiCropDbConfig setPassword(String password) {
         this.password = password;
         return this;
     }

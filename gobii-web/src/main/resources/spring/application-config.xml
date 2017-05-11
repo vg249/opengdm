@@ -458,7 +458,7 @@
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigRice"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigRice"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
@@ -482,7 +482,7 @@
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigWheat"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigWheat"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
@@ -505,7 +505,7 @@
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigMaize"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigMaize"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
@@ -528,7 +528,7 @@
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigDev"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigDev"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
@@ -551,7 +551,7 @@
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigTest"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigTest"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
@@ -575,7 +575,7 @@
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigSorghum"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigSorghum"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
@@ -598,7 +598,7 @@
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigChickpea"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigChickpea"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
