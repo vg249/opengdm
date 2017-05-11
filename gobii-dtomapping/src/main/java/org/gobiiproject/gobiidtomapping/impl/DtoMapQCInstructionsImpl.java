@@ -143,7 +143,7 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
                     + INSTRUCTION_FILE_EXT;
 
             if (instructionFilesDao.doesPathExist(instructionFileFqpn)) {
-                InstructionFileAccess<QCInstructionsDTO> instructionFileAccess = new InstructionFileAccess<>(QCInstructionsDTO[].class);
+                InstructionFileAccess<QCInstructionsDTO> instructionFileAccess = new InstructionFileAccess<>(QCInstructionsDTO.class);
 
                 returnVal = instructionFileAccess.getInstruction(instructionFileFqpn);
 
