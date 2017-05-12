@@ -451,14 +451,14 @@
     <!--<bean id="configSettings" class="org.gobiiproject.gobiimodel.config.ConfigSettings"/>-->
     <!--&lt;!&ndash;**************** JDBC Configuraiton: RICE *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigRice"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="RICE"/>-->
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigRice"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigRice"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
@@ -475,14 +475,14 @@
 
     <!--&lt;!&ndash;**************** JDBC Configuraiton: WHEAT *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigWheat"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="WHEAT"/>-->
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigWheat"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigWheat"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
@@ -498,14 +498,14 @@
 
     <!--&lt;!&ndash;**************** JDBC Configuraiton: MAIZE *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigMaize"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="MAIZE"/>-->
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigMaize"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigMaize"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
@@ -521,14 +521,14 @@
 
     <!--&lt;!&ndash;**************** JDBC Configuraiton: DEV *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigDev"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="DEV"/>-->
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigDev"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigDev"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
@@ -544,14 +544,14 @@
 
     <!--&lt;!&ndash;**************** JDBC Configuraiton: TEST *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigTest"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="TEST"/>-->
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigTest"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigTest"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
@@ -568,14 +568,14 @@
 
     <!--&lt;!&ndash;**************** JDBC Configuraiton: SORGHUM *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigSorghum"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="SORGHUM"/>-->
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigSorghum"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigSorghum"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->
@@ -591,14 +591,14 @@
 
     <!--&lt;!&ndash;**************** JDBC Configuraiton: CHICKPEA *********************************&ndash;&gt;-->
     <!--<bean id="cropConfigChickpea"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropConfigonfig"-->
     <!--factory-bean="configSettings"-->
     <!--factory-method="getCropConfig">-->
     <!--<constructor-arg value="CHICKPEA"/>-->
     <!--</bean>-->
 
     <!--<bean id="cropDbConfigChickpea"-->
-    <!--class="org.gobiiproject.gobiimodel.config.CropDbConfig"-->
+    <!--class="org.gobiiproject.gobiimodel.config.GobiiCropDbConfigonfig"-->
     <!--factory-bean="cropConfigChickpea"-->
     <!--factory-method="getCropDbConfig">-->
     <!--<constructor-arg value="#{T(org.gobiiproject.gobiimodel.types.GobiiDbType).POSTGRESQL}"/>-->

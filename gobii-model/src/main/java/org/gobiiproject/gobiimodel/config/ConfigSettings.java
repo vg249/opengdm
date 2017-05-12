@@ -106,12 +106,12 @@ public class ConfigSettings {
         return this.configValues.isCropDefined(gobiiCropType);
     }
 
-    public CropConfig getCropConfig(String gobiiCropType) throws Exception {
+    public GobiiCropConfig getCropConfig(String gobiiCropType) throws Exception {
 
         return (this.configValues.getCropConfig(gobiiCropType));
     }
 
-    public List<CropConfig> getActiveCropConfigs() throws Exception {
+    public List<GobiiCropConfig> getActiveCropConfigs() throws Exception {
 
         return (this.configValues.getActiveCropConfigs());
     }
@@ -131,11 +131,11 @@ public class ConfigSettings {
                 .getActiveCropConfigs()
                 .stream()
                 .filter(c -> c.isActive() == true)
-                .map(CropConfig::getGobiiCropType)
+                .map(GobiiCropConfig::getGobiiCropType)
                 .collect(Collectors.toList());
     }
 
-    public CropConfig getCurrentCropConfig() throws Exception {
+    public GobiiCropConfig getCurrentCropConfig() throws Exception {
 
         return this.configValues.getCurrentCropConfig();
     }
