@@ -45,13 +45,13 @@ public class ServerConfig {
     }
 
     @Element(required = false)
-    private Integer port;
+    private Integer port = 0;
 
     @Element(required = false)
-    private String domain;
+    private String domain = "";
 
     @Element(required = false)
-    private String contextRoot;
+    private String contextRoot = "";
 
     @Element(required = false)
     private String gobiiCropType;

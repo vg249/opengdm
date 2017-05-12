@@ -28,6 +28,10 @@ class ConfigValues {
     @Element(required = false)
     private TestExecConfig testExecConfig = new TestExecConfig();
 
+    @Element(required=false)
+    private ServerConfigKDC serverConfigKDC = new ServerConfigKDC();
+
+
     @ElementMap(required = false)
     private Map<String, GobiiCropConfig> cropConfigs = new LinkedHashMap<>();
 
@@ -114,6 +118,10 @@ class ConfigValues {
 
     public TestExecConfig getTestExecConfig() {
         return testExecConfig;
+    }
+
+    public ServerConfigKDC getKDCConfig() {
+        return serverConfigKDC;
     }
 
     public void setTestExecConfig(TestExecConfig testExecConfig) {

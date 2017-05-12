@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiCropDbConfig;
+import org.gobiiproject.gobiimodel.config.ServerConfigKDC;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
@@ -91,9 +92,18 @@ public class GobiiConfig {
 
     private static String CONFIG_SVR_OPTIONS_HOST = "soH";
     private static String CONFIG_SVR_OPTIONS_PORT = "soN";
-    private static String CONFIG_SVR_OPTIONS_CONTEXT_ROOT = "soR";
+    private static String CONFIG_SVR_OPTIONS_CONTEXT_PATH = "soR";
     private static String CONFIG_SVR_OPTIONS_USER_NAME = "soU";
     private static String CONFIG_SVR_OPTIONS_PASSWORD = "soP";
+
+
+    private static String SVR_KDC = "ksvr";
+    private static String SVR_KDC_RESOURCE_START = "krscSTA";
+    private static String SVR_KDC_RESOURCE_STATUS = "krscSTT";
+    private static String SVR_KDC_RESOURCE_DOWNLOAD = "krscDLD";
+    private static String SVR_KDC_STATUS_CHECK_INTERVAL_SECS = "kstTRS";
+    private static String SVR_KDC_STATUS_CHECK_MAX_TIME_MINS = "kstTRM";
+    private static String SVR_KDC_STATUS_ACTIVE = "kA";
 
 
     private static String WAR_FILES_DIR = "wars/";
@@ -224,13 +234,13 @@ public class GobiiConfig {
             setOption(options, CONFIG_SVR_GLOBAL_LDAP_BPAS, true, "Password for authenticated LDAP search", "LDAP password");
             setOption(options, CONFIG_SVR_GLOBAL_LDAP_RUN_AS_USER, true, "LDAP user as which background processes will run", "Background LDAP user");
             setOption(options, CONFIG_SVR_GLOBAL_LDAP_RUN_AS_PASSWORD, true, "LDAP password with which background processes authenticate", "Background LDAP password");
-            setOption(options, CONFIG_SVR_GLOBAL_LDAP_AUTHENTICATE_BRAPI , true, "Whether or not BRAPI calls require authentication", "BRAPI Authentication");
+            setOption(options, CONFIG_SVR_GLOBAL_LDAP_AUTHENTICATE_BRAPI, true, "Whether or not BRAPI calls require authentication", "BRAPI Authentication");
 
             setOption(options, CONFIG_SVR_GLOBAL_LDAP_DECRYPT, true, "Whether or not to decrypt ALL userids and passwords (true | false)", "decryption flag");
 
             setOption(options, CONFIG_SVR_OPTIONS_HOST, true, "Server option: hostname", "hostname");
             setOption(options, CONFIG_SVR_OPTIONS_PORT, true, "Server option: port number", "port number");
-            setOption(options, CONFIG_SVR_OPTIONS_CONTEXT_ROOT, true, "Server option: context root ("
+            setOption(options, CONFIG_SVR_OPTIONS_CONTEXT_PATH, true, "Server option: context root ("
                     + CONFIG_SVR_CROP_WEB
                     + ") or database name ("
                     + CONFIG_SVR_CROP_POSTGRES + " and " + "("
@@ -254,6 +264,13 @@ public class GobiiConfig {
 
             setOption(options, VALIDATE_CONFIGURATION, false, "Verify that the specified configuration has all the values necessary for the system to function (does not test that the servers exist); requires " + PROP_FILE_FQPN, "validate");
 
+            setOption(options, SVR_KDC, false, "KDC server to add or modify; must be accompanied by a server options and KDC options", "KDC Server options");
+            setOption(options, SVR_KDC_RESOURCE_START, true, "KDC qcStart resource path", "qcStart resource");
+            setOption(options, SVR_KDC_RESOURCE_STATUS, true, "KDC qcStatus resource path", "qcStatus resource");
+            setOption(options, SVR_KDC_RESOURCE_DOWNLOAD, true, "KDC qcDownload resource path", "qcDownload resource");
+            setOption(options, SVR_KDC_STATUS_CHECK_INTERVAL_SECS, true, "Status check interval for KDC jobs in seconds", "KDC status check interval");
+            setOption(options, SVR_KDC_STATUS_CHECK_MAX_TIME_MINS, true, "Total time to wait for KDC job completion in minutes", "KDC job wait threshold");
+            setOption(options, SVR_KDC_STATUS_ACTIVE, true, "Mark KDC server inactive 'false'", "KDC active");
 
             // parse our commandline
             CommandLineParser parser = new DefaultParser();
@@ -454,6 +471,13 @@ public class GobiiConfig {
                     System.err.println("Value is required: " + options.getOption(PROP_FILE_FQPN).getDescription());
                 }
 
+            } else if (commandLine.hasOption(SVR_KDC)
+                    && commandLine.hasOption(PROP_FILE_FQPN)) {
+
+                if (setKdcOptions(options, commandLine)) {
+                    exitCode = 0;
+                }
+
             } else {
                 helpFormatter.printHelp(NAME_COMMAND, options);
             }
@@ -541,6 +565,122 @@ public class GobiiConfig {
                     Arrays.asList(CONFIG_SVR_GLOBAL_LDAP_DECRYPT),
                     Arrays.asList(decrypt ? "true" : "false"),
                     null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnVal = false;
+        }
+
+        return returnVal;
+    }
+
+    private static boolean setKdcOptions(Options options, CommandLine commandLine) {
+
+        boolean returnVal = false;
+
+        try {
+
+            String propFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
+
+            ConfigSettings configSettings = getConfigSettings(propFileFqpn);
+
+
+            List<String> argsSet = new ArrayList<>();
+            List<String> valsSet = new ArrayList<>();
+
+
+            String svrHost;
+            Integer port;
+            String contextPath;
+            String resourceQCStart;
+            String resourceQCStatus;
+            String resourceQCDownload;
+            Integer statusCheckIntervalSecs;
+            Integer statusWaitThresholdMinutes;
+            boolean active;
+
+
+            if (commandLine.hasOption(CONFIG_SVR_OPTIONS_HOST)) {
+                svrHost = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_HOST);
+                argsSet.add(CONFIG_SVR_OPTIONS_HOST);
+                valsSet.add(svrHost);
+                configSettings.getKDCConfig().setHost(svrHost);
+            }
+
+            if (commandLine.hasOption(CONFIG_SVR_OPTIONS_PORT)) {
+                port = Integer.parseInt(commandLine.getOptionValue(CONFIG_SVR_OPTIONS_PORT));
+                argsSet.add(CONFIG_SVR_OPTIONS_PORT);
+                valsSet.add(port.toString());
+                configSettings.getKDCConfig().setPort(port);
+            }
+
+            if (commandLine.hasOption(CONFIG_SVR_OPTIONS_CONTEXT_PATH)) {
+                contextPath = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_CONTEXT_PATH);
+                argsSet.add(CONFIG_SVR_OPTIONS_CONTEXT_PATH);
+                valsSet.add(contextPath);
+                configSettings.getKDCConfig().setContextPath(contextPath);
+            }
+
+            if (commandLine.hasOption(SVR_KDC_RESOURCE_START)) {
+                resourceQCStart = commandLine.getOptionValue(SVR_KDC_RESOURCE_START);
+                argsSet.add(SVR_KDC_RESOURCE_START);
+                valsSet.add(resourceQCStart);
+                configSettings.getKDCConfig().addPath(ServerConfigKDC.KDCResource.QC_START, resourceQCStart);
+            }
+
+            if (commandLine.hasOption(SVR_KDC_RESOURCE_STATUS)) {
+                resourceQCStatus = commandLine.getOptionValue(SVR_KDC_RESOURCE_STATUS);
+                argsSet.add(SVR_KDC_RESOURCE_STATUS);
+                valsSet.add(resourceQCStatus);
+                configSettings.getKDCConfig().addPath(ServerConfigKDC.KDCResource.QC_STATUS_, resourceQCStatus);
+            }
+
+            if (commandLine.hasOption(SVR_KDC_RESOURCE_DOWNLOAD)) {
+                resourceQCDownload = commandLine.getOptionValue(SVR_KDC_RESOURCE_DOWNLOAD);
+                argsSet.add(SVR_KDC_RESOURCE_DOWNLOAD);
+                valsSet.add(resourceQCDownload);
+                configSettings.getKDCConfig().addPath(ServerConfigKDC.KDCResource.QC_DOWNLOAD, resourceQCDownload);
+            }
+
+            if (commandLine.hasOption(SVR_KDC_STATUS_CHECK_INTERVAL_SECS)) {
+                statusCheckIntervalSecs = Integer.parseInt(commandLine.getOptionValue(SVR_KDC_STATUS_CHECK_INTERVAL_SECS));
+                argsSet.add(SVR_KDC_STATUS_CHECK_INTERVAL_SECS);
+                valsSet.add(statusCheckIntervalSecs.toString());
+                configSettings.getKDCConfig().setStatusCheckIntervalSecs(statusCheckIntervalSecs);
+            }
+
+            if (commandLine.hasOption(SVR_KDC_STATUS_CHECK_MAX_TIME_MINS)) {
+                statusWaitThresholdMinutes = Integer.parseInt(commandLine.getOptionValue(SVR_KDC_STATUS_CHECK_MAX_TIME_MINS));
+                argsSet.add(SVR_KDC_STATUS_CHECK_MAX_TIME_MINS);
+                valsSet.add(statusWaitThresholdMinutes.toString());
+                configSettings.getKDCConfig().setMaxStatusCheckMins(statusWaitThresholdMinutes);
+            }
+
+            if (commandLine.hasOption(SVR_KDC_STATUS_ACTIVE)) {
+                String activeStr = commandLine.getOptionValue(SVR_KDC_STATUS_ACTIVE);
+                if(activeStr.toLowerCase().equals("false")) {
+                    active = false;
+                } else {
+                    active = true;
+                }
+            } else {
+                active = true;
+            }
+
+            argsSet.add(SVR_KDC_STATUS_ACTIVE);
+            valsSet.add(active ? "true" : "false");
+            configSettings.getKDCConfig().setActive(active);
+
+
+            writeConfigSettingsMessage(options,
+                    propFileFqpn,
+                    argsSet,
+                    valsSet,
+                    null);
+
+            configSettings.commit();
+            returnVal = true;
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -795,8 +935,8 @@ public class GobiiConfig {
 
                 if (commandLine.hasOption(CONFIG_SVR_GLOBAL_LDAP_AUTHENTICATE_BRAPI)) {
                     ldapAuthenticateBrapi = commandLine.getOptionValue(CONFIG_SVR_GLOBAL_LDAP_AUTHENTICATE_BRAPI)
-                    .toLowerCase()
-                    .equals("true");
+                            .toLowerCase()
+                            .equals("true");
                     argsSet.add(CONFIG_SVR_GLOBAL_LDAP_AUTHENTICATE_BRAPI);
                     valsSet.add(ldapAuthenticateBrapi ? "true" : "false");
                 }
@@ -896,9 +1036,9 @@ public class GobiiConfig {
                     GobiiCropConfig gobiiCropConfig = configSettings.getCropConfig(cropId);
 
                     String contextRoot = null;
-                    if (commandLine.hasOption(CONFIG_SVR_OPTIONS_CONTEXT_ROOT)) {
-                        contextRoot = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_CONTEXT_ROOT);
-                        argsSet.add(CONFIG_SVR_OPTIONS_CONTEXT_ROOT);
+                    if (commandLine.hasOption(CONFIG_SVR_OPTIONS_CONTEXT_PATH)) {
+                        contextRoot = commandLine.getOptionValue(CONFIG_SVR_OPTIONS_CONTEXT_PATH);
+                        argsSet.add(CONFIG_SVR_OPTIONS_CONTEXT_PATH);
                         valsSet.add(contextRoot);
                     }
 

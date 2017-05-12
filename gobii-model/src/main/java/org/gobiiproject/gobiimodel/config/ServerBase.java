@@ -10,16 +10,16 @@ public class ServerBase {
 
 
     @Element(required = false)
-    private String host;
+    private String host = "";
 
     @Element(required = false)
-    private String contextPath;
+    private String contextPath = "";
 
     @Element(required = false)
-    private Integer port;
+    private Integer port = 0;
 
     @Element(required = false)
-    private boolean isActive;
+    private boolean isActive = false;
 
     public ServerBase() {
     }

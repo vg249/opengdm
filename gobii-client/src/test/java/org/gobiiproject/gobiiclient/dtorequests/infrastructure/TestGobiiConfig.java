@@ -4,6 +4,7 @@ import org.gobiiproject.gobiiclient.core.common.TestConfiguration;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiCropDbConfig;
+import org.gobiiproject.gobiimodel.config.ServerConfigKDC;
 import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -43,7 +45,7 @@ public class TestGobiiConfig {
 
         String returnVal;
 
-        
+
         returnVal = testExecConfig.getConfigUtilCommandlineStem() + "/gobiiconfig.jar" + " " + arguments;
 
         return returnVal;
@@ -177,7 +179,6 @@ public class TestGobiiConfig {
         boolean ldapAuthenticateBrapi = false;
 
 
-
         String commandLine = makeCommandline("-a -wfqpn "
                 + testFileFqpn
                 + " -auT "
@@ -298,7 +299,7 @@ public class TestGobiiConfig {
         Assert.assertTrue("The plain ldap bind password retrieved does not match the encrypted ldap password that was written: " + ecnryptionWarning,
                 configSettings.getLdapBindPassword().equals(ldapBindPasswordPlain));
 
-        String ldapUserForBackendProcessRetrieved = configSettings.getLdapUserForBackendProcs(); 
+        String ldapUserForBackendProcessRetrieved = configSettings.getLdapUserForBackendProcs();
         Assert.assertTrue("The plain background run as user retrieved does not match the encrypted background run as user that was written: " + ecnryptionWarning,
                 ldapUserForBackendProcessRetrieved.equals(ldapUserForBackgroundProcessPlain));
 
@@ -539,6 +540,81 @@ public class TestGobiiConfig {
                 gobiiCropDbConfig.getPassword().equals(password));
     }
 
+    @Test
+    public void testSetKDCServerOptions() throws Exception {
+
+        String testFileFqpn = makeTestFileFqpn("KDCoptions");
+
+        String host = "mykdc.com";
+        Integer port = 5063;
+        String contextPath = "foodkdcpath-" + UUID.randomUUID().toString() + "/";
+        String resourceQCStart = "qcStart";
+        String resourceQCStatus = "qcStatus";
+        String resourceQCDownload = "qcDownload";
+        Integer statusCheckIntervalSecs = 60;
+        Integer statusWaitThresholdMinutes = 20;
+        boolean active = false;
+
+
+        String commandLine = makeCommandline("-ksvr -wfqpn "
+                + testFileFqpn
+                + " -soH "
+                + host
+                + " -soN "
+                + port.toString()
+                + " -soR "
+                + contextPath
+                + " -krscSTA "
+                + resourceQCStart
+                + " -krscSTT "
+                + resourceQCStatus
+                + " -krscDLD "
+                + resourceQCDownload
+                + " -kstTRS "
+                + statusCheckIntervalSecs
+                + " -kstTRM "
+                + statusWaitThresholdMinutes
+                + " -kA "
+                + (active ? "true" : false)
+        );
+
+        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+        Assert.assertTrue("The host name does not match",
+                configSettings.getKDCConfig().getHost().equals(host));
+
+        Assert.assertTrue("The port does not match: should be "
+                        + port.toString()
+                        + "; got: "
+                        + configSettings.getKDCConfig().getPort(),
+                configSettings.getKDCConfig().getPort().equals(port));
+
+        String contextPathRetrieved = configSettings.getKDCConfig().getContextPath();
+        Assert.assertTrue("The context path not match",
+                contextPathRetrieved.equals(contextPath));
+
+        Assert.assertTrue("The start resource does not not match",
+                configSettings.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_START).equals(resourceQCStart));
+
+        Assert.assertTrue("The status resource does not not match",
+                configSettings.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_STATUS_).equals(resourceQCStatus));
+
+        Assert.assertTrue("The download resource does not not match",
+                configSettings.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_DOWNLOAD).equals(resourceQCDownload));
+
+        Assert.assertTrue("The status check interval does not match",
+                configSettings.getKDCConfig().getStatusCheckIntervalSecs().equals(statusCheckIntervalSecs));
+
+        Assert.assertTrue("The max status check threshold does not not match",
+                configSettings.getKDCConfig().getMaxStatusCheckMins().equals(statusWaitThresholdMinutes));
+
+        Assert.assertFalse("The active flag value does not match",
+                configSettings.getKDCConfig().isActive());
+
+    }
 
     @Test
     public void testSetMonetGresForCropEncrypted() throws Exception {
@@ -882,6 +958,7 @@ public class TestGobiiConfig {
         return returnVal;
 
     }
+
 
     @Ignore // fails on SYS_INT
     public void testSetCropActive() throws Exception {
