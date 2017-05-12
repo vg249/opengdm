@@ -125,6 +125,13 @@ public class ConfigSettings {
         this.configValues.setTestExecConfig(testExecConfig);
     }
 
+    public ServerConfigKDC getKDCConfig() {
+
+        return this.configValues.getKDCConfig();
+    }
+
+
+
     public List<String> getActiveCropTypes() throws Exception {
         return this
                 .configValues
