@@ -41,8 +41,6 @@ public class GobiiExtractor {
 	//Paths
 	private static String  pathToHDF5, propertiesFile,pathToHDF5Files;
 	private static UriFactory uriFactory;
-	private static String lastErrorFile=null;
-	private static String errorLogOverride;
 	private static boolean verbose;
 	private static String rootDir="../";
 	private static String markerListOverrideLocation=null;
@@ -60,20 +58,19 @@ public class GobiiExtractor {
          		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
          		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
 				.addOption("m", "markerList", true, "Fully qualified path to marker list files - (Debugging, forces marker list extract)");
-			o.addOption("kaf","keepAllFiles", false, "keep all temporary files");
-        
+		ExtractorGlobalConfigs.addOptions(o);
+
         CommandLineParser parser = new DefaultParser();
         try{
             CommandLine cli = parser.parse( o, args );
             if(cli.hasOption("verbose")) verbose=true;
-            if(cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
             if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
             if(cli.hasOption("rootDir")){
                 rootDir = cli.getOptionValue("rootDir");
             }
             if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
             if(cli.hasOption("markerList")) markerListOverrideLocation=cli.getOptionValue("markerList");
-			if(cli.hasOption("keepAllFiles")) FileSystemInterface.keepAllFiles(true);
+			ExtractorGlobalConfigs.setFromFlags(cli);
             args=cli.getArgs();//Remaining args passed through
 
         }catch(org.apache.commons.cli.ParseException exp ) {
@@ -241,23 +238,15 @@ public class GobiiExtractor {
 									" -d " + datasetId +
 									" -l" +
 									verboseTerm + " ";
+
+							//Email Identifiers
 							pm.addIdentifier("PI",extract.getPrincipleInvestigator());
 							pm.addIdentifier("Project",extract.getProject());
-//							pm.addIdentifier("Experiment",extract.getExperiment());
 							pm.addIdentifier("Dataset", extract.getDataSet());
 							pm.addIdentifier("Mapset", (mapId!=null?mapId.toString():"No Mapset info available"), null);
 							pm.addIdentifier("Export Type", uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase()), null);
 
 
-							pm.addPath("Instruction File", new File(instructionFile).getAbsolutePath(), configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
-							pm.addPath("Output Directory", extractDir);
-							pm.addPath("Error Log", logFile);
-							pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
-							pm.addPath("Sample file", new File(sampleFile).getAbsolutePath());
-							pm.addPath("Marker file", new File(markerFile).getAbsolutePath());
-							if(checkFileExistance(mapsetFile)) {
-								pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
-							}
 							break;
 						case BY_MARKER:
 							extractType="Extract by Marker";
@@ -288,25 +277,18 @@ public class GobiiExtractor {
 									platformTerm +
 									" -l" +
 									verboseTerm + " ";
+
+
+							//Email Identifiers
 							pm.addIdentifier("Mapset", (mapId!=null?mapId.toString():"No Mapset info available"), null);
 							pm.addIdentifier("Dataset Type",extract.getGobiiDatasetType());
 							for (Integer platformId: platforms) {
 								pm.addIdentifier("Platform", (platformId != null ? platformId.toString() : "No Platform info available"), platformId.toString());
 							}
-							pm.addIdentifier("Marker List", markerListLocation, null);
+							pm.addIdentifier("Marker List", markerListLocation, null); //TODO - marker list has an 'on empty,
 							pm.addIdentifier("Export Type", extract.getGobiiFileType().toString(), null);
 
 
-							pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath());
-							pm.addPath("Output Directory", extractDir);
-							pm.addPath("Error Log", logFile);
-							pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
-							pm.addPath("Sample file", new File(sampleFile).getAbsolutePath());
-							pm.addPath("Marker file", new File(markerFile).getAbsolutePath());
-
-							if(checkFileExistance(mapsetFile)) {
-								pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
-							}
 
 							break;
 						case BY_SAMPLE:
@@ -354,24 +336,20 @@ public class GobiiExtractor {
 									platformTerm +
 									" -l" +
 									verboseTerm + " ";
+
+
+							//Email Identifiers
 							pm.addIdentifier("PI",extract.getPrincipleInvestigator());
 							pm.addIdentifier("Project",extract.getProject());
-//							pm.addIdentifier("Experiment",extract.getExperiment());
 							pm.addIdentifier("Dataset", extract.getDataSet());
 							pm.addIdentifier("Mapset", (mapId!=null?mapId.toString():"No Mapset info available"), null);
 							pm.addIdentifier("Sample List Type", uppercaseFirstLetter(extract.getGobiiSampleListType().toString().toLowerCase()), null);
 							pm.addIdentifier("Sample List", (sampleListFile==null?"No Sample list provided":sampleListFile), null);
 							pm.addIdentifier("Export Type", extract.getGobiiFileType().toString(), null);
 
-							pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath());
-							pm.addPath("Output Directory", extractDir);
-							pm.addPath("Error Log", logFile);
-							pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
-							pm.addPath("Sample file", new File(sampleFile).getAbsolutePath());
-							pm.addPath("Marker file", new File(markerFile).getAbsolutePath());
-							if(checkFileExistance(mapsetFile)) {
-								pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
-							}
+
+
+
 							break;
 						default:
 							gobiiMDE = "";
@@ -383,6 +361,18 @@ public class GobiiExtractor {
 					String errorFile = getLogName(extract, gobiiCropConfig, datasetId);
 					ErrorLogger.logInfo("Extractor", "Executing MDEs");
 					tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
+
+
+					//Email Identifiers part 2
+					pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath());
+					pm.addPath("Output Directory", extractDir);
+					pm.addPath("Error Log", logFile);
+					pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
+					pm.addPath("Sample file", new File(sampleFile).getAbsolutePath());
+					pm.addPath("Marker file", new File(markerFile).getAbsolutePath());
+					if(checkFileExistance(mapsetFile)) {
+						pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
+					}
 
 
 					//HDF5
@@ -426,7 +416,6 @@ public class GobiiExtractor {
 							case FLAPJACK:
 								String genoOutFile = extractDir + "Dataset.genotype";
 								String mapOutFile = extractDir + "Dataset.map";
-								lastErrorFile = errorFile;
 								pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath());
 								pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath());
 								//Always regenerate requests - may have different parameters
@@ -491,35 +480,8 @@ public class GobiiExtractor {
 
 					ErrorLogger.logDebug("Extractor", "DataSet " + datasetName + " Created");
 
-					//QC - Subsection #1 of 1
-					if (inst.isQcCheck()) {
-						ErrorLogger.logInfo("Extractor", "qcCheck detected");
-						ErrorLogger.logInfo("Extractor", "Entering into the QC Subsection #1 of 1...");
-						QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
-						qcInstructionsDTOToSend.setContactId(inst.getContactId());
-						qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
-						qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
-						qcInstructionsDTOToSend.setDatasetId(datasetId);
-						qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
-						qcInstructionsDTOToSend.setQualityFileName("Report.xls");
-						PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
-						ClientContext clientContext = ClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
-						if (LineUtils.isNullOrEmpty(clientContext.getUserToken())) {
-							ErrorLogger.logError("Digester", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
-							return;
-						}
-						String currentCropContextRoot = clientContext.getInstance(null, false).getCurrentCropContextRoot();
-						uriFactory = new UriFactory(currentCropContextRoot);
-						GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
-						PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
-								payloadEnvelope);
-						if (qcInstructionFileDTOResponseEnvelope != null) {
-							ErrorLogger.logInfo("Extractor", "QC Instructions Request Sent");
-						} else {
-							ErrorLogger.logError("Extractor", "Error Sending QC Instructions Request");
-						}
-
-						ErrorLogger.logInfo("Extractor", "Done with the QC Subsection #1 of 1!");
+					if (inst.isQcCheck()) {//QC - Subsection #1 of 1
+						performQC(configuration, inst, crop, datasetId);
 					}
 				}
 				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
@@ -534,7 +496,44 @@ public class GobiiExtractor {
 		}
 	}
 
-    /**
+	/**
+	 * Extractor QC subsection 1
+	 * @param configuration
+	 * @param inst
+	 * @param crop
+	 * @param datasetId
+	 * @throws Exception
+	 */
+	private static void performQC(ConfigSettings configuration, GobiiExtractorInstruction inst, String crop, Integer datasetId) throws Exception {
+		ErrorLogger.logInfo("Extractor", "qcCheck detected");
+		ErrorLogger.logInfo("Extractor", "Entering into the QC Subsection #1 of 1...");
+		QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
+		qcInstructionsDTOToSend.setContactId(inst.getContactId());
+		qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
+		qcInstructionsDTOToSend.setDataFileName("qc_"+DateUtils.makeDateIdString());
+		qcInstructionsDTOToSend.setDatasetId(datasetId);
+		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
+		qcInstructionsDTOToSend.setQualityFileName("Report.xls");
+		PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
+		ClientContext clientContext = ClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
+		if (LineUtils.isNullOrEmpty(clientContext.getUserToken())) {
+            ErrorLogger.logError("Digester", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
+			return; //This used to return from the outer method. Why fail here?
+        }
+		String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
+		uriFactory = new UriFactory(currentCropContextRoot);
+		GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
+		PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
+                payloadEnvelope);
+		if (qcInstructionFileDTOResponseEnvelope != null) {
+            ErrorLogger.logInfo("Extractor", "QC Instructions Request Sent");
+        } else {
+            ErrorLogger.logError("Extractor", "Error Sending QC Instructions Request");
+        }
+		ErrorLogger.logInfo("Extractor", "Done with the QC Subsection #1 of 1!");
+	}
+
+	/**
      * To draft JobName for eMail notification
      * @param cropName - From inst
      * @param extract
