@@ -190,24 +190,22 @@
           class="org.gobiiproject.gobidomain.services.impl.NameIdListServiceImpl"/>
 
     <!-- **** Loader File Beans *************************************** -->
-    <bean id="loaderFilesDAO"
-          class="org.gobiiproject.gobiidao.filesystem.impl.LoaderFilesDAOImpl"/>
     <bean id="dtoMapLoaderFiles"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapLoaderFilesImpl"/>
     <bean id="loaderFilesService"
           class="org.gobiiproject.gobidomain.services.impl.LoaderFilesServiceImpl"/>
 
     <!-- **** Loader Instruction File Beans *************************************** -->
-    <bean id="loaderFileDAO"
-          class="org.gobiiproject.gobiidao.filesystem.impl.LoaderInstructionsDAOImpl"/>
     <bean id="dtoMapLoaderInstructions"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapLoaderInstructionsImpl"/>
     <bean id="loaderInstructionFilesService"
           class="org.gobiiproject.gobidomain.services.impl.LoaderInstructionFileServiceImpl"/>
 
+    <!-- **** Instruction File Beans *************************************** -->
+    <bean id="instructionFilesDAO"
+          class="org.gobiiproject.gobiidao.filesystem.impl.InstructionFilesDAOImpl"/>
+
     <!-- **** Extractor File Beans *************************************** -->
-    <bean id="extractorFileDAO"
-          class="org.gobiiproject.gobiidao.filesystem.impl.ExtractorInstructionsDAOImpl"/>
     <bean id="dtoMapExtractorInstructions"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapExtractorInstructionsImpl"/>
     <bean id="ExtractorInstructionFilesService"
@@ -215,8 +213,6 @@
 
 
     <!-- **** QC Check Beans *************************************** -->
-    <bean id="qcInstructionsDAO"
-          class="org.gobiiproject.gobiidao.filesystem.impl.QCInstructionsDAOImpl"/>
     <bean id="dtoMapQCInstructions"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapQCInstructionsImpl"/>
     <bean id="QCInstuctionFilesService"
