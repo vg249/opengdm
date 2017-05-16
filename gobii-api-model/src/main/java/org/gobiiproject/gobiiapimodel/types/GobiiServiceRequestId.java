@@ -54,7 +54,7 @@ public enum GobiiServiceRequestId {
         this.requestPath = requestPath;
     }
 
-    public String getRequestPath() {
+    public String getResourcePath() {
         return this.requestPath;
     }
 
@@ -71,7 +71,7 @@ public enum GobiiServiceRequestId {
             returnVal += secondaryPath;
         }
 
-        returnVal += this.getRequestPath();
+        returnVal += this.getResourcePath();
 
         return returnVal;
     }

@@ -1,6 +1,5 @@
 package org.gobiiproject.gobiiapimodel.restresources.common;
 
-import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 
@@ -19,13 +18,22 @@ public class RestUri {
     private final String DELIM_PARAM_BEGIN = "{";
     private final String DELIM_PARAM_END = "}";
 
-    private GobiiControllerType gobiiControllerType;
+    private String secondaryPath;
     private String cropContextRoot;
 
     private String requestTemplate;
     private Map<String, ResourceParam> paramMap = new HashMap<>();
     private List<ResourceParam> resourceParams = new ArrayList<>();
 
+    public RestUri(String cropContextRoot, String secondaryPath, String resourcePath) throws Exception {
+        this.secondaryPath = secondaryPath;
+        this.cropContextRoot = this.delimitSegment(cropContextRoot);
+        this.requestTemplate = this.cropContextRoot + this.secondaryPath + resourcePath;
+    }
+
+    public RestUri(String restUri) {
+        this.requestTemplate = restUri;
+    }
 
     public String getResourcePath() throws Exception {
 
@@ -40,7 +48,7 @@ public class RestUri {
 
         return RestUri.URL_SEPARATOR
                 + returnVal
-                .replace(this.gobiiControllerType.getControllerPath(), "")
+                .replace(this.secondaryPath, "")
                 .replace(this.cropContextRoot, "");
     }
 
@@ -57,16 +65,6 @@ public class RestUri {
         return returnVal;
     }
 
-
-    public RestUri(String cropContextRoot, GobiiControllerType gobiiControllerType, GobiiServiceRequestId gobiiServiceRequestId) throws Exception {
-        this.gobiiControllerType = gobiiControllerType;
-        this.cropContextRoot = this.delimitSegment(cropContextRoot);
-        this.requestTemplate = gobiiServiceRequestId.getRequestUrl(this.cropContextRoot, this.gobiiControllerType.getControllerPath());
-    }
-
-    public RestUri(String restUri) {
-        this.requestTemplate = restUri;
-    }
 
 
     public List<ResourceParam> getRequestParams() {
@@ -117,7 +115,7 @@ public class RestUri {
     public RestUri appendSegment(GobiiServiceRequestId gobiiServiceRequestId) throws Exception {
 
         this.requestTemplate = this.delimitSegment(this.requestTemplate);
-        String segment = gobiiServiceRequestId.getRequestPath();
+        String segment = gobiiServiceRequestId.getResourcePath();
 
         this.requestTemplate += this.delimitSegment(segment);
 
