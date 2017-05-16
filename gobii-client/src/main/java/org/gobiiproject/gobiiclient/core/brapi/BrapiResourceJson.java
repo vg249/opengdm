@@ -3,12 +3,12 @@ package org.gobiiproject.gobiiclient.core.brapi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiibrapi.core.json.BrapiJsonKeys;
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiibrapi.core.json.BrapiResponseJson;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
-import org.gobiiproject.gobiiclient.core.common.RestResourceUtils;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiRestResourceUtils;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class BrapiResourceJson<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
 
     private RestUri restUri;
     private ObjectMapper objectMapper = new ObjectMapper();
-    private RestResourceUtils restResourceUtils;
+    private GobiiRestResourceUtils gobiiRestResourceUtils;
 
     private Class<T_POST_OBJ_TYPE> brapiPostObjType;
     private Class<T_RESPONSE_OBJ_DATA_LIST> brapiResponsebjType;
@@ -31,7 +31,7 @@ public class BrapiResourceJson<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
         this.restUri = restUri;
         this.brapiPostObjType = brapiPostObjType;
         this.brapiResponsebjType = brapiResponseObjType;
-        this.restResourceUtils = new RestResourceUtils();
+        this.gobiiRestResourceUtils = new GobiiRestResourceUtils();
     }
 
     private BrapiResponseJson<T_RESPONSE_OBJ_DATA_LIST> extractResponse(HttpMethodResult httpMethodResult) throws Exception {
@@ -61,9 +61,9 @@ public class BrapiResourceJson<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
         BrapiResponseJson<T_RESPONSE_OBJ_DATA_LIST> returnVal;
 
         HttpMethodResult httpMethodResult =
-                this.restResourceUtils.getClientContext().getHttp()
+                this.gobiiRestResourceUtils.getGobiiClientContext().getHttp()
                         .get(this.restUri,
-                                restResourceUtils.getClientContext().getUserToken());
+                                gobiiRestResourceUtils.getGobiiClientContext().getUserToken());
 
         returnVal = this.extractResponse(httpMethodResult);
 
@@ -78,10 +78,10 @@ public class BrapiResourceJson<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
         String bodyAsString = objectMapper.writeValueAsString(bodyObj);
 
         HttpMethodResult httpMethodResult =
-                this.restResourceUtils.getClientContext().getHttp()
+                this.gobiiRestResourceUtils.getGobiiClientContext().getHttp()
                         .post(this.restUri,
                                 bodyAsString,
-                                restResourceUtils.getClientContext().getUserToken());
+                                gobiiRestResourceUtils.getGobiiClientContext().getUserToken());
 
         returnVal = this.extractResponse(httpMethodResult);
 

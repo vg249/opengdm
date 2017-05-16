@@ -3,10 +3,10 @@ package org.gobiiproject.gobiiprocess;
 import com.google.gson.*;
 import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
-import org.gobiiproject.gobiiclient.core.common.Authenticator;
-import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiAuthenticator;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
@@ -224,7 +224,7 @@ public class GobiiTestData {
 
         Map<String, Integer> returnVal = new HashMap<>();
 
-        RestUri namesUri = ClientContext.getInstance(null, false)
+        RestUri namesUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
         GobiiEnvelopeRestResource<NameIdDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(namesUri);
@@ -256,7 +256,7 @@ public class GobiiTestData {
         System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
-        RestUri restUriOrganization = ClientContext.getInstance(null, false)
+        RestUri restUriOrganization = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_ORGANIZATION);
         GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriOrganization);
@@ -315,7 +315,7 @@ public class GobiiTestData {
         /*** create organization ***/
 
         PayloadEnvelope<OrganizationDTO> payloadEnvelope = new PayloadEnvelope<>(newOrganizationDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<OrganizationDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_ORGANIZATION));
         PayloadEnvelope<OrganizationDTO> organizationDTOResponseEnvelope = gobiiEnvelopeRestResource.post(OrganizationDTO.class,
@@ -343,7 +343,7 @@ public class GobiiTestData {
         System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
-        RestUri restUriContact = ClientContext.getInstance(null, false)
+        RestUri restUriContact = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .contactsByQueryParams();
         restUriContact.setParamValue("email", dbPkeysurrogateValue);
@@ -374,7 +374,7 @@ public class GobiiTestData {
         System.out.println("Populating " +entityName+ "DTO with attributes from XML file...");
 
         // get roles
-        RestUri rolesUri = ClientContext.getInstance(null, false)
+        RestUri rolesUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .nameIdListByQueryParams();
 
@@ -439,7 +439,7 @@ public class GobiiTestData {
         /*** create contact ***/
 
         PayloadEnvelope<ContactDTO> payloadEnvelopeContact = new PayloadEnvelope<>(newContactDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceContact = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceContact = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                     .getUriFactory()
                     .resourceColl(GobiiServiceRequestId.URL_CONTACTS));
         PayloadEnvelope<ContactDTO> contactDTOResponseEnvelope = gobiiEnvelopeRestResourceContact.post(ContactDTO.class,
@@ -466,7 +466,7 @@ public class GobiiTestData {
         System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
-        RestUri restUriPlatform = ClientContext.getInstance(null, false)
+        RestUri restUriPlatform = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_PLATFORM);
         GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriPlatform);
@@ -558,7 +558,7 @@ public class GobiiTestData {
         /*** create platform ***/
 
         PayloadEnvelope<PlatformDTO> payloadEnvelopePlatform = new PayloadEnvelope<>(newPlatformDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourcePlatform = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourcePlatform = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                         .getUriFactory()
                         .resourceColl(GobiiServiceRequestId.URL_PLATFORM));
         PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelope = gobiiEnvelopeRestResourcePlatform.post(PlatformDTO.class,
@@ -586,7 +586,7 @@ public class GobiiTestData {
         System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
-        RestUri restUriProtocol = ClientContext.getInstance(null, false)
+        RestUri restUriProtocol = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_PROTOCOL);
         GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriProtocol);
@@ -668,7 +668,7 @@ public class GobiiTestData {
         /*** create protocol ***/
 
         PayloadEnvelope<ProtocolDTO> payloadEnvelopeProtocol = new PayloadEnvelope<>(newProtocolDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResourceProtocol = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResourceProtocol = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                         .getUriFactory()
                         .resourceColl(GobiiServiceRequestId.URL_PROTOCOL));
         PayloadEnvelope<ProtocolDTO> protocolDTOResponseEnvelope = gobiiEnvelopeRestResourceProtocol.post(ProtocolDTO.class,
@@ -713,7 +713,7 @@ public class GobiiTestData {
         System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
-        RestUri restUriOrganizationForGetById = ClientContext.getInstance(null, false)
+        RestUri restUriOrganizationForGetById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(GobiiServiceRequestId.URL_ORGANIZATION);
         restUriOrganizationForGetById.setParamValue("id", newVendorProtocolDTO.getOrganizationId().toString());
@@ -745,7 +745,7 @@ public class GobiiTestData {
         /*** create vendor protcol ***/
         // get organization/vendor
 
-        RestUri restUriForGetOrganizationById = ClientContext.getInstance(null, false)
+        RestUri restUriForGetOrganizationById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(GobiiServiceRequestId.URL_ORGANIZATION);
         restUriForGetOrganizationById.setParamValue("id", newVendorProtocolDTO.getOrganizationId().toString());
@@ -756,7 +756,7 @@ public class GobiiTestData {
         OrganizationDTO organizationDTO = resultEnvelopeForGetOrganizationByID.getPayload().getData().get(0);
         organizationDTO.getVendorProtocols().add(newVendorProtocolDTO);
 
-        RestUri restUriProtocoLVendor = ClientContext.getInstance(null, false)
+        RestUri restUriProtocoLVendor = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .childResourceByUriIdParam(GobiiServiceRequestId.URL_PROTOCOL,
                         GobiiServiceRequestId.URL_VENDORS);
@@ -798,7 +798,7 @@ public class GobiiTestData {
         System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
-        RestUri restUriReference = ClientContext.getInstance(null, false)
+        RestUri restUriReference = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_REFERENCE);
         GobiiEnvelopeRestResource<ReferenceDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriReference);
@@ -857,7 +857,7 @@ public class GobiiTestData {
         /*** create reference ***/
 
         PayloadEnvelope<ReferenceDTO> payloadEnvelopeReference = new PayloadEnvelope<>(newReferenceDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<ReferenceDTO> gobiiEnvelopeRestResourceReference = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<ReferenceDTO> gobiiEnvelopeRestResourceReference = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                         .getUriFactory()
                         .resourceColl(GobiiServiceRequestId.URL_REFERENCE));
         PayloadEnvelope<ReferenceDTO> referenceDTOResponseEnvelope = gobiiEnvelopeRestResourceReference.post(ReferenceDTO.class,
@@ -885,7 +885,7 @@ public class GobiiTestData {
         System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
-        RestUri restUriMapset = ClientContext.getInstance(null, false)
+        RestUri restUriMapset = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_MAPSET);
         GobiiEnvelopeRestResource<MapsetDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriMapset);
@@ -980,7 +980,7 @@ public class GobiiTestData {
         /*** create mapset ***/
 
         PayloadEnvelope<MapsetDTO> payloadEnvelopeMapset = new PayloadEnvelope<>(newMapsetDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<MapsetDTO> gobiiEnvelopeRestResourceMapset = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<MapsetDTO> gobiiEnvelopeRestResourceMapset = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                         .getUriFactory()
                         .resourceColl(GobiiServiceRequestId.URL_MAPSET));
         PayloadEnvelope<MapsetDTO> mapsetDTOResponseEnvelope = gobiiEnvelopeRestResourceMapset.post(MapsetDTO.class,
@@ -1008,7 +1008,7 @@ public class GobiiTestData {
         System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
-        RestUri restUriProject = ClientContext.getInstance(null, false)
+        RestUri restUriProject = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_PROJECTS);
         GobiiEnvelopeRestResource<ProjectDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriProject);
@@ -1089,7 +1089,7 @@ public class GobiiTestData {
 
         /*** create project ***/
 
-        RestUri projectsUri = ClientContext.getInstance(null, false).getUriFactory().resourceColl(GobiiServiceRequestId.URL_PROJECTS);
+        RestUri projectsUri = GobiiClientContext.getInstance(null, false).getUriFactory().resourceColl(GobiiServiceRequestId.URL_PROJECTS);
         GobiiEnvelopeRestResource<ProjectDTO> gobiiEnvelopeRestResourceForProjects = new GobiiEnvelopeRestResource<>(projectsUri);
         PayloadEnvelope<ProjectDTO> payloadEnvelope = new PayloadEnvelope<>(newProjectDTO, GobiiProcessType.CREATE);
         PayloadEnvelope<ProjectDTO> projectDTOResponseEnvelope = gobiiEnvelopeRestResourceForProjects.post(ProjectDTO.class, payloadEnvelope);
@@ -1115,7 +1115,7 @@ public class GobiiTestData {
         System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
-        RestUri restUriManifest = ClientContext.getInstance(null, false)
+        RestUri restUriManifest = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_MANIFEST);
         GobiiEnvelopeRestResource<ManifestDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriManifest);
@@ -1177,7 +1177,7 @@ public class GobiiTestData {
 
 
         PayloadEnvelope<ManifestDTO> payloadEnvelopeManifest = new PayloadEnvelope<>(newManifestDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<ManifestDTO> gobiiEnvelopeRestResourceManifest = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<ManifestDTO> gobiiEnvelopeRestResourceManifest = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                         .getUriFactory()
                         .resourceColl(GobiiServiceRequestId.URL_MANIFEST));
         PayloadEnvelope<ManifestDTO> manifestDTOResponseEnvelope = gobiiEnvelopeRestResourceManifest.post(ManifestDTO.class,
@@ -1206,7 +1206,7 @@ public class GobiiTestData {
         System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
-        RestUri restUriExperiment = ClientContext.getInstance(null, false)
+        RestUri restUriExperiment = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_EXPERIMENTS);
         GobiiEnvelopeRestResource<ExperimentDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriExperiment);
@@ -1266,7 +1266,7 @@ public class GobiiTestData {
         /*** create experiment ***/
 
         PayloadEnvelope<ExperimentDTO> payloadEnvelopeExperiment = new PayloadEnvelope<>(newExperimentDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<ExperimentDTO> gobiiEnvelopeRestResourceExperiment = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<ExperimentDTO> gobiiEnvelopeRestResourceExperiment = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                         .getUriFactory()
                         .resourceColl(GobiiServiceRequestId.URL_EXPERIMENTS));
         PayloadEnvelope<ExperimentDTO> experimentDTOResponseEnvelope = gobiiEnvelopeRestResourceExperiment.post(ExperimentDTO.class,
@@ -1294,7 +1294,7 @@ public class GobiiTestData {
         System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
-        RestUri restUriAnalysis = ClientContext.getInstance(null, false)
+        RestUri restUriAnalysis = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_ANALYSIS);
         GobiiEnvelopeRestResource<AnalysisDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriAnalysis);
@@ -1387,7 +1387,7 @@ public class GobiiTestData {
         /*** create analysis ***/
 
         PayloadEnvelope<AnalysisDTO> payloadEnvelopeAnalysis = new PayloadEnvelope<>(newAnalysisDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<AnalysisDTO> gobiiEnvelopeRestResourceAnalysis = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<AnalysisDTO> gobiiEnvelopeRestResourceAnalysis = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                         .getUriFactory()
                         .resourceColl(GobiiServiceRequestId.URL_ANALYSIS));
         PayloadEnvelope<AnalysisDTO> analysisDTOResponseEnvelope = gobiiEnvelopeRestResourceAnalysis.post(AnalysisDTO.class,
@@ -1417,7 +1417,7 @@ public class GobiiTestData {
         System.out.println("\nChecking if " + entityName + " ("+dbPkeysurrogateValue+") already exists in the database...\n");
         /*** check if entity already exist in the database ***/
 
-        RestUri restUriDataset = ClientContext.getInstance(null, false)
+        RestUri restUriDataset = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_DATASETS);
         GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriDataset);
@@ -1508,7 +1508,7 @@ public class GobiiTestData {
         /*** create dataset ***/
 
         PayloadEnvelope<DataSetDTO> payloadEnvelopeDataSet = new PayloadEnvelope<>(newDataSetDTO, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+        GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                         .getUriFactory()
                         .resourceColl(GobiiServiceRequestId.URL_DATASETS));
         PayloadEnvelope<DataSetDTO> dataSetDTOResponseEnvelope = gobiiEnvelopeRestResourceDataSet.post(DataSetDTO.class,
@@ -1536,7 +1536,7 @@ public class GobiiTestData {
         Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
         NodeList propKeyList = props.getElementsByTagName("*");
 
-        Authenticator.authenticate();
+        GobiiAuthenticator.authenticate();
 
         switch (entityName) {
 

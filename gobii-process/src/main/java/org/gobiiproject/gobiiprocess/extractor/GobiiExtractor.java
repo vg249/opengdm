@@ -14,9 +14,9 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
-import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
@@ -40,7 +40,7 @@ import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
 public class GobiiExtractor {
 	//Paths
 	private static String  pathToHDF5, propertiesFile,pathToHDF5Files;
-	private static UriFactory uriFactory;
+	private static GobiiUriFactory gobiiUriFactory;
 	private static boolean verbose;
 	private static String rootDir="../";
 	private static String markerListOverrideLocation=null;
@@ -515,14 +515,14 @@ public class GobiiExtractor {
 		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
 		qcInstructionsDTOToSend.setQualityFileName("Report.xls");
 		PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
-		ClientContext clientContext = ClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
-		if (LineUtils.isNullOrEmpty(clientContext.getUserToken())) {
+		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
+		if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
             ErrorLogger.logError("Digester", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
 			return; //This used to return from the outer method. Why fail here?
         }
-		String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-		uriFactory = new UriFactory(currentCropContextRoot);
-		GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(uriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
+		String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
+		gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+		GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(gobiiUriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
 		PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
                 payloadEnvelope);
 		if (qcInstructionFileDTOResponseEnvelope != null) {

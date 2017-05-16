@@ -6,7 +6,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang.math.NumberUtils;
-import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiCropDbConfig;
@@ -348,10 +348,10 @@ public class GobiiConfig {
                                         System.err.print("The configuration in server.xml does not define ResourceLink to the properties file: " + configFileServerFqpn);
                                     }
 
-                                    ClientContext clientContext = configClientContext(configServerUrl);
+                                    GobiiClientContext gobiiClientContext = configClientContext(configServerUrl);
 
 
-                                    if (GobiiConfig.showServerInfo(clientContext)) {
+                                    if (GobiiConfig.showServerInfo(gobiiClientContext)) {
                                         exitCode = 0;
                                     }
 
@@ -387,9 +387,9 @@ public class GobiiConfig {
                 GobiiConfig.printSeparator();
                 GobiiConfig.printField("Configuration Mode", "From url");
 
-                ClientContext clientContext = configClientContext(configUrl);
+                GobiiClientContext gobiiClientContext = configClientContext(configUrl);
 
-                if (GobiiConfig.showServerInfo(clientContext)) {
+                if (GobiiConfig.showServerInfo(gobiiClientContext)) {
                     exitCode = 0;
                 }
 
@@ -1388,7 +1388,7 @@ public class GobiiConfig {
         return returnVal;
     }
 
-    private static ClientContext configClientContext(String configServerUrl) throws Exception {
+    private static GobiiClientContext configClientContext(String configServerUrl) throws Exception {
         System.out.println();
         System.out.println();
         GobiiConfig.printSeparator();
@@ -1398,38 +1398,38 @@ public class GobiiConfig {
         System.out.println();
         GobiiConfig.printSeparator();
 
-        return ClientContext.getInstance(configServerUrl, true);
+        return GobiiClientContext.getInstance(configServerUrl, true);
 
     }
 
-    private static boolean showServerInfo(ClientContext clientContext) throws Exception {
+    private static boolean showServerInfo(GobiiClientContext gobiiClientContext) throws Exception {
 
         boolean returnVal = true;
 
         // The logging framework emits debugging messages before it knows not to emit them.
         // Until we solve this problem, we we'll visually set those messages aside
-        List<String> gobiiCropTypes = clientContext.getInstance(null, false).getCropTypeTypes();
+        List<String> gobiiCropTypes = gobiiClientContext.getInstance(null, false).getCropTypeTypes();
         GobiiConfig.printSeparator();
 
-        GobiiConfig.printField("Default crop", ClientContext.getInstance(null, false).getDefaultCropType().toString());
+        GobiiConfig.printField("Default crop", GobiiClientContext.getInstance(null, false).getDefaultCropType().toString());
 
         for (String currentCropType : gobiiCropTypes) {
 
-            ClientContext.getInstance(null, false).setCurrentClientCrop(currentCropType);
+            GobiiClientContext.getInstance(null, false).setCurrentClientCrop(currentCropType);
 
             GobiiConfig.printSeparator();
             GobiiConfig.printField("Crop Type", currentCropType.toString());
-            GobiiConfig.printField("Host", ClientContext.getInstance(null, false).getCurrentCropDomain());
-            GobiiConfig.printField("Port", ClientContext.getInstance(null, false).getCurrentCropPort().toString());
-            GobiiConfig.printField("Context root", ClientContext.getInstance(null, false).getCurrentCropContextRoot());
+            GobiiConfig.printField("Host", GobiiClientContext.getInstance(null, false).getCurrentCropDomain());
+            GobiiConfig.printField("Port", GobiiClientContext.getInstance(null, false).getCurrentCropPort().toString());
+            GobiiConfig.printField("Context root", GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot());
 
-            GobiiConfig.printField("Loader instructions directory", ClientContext.getInstance(null, false)
+            GobiiConfig.printField("Loader instructions directory", GobiiClientContext.getInstance(null, false)
                     .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS));
-            GobiiConfig.printField("User file upload directory", ClientContext.getInstance(null, false)
+            GobiiConfig.printField("User file upload directory", GobiiClientContext.getInstance(null, false)
                     .getFileLocationOfCurrenCrop(GobiiFileProcessDir.RAW_USER_FILES));
-            GobiiConfig.printField("Digester output directory ", ClientContext.getInstance(null, false)
+            GobiiConfig.printField("Digester output directory ", GobiiClientContext.getInstance(null, false)
                     .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES));
-            GobiiConfig.printField("Extractor instructions directory", ClientContext.getInstance(null, false)
+            GobiiConfig.printField("Extractor instructions directory", GobiiClientContext.getInstance(null, false)
                     .getFileLocationOfCurrenCrop(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS));
 
             //if(!LineUtils.isNullOrEmpty())
@@ -1438,13 +1438,13 @@ public class GobiiConfig {
 //            SystemUsers systemUsers = new SystemUsers();
 //            SystemUserDetail userDetail = systemUsers.getDetail(SystemUserNames.USER_READER.toString());
 //
-//            if (ClientContext.getInstance(null, false).login(userDetail.getUserName(), userDetail.getPassword())) {
+//            if (GobiiClientContext.getInstance(null, false).login(userDetail.getUserName(), userDetail.getPassword())) {
 //
 //                PingDTO pingDTORequest = new PingDTO();
 //
 //
 //                //DtoRequestPing dtoRequestPing = new DtoRequestPing();
-//                GobiiEnvelopeRestResource<PingDTO> gobiiEnvelopeRestResourcePingDTO = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
+//                GobiiEnvelopeRestResource<PingDTO> gobiiEnvelopeRestResourcePingDTO = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
 //                        .getUriFactory()
 //                        .resourceColl(GobiiServiceRequestId.URL_PING));
 //

@@ -2,7 +2,7 @@ package org.gobiiproject.gobiiclient.core.gobii.dtopost;
 
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
-import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.slf4j.Logger;
@@ -21,10 +21,10 @@ public class EnvelopeDtoRequest<T> {
                                               GobiiControllerType gobiiControllerType,
                                               GobiiServiceRequestId requestId) throws Exception {
 
-        String token = ClientContext.getInstance(null, false).getUserToken();
-        String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
-        Integer port = ClientContext.getInstance(null, false).getCurrentCropPort();
-        String cropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
+        String token = GobiiClientContext.getInstance(null, false).getUserToken();
+        String host = GobiiClientContext.getInstance(null, false).getCurrentCropDomain();
+        Integer port = GobiiClientContext.getInstance(null, false).getCurrentCropPort();
+        String cropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
 
         PayloadEnvelope<T> returnVal = null;
 

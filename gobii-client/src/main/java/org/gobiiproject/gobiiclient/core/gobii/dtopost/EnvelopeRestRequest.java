@@ -10,10 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpCore;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class EnvelopeRestRequest<T> {
 
     private final Class<T> paramType;
     private HttpCore httpCore = null;
-    private UriFactory uriFactory = null;
+    private GobiiUriFactory gobiiUriFactory = null;
 
     Logger LOGGER = LoggerFactory.getLogger(EnvelopeRestRequest.class);
 
@@ -35,8 +35,8 @@ public class EnvelopeRestRequest<T> {
 
         this.paramType = paramType;
 
-        this.uriFactory = new UriFactory(cropContextRoot);
-        this.httpCore = ClientContext.getInstance(null,false).getHttp();
+        this.gobiiUriFactory = new GobiiUriFactory(cropContextRoot);
+        this.httpCore = GobiiClientContext.getInstance(null,false).getHttp();
 
     } // ctor
 
@@ -54,7 +54,7 @@ public class EnvelopeRestRequest<T> {
         String dtoRequestJson = objectMapper.writeValueAsString(payloadEnvelope);
 
 
-        HttpMethodResult httpMethodResult = httpCore.post(this.uriFactory.RestUriFromUri(url), dtoRequestJson, token);
+        HttpMethodResult httpMethodResult = httpCore.post(this.gobiiUriFactory.RestUriFromUri(url), dtoRequestJson, token);
         //JsonObject responseJson = httpCore.getResponseBody(url, dtoRequestJson, token);
         JsonObject responseJson = httpMethodResult.getPayLoad();
 

@@ -2,7 +2,7 @@ package org.gobiiproject.gobiiweb.automation;
 
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderAuth;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
@@ -54,7 +54,7 @@ public class PayloadWriter<T extends DTOBase> {
                 payloadEnvelope.getPayload().getData().add(itemToWrite);
 
 //                String contextPath = this.httpServletRequest.getContextPath();
-//                UriFactory uriFactory = new UriFactory(contextPath);
+//                GobiiUriFactory uriFactory = new GobiiUriFactory(contextPath);
 //                RestUri restUri = uriFactory.resourceByUriIdParam(serviceRequestId);
                 restUri.setParamValue("id", id);
                 //And hence we can create the link ehre

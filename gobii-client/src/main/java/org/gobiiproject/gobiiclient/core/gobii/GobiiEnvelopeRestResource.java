@@ -3,11 +3,9 @@ package org.gobiiproject.gobiiclient.core.gobii;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.common.HttpCore;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
-import org.gobiiproject.gobiiclient.core.common.RestResourceUtils;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
@@ -24,11 +22,11 @@ public class GobiiEnvelopeRestResource<T> {
     private RestUri restUri;
     private ObjectMapper objectMapper = new ObjectMapper();
     private GobiiPayloadResponse<T> gobiiPayloadResponse = null;
-    private RestResourceUtils restResourceUtils;
+    private GobiiRestResourceUtils gobiiRestResourceUtils;
 
     public GobiiEnvelopeRestResource(RestUri restUri) {
         this.restUri = restUri;
-        this.restResourceUtils = new RestResourceUtils();
+        this.gobiiRestResourceUtils = new GobiiRestResourceUtils();
         this.gobiiPayloadResponse = new GobiiPayloadResponse<>(this.restUri);
     }
 
@@ -37,14 +35,14 @@ public class GobiiEnvelopeRestResource<T> {
     }
 
 
-    private ClientContext getClientContext() throws Exception {
+    private GobiiClientContext getClientContext() throws Exception {
 
-        return this.restResourceUtils.getClientContext();
+        return this.gobiiRestResourceUtils.getGobiiClientContext();
     }
 
     private HttpCore getHttp() throws Exception {
 
-        return this.restResourceUtils.getClientContext().getHttp();
+        return this.gobiiRestResourceUtils.getGobiiClientContext().getHttp();
     }
 
 

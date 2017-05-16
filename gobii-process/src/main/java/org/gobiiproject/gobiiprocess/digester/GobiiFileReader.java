@@ -10,10 +10,10 @@ import java.util.*;
 
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
-import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiCropDbConfig;
@@ -66,7 +66,7 @@ public class GobiiFileReader {
 	private static boolean verbose;
 	private static String errorLogOverride;
 	private static String propertiesFile;
-	private static UriFactory uriFactory;
+	private static GobiiUriFactory gobiiUriFactory;
 	private static boolean enableMonet=false;
 
 	//Not null if QC Extract is happening
@@ -512,14 +512,14 @@ public class GobiiFileReader {
 		extractorInstructionFilesDTOToSend.setInstructionFileName("extractor_"+DateUtils.makeDateIdString());
 		PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
 
-		ClientContext clientContext = ClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
-		if(LineUtils.isNullOrEmpty(clientContext.getUserToken())) {
+		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
+		if(LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
 			ErrorLogger.logError("Digester","Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
 			return;
 		}
-		String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-		uriFactory = new UriFactory(currentCropContextRoot);
-		GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForPost = new GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO>(uriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS));
+		String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
+		gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+		GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForPost = new GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO>(gobiiUriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS));
 		PayloadEnvelope<ExtractorInstructionFilesDTO> extractorInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForPost.post(ExtractorInstructionFilesDTO.class,
 				payloadEnvelope);
 		if (extractorInstructionFileDTOResponseEnvelope != null) {
@@ -712,7 +712,7 @@ public class GobiiFileReader {
 		try{
 			// set up authentication and so forth
 			// you'll need to get the current from the instruction file
-			ClientContext context=ClientContext.getInstance(config,cropName,GobiiAutoLoginType.USER_RUN_AS);
+			GobiiClientContext context= GobiiClientContext.getInstance(config,cropName,GobiiAutoLoginType.USER_RUN_AS);
 			//context.setCurrentClientCrop(cropName);
 
 			if( LineUtils.isNullOrEmpty( context.getUserToken())){
@@ -721,9 +721,9 @@ public class GobiiFileReader {
 			}
 
 			String currentCropContextRoot = context.getInstance(null, false).getCurrentCropContextRoot();
-			UriFactory uriFactory = new UriFactory(currentCropContextRoot);
+			GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
 
-			RestUri projectsUri = uriFactory
+			RestUri projectsUri = gobiiUriFactory
 					.resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
 			projectsUri.setParamValue("id", dataSetId.toString());
 			GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(projectsUri);
