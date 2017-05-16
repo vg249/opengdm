@@ -108,8 +108,6 @@ public class GobiiExtractor {
 		}
 		
 		startTime = System.currentTimeMillis();
-
-
 		List<GobiiExtractorInstruction> list= parseExtractorInstructionFile(instructionFile);
 		if(list==null){
 			ErrorLogger.logError("Extractor","No instruction for file "+instructionFile);
@@ -123,7 +121,7 @@ public class GobiiExtractor {
 			instructionName=instructionName.substring(0,instructionName.lastIndexOf('.'));
 			logFile=logDir+"/"+instructionName+".log";
 			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
-//			ErrorLogger.setLogFilepath(logFile);
+			ErrorLogger.setLogFilepath(logFile);
 			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
 		}
 		else{
@@ -242,8 +240,6 @@ public class GobiiExtractor {
 							pm.addIdentifier("Dataset", extract.getDataSet());
 							pm.addIdentifier("Mapset", (mapId!=null?mapId.toString():"No Mapset info available"), null);
 							pm.addIdentifier("Export Type", uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase()), null);
-
-
 							break;
 						case BY_MARKER:
 							extractType="Extract by Marker";
@@ -284,9 +280,6 @@ public class GobiiExtractor {
 							}
 							pm.addIdentifier("Marker List", markerListLocation, null); //TODO - marker list has an 'on empty,
 							pm.addIdentifier("Export Type", extract.getGobiiFileType().toString(), null);
-
-
-
 							break;
 						case BY_SAMPLE:
 							extractType="Extract by Sample";
@@ -343,10 +336,6 @@ public class GobiiExtractor {
 							pm.addIdentifier("Sample List Type", uppercaseFirstLetter(extract.getGobiiSampleListType().toString().toLowerCase()), null);
 							pm.addIdentifier("Sample List", (sampleListFile==null?"No Sample list provided":sampleListFile), null);
 							pm.addIdentifier("Export Type", extract.getGobiiFileType().toString(), null);
-
-
-
-
 							break;
 						default:
 							gobiiMDE = "";
