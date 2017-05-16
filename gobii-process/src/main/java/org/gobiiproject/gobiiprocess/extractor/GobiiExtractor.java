@@ -49,9 +49,7 @@ public class GobiiExtractor {
 	private static String rootDir="../";
 	private static String markerListOverrideLocation=null;
 	//To calculate RunTime of Extraction
-	private static long startTime;
-	private static long endTime;
-	private static long duration;
+	private static long startTime, endTime, duration;
 
 	public static void main(String[] args) throws Exception {
 
@@ -127,7 +125,7 @@ public class GobiiExtractor {
 			instructionName=instructionName.substring(0,instructionName.lastIndexOf('.'));
 			logFile=logDir+"/"+instructionName+".log";
 			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
-			ErrorLogger.setLogFilepath(logFile);
+//			ErrorLogger.setLogFilepath(logFile);
 			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
 		}
 		else{
@@ -352,24 +350,20 @@ public class GobiiExtractor {
 									platformTerm +
 									" -l" +
 									verboseTerm + " ";
+
+
+							//Email Identifiers
 							pm.addIdentifier("PI",extract.getPrincipleInvestigator());
 							pm.addIdentifier("Project",extract.getProject());
-//							pm.addIdentifier("Experiment",extract.getExperiment());
 							pm.addIdentifier("Dataset", extract.getDataSet());
 							pm.addIdentifier("Mapset", (mapId!=null?mapId.toString():"No Mapset info available"), null);
 							pm.addIdentifier("Sample List Type", uppercaseFirstLetter(extract.getGobiiSampleListType().toString().toLowerCase()), null);
 							pm.addIdentifier("Sample List", (sampleListFile==null?"No Sample list provided":sampleListFile), null);
 							pm.addIdentifier("Export Type", extract.getGobiiFileType().toString(), null);
 
-							pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath());
-							pm.addPath("Output Directory", extractDir);
-							pm.addPath("Error Log", logFile);
-							pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
-							pm.addPath("Sample file", new File(sampleFile).getAbsolutePath());
-							pm.addPath("Marker file", new File(markerFile).getAbsolutePath());
-							if(checkFileExistance(mapsetFile)) {
-								pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
-							}
+
+
+
 							break;
 						default:
 							gobiiMDE = "";
@@ -381,6 +375,18 @@ public class GobiiExtractor {
 					String errorFile = getLogName(extract, cropConfig, datasetId);
 					ErrorLogger.logInfo("Extractor", "Executing MDEs");
 					tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
+
+
+					//Email Identifiers part 2
+					pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath());
+					pm.addPath("Output Directory", extractDir);
+					pm.addPath("Error Log", logFile);
+					pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
+					pm.addPath("Sample file", new File(sampleFile).getAbsolutePath());
+					pm.addPath("Marker file", new File(markerFile).getAbsolutePath());
+					if(checkFileExistance(mapsetFile)) {
+						pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
+					}
 
 
 					//HDF5
