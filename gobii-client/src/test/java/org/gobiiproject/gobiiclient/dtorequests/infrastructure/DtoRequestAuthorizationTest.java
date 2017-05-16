@@ -12,8 +12,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
 //import org.gobiiproject.gobiimodel.dto.response.HeaderAuth;
-import org.gobiiproject.gobiiapimodel.types.ControllerType;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderAuth;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
@@ -41,7 +41,7 @@ public class DtoRequestAuthorizationTest {
     }
 
 
-    private HttpPost makePostRequest(ServiceRequestId serviceRequestId, String gobiiCropType) throws Exception {
+    private HttpPost makePostRequest(GobiiServiceRequestId gobiiServiceRequestId, String gobiiCropType) throws Exception {
 
         // Aside from crop domain, port, and type, we don't want the tests relying
         // on ClientContext. Authentication will fill the clientContext with config data,
@@ -51,7 +51,7 @@ public class DtoRequestAuthorizationTest {
         Integer currentCropPort = ClientContext.getInstance(null, false).getCurrentCropPort();
         String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
         String currentGobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
-        String url = ServiceRequestId.URL_AUTH.getRequestUrl(currentCropContextRoot,ControllerType.GOBII);
+        String url = GobiiServiceRequestId.URL_AUTH.getRequestUrl(currentCropContextRoot, GobiiControllerType.GOBII.getControllerPath());
         Assert.assertTrue(Authenticator.deAuthenticate());
 
         URI uri = new URIBuilder().setScheme("http")
@@ -79,7 +79,7 @@ public class DtoRequestAuthorizationTest {
     @Test
     public void testNoAuthHeaders() throws Exception {
 
-        HttpPost postRequest = makePostRequest(ServiceRequestId.URL_AUTH, null);
+        HttpPost postRequest = makePostRequest(GobiiServiceRequestId.URL_AUTH, null);
 
         // WE ARE _NOT_ ADDING ANY OF THE AUTHENTICATION TOKENS
         HttpResponse httpResponse = HttpClientBuilder.create().build().execute(postRequest);
@@ -94,7 +94,7 @@ public class DtoRequestAuthorizationTest {
     @Test
     public void testBadCredentials() throws Exception {
 
-        HttpPost postRequest = makePostRequest(ServiceRequestId.URL_AUTH, null);
+        HttpPost postRequest = makePostRequest(GobiiServiceRequestId.URL_AUTH, null);
 
         // add bogus credentials
         postRequest.addHeader(GobiiHttpHeaderNames.HEADER_USERNAME, "nobodyspecial");
@@ -116,7 +116,7 @@ public class DtoRequestAuthorizationTest {
     @Test
     public void testBadToken() throws Exception {
 
-        HttpPost postRequest = makePostRequest(ServiceRequestId.URL_AUTH, null);
+        HttpPost postRequest = makePostRequest(GobiiServiceRequestId.URL_AUTH, null);
 
         // add bogus credentials
         postRequest.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN, "11111111");
@@ -135,7 +135,7 @@ public class DtoRequestAuthorizationTest {
     public void testGoodCredentailsWithToken() throws Exception {
 
         String gobiiCropTypeSent = "TEST";
-        HttpPost postRequestForToken = makePostRequest(ServiceRequestId.URL_AUTH, gobiiCropTypeSent);
+        HttpPost postRequestForToken = makePostRequest(GobiiServiceRequestId.URL_AUTH, gobiiCropTypeSent);
 
         // add good credentials
         String testUser = Authenticator.getTestExecConfig().getLdapUserForUnitTest();
@@ -194,7 +194,7 @@ public class DtoRequestAuthorizationTest {
         Assert.assertEquals("Crop type in auth response does not match the one that was sent", gobiiCropTypeSent, gobiiCropTypeReceived);
 
         // now test we can do a request with the token we got
-        HttpPost postRequestForPing = makePostRequest(ServiceRequestId.URL_PING, gobiiCropTypeSent);
+        HttpPost postRequestForPing = makePostRequest(GobiiServiceRequestId.URL_PING, gobiiCropTypeSent);
         postRequestForPing.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN, tokenValue);
 
         HttpResponse httpResponseForToken = HttpClientBuilder.create().build().execute(postRequestForToken);

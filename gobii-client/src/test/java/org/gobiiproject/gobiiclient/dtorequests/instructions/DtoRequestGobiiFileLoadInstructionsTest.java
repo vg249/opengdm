@@ -9,7 +9,7 @@ import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
@@ -175,7 +175,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         loaderInstructionFilesDTOToSend.getGobiiLoaderInstructions().add(gobiiLoaderInstructionTwo);
 
         PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+        GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -270,7 +270,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
 
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -299,7 +299,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setRequireDirectoriesToExist(true); // <== should result in validation error
 
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -308,7 +308,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         // ************** VERIFY THAT WE GET AN ERROR WHEN A FILE ALREADY EXISTS
         loaderInstructionFilesDTOToSend.setInstructionFileName(newInstructionFileNameNoError);
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -337,7 +337,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
 
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         PayloadEnvelope<LoaderInstructionFilesDTO> testForuserInputFileExistsCausesErrorEnvelopse = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -372,7 +372,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
                 .setCreateSource(false); // <== should result in validation error
 
         payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+        gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
         PayloadEnvelope<LoaderInstructionFilesDTO> testForuserInputFileExistsNoErrorEnvelope = gobiiEnvelopeRestResource.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -404,7 +404,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         RestUri datasetsUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
         datasetsUri.setParamValue("id", dataSetId.toString());
 
         GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(datasetsUri);
@@ -459,7 +459,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResourceForInstruction = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory
-                                .resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+                                .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
 
         PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForInstruction.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
@@ -501,7 +501,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         RestUri datasetsUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
         datasetsUri.setParamValue("id", dataSetId.toString());
 
         GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(datasetsUri);
@@ -520,7 +520,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         //get experimentDTO
         RestUri experimentsUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_EXPERIMENTS);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_EXPERIMENTS);
         experimentsUri.setParamValue("id", experimentId.toString());
 
         GobiiEnvelopeRestResource<ExperimentDTO> gobiiEnvelopeRestResourceExperiment = new GobiiEnvelopeRestResource<>(experimentsUri);
@@ -572,7 +572,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResourceForInstruction = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory
-                                .resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+                                .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
 
         PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForInstruction.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
@@ -615,7 +615,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         RestUri datasetsUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
         datasetsUri.setParamValue("id", dataSetId.toString());
 
         GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(datasetsUri);
@@ -670,7 +670,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResourceForInstruction = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory
-                .resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+                .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
 
         PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForInstruction.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);
@@ -714,7 +714,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         RestUri datasetsUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
         datasetsUri.setParamValue("id", dataSetId.toString());
 
         GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceDataSet = new GobiiEnvelopeRestResource<>(datasetsUri);
@@ -733,7 +733,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         //get experimentDTO
         RestUri experimentsUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_EXPERIMENTS);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_EXPERIMENTS);
         experimentsUri.setParamValue("id", experimentId.toString());
 
         GobiiEnvelopeRestResource<ExperimentDTO> gobiiEnvelopeRestResourceExperiment = new GobiiEnvelopeRestResource<>(experimentsUri);
@@ -746,9 +746,9 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
         //get protocolDTO
         RestUri protocolUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_EXPERIMENTS)
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_EXPERIMENTS)
                 .setParamValue("id", experimentDTOResponse.getId().toString())
-                .appendSegment(ServiceRequestId.URL_PROTOCOL);
+                .appendSegment(GobiiServiceRequestId.URL_PROTOCOL);
 
         GobiiEnvelopeRestResource<ProtocolDTO> gobiiEnvelopeRestResourceProtocol = new GobiiEnvelopeRestResource<>(protocolUri);
         PayloadEnvelope<ProtocolDTO> resultEnvelopeProtocol = gobiiEnvelopeRestResourceProtocol.get(ProtocolDTO.class);
@@ -797,7 +797,7 @@ public class DtoRequestGobiiFileLoadInstructionsTest {
 
         PayloadEnvelope<LoaderInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(loaderInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<LoaderInstructionFilesDTO> gobiiEnvelopeRestResourceForInstruction = new GobiiEnvelopeRestResource<>(DtoRequestGobiiFileLoadInstructionsTest.uriFactory
-                .resourceColl(ServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
+                .resourceColl(GobiiServiceRequestId.URL_FILE_LOAD_INSTRUCTIONS));
 
         PayloadEnvelope<LoaderInstructionFilesDTO> loaderInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForInstruction.post(LoaderInstructionFilesDTO.class,
                 payloadEnvelope);

@@ -4,7 +4,7 @@ import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
@@ -129,7 +129,7 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForPost = new GobiiEnvelopeRestResource<>(uriFactory
-                .resourceColl(ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS));
+                .resourceColl(GobiiServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS));
         PayloadEnvelope<ExtractorInstructionFilesDTO> extractorInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForPost.post(ExtractorInstructionFilesDTO.class,
                 payloadEnvelope);
 
@@ -233,7 +233,7 @@ public class DtoRequestFileExtractorInstructionsTest {
 
         RestUri restUriExtractorInstructionsForGetByFilename = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_FILE_EXTRACTOR_STATUS);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_FILE_EXTRACTOR_STATUS);
         restUriExtractorInstructionsForGetByFilename.setParamValue("id", extractorInstructionFilesDTOFromSecondRetrieval.getInstructionFileName());
         GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriExtractorInstructionsForGetByFilename);
         PayloadEnvelope<ExtractorInstructionFilesDTO> resultEnvelopeForGetStatusByFileName = gobiiEnvelopeRestResourceForGetById

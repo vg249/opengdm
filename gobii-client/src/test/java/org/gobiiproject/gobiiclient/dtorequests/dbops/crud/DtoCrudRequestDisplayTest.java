@@ -13,7 +13,7 @@ import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
@@ -45,7 +45,7 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
 
         RestUri restUriDisplay = ClientContext.getInstance(null,false)
                 .getUriFactory()
-                .resourceColl(ServiceRequestId.URL_DISPLAY);
+                .resourceColl(GobiiServiceRequestId.URL_DISPLAY);
         GobiiEnvelopeRestResource<DisplayDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriDisplay);
         PayloadEnvelope<DisplayDTO> resultEnvelope = gobiiEnvelopeRestResource.get(DisplayDTO.class);
 
@@ -59,7 +59,7 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
         Integer displayId = displayDTOList.get(0).getDisplayId();
         RestUri restUriDisplayForGetById = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_DISPLAY);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DISPLAY);
         restUriDisplayForGetById.setParamValue("id", displayId.toString());
         GobiiEnvelopeRestResource<DisplayDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriDisplayForGetById);
         PayloadEnvelope<DisplayDTO> resultEnvelopeForGetById = gobiiEnvelopeRestResourceForGetById
@@ -78,7 +78,7 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
     public void testEmptyResult() throws Exception {
 
         DtoRestRequestUtils<DisplayDTO> dtoDtoRestRequestUtils = new DtoRestRequestUtils<>(DisplayDTO.class,
-                ServiceRequestId.URL_DISPLAY);
+                GobiiServiceRequestId.URL_DISPLAY);
         Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
         Integer nonExistentID = maxId + 1;
 
@@ -102,7 +102,7 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
         PayloadEnvelope<DisplayDTO> payloadEnvelope = new PayloadEnvelope<>(newDisplayDto, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<DisplayDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(ServiceRequestId.URL_DISPLAY));
+                .resourceColl(GobiiServiceRequestId.URL_DISPLAY));
         PayloadEnvelope<DisplayDTO> displayDTOResponseEnvelope = gobiiEnvelopeRestResource.post(DisplayDTO.class,
                 payloadEnvelope);
         DisplayDTO displayDTOResponse = displayDTOResponseEnvelope.getPayload().getData().get(0);
@@ -115,7 +115,7 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
 
         RestUri restUriDisplayForGetById = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_DISPLAY);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DISPLAY);
         restUriDisplayForGetById.setParamValue("id", displayDTOResponse.getDisplayId().toString());
         GobiiEnvelopeRestResource<DisplayDTO> gobiiEnvelopeRestResouceForGetById = new GobiiEnvelopeRestResource<>(restUriDisplayForGetById);
         PayloadEnvelope<DisplayDTO> resultEnvelopeForGetById = gobiiEnvelopeRestResouceForGetById
@@ -140,7 +140,7 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
         PayloadEnvelope<DisplayDTO> payloadEnvelope = new PayloadEnvelope<>(newDisplayDto, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<DisplayDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(ServiceRequestId.URL_DISPLAY));
+                .resourceColl(GobiiServiceRequestId.URL_DISPLAY));
         PayloadEnvelope<DisplayDTO> displayDTOResponseEnvelope = gobiiEnvelopeRestResource.post(DisplayDTO.class,
                 payloadEnvelope);
         DisplayDTO newDisplayDTOResponse = displayDTOResponseEnvelope.getPayload().getData().get(0);
@@ -149,7 +149,7 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
 
         RestUri restUriDisplayForGetById = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_DISPLAY);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_DISPLAY);
         restUriDisplayForGetById.setParamValue("id", newDisplayDTOResponse.getDisplayId().toString());
         GobiiEnvelopeRestResource<DisplayDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriDisplayForGetById);
         PayloadEnvelope<DisplayDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
@@ -187,7 +187,7 @@ public class DtoCrudRequestDisplayTest implements DtoCrudRequestTest {
 
         RestUri restUriDisplay = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(ServiceRequestId.URL_DISPLAY);
+                .resourceColl(GobiiServiceRequestId.URL_DISPLAY);
         GobiiEnvelopeRestResource<DisplayDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriDisplay);
         PayloadEnvelope<DisplayDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(DisplayDTO.class);

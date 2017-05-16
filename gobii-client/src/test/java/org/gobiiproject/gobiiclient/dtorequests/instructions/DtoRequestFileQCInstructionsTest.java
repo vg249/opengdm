@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiclient.dtorequests.instructions;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
@@ -44,7 +44,7 @@ public class DtoRequestFileQCInstructionsTest {
 
         PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTO, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<>(uriFactory
-                .resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
+                .resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
         PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
                 payloadEnvelope);
 
@@ -61,7 +61,7 @@ public class DtoRequestFileQCInstructionsTest {
         RestUri qcGetUri = ClientContext
                 .getInstance(null,false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS);
         qcGetUri.setParamValue("id", qcInstructionsDTO.getDataFileName());
 
         GobiiEnvelopeRestResource<QCInstructionsDTO> restResource = new GobiiEnvelopeRestResource<>(qcGetUri);

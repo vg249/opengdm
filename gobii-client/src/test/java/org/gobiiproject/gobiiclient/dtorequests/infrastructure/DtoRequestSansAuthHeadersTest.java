@@ -4,10 +4,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
-import org.gobiiproject.gobiiapimodel.types.ControllerType;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.junit.Assert;
@@ -31,7 +31,7 @@ public class DtoRequestSansAuthHeadersTest {
         Integer currentCropPort = ClientContext.getInstance(null, false).getCurrentCropPort();
         String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
         String currentGobiiCropType = ClientContext.getInstance(null, false).getCurrentClientCropType();
-        String url = ServiceRequestId.URL_AUTH.getRequestUrl(currentCropContextRoot,ControllerType.GOBII);
+        String url = GobiiServiceRequestId.URL_AUTH.getRequestUrl(currentCropContextRoot, GobiiControllerType.GOBII.getControllerPath());
         Assert.assertTrue(Authenticator.deAuthenticate());
 
 

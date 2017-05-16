@@ -1,11 +1,13 @@
 package org.gobiiproject.gobiiapimodel.types;
 
+import org.gobiiproject.gobiimodel.utils.LineUtils;
+
 /**
  * Created by Phil on 5/13/2016.
  */
 
 
-public enum ServiceRequestId {
+public enum GobiiServiceRequestId {
 
     URL_AUTH("auth"),
     URL_PING("ping"),
@@ -46,13 +48,9 @@ public enum ServiceRequestId {
     URL_FILE_QC_INSTRUCTIONS("/instructions/qualitycontrol");
 
 
-    public static final String SERVICE_PATH_GOBII = "/gobii/v1";
-    public static final String SERVICE_PATH_BRAPI = "/brapi/v1";
-
-
     private String requestPath;
 
-    ServiceRequestId(String requestPath) {
+    GobiiServiceRequestId(String requestPath) {
         this.requestPath = requestPath;
     }
 
@@ -60,16 +58,17 @@ public enum ServiceRequestId {
         return this.requestPath;
     }
 
-    public String getRequestUrl(String contextRoot, ControllerType controllerType) throws Exception {
+    public String getRequestUrl(String contextRoot, String secondaryPath) throws Exception {
 
-        String controllerPath = getControllerPath(controllerType);
+        String returnVal = "";
 
-        String returnVal = null;
 
-        if( contextRoot != null ) {
-            returnVal = contextRoot + controllerPath;
-        } else {
-            returnVal = controllerPath;
+        if (!LineUtils.isNullOrEmpty(contextRoot)) {
+            returnVal = contextRoot;
+        }
+
+        if (!LineUtils.isNullOrEmpty(secondaryPath)) {
+            returnVal += secondaryPath;
         }
 
         returnVal += this.getRequestPath();
@@ -77,22 +76,4 @@ public enum ServiceRequestId {
         return returnVal;
     }
 
-    public static String getControllerPath(ControllerType controllerType) throws Exception {
-
-        String returnVal = null;
-
-        if (controllerType == ControllerType.GOBII) {
-
-            returnVal = ServiceRequestId.SERVICE_PATH_GOBII + "/";
-
-        } else if (controllerType == ControllerType.BRAPI) {
-
-            returnVal = ServiceRequestId.SERVICE_PATH_BRAPI + "/";
-        } else {
-            throw new Exception("Unknown controller type: " + controllerType.toString());
-        }
-
-        return returnVal;
-
-    } // getControllerPath()
 }

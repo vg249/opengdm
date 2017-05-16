@@ -8,7 +8,7 @@ package org.gobiiproject.gobiiclient.dtorequests.instructions;
 import org.apache.commons.io.FileUtils;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
@@ -48,7 +48,7 @@ public class DtoRequestLoaderFilePreviewTest {
         RestUri previewTestUri = ClientContext
                 .getInstance(null,false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_FILE_LOAD);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_FILE_LOAD);
 
         String folderName = TestDtoFactory.getFolderNameWithTimestamp("Loader File Preview Test");
         previewTestUri.setParamValue("id", folderName );
@@ -83,7 +83,7 @@ public class DtoRequestLoaderFilePreviewTest {
         RestUri previewTestUriCreate = ClientContext
                 .getInstance(null,false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_FILE_LOAD);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_FILE_LOAD);
         previewTestUriCreate.setParamValue("id", TestDtoFactory.getFolderNameWithTimestamp("Loader File Preview Test"));
         GobiiEnvelopeRestResource<LoaderFilePreviewDTO> gobiiEnvelopeRestResourceCreate = new GobiiEnvelopeRestResource<>(previewTestUriCreate);
         PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelopeCreate = gobiiEnvelopeRestResourceCreate.put(LoaderFilePreviewDTO.class,
@@ -135,7 +135,7 @@ public class DtoRequestLoaderFilePreviewTest {
         RestUri previewTestUriCreateHmp = ClientContext
                 .getInstance(null,false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_FILE_LOAD);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_FILE_LOAD);
         previewTestUriCreateHmp.setParamValue("id", TestDtoFactory.getFolderNameWithTimestamp("Loader File Preview Test"));
         GobiiEnvelopeRestResource<LoaderFilePreviewDTO> gobiiEnvelopeRestResourceCreateHmp = new GobiiEnvelopeRestResource<>(previewTestUriCreateHmp);
         PayloadEnvelope<LoaderFilePreviewDTO> resultEnvelopeCreateHmp = gobiiEnvelopeRestResourceCreateHmp.put(LoaderFilePreviewDTO.class,

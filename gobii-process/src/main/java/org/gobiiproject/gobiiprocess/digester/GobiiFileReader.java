@@ -12,7 +12,7 @@ import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
@@ -519,7 +519,7 @@ public class GobiiFileReader {
 		}
 		String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
 		uriFactory = new UriFactory(currentCropContextRoot);
-		GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForPost = new GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS));
+		GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO> gobiiEnvelopeRestResourceForPost = new GobiiEnvelopeRestResource<ExtractorInstructionFilesDTO>(uriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS));
 		PayloadEnvelope<ExtractorInstructionFilesDTO> extractorInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForPost.post(ExtractorInstructionFilesDTO.class,
 				payloadEnvelope);
 		if (extractorInstructionFileDTOResponseEnvelope != null) {
@@ -724,7 +724,7 @@ public class GobiiFileReader {
 			UriFactory uriFactory = new UriFactory(currentCropContextRoot);
 
 			RestUri projectsUri = uriFactory
-					.resourceByUriIdParam(ServiceRequestId.URL_DATASETS);
+					.resourceByUriIdParam(GobiiServiceRequestId.URL_DATASETS);
 			projectsUri.setParamValue("id", dataSetId.toString());
 			GobiiEnvelopeRestResource<DataSetDTO> gobiiEnvelopeRestResourceForDatasets = new GobiiEnvelopeRestResource<>(projectsUri);
 			PayloadEnvelope<DataSetDTO> resultEnvelope = gobiiEnvelopeRestResourceForDatasets

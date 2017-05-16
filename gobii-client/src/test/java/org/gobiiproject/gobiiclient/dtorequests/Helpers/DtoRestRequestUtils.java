@@ -2,7 +2,7 @@ package org.gobiiproject.gobiiclient.dtorequests.Helpers;
 
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DTOBase;
@@ -20,18 +20,18 @@ import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
 public class DtoRestRequestUtils<T extends DTOBase> {
 
     private Class<T> dtoType;
-    private ServiceRequestId serviceRequestId;
+    private GobiiServiceRequestId gobiiServiceRequestId;
 
     /**
-     * Constructs a DtoRestRequestUtils specic to a DTO type and a ServiceRequestId enum value.
+     * Constructs a DtoRestRequestUtils specic to a DTO type and a GobiiServiceRequestId enum value.
      * @param dtoType
      * The class type of the DTO
-     * @param serviceRequestId
+     * @param gobiiServiceRequestId
      * The ServiceReuqestId for the corresponding URI
      */
-    public DtoRestRequestUtils(Class<T> dtoType, ServiceRequestId serviceRequestId) {
+    public DtoRestRequestUtils(Class<T> dtoType, GobiiServiceRequestId gobiiServiceRequestId) {
         this.dtoType = dtoType;
-        this.serviceRequestId = serviceRequestId;
+        this.gobiiServiceRequestId = gobiiServiceRequestId;
     }
 
     /**
@@ -46,7 +46,7 @@ public class DtoRestRequestUtils<T extends DTOBase> {
 
         RestUri restUri = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(this.serviceRequestId);
+                .resourceColl(this.gobiiServiceRequestId);
         GobiiEnvelopeRestResource<T> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUri);
 
         returnVal = gobiiEnvelopeRestResource.get(dtoType);
@@ -134,7 +134,7 @@ public class DtoRestRequestUtils<T extends DTOBase> {
 
         RestUri restUriContact = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(this.serviceRequestId);
+                .resourceByUriIdParam(this.gobiiServiceRequestId);
 
         restUriContact.setParamValue("id", id);
         GobiiEnvelopeRestResource<T> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);

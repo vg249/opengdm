@@ -2,8 +2,8 @@ package org.gobiiproject.gobiiclient.dtorequests.brapi;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.types.ControllerType;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
@@ -37,8 +37,8 @@ public class BrapiTestCalls {
 
 
         RestUri restUriCalls = ClientContext.getInstance(null, false)
-                .getUriFactory(ControllerType.BRAPI)
-                .resourceColl(ServiceRequestId.URL_CALLS);
+                .getUriFactory(GobiiControllerType.BRAPI)
+                .resourceColl(GobiiServiceRequestId.URL_CALLS);
 
         BrapiEnvelopeRestResource<ObjectUtils.Null,ObjectUtils.Null,BrapiResponseCalls> brapiEnvelopeRestResource =
                 new BrapiEnvelopeRestResource<>(restUriCalls,

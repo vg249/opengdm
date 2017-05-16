@@ -4,6 +4,7 @@ import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiPayloadResponse;
@@ -11,8 +12,7 @@ import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
-import org.gobiiproject.gobiiapimodel.types.ControllerType;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
@@ -195,7 +195,7 @@ public final class ClientContext {
         // The /configsettings resource does not require authentication
         // this should be the only case in which we don't provide a crop ID
         HttpCore httpCore = new HttpCore(host, port, null);
-        String settingsPath = ServiceRequestId.URL_CONFIGSETTINGS.getRequestUrl(context, ControllerType.GOBII);
+        String settingsPath = GobiiServiceRequestId.URL_CONFIGSETTINGS.getRequestUrl(context, GobiiControllerType.GOBII.getControllerPath());
 
         RestUri configSettingsUri = new UriFactory(null).RestUriFromUri(settingsPath);
         HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri, null);
@@ -268,10 +268,10 @@ public final class ClientContext {
         return new UriFactory(contextPath);
     }
 
-    public UriFactory getUriFactory(ControllerType controllerType) throws Exception {
+    public UriFactory getUriFactory(GobiiControllerType gobiiControllerType) throws Exception {
 
         String contextPath = this.getServerConfig().getContextRoot();
-        return new UriFactory(contextPath, controllerType);
+        return new UriFactory(contextPath, gobiiControllerType);
     }
 
 
@@ -354,9 +354,9 @@ public final class ClientContext {
         boolean returnVal = true;
 
         try {
-            String authUrl = ServiceRequestId.URL_AUTH
+            String authUrl = GobiiServiceRequestId.URL_AUTH
                     .getRequestUrl(this.getCurrentCropContextRoot(),
-                            ControllerType.GOBII);
+                            GobiiControllerType.GOBII.getControllerPath());
 
             RestUri authUri = this.getUriFactory().RestUriFromUri(authUrl);
             userToken = this.getHttp().getTokenForUser(authUri, userName, password);

@@ -5,7 +5,7 @@ import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.hateos.LinkCollection;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
@@ -79,7 +79,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 
         PayloadEnvelope<PlatformDTO> payloadEnvelope = new PayloadEnvelope<>(newPlatformDto, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false).getUriFactory()
-                .resourceColl(ServiceRequestId.URL_PLATFORM));
+                .resourceColl(GobiiServiceRequestId.URL_PLATFORM));
         PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelope = gobiiEnvelopeRestResource.post(PlatformDTO.class,
                 payloadEnvelope);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(platformDTOResponseEnvelope.getHeader()));
@@ -92,7 +92,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 
         RestUri restUriPlatformForGetById = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_PLATFORM);
         restUriPlatformForGetById.setParamValue("id", platformDTOResponse.getPlatformId().toString());
         GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriPlatformForGetById);
         PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
@@ -167,7 +167,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         PayloadEnvelope<PlatformDTO> payloadEnvelope = new PayloadEnvelope<>(newPlatformDto, GobiiProcessType.CREATE);
         GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(ServiceRequestId.URL_PLATFORM));
+                .resourceColl(GobiiServiceRequestId.URL_PLATFORM));
         PayloadEnvelope<PlatformDTO> platformDTOResponseEnvelope = gobiiEnvelopeRestResource.post(PlatformDTO.class,
                 payloadEnvelope);
         PlatformDTO newPlatformDTOResponse = platformDTOResponseEnvelope.getPayload().getData().get(0);
@@ -176,7 +176,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 
         RestUri restUriPlatformForGetById = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_PLATFORM);
         restUriPlatformForGetById.setParamValue("id", newPlatformDTOResponse.getPlatformId().toString());
         GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriPlatformForGetById);
         PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
@@ -235,7 +235,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         // get a list of platforms
         RestUri restUriPlatform = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(ServiceRequestId.URL_PLATFORM);
+                .resourceColl(GobiiServiceRequestId.URL_PLATFORM);
         GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriPlatform);
         PayloadEnvelope<PlatformDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(PlatformDTO.class);
@@ -251,7 +251,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
         Integer platformId = platformDTOList.get(0).getPlatformId();
         RestUri restUriPlatformForGetById = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceByUriIdParam(ServiceRequestId.URL_PLATFORM);
+                .resourceByUriIdParam(GobiiServiceRequestId.URL_PLATFORM);
         restUriPlatformForGetById.setParamValue("id", platformId.toString());
         GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResourceForGetById = new GobiiEnvelopeRestResource<>(restUriPlatformForGetById);
         PayloadEnvelope<PlatformDTO> resultEnvelopeForGetByID = gobiiEnvelopeRestResourceForGetById
@@ -267,7 +267,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
     public void testEmptyResult() throws Exception {
 
         DtoRestRequestUtils<PlatformDTO> dtoDtoRestRequestUtils =
-                new DtoRestRequestUtils<>(PlatformDTO.class, ServiceRequestId.URL_PLATFORM);
+                new DtoRestRequestUtils<>(PlatformDTO.class, GobiiServiceRequestId.URL_PLATFORM);
         Integer maxId = dtoDtoRestRequestUtils.getMaxPkVal();
         Integer nonExistentId = maxId + 1;
 
@@ -288,7 +288,7 @@ public class DtoCrudRequestPlatformTest implements DtoCrudRequestTest {
 
         RestUri restUriPlatform = ClientContext.getInstance(null, false)
                 .getUriFactory()
-                .resourceColl(ServiceRequestId.URL_PLATFORM);
+                .resourceColl(GobiiServiceRequestId.URL_PLATFORM);
         GobiiEnvelopeRestResource<PlatformDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriPlatform);
         PayloadEnvelope<PlatformDTO> resultEnvelope = gobiiEnvelopeRestResource
                 .get(PlatformDTO.class);

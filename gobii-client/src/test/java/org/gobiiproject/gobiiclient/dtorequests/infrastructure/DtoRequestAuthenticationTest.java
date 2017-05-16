@@ -9,6 +9,7 @@ package org.gobiiproject.gobiiclient.dtorequests.infrastructure;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
@@ -16,8 +17,7 @@ import org.gobiiproject.gobiiclient.core.common.TestConfiguration;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
-import org.gobiiproject.gobiiapimodel.types.ControllerType;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -63,8 +63,8 @@ public class DtoRequestAuthenticationTest {
         analysisDTORequest.setAnalysisId(1);
 
 
-        String url = ServiceRequestId.URL_ANALYSIS.getRequestUrl(ClientContext.getInstance(null, false).getCurrentCropContextRoot(),
-                ControllerType.GOBII);
+        String url = GobiiServiceRequestId.URL_ANALYSIS.getRequestUrl(ClientContext.getInstance(null, false).getCurrentCropContextRoot(),
+                GobiiControllerType.GOBII.getControllerPath());
 
 //        DtoRequestProcessor<AnalysisDTO> dtoDtoRequestProcessor = new DtoRequestProcessor<>();
 
@@ -138,7 +138,7 @@ public class DtoRequestAuthenticationTest {
             String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
             UriFactory uriFactory = new UriFactory(currentCropContextRoot);
             RestUri restUriContact = uriFactory
-                    .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
+                    .resourceByUriIdParam(GobiiServiceRequestId.URL_CONTACTS);
             restUriContact.setParamValue("id", "6");
             GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
             PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResource
@@ -150,7 +150,7 @@ public class DtoRequestAuthenticationTest {
             // uriFactory still has crop two's context root.
             ClientContext.getInstance(null, false).setCurrentClientCrop(cropIdOne);
             restUriContact = uriFactory
-                    .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
+                    .resourceByUriIdParam(GobiiServiceRequestId.URL_CONTACTS);
             restUriContact.setParamValue("id", "6");
             gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
             resultEnvelope = gobiiEnvelopeRestResource
@@ -173,7 +173,7 @@ public class DtoRequestAuthenticationTest {
             String currentCropContextRootForCropOne = ClientContext.getInstance(null, false).getCropContextRoot(cropIdOne);
             uriFactory = new UriFactory(currentCropContextRootForCropOne);
             restUriContact = uriFactory
-                    .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
+                    .resourceByUriIdParam(GobiiServiceRequestId.URL_CONTACTS);
             restUriContact.setParamValue("id", "6");
             gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
             resultEnvelope = gobiiEnvelopeRestResource

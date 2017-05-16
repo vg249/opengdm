@@ -1,10 +1,10 @@
 package org.gobiiproject.gobiiclient.core.gobii.dtopost;
 
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 
-import org.gobiiproject.gobiiapimodel.types.ControllerType;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +18,8 @@ public class EnvelopeDtoRequest<T> {
 
     public PayloadEnvelope<T> processEnvelope(PayloadEnvelope<T> payloadEnvelope,
                                               Class<T> DtoType,
-                                              ControllerType controllerType,
-                                              ServiceRequestId requestId) throws Exception {
+                                              GobiiControllerType gobiiControllerType,
+                                              GobiiServiceRequestId requestId) throws Exception {
 
         String token = ClientContext.getInstance(null, false).getUserToken();
         String host = ClientContext.getInstance(null, false).getCurrentCropDomain();
@@ -36,7 +36,7 @@ public class EnvelopeDtoRequest<T> {
             throw (new Exception("there is no user token; user must log in"));
         }
 
-        String url = requestId.getRequestUrl(cropContextRoot, controllerType);
+        String url = requestId.getRequestUrl(cropContextRoot, gobiiControllerType.getControllerPath());
 
 
         returnVal = envelopeRestRequest.getTypedHtppResponseForDtoEnvelope(url,

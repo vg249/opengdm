@@ -1,10 +1,9 @@
 package org.gobiiproject.gobiiapimodel.restresources;
 
-import org.gobiiproject.gobiiapimodel.types.ControllerType;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 
-import java.security.Provider;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +19,7 @@ public class RestUri {
     private final String DELIM_PARAM_BEGIN = "{";
     private final String DELIM_PARAM_END = "}";
 
-    private ControllerType controllerType;
+    private GobiiControllerType gobiiControllerType;
     private String cropContextRoot;
 
     private String requestTemplate;
@@ -41,7 +40,7 @@ public class RestUri {
 
         return RestUri.URL_SEPARATOR
                 + returnVal
-                .replace(ServiceRequestId.getControllerPath(this.controllerType), "")
+                .replace(this.gobiiControllerType.getControllerPath(), "")
                 .replace(this.cropContextRoot, "");
     }
 
@@ -59,10 +58,10 @@ public class RestUri {
     }
 
 
-    public RestUri(String cropContextRoot, ControllerType controllerType, ServiceRequestId serviceRequestId) throws Exception {
-        this.controllerType = controllerType;
+    public RestUri(String cropContextRoot, GobiiControllerType gobiiControllerType, GobiiServiceRequestId gobiiServiceRequestId) throws Exception {
+        this.gobiiControllerType = gobiiControllerType;
         this.cropContextRoot = this.delimitSegment(cropContextRoot);
-        this.requestTemplate = serviceRequestId.getRequestUrl(this.cropContextRoot, this.controllerType);
+        this.requestTemplate = gobiiServiceRequestId.getRequestUrl(this.cropContextRoot, this.gobiiControllerType.getControllerPath());
     }
 
     public RestUri(String restUri) {
@@ -115,10 +114,10 @@ public class RestUri {
         return this;
     }
 
-    public RestUri appendSegment(ServiceRequestId serviceRequestId) throws Exception {
+    public RestUri appendSegment(GobiiServiceRequestId gobiiServiceRequestId) throws Exception {
 
         this.requestTemplate = this.delimitSegment(this.requestTemplate);
-        String segment = serviceRequestId.getRequestPath();
+        String segment = gobiiServiceRequestId.getRequestPath();
 
         this.requestTemplate += this.delimitSegment(segment);
 

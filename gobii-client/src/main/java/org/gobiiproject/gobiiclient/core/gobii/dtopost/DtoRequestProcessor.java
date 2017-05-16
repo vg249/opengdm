@@ -1,13 +1,13 @@
 package org.gobiiproject.gobiiclient.core.gobii.dtopost;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpCore;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
-import org.gobiiproject.gobiiapimodel.types.ControllerType;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +20,8 @@ public class DtoRequestProcessor<T extends Header> {
 
     public T process(T dtoToProcess,
                      Class<T> dtoType,
-                     ControllerType controllerType,
-                     ServiceRequestId requestId) throws Exception {
+                     GobiiControllerType gobiiControllerType,
+                     GobiiServiceRequestId requestId) throws Exception {
 
 
         T returnVal = null;
@@ -40,7 +40,7 @@ public class DtoRequestProcessor<T extends Header> {
             dtoToProcess.setCropType(cropType);
 
 
-            String url = requestId.getRequestUrl(cropContextRoot,controllerType);
+            String url = requestId.getRequestUrl(cropContextRoot, gobiiControllerType.getControllerPath());
 
             returnVal = this.getTypedHtppResponseForDto(
                     host,
