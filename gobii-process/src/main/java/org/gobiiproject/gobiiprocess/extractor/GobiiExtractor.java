@@ -45,9 +45,7 @@ public class GobiiExtractor {
 	private static String rootDir="../";
 	private static String markerListOverrideLocation=null;
 	//To calculate RunTime of Extraction
-	private static long startTime;
-	private static long endTime;
-	private static long duration;
+	private static long startTime, endTime, duration;
 
 	public static void main(String[] args) throws Exception {
 
@@ -111,7 +109,6 @@ public class GobiiExtractor {
 		
 		startTime = System.currentTimeMillis();
 
-		startTime = System.currentTimeMillis();
 
 		List<GobiiExtractorInstruction> list= parseExtractorInstructionFile(instructionFile);
 		if(list==null){
@@ -126,7 +123,7 @@ public class GobiiExtractor {
 			instructionName=instructionName.substring(0,instructionName.lastIndexOf('.'));
 			logFile=logDir+"/"+instructionName+".log";
 			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
-			ErrorLogger.setLogFilepath(logFile);
+//			ErrorLogger.setLogFilepath(logFile);
 			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
 		}
 		else{
@@ -426,10 +423,7 @@ public class GobiiExtractor {
 								}
 								ErrorLogger.logDebug("GobiiExtractor","Executing FlapJack Genotype file Generation");
 								success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile,errorFile);
-								if(success){
-									pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
-									pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
-								}
+								getCounts(success, pm, markerFile, sampleFile);
 								endTime = System.currentTimeMillis();
 								duration = endTime - startTime;
 								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
@@ -443,10 +437,7 @@ public class GobiiExtractor {
 								success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
 								endTime = System.currentTimeMillis();
 								duration = endTime - startTime;
-								if(success){
-									pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
-									pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
-								}
+								getCounts(success, pm, markerFile, sampleFile);
 								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 								break;
@@ -494,6 +485,20 @@ public class GobiiExtractor {
 							org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(e), null, false, null, configuration, inst.getContactEmail());
 				}
 		}
+	}
+
+	/***
+	 * Get marker and sample count for Email notification Table
+	 * @param success
+	 * @param pm
+	 * @param markerFile
+	 * @param sampleFile
+	 */
+	private static void getCounts(boolean success, ProcessMessage pm, String markerFile, String sampleFile) {
+		if(success){
+            pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
+            pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
+        }
 	}
 
 	/**
