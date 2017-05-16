@@ -34,6 +34,7 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.gobiiproject.gobiimodel.utils.email.DigesterMessage;
 import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.PGArray;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
@@ -56,13 +57,13 @@ import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
  */
 public class GobiiFileReader {
 	private static String rootDir="../";
-	private static String loaderScriptPath,extractorScriptPath,pathToHDF5;
+	private static String loaderScriptPath;
+	private static String extractorScriptPath;
 	private static final String VARIANT_CALL_TABNAME="matrix";
 	private static final String	LINKAGE_GROUP_TABNAME="linkage_group";
 	private static final String GERMPLASM_PROP_TABNAME="germplasm_prop";
 	private static final String GERMPLASM_TABNAME="germplasm";
 	private static final String MARKER_TABNAME="marker";
-	private static String pathToHDF5Files;
 	private static boolean verbose;
 	private static String errorLogOverride;
 	private static String propertiesFile;
@@ -98,7 +99,7 @@ public class GobiiFileReader {
             if(cli.hasOption("verbose")) verbose=true;
             if(cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
             if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
-            if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
+            if(cli.hasOption("hdfFiles")) HDF5Interface.setPathToHDF5Files(cli.getOptionValue("hdfFiles"));
 			if(cli.hasOption("enableMonet")) enableMonet=true;
 			LoaderGlobalConfigs.setFromFlags(cli);
             args=cli.getArgs();//Remaining args passed through
@@ -111,7 +112,7 @@ public class GobiiFileReader {
 		
      	extractorScriptPath=rootDir+"extractors/";
      	loaderScriptPath=rootDir+"loaders/";
-     	pathToHDF5=loaderScriptPath+"hdf5/bin/";
+     	HDF5Interface.setPathToHDF5(loaderScriptPath+"hdf5/bin/");
     	
     	if(propertiesFile==null)propertiesFile=rootDir+"config/gobii-web.properties";
 		
@@ -186,7 +187,7 @@ public class GobiiFileReader {
 			logError("Digester","Unknown Crop Type: "+crop+" in the Configuration File");
 			return;
 		}
-		if(pathToHDF5Files==null)pathToHDF5Files=cropPath.toString()+"/hdf5/";
+		if(HDF5Interface.getPathToHDF5Files() ==null) HDF5Interface.setPathToHDF5Files(cropPath.toString()+"/hdf5/");
 
 		String errorPath=getLogName(zero, gobiiCropConfig,crop);
 
@@ -395,8 +396,8 @@ public class GobiiFileReader {
 			errorPath=getLogName(zero, gobiiCropConfig, crop, "Matrix_Upload");
 			String variantFilename="DS"+dataSetId;
 			File variantFile=loaderInstructionMap.get(VARIANT_CALL_TABNAME);
-			String markerFileLoc=pathToHDF5Files+"DS"+dataSetId+".marker_id";
-			String sampleFileLoc=pathToHDF5Files+"DS"+dataSetId+".dnarun_id";
+			String markerFileLoc= HDF5Interface.getPathToHDF5Files() +"DS"+dataSetId+".marker_id";
+			String sampleFileLoc= HDF5Interface.getPathToHDF5Files() +"DS"+dataSetId+".dnarun_id";
 
 			if(variantFile!=null && dataSetId==null){
 				logError("Digester","Data Set ID is null for variant call");
@@ -406,7 +407,7 @@ public class GobiiFileReader {
 					uploadToMonet(dataSetId, gobiiCropConfig, errorPath, variantFile, markerFileLoc, sampleFileLoc);
 				}
 
-				createHDF5(dm, dst, configuration, dataSetId, crop, errorPath, variantFilename, variantFile);
+				HDF5Interface.createHDF5FromDataset(dm, dst, configuration, dataSetId, crop, errorPath, variantFilename, variantFile);
 				rmIfExist(variantFile.getPath());
 			}
 			if(success && ErrorLogger.success()){
@@ -431,27 +432,6 @@ public class GobiiFileReader {
 		if (qcCheck) {//QC - Subsection #3 of 3
 			sendQCExtract(configuration, crop);
 		}
-	}
-
-	private static void createHDF5(DigesterMessage dm, String dst, ConfigSettings configuration, Integer dataSetId, String crop, String errorPath, String variantFilename, File variantFile) {
-		//HDF-5
-		//Usage: %s <datasize> <input file> <output HDF5 file
-		String loadHDF5=pathToHDF5+"loadHDF5";
-		dm.addPath("matrix directory",pathToHDF5Files);
-		String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
-		int size=8;
-		switch(dst.toUpperCase()){
-            case "NUCLEOTIDE_2_LETTER": case "IUPAC":case "VCF":
-                size=2;break;
-            case "SSR_ALLELE_SIZE":size=8;break;
-            case "CO_DOMINANT_NON_NUCLEOTIDE":
-            case "DOMINANT_NON_NUCLEOTIDE":size=1;break;
-            default:
-                logError("Digester","Unknown type "+dst.toString());break;
-        }
-		ErrorLogger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
-		HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
-		updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
 	}
 
 	private static void uploadToMonet(Integer dataSetId, GobiiCropConfig gobiiCropConfig, String errorPath, File variantFile, String markerFileLoc, String sampleFileLoc) {
