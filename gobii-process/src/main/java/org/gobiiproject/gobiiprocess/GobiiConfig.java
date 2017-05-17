@@ -10,6 +10,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiCropDbConfig;
+import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.config.ServerConfigKDC;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.GobiiDbType;
@@ -658,7 +659,7 @@ public class GobiiConfig {
 
             if (commandLine.hasOption(SVR_KDC_STATUS_ACTIVE)) {
                 String activeStr = commandLine.getOptionValue(SVR_KDC_STATUS_ACTIVE);
-                if(activeStr.toLowerCase().equals("false")) {
+                if (activeStr.toLowerCase().equals("false")) {
                     active = false;
                 } else {
                     active = true;
@@ -1411,26 +1412,32 @@ public class GobiiConfig {
         List<String> gobiiCropTypes = gobiiClientContext.getInstance(null, false).getCropTypeTypes();
         GobiiConfig.printSeparator();
 
-        GobiiConfig.printField("Default crop", GobiiClientContext.getInstance(null, false).getDefaultCropType().toString());
+        for (String currentCropId : gobiiCropTypes) {
 
-        for (String currentCropType : gobiiCropTypes) {
 
-            GobiiClientContext.getInstance(null, false).setCurrentClientCrop(currentCropType);
+            ServerConfig currentServerConfig = GobiiClientContext.getInstance(null, false).getServerConfig(currentCropId);
 
             GobiiConfig.printSeparator();
-            GobiiConfig.printField("Crop Type", currentCropType.toString());
-            GobiiConfig.printField("Host", GobiiClientContext.getInstance(null, false).getCurrentCropDomain());
-            GobiiConfig.printField("Port", GobiiClientContext.getInstance(null, false).getCurrentCropPort().toString());
-            GobiiConfig.printField("Context root", GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot());
+            GobiiConfig.printField("Crop Type", currentCropId.toString());
+            GobiiConfig.printField("Host", currentServerConfig.getDomain());
+            GobiiConfig.printField("Port", currentServerConfig.getPort().toString());
+            GobiiConfig.printField("Context root", currentServerConfig.getContextRoot());
 
-            GobiiConfig.printField("Loader instructions directory", GobiiClientContext.getInstance(null, false)
-                    .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INSTRUCTIONS));
-            GobiiConfig.printField("User file upload directory", GobiiClientContext.getInstance(null, false)
-                    .getFileLocationOfCurrenCrop(GobiiFileProcessDir.RAW_USER_FILES));
-            GobiiConfig.printField("Digester output directory ", GobiiClientContext.getInstance(null, false)
-                    .getFileLocationOfCurrenCrop(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES));
-            GobiiConfig.printField("Extractor instructions directory", GobiiClientContext.getInstance(null, false)
-                    .getFileLocationOfCurrenCrop(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS));
+            GobiiConfig.printField("Loader instructions directory", currentServerConfig
+                    .getFileLocations()
+                    .get(GobiiFileProcessDir.LOADER_INSTRUCTIONS));
+
+            GobiiConfig.printField("User file upload directory", currentServerConfig
+                    .getFileLocations()
+                    .get(GobiiFileProcessDir.RAW_USER_FILES));
+
+            GobiiConfig.printField("Digester output directory ", currentServerConfig
+                    .getFileLocations()
+                    .get(GobiiFileProcessDir.LOADER_INTERMEDIATE_FILES));
+
+            GobiiConfig.printField("Extractor instructions directory", currentServerConfig
+                    .getFileLocations()
+                    .get(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS));
 
             //if(!LineUtils.isNullOrEmpty())
 

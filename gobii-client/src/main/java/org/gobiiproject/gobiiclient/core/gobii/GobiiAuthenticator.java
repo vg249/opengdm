@@ -34,12 +34,11 @@ public class GobiiAuthenticator {
 
         }
 
-        GobiiClientContext.getInstance(null, false).setCurrentClientCrop(clientCrop);
 
         String testUserName = testExecConfig.getLdapUserForUnitTest();
         String testPassword = testExecConfig.getLdapPasswordForUnitTest();
 
-        return GobiiClientContext.getInstance(null, false).login(testUserName, testPassword);
+        return GobiiClientContext.getInstance(null, false).login(clientCrop, testUserName, testPassword);
     }
 
     public static boolean authenticate() throws Exception {

@@ -713,7 +713,7 @@ public class GobiiFileReader {
 			// set up authentication and so forth
 			// you'll need to get the current from the instruction file
 			GobiiClientContext context= GobiiClientContext.getInstance(config,cropName,GobiiAutoLoginType.USER_RUN_AS);
-			//context.setCurrentClientCrop(cropName);
+			//context.setCurrentCropId(cropName);
 
 			if( LineUtils.isNullOrEmpty( context.getUserToken())){
 				logError("Digester","Unable to login with user " + GobiiAutoLoginType.USER_RUN_AS.toString());

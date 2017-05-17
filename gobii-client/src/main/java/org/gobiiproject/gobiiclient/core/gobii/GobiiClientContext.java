@@ -25,8 +25,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Phil on 5/13/2016.
+/***
+ * This class encapsulates the configuration data and http component that Java clients
+ * will require in order to connect ot gobii web services. In the nominal case, configuraiton
+ * data are retrieved from a configuration URL that does not require authentication, whilst all
+ * other gobii web service calls require authentication. There are two, and only two, Java clients
+ * that should be using the local configuration method, wherein an instance of ConfigSettings from
+ * a configuration file path is created. There are to getInstance() methods for both of these approaches.
+ * Once a getInstance() method is called, the client context is populated with a list of configuration
+ * settings indexed by cropId. The cropId uniquely identifies a server with respect to its destination
+ * address. In a prior version of this class, the user could arbitrarily determine the "current" crop
+ * by setting the crop ID. Moreover, there as also the concept of a default crop. This flexibility
+ * led to some significant and hard to trace bugs, where a request for a crop would correctly go to
+ * that crops context path (e.g., gobii-dev) but to the port of a different instance. In the new
+ * dispensation, there are two, and only two ways, in which the "current" crop ID can be set:
+ * 1) Through the getInstance() method that takes a ConfigurationSEttings instance: in these cases,
+ *    we want to do the authentication in the getInstance() method so that our Java clients needn't
+ *    be troubled by that detail. Accordingly, that version of getInstance() does a login to the
+ *    server corresponding to the specified crop;
+ * 2) Through the login() method: for all other clients, the flow of control is:
+ *    a) Use the getInstance() method that takes a configuration URL to pouplate the configuraiton list;
+ *    b) The user selects a desired crop from the list;
+ *    c) The user logs in with the login() method.
+ *
+ * Thus, when a different crop is desired, the user will have to authenticate specifically to the server
+ * for that crop, and in this case the HttpCore instance (which knows the domain and port of the server
+ * along with the authentication token) is reset.
+ *
  */
 public final class GobiiClientContext {
 
@@ -68,24 +93,21 @@ public final class GobiiClientContext {
 
 
     public synchronized static GobiiClientContext getInstance(ConfigSettings configSettings,
-                                                              String cropType, GobiiAutoLoginType gobiiAutoLoginType) throws Exception {
+                                                              String cropId, GobiiAutoLoginType gobiiAutoLoginType) throws Exception {
 
         if (null == gobiiClientContext) {
+
+            if (LineUtils.isNullOrEmpty(cropId)) {
+                throw new Exception("Crop ID must not be null");
+            }
 
             if (null == configSettings) {
                 throw new Exception("Client context cannot be null!");
             }
 
             gobiiClientContext = new GobiiClientContext();
+            gobiiClientContext.cropId = cropId;
             gobiiClientContext.fileSystemRoot = configSettings.getFileSystemRoot();
-
-            if (LineUtils.isNullOrEmpty(cropType)) {
-                gobiiClientContext.defaultGobiiCropType = configSettings.getDefaultGobiiCropType();
-                gobiiClientContext.currentGobiiCropType = gobiiClientContext.defaultGobiiCropType;
-            } else {
-                gobiiClientContext.defaultGobiiCropType = cropType;
-                gobiiClientContext.currentGobiiCropType = cropType;
-            }
 
             for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
@@ -103,6 +125,10 @@ public final class GobiiClientContext {
                 gobiiClientContext.serverConfigs.put(currentGobiiCropConfig.getGobiiCropType(),
                         currentServerConfig);
             }
+
+            gobiiClientContext.gobiiCropTypes.addAll(gobiiClientContext
+                    .serverConfigs
+                    .keySet());
 
             if (gobiiAutoLoginType != GobiiAutoLoginType.UNKNOWN) {
 
@@ -122,7 +148,7 @@ public final class GobiiClientContext {
                 }
 
                 if (!LineUtils.isNullOrEmpty(userName) && !LineUtils.isNullOrEmpty(password)) {
-                    gobiiClientContext.login(userName, password);
+                    gobiiClientContext.login(cropId, userName, password);
                 }
             }
         }
@@ -211,7 +237,6 @@ public final class GobiiClientContext {
         if (resultEnvelope.getHeader().getStatus().isSucceeded()) {
 
             ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
-            returnVal.defaultGobiiCropType = configSettingsDTOResponse.getDefaultCrop();
             returnVal.serverConfigs = configSettingsDTOResponse.getServerConfigs();
 
         } else {
@@ -236,30 +261,48 @@ public final class GobiiClientContext {
     private Map<String, ServerConfig> serverConfigs = new HashMap<>();
 
 
-    String currentGobiiCropType;
+    String cropId;
 
-    String defaultGobiiCropType;
     List<String> gobiiCropTypes = new ArrayList<>();
 
 
+    /***
+     * Gets the ServerConfig for the current cropId
+     * @return
+     * @throws Exception
+     */
     private ServerConfig getServerConfig() throws Exception {
 
         ServerConfig returnVal;
+        returnVal = this.getServerConfig(this.cropId);
+        return returnVal;
+    }
 
-        String cropType;
-        if (!LineUtils.isNullOrEmpty(currentGobiiCropType)) {
-            cropType = this.currentGobiiCropType;
-        } else {
-            cropType = this.defaultGobiiCropType;
+    /***
+     * This method only returns a ServerConfig, if it exists. It does not change the state of this instance of
+     * GobiiClientContext with respect to the current cropId. In other words, when you call this method, you get
+     * the ServerConfig, but the context and the HttpCore that it encapsulates still reference the server for the
+     * cropId with which login() was called.
+     * @param cropId: The ID of the crop per the configuration file
+     * @return
+     * @throws Exception if cropoId is null or is not a crop defined in the configuration
+     */
+    public ServerConfig getServerConfig(String cropId) throws Exception {
+
+        ServerConfig returnVal;
+
+        if (LineUtils.isNullOrEmpty(cropId)) {
+            throw new Exception("Unable to get server config: A cropID was never set for this context");
         }
 
-        if (!this.serverConfigs.containsKey(cropType)) {
-            throw new Exception("No server configuration is defined for crop: " + cropType);
+        if (!this.serverConfigs.containsKey(cropId)) {
+            throw new Exception("No server configuration is defined for crop: " + this.cropId);
         }
 
-        returnVal = this.serverConfigs.get(cropType);
+        returnVal = this.serverConfigs.get(cropId);
 
         return returnVal;
+
     }
 
     public GobiiUriFactory getUriFactory() throws Exception {
@@ -323,15 +366,7 @@ public final class GobiiClientContext {
 
 
     public String getCurrentClientCropType() {
-        return this.currentGobiiCropType;
-    }
-
-    public void setCurrentClientCrop(String currentClientCrop) {
-        this.currentGobiiCropType = currentClientCrop;
-    }
-
-    public String getDefaultCropType() {
-        return this.defaultGobiiCropType;
+        return this.cropId;
     }
 
     public String getFileLocationOfCurrenCrop(GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
@@ -340,27 +375,41 @@ public final class GobiiClientContext {
                 .get(gobiiFileProcessDir);
     }
 
+//    public void setCurrentCropId(String cropId) throws Exception {
+//
+//        if (!this.gobiiCropTypes.contains(cropId)) {
+//            throw new Exception("The specified cropId does not exist");
+//        }
+//
+//        this.cropId = cropId;
+//    }
+
 
     private HttpCore httpCore = null;
+
     public HttpCore getHttp() throws Exception {
 
-        return this.getHttp(false);
-    }
-
-    public HttpCore getHttp(boolean refresh) throws Exception {
-
-        if (httpCore == null || refresh == true) {
-            this.httpCore = new HttpCore(this.getCurrentCropDomain(),
-                    this.getCurrentCropPort(),
-                    this.getCurrentClientCropType());
+        if (this.httpCore == null) {
+            throw new Exception("The http instance has not been initialized: you must call login() ");
         }
 
         return this.httpCore;
     }
 
-    public boolean login(String userName, String password) throws Exception {
+
+    public boolean login(String cropId, String userName, String password) throws Exception {
 
         boolean returnVal = true;
+
+        if (LineUtils.isNullOrEmpty(cropId)) {
+            throw new Exception("CropId must not be null");
+        }
+
+        if (!this.gobiiCropTypes.contains(cropId)) {
+            throw new Exception("The requested crop does not exist in the configuration: " + cropId);
+        }
+
+        this.cropId = cropId;
 
         try {
             String authUrl = GobiiServiceRequestId.URL_AUTH
@@ -369,8 +418,12 @@ public final class GobiiClientContext {
 
             RestUri authUri = this.getUriFactory().RestUriFromUri(authUrl);
 
-            // force refresh of http because we're getting a new token
-            returnVal = this.getHttp(true).authenticate(authUri, userName, password);
+            this.httpCore = new HttpCore(this.getCurrentCropDomain(),
+                    this.getCurrentCropPort(),
+                    this.getCurrentClientCropType());
+
+
+            returnVal = this.httpCore.authenticate(authUri, userName, password);
 
         } catch (Exception e) {
             LOGGER.error("Authenticating", e);

@@ -114,14 +114,13 @@ public class DtoRequestConfigSettingsPropsTest {
 
         GobiiClientContext.getInstance(serviceUrl, true);
 
-        GobiiClientContext.getInstance(null, false)
-                .setCurrentClientCrop(defaultCrop);
-
         String testUser = GobiiAuthenticator.getTestExecConfig().getLdapUserForUnitTest();
         String testPassword = GobiiAuthenticator.getTestExecConfig().getLdapPasswordForUnitTest();
 
+        String testCrop = GobiiAuthenticator.getTestExecConfig().getTestCrop();
+
         Assert.assertTrue("Unable to authenticate to remote server with default drop " + defaultCrop,
-                GobiiClientContext.getInstance(null, false).login(testUser, testPassword));
+                GobiiClientContext.getInstance(null, false).login(testCrop, testUser, testPassword));
 
         Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
 
@@ -158,11 +157,11 @@ public class DtoRequestConfigSettingsPropsTest {
 
 
         try {
-            GobiiClientContext.getInstance(null, false)
-                    .setCurrentClientCrop(defaultCropMismatched);
+            //authentication would fail if we didn't get the mismatched crop error
+            GobiiClientContext.getInstance(null, false).login(defaultCropMismatched,"foo","foo");
         } catch(Exception e) {
             Assert.assertTrue("Setting context to a case-mismatched crop type does not throw an exception",
-                    e.getMessage().contains("No server configuration is defined for crop: " + defaultCropMismatched));
+                    e.getMessage().contains("The requested crop does not exist in the configuration" ));
 
         }
 
