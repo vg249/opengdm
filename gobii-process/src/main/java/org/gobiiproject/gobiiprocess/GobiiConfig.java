@@ -52,7 +52,6 @@ public class GobiiConfig {
     private static String CONFIG_MARK_CROP_ACTIVE = "cA";
     private static String CONFIG_MARK_CROP_NOTACTIVE = "cD";
     private static String CONFIG_REMOVE_CROP = "cR";
-    private static String CONFIG_GLOBAL_DEFAULT_CROP = "gD";
     private static String CONFIG_GLOBAL_FILESYS_ROOT = "gR";
     private static String CONFIG_GLOBAL_FILESYS_LOG = "gL";
 
@@ -206,14 +205,13 @@ public class GobiiConfig {
             setOption(options, PROP_FILE_FQPN, true, "fqpn of gobii configuration file", "config fqpn");
             setOption(options, PROP_FILE_PROPS_TO_XML, false, "Convert existing gobii-properties file to xml (requires " + PROP_FILE_FQPN + ")", "convert to xml");
             setOption(options, CONFIG_ADD_ITEM, false, "Adds or updates the configuration value specified by one of the infrastructure parameters ("
-                    + CONFIG_GLOBAL_FILESYS_ROOT + ", " + CONFIG_GLOBAL_DEFAULT_CROP + ") or parameters that require server option parameters ("
+                    + CONFIG_GLOBAL_FILESYS_ROOT + ") or parameters that require server option parameters ("
                     + CONFIG_SVR_GLOBAL_EMAIL + ", " + CONFIG_CROP_ID + ")", "add config item");
 
             setOption(options, CONFIG_REMOVE_CROP, true, "Removes the specified crop and related server specifications", "crop ID");
             setOption(options, CONFIG_MARK_CROP_ACTIVE, false, "Marks the specified crop active", "crop ID");
             setOption(options, CONFIG_MARK_CROP_NOTACTIVE, false, "Marks the specified crop inactive", "crop ID");
 
-            setOption(options, CONFIG_GLOBAL_DEFAULT_CROP, true, "Default crop (global)", "crop id");
             setOption(options, CONFIG_GLOBAL_FILESYS_ROOT, true, "Absolute path to the gobii file system root (global)", "gobii root fqpn");
             setOption(options, CONFIG_GLOBAL_FILESYS_LOG, true, "Log file directory (global)", "log directory");
 
@@ -318,9 +316,6 @@ public class GobiiConfig {
                                 GobiiConfig.printField("Local properties file", propertiesFileFqpn);
 
                                 ConfigSettings configSettings = new ConfigSettings(propertiesFileFqpn);
-
-                                String defaultCropType = configSettings.getDefaultGobiiCropType();
-                                configSettings.setCurrentGobiiCropType(defaultCropType);
 
                                 String configServerUrl = "http://"
                                         + configSettings.getCurrentCropConfig().getHost()
@@ -700,26 +695,7 @@ public class GobiiConfig {
 
             ConfigSettings configSettings = getConfigSettings(propFileFqpn);
 
-            if (commandLine.hasOption(CONFIG_GLOBAL_DEFAULT_CROP)) {
-
-                String defaultCrop = commandLine.getOptionValue(CONFIG_GLOBAL_DEFAULT_CROP);
-
-                if (!configSettings.isCropDefined(defaultCrop)) {
-                    configSettings.setCrop(defaultCrop, true, null, null, null);
-                }
-
-                configSettings.setDefaultGobiiCropType(defaultCrop);
-
-                configSettings.commit();
-
-                writeConfigSettingsMessage(options,
-                        propFileFqpn,
-                        Arrays.asList(CONFIG_GLOBAL_DEFAULT_CROP),
-                        Arrays.asList(defaultCrop),
-                        null);
-
-
-            } else if (commandLine.hasOption(CONFIG_GLOBAL_FILESYS_ROOT)) {
+            if (commandLine.hasOption(CONFIG_GLOBAL_FILESYS_ROOT)) {
 
                 String fileSysRoot = commandLine.getOptionValue(CONFIG_GLOBAL_FILESYS_ROOT);
 
@@ -1144,11 +1120,6 @@ public class GobiiConfig {
 
                 if (LineUtils.isNullOrEmpty(configSettings.getEmailSvrUser())) {
                     System.err.println("An email server password is not defined");
-                    returnVal = false;
-                }
-
-                if (LineUtils.isNullOrEmpty(configSettings.getDefaultGobiiCropType())) {
-                    System.err.println("A default crop type is not defined");
                     returnVal = false;
                 }
 

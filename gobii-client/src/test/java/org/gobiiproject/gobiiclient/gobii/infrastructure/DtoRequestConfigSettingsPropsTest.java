@@ -27,9 +27,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 public class DtoRequestConfigSettingsPropsTest {
-
 
 
     @BeforeClass
@@ -47,7 +47,7 @@ public class DtoRequestConfigSettingsPropsTest {
 
         PayloadEnvelope<ConfigSettingsDTO> returnVal = null;
 
-        RestUri confgSettingsUri = GobiiClientContext.getInstance(null,false)
+        RestUri confgSettingsUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceColl(GobiiServiceRequestId.URL_CONFIGSETTINGS);
         GobiiEnvelopeRestResource<ConfigSettingsDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(confgSettingsUri);
@@ -71,26 +71,28 @@ public class DtoRequestConfigSettingsPropsTest {
         GobiiClientContext.resetConfiguration();
         Assert.assertTrue(GobiiAuthenticator.authenticate());
 
-        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope =  getConfigSettingsFromServer();
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = getConfigSettingsFromServer();
         ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
 
         Assert.assertNotNull(configSettingsDTOResponse);
         Assert.assertTrue(configSettingsDTOResponse.getServerConfigs().size() > 0);
 
-        Assert.assertNotNull("The server configuration does not define a default crop",
-                configSettingsDTOResponse.getDefaultCrop());
 
-        String defaultCrop = configSettingsDTOResponse.getDefaultCrop();
+        String randomCrop = new ArrayList<String>( configSettingsDTOResponse
+                .getServerConfigs()
+                .keySet())
+                .get(0);
+
 
         ServerConfig serverConfigDefaultCrop = configSettingsDTOResponse
                 .getServerConfigs()
-                .get(defaultCrop);
+                .get(randomCrop);
 
         Assert.assertNotNull("The remote server configuration does not define crop type",
                 serverConfigDefaultCrop.getGobiiCropType());
 
         Assert.assertTrue("The default crop's crop ID does not match the settings default crop",
-                defaultCrop.equals(serverConfigDefaultCrop.getGobiiCropType()));
+                randomCrop.equals(serverConfigDefaultCrop.getGobiiCropType()));
 
         Assert.assertNotNull("The remote server configuration does not define a domain for crop type " + serverConfigDefaultCrop.getGobiiCropType(),
                 serverConfigDefaultCrop.getDomain());
@@ -119,7 +121,7 @@ public class DtoRequestConfigSettingsPropsTest {
 
         String testCrop = GobiiAuthenticator.getTestExecConfig().getTestCrop();
 
-        Assert.assertTrue("Unable to authenticate to remote server with default drop " + defaultCrop,
+        Assert.assertTrue("Unable to authenticate to remote server with default drop " + randomCrop,
                 GobiiClientContext.getInstance(null, false).login(testCrop, testUser, testPassword));
 
         Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
@@ -127,16 +129,20 @@ public class DtoRequestConfigSettingsPropsTest {
     }
 
     @Test
-    public void testWithCaseMisMatchedCropname() throws  Exception {
+    public void testWithCaseMisMatchedCropname() throws Exception {
 
-        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope =  getConfigSettingsFromServer();
+        PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = getConfigSettingsFromServer();
         ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
 
-        String defaultCrop = configSettingsDTOResponse.getDefaultCrop();
+        Assert.assertTrue(configSettingsDTOResponse.getServerConfigs().size() > 0);
+
+        String randomCrop = new ArrayList<String>(
+                configSettingsDTOResponse.getServerConfigs().keySet()
+        ).get(0);
 
         ServerConfig serverConfigDefaultCrop = configSettingsDTOResponse
                 .getServerConfigs()
-                .get(defaultCrop);
+                .get(randomCrop);
 
 
         URL url = new URL("http",
@@ -152,16 +158,15 @@ public class DtoRequestConfigSettingsPropsTest {
         GobiiClientContext.getInstance(serviceUrl, true);
 
 
-        String defaultCropMismatched = defaultCrop.toUpperCase();
-
+        String defaultCropMismatched = randomCrop.toUpperCase();
 
 
         try {
             //authentication would fail if we didn't get the mismatched crop error
-            GobiiClientContext.getInstance(null, false).login(defaultCropMismatched,"foo","foo");
-        } catch(Exception e) {
+            GobiiClientContext.getInstance(null, false).login(defaultCropMismatched, "foo", "foo");
+        } catch (Exception e) {
             Assert.assertTrue("Setting context to a case-mismatched crop type does not throw an exception",
-                    e.getMessage().contains("The requested crop does not exist in the configuration" ));
+                    e.getMessage().contains("The requested crop does not exist in the configuration"));
 
         }
 
@@ -178,18 +183,18 @@ public class DtoRequestConfigSettingsPropsTest {
         GobiiTestConfiguration gobiiTestConfiguration = new GobiiTestConfiguration();
 
 
-                GobiiClientContext.getInstance(configSettings,
-                        gobiiTestConfiguration
-                                .getConfigSettings()
-                                .getTestExecConfig()
-                                .getTestCrop(),
-                        GobiiAutoLoginType.USER_TEST);
+        GobiiClientContext.getInstance(configSettings,
+                gobiiTestConfiguration
+                        .getConfigSettings()
+                        .getTestExecConfig()
+                        .getTestCrop(),
+                GobiiAutoLoginType.USER_TEST);
 
         Assert.assertNotNull("Unable to log in with locally instantiated config settings",
-                GobiiClientContext.getInstance(null,false).getUserToken());
+                GobiiClientContext.getInstance(null, false).getUserToken());
 
 
-                PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
+        PingDTO pingDTORequest = TestDtoFactory.makePingDTO();
         //DtoRequestPing dtoRequestPing = new DtoRequestPing();
         GobiiEnvelopeRestResource<PingDTO> gobiiEnvelopeRestResourcePingDTO = new GobiiEnvelopeRestResource<>(GobiiClientContext.getInstance(null, false)
                 .getUriFactory()

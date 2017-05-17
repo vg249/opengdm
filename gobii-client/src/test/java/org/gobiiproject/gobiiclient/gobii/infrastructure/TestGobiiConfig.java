@@ -1016,30 +1016,6 @@ public class TestGobiiConfig {
                 configSettings.isCropDefined(cropToRemove));
     }
 
-    @Ignore // fails on SYS_INT
-    public void testSetDefaultCrop() throws Exception {
-
-        String testFileFqpn = makeTestFileFqpn("defaultcrop");
-
-        createCrops(testFileFqpn, Arrays.asList("dev", "test", "extra"));
-
-        String defaultCrop = "dev";
-
-        String setDefaultCrop = makeCommandline("-a -wfqpn "
-                + testFileFqpn
-                + " -gD "
-                + " " + defaultCrop + " ");
-
-        boolean succeeded = HelperFunctions.tryExec(setDefaultCrop, testFileFqpn + ".out", testFileFqpn + ".err");
-        Assert.assertTrue("Command failed: " + setDefaultCrop, succeeded);
-
-        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
-
-        Assert.assertTrue("The crop was not set as the default: " + defaultCrop,
-                configSettings.getDefaultGobiiCropType().equals(defaultCrop));
-    }
-
-
     @Ignore// fails on SYS_INT
     public void testSetLogFileLocation() throws Exception {
 
@@ -1190,15 +1166,6 @@ public class TestGobiiConfig {
                 + " -gtsu "
                 + initialConfigUrlForSshOverride);
 
-
-        succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
-        Assert.assertTrue("Command failed: " + commandLine, succeeded);
-
-        // ************************ SET DEFAULT CROP TYPE
-        commandLine = makeCommandline("-a -wfqpn "
-                + testFileFqpn
-                + " -gD "
-                + " " + cropIdDev + " ");
 
         succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
         Assert.assertTrue("Command failed: " + commandLine, succeeded);

@@ -157,16 +157,6 @@ public class ConfigSettings {
         return this.configValues.getCurrentGobiiCropType();
     }
 
-    public String getDefaultGobiiCropType() {
-        return this.configValues.getDefaultGobiiCropType();
-    }
-
-
-    public void setDefaultGobiiCropType(String defaultGobiiCropType) throws Exception {
-
-        this.configValues.setDefaultGobiiCropType(defaultGobiiCropType);
-    }
-
     public String getEmailSvrPassword() {
 
         return this.configValues.getEmailSvrPassword();

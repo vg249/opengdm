@@ -65,21 +65,6 @@ public class CropRequestAnalyzer {
 
     }
 
-    public static String getDefaultCropType() {
-
-        String returnVal = null;
-
-        try {
-            returnVal = CONFIG_SETTINGS.getDefaultGobiiCropType();
-
-        } catch (Exception e) {
-            LOGGER.error("Error retrieving config settings to find default crop", e);
-        }
-
-        return returnVal;
-    }
-
-
     private static String getCropTypeFromUri(HttpServletRequest httpRequest) throws Exception {
 
         String returnVal = null;
@@ -141,7 +126,20 @@ public class CropRequestAnalyzer {
             returnVal = CropRequestAnalyzer.getGobiiCropType(httpRequest);
         } else {
             // this will be the case when the server is initializing
-            returnVal = CropRequestAnalyzer.getDefaultCropType();
+            // we used to have a "default" crop for this purpose but that approach
+            // led to some really bad bugs.
+            if( CONFIG_SETTINGS.getActiveCropTypes().size() <= 0 ) {
+                String message = "Unable to initialize: there are no active crop types in the configuration";
+                LOGGER.error(message);
+                throw new Exception(message);
+            }
+
+            // so we just randomly use the first active crop in the list
+            // again, this should only occur upon initialization, when ther eis no
+            // http context; when there is, we will get the cropId from the url
+            // (GobiiConfig's validator enforces that all cropIds must be contained
+            // within all server context paths)
+            returnVal = CONFIG_SETTINGS.getActiveCropTypes().get(0);
         }
 
         return returnVal;
@@ -158,15 +156,9 @@ public class CropRequestAnalyzer {
             returnVal = CropRequestAnalyzer.getCropTypeFromUri(httpRequest);
 
             if (null == returnVal) {
-
-                returnVal = CropRequestAnalyzer.getDefaultCropType();
-
-                if (null == returnVal) {
-
-                    LOGGER.error("Unable to determine crop type from response or uri; setting crop type to "
-                            + returnVal
-                            + " database connectioins will be made accordingly");
-                }
+                String message = "Unable to determine crop type from response or uri";
+                LOGGER.error(message);
+                throw new Exception(message);
             }
         }
 
