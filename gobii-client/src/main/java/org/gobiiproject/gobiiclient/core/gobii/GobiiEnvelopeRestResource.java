@@ -64,8 +64,7 @@ public class GobiiEnvelopeRestResource<T> {
 
         HttpMethodResult httpMethodResult =
                 getHttp()
-                        .get(this.restUri,
-                                this.getClientContext().getUserToken());
+                        .get(this.restUri);
 
         returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.GET,
@@ -85,8 +84,7 @@ public class GobiiEnvelopeRestResource<T> {
         HttpMethodResult httpMethodResult =
                 getHttp()
                         .post(this.restUri,
-                                postBody,
-                                this.getClientContext().getUserToken());
+                                postBody);
 
         returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.POST,
@@ -137,8 +135,7 @@ public class GobiiEnvelopeRestResource<T> {
 
         HttpMethodResult httpMethodResult =
                 getHttp()
-                        .delete(this.restUri,
-                                this.getClientContext().getUserToken());
+                        .delete(this.restUri);
 
         returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.DELETE,

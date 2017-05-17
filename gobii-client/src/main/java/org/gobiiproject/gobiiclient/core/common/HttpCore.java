@@ -53,6 +53,12 @@ public class HttpCore {
     Logger LOGGER = LoggerFactory.getLogger(HttpCore.class);
 
 
+    String token = null;
+
+    public String getToken() {
+        return token;
+    }
+
     URIBuilder getBaseBuilder() throws Exception {
         return (new URIBuilder().setScheme("http")
                 .setHost(host)
@@ -84,10 +90,9 @@ public class HttpCore {
         httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_PASSWORD, password);
     }
 
-    private void setTokenHeader(HttpUriRequest httpUriRequest,
-                                String token) {
+    private void setTokenHeader(HttpUriRequest httpUriRequest) {
 
-        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN, token);
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN, this.token);
 
     }
 
@@ -145,27 +150,29 @@ public class HttpCore {
 
     }//authenticateWithUser()
 
-    public String getTokenForUser(RestUri restUri, String userName, String password) throws Exception {
+    public boolean authenticate(RestUri restUri, String userName, String password) throws Exception {
 
-        String returnVal = null;
+        boolean returnVal = true;
 
         URI uri = makeUri(restUri);
         HttpResponse response = authenticateWithUser(uri, userName, password);
-        Header tokenHeader = getHeader(response.getAllHeaders(), GobiiHttpHeaderNames.HEADER_TOKEN);
-        returnVal = tokenHeader.getValue();
 
-        if (null == returnVal) {
+        Header tokenHeader = getHeader(response.getAllHeaders(), GobiiHttpHeaderNames.HEADER_TOKEN);
+        this.token = tokenHeader.getValue();
+
+        returnVal = (false == LineUtils.isNullOrEmpty(this.token));
+
+        if (returnVal == false) {
             LOGGER.error("Unable to get authentication token for user " + userName);
         }
 
         return returnVal;
 
-    } // getTokenForUser()
+    } // authenticate()
 
 
     private HttpMethodResult submitHttpMethod(HttpRequestBase httpRequestBase,
-                                              RestUri restUri,
-                                              String token) throws Exception {
+                                              RestUri restUri) throws Exception {
 
         HttpMethodResult returnVal = new HttpMethodResult();
 
@@ -175,7 +182,7 @@ public class HttpCore {
         httpRequestBase.setURI(uri);
 
 
-        this.setTokenHeader(httpRequestBase,token);
+        this.setTokenHeader(httpRequestBase);
         httpResponse = submitUriRequest(httpRequestBase);
 
         int responseCode = httpResponse.getStatusLine().getStatusCode();
@@ -254,24 +261,22 @@ public class HttpCore {
 
     }
 
-    public HttpMethodResult get(RestUri restUri,
-                                String token) throws Exception {
+    public HttpMethodResult get(RestUri restUri) throws Exception {
 
-        HttpMethodResult returnVal = this.submitHttpMethod(new HttpGet(), restUri, token);
+        HttpMethodResult returnVal = this.submitHttpMethod(new HttpGet(), restUri);
         this.logRequest(RestMethodTypes.GET, restUri, null, returnVal);
         return returnVal;
 
     }
 
     public HttpMethodResult post(RestUri restUri,
-                                 String body,
-                                 String token) throws Exception {
+                                 String body) throws Exception {
 
         HttpMethodResult returnVal;
 
         HttpPost httpPost = new HttpPost();
         this.setHttpBody(httpPost, body);
-        returnVal = this.submitHttpMethod(httpPost, restUri, token);
+        returnVal = this.submitHttpMethod(httpPost, restUri);
         this.logRequest(RestMethodTypes.POST, restUri, body, returnVal);
 
         return returnVal;
@@ -284,25 +289,23 @@ public class HttpCore {
         HttpMethodResult returnVal;
         HttpPut httpPut = new HttpPut();
         this.setHttpBody(httpPut, body);
-        returnVal = this.submitHttpMethod(httpPut, restUri, token);
+        returnVal = this.submitHttpMethod(httpPut, restUri);
         this.logRequest(RestMethodTypes.PUT, restUri, body, returnVal);
         return returnVal;
     }
 
     public HttpMethodResult patch(RestUri restUri,
-                                  String body,
-                                  String token) throws Exception {
+                                  String body) throws Exception {
 
         HttpPatch httpPatch = new HttpPatch();
         this.setHttpBody(httpPatch, body);
-        return this.submitHttpMethod(httpPatch, restUri, token);
+        return this.submitHttpMethod(httpPatch, restUri);
     }
 
 
-    public HttpMethodResult delete(RestUri restUri,
-                                   String token) throws Exception {
+    public HttpMethodResult delete(RestUri restUri) throws Exception {
 
-        return this.submitHttpMethod(new HttpDelete(), restUri, token);
+        return this.submitHttpMethod(new HttpDelete(), restUri);
     }
 
 }

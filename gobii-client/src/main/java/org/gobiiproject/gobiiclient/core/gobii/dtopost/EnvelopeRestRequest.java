@@ -54,7 +54,7 @@ public class EnvelopeRestRequest<T> {
         String dtoRequestJson = objectMapper.writeValueAsString(payloadEnvelope);
 
 
-        HttpMethodResult httpMethodResult = httpCore.post(this.gobiiUriFactory.RestUriFromUri(url), dtoRequestJson, token);
+        HttpMethodResult httpMethodResult = httpCore.post(this.gobiiUriFactory.RestUriFromUri(url), dtoRequestJson);
         //JsonObject responseJson = httpCore.getResponseBody(url, dtoRequestJson, token);
         JsonObject responseJson = httpMethodResult.getPayLoad();
 

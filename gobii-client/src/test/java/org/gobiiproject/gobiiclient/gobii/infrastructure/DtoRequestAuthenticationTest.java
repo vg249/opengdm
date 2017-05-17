@@ -73,13 +73,6 @@ public class DtoRequestAuthenticationTest {
 
     private String makeUrl(GobiiCropConfig gobiiCropConfig) throws Exception {
 
-//        String returnVal = "http://"
-//                + gobiiCropConfig.getHost()
-//                + ":"
-//                + gobiiCropConfig.getPort().toString()
-//                + "/"
-//
-
         String returnVal;
 
         URL url = new URL("http",
@@ -100,48 +93,110 @@ public class DtoRequestAuthenticationTest {
             // http://localhost:8282/gobii-dev/
 
 
-            // ****************** FIRST LOGIN
+            // **************** stuff we need for both tests
             GobiiCropConfig gobiiCropConfigOne = activeGobiiCropConfigs.get(0);
             String serviceUrlOne = makeUrl(gobiiCropConfigOne);
-            String cropIdOne = GobiiClientContext.getInstance(serviceUrlOne, true).getDefaultCropType();
+            String cropIdOne = gobiiCropConfigOne.getGobiiCropType();
+            String cropContextRootOne = gobiiCropConfigOne.getContextPath();
+            Integer cropPortOne = gobiiCropConfigOne.getPort();
+            GobiiUriFactory gobiiUriFactoryServerOne = new GobiiUriFactory(cropContextRootOne);
+            RestUri restUriContactServerOne = gobiiUriFactoryServerOne
+                    .resourceByUriIdParam(GobiiServiceRequestId.URL_CONTACTS);
 
-            GobiiClientContext.getInstance(null, false)
-                    .setCurrentClientCrop(cropIdOne);
+            GobiiCropConfig gobiiCropConfigTwo = activeGobiiCropConfigs.get(1);
+            String serviceUrlTwo = makeUrl(gobiiCropConfigTwo);
+            String cropIdTwo = gobiiCropConfigTwo.getGobiiCropType();
+            String cropContextRootTwo = gobiiCropConfigTwo.getContextPath();
+            Integer cropPortTwo = gobiiCropConfigTwo.getPort();
+            GobiiUriFactory gobiiUriFactoryServeTwo = new GobiiUriFactory(cropContextRootTwo);
+            RestUri restUriContactServerTwo = gobiiUriFactoryServeTwo
+                    .resourceByUriIdParam(GobiiServiceRequestId.URL_CONTACTS);
 
             Assert.assertNotNull("Could not get testexecconfig", GobiiAuthenticator.getTestExecConfig());
-
             String testUser = GobiiAuthenticator.getTestExecConfig().getLdapUserForUnitTest();
             String testPassword = GobiiAuthenticator.getTestExecConfig().getLdapPasswordForUnitTest();
 
+            // ****************** FIRST LOGIN
 
-            GobiiClientContext.getInstance(null, false).login(testUser, testPassword);
+            GobiiClientContext.getInstance(serviceUrlOne, true)
+                    .setCurrentClientCrop(cropIdOne);
+            Assert.assertTrue("Unable to authenticate with test user "
+                            + testUser
+                            + " to server of "
+                            + serviceUrlOne,
+                    GobiiClientContext.getInstance(null, false).login(testUser, testPassword));
 
+            Assert.assertTrue("The context root retrieved from the context "
+                            + GobiiClientContext.getInstance(null, false)
+                            .getCurrentCropContextRoot()
+                            + " does not match the one retrieved from the configuration file "
+                            + cropContextRootOne,
+                    GobiiClientContext.getInstance(null, false)
+                            .getCurrentCropContextRoot().equals(cropContextRootOne));
+
+            Assert.assertTrue("The port retrieved from the context "
+                            + GobiiClientContext.getInstance(null, false)
+                            .getCurrentCropPort()
+                            + " does not match the one retrieved from the configuration file "
+                            + cropPortOne,
+                    GobiiClientContext.getInstance(null, false)
+                            .getCurrentCropPort().equals(cropPortOne));
             // ****************** SECOND LOGIN
-            GobiiCropConfig gobiiCropConfigTwo = activeGobiiCropConfigs.get(1);
-            String serviceUrlTwo = makeUrl(gobiiCropConfigTwo);
 
 
             GobiiClientContext.resetConfiguration();
-//            String cropIdTwo = GobiiClientContext.getInstance(serviceUrlTwo,true).getDefaultCropType();
             GobiiClientContext.getInstance(serviceUrlTwo, true);
-            String cropIdTwo = gobiiCropConfigTwo.getGobiiCropType();
+//            GobiiClientContext.getInstance(null, false).setCurrentClientCrop(cropIdTwo);
+            Assert.assertTrue("Unable to authenticate with test user "
+                            + testUser
+                            + " to server of "
+                            + serviceUrlTwo,
+                    GobiiClientContext.getInstance(null, false).login(testUser, testPassword));
 
-            GobiiClientContext.getInstance(null, false)
-                    .setCurrentClientCrop(cropIdTwo);
+            GobiiClientContext.getInstance(null, false).setCurrentClientCrop(cropIdOne);
 
-            GobiiClientContext.getInstance(null, false).login(testUser, testPassword);
+            Assert.assertFalse("The context root retrieved from the context "
+                            + GobiiClientContext.getInstance(null, false)
+                            .getCurrentCropContextRoot()
+                            + " should NOT match the one retrieved from the configuration file because the crop was set to crop one "
+                            + cropContextRootTwo,
+                    GobiiClientContext.getInstance(null, false)
+                            .getCurrentCropContextRoot().equals(cropContextRootTwo));
+
+            Assert.assertFalse("The port retrieved from the context "
+                            + GobiiClientContext.getInstance(null, false)
+                            .getCurrentCropPort()
+                            + " should NOT match the one retrieved from the configuration file because the crop was set to crop one "
+                            + cropPortTwo,
+                    GobiiClientContext.getInstance(null, false)
+                            .getCurrentCropPort().equals(cropPortTwo));
+
 
             GobiiClientContext.getInstance(null, false).setCurrentClientCrop(cropIdTwo);
 
 
+            Assert.assertTrue("The context root retrieved from the context "
+                            + GobiiClientContext.getInstance(null, false)
+                            .getCurrentCropContextRoot()
+                            + " does not match the one retrieved from the configuration file "
+                            + cropContextRootTwo,
+                    GobiiClientContext.getInstance(null, false)
+                            .getCurrentCropContextRoot().equals(cropContextRootTwo));
+
+            Assert.assertTrue("The port retrieved from the context "
+                            + GobiiClientContext.getInstance(null, false)
+                            .getCurrentCropPort()
+                            + " does not match the one retrieved from the configuration file "
+                            + cropPortTwo,
+                    GobiiClientContext.getInstance(null, false)
+                            .getCurrentCropPort().equals(cropPortTwo));
+
+
+
             // do contacts request with crop two context root
-            String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-            GobiiUriFactory gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
-            RestUri restUriContact = gobiiUriFactory
-                    .resourceByUriIdParam(GobiiServiceRequestId.URL_CONTACTS);
-            restUriContact.setParamValue("id", "6");
-            GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
-            PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResource
+            restUriContactServerTwo.setParamValue("id", "6");
+            GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceServerTwo = new GobiiEnvelopeRestResource<>(restUriContactServerTwo);
+            PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResourceServerTwo
                     .get(ContactDTO.class);
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
 
@@ -149,11 +204,9 @@ public class DtoRequestAuthenticationTest {
             // now set current root to crop onej -- this will cause an error because the
             // gobiiUriFactory still has crop two's context root.
             GobiiClientContext.getInstance(null, false).setCurrentClientCrop(cropIdOne);
-            restUriContact = gobiiUriFactory
-                    .resourceByUriIdParam(GobiiServiceRequestId.URL_CONTACTS);
-            restUriContact.setParamValue("id", "6");
-            gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
-            resultEnvelope = gobiiEnvelopeRestResource
+            restUriContactServerOne.setParamValue("id", "6");
+            GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceServerOne = new GobiiEnvelopeRestResource<>(restUriContactServerOne);
+            resultEnvelope = gobiiEnvelopeRestResourceServerOne
                     .get(ContactDTO.class);
 
             Assert.assertTrue("Method with incorrectly configured gobiiUriFactory should have failed with 404",
@@ -170,13 +223,11 @@ public class DtoRequestAuthenticationTest {
             // create a new factory with correct context root and re-do the request
             // this should now work
             GobiiClientContext.getInstance(null, false).login(testUser, testPassword);
-            String currentCropContextRootForCropOne = GobiiClientContext.getInstance(null, false).getCropContextRoot(cropIdOne);
-            gobiiUriFactory = new GobiiUriFactory(currentCropContextRootForCropOne);
-            restUriContact = gobiiUriFactory
+            restUriContactServerTwo = gobiiUriFactoryServeTwo
                     .resourceByUriIdParam(GobiiServiceRequestId.URL_CONTACTS);
-            restUriContact.setParamValue("id", "6");
-            gobiiEnvelopeRestResource = new GobiiEnvelopeRestResource<>(restUriContact);
-            resultEnvelope = gobiiEnvelopeRestResource
+            restUriContactServerTwo.setParamValue("id", "6");
+            gobiiEnvelopeRestResourceServerTwo = new GobiiEnvelopeRestResource<>(restUriContactServerTwo);
+            resultEnvelope = gobiiEnvelopeRestResourceServerTwo
                     .get(ContactDTO.class);
 
 
@@ -188,7 +239,7 @@ public class DtoRequestAuthenticationTest {
     }
 
     @Test
-    public void testSwitchToSecondCrop () throws Exception {
+    public void testSwitchToSecondCrop() throws Exception {
 
 
         // these steps require physical access to a config file. Other clients do not have
@@ -211,9 +262,9 @@ public class DtoRequestAuthenticationTest {
                     .setCurrentClientCrop(cropIdOne);
             GobiiClientContext.getInstance(null, false).login(testUser, testPassword);
             Assert.assertNotNull("Authentication with first crop failed: " + cropIdOne,
-                    GobiiClientContext.getInstance(null,true).getUserToken());
+                    GobiiClientContext.getInstance(null, true).getUserToken());
 
-            String cropOneToken = GobiiClientContext.getInstance(null,true).getUserToken();
+            String cropOneToken = GobiiClientContext.getInstance(null, true).getUserToken();
 
             // ****************** SECOND LOGIN
 
@@ -221,9 +272,9 @@ public class DtoRequestAuthenticationTest {
                     .setCurrentClientCrop(cropIdTwo);
             GobiiClientContext.getInstance(null, false).login(testUser, testPassword);
             Assert.assertNotNull("Authentication with second crop failed: " + cropIdTwo,
-                    GobiiClientContext.getInstance(null,true).getUserToken());
+                    GobiiClientContext.getInstance(null, true).getUserToken());
 
-            String cropTwoToken = GobiiClientContext.getInstance(null,true).getUserToken();
+            String cropTwoToken = GobiiClientContext.getInstance(null, true).getUserToken();
 
             Assert.assertFalse("The tokens for the two authentications should be different: " + cropOneToken + "," + cropTwoToken,
                     cropOneToken.equals(cropTwoToken));

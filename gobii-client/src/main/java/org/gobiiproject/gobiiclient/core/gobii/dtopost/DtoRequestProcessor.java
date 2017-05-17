@@ -77,8 +77,7 @@ public class DtoRequestProcessor<T extends Header> {
         //        JsonObject responseJson = httpCore.getResponseBody(url, dtoRequestJson, token);
 
         HttpMethodResult httpMethodResult = httpCore.post((new GobiiUriFactory(cropContextRoot)).RestUriFromUri(url),
-                dtoRequestJson,
-                token);
+                dtoRequestJson);
 
 
         returnVal = objectMapper.readValue(httpMethodResult.getPayLoad().toString(), paramType);

@@ -63,6 +63,7 @@ public final class GobiiClientContext {
         gobiiClientContext = null;
         sshOverrideHost = null;
         sshOverridePort = null;
+
     }
 
 
@@ -199,7 +200,7 @@ public final class GobiiClientContext {
         String settingsPath = GobiiServiceRequestId.URL_CONFIGSETTINGS.getRequestUrl(context, GobiiControllerType.GOBII.getControllerPath());
 
         RestUri configSettingsUri = new GobiiUriFactory(null).RestUriFromUri(settingsPath);
-        HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri, null);
+        HttpMethodResult httpMethodResult = httpCore.get(configSettingsUri);
 
         GobiiPayloadResponse<ConfigSettingsDTO> gobiiPayloadResponse = new GobiiPayloadResponse<>(configSettingsUri);
         PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = gobiiPayloadResponse.getPayloadFromResponse(ConfigSettingsDTO.class,
@@ -234,8 +235,6 @@ public final class GobiiClientContext {
 
     private Map<String, ServerConfig> serverConfigs = new HashMap<>();
 
-
-    private String userToken = null;
 
     String currentGobiiCropType;
 
@@ -342,16 +341,25 @@ public final class GobiiClientContext {
     }
 
 
+    private HttpCore httpCore = null;
     public HttpCore getHttp() throws Exception {
 
-        HttpCore returnVal = new HttpCore(this.getCurrentCropDomain(),
-                this.getCurrentCropPort(),
-                this.getCurrentClientCropType());
+        return this.getHttp(false);
+    }
 
-        return returnVal;
+    public HttpCore getHttp(boolean refresh) throws Exception {
+
+        if (httpCore == null || refresh == true) {
+            this.httpCore = new HttpCore(this.getCurrentCropDomain(),
+                    this.getCurrentCropPort(),
+                    this.getCurrentClientCropType());
+        }
+
+        return this.httpCore;
     }
 
     public boolean login(String userName, String password) throws Exception {
+
         boolean returnVal = true;
 
         try {
@@ -360,7 +368,9 @@ public final class GobiiClientContext {
                             GobiiControllerType.GOBII.getControllerPath());
 
             RestUri authUri = this.getUriFactory().RestUriFromUri(authUrl);
-            userToken = this.getHttp().getTokenForUser(authUri, userName, password);
+
+            // force refresh of http because we're getting a new token
+            returnVal = this.getHttp(true).authenticate(authUri, userName, password);
 
         } catch (Exception e) {
             LOGGER.error("Authenticating", e);
@@ -370,8 +380,8 @@ public final class GobiiClientContext {
         return returnVal;
     }
 
-    public String getUserToken() {
-        return userToken;
+    public String getUserToken() throws Exception {
+        return this.getHttp().getToken();
     }
 
     public String getFileSystemRoot() {
