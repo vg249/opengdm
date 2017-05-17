@@ -76,24 +76,30 @@ public class HttpCore {
 
     }
 
-    private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest,
+    private void setAuthenticationHeaders(HttpUriRequest httpUriRequest,
                                           String userName,
-                                          String password,
-                                          String token) throws Exception {
+                                          String password) {
+
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_USERNAME, userName);
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_PASSWORD, password);
+    }
+
+    private void setTokenHeader(HttpUriRequest httpUriRequest,
+                                String token) {
+
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN, token);
+
+    }
+
+    private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest) throws Exception {
 
         httpUriRequest.addHeader("Content-Type", "application/json");
         httpUriRequest.addHeader("Accept", "application/json");
 
-        if ((null != token) && (false == token.isEmpty())) {
-            httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN, token);
-        } else {
-            httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_USERNAME, userName);
-            httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_PASSWORD, password);
-        }
-
-
         if (!LineUtils.isNullOrEmpty(this.cropId)) {
             httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP, this.cropId);
+        } else {
+            LOGGER.error("Request submitted without crop ID header: " + httpUriRequest.getURI().toString());
         }
 
         return (HttpClientBuilder.create().build().execute(httpUriRequest));
@@ -124,7 +130,8 @@ public class HttpCore {
 
         HttpPost postRequest = new HttpPost(uri);
         this.setHttpBody(postRequest, "empty");
-        returnVal = submitUriRequest(postRequest, userName, password, null);
+        this.setAuthenticationHeaders(postRequest, userName, password);
+        returnVal = this.submitUriRequest(postRequest);
 
         if (HttpStatus.SC_OK != returnVal.getStatusLine().getStatusCode()) {
             throw new Exception("Request did not succeed with http status code "
@@ -168,7 +175,8 @@ public class HttpCore {
         httpRequestBase.setURI(uri);
 
 
-        httpResponse = submitUriRequest(httpRequestBase, "", "", token);
+        this.setTokenHeader(httpRequestBase,token);
+        httpResponse = submitUriRequest(httpRequestBase);
 
         int responseCode = httpResponse.getStatusLine().getStatusCode();
         String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
