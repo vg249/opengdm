@@ -36,17 +36,14 @@ public class HttpCore {
 
     private String host = null;
     private Integer port = null;
-    private String cropId;
     private boolean logJson = false;
 
 
     public HttpCore(String host,
-                    Integer port,
-                    String cropId) {
+                    Integer port) {
 
         this.host = host;
         this.port = port;
-        this.cropId = cropId;
     }
 
 
@@ -100,12 +97,6 @@ public class HttpCore {
 
         httpUriRequest.addHeader("Content-Type", "application/json");
         httpUriRequest.addHeader("Accept", "application/json");
-
-        if (!LineUtils.isNullOrEmpty(this.cropId)) {
-            httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP, this.cropId);
-        } else {
-            LOGGER.error("Request submitted without crop ID header: " + httpUriRequest.getURI().toString());
-        }
 
         return (HttpClientBuilder.create().build().execute(httpUriRequest));
 

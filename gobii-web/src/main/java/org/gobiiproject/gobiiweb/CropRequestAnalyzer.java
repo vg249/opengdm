@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiweb;
 
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 
+import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
@@ -24,47 +25,14 @@ public class CropRequestAnalyzer {
     private static ConfigSettings CONFIG_SETTINGS = new ConfigSettings();
 
 
-    private static HttpServletRequest getRequest() {
-
-        HttpServletRequest returnVal = null;
-
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-
-        if (null != requestAttributes && requestAttributes instanceof ServletRequestAttributes) {
-            returnVal = ((ServletRequestAttributes) requestAttributes).getRequest();
-        }
-
-        return returnVal;
-    }
-
-
-    private static String getCropTypeFromHeaders(HttpServletRequest httpRequest) throws Exception {
-
-        String returnVal = null;
-
-        String errorMessage = null;
-
-        if (null != httpRequest) {
-
-            returnVal = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP);
-
-            if (LineUtils.isNullOrEmpty(returnVal)) {
-
-                // this is not an exception because if we didn't get the crop ID from
-                // the header we'll infer it from uri
-                LOGGER.error("Request did not include the response "
-                        + GobiiHttpHeaderNames.HEADER_GOBII_CROP);
-            }
-
-        } else {
-            throw new Exception("Unable to retreive servlet request for crop type analysis from response");
-
-        }
-
-        return returnVal;
-
-    }
-
+    /***
+     * Given a uri (for example, /gobii-maize/gobii/v1/contacts):
+     *  1) Find the crop configuration that has gobii-maize as its context path;
+     *  2) Set the cropId to the cropId for that context path
+     * @param httpRequest
+     * @return
+     * @throws Exception
+     */
     private static String getCropTypeFromUri(HttpServletRequest httpRequest) throws Exception {
 
         String returnVal = null;
@@ -72,30 +40,30 @@ public class CropRequestAnalyzer {
         String errorMessage = null;
 
         if (null != httpRequest) {
+
+
+
             String requestUrl = httpRequest.getRequestURI();
+            for (int idx = 0;
+                 (idx < CONFIG_SETTINGS.getActiveCropConfigs().size()) && (returnVal == null);
+                 idx++) {
 
-            List<String> matchedCrops =
-                    CONFIG_SETTINGS
-                            .getActiveCropTypes()
-                            .stream()
-                            .filter(c -> requestUrl.toLowerCase().contains(c.toString().toLowerCase()))
-                            .collect(Collectors.toList());
+                GobiiCropConfig currentCropConfig = CONFIG_SETTINGS.getActiveCropConfigs().get(idx);
+                String currentContextPath = currentCropConfig
+                        .getContextPath()
+                        .replace("/","");
 
-            if (matchedCrops.size() > 0) {
+                String candidateSegment = requestUrl
+                        .replace("/","")
+                        .substring(0, currentContextPath.length());
+                if (candidateSegment.toLowerCase().equals(currentContextPath.toLowerCase())) {
 
-                if (1 == matchedCrops.size()) {
-                    returnVal = matchedCrops.get(0);
-                } else {
-                    errorMessage = "The current url ("
-                            + requestUrl
-                            + ") matched more than one one crop; the service app root must contain only one crop ID";
+                    returnVal = currentCropConfig.getGobiiCropType();
                 }
+            }
 
-            } else {
-
-                errorMessage = "The current url ("
-                        + requestUrl
-                        + ") did not match any crops; ; service app root must contain one, and only one, crop ID";
+            if (returnVal == null) {
+                errorMessage = "There is no cropId corresponding to the context path of the request url: " + requestUrl;
             }
 
         } else {
@@ -128,7 +96,7 @@ public class CropRequestAnalyzer {
             // this will be the case when the server is initializing
             // we used to have a "default" crop for this purpose but that approach
             // led to some really bad bugs.
-            if( CONFIG_SETTINGS.getActiveCropTypes().size() <= 0 ) {
+            if (CONFIG_SETTINGS.getActiveCropTypes().size() <= 0) {
                 String message = "Unable to initialize: there are no active crop types in the configuration";
                 LOGGER.error(message);
                 throw new Exception(message);
@@ -149,17 +117,12 @@ public class CropRequestAnalyzer {
 
     public static String getGobiiCropType(HttpServletRequest httpRequest) throws Exception {
 
-        String returnVal = CropRequestAnalyzer.getCropTypeFromHeaders(httpRequest);
+        String returnVal = CropRequestAnalyzer.getCropTypeFromUri(httpRequest);
 
         if (null == returnVal) {
-
-            returnVal = CropRequestAnalyzer.getCropTypeFromUri(httpRequest);
-
-            if (null == returnVal) {
-                String message = "Unable to determine crop type from response or uri";
-                LOGGER.error(message);
-                throw new Exception(message);
-            }
+            String message = "Unable to determine crop type from response or uri";
+            LOGGER.error(message);
+            throw new Exception(message);
         }
 
         return returnVal;
