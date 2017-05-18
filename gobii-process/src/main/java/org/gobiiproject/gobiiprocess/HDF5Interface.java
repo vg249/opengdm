@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistance;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.checkFileExistence;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logDebug;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
@@ -120,7 +120,7 @@ public class HDF5Interface {
         BufferedReader sampR=null;
         boolean hasSampleList=false;
         HashMap<String,String> samplePos=null;
-        if(checkFileExistance(samplePosFile)){
+        if(checkFileExistence(samplePosFile)){
             hasSampleList=true;
             sampR=new BufferedReader(new FileReader(samplePosFile));
             samplePos=getSamplePosFromFile(samplePosFile);

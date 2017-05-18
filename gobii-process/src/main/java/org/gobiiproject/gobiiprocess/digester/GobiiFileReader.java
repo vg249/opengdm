@@ -37,6 +37,7 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.PGArray;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
+import static org.gobiiproject.gobiiprocess.digester.utils.IUPACmatrixToBi.convertIUPACtoBi;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
 
@@ -283,7 +284,7 @@ public class GobiiFileReader {
 						isSNPSepRemoval=true;
 						break;
 					case "IUPAC":
-						function = loaderScriptPath + "etc/IUPACmatrix_to_bi.pl tab";
+						convertIUPACtoBi("tab", fromFile, toFile);
 						break;
 					case "SSR_ALLELE_SIZE":
 						//No Translation Needed. Done before GOBII
