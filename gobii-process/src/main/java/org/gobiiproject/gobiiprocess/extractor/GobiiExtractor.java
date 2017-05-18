@@ -527,18 +527,18 @@ public class GobiiExtractor {
 		qcInstructionsDTOToSend.setQualityFileName("Report.xls");
 		PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
 		ClientContext clientContext = ClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
-						if (LineUtils.isNullOrEmpty(clientContext.getUserToken())) {
-							ErrorLogger.logError("Digester", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
-							return;
-						}
-						String currentCropContextRoot = clientContext.getInstance(null, false).getCurrentCropContextRoot();
-						uriFactory = new UriFactory(currentCropContextRoot);
-						GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
-						PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
-                payloadEnvelope);
+		if (LineUtils.isNullOrEmpty(clientContext.getUserToken())) {
+			ErrorLogger.logError("Digester", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
+			return; //This used to return from the outer method. Why fail here?
+		}
+		String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
+		uriFactory = new UriFactory(currentCropContextRoot);
+		GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
+		PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
+				payloadEnvelope);
 		if (qcInstructionFileDTOResponseEnvelope != null) {
-            ErrorLogger.logInfo("Extractor", "QC Instructions Request Sent");
-        } else {
+			ErrorLogger.logInfo("Extractor", "QC Instructions Request Sent");
+		} else {
             ErrorLogger.logError("Extractor", "Error Sending QC Instructions Request");
         }
 		ErrorLogger.logInfo("Extractor", "Done with the QC Subsection #1 of 1!");
