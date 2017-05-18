@@ -84,37 +84,37 @@ public class GobiiFileReader {
 	public static void main(String[] args) throws Exception {
 		//Section - Setup
 		Options o = new Options()
-				.addOption("v", "verbose", false, "Verbose output")
-				.addOption("e", "errlog", true, "Error log override location")
-				.addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
-				.addOption("c","config",true,"Fully qualified path to gobii configuration file")
-				.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
+         		.addOption("v", "verbose", false, "Verbose output")
+         		.addOption("e", "errlog", true, "Error log override location")
+         		.addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
+         		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
+         		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
 				.addOption("em","enableMonet",false,"Enable Monet");
 		LoaderGlobalConfigs.addOptions(o);
-		ProcessMessage pm = new ProcessMessage();
+        ProcessMessage pm = new ProcessMessage();
 		CommandLineParser parser = new DefaultParser();
-		try{
+        try{
 			CommandLine cli = parser.parse( o, args );
-			if(cli.hasOption("rootDir")) rootDir = cli.getOptionValue("rootDir");
-			if(cli.hasOption("verbose")) verbose=true;
-			if(cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
-			if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
-			if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
+            if(cli.hasOption("rootDir")) rootDir = cli.getOptionValue("rootDir");
+            if(cli.hasOption("verbose")) verbose=true;
+            if(cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
+            if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
+            if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
 			if(cli.hasOption("enableMonet")) enableMonet=true;
 			LoaderGlobalConfigs.setFromFlags(cli);
-			args=cli.getArgs();//Remaining args passed through
+            args=cli.getArgs();//Remaining args passed through
 
 		}catch(org.apache.commons.cli.ParseException exp ) {
 			new HelpFormatter().printHelp("java -jar Digester.jar ","Also accepts input file directly after arguments\n" +
-					"Example: java -jar Digester.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json",o,null,true);
-			System.exit(2);
+                		                  "Example: java -jar Digester.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json",o,null,true);
+               System.exit(2);
 		}
 
-		extractorScriptPath=rootDir+"extractors/";
-		loaderScriptPath=rootDir+"loaders/";
-		pathToHDF5=loaderScriptPath+"hdf5/bin/";
+     	extractorScriptPath=rootDir+"extractors/";
+     	loaderScriptPath=rootDir+"loaders/";
+     	pathToHDF5=loaderScriptPath+"hdf5/bin/";
 
-		if(propertiesFile==null)propertiesFile=rootDir+"config/gobii-web.xml";
+    	if(propertiesFile==null)propertiesFile=rootDir+"config/gobii-web.xml";
 
 		boolean success=true;
 		Map<String,File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
@@ -173,7 +173,7 @@ public class GobiiFileReader {
 		if(crop==null) crop=divineCrop(instructionFile);
 		Path cropPath = Paths.get(rootDir+"crops/"+crop.toLowerCase());
 		if (!(Files.exists(cropPath) &&
-				Files.isDirectory(cropPath))) {
+			  Files.isDirectory(cropPath))) {
 			logError("Digester","Unknown Crop Type: "+crop);
 			return;
 		}
@@ -445,14 +445,14 @@ public class GobiiFileReader {
 		String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
 		int size=8;
 		switch(dst.toUpperCase()){
-			case "NUCLEOTIDE_2_LETTER": case "IUPAC":case "VCF":
-				size=2;break;
-			case "SSR_ALLELE_SIZE":size=8;break;
-			case "CO_DOMINANT_NON_NUCLEOTIDE":
-			case "DOMINANT_NON_NUCLEOTIDE":size=1;break;
-			default:
-				logError("Digester","Unknown type "+dst.toString());break;
-		}
+            case "NUCLEOTIDE_2_LETTER": case "IUPAC":case "VCF":
+                size=2;break;
+            case "SSR_ALLELE_SIZE":size=8;break;
+            case "CO_DOMINANT_NON_NUCLEOTIDE":
+            case "DOMINANT_NON_NUCLEOTIDE":size=1;break;
+            default:
+                logError("Digester","Unknown type "+dst.toString());break;
+        }
 		ErrorLogger.logInfo("Digester","Running HDF5 Loader. HDF5 Generating at "+HDF5File);
 		HelperFunctions.tryExec(loadHDF5+" "+size+" "+variantFile.getPath()+" "+HDF5File,null,errorPath);
 		updateValues(configuration, crop, dataSetId,variantFilename, HDF5File);
@@ -496,10 +496,10 @@ public class GobiiFileReader {
 		int pathDepth = loaderDestinationDirectoryPath.getNameCount();
 		Path cropDirectory = loaderDestinationDirectoryPath.subpath(0, (pathDepth - 3));
 		Path extractDestinationDirectoryPath = Paths.get(cropDirectory.toString(),
-				"extractor",
-				"output",
-				inst.getGobiiFile().getGobiiFileType().toString().toLowerCase(),
-				"ds_"+inst.getDataSetId());
+                "extractor",
+                "output",
+                inst.getGobiiFile().getGobiiFileType().toString().toLowerCase(),
+                "ds_"+inst.getDataSetId());
 		gobiiDataSetExtract.setExtractDestinationDirectory(extractDestinationDirectoryPath.toString());
 		// As the extract filter type is set, a posteriori, by the GobiiExtractor class, it is set as UNKOWN
 		gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.UNKNOWN);
@@ -675,7 +675,7 @@ public class GobiiFileReader {
 
 	/**
 	 * Generates appropriate monetDB files from the MDE by reverse-digesting the data we just loaded.
-	 * Reason - Ensures Postgres and MonetDB are in sync
+     * Reason - Ensures Postgres and MonetDB are in sync
 	 * @param gobiiCropConfig Connection String
 	 * @param markerFile No header
 	 * @param dnaRunFile With header
@@ -687,17 +687,17 @@ public class GobiiFileReader {
 		markerFile=new File(markerFile).getAbsolutePath();
 		dnaRunFile=new File(dnaRunFile).getAbsolutePath();
 		String gobiiIFL="python " + extractorScriptPath+"postgres/gobii_mde/gobii_mde.py"+" -c "+HelperFunctions.getPostgresConnectionString(gobiiCropConfig)+
-				" -m "+markerFile+".tmp"+
-				" -s "+dnaRunFile+".tmp"+
-				" -d "+dsid;
+			" -m "+markerFile+".tmp"+
+			" -s "+dnaRunFile+".tmp"+
+			" -d "+dsid;
 		ErrorLogger.logDebug("MonetDB",gobiiIFL);
 		tryExec(gobiiIFL, null, errorFile);
-		tryExec("cut -f1 "+markerFile+".tmp",markerFile+".tmp2",errorFile);
+        tryExec("cut -f1 "+markerFile+".tmp",markerFile+".tmp2",errorFile);
 		tryExec("tail -n +2", markerFile, errorFile,markerFile+".tmp2");
-		tryExec("cut -f1 "+dnaRunFile+".tmp", dnaRunFile, errorFile);
+        tryExec("cut -f1 "+dnaRunFile+".tmp", dnaRunFile, errorFile);
 
-		rm(markerFile+".tmp");
-		rm(markerFile+".tmp2");
+        rm(markerFile+".tmp");
+        rm(markerFile+".tmp2");
 		rm(dnaRunFile+".tmp");
 	}
 
