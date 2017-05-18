@@ -50,38 +50,38 @@ public class GobiiExtractor {
 	public static void main(String[] args) throws Exception {
 
 		Options o = new Options()
-         		.addOption("v", "verbose", false, "Verbose output")
-         		.addOption("e", "errlog", true, "Error log override location")
-         		.addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
-         		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
-         		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
+				.addOption("v", "verbose", false, "Verbose output")
+				.addOption("e", "errlog", true, "Error log override location")
+				.addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
+				.addOption("c","config",true,"Fully qualified path to gobii configuration file")
+				.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
 				.addOption("m", "markerList", true, "Fully qualified path to marker list files - (Debugging, forces marker list extract)");
 		ExtractorGlobalConfigs.addOptions(o);
 
-        CommandLineParser parser = new DefaultParser();
-        try{
-            CommandLine cli = parser.parse( o, args );
-            if(cli.hasOption("verbose")) verbose=true;
-            if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
-            if(cli.hasOption("rootDir")){
-                rootDir = cli.getOptionValue("rootDir");
-            }
-            if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
-            if(cli.hasOption("markerList")) markerListOverrideLocation=cli.getOptionValue("markerList");
+		CommandLineParser parser = new DefaultParser();
+		try{
+			CommandLine cli = parser.parse( o, args );
+			if(cli.hasOption("verbose")) verbose=true;
+			if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
+			if(cli.hasOption("rootDir")){
+				rootDir = cli.getOptionValue("rootDir");
+			}
+			if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
+			if(cli.hasOption("markerList")) markerListOverrideLocation=cli.getOptionValue("markerList");
 			ExtractorGlobalConfigs.setFromFlags(cli);
-            args=cli.getArgs();//Remaining args passed through
+			args=cli.getArgs();//Remaining args passed through
 
-        }catch(org.apache.commons.cli.ParseException exp ) {
-            new HelpFormatter().printHelp("java -jar Extractor.jar ","Also accepts input file directly after arguments\n"
-                    + "Example: java -jar Extractor.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json",o,null,true);
+		}catch(org.apache.commons.cli.ParseException exp ) {
+			new HelpFormatter().printHelp("java -jar Extractor.jar ","Also accepts input file directly after arguments\n"
+					+ "Example: java -jar Extractor.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json",o,null,true);
 
-            System.exit(2);
-        }
+			System.exit(2);
+		}
 
-     	String extractorScriptPath=rootDir+"extractors/";
-    	pathToHDF5=extractorScriptPath+"hdf5/bin/";
+		String extractorScriptPath=rootDir+"extractors/";
+		pathToHDF5=extractorScriptPath+"hdf5/bin/";
 
-    	if(propertiesFile==null)propertiesFile=rootDir+"config/gobii-web.xml";
+		if(propertiesFile==null)propertiesFile=rootDir+"config/gobii-web.xml";
 
 		boolean success=true;
 		ConfigSettings configuration=null;
@@ -100,13 +100,13 @@ public class GobiiExtractor {
 			Scanner s=new Scanner(System.in);
 			System.out.println("Enter Extractor Instruction File Location:");
 			instructionFile=s.nextLine();
-		    if(instructionFile.equals("")) instructionFile="scripts//jdl232_01_pretty.json";
-		    s.close();
+			if(instructionFile.equals("")) instructionFile="scripts//jdl232_01_pretty.json";
+			s.close();
 		}
 		else{
 			instructionFile=args[0];
 		}
-		
+
 		startTime = System.currentTimeMillis();
 		List<GobiiExtractorInstruction> list= parseExtractorInstructionFile(instructionFile);
 		if(list==null){
@@ -131,11 +131,11 @@ public class GobiiExtractor {
 
 
 
-			for (GobiiExtractorInstruction inst : list) {
-				String crop = inst.getGobiiCropType();
-				String extractType="";
-				if (crop == null) crop = divineCrop(instructionFile);
-				try {
+		for (GobiiExtractorInstruction inst : list) {
+			String crop = inst.getGobiiCropType();
+			String extractType="";
+			if (crop == null) crop = divineCrop(instructionFile);
+			try {
 				Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
 				if (!(Files.exists(cropPath) &&
 						Files.isDirectory(cropPath))) {
@@ -466,13 +466,13 @@ public class GobiiExtractor {
 				}
 				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
 			}catch(Exception e){
-					ErrorLogger.logError("GobiiExtractor","Uncaught fatal error found in program. Contact a programmer.",e);
-					HelperFunctions.sendEmail("Hi.\n\n"+
+				ErrorLogger.logError("GobiiExtractor","Uncaught fatal error found in program. Contact a programmer.",e);
+				HelperFunctions.sendEmail("Hi.\n\n"+
 
-							"I'm sorry, but your extract failed for reasons beyond your control.\n"+
-							"I'm going to dump a message of the error here so a programmer can determine why.\n\n\n"+
-							org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(e), null, false, null, configuration, inst.getContactEmail());
-				}
+						"I'm sorry, but your extract failed for reasons beyond your control.\n"+
+						"I'm going to dump a message of the error here so a programmer can determine why.\n\n\n"+
+						org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(e), null, false, null, configuration, inst.getContactEmail());
+			}
 		}
 	}
 
@@ -485,9 +485,9 @@ public class GobiiExtractor {
 	 */
 	private static void getCounts(boolean success, ProcessMessage pm, String markerFile, String sampleFile) {
 		if(success){
-            pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
-            pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
-        }
+			pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
+			pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
+		}
 	}
 
 	/**
@@ -511,28 +511,28 @@ public class GobiiExtractor {
 		PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
 		ClientContext clientContext = ClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
 		if (LineUtils.isNullOrEmpty(clientContext.getUserToken())) {
-            ErrorLogger.logError("Digester", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
+			ErrorLogger.logError("Digester", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
 			return; //This used to return from the outer method. Why fail here?
-        }
+		}
 		String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
 		uriFactory = new UriFactory(currentCropContextRoot);
 		GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
 		PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
-                payloadEnvelope);
+				payloadEnvelope);
 		if (qcInstructionFileDTOResponseEnvelope != null) {
-            ErrorLogger.logInfo("Extractor", "QC Instructions Request Sent");
-        } else {
-            ErrorLogger.logError("Extractor", "Error Sending QC Instructions Request");
-        }
+			ErrorLogger.logInfo("Extractor", "QC Instructions Request Sent");
+		} else {
+			ErrorLogger.logError("Extractor", "Error Sending QC Instructions Request");
+		}
 		ErrorLogger.logInfo("Extractor", "Done with the QC Subsection #1 of 1!");
 	}
 
 	/**
-     * To draft JobName for eMail notification
-     * @param cropName - From inst
-     * @param extract
-     * @return
-     */
+	 * To draft JobName for eMail notification
+	 * @param cropName - From inst
+	 * @param extract
+	 * @return
+	 */
 	private static String getJobName(String cropName, GobiiDataSetExtract extract) {
 		//@Siva get confirmation on lowercase crop name?
 		cropName=cropName.charAt(0)+cropName.substring(1).toLowerCase();
@@ -550,15 +550,15 @@ public class GobiiExtractor {
 		BufferedReader sampR = new BufferedReader(new FileReader(inputFile));
 		try{
 			while (sampR.ready()) {
-					String sampLine = sampR.readLine();
-					if (sampLine != null) {
-						String[] sampSplit = sampLine.split("\t");
-						if(sampSplit.length>1){
-							map.put(sampSplit[0],sampSplit[1]);
-						}
+				String sampLine = sampR.readLine();
+				if (sampLine != null) {
+					String[] sampSplit = sampLine.split("\t");
+					if(sampSplit.length>1){
+						map.put(sampSplit[0],sampSplit[1]);
 					}
 				}
 			}
+		}
 		catch(Exception e){
 			ErrorLogger.logError("GobiiExtractor", "Unexpected error in reading sample file",e);
 		}
@@ -579,7 +579,7 @@ public class GobiiExtractor {
 			sampR=new BufferedReader(new FileReader(samplePosFile));
 			samplePos=getSamplePosFromFile(samplePosFile);
 		}
-        StringBuilder genoFileString=new StringBuilder();
+		StringBuilder genoFileString=new StringBuilder();
 		try{
 			posR.readLine();//header
 			if(sampR!=null)sampR.readLine();
@@ -757,7 +757,7 @@ public class GobiiExtractor {
 
 	private static String getLogName(GobiiExtractorInstruction gli, GobiiCropConfig config, Integer dsid) {
 		return getLogName(gli.getDataSetExtracts().get(0),config,dsid);
-	 }
+	}
 
 	private static String getLogName(GobiiDataSetExtract gli, GobiiCropConfig config, Integer dsid) {
 		String cropName=config.getGobiiCropType();
@@ -808,7 +808,7 @@ public class GobiiExtractor {
 	}
 
 
-		private static boolean addSlashesToBiAllelicData(String genoFile, String extractDir, GobiiDataSetExtract extract) throws Exception {
+	private static boolean addSlashesToBiAllelicData(String genoFile, String extractDir, GobiiDataSetExtract extract) throws Exception {
 		Path SSRFilePath = Paths.get(genoFile);
 		File SSRFile = new File(SSRFilePath.toString());
 		if (SSRFile.exists()) {
@@ -868,8 +868,8 @@ public class GobiiExtractor {
 									}
 								}
 								else {
-										ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): " + lineParts[index]);
-										addedLineStringBuilder.append(lineParts[index]);
+									ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): " + lineParts[index]);
+									addedLineStringBuilder.append(lineParts[index]);
 								}
 							}
 						}
