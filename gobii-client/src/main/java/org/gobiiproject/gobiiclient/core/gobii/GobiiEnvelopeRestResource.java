@@ -112,8 +112,7 @@ public class GobiiEnvelopeRestResource<T> {
         HttpMethodResult httpMethodResult =
                 getHttp()
                         .put(this.restUri,
-                                putBody,
-                                this.getClientContext().getUserToken());
+                                putBody);
 
         returnVal = this.gobiiPayloadResponse.getPayloadFromResponse(dtoType,
                 RestMethodTypes.PUT,

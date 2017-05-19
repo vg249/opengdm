@@ -38,7 +38,7 @@ import java.net.URI;
  * want this class to be generic so that it can serve as the workhorse for
  * all client operations performed by GOBII clients with arbitrary web services,
  * not just GOBII ones.
- * 
+ *
  */
 public class HttpCore {
 
@@ -282,8 +282,7 @@ public class HttpCore {
     }
 
     public HttpMethodResult put(RestUri restUri,
-                                String body,
-                                String token) throws Exception {
+                                String body) throws Exception {
 
         HttpMethodResult returnVal;
         HttpPut httpPut = new HttpPut();
