@@ -1,21 +1,34 @@
 package org.gobiiproject.gobiiclient.generic;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.http.HttpStatus;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiimodel.config.ServerBase;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Phil on 5/19/2017.
  */
 public class GenericTestClient {
 
-    private static Server server = new Server(8788);
+    private static Logger LOGGER = LoggerFactory.getLogger(GenericTestClient.class);
+
+    private static Server server = null;
+    private static ServerBase serverBase = null;
+    private static GenericClientContext genericClientContext = null;
 
     @BeforeClass
     public static void serverSetup() throws Exception {
@@ -50,20 +63,51 @@ public class GenericTestClient {
 
         */
 
+        serverBase = new ServerBase("localhost",
+                GenericTestPaths.GENERIC_CONTEXT_ONE,
+                8099,
+                true);
+
+        genericClientContext = new GenericClientContext(serverBase);
+
+
         ResourceConfig resourceConfig = new ResourceConfig();
         resourceConfig.packages(GenericTestServer.class.getPackage().getName());
         resourceConfig.register(JacksonFeature.class);
+        resourceConfig.register(SerializationFeature.INDENT_OUTPUT);
         ServletContainer servletContainer = new ServletContainer(resourceConfig);
         ServletHolder sh = new ServletHolder(servletContainer);
-        server = new Server(8099);
+        server = new Server(serverBase.getPort());
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addServlet(sh, "/*");
         server.setHandler(context);
 
+        //System.out.print(server.dump());
         server.start();
-        server.join();
+        //server.join();
 
+    }
+
+    public static boolean didHttpMethodSucceed(HttpMethodResult httpMethodResult) {
+
+        boolean returnVal = true;
+
+        if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
+            String message = "http method failed: "
+                    + httpMethodResult.getUri().toString()
+                    + "; failure mode: "
+                    + Integer.toString(httpMethodResult.getResponseCode())
+                    + " ("
+                    + httpMethodResult.getReasonPhrase()
+                    + ")";
+
+            LOGGER.error(message);
+
+            returnVal = false;
+        }
+
+        return returnVal;
     }
 
     @AfterClass
@@ -75,5 +119,13 @@ public class GenericTestClient {
     @Test
     public void testGetMethod() throws Exception {
 
+        RestUri restUriGetPerson = new RestUri(GenericTestPaths.GENERIC_TEST_ROOT,
+                GenericTestPaths.GENERIC_CONTEXT_ONE,
+                GenericTestPaths.RESOURCE_PERSON);
+
+        HttpMethodResult httpMethodResult = genericClientContext
+                .get(restUriGetPerson);
+
+        Assert.assertTrue(didHttpMethodSucceed(httpMethodResult));
     }
 }

@@ -18,17 +18,17 @@ public class RestUri {
     private final String DELIM_PARAM_BEGIN = "{";
     private final String DELIM_PARAM_END = "}";
 
-    private String secondaryPath;
-    private String cropContextRoot;
+    private String contextPath;
+    private String contextRoot;
 
     private String requestTemplate;
     private Map<String, ResourceParam> paramMap = new HashMap<>();
     private List<ResourceParam> resourceParams = new ArrayList<>();
 
-    public RestUri(String cropContextRoot, String secondaryPath, String resourcePath) throws Exception {
-        this.secondaryPath = secondaryPath;
-        this.cropContextRoot = this.delimitSegment(cropContextRoot);
-        this.requestTemplate = this.cropContextRoot + this.secondaryPath + resourcePath;
+    public RestUri(String contextRoot, String contextPath, String resourcePath) throws Exception {
+        this.contextRoot = this.delimitSegment(contextRoot);
+        this.contextPath = contextPath;
+        this.requestTemplate = this.contextRoot + this.contextPath + resourcePath;
     }
 
     public RestUri(String restUri) {
@@ -48,8 +48,8 @@ public class RestUri {
 
         return RestUri.URL_SEPARATOR
                 + returnVal
-                .replace(this.secondaryPath, "")
-                .replace(this.cropContextRoot, "");
+                .replace(this.contextPath, "")
+                .replace(this.contextRoot, "");
     }
 
     private String delimitSegment(String segment) {
