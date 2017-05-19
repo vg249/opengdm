@@ -1100,42 +1100,43 @@ public class GobiiConfig {
 
             if (commandLine.hasOption(VALIDATE_CONFIGURATION) && commandLine.hasOption(PROP_FILE_FQPN)) {
 
+                List<String> messages = new ArrayList<>();
                 String configFileFqpn = commandLine.getOptionValue(PROP_FILE_FQPN);
                 ConfigSettings configSettings = new ConfigSettings(configFileFqpn);
 
                 if (LineUtils.isNullOrEmpty(configSettings.getEmailSvrDomain())) {
-                    System.err.println("An email server host is not defined");
+                    messages.add("An email server host is not defined");
                     returnVal = false;
                 }
 
                 if (configSettings.getEmailServerPort() == null) {
-                    System.err.println("An email port is not defined");
+                    messages.add("An email port is not defined");
                     returnVal = false;
                 }
 
                 if (LineUtils.isNullOrEmpty(configSettings.getEmailSvrUser())) {
-                    System.err.println("An email server user id is not defined");
+                    messages.add("An email server user id is not defined");
                     returnVal = false;
                 }
 
                 if (LineUtils.isNullOrEmpty(configSettings.getEmailSvrUser())) {
-                    System.err.println("An email server password is not defined");
+                    messages.add("An email server password is not defined");
                     returnVal = false;
                 }
 
                 if (LineUtils.isNullOrEmpty(configSettings.getFileSystemRoot())) {
-                    System.err.println("A file system root is not defined");
+                    messages.add("A file system root is not defined");
                     returnVal = false;
                 } else {
                     File directoryToTest = new File(configSettings.getFileSystemRoot());
                     if (!directoryToTest.exists() || !directoryToTest.isDirectory()) {
-                        System.err.println("The specified file system root does not exist or is not a directory: " + configSettings.getFileSystemRoot());
+                        messages.add("The specified file system root does not exist or is not a directory: " + configSettings.getFileSystemRoot());
                         returnVal = false;
                     }
                 }
 
                 if (configSettings.getGobiiAuthenticationType() == null) {
-                    System.err.println("An authentication type is not specified");
+                    messages.add("An authentication type is not specified");
                     returnVal = false;
                 }
 
@@ -1143,14 +1144,14 @@ public class GobiiConfig {
                 if (!configSettings.getGobiiAuthenticationType().equals(GobiiAuthenticationType.TEST)) {
 
                     if (LineUtils.isNullOrEmpty(configSettings.getLdapUserDnPattern())) {
-                        System.err.println("The authentication type is "
+                        messages.add("The authentication type is "
                                 + configSettings.getGobiiAuthenticationType().toString()
                                 + " but a user dn pattern is not specified");
                         returnVal = false;
                     }
 
                     if (LineUtils.isNullOrEmpty(configSettings.getLdapUrl())) {
-                        System.err.println("The authentication type is "
+                        messages.add("The authentication type is "
                                 + configSettings.getGobiiAuthenticationType().toString()
                                 + " but an ldap url is not specified");
                         returnVal = false;
@@ -1160,14 +1161,14 @@ public class GobiiConfig {
                             configSettings.getGobiiAuthenticationType().equals(GobiiAuthenticationType.ACTIVE_DIRECTORY_CONNECT_WITH_MANAGER)) {
 
                         if (LineUtils.isNullOrEmpty(configSettings.getLdapBindUser())) {
-                            System.err.println("The authentication type is "
+                            messages.add("The authentication type is "
                                     + configSettings.getGobiiAuthenticationType().toString()
                                     + " but an ldap bind user is not specified");
                             returnVal = false;
                         }
 
                         if (LineUtils.isNullOrEmpty(configSettings.getLdapBindPassword())) {
-                            System.err.println("The authentication type is "
+                            messages.add("The authentication type is "
                                     + configSettings.getGobiiAuthenticationType().toString()
                                     + " but an ldap bind password is not specified");
                             returnVal = false;
@@ -1179,42 +1180,42 @@ public class GobiiConfig {
 
 
                 if (LineUtils.isNullOrEmpty(configSettings.getFileSystemLog())) {
-                    System.err.println("A file system log directory is not defined");
+                    messages.add("A file system log directory is not defined");
                     returnVal = false;
                 } else {
                     File directoryToTest = new File(configSettings.getFileSystemLog());
                     if (!directoryToTest.exists() || !directoryToTest.isDirectory()) {
-                        System.err.println("The specified file system log does not exist or is not a directory: " + configSettings.getFileSystemLog());
+                        messages.add("The specified file system log does not exist or is not a directory: " + configSettings.getFileSystemLog());
                         returnVal = false;
                     }
                 }
 
 
                 if (LineUtils.isNullOrEmpty(configSettings.getFileSysCropsParent())) {
-                    System.err.println("A file system crop parent directory is not defined");
+                    messages.add("A file system crop parent directory is not defined");
                     returnVal = false;
                 } else {
                     File directoryToTest = new File(configSettings.getFileSysCropsParent());
                     if (!directoryToTest.exists() || !directoryToTest.isDirectory()) {
-                        System.err.println("The specified file crop parent directory does not exist or is not a directory: " + configSettings.getFileSysCropsParent());
+                        messages.add("The specified file crop parent directory does not exist or is not a directory: " + configSettings.getFileSysCropsParent());
                         returnVal = false;
                     }
                 }
 
 
                 if (configSettings.getTestExecConfig() == null) {
-                    System.err.println("No test exec configuration is defined");
+                    messages.add("No test exec configuration is defined");
                     returnVal = false;
                 }
 
                 if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getTestCrop())) {
-                    System.err.println("A test crop id is not defined");
+                    messages.add("A test crop id is not defined");
                     returnVal = false;
                 } else {
 
                     String cropId = configSettings.getTestExecConfig().getTestCrop();
                     if (!configSettings.isCropDefined(cropId)) {
-                        System.err.println("The test crop is not defined in the crop configurations: " + cropId);
+                        messages.add("The test crop is not defined in the crop configurations: " + cropId);
                         returnVal = false;
                     }
 
@@ -1223,26 +1224,26 @@ public class GobiiConfig {
                             .stream()
                             .filter(cropConfig -> cropConfig.getGobiiCropType().equals(cropId))
                             .count() != 1) {
-                        System.err.println("The specified test crop config is not an active crop: " + cropId);
+                        messages.add("The specified test crop config is not an active crop: " + cropId);
                         returnVal = false;
                     }
                 }
 
 
                 if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getInitialConfigUrl())) {
-                    System.err.println("An initial configuration url for testing is not defined");
+                    messages.add("An initial configuration url for testing is not defined");
                     returnVal = false;
                 }
 
 
                 if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getConfigFileTestDirectory())) {
-                    System.err.println("A a directory for test files is not defined");
+                    messages.add("A a directory for test files is not defined");
                     returnVal = false;
                 } else {
                     String testDirectoryPath = configSettings.getTestExecConfig().getConfigFileTestDirectory();
                     File testFilePath = new File(configSettings.getTestExecConfig().getConfigFileTestDirectory());
                     if (!testFilePath.exists()) {
-                        System.err.println("The specified test file path does not exist: "
+                        messages.add("The specified test file path does not exist: "
                                 + testDirectoryPath);
                         returnVal = false;
                     }
@@ -1250,56 +1251,57 @@ public class GobiiConfig {
 
 
                 if (LineUtils.isNullOrEmpty(configSettings.getTestExecConfig().getConfigUtilCommandlineStem())) {
-                    System.err.println("The commandline stem of this utility for testing purposes is not defined");
+                    messages.add("The commandline stem of this utility for testing purposes is not defined");
                     returnVal = false;
                 }
 
 
                 if (configSettings.getActiveCropConfigs().size() < 1) {
-                    System.err.println("No active crops are defined");
+                    messages.add("No active crops are defined");
                     returnVal = false;
                 }
 
-                for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
+                List<String> contextPathList = new ArrayList<>();
+                for (GobiiCropConfig currentGobiiCropConfig : configSettings.getAllCropConfigs()) {
 
 
-                    if (!currentGobiiCropConfig.getContextPath().toLowerCase().contains(currentGobiiCropConfig.getGobiiCropType())) {
-                        System.err.println("The context root "
-                                + currentGobiiCropConfig.getContextPath()
-                                + " does not contain the crop ID "
-                                + currentGobiiCropConfig.getGobiiCropType());
-                        returnVal = false;
-                    }
-
+                    // we don't need to test for unique cropNames because they are stored  in a map keyed
+                    // by crop name
                     if (LineUtils.isNullOrEmpty(currentGobiiCropConfig.getGobiiCropType())) {
-                        System.err.println("The crop type for the active crop  is not defined");
+                        messages.add("The crop type for the crop is not defined");
                         returnVal = false;
                     }
 
 
                     if (LineUtils.isNullOrEmpty(currentGobiiCropConfig.getHost())) {
-                        System.err.println("The web server host for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
+                        messages.add("The web server host for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
 
                     }
 
 
                     if (LineUtils.isNullOrEmpty(currentGobiiCropConfig.getContextPath())) {
-                        System.err.println("The web server context path for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
+                        messages.add("The web server context path for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
-
+                    } else {
+                        if (!contextPathList.contains(currentGobiiCropConfig.getContextPath())) {
+                            contextPathList.add(currentGobiiCropConfig.getContextPath());
+                        } else {
+                            messages.add("The context path for the crop occurs more than once -- context paths must be unique:" + currentGobiiCropConfig.getContextPath());
+                            returnVal = false;
+                        }
                     }
 
 
                     if (currentGobiiCropConfig.getPort() == null) {
-                        System.err.println("The web server port for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
+                        messages.add("The web server port for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
 
                     }
 
                     GobiiCropDbConfig gobiiCropDbConfigPostGres = currentGobiiCropConfig.getCropDbConfig(GobiiDbType.POSTGRESQL);
                     if (gobiiCropDbConfigPostGres == null) {
-                        System.err.println("The postgresdb for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
+                        messages.add("The postgresdb for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
                     } else {
                         returnVal = returnVal && verifyDbConfig(gobiiCropDbConfigPostGres);
@@ -1307,11 +1309,19 @@ public class GobiiConfig {
 
                     GobiiCropDbConfig gobiiCropDbConfigMonetDB = currentGobiiCropConfig.getCropDbConfig(GobiiDbType.MONETDB);
                     if (gobiiCropDbConfigMonetDB == null) {
-                        System.err.println("The monetdb for the active crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
+                        messages.add("The monetdb for the crop (" + currentGobiiCropConfig.getGobiiCropType() + ") is not defined");
                         returnVal = false;
                     } else {
                         returnVal = returnVal && verifyDbConfig(gobiiCropDbConfigMonetDB);
                     }
+                }
+
+
+                if (returnVal == false && messages.size() > 0) {
+                    System.err.println("\n\n****************CONFIGURATION VALIDATION FAILED****************");
+                    messages.forEach(m -> {
+                        System.err.println(m);
+                    });
                 }
             }
 

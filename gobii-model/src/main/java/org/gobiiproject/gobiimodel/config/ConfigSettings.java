@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.config;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -116,6 +117,13 @@ public class ConfigSettings {
         return (this.configValues.getActiveCropConfigs());
     }
 
+    public List<GobiiCropConfig> getAllCropConfigs() throws Exception {
+
+        return (new ArrayList<>(this.configValues
+                .getCropConfigs()
+                .values()));
+    }
+
     public TestExecConfig getTestExecConfig() {
 
         return this.configValues.getTestExecConfig();
@@ -129,7 +137,6 @@ public class ConfigSettings {
 
         return this.configValues.getKDCConfig();
     }
-
 
 
     public List<String> getActiveCropTypes() throws Exception {
