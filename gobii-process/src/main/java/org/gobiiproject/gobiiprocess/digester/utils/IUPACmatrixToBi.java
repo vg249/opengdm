@@ -24,7 +24,7 @@ public class IUPACmatrixToBi {
 
         if (!checkFileExistence(iFile)) {
             ErrorLogger.logError("IUPAC to Bi","Input file provided does not exists.\n");
-            System.exit(0);
+            System.exit(1);
         }
 
         Map<String, NucIupacCodes> hash = new HashMap<>();
@@ -39,7 +39,7 @@ public class IUPACmatrixToBi {
                 break;
             default:
                 ErrorLogger.logError("IUPAC to Bi","Given file format can not be processed.");
-                System.exit(0);
+                System.exit(1);
                 break;
         }
         startTime = System.currentTimeMillis();
@@ -55,7 +55,7 @@ public class IUPACmatrixToBi {
                     oNucl[i] = hash.get(iNucl[i].toUpperCase()).toString();
                 }
                 buffOut.write(StringUtils.join(oNucl, fSep));
-                buffOut.write(NEWLINE);
+                buffOut.newLine();
             }
             buffOut.close();
             buffIn.close();
