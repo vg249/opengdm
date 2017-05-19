@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiweb.automation;
 import org.gobiiproject.gobiiapimodel.hateos.Link;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderAuth;
+import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DTOBase;

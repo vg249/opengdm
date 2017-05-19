@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.config.ServerConfig;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
 
 
 import java.util.LinkedHashMap;

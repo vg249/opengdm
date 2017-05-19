@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.tobemovedtoapimodel;
+package org.gobiiproject.gobiiapimodel.payload;
 
 /**
  * Created by Phil on 9/6/2016.

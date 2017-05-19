@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.tobemovedtoapimodel;
+package org.gobiiproject.gobiiapimodel.payload;
 
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;

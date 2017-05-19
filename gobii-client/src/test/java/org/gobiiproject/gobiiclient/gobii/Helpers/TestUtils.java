@@ -2,8 +2,8 @@ package org.gobiiproject.gobiiclient.gobii.Helpers;
 
 
 import org.gobiiproject.gobiimodel.headerlesscontainer.NameIdDTO;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;
-import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderStatusMessage;
+import org.gobiiproject.gobiiapimodel.payload.Header;
+import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 //import org.gobiiproject.gobiimodel.tobemovedtoapimodel.Header;;

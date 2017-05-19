@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiimodel.tobemovedtoapimodel;
+package org.gobiiproject.gobiiapimodel.payload;
 
 
 import org.codehaus.jackson.annotate.JsonIgnore;

@@ -3,7 +3,7 @@
 // Initial Version: Phil Glaser
 // Create Date:   2016-03-24
 // ************************************************************************
-package org.gobiiproject.gobiimodel.tobemovedtoapimodel;
+package org.gobiiproject.gobiiapimodel.payload;
 
 
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
