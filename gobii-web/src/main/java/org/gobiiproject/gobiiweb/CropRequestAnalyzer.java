@@ -81,6 +81,11 @@ public class CropRequestAnalyzer {
                 }
             } // iterate configurations
 
+            // this is the condition if we simply couldn't find a config
+            if( errorMessage == null && returnVal == null ) {
+                errorMessage = "There is no active crop with the context path of th specified URL; ";
+            }
+
             if (returnVal == null) {
 
                 errorMessage += "; the cropId corresponding to the context path of the request url could not be set: " + requestUrl;
