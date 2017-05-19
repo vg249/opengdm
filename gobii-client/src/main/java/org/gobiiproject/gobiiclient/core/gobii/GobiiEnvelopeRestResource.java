@@ -13,7 +13,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by Phil on 5/13/2016.
+ * This class adds the GOBII-specific type handling on top of the generic
+ * HTTP functionality of HttpCore. It wraps the generic HTTP method methods
+ * (get, post, put, patch, delete) provided by HTTP core. It serializes and
+ * deserializes GOBII's POJO DTO payloads. Some of the functionality here is
+ * general enough that it could be used for non-GOBII payloads that are,
+ * like the GOBII DTOs, expressed as POJO. However, the structure of the GOBII
+ * response is very specific. If in the future this client library is required to support
+ * non-GOBII services that merit using POJOs similar to DTOs, the generic type-based
+ * functionality of this class could be separated out into a common class that
+ * would be consumed by this class and a similar new class for the non-GOBII
+ * payloads. 
  */
 public class GobiiEnvelopeRestResource<T> {
 
