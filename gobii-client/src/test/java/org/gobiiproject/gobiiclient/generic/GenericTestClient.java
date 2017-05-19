@@ -1,21 +1,19 @@
 package org.gobiiproject.gobiiclient.generic;
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import sun.reflect.annotation.ExceptionProxy;
 
 /**
  * Created by Phil on 5/19/2017.
  */
-public class GenericClientTest {
+public class GenericTestClient {
 
     private static Server server = new Server(8788);
 
@@ -23,6 +21,11 @@ public class GenericClientTest {
     public static void serverSetup() throws Exception {
 
 
+        /*
+        // This setup is if you are using jetty without jersey
+        // Please keep this example around in case we need to revert to that
+        // However, for now it seems that jersey makes it easier to set up the
+        // test server resources
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(8090);
         server.setConnectors(new Connector[] { connector });
@@ -34,13 +37,7 @@ public class GenericClientTest {
         ContextHandler contextPost = new ContextHandler();
         contextPost.setHandler(new TestServerHandlerPost());
         contextPost.setContextPath("/generic/postresource");
-//        File dir1 = MavenTestingUtils.getTestResourceDir("dir1");
-//        context1.setBaseResource(Resource.newResource(dir1));
-//        context1.setHandler(rh1);
 
-        // Create a ContextHandlerCollection and set the context handlers to it.
-        // This will let jetty process urls against the declared contexts in
-        // order to match up content.
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         contexts.setHandlers(new Handler[] { contextGet, contextPost });
         server.setHandler(contexts);
@@ -50,6 +47,23 @@ public class GenericClientTest {
 
 
         System.out.print(server.dump());
+
+        */
+
+        ResourceConfig resourceConfig = new ResourceConfig();
+        resourceConfig.packages(GenericTestServer.class.getPackage().getName());
+        resourceConfig.register(JacksonFeature.class);
+        ServletContainer servletContainer = new ServletContainer(resourceConfig);
+        ServletHolder sh = new ServletHolder(servletContainer);
+        server = new Server(8099);
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
+        context.addServlet(sh, "/*");
+        server.setHandler(context);
+
+        server.start();
+        server.join();
+
     }
 
     @AfterClass
