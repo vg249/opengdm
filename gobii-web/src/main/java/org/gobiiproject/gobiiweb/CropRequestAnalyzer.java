@@ -36,34 +36,55 @@ public class CropRequestAnalyzer {
     private static String getCropTypeFromUri(HttpServletRequest httpRequest) throws Exception {
 
         String returnVal = null;
-
         String errorMessage = null;
 
         if (null != httpRequest) {
 
-
-
             String requestUrl = httpRequest.getRequestURI();
+
             for (int idx = 0;
                  (idx < CONFIG_SETTINGS.getActiveCropConfigs().size()) && (returnVal == null);
                  idx++) {
 
                 GobiiCropConfig currentCropConfig = CONFIG_SETTINGS.getActiveCropConfigs().get(idx);
-                String currentContextPath = currentCropConfig
-                        .getContextPath()
-                        .replace("/","");
 
-                String candidateSegment = requestUrl
-                        .replace("/","")
-                        .substring(0, currentContextPath.length());
-                if (candidateSegment.toLowerCase().equals(currentContextPath.toLowerCase())) {
+                String rawContextPath = currentCropConfig
+                        .getContextPath();
 
-                    returnVal = currentCropConfig.getGobiiCropType();
+                // double check that context paths are unique
+                if (CONFIG_SETTINGS
+                        .getActiveCropConfigs()
+                        .stream()
+                        .filter(cc -> {
+                            return cc.getContextPath().equals(rawContextPath);
+                        })
+                        .count() < 2) {
+
+                    String contextPathWithoutSlashes = rawContextPath
+                            .replace("/", "");
+
+
+                    String candidateSegment = requestUrl
+                            .replace("/", "")
+                            .substring(0, contextPathWithoutSlashes.length());
+
+                    if (candidateSegment.toLowerCase().equals(contextPathWithoutSlashes.toLowerCase())) {
+
+                        returnVal = currentCropConfig.getGobiiCropType();
+                    }
+
+
+                } else {
+
+                    errorMessage = "The context path is repeated in the configuration; context paths must be unique: " + rawContextPath;
+
                 }
-            }
+            } // iterate configurations
 
             if (returnVal == null) {
-                errorMessage = "There is no cropId corresponding to the context path of the request url: " + requestUrl;
+
+                errorMessage += "; the cropId corresponding to the context path of the request url could not be set: " + requestUrl;
+
             }
 
         } else {
