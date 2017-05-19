@@ -8,7 +8,7 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaste
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.json.BrapiJsonKeys;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiRestResourceUtils;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 
 /**
  * Created by Phil on 12/16/2016.
@@ -17,7 +17,6 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
 
     private RestUri restUri;
     private ObjectMapper objectMapper = new ObjectMapper();
-    private GobiiRestResourceUtils gobiiRestResourceUtils;
 
     private Class<T_POST_OBJ_TYPE> brapiPostObjType;
     private Class<T_RESPONSE_TYPE_MASTER> brapiResponseTypeMaster;
@@ -32,7 +31,6 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
         this.brapiPostObjType = brapiPostObjType;
         this.brapiResponseTypeMaster = brapiResponseTypeMaster;
         this.brapiResponseTypeDetail = brapiResponseTypeDetail;
-        this.gobiiRestResourceUtils = new GobiiRestResourceUtils();
     }
 
     private BrapiResponseEnvelopeMasterDetail<T_RESPONSE_TYPE_DETAIL> getTypedListObjFromResult(HttpMethodResult httpMethodResult) throws Exception {
@@ -77,7 +75,8 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
         BrapiResponseEnvelopeMasterDetail<T_RESPONSE_TYPE_DETAIL> returnVal;
 
         HttpMethodResult httpMethodResult =
-                this.gobiiRestResourceUtils.getGobiiClientContext().getHttp()
+                GobiiClientContext.getInstance(null, false)
+                        .getHttp()
                         .get(this.restUri);
 
 
@@ -96,7 +95,7 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
         String bodyAsString = objectMapper.writeValueAsString(bodyObj);
 
         HttpMethodResult httpMethodResult =
-                this.gobiiRestResourceUtils.getGobiiClientContext().getHttp()
+                GobiiClientContext.getInstance(null, false).getHttp()
                         .post(this.restUri,
                                 bodyAsString);
 
@@ -112,7 +111,7 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
         BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> returnVal;
 
         HttpMethodResult httpMethodResult =
-                this.gobiiRestResourceUtils.getGobiiClientContext().getHttp()
+                GobiiClientContext.getInstance(null, false).getHttp()
                         .get(this.restUri);
 
         returnVal = this.getMasterObjFromResult(httpMethodResult);

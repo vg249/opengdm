@@ -22,11 +22,9 @@ public class GobiiEnvelopeRestResource<T> {
     private RestUri restUri;
     private ObjectMapper objectMapper = new ObjectMapper();
     private GobiiPayloadResponse<T> gobiiPayloadResponse = null;
-    private GobiiRestResourceUtils gobiiRestResourceUtils;
 
     public GobiiEnvelopeRestResource(RestUri restUri) {
         this.restUri = restUri;
-        this.gobiiRestResourceUtils = new GobiiRestResourceUtils();
         this.gobiiPayloadResponse = new GobiiPayloadResponse<>(this.restUri);
     }
 
@@ -37,12 +35,12 @@ public class GobiiEnvelopeRestResource<T> {
 
     private GobiiClientContext getClientContext() throws Exception {
 
-        return this.gobiiRestResourceUtils.getGobiiClientContext();
+        return GobiiClientContext.getInstance(null, false);
     }
 
     private HttpCore getHttp() throws Exception {
 
-        return this.gobiiRestResourceUtils.getGobiiClientContext().getHttp();
+        return GobiiClientContext.getInstance(null, false).getHttp();
     }
 
 

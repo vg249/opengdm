@@ -8,7 +8,7 @@ import org.gobiiproject.gobiibrapi.core.json.BrapiJsonKeys;
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiibrapi.core.json.BrapiResponseJson;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiRestResourceUtils;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 
 import java.util.List;
 
@@ -19,7 +19,6 @@ public class BrapiResourceJson<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
 
     private RestUri restUri;
     private ObjectMapper objectMapper = new ObjectMapper();
-    private GobiiRestResourceUtils gobiiRestResourceUtils;
 
     private Class<T_POST_OBJ_TYPE> brapiPostObjType;
     private Class<T_RESPONSE_OBJ_DATA_LIST> brapiResponsebjType;
@@ -31,7 +30,6 @@ public class BrapiResourceJson<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
         this.restUri = restUri;
         this.brapiPostObjType = brapiPostObjType;
         this.brapiResponsebjType = brapiResponseObjType;
-        this.gobiiRestResourceUtils = new GobiiRestResourceUtils();
     }
 
     private BrapiResponseJson<T_RESPONSE_OBJ_DATA_LIST> extractResponse(HttpMethodResult httpMethodResult) throws Exception {
@@ -61,7 +59,7 @@ public class BrapiResourceJson<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
         BrapiResponseJson<T_RESPONSE_OBJ_DATA_LIST> returnVal;
 
         HttpMethodResult httpMethodResult =
-                this.gobiiRestResourceUtils.getGobiiClientContext().getHttp()
+                GobiiClientContext.getInstance(null, false).getHttp()
                         .get(this.restUri);
 
         returnVal = this.extractResponse(httpMethodResult);
@@ -77,7 +75,7 @@ public class BrapiResourceJson<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
         String bodyAsString = objectMapper.writeValueAsString(bodyObj);
 
         HttpMethodResult httpMethodResult =
-                this.gobiiRestResourceUtils.getGobiiClientContext().getHttp()
+                GobiiClientContext.getInstance(null, false).getHttp()
                         .post(this.restUri,
                                 bodyAsString);
 
