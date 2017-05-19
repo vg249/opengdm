@@ -30,7 +30,15 @@ import java.io.InputStreamReader;
 import java.net.URI;
 
 /**
- * Created by Phil on 5/13/2016.
+ * This class provides generic HTTP rest-oriented client functionality.
+ * For example, it takes a plain string for a post and converts it to
+ * an HTTP entity as the POST body. It is vital that this class not contain
+ * any GOBII specific functionality. For example, serialization and deserialization
+ * of GOBII POJOs is handled by another class that consumes this class. We
+ * want this class to be generic so that it can serve as the workhorse for
+ * all client operations performed by GOBII clients with arbitrary web services,
+ * not just GOBII ones.
+ * 
  */
 public class HttpCore {
 

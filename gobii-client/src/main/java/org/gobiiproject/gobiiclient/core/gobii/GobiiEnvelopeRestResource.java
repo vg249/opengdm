@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * non-GOBII services that merit using POJOs similar to DTOs, the generic type-based
  * functionality of this class could be separated out into a common class that
  * would be consumed by this class and a similar new class for the non-GOBII
- * payloads. 
+ * payloads.
  */
 public class GobiiEnvelopeRestResource<T> {
 
