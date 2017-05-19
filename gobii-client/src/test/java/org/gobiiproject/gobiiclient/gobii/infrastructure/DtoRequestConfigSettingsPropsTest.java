@@ -10,7 +10,7 @@ import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiAuthenticator;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestDtoFactory;
@@ -43,7 +43,7 @@ public class DtoRequestConfigSettingsPropsTest {
     private PayloadEnvelope<ConfigSettingsDTO> getConfigSettingsFromServer() throws Exception {
 
         GobiiClientContext.resetConfiguration();
-        Assert.assertTrue(GobiiAuthenticator.authenticate());
+        Assert.assertTrue(GobiiClientContextAuth.authenticate());
 
         PayloadEnvelope<ConfigSettingsDTO> returnVal = null;
 
@@ -58,7 +58,7 @@ public class DtoRequestConfigSettingsPropsTest {
 
         returnVal = resultEnvelope;
 
-        Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
+        Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
 
 
         return returnVal;
@@ -69,7 +69,7 @@ public class DtoRequestConfigSettingsPropsTest {
     public void testGetConfigSettings() throws Exception {
 
         GobiiClientContext.resetConfiguration();
-        Assert.assertTrue(GobiiAuthenticator.authenticate());
+        Assert.assertTrue(GobiiClientContextAuth.authenticate());
 
         PayloadEnvelope<ConfigSettingsDTO> resultEnvelope = getConfigSettingsFromServer();
         ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
@@ -116,15 +116,15 @@ public class DtoRequestConfigSettingsPropsTest {
 
         GobiiClientContext.getInstance(serviceUrl, true);
 
-        String testUser = GobiiAuthenticator.getTestExecConfig().getLdapUserForUnitTest();
-        String testPassword = GobiiAuthenticator.getTestExecConfig().getLdapPasswordForUnitTest();
+        String testUser = GobiiClientContextAuth.getTestExecConfig().getLdapUserForUnitTest();
+        String testPassword = GobiiClientContextAuth.getTestExecConfig().getLdapPasswordForUnitTest();
 
-        String testCrop = GobiiAuthenticator.getTestExecConfig().getTestCrop();
+        String testCrop = GobiiClientContextAuth.getTestExecConfig().getTestCrop();
 
         Assert.assertTrue("Unable to authenticate to remote server with default drop " + randomCrop,
                 GobiiClientContext.getInstance(null, false).login(testCrop, testUser, testPassword));
 
-        Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
+        Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
 
     }
 
@@ -170,7 +170,7 @@ public class DtoRequestConfigSettingsPropsTest {
 
         }
 
-        Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
+        Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
 
     }
 
@@ -215,7 +215,7 @@ public class DtoRequestConfigSettingsPropsTest {
         Assert.assertTrue(pingDTOResponse.getPingResponses().size()
                 >= pingDTORequest.getDbMetaData().size());
 
-        Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
+        Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
 
     } // testInitContextFromConfigSettings()
 

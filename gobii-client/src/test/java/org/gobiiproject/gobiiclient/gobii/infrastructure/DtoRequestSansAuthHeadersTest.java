@@ -6,7 +6,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiAuthenticator;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
@@ -26,13 +26,13 @@ public class DtoRequestSansAuthHeadersTest {
         // Aside from crop domain, port, and type, we don't want the tests relying
         // on GobiiClientContext. Authentication will fill the clientContext with config data,
         // and de-authentication will nuke it.
-        Assert.assertTrue(GobiiAuthenticator.authenticate());
+        Assert.assertTrue(GobiiClientContextAuth.authenticate());
         String currentCropDomain = GobiiClientContext.getInstance(null, false).getCurrentCropDomain();
         Integer currentCropPort = GobiiClientContext.getInstance(null, false).getCurrentCropPort();
         String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
         String currentGobiiCropType = GobiiClientContext.getInstance(null, false).getCurrentClientCropType();
         String url = GobiiServiceRequestId.URL_AUTH.getRequestUrl(currentCropContextRoot, GobiiControllerType.GOBII.getControllerPath());
-        Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
+        Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
 
 
         URI uri = new URIBuilder().setScheme("http")

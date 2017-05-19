@@ -13,7 +13,7 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiAuthenticator;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
 import org.gobiiproject.gobiiclient.gobii.dbops.crud.DtoCrudRequestContactTest;
@@ -41,7 +41,7 @@ public class DtoRequestNameIdListTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        Assert.assertTrue(GobiiAuthenticator.authenticate());
+        Assert.assertTrue(GobiiClientContextAuth.authenticate());
 
 //        (new GlobalPkColl<DtoCrudRequestAnalysisTest>()).getPkVals(DtoCrudRequestAnalysisTest.class,GobiiEntityNameType.ANALYSES,10);
         (new GlobalPkColl<DtoCrudRequestProjectTest>()).getPkVals(DtoCrudRequestProjectTest.class, GobiiEntityNameType.PROJECTS, 10);
@@ -55,7 +55,7 @@ public class DtoRequestNameIdListTest {
 
     @AfterClass
     public static void tearDownUpClass() throws Exception {
-        Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
+        Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
     }
 
     private void testNameRetrieval(GobiiEntityNameType gobiiEntityNameType,

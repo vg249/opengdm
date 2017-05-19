@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiclient.core.common;
+package org.gobiiproject.gobiiclient.core.authentication;
 
 /**
  * Created by Phil on 5/17/2017.

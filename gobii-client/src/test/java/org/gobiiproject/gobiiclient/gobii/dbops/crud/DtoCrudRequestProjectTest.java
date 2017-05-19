@@ -11,7 +11,7 @@ import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiAuthenticator;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.DtoRestRequestUtils;
 import org.gobiiproject.gobiiclient.gobii.Helpers.GlobalPkValues;
@@ -37,12 +37,12 @@ public class DtoCrudRequestProjectTest implements DtoCrudRequestTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        Assert.assertTrue(GobiiAuthenticator.authenticate());
+        Assert.assertTrue(GobiiClientContextAuth.authenticate());
     }
 
     @AfterClass
     public static void tearDownUpClass() throws Exception {
-        Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
+        Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
     }
 
 

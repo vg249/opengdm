@@ -3,7 +3,7 @@ package org.gobiiproject.gobiiclient.gobii.infrastructure;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiAuthenticator;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
@@ -42,12 +42,12 @@ public class TestGobiiTestData {
 
         testExecConfig = new GobiiTestConfiguration().getConfigSettings().getTestExecConfig();
 
-        Assert.assertTrue(GobiiAuthenticator.authenticate());
+        Assert.assertTrue(GobiiClientContextAuth.authenticate());
     }
 
     @AfterClass
     public static void tearDownUpClass() throws Exception {
-        Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
+        Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
     }
 
     private static String processPropName(String propName) {

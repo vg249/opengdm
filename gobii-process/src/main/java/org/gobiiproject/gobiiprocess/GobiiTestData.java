@@ -5,7 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiAuthenticator;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.headerlesscontainer.*;
@@ -1536,7 +1536,7 @@ public class GobiiTestData {
         Element props = (Element) parentElement.getElementsByTagName("Properties").item(0);
         NodeList propKeyList = props.getElementsByTagName("*");
 
-        GobiiAuthenticator.authenticate();
+        GobiiClientContextAuth.authenticate();
 
         switch (entityName) {
 

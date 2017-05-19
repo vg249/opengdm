@@ -6,7 +6,7 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiAuthenticator;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
@@ -42,14 +42,14 @@ public class DtoRequestFileExtractorInstructionsTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        Assert.assertTrue(GobiiAuthenticator.authenticate());
+        Assert.assertTrue(GobiiClientContextAuth.authenticate());
         String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
         gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
     }
 
     @AfterClass
     public static void tearDownUpClass() throws Exception {
-        Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
+        Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
     }
 
 

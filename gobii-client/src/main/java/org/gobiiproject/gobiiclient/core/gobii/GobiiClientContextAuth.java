@@ -7,7 +7,7 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 /**
  * Created by Phil on 5/13/2016.
  */
-public class GobiiAuthenticator {
+public class GobiiClientContextAuth {
 
     private static TestExecConfig testExecConfig = null;
 
@@ -77,7 +77,7 @@ public class GobiiAuthenticator {
         //String gobiiCropTypeDefault = GobiiClientContext.getInstance(initialConfigUrl, true).getDefaultCropType();
         GobiiClientContext.getInstance(initialConfigUrl, true);
 
-        return GobiiAuthenticator.authenticate(getTestExecConfig(),cropId);
+        return GobiiClientContextAuth.authenticate(getTestExecConfig(),cropId);
     }
 
     // not implemented yet

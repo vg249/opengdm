@@ -10,7 +10,7 @@ import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseDataList;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.brapi.BrapiEnvelopeRestResource;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiAuthenticator;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -24,13 +24,13 @@ public class BrapiTestGermplasm {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        Assert.assertTrue(GobiiAuthenticator.authenticate());
+        Assert.assertTrue(GobiiClientContextAuth.authenticate());
 
     }
 
     @AfterClass
     public static void tearDownUpClass() throws Exception {
-        Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
+        Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
     }
 
 

@@ -11,7 +11,7 @@ import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
-import org.gobiiproject.gobiiclient.core.gobii.GobiiAuthenticator;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiiclient.gobii.Helpers.TestUtils;
@@ -22,7 +22,6 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URL;
@@ -33,29 +32,29 @@ public class DtoRequestAuthenticationTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-//        Assert.assertTrue(GobiiAuthenticator.authenticate());
+//        Assert.assertTrue(GobiiClientContextAuth.authenticate());
     }
 
     //
     @AfterClass
     public static void tearDownUpClass() throws Exception {
-        Assert.assertTrue(GobiiAuthenticator.deAuthenticate());
+        Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
     }
 
 
     @Test
     public void testSucceedWithOneAuthentication() throws Exception {
 
-        Assert.assertTrue(GobiiAuthenticator.authenticate());
+        Assert.assertTrue(GobiiClientContextAuth.authenticate());
     }
 
     @Test
     public void testFailOnSecondAuthentication() throws Exception {
 
-        Assert.assertTrue(GobiiAuthenticator.authenticate());
+        Assert.assertTrue(GobiiClientContextAuth.authenticate());
         String oldToken = GobiiClientContext.getInstance(null, false).getUserToken();
 
-        Assert.assertTrue(GobiiAuthenticator.authenticate());
+        Assert.assertTrue(GobiiClientContextAuth.authenticate());
         String newToken = GobiiClientContext.getInstance(null, false).getUserToken();
 
         Assert.assertNotEquals(oldToken, newToken);
@@ -113,9 +112,9 @@ public class DtoRequestAuthenticationTest {
             RestUri restUriContactServerTwo = gobiiUriFactoryServeTwo
                     .resourceByUriIdParam(GobiiServiceRequestId.URL_CONTACTS);
 
-            Assert.assertNotNull("Could not get testexecconfig", GobiiAuthenticator.getTestExecConfig());
-            String testUser = GobiiAuthenticator.getTestExecConfig().getLdapUserForUnitTest();
-            String testPassword = GobiiAuthenticator.getTestExecConfig().getLdapPasswordForUnitTest();
+            Assert.assertNotNull("Could not get testexecconfig", GobiiClientContextAuth.getTestExecConfig());
+            String testUser = GobiiClientContextAuth.getTestExecConfig().getLdapUserForUnitTest();
+            String testPassword = GobiiClientContextAuth.getTestExecConfig().getLdapPasswordForUnitTest();
 
             // ****************** FIRST LOGIN
 
