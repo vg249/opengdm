@@ -27,30 +27,43 @@ import java.util.Map;
 
 /***
  * This class encapsulates the configuration data and http component that Java clients
- * will require in order to connect ot gobii web services. In the nominal case, configuraiton
- * data are retrieved from a configuration URL that does not require authentication, whilst all
- * other gobii web service calls require authentication. There are two, and only two, Java clients
- * that should be using the local configuration method, wherein an instance of ConfigSettings from
- * a configuration file path is created. There are to getInstance() methods for both of these approaches.
+ * will require in order to connect to gobii web services. In the nominal case, configuration
+ * data are retrieved from  web services via a resource that does not require authentication, whilst all
+ * other gobii web service calls require authentication. In the marked case, a ConfigSettings instance is
+ * provided to the client context, requiring that a configuration file be accessible to the caller
+ * on its local file system. Each of these approaches has its own getInstance() method.
+ * The local configuration method is used by the Digester/Extractor processes and loaderUI.
  * Once a getInstance() method is called, the client context is populated with a list of configuration
- * settings indexed by cropId. The cropId uniquely identifies a server with respect to its destination
+ * settings indexed by cropId. The cropId uniquely identifies a GOBII server with respect to its destination
  * address. In a prior version of this class, the user could arbitrarily determine the "current" crop
- * by setting the crop ID. Moreover, there as also the concept of a default crop. This flexibility
+ * by setting the crop ID. Moreover, there was also the concept of a default crop. This flexibility
  * led to some significant and hard to trace bugs, where a request for a crop would correctly go to
  * that crops context path (e.g., gobii-dev) but to the port of a different instance. In the new
  * dispensation, there are two, and only two ways, in which the "current" crop ID can be set:
- * 1) Through the getInstance() method that takes a ConfigurationSEttings instance: in these cases,
+ * 1) Through the getInstance() method that takes a ConfigurationSettings instance: in these cases,
  *    we want to do the authentication in the getInstance() method so that our Java clients needn't
  *    be troubled by that detail. Accordingly, that version of getInstance() does a login to the
  *    server corresponding to the specified crop;
  * 2) Through the login() method: for all other clients, the flow of control is:
- *    a) Use the getInstance() method that takes a configuration URL to pouplate the configuraiton list;
+ *    a) Use the getInstance() method that takes a configuration URL to populate the configuration list;
  *    b) The user selects a desired crop from the list;
- *    c) The user logs in with the login() method.
+ *    c) The user logs in with the login() method, specifying the selected crop and credentials.
  *
  * Thus, when a different crop is desired, the user will have to authenticate specifically to the server
  * for that crop, and in this case the HttpCore instance (which knows the domain and port of the server
- * along with the authentication token) is reset.
+ * along with the authentication token) is reset. Corresponding to this change is a new approach to
+ * database connection selection on the server. In the previous dispensation, it was possible for a
+ * client to authenticate to a particular server instance, but specify an arbitrary crop database
+ * by specifying the cropId in the HTTP headers. The server would use the header-specified cropId
+ * to select the database connection corresponding to that crop's database. This approach, again,
+ * led to some difficult bugs. In the new dispensation, a server will use only the database connection
+ * for the server as it is identified by the context path. That is to say, when the server gets a request,
+ * it will look up the server instance from configuration by the context path that the server identifies
+ * in the request URL. The cropId for the server instance identified by these means is then use to
+ * select the database instance for that crop. In other words, a context path (e.g., gobii-maize) is now
+ * exclusively identified with the database for that configuration's database. Client no longer includes
+ * a cropId in the HTTP request headers. However, the server continues to return the identified cropId
+ * in the response headers for informational purposes.
  *
  */
 public final class GobiiClientContext {
