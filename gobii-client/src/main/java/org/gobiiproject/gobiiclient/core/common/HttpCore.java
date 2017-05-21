@@ -24,6 +24,7 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.MediaType;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -95,10 +96,10 @@ public class HttpCore {
                                           String password) {
 
         httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
-                GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE_JSON);
+                MediaType.APPLICATION_JSON);
 
         httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
-                GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE_JSON);
+                MediaType.APPLICATION_JSON);
 
         httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME, userName);
 
@@ -113,14 +114,16 @@ public class HttpCore {
 
     private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest, Map<String,String> headers) throws Exception {
 
-        Iterator it = headers.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry currentPair = (Map.Entry)it.next();
-            httpUriRequest
-                    .addHeader(currentPair.getKey().toString(),
-                            currentPair.getValue().toString());
-        }
 
+        if( headers != null ) {
+            Iterator it = headers.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry currentPair = (Map.Entry) it.next();
+                httpUriRequest
+                        .addHeader(currentPair.getKey().toString(),
+                                currentPair.getValue().toString());
+            }
+        }
 
         HttpResponse returnVal = (HttpClientBuilder.create().build().execute(httpUriRequest));
 
@@ -226,17 +229,20 @@ public class HttpCore {
             }
 
 
-            JsonParser parser = new JsonParser();
-
-            String jsonAsString = stringBuilder.toString();
-
-            JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
-
-            returnVal.setPayLoad(jsonObject);
+            Header headers[] = httpResponse.getHeaders(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
+            if( headers.length > 0 && headers[0].getValue().contains(MediaType.APPLICATION_JSON) )
+            {
+                JsonParser parser = new JsonParser();
+                String jsonAsString = stringBuilder.toString();
+                JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
+                returnVal.setJsonPayload(jsonObject);
+            } else {
+                returnVal.setPlainPayload(stringBuilder);
+            }
         }
 
 
-        ///returnVal.setPayLoad(getJsonFromInputStream(httpResponse.getEntity().getContent()));
+        ///returnVal.setJsonPayload(getJsonFromInputStream(httpResponse.getEntity().getContent()));
 
         return returnVal;
     }
@@ -268,8 +274,8 @@ public class HttpCore {
 
             System.out.println("Response: ");
 
-            if (httpMethodResult.getPayLoad() != null) {
-                System.out.println(httpMethodResult.getPayLoad().toString());
+            if (httpMethodResult.getJsonPayload() != null) {
+                System.out.println(httpMethodResult.getJsonPayload().toString());
             } else {
                 System.out.println("Null payload");
             }

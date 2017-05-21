@@ -4,6 +4,8 @@ import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 
+
+import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,11 +35,12 @@ public class RestUri {
         this.contextPath = contextPath;
         this.requestTemplate = this.contextRoot + this.contextPath + resourcePath;
 
+        // set default content type; this can be overridden by withHeaders()
         this.httpHeaders.put(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
-                GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE_JSON);
+                MediaType.APPLICATION_JSON);
 
         this.httpHeaders.put(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
-                GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE_JSON);
+                MediaType.APPLICATION_JSON);
 
     }
 

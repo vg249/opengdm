@@ -14,6 +14,7 @@ import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -403,7 +404,7 @@ public class TestGobiiTestData {
         return returnVal;
     }
 
-    @Test
+    @Ignore
     public void testGobiiTestData() throws Exception {
         String commandline = makeCommandLine();
 

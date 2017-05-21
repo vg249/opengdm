@@ -13,7 +13,7 @@ public class GobiiHttpHeaderNames {
     public static final String HEADER_NAME_CONTENT_TYPE = "Content-Type";
     public static final String HEADER_NAME_ACCEPT = "Accept";
 
-    public static final String HEADER_NAME_CONTENT_TYPE_JSON = "application/json";
+    public static final String HEADER_VALUE_CONTENT_TYPE_JSON = "application/json";
 
 
 }

@@ -11,13 +11,17 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiiclient.generic.model.GenericTestValues;
 import org.gobiiproject.gobiimodel.config.ServerBase;
+import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.core.MediaType;
 
 /**
  * Created by Phil on 5/19/2017.
@@ -68,24 +72,27 @@ public class GenericTestClient {
                 8099,
                 true);
 
-        genericClientContext = new GenericClientContext(serverBase);
 
 
         ResourceConfig resourceConfig = new ResourceConfig();
-        resourceConfig.packages(GenericTestServer.class.getPackage().getName());
+        resourceConfig.packages(GenericServerMethodsContextOne.class.getPackage().getName());
         resourceConfig.register(JacksonFeature.class);
         resourceConfig.register(SerializationFeature.INDENT_OUTPUT);
         ServletContainer servletContainer = new ServletContainer(resourceConfig);
         ServletHolder sh = new ServletHolder(servletContainer);
         server = new Server(serverBase.getPort());
+
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addServlet(sh, "/*");
         server.setHandler(context);
 
+
+        genericClientContext = new GenericClientContext(serverBase);
+
         //System.out.print(server.dump());
         server.start();
-        //server.join();
+//        server.join();
 
     }
 
@@ -117,7 +124,7 @@ public class GenericTestClient {
     }
 
     @Test
-    public void testGetMethod() throws Exception {
+    public void testGetJson() throws Exception {
 
         RestUri restUriGetPerson = new RestUri(GenericTestPaths.GENERIC_TEST_ROOT,
                 GenericTestPaths.GENERIC_CONTEXT_ONE,
@@ -127,5 +134,44 @@ public class GenericTestClient {
                 .get(restUriGetPerson);
 
         Assert.assertTrue(didHttpMethodSucceed(httpMethodResult));
+
+        Assert.assertNotNull(httpMethodResult.getJsonPayload());
+
+        Assert.assertEquals(httpMethodResult
+                        .getJsonPayload()
+                        .get("nameLast")
+                        .getAsString(),
+                GenericTestValues.NAME_LAST);
+
+        Assert.assertEquals(httpMethodResult
+                        .getJsonPayload()
+                        .get("nameFirst")
+                        .getAsString(),
+                GenericTestValues.NAME_FIRST);
+
+    }
+
+    @Test
+    public void testGetPlain() throws Exception {
+
+        RestUri restUriGetPerson = new RestUri(GenericTestPaths.GENERIC_TEST_ROOT,
+                GenericTestPaths.GENERIC_CONTEXT_TWO,
+                GenericTestPaths.RESOURCE_PERSON)
+                .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+                        MediaType.TEXT_PLAIN)
+                .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+                        MediaType.TEXT_PLAIN);
+
+        HttpMethodResult httpMethodResult = genericClientContext
+                .get(restUriGetPerson);
+
+        Assert.assertTrue(didHttpMethodSucceed(httpMethodResult));
+
+        String plainTextResult = httpMethodResult.getPlainPayload().toString();
+        Assert.assertNotNull(plainTextResult);
+        Assert.assertTrue(plainTextResult.contains(GenericTestValues.NAME_FIRST));
+        Assert.assertTrue(plainTextResult.contains(GenericTestValues.NAME_LAST));
+
+
     }
 }
