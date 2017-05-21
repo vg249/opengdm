@@ -68,7 +68,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
             String gobiiCropType = CropRequestAnalyzer.getGobiiCropType(httpRequest);
             if (gobiiCropType != null) {
 
-                String tokenHeaderVal = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_TOKEN);
+                String tokenHeaderVal = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
                 boolean hasValidToken = authenticationService.checkToken(tokenHeaderVal);
 
                 if (hasValidToken) {
@@ -79,8 +79,8 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                 } else {
 
                     TokenInfo tokenInfo = null;
-                    String userName = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_USERNAME);
-                    String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_PASSWORD);
+                    String userName = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME);
+                    String password = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD);
                     String authorization = httpRequest.getHeader("Authorization");
 
                     // we assume that the DataSource selector will have done the right thing with the response
@@ -131,9 +131,9 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                                           String token) throws Exception {
 
 
-        httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, token);
-        httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP, gobiiCropType);
-        httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_USERNAME, userName);
+        httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN, token);
+        httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_NAME_GOBII_CROP, gobiiCropType);
+        httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME, userName);
 
 
 
@@ -163,7 +163,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
     private void checkLogout(HttpServletRequest httpRequest) {
         if (currentLink(httpRequest).equals(logoutLink)) {
-            String token = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_TOKEN);
+            String token = httpRequest.getHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
             // we go here only authenticated, token must not be null
             authenticationService.logout(token);
         }

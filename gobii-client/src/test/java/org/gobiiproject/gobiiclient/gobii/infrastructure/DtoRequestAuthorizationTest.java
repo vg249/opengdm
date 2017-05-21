@@ -90,8 +90,8 @@ public class DtoRequestAuthorizationTest {
         HttpPost postRequest = makePostRequest();
 
         // add bogus credentials
-        postRequest.addHeader(GobiiHttpHeaderNames.HEADER_USERNAME, "nobodyspecial");
-        postRequest.addHeader(GobiiHttpHeaderNames.HEADER_PASSWORD, "unimaginative");
+        postRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME, "nobodyspecial");
+        postRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD, "unimaginative");
 
         HttpResponse httpResponse = HttpClientBuilder.create().build().execute(postRequest);
 
@@ -112,7 +112,7 @@ public class DtoRequestAuthorizationTest {
         HttpPost postRequest = makePostRequest();
 
         // add bogus credentials
-        postRequest.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN, "11111111");
+        postRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN, "11111111");
 
 
         HttpResponse httpResponse = HttpClientBuilder.create().build().execute(postRequest);
@@ -134,11 +134,11 @@ public class DtoRequestAuthorizationTest {
         String testUser = GobiiClientContextAuth.getTestExecConfig().getLdapUserForUnitTest();
         String testPassword = GobiiClientContextAuth.getTestExecConfig().getLdapPasswordForUnitTest();
 
-        postRequestForToken.addHeader(GobiiHttpHeaderNames.HEADER_USERNAME, testUser);
-        postRequestForToken.addHeader(GobiiHttpHeaderNames.HEADER_PASSWORD, testPassword);
+        postRequestForToken.addHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME, testUser);
+        postRequestForToken.addHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD, testPassword);
 
 
-        postRequestForToken.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP,
+        postRequestForToken.addHeader(GobiiHttpHeaderNames.HEADER_NAME_GOBII_CROP,
                 gobiiCropTypeSent.toString());
 
         HttpResponse httpResponse = HttpClientBuilder.create().build().execute(postRequestForToken);
@@ -152,7 +152,7 @@ public class DtoRequestAuthorizationTest {
         // verify that token was sent back in the response (for clients that use that)
         List<Header> tokenHeaderList = Arrays.asList(httpResponse.getAllHeaders())
                 .stream()
-                .filter(header -> header.getName().equals(GobiiHttpHeaderNames.HEADER_TOKEN))
+                .filter(header -> header.getName().equals(GobiiHttpHeaderNames.HEADER_NAME_TOKEN))
                 .collect(Collectors.toList());
         Assert.assertTrue("No authentication token was returned",
                 tokenHeaderList.size() == 1);
@@ -188,7 +188,7 @@ public class DtoRequestAuthorizationTest {
 
         // now test we can do a request with the token we got
         HttpPost postRequestForPing = makePostRequest();
-        postRequestForPing.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN, tokenValue);
+        postRequestForPing.addHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN, tokenValue);
 
         HttpResponse httpResponseForToken = HttpClientBuilder.create().build().execute(postRequestForToken);
         Integer httpStatusCodeForToken = httpResponseForToken.getStatusLine().getStatusCode();

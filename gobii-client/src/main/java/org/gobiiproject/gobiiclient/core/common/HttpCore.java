@@ -91,20 +91,23 @@ public class HttpCore {
                                           String userName,
                                           String password) {
 
-        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_USERNAME, userName);
-        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_PASSWORD, password);
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME, userName);
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD, password);
     }
 
     private void setTokenHeader(HttpUriRequest httpUriRequest) {
 
-        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN, this.token);
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN, this.token);
 
     }
 
     private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest) throws Exception {
 
-        httpUriRequest.addHeader("Content-Type", "application/json");
-        httpUriRequest.addHeader("Accept", "application/json");
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+                GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE_JSON);
+
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+                GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE_JSON);
 
         return (HttpClientBuilder.create().build().execute(httpUriRequest));
 
@@ -156,7 +159,7 @@ public class HttpCore {
         URI uri = makeUri(restUri);
         HttpResponse response = authenticateWithUser(uri, userName, password);
 
-        Header tokenHeader = getHeader(response.getAllHeaders(), GobiiHttpHeaderNames.HEADER_TOKEN);
+        Header tokenHeader = getHeader(response.getAllHeaders(), GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
         this.token = tokenHeader.getValue();
 
         returnVal = (false == LineUtils.isNullOrEmpty(this.token));

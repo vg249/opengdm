@@ -47,7 +47,7 @@ public class DtoRequestSansAuthHeadersTest {
         postRequest.addHeader("Accept", "application/json");
         // WE ARE _NOT_ ADDING ANY OF THE AUTHENTICATION TOKENS
 
-        postRequest.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP,
+        postRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_GOBII_CROP,
                 currentGobiiCropType.toString());
 
 
