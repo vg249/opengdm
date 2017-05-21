@@ -169,6 +169,13 @@
             <version>${jersey-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>${javax.version}</version>
+        </dependency>
+
+
     </dependencies>
 
 

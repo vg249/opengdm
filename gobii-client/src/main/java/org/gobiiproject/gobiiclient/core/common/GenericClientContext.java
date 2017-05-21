@@ -7,7 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by Phil on 5/19/2017.
+ * Use Jersey annotations for server methods. For more info,
+ * see this doc: https://www.javatpoint.com/jax-rs-annotations-example
  */
 public class GenericClientContext {
 
@@ -61,7 +62,7 @@ public class GenericClientContext {
                                 String body) throws Exception {
 
         HttpMethodResult returnVal =
-                this.put(restUri, body);
+                this.httpCore.put(restUri, body);
 
         this.validateResult(returnVal, restUri);
 

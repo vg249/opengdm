@@ -10,5 +10,6 @@ public class GenericTestPaths {
     public static final String GENERIC_CONTEXT_TWO = "plain-context";
 
     public static final String RESOURCE_PERSON = "/person";
+    public static final String RESOURCE_PERSON_SEARCH = "/person-search";
 
 }
