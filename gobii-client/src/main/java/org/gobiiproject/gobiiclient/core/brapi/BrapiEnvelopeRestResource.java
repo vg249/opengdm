@@ -38,15 +38,15 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
         BrapiResponseEnvelopeMasterDetail<T_RESPONSE_TYPE_DETAIL> returnVal = new BrapiResponseEnvelopeMasterDetail();
 
 
-        String metaDataAsString = httpMethodResult.getPayLoad().get(BrapiJsonKeys.METADATA).toString();
+        String metaDataAsString = httpMethodResult.getJsonPayload().get(BrapiJsonKeys.METADATA).toString();
         BrapiMetaData brapiMetaData = objectMapper.readValue(metaDataAsString, BrapiMetaData.class);
         returnVal.setBrapiMetaData(brapiMetaData);
 
-        String resultAsString = httpMethodResult.getPayLoad().get(BrapiJsonKeys.RESULT).toString();
+        String resultAsString = httpMethodResult.getJsonPayload().get(BrapiJsonKeys.RESULT).toString();
         T_RESPONSE_TYPE_DETAIL result = objectMapper.readValue(resultAsString, this.brapiResponseTypeDetail);
         returnVal.setResult(result);
 
-//        String responseAsString = httpMethodResult.getPayLoad().toString();
+//        String responseAsString = httpMethodResult.getJsonPayload().toString();
 //        returnVal = objectMapper.readValue(responseAsString, BrapiResponseEnvelopeMasterDetail.class);
 
         return returnVal;
@@ -57,11 +57,11 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
         BrapiResponseEnvelopeMaster<T_RESPONSE_TYPE_MASTER> returnVal = new BrapiResponseEnvelopeMaster<>();
 
 
-        String metaDataAsString = httpMethodResult.getPayLoad().get(BrapiJsonKeys.METADATA).toString();
+        String metaDataAsString = httpMethodResult.getJsonPayload().get(BrapiJsonKeys.METADATA).toString();
         BrapiMetaData brapiMetaData = objectMapper.readValue(metaDataAsString, BrapiMetaData.class);
         returnVal.setBrapiMetaData(brapiMetaData);
 
-        String resultAsString = httpMethodResult.getPayLoad().get(BrapiJsonKeys.RESULT).toString();
+        String resultAsString = httpMethodResult.getJsonPayload().get(BrapiJsonKeys.RESULT).toString();
         T_RESPONSE_TYPE_MASTER result = objectMapper.readValue(resultAsString, this.brapiResponseTypeMaster);
         returnVal.setResult(result);
 

@@ -6,9 +6,10 @@ package org.gobiiproject.gobiiclient.generic;
 public class GenericTestPaths {
 
     public static final String GENERIC_TEST_ROOT = "/generic";
-    public static final String GENERIC_CONTEXT_ONE = "context-one";
-    public static final String GENERIC_CONTEXT_TWO = "context-two";
+    public static final String GENERIC_CONTEXT_ONE = "json-context";
+    public static final String GENERIC_CONTEXT_TWO = "plain-context";
 
     public static final String RESOURCE_PERSON = "/person";
+    public static final String RESOURCE_PERSON_SEARCH = "/person-search";
 
 }

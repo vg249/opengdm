@@ -106,6 +106,13 @@ public class GobiiConfig {
     private static String SVR_KDC_STATUS_ACTIVE = "kA";
 
 
+
+    // we don't actually use the default crop any more, but for now we need to
+    // leave the option in the commands so we don't break deploy scripts
+    // if the value is not there at all
+    private static String CONFIG_GLOBAL_DEFAULT_CROP = "gD";
+
+
     private static String WAR_FILES_DIR = "wars/";
 
     private static void printSeparator() {
@@ -270,6 +277,12 @@ public class GobiiConfig {
             setOption(options, SVR_KDC_STATUS_CHECK_INTERVAL_SECS, true, "Status check interval for KDC jobs in seconds", "KDC status check interval");
             setOption(options, SVR_KDC_STATUS_CHECK_MAX_TIME_MINS, true, "Total time to wait for KDC job completion in minutes", "KDC job wait threshold");
             setOption(options, SVR_KDC_STATUS_ACTIVE, true, "Mark KDC server inactive 'false'", "KDC active");
+
+
+            // we don't actually use this value any more; it shold be removed when there is time to
+            // change the deploy scripts
+            setOption(options, CONFIG_GLOBAL_DEFAULT_CROP, true, "Default crop (global)", "crop id");
+
 
             // parse our commandline
             CommandLineParser parser = new DefaultParser();

@@ -1,8 +1,11 @@
 package org.gobiiproject.gobiiapimodel.restresources.common;
 
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 
+
+import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,14 +28,28 @@ public class RestUri {
     private Map<String, ResourceParam> paramMap = new HashMap<>();
     private List<ResourceParam> resourceParams = new ArrayList<>();
 
+    private Map<String,String> httpHeaders = new HashMap<>();
+
     public RestUri(String contextRoot, String contextPath, String resourcePath) throws Exception {
         this.contextRoot = this.delimitSegment(contextRoot);
         this.contextPath = contextPath;
         this.requestTemplate = this.contextRoot + this.contextPath + resourcePath;
+
+        // set default content type; this can be overridden by withHeaders()
+        this.httpHeaders.put(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+                MediaType.APPLICATION_JSON);
+
+        this.httpHeaders.put(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+                MediaType.APPLICATION_JSON);
+
     }
 
     public RestUri(String restUri) {
         this.requestTemplate = restUri;
+    }
+
+    public Map<String, String> getHttpHeaders() {
+        return httpHeaders;
     }
 
     public String getResourcePath() throws Exception {
@@ -130,6 +147,11 @@ public class RestUri {
 
         return this;
 
+    }
+
+    public RestUri withHttpHeader(String headerName, String headerValue) {
+        this.httpHeaders.put(headerName,headerValue);
+        return this;
     }
 
 

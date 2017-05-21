@@ -132,9 +132,9 @@ public class PayloadWriter<T extends DTOBase> {
 
     public void setAuthHeader(HeaderAuth headerAuth, HttpServletResponse response) {
 
-        String userName = response.getHeader(GobiiHttpHeaderNames.HEADER_USERNAME);
-        String token = response.getHeader(GobiiHttpHeaderNames.HEADER_TOKEN);
-        String gobiiCropType = response.getHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP);
+        String userName = response.getHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME);
+        String token = response.getHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
+        String gobiiCropType = response.getHeader(GobiiHttpHeaderNames.HEADER_NAME_GOBII_CROP);
 
         headerAuth.setToken(token);
         headerAuth.setGobiiCropType(gobiiCropType);

@@ -56,7 +56,7 @@ public class GobiiPayloadResponse<T> {
                         try {
 
                             returnVal = new PayloadEnvelope<T>()
-                                    .fromJson(httpMethodResult.getPayLoad(),
+                                    .fromJson(httpMethodResult.getJsonPayload(),
                                             dtoType);
 
                             // it's possible that you can have codes other than success, and still have valid response

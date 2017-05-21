@@ -24,10 +24,14 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.MediaType;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * This class provides generic HTTP rest-oriented client functionality.
@@ -91,22 +95,39 @@ public class HttpCore {
                                           String userName,
                                           String password) {
 
-        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_USERNAME, userName);
-        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_PASSWORD, password);
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+                MediaType.APPLICATION_JSON);
+
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+                MediaType.APPLICATION_JSON);
+
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME, userName);
+
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD, password);
     }
 
     private void setTokenHeader(HttpUriRequest httpUriRequest) {
 
-        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN, this.token);
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN, this.token);
 
     }
 
-    private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest) throws Exception {
+    private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest, Map<String,String> headers) throws Exception {
 
-        httpUriRequest.addHeader("Content-Type", "application/json");
-        httpUriRequest.addHeader("Accept", "application/json");
 
-        return (HttpClientBuilder.create().build().execute(httpUriRequest));
+        if( headers != null ) {
+            Iterator it = headers.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry currentPair = (Map.Entry) it.next();
+                httpUriRequest
+                        .addHeader(currentPair.getKey().toString(),
+                                currentPair.getValue().toString());
+            }
+        }
+
+        HttpResponse returnVal = (HttpClientBuilder.create().build().execute(httpUriRequest));
+
+        return returnVal;
 
     }// submitUriRequest()
 
@@ -135,7 +156,9 @@ public class HttpCore {
         HttpPost postRequest = new HttpPost(uri);
         this.setHttpBody(postRequest, "empty");
         this.setAuthenticationHeaders(postRequest, userName, password);
-        returnVal = this.submitUriRequest(postRequest);
+
+        // content headers are already set in setAuthenticationHeaders()
+        returnVal = this.submitUriRequest(postRequest,new HashMap<>());
 
         if (HttpStatus.SC_OK != returnVal.getStatusLine().getStatusCode()) {
             throw new Exception("Request did not succeed with http status code "
@@ -156,7 +179,7 @@ public class HttpCore {
         URI uri = makeUri(restUri);
         HttpResponse response = authenticateWithUser(uri, userName, password);
 
-        Header tokenHeader = getHeader(response.getAllHeaders(), GobiiHttpHeaderNames.HEADER_TOKEN);
+        Header tokenHeader = getHeader(response.getAllHeaders(), GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
         this.token = tokenHeader.getValue();
 
         returnVal = (false == LineUtils.isNullOrEmpty(this.token));
@@ -182,7 +205,7 @@ public class HttpCore {
 
 
         this.setTokenHeader(httpRequestBase);
-        httpResponse = submitUriRequest(httpRequestBase);
+        httpResponse = submitUriRequest(httpRequestBase,restUri.getHttpHeaders());
 
         int responseCode = httpResponse.getStatusLine().getStatusCode();
         String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
@@ -206,17 +229,20 @@ public class HttpCore {
             }
 
 
-            JsonParser parser = new JsonParser();
-
-            String jsonAsString = stringBuilder.toString();
-
-            JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
-
-            returnVal.setPayLoad(jsonObject);
+            Header headers[] = httpResponse.getHeaders(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
+            if( headers.length > 0 && headers[0].getValue().contains(MediaType.APPLICATION_JSON) )
+            {
+                JsonParser parser = new JsonParser();
+                String jsonAsString = stringBuilder.toString();
+                JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
+                returnVal.setJsonPayload(jsonObject);
+            } else {
+                returnVal.setPlainPayload(stringBuilder);
+            }
         }
 
 
-        ///returnVal.setPayLoad(getJsonFromInputStream(httpResponse.getEntity().getContent()));
+        ///returnVal.setJsonPayload(getJsonFromInputStream(httpResponse.getEntity().getContent()));
 
         return returnVal;
     }
@@ -248,8 +274,8 @@ public class HttpCore {
 
             System.out.println("Response: ");
 
-            if (httpMethodResult.getPayLoad() != null) {
-                System.out.println(httpMethodResult.getPayLoad().toString());
+            if (httpMethodResult.getJsonPayload() != null) {
+                System.out.println(httpMethodResult.getJsonPayload().toString());
             } else {
                 System.out.println("Null payload");
             }

@@ -36,11 +36,11 @@ public class BrapiResourceJson<T_POST_OBJ_TYPE, T_RESPONSE_OBJ_DATA_LIST> {
 
         BrapiResponseJson<T_RESPONSE_OBJ_DATA_LIST> returnVal = new BrapiResponseJson<>();
 
-        String brapiMetaDataString = httpMethodResult.getPayLoad().get(BrapiJsonKeys.METADATA).toString();
+        String brapiMetaDataString = httpMethodResult.getJsonPayload().get(BrapiJsonKeys.METADATA).toString();
         BrapiMetaData brapiMetaData = objectMapper.readValue(brapiMetaDataString, BrapiMetaData.class);
         returnVal.setBrapiMetaData(brapiMetaData);
 
-        JsonObject resultAsJson = httpMethodResult.getPayLoad().get(BrapiJsonKeys.RESULT).getAsJsonObject();
+        JsonObject resultAsJson = httpMethodResult.getJsonPayload().get(BrapiJsonKeys.RESULT).getAsJsonObject();
         JsonArray jsonArray = resultAsJson.get(BrapiJsonKeys.RESULT_DATA).getAsJsonArray();
         String arrayAsString = jsonArray.toString();
         List<T_RESPONSE_OBJ_DATA_LIST> resultItemList = objectMapper.readValue(arrayAsString,
