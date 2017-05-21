@@ -28,6 +28,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * This class provides generic HTTP rest-oriented client functionality.
@@ -91,7 +94,14 @@ public class HttpCore {
                                           String userName,
                                           String password) {
 
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+                GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE_JSON);
+
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+                GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE_JSON);
+
         httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME, userName);
+
         httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD, password);
     }
 
@@ -101,15 +111,20 @@ public class HttpCore {
 
     }
 
-    private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest) throws Exception {
+    private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest, Map<String,String> headers) throws Exception {
 
-        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
-                GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE_JSON);
+        Iterator it = headers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry currentPair = (Map.Entry)it.next();
+            httpUriRequest
+                    .addHeader(currentPair.getKey().toString(),
+                            currentPair.getValue().toString());
+        }
 
-        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
-                GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE_JSON);
 
-        return (HttpClientBuilder.create().build().execute(httpUriRequest));
+        HttpResponse returnVal = (HttpClientBuilder.create().build().execute(httpUriRequest));
+
+        return returnVal;
 
     }// submitUriRequest()
 
@@ -138,7 +153,9 @@ public class HttpCore {
         HttpPost postRequest = new HttpPost(uri);
         this.setHttpBody(postRequest, "empty");
         this.setAuthenticationHeaders(postRequest, userName, password);
-        returnVal = this.submitUriRequest(postRequest);
+
+        // content headers are already set in setAuthenticationHeaders()
+        returnVal = this.submitUriRequest(postRequest,new HashMap<>());
 
         if (HttpStatus.SC_OK != returnVal.getStatusLine().getStatusCode()) {
             throw new Exception("Request did not succeed with http status code "
@@ -185,7 +202,7 @@ public class HttpCore {
 
 
         this.setTokenHeader(httpRequestBase);
-        httpResponse = submitUriRequest(httpRequestBase);
+        httpResponse = submitUriRequest(httpRequestBase,restUri.getHttpHeaders());
 
         int responseCode = httpResponse.getStatusLine().getStatusCode();
         String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
