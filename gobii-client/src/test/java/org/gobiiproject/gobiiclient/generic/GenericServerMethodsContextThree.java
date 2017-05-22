@@ -26,26 +26,15 @@ public class GenericServerMethodsContextThree {
 
     Logger LOGGER = LoggerFactory.getLogger(GenericServerMethodsContextThree.class);
 
-//    @GET
-//    @Path(GenericTestPaths.FILES_MARKERS)
-//    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-//    public Response markers() {
-//
-//
-//        File fileToSend = new File(GenericTestValues.FILE_MARKERS);
-//        return Response
-//                .ok(fileToSend, MediaType.APPLICATION_OCTET_STREAM)
-//                //         .header(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,MediaType.APPLICATION_OCTET_STREAM)
-//                .build();
-//
-//    }
-
-
     @GET
     @Path(GenericTestPaths.FILES_MARKERS)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getFile() throws Exception {
+    public Response getFileOctet() throws Exception {
 
+        return this.makeTestFileResponse();
+    }
+
+    private Response makeTestFileResponse() throws Exception {
         StreamingOutput stream ;
 
         try {
@@ -81,5 +70,20 @@ public class GenericServerMethodsContextThree {
                 .ok(stream)
                 .header("content-disposition", "attachment; filename = " + GenericTestValues.FILE_MARKERS)
                 .build();
+    }
+
+    /***
+     * Note that the only difference between this method and the Octo method is the @Produces() value;
+     * The exact same resource, even with the same REST method (GET in this case), can be differentiated
+     * purely by the content type it produces
+     * @return
+     * @throws Exception
+     */
+    @GET
+    @Path(GenericTestPaths.FILES_MARKERS)
+    @Produces(MediaType.MULTIPART_FORM_DATA)
+    public Response getFileMultiPart() throws Exception {
+
+        return this.makeTestFileResponse();
     }
 }
