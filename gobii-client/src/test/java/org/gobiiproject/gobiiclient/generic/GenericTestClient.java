@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiclient.generic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpStatus;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -12,10 +13,13 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiiclient.generic.model.GenericTestValues;
 import org.gobiiproject.gobiiclient.generic.model.Person;
 import org.gobiiproject.gobiimodel.config.ServerBase;
+import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -38,11 +42,13 @@ public class GenericTestClient {
     private static Server server = null;
     private static ServerBase serverBase = null;
     private static GenericClientContext genericClientContext = null;
-
+    private static TestExecConfig testExecConfig = null;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeClass
     public static void serverSetup() throws Exception {
+
+        testExecConfig = new GobiiTestConfiguration().getConfigSettings().getTestExecConfig();
 
 
         // We are using a simple Jetty server with Jersey annotations
@@ -73,9 +79,23 @@ public class GenericTestClient {
 
         //System.out.print(server.dump());
         server.start();
-//        server.join();
-
+        //Uncomment server.join() to make server persist so you can curl the server
+        //server.join();
     }
+
+    @AfterClass
+    public static void serverTearDown() throws Exception {
+
+        server.stop();
+
+        String testFileDirectory = testExecConfig.getTestFileDownloadDirectory();
+        File file = new File(testFileDirectory);
+        if ( file.exists() ) {
+            FileUtils.deleteDirectory(file);
+        }
+    }
+
+
 
     public static boolean didHttpMethodSucceed(HttpMethodResult httpMethodResult) {
 
@@ -96,12 +116,6 @@ public class GenericTestClient {
         }
 
         return returnVal;
-    }
-
-    @AfterClass
-    public static void serverTearDown() throws Exception {
-
-        server.stop();
     }
 
     /***
@@ -323,12 +337,22 @@ public class GenericTestClient {
 
     }
 
+
+    /***
+     * Test download of a file as OctetStream.
+     * The file will be removed at the end of the test -- if you want to physically
+     * inspect that download succeeded, put a break point in tearDown() before th e
+     * deletion
+     * @throws Exception
+     */
     @Test
     public void testGetFile() throws Exception {
 
+        String destinationPath = testExecConfig
+                .getTestFileDownloadDirectory();
 
-        String destinationPath = "/home/gadm/temp";
-
+        Assert.assertNotNull("The test configuration does not define a temp download directory",
+                destinationPath);
 
         File destinationFolder = new File(destinationPath);
         if (!destinationFolder.exists()) {
@@ -337,7 +361,7 @@ public class GenericTestClient {
 
         String fileFqpn = destinationPath + "/" + GenericTestValues.FILE_MARKERS;
 
-        RestUri restUriGetPerson = new RestUri(GenericTestPaths.GENERIC_TEST_ROOT,
+        RestUri restUriGetFileDownload = new RestUri(GenericTestPaths.GENERIC_TEST_ROOT,
                 GenericTestPaths.GENERIC_CONTEXT_THREE,
                 GenericTestPaths.FILES_MARKERS)
                 .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
@@ -347,11 +371,14 @@ public class GenericTestClient {
                 .withDestinationFqpn(fileFqpn);
 
         HttpMethodResult httpMethodResult = genericClientContext
-                .get(restUriGetPerson);
+                .get(restUriGetFileDownload);
 
         Assert.assertTrue(didHttpMethodSucceed(httpMethodResult));
 
-
+        File downloadedFile = new File(httpMethodResult.getFileName());
+        Assert.assertTrue("File download web method succeeded, but the file does not exist on the specified path"
+                        + httpMethodResult.getFileName(),
+                downloadedFile.exists());
     }
 
 }

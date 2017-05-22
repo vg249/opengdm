@@ -694,6 +694,7 @@ public class TestGobiiConfig {
         boolean isTestSsh = false;
         String ldapUserForUnitTest = "ldapUnitTestUser_" + UUID.randomUUID().toString();
         String ldapPasswordForUnitTest = "ldapUnitTestPassword_" + UUID.randomUUID().toString();
+        String testDownloadDir = "/tmp/dir";
 
 
         String commandLine = makeCommandline("-a -wfqpn "
@@ -719,6 +720,8 @@ public class TestGobiiConfig {
                 + ldapUserForUnitTest
                 + " -gtldp "
                 + ldapPasswordForUnitTest
+                + " -dldr "
+                + testDownloadDir
         );
 
 
@@ -740,6 +743,7 @@ public class TestGobiiConfig {
         Assert.assertTrue("Config test value does not match: ldap user", configSettings.getTestExecConfig().getLdapUserForUnitTest().equals(ldapUserForUnitTest));
         Assert.assertTrue("Config test value does not match: ldap password", configSettings.getTestExecConfig().getLdapPasswordForUnitTest().equals(ldapPasswordForUnitTest));
         Assert.assertTrue("Config test value does not match: ldap password", configSettings.getTestExecConfig().getLdapPasswordForUnitTest().equals(ldapPasswordForUnitTest));
+        Assert.assertTrue("Config test value does not match: download directory", configSettings.getTestExecConfig().getTestFileDownloadDirectory().equals(testDownloadDir));
     }
 
     @Test
