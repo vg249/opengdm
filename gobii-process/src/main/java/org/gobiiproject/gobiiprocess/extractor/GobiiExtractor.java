@@ -107,10 +107,8 @@ public class GobiiExtractor {
 		else{
 			instructionFile=args[0];
 		}
-		
-		startTime = System.currentTimeMillis();
 
-		startTime = System.currentTimeMillis();
+		SimpleTimer.start("Extract");
 
 		List<GobiiExtractorInstruction> list= parseExtractorInstructionFile(instructionFile);
 		if(list==null){
@@ -414,9 +412,7 @@ public class GobiiExtractor {
 									pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
 									pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
 								}
-								endTime = System.currentTimeMillis();
-								duration = endTime - startTime;
-								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 								break;
 							case HAPMAP:
@@ -431,20 +427,16 @@ public class GobiiExtractor {
 									pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
 									pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
 								}
-								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 								break;
 							case META_DATA:
-								endTime = System.currentTimeMillis();
-								duration = endTime - startTime;
-								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 								break;
 							default:
 								ErrorLogger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
-								endTime = System.currentTimeMillis();
-								duration = endTime - startTime;
-								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 						}
 					}
