@@ -23,9 +23,8 @@ public class Util {
 	/**
 	 * 
 	 * @param tempFolderLocation
-	 * @param table
-	 * @param output
-	 * @param expectedOutputFolderLocation 
+	 * @param tableName
+	 * @param expectedOutputFolderLocation
 	 */
 	static void validateResult(String tempFolderLocation, String tableName, String expectedOutputFolderLocation) throws IOException, FileNotFoundException {
 		BufferedReader actualOutputReader = new BufferedReader(new FileReader(tempFolderLocation + "\\dest" + "\\digest." + tableName));
@@ -159,7 +158,6 @@ public class Util {
 	 * cases. Refer
 	 * {@code org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile.java}
 	 * 
-	 * @param gobiiFile
 	 */
 	@VisibleForTesting
 	static void createAndSetGobiiFile(GobiiLoaderInstruction instruction, String tempFolderLocation) {
