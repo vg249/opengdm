@@ -497,27 +497,32 @@ public class GobiiExtractor {
 		QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
 		qcInstructionsDTOToSend.setContactId(inst.getContactId());
 		qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
-		qcInstructionsDTOToSend.setDataFileName("qc_"+DateUtils.makeDateIdString());
+		qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
 		qcInstructionsDTOToSend.setDatasetId(datasetId);
-		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
-		qcInstructionsDTOToSend.setQualityFileName("Report.xls");
+		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.STARTED);
+		// According to Liz, there are several quality files so this method is no longer necessary
+		qcInstructionsDTOToSend.setQualityFileName("");
 		PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
 		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
 		if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
             ErrorLogger.logError("Digester", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
-			return; //This used to return from the outer method. Why fail here?
         }
-		String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-		gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
-		GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(gobiiUriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
-		PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
+        else {
+			String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
+			gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+			GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(gobiiUriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
+			PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
                 payloadEnvelope);
-		if (qcInstructionFileDTOResponseEnvelope != null) {
-            ErrorLogger.logInfo("Extractor", "QC Instructions Request Sent");
-        } else {
-            ErrorLogger.logError("Extractor", "Error Sending QC Instructions Request");
-        }
-		ErrorLogger.logInfo("Extractor", "Done with the QC Subsection #1 of 1!");
+			if (qcInstructionFileDTOResponseEnvelope != null) {
+            	ErrorLogger.logInfo("Extractor", "QC Instructions Request Sent");
+        	} else {
+            	ErrorLogger.logError("Extractor", "Error Sending QC Instructions Request");
+        	}
+
+        	// To implement the B plan of the KDCompute integration
+
+			ErrorLogger.logInfo("Extractor", "Done with the QC Subsection #1 of 1!");
+		}
 	}
 
 	/**

@@ -354,7 +354,7 @@ public class GobiiFileReader {
 			}
 			
 			if (qcCheck) {//QC - Subsection #2 of 3
-				setQCExtractPaths(dstDir, inst);
+				setQCExtractPaths(dstDir, inst, configuration, crop);
 			}
 		}
 		
@@ -448,7 +448,6 @@ public class GobiiFileReader {
 		rm(sampleFileLoc);
 	}
 
-
 	private static GobiiExtractorInstruction createQCExtractInstruction(GobiiLoaderInstruction zero, String crop) {
 		GobiiExtractorInstruction gobiiExtractorInstruction;
 		ErrorLogger.logInfo("Digester", "qcCheck detected");
@@ -462,36 +461,32 @@ public class GobiiFileReader {
 		ErrorLogger.logInfo("Digester","Done with the QC Subsection #1 of 3!");
 		return gobiiExtractorInstruction;
 	}
-	private static void setQCExtractPaths(File dstDir, GobiiLoaderInstruction inst) {
+
+	private static void setQCExtractPaths(File dstDir, GobiiLoaderInstruction inst, ConfigSettings configuration, String crop) throws Exception {
 		ErrorLogger.logInfo("Digester", "Entering into the QC Subsection #2 of 3...");
 		GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
 		gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
 		gobiiDataSetExtract.setDataSet(inst.getDataSet());
 		gobiiDataSetExtract.setGobiiDatasetType(inst.getDatasetType());
-		Path loaderDestinationDirectoryPath = FileSystems.getDefault().getPath(dstDir.getAbsolutePath());
-		int pathDepth = loaderDestinationDirectoryPath.getNameCount();
-		Path cropDirectory = loaderDestinationDirectoryPath.subpath(0, (pathDepth - 3));
-		Path extractDestinationDirectoryPath = Paths.get(cropDirectory.toString(),
-                "extractor",
-                "output",
-                inst.getGobiiFile().getGobiiFileType().toString().toLowerCase(),
-                "ds_"+inst.getDataSetId());
+		Path extractDestinationDirectoryPath = Paths.get(configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_OUTPUT),
+				inst.getGobiiFile().getGobiiFileType().toString().toLowerCase(),
+				new StringBuilder("ds_").append(inst.getDataSetId()).toString());
 		gobiiDataSetExtract.setExtractDestinationDirectory(extractDestinationDirectoryPath.toString());
-		// As the extract filter type is set, a posteriori, by the GobiiExtractor class, it is set as UNKOWN
-		gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.UNKNOWN);
+		// According to Liz, the Gobii extract filter type is always "WHOLE_DATASET" for any QC job
+		gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
 		gobiiDataSetExtract.setGobiiFileType(inst.getGobiiFile().getGobiiFileType());
 		// It is going to be set by the GobiiExtractor class
 		gobiiDataSetExtract.setGobiiJobStatus(null);
 		qcExtractInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
 		ErrorLogger.logInfo("Digester", "Done with the QC Subsection #2 of 3!");
 	}
+
 	private static void sendQCExtract(ConfigSettings configuration, String crop) throws Exception {
 		ErrorLogger.logInfo("Digester","Entering into the QC Subsection #3 of 3...");
 		ExtractorInstructionFilesDTO extractorInstructionFilesDTOToSend = new ExtractorInstructionFilesDTO();
 		extractorInstructionFilesDTOToSend.getGobiiExtractorInstructions().add(qcExtractInstruction);
 		extractorInstructionFilesDTOToSend.setInstructionFileName("extractor_"+DateUtils.makeDateIdString());
 		PayloadEnvelope<ExtractorInstructionFilesDTO> payloadEnvelope = new PayloadEnvelope<>(extractorInstructionFilesDTOToSend, GobiiProcessType.CREATE);
-
 		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
 		if(LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
 			ErrorLogger.logError("Digester","Unable to log in with user " + GobiiAutoLoginType.USER_RUN_AS.toString());
@@ -510,7 +505,6 @@ public class GobiiFileReader {
 		}
 		ErrorLogger.logInfo("Digester","Done with the QC Subsection #3 of 3!");
 	}
-
 
 	/**
 	 * Read ppd and nodups files to determine their length, and add the row corresponding to the key to the digester message status.
