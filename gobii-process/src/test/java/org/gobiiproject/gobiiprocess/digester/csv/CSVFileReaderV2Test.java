@@ -24,7 +24,7 @@ import org.junit.rules.TemporaryFolder;
  */
 public class CSVFileReaderV2Test {
 
-	public static String tempFolderLocation, resourceDestFolderLocation;
+	private static String tempFolderLocation, resourceDestFolderLocation;
 
 	@ClassRule
 	public static TemporaryFolder tempFolder = new TemporaryFolder();
@@ -134,7 +134,6 @@ public class CSVFileReaderV2Test {
 	public void testMultipleFilesCSV_ROW() throws IOException, InterruptedException {
 		String table = "multiFileCSV_ROW";
 		File file2 = new File(tempFolderLocation + "\\src" + "\\file2.txt");
-		;
 		String data[] = { "marker_name	dnarunname_dom_1	dnarunname_dom_2	dnarunname_dom_3	dnarunname_dom_4",
 						  "dommarker1	1	0	1	1" };
 		BufferedWriter srcFileWriter = new BufferedWriter(new FileWriter(file2));
