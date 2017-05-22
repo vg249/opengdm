@@ -31,12 +31,13 @@ import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.gobiiproject.gobiimodel.utils.email.DigesterMessage;
+import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.PGArray;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
+import static org.gobiiproject.gobiiprocess.digester.utils.IUPACmatrixToBi.convertIUPACtoBi;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
 
@@ -64,12 +65,14 @@ public class GobiiFileReader {
 	private static final String GERMPLASM_PROP_TABNAME="germplasm_prop";
 	private static final String GERMPLASM_TABNAME="germplasm";
 	private static final String MARKER_TABNAME="marker";
+	private static String pathToHDF5Files;
 	private static boolean verbose;
 	private static String errorLogOverride;
 	private static String propertiesFile;
 	private static GobiiUriFactory gobiiUriFactory;
 	private static boolean enableMonet=false;
-
+	//To calculate RunTime of Extraction
+	private static long startTime, endTime, duration;
 	//Not null if QC Extract is happening
 	private static GobiiExtractorInstruction qcExtractInstruction = null;
 
@@ -91,7 +94,7 @@ public class GobiiFileReader {
          		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
 				.addOption("em","enableMonet",false,"Enable Monet");
 		LoaderGlobalConfigs.addOptions(o);
-        DigesterMessage dm = new DigesterMessage();
+        ProcessMessage pm = new ProcessMessage();
 		CommandLineParser parser = new DefaultParser();
         try{
 			CommandLine cli = parser.parse( o, args );
@@ -103,25 +106,25 @@ public class GobiiFileReader {
 			if(cli.hasOption("enableMonet")) enableMonet=true;
 			LoaderGlobalConfigs.setFromFlags(cli);
             args=cli.getArgs();//Remaining args passed through
-                
+
 		}catch(org.apache.commons.cli.ParseException exp ) {
 			new HelpFormatter().printHelp("java -jar Digester.jar ","Also accepts input file directly after arguments\n" +
                 		                  "Example: java -jar Digester.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json",o,null,true);
                System.exit(2);
 		}
-		
+
      	extractorScriptPath=rootDir+"extractors/";
      	loaderScriptPath=rootDir+"loaders/";
      	HDF5Interface.setPathToHDF5(loaderScriptPath+"hdf5/bin/");
-    	
-    	if(propertiesFile==null)propertiesFile=rootDir+"config/gobii-web.properties";
-		
+
+    	if(propertiesFile==null)propertiesFile=rootDir+"config/gobii-web.xml";
+
 		boolean success=true;
 		Map<String,File> loaderInstructionMap = new HashMap<>();//Map of Key to filename
 		List<String> loaderInstructionList=new ArrayList<String>(); //Ordered list of loader instructions to execute, Keys to loaderInstructionMap
 		String dst=null;
 		DataSetOrientationType dso=null;
-		
+
 		ConfigSettings configuration=null;
 		try {
 			configuration = new ConfigSettings(propertiesFile);
@@ -140,9 +143,10 @@ public class GobiiFileReader {
 		else{
 			instructionFile=args[0];
 		}
-		
-		//Error logs go to a file based on crop (for human readability) and 
-		dm.addPath("instruction file",new File(instructionFile).getAbsolutePath());
+
+		//Error logs go to a file based on crop (for human readability) and
+		pm.addPath("instruction file",new File(instructionFile).getAbsolutePath());
+		startTime = System.currentTimeMillis();
 		ErrorLogger.logInfo("Digester","Beginning read of "+instructionFile);
 		List<GobiiLoaderInstruction> list= parseInstructionFile(instructionFile);
 		if(list==null || list.isEmpty()){
@@ -152,12 +156,12 @@ public class GobiiFileReader {
 		GobiiLoaderInstruction zero=list.iterator().next();
 		Integer dataSetId=zero.getDataSetId();
 
-		dm.addIdentifier("Project",zero.getProject());
-		dm.addIdentifier("Platform",zero.getPlatform());
-		dm.addIdentifier("Experiment",zero.getExperiment());
-		dm.addIdentifier("Dataset",zero.getDataSet());
-		dm.addIdentifier("Mapset",zero.getMapset());
-		dm.addIdentifier("Dataset Type",zero.getDatasetType());
+		pm.addIdentifier("Project",zero.getProject());
+		pm.addIdentifier("Platform",zero.getPlatform());
+		pm.addIdentifier("Experiment",zero.getExperiment());
+		pm.addIdentifier("Dataset",zero.getDataSet());
+		pm.addIdentifier("Mapset",zero.getMapset());
+		pm.addIdentifier("Dataset Type",zero.getDatasetType());
 
 
 		String dstFilePath=HelperFunctions.getDestinationFile(zero);//Intermediate 'file'
@@ -165,8 +169,8 @@ public class GobiiFileReader {
 		if(!dstDir.isDirectory()){ //Note: if dstDir is a non-existant
 			dstDir=new File(dstFilePath.substring(0, dstFilePath.lastIndexOf("/")));
 		}
-		dm.addPath("destination directory",dstDir.getAbsolutePath());//Convert to directory
-		dm.addPath("input directory",zero.getGobiiFile().getSource());
+		pm.addPath("destination directory",dstDir.getAbsolutePath());//Convert to directory
+		pm.addPath("input directory",zero.getGobiiFile().getSource());
 
 		String crop=zero.getGobiiCropType();
 		if(crop==null) crop=divineCrop(instructionFile);
@@ -191,17 +195,17 @@ public class GobiiFileReader {
 
 		String errorPath=getLogName(zero, gobiiCropConfig,crop);
 
-		//TODO: HACK - Job's name is 
+		//TODO: HACK - Job's name is
 		String jobName = getJobName(crop,list);
 		String jobUser=zero.getContactEmail();
-		dm.setUser(jobUser);
+		pm.setUser(jobUser);
 
 		String logDir=configuration.getFileSystemLog();
 		if(logDir!=null) {
 			String logFile=logDir+"/"+jobUser.substring(0,jobUser.indexOf('@'))+"_"+getSourceFileName(zero.getGobiiFile())+".log";
 			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
 			ErrorLogger.setLogFilepath(logFile);
-			dm.addPath("Error Log",logFile);
+			pm.addPath("Error Log",logFile);
 			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
 		}
 
@@ -280,7 +284,8 @@ public class GobiiFileReader {
 						isSNPSepRemoval=true;
 						break;
 					case "IUPAC":
-						function = loaderScriptPath + "etc/IUPACmatrix_to_bi.pl tab";
+						convertIUPACtoBi("tab", fromFile, toFile);
+						hasFunction=true;//jdls - need to set flag to know fromfile is now in tofile
 						break;
 					case "SSR_ALLELE_SIZE":
 						//No Translation Needed. Done before GOBII
@@ -352,18 +357,18 @@ public class GobiiFileReader {
 				success &= HelperFunctions.tryExec("mv " + dest + " " + tmp);
 				new PGArray(tmp, dest, "alts").process();
 			}
-			
+
 			if (qcCheck) {//QC - Subsection #2 of 3
 				setQCExtractPaths(dstDir, inst);
 			}
 		}
-		
+
 		if(success){
 
 			errorPath=getLogName(zero, gobiiCropConfig, crop, "IFLs");
 			String pathToIFL=loaderScriptPath+"postgres/gobii_ifl/gobii_ifl.py";
 			String connectionString=" -c "+HelperFunctions.getPostgresConnectionString(gobiiCropConfig);
-			
+
 			//Load PostgreSQL
 			boolean loadedData=false;
 			for(String key:loaderInstructionList){
@@ -375,7 +380,7 @@ public class GobiiFileReader {
 					//Lines affected returned by method call - THIS IS NOW IGNORED
 					HelperFunctions.tryExec(pathToIFL+connectionString+inputFile+outputFile+" -l",verbose?dstDir.getAbsolutePath()+"/iflOut":null,errorPath);
 
-					IFLLineCounts counts=calculateTableStats(dm, loaderInstructionMap, dstDir, key);
+					IFLLineCounts counts=calculateTableStats(pm, loaderInstructionMap, dstDir, key);
 
 					if(counts.loadedData==0){
 						ErrorLogger.logDebug("FileReader","No data loaded for table "+key);
@@ -407,7 +412,7 @@ public class GobiiFileReader {
 					uploadToMonet(dataSetId, gobiiCropConfig, errorPath, variantFile, markerFileLoc, sampleFileLoc);
 				}
 
-				HDF5Interface.createHDF5FromDataset(dm, dst, configuration, dataSetId, crop, errorPath, variantFilename, variantFile);
+				HDF5Interface.createHDF5FromDataset(pm, dst, configuration, dataSetId, crop, errorPath, variantFilename, variantFile);
 				rmIfExist(variantFile.getPath());
 			}
 			if(success && ErrorLogger.success()){
@@ -420,10 +425,12 @@ public class GobiiFileReader {
 		else{
 			ErrorLogger.logWarning("Digester","Unsuccessfully Generated files");
 		}
-		
+
 		try{
-			dm.setBody(jobName,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-			mailInterface.send(dm);
+			endTime = System.currentTimeMillis();
+			duration = endTime - startTime;
+			pm.setBody(jobName,zero.getGobiiFile().getGobiiFileType().name(),duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+			mailInterface.send(pm);
 		}catch(Exception e){
 			ErrorLogger.logError("MailInterface","Error Sending Mail",e);
 		}
@@ -515,13 +522,13 @@ public class GobiiFileReader {
 	/**
 	 * Read ppd and nodups files to determine their length, and add the row corresponding to the key to the digester message status.
 	 * Assumes IFL was run with output of dstDir on key in instructionMap.
-	 * @param dm DigesterMessage to record data to
+	 * @param pm ProcessMessage to record data to
 	 * @param loaderInstructionMap Map of key/location of loader instructions
 	 * @param dstDir Destination directory for IFL call run on key's table
 	 * @param key Key in loaderInstructionMap
 	 * @return
 	 */
-	private static IFLLineCounts calculateTableStats(DigesterMessage dm, Map<String, File> loaderInstructionMap, File dstDir, String key) {
+	private static IFLLineCounts calculateTableStats(ProcessMessage pm, Map<String, File> loaderInstructionMap, File dstDir, String key) {
 		String ppdFile=new File(dstDir,"ppd_digest."+key).getAbsolutePath();
 		String noDupsFile=new File(dstDir,"nodups_ppd_digest."+key).getAbsolutePath();
 
@@ -581,7 +588,7 @@ public class GobiiFileReader {
 		counts.loadedData=loadedLines;
 		counts.existingData=existingLines;
 		counts.invalidData=invalidLines;
-		dm.addEntry(key,totalLinesVal,linesLoadedVal,existingLinesVal,invalidLinesVal);
+		pm.addEntry(key,totalLinesVal,linesLoadedVal,existingLinesVal,invalidLinesVal);
 		return counts;
 	}
 
@@ -593,10 +600,7 @@ public class GobiiFileReader {
 	 */
 	private static String getJobName(String cropName, List<GobiiLoaderInstruction> list) {
 		cropName=cropName.charAt(0)+cropName.substring(1).toLowerCase();// MAIZE -> Maize
-		String jobName=cropName + " digest of ";
-		String source = getSourceFileName(list.get(0).getGobiiFile());
-		jobName+=source;
-		
+		String jobName="[GOBII - Loader]: " + cropName + " - digest of \"" + getSourceFileName(list.get(0).getGobiiFile()) + "\"";
 		return jobName;
 	}
 
@@ -630,7 +634,7 @@ public class GobiiFileReader {
 	}
 	/**
 	 * Generates a log file location given a crop name, crop type, and process ID. (Given by the process calling this method).
-	 * 
+	 *
 	 * Currently works by placing logs in the intermediate file directory.
 	 * @param config Crop configuration
 	 * @return The logfile location for this process

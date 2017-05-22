@@ -318,7 +318,7 @@ public class HelperFunctions {
 		if(success && showTempFiles){
 			if(digestTempFiles != null) {
 				for (String file : digestTempFiles) {
-					if (checkFileExistance(file.substring(file.indexOf('\t') + 1, file.length()))) {
+					if (checkFileExistence(file.substring(file.indexOf('\t') + 1, file.length()))) {
 						content += "\nThe loader has created digest file: " + file;
 					}
 				}
@@ -328,7 +328,7 @@ public class HelperFunctions {
 			content+="\nAn unexpected error occurred when processing your request.";
 			if(digestTempFiles != null){
 				for(String file:digestTempFiles){
-					if(checkFileExistance(file.substring(file.indexOf('\t')+1,file.length()))){
+					if(checkFileExistence(file.substring(file.indexOf('\t')+1,file.length()))){
 						content+="\nThe loader has created digest file: "+file;
 					}
 				}
@@ -357,7 +357,7 @@ public class HelperFunctions {
 	 * @param fileLocation String representation of the file's location (absolute or relative).
 	 * @return true if non-empty file exists
 	 */
-	public static boolean checkFileExistance(String fileLocation) {
+	public static boolean checkFileExistence(String fileLocation) {
 		if(fileLocation==null)return false;
 		File f = new File(fileLocation);
 		return f.exists() && f.getTotalSpace()!=0;

@@ -43,10 +43,6 @@ public class GobiiExtractor {
 	private static boolean verbose;
 	private static String rootDir="../";
 	private static String markerListOverrideLocation=null;
-	//To calculate RunTime of Extraction
-	private static long startTime;
-	private static long endTime;
-	private static long duration;
 
 	public static void main(String[] args) throws Exception {
 
@@ -352,7 +348,7 @@ public class GobiiExtractor {
 					pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
 					pm.addPath("Sample file", new File(sampleFile).getAbsolutePath());
 					pm.addPath("Marker file", new File(markerFile).getAbsolutePath());
-					if(checkFileExistance(mapsetFile)) {
+					if(checkFileExistence(mapsetFile)) {
 						pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
 					}
 
@@ -393,7 +389,7 @@ public class GobiiExtractor {
 						}
 					}
 					GobiiFileType fileType=extract.getGobiiFileType();
-					if(checkFileExistance(genoFile) || (fileType == GobiiFileType.META_DATA)) {
+					if(checkFileExistence(genoFile) || (fileType == GobiiFileType.META_DATA)) {
 						switch (fileType) {
 							case FLAPJACK:
 								String genoOutFile = extractDir + "Dataset.genotype";
@@ -401,17 +397,14 @@ public class GobiiExtractor {
 								pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath());
 								pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath());
 								//Always regenerate requests - may have different parameters
-								boolean extended = HelperFunctions.checkFileExistance(extendedMarkerFile);
+								boolean extended = HelperFunctions.checkFileExistence(extendedMarkerFile);
 								success &= FlapjackTransformer.generateMapFile(extended?extendedMarkerFile:markerFile, sampleFile, chrLengthFile, tempFolder, mapOutFile, errorFile,extended);
 								if(success){
 									pm.addEntity("Map File", FileSystemInterface.lineCount(mapOutFile)+"");
 								}
 								ErrorLogger.logDebug("GobiiExtractor","Executing FlapJack Genotype file Generation");
 								success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile,errorFile);
-								if(success){
-									pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
-									pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
-								}
+								getCounts(success, pm, markerFile, sampleFile);
 								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 								break;
@@ -421,12 +414,7 @@ public class GobiiExtractor {
 								HapmapTransformer hapmapTransformer = new HapmapTransformer();
 								ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
 								success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
-								endTime = System.currentTimeMillis();
-								duration = endTime - startTime;
-								if(success){
-									pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
-									pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
-								}
+								getCounts(success, pm, markerFile, sampleFile);
 								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 								break;
@@ -442,9 +430,7 @@ public class GobiiExtractor {
 					}
 					else{ //We had no genotype file, so we aborted
 						ErrorLogger.logError("GobiiExtractor","No genetic data extracted. Extract failed.");
-						endTime = System.currentTimeMillis();
-						duration = endTime - startTime;
-						pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+						pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 						mailInterface.send(pm);
 					}
 
@@ -472,6 +458,20 @@ public class GobiiExtractor {
 							"I'm going to dump a message of the error here so a programmer can determine why.\n\n\n"+
 							org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(e), null, false, null, configuration, inst.getContactEmail());
 				}
+		}
+	}
+
+	/***
+	 * Get marker and sample count for Email notification Table
+	 * @param success
+	 * @param pm
+	 * @param markerFile
+	 * @param sampleFile
+	 */
+	private static void getCounts(boolean success, ProcessMessage pm, String markerFile, String sampleFile) {
+		if(success){
+			pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
+			pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
 		}
 	}
 
@@ -555,7 +555,7 @@ public class GobiiExtractor {
 
 	private static String getLogName(GobiiExtractorInstruction gli, GobiiCropConfig config, Integer dsid) {
 		return getLogName(gli.getDataSetExtracts().get(0),config,dsid);
-	 }
+	}
 
 	private static String getLogName(GobiiDataSetExtract gli, GobiiCropConfig config, Integer dsid) {
 		String cropName=config.getGobiiCropType();
@@ -666,8 +666,8 @@ public class GobiiExtractor {
 									}
 								}
 								else {
-										ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): " + lineParts[index]);
-										addedLineStringBuilder.append(lineParts[index]);
+									ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): " + lineParts[index]);
+									addedLineStringBuilder.append(lineParts[index]);
 								}
 							}
 						}
