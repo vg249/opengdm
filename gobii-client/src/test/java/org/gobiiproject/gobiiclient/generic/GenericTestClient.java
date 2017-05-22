@@ -22,8 +22,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 
 import javax.ws.rs.core.MediaType;
+import java.io.File;
 import java.util.UUID;
 
 /**
@@ -191,7 +193,7 @@ public class GenericTestClient {
                 .addQueryParam("nameLast")
                 .setParamValue("nameLast", nameLast)
                 .addQueryParam("nameFirst")
-                .setParamValue("nameFirst",nameFirst);
+                .setParamValue("nameFirst", nameFirst);
 
         HttpMethodResult httpMethodResult = genericClientContext
                 .get(restUriGetPerson);
@@ -207,8 +209,8 @@ public class GenericTestClient {
         Assert.assertNotNull(personRetrieved.getPersonId());
 
         //these should equal what we searched for
-        Assert.assertEquals(personRetrieved.getNameLast(),nameLast);
-        Assert.assertEquals(personRetrieved.getNameFirst(),nameFirst);
+        Assert.assertEquals(personRetrieved.getNameLast(), nameLast);
+        Assert.assertEquals(personRetrieved.getNameFirst(), nameFirst);
 
 
     }
@@ -245,9 +247,9 @@ public class GenericTestClient {
         Assert.assertNotNull(personRetrieved.getPersonId());
 
         //these should equal what we sent
-        Assert.assertEquals(personRetrieved.getNameLast(),nameLast);
-        Assert.assertEquals(personRetrieved.getNameFirst(),nameFirst);
-        Assert.assertEquals(personRetrieved.getDescription(),desc);
+        Assert.assertEquals(personRetrieved.getNameLast(), nameLast);
+        Assert.assertEquals(personRetrieved.getNameFirst(), nameFirst);
+        Assert.assertEquals(personRetrieved.getDescription(), desc);
     }
 
     /***
@@ -261,7 +263,7 @@ public class GenericTestClient {
         String nameLast = "nuLasetName";
         String desc = UUID.randomUUID().toString();
         String personId = "1500";
-        Person person = new Person(personId , nameFirst, nameLast, desc);
+        Person person = new Person(personId, nameFirst, nameLast, desc);
 
         RestUri restUriPostPerson = new RestUri(GenericTestPaths.GENERIC_TEST_ROOT,
                 GenericTestPaths.GENERIC_CONTEXT_ONE,
@@ -280,12 +282,12 @@ public class GenericTestClient {
                 Person.class);
 
         //This time we supplied an ID and since it's an update that should not have changed
-        Assert.assertEquals(personRetrieved.getPersonId(),personId);
+        Assert.assertEquals(personRetrieved.getPersonId(), personId);
 
         //But the last name should be set to the one the server updates it  to
-        Assert.assertEquals(personRetrieved.getNameLast(),GenericTestValues.NAME_LAST_UPDATED);
-        Assert.assertEquals(personRetrieved.getNameFirst(),nameFirst);
-        Assert.assertEquals(personRetrieved.getDescription(),desc);
+        Assert.assertEquals(personRetrieved.getNameLast(), GenericTestValues.NAME_LAST_UPDATED);
+        Assert.assertEquals(personRetrieved.getNameFirst(), nameFirst);
+        Assert.assertEquals(personRetrieved.getDescription(), desc);
     }
 
 
@@ -320,4 +322,36 @@ public class GenericTestClient {
         Assert.assertTrue(plainTextResult.contains(GenericTestValues.NAME_LAST));
 
     }
+
+    @Test
+    public void testGetFile() throws Exception {
+
+
+        String destinationPath = "/home/gadm/temp";
+
+
+        File destinationFolder = new File(destinationPath);
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdir();
+        }
+
+        String fileFqpn = destinationPath + "/" + GenericTestValues.FILE_MARKERS;
+
+        RestUri restUriGetPerson = new RestUri(GenericTestPaths.GENERIC_TEST_ROOT,
+                GenericTestPaths.GENERIC_CONTEXT_THREE,
+                GenericTestPaths.FILES_MARKERS)
+                .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+                        MediaType.APPLICATION_OCTET_STREAM)
+                .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+                        MediaType.APPLICATION_OCTET_STREAM)
+                .withDestinationFqpn(fileFqpn);
+
+        HttpMethodResult httpMethodResult = genericClientContext
+                .get(restUriGetPerson);
+
+        Assert.assertTrue(didHttpMethodSucceed(httpMethodResult));
+
+
+    }
+
 }

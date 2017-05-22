@@ -26,8 +26,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MediaType;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,7 +45,6 @@ import java.util.Map;
  * want this class to be generic so that it can serve as the workhorse for
  * all client operations performed by GOBII clients with arbitrary web services,
  * not just GOBII ones.
- *
  */
 public class HttpCore {
 
@@ -112,10 +114,10 @@ public class HttpCore {
 
     }
 
-    private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest, Map<String,String> headers) throws Exception {
+    private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest, Map<String, String> headers) throws Exception {
 
 
-        if( headers != null ) {
+        if (headers != null) {
             Iterator it = headers.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry currentPair = (Map.Entry) it.next();
@@ -158,7 +160,7 @@ public class HttpCore {
         this.setAuthenticationHeaders(postRequest, userName, password);
 
         // content headers are already set in setAuthenticationHeaders()
-        returnVal = this.submitUriRequest(postRequest,new HashMap<>());
+        returnVal = this.submitUriRequest(postRequest, new HashMap<>());
 
         if (HttpStatus.SC_OK != returnVal.getStatusLine().getStatusCode()) {
             throw new Exception("Request did not succeed with http status code "
@@ -198,49 +200,105 @@ public class HttpCore {
 
         HttpMethodResult returnVal = new HttpMethodResult();
 
-        HttpResponse httpResponse;
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
 
-        URI uri = makeUri(restUri);
-        httpRequestBase.setURI(uri);
+        try {
 
+            HttpResponse httpResponse;
 
-        this.setTokenHeader(httpRequestBase);
-        httpResponse = submitUriRequest(httpRequestBase,restUri.getHttpHeaders());
-
-        int responseCode = httpResponse.getStatusLine().getStatusCode();
-        String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
-        returnVal.setResponse(responseCode, reasonPhrase, uri);
+            URI uri = makeUri(restUri);
+            httpRequestBase.setURI(uri);
 
 
-        if (HttpStatus.SC_NOT_FOUND != responseCode &&
-                HttpStatus.SC_BAD_REQUEST != responseCode &&
-                HttpStatus.SC_METHOD_NOT_ALLOWED != responseCode &&
-                HttpStatus.SC_UNAUTHORIZED != responseCode) {
+            this.setTokenHeader(httpRequestBase);
+            httpResponse = submitUriRequest(httpRequestBase, restUri.getHttpHeaders());
 
-            InputStream inputStream = httpResponse.getEntity().getContent();
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(inputStream));
+            int responseCode = httpResponse.getStatusLine().getStatusCode();
+            String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
+            returnVal.setResponse(responseCode, reasonPhrase, uri);
 
 
-            StringBuilder stringBuilder = new StringBuilder();
-            String currentLine = null;
-            while ((currentLine = bufferedReader.readLine()) != null) {
-                stringBuilder.append(currentLine);
-            }
+            if (HttpStatus.SC_NOT_FOUND != responseCode &&
+                    HttpStatus.SC_BAD_REQUEST != responseCode &&
+                    HttpStatus.SC_METHOD_NOT_ALLOWED != responseCode &&
+                    HttpStatus.SC_UNAUTHORIZED != responseCode &&
+                    HttpStatus.SC_INTERNAL_SERVER_ERROR != responseCode) {
 
 
-            Header headers[] = httpResponse.getHeaders(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
-            if( headers.length > 0 && headers[0].getValue().contains(MediaType.APPLICATION_JSON) )
-            {
-                JsonParser parser = new JsonParser();
-                String jsonAsString = stringBuilder.toString();
-                JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
-                returnVal.setJsonPayload(jsonObject);
-            } else {
-                returnVal.setPlainPayload(stringBuilder);
+                String contentType = MediaType.APPLICATION_JSON; // default
+                Header headers[] = httpResponse.getHeaders(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
+                if (headers.length > 0) {
+                    contentType = headers[0].getValue();
+                }
+
+
+
+
+                inputStream = httpResponse.getEntity().getContent();
+
+
+                if (contentType.contains(MediaType.APPLICATION_JSON)
+                        || contentType.contains(MediaType.TEXT_PLAIN)) {
+
+
+                    BufferedReader bufferedReader = new BufferedReader(
+                            new InputStreamReader(inputStream));
+
+
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String currentLine = null;
+                    while ((currentLine = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(currentLine);
+                    }
+
+
+                    if (contentType.contains(MediaType.APPLICATION_JSON)) {
+                        JsonParser parser = new JsonParser();
+                        String jsonAsString = stringBuilder.toString();
+                        JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
+                        returnVal.setJsonPayload(jsonObject);
+                    } else {
+                        returnVal.setPlainPayload(stringBuilder);
+                    }
+
+                } else if (contentType.contains(MediaType.APPLICATION_OCTET_STREAM)) {
+                    outputStream = null;
+                    byte[] buffer = new byte[1024];
+                    String fileName = restUri.getDestinationFqpn();
+                    File outputFile = new File(fileName);
+                    outputFile.createNewFile();
+                    outputStream = new FileOutputStream(outputFile,false);
+                    for (int length; (length = inputStream.read(buffer)) > 0; ) {
+                        outputStream.write(buffer, 0, length);
+                    }
+
+                    returnVal.setFileName(fileName);
+                }
+
             }
         }
 
+        finally {
+
+             if (inputStream != null ) {
+
+                 try {
+                     inputStream.close();
+                 } catch (Exception e) {
+                     LOGGER.error("Error closing input stream: ", e);
+                 }
+             }
+
+            if (outputStream!= null ) {
+
+                try {
+                    outputStream.close();
+                } catch (Exception e) {
+                    LOGGER.error("Error closing output stream: ", e);
+                }
+            }
+        }
 
         ///returnVal.setJsonPayload(getJsonFromInputStream(httpResponse.getEntity().getContent()));
 

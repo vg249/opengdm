@@ -16,6 +16,7 @@ public class HttpMethodResult {
     JsonObject jsonPayload;
     StringBuilder plainPayload = new StringBuilder();
     URI uri;
+    String fileName = null;
 
     public int getResponseCode() {
         return responseCode;
@@ -49,5 +50,13 @@ public class HttpMethodResult {
 
     public void setPlainPayload(StringBuilder plainPayload) {
         this.plainPayload = plainPayload;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }
