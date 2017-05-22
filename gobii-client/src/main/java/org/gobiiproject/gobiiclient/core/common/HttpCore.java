@@ -219,78 +219,96 @@ public class HttpCore {
             returnVal.setResponse(responseCode, reasonPhrase, uri);
 
 
+            // this really needs to be changed so that it allows only the
+            // known-good succeess codes. The problem is that it is not so simple
+            // There can actually be many ways to succeed . . .
+            // one thing that can prevent problems is that in this condition we also verify that
+            // a content type was set. The absence of a content type is a sure sign that the server
+            // barfed. So in this case we report the condition as an exception with the reason code an d
+            // so forth. I would also observe that there are several different classes that are formulating
+            // error based on these response codes. That really needs to be enapsulated.
             if (HttpStatus.SC_NOT_FOUND != responseCode &&
                     HttpStatus.SC_BAD_REQUEST != responseCode &&
                     HttpStatus.SC_METHOD_NOT_ALLOWED != responseCode &&
                     HttpStatus.SC_UNAUTHORIZED != responseCode &&
-                    HttpStatus.SC_INTERNAL_SERVER_ERROR != responseCode) {
+                    HttpStatus.SC_INTERNAL_SERVER_ERROR != responseCode &&
+                    HttpStatus.SC_NOT_ACCEPTABLE != responseCode) {
 
 
-                String contentType = MediaType.APPLICATION_JSON; // default
+                String contentType = null; // default
                 Header headers[] = httpResponse.getHeaders(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
                 if (headers.length > 0) {
                     contentType = headers[0].getValue();
                 }
 
 
+                if( contentType != null ) {
+
+                    inputStream = httpResponse.getEntity().getContent();
 
 
-                inputStream = httpResponse.getEntity().getContent();
+                    if (contentType.contains(MediaType.APPLICATION_JSON)
+                            || contentType.contains(MediaType.TEXT_PLAIN)) {
 
 
-                if (contentType.contains(MediaType.APPLICATION_JSON)
-                        || contentType.contains(MediaType.TEXT_PLAIN)) {
+                        BufferedReader bufferedReader = new BufferedReader(
+                                new InputStreamReader(inputStream));
 
 
-                    BufferedReader bufferedReader = new BufferedReader(
-                            new InputStreamReader(inputStream));
+                        StringBuilder stringBuilder = new StringBuilder();
+                        String currentLine = null;
+                        while ((currentLine = bufferedReader.readLine()) != null) {
+                            stringBuilder.append(currentLine);
+                        }
 
 
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String currentLine = null;
-                    while ((currentLine = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(currentLine);
+                        if (contentType.contains(MediaType.APPLICATION_JSON)) {
+                            JsonParser parser = new JsonParser();
+                            String jsonAsString = stringBuilder.toString();
+                            JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
+                            returnVal.setJsonPayload(jsonObject);
+                        } else {
+                            returnVal.setPlainPayload(stringBuilder);
+                        }
+
+                    } else if (contentType.contains(MediaType.APPLICATION_OCTET_STREAM)
+                            || contentType.contains(MediaType.MULTIPART_FORM_DATA)) {
+                        outputStream = null;
+                        byte[] buffer = new byte[1024];
+                        String fileName = restUri.getDestinationFqpn();
+                        File outputFile = new File(fileName);
+                        outputFile.createNewFile();
+                        outputStream = new FileOutputStream(outputFile, false);
+                        for (int length; (length = inputStream.read(buffer)) > 0; ) {
+                            outputStream.write(buffer, 0, length);
+                        }
+
+                        returnVal.setFileName(fileName);
                     }
 
-
-                    if (contentType.contains(MediaType.APPLICATION_JSON)) {
-                        JsonParser parser = new JsonParser();
-                        String jsonAsString = stringBuilder.toString();
-                        JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
-                        returnVal.setJsonPayload(jsonObject);
-                    } else {
-                        returnVal.setPlainPayload(stringBuilder);
-                    }
-
-                } else if (contentType.contains(MediaType.APPLICATION_OCTET_STREAM)) {
-                    outputStream = null;
-                    byte[] buffer = new byte[1024];
-                    String fileName = restUri.getDestinationFqpn();
-                    File outputFile = new File(fileName);
-                    outputFile.createNewFile();
-                    outputStream = new FileOutputStream(outputFile,false);
-                    for (int length; (length = inputStream.read(buffer)) > 0; ) {
-                        outputStream.write(buffer, 0, length);
-                    }
-
-                    returnVal.setFileName(fileName);
+                } else {
+                    String message = "Unable to process response because no content type was set: "
+                            + httpRequestBase.getMethod()
+                            + ": " + uri.toString() + " "
+                            + returnVal.getResponseCode()
+                            + " (" + returnVal.getReasonPhrase() + ")";
+                    LOGGER.error(message);
+                    throw new Exception(message);
                 }
 
             }
-        }
+        } finally {
 
-        finally {
+            if (inputStream != null) {
 
-             if (inputStream != null ) {
+                try {
+                    inputStream.close();
+                } catch (Exception e) {
+                    LOGGER.error("Error closing input stream: ", e);
+                }
+            }
 
-                 try {
-                     inputStream.close();
-                 } catch (Exception e) {
-                     LOGGER.error("Error closing input stream: ", e);
-                 }
-             }
-
-            if (outputStream!= null ) {
+            if (outputStream != null) {
 
                 try {
                     outputStream.close();

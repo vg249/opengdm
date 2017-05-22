@@ -346,7 +346,7 @@ public class GenericTestClient {
      * @throws Exception
      */
     @Test
-    public void testGetFile() throws Exception {
+    public void testGetFileOctet() throws Exception {
 
         String destinationPath = testExecConfig
                 .getTestFileDownloadDirectory();
@@ -368,6 +368,47 @@ public class GenericTestClient {
                         MediaType.APPLICATION_OCTET_STREAM)
                 .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
                         MediaType.APPLICATION_OCTET_STREAM)
+                .withDestinationFqpn(fileFqpn);
+
+        HttpMethodResult httpMethodResult = genericClientContext
+                .get(restUriGetFileDownload);
+
+        Assert.assertTrue(didHttpMethodSucceed(httpMethodResult));
+
+        File downloadedFile = new File(httpMethodResult.getFileName());
+        Assert.assertTrue("File download web method succeeded, but the file does not exist on the specified path"
+                        + httpMethodResult.getFileName(),
+                downloadedFile.exists());
+    }
+
+
+    /***
+     * Test download of a file as Multipart.
+     * @throws Exception
+     */
+    @Test
+    public void testGetFileMultiPart() throws Exception {
+
+        String destinationPath = testExecConfig
+                .getTestFileDownloadDirectory();
+
+        Assert.assertNotNull("The test configuration does not define a temp download directory",
+                destinationPath);
+
+        File destinationFolder = new File(destinationPath);
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdir();
+        }
+
+        String fileFqpn = destinationPath + "/" + GenericTestValues.FILE_MARKERS;
+
+        RestUri restUriGetFileDownload = new RestUri(GenericTestPaths.GENERIC_TEST_ROOT,
+                GenericTestPaths.GENERIC_CONTEXT_THREE,
+                GenericTestPaths.FILES_MARKERS)
+                .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+                        MediaType.MULTIPART_FORM_DATA)
+                .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+                        MediaType.MULTIPART_FORM_DATA)
                 .withDestinationFqpn(fileFqpn);
 
         HttpMethodResult httpMethodResult = genericClientContext

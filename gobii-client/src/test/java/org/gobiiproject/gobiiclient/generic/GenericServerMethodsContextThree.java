@@ -46,23 +46,9 @@ public class GenericServerMethodsContextThree {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getFile() throws Exception {
 
-//        Resource resource = new ClassPathResource("/xls/template.xlsx");
-//
-//        final InputStream inp = resource.getInputStream();
-//        final Workbook wb = WorkbookFactory.create(inp);
-//        Sheet sheet = wb.getSheetAt(0);
-//
-//        Row row = CellUtil.getRow(7, sheet);
-//        Cell cell = CellUtil.getCell(row, 0);
-//        cell.setCellValue("TITRE TEST");
-
-
         StreamingOutput stream ;
 
         try {
-
-            // File fileToSend = new File(GenericTestValues.FILE_MARKERS);
-
 
             stream = new StreamingOutput() {
 
