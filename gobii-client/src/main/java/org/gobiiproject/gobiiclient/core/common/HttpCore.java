@@ -221,17 +221,22 @@ public class HttpCore {
 
             // this really needs to be changed so that it allows only the
             // known-good succeess codes. The problem is that it is not so simple
-            // There can actually be many ways to succeed . . .
-            // one thing that can prevent problems is that in this condition we also verify that
+            // There can actually be many ways to succeed. For example,
+            // SC_INTERNAL_SERVER_ERROR has to be allowed to go through because
+            // we actually want server exceptions to buble up to the client so he
+            // knows something bad happened. indeed, a significant number of our
+            // unit tests verify the _presence_ of such exceptions as a success
+            // criterion.
+            // What we can do universally in this condition is is to verify that
             // a content type was set. The absence of a content type is a sure sign that the server
-            // barfed. So in this case we report the condition as an exception with the reason code an d
+            // barfed in an unpredicted way. So in this case we report the
+            // condition as an exception with the reason code and
             // so forth. I would also observe that there are several different classes that are formulating
             // error based on these response codes. That really needs to be enapsulated.
             if (HttpStatus.SC_NOT_FOUND != responseCode &&
                     HttpStatus.SC_BAD_REQUEST != responseCode &&
                     HttpStatus.SC_METHOD_NOT_ALLOWED != responseCode &&
                     HttpStatus.SC_UNAUTHORIZED != responseCode &&
-                    HttpStatus.SC_INTERNAL_SERVER_ERROR != responseCode &&
                     HttpStatus.SC_NOT_ACCEPTABLE != responseCode) {
 
 
