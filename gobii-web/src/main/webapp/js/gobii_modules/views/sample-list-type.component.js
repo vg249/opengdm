@@ -39,16 +39,15 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
             SampleListTypeComponent = (function () {
                 function SampleListTypeComponent(_fileModelTreeService) {
                     this._fileModelTreeService = _fileModelTreeService;
-                    this.onSampleListTypeSelected = new core_1.EventEmitter();
                     this.onHeaderStatusMessage = new core_1.EventEmitter();
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
+                    this.listType = "GERMPLASM_NAME";
                 } // ctor
                 SampleListTypeComponent.prototype.handleExportTypeSelected = function (arg) {
                     if (arg.srcElement.checked) {
                         var radioValue = arg.srcElement.value;
                         var gobiiSampleListType = type_extractor_sample_list_1.GobiiSampleListType[radioValue];
                         this.submitSampleListTypeToService(gobiiSampleListType);
-                        this.onSampleListTypeSelected.emit(gobiiSampleListType);
                     }
                 };
                 SampleListTypeComponent.prototype.submitSampleListTypeToService = function (gobiiSampleListType) {
@@ -62,20 +61,30 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
                         _this.onHeaderStatusMessage.emit(he);
                     });
                 };
-                SampleListTypeComponent.prototype.ngOnInit = function () {
-                    return null;
-                };
-                SampleListTypeComponent.prototype.ngOnChanges = function (changes) {
+                SampleListTypeComponent.prototype.setDefault = function () {
+                    this.listType = "GERMPLASM_NAME";
                     this.submitSampleListTypeToService(type_extractor_sample_list_1.GobiiSampleListType.GERMPLASM_NAME);
-                    var scope$ = this;
+                };
+                SampleListTypeComponent.prototype.ngOnInit = function () {
+                    var _this = this;
                     this._fileModelTreeService
                         .fileItemNotifications()
                         .subscribe(function (fileItem) {
-                        if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
-                            && fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                            scope$.submitSampleListTypeToService(type_extractor_sample_list_1.GobiiSampleListType.GERMPLASM_NAME);
+                        if (fileItem.getGobiiExtractFilterType() === type_extractor_filter_1.GobiiExtractFilterType.BY_SAMPLE
+                            && fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
+                            && ((fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY)
+                                || (fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.CLEAR_TREE))) {
+                            _this.setDefault();
                         }
                     });
+                    return null;
+                };
+                SampleListTypeComponent.prototype.ngOnChanges = function (changes) {
+                    if (changes['gobiiExtractFilterType']
+                        && (changes['gobiiExtractFilterType'].currentValue != null)
+                        && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
+                        this.setDefault();
+                    }
                 };
                 return SampleListTypeComponent;
             }());
@@ -83,8 +92,8 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../model/ty
                 core_1.Component({
                     selector: 'sample-list-type',
                     inputs: ['gobiiExtractFilterType'],
-                    outputs: ['onSampleListTypeSelected', 'onHeaderStatusMessage'],
-                    template: "<label class=\"the-label\">Export By:</label><BR>\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"GERMPLASM_NAME\" checked=\"checked\">Germplasm Name<BR>\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"EXTERNAL_CODE\">External Code<BR>\n                  <input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" name=\"format\" value=\"DNA_SAMPLE\">DNA Sample<BR>" // end template
+                    outputs: ['onHeaderStatusMessage'],
+                    template: "<form>\n                            <label class=\"the-legend\">List Item Type:&nbsp;</label>\n                            <BR><input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" [(ngModel)]=\"listType\" name=\"listType\" value=\"GERMPLASM_NAME\" checked=\"checked\">\n                            <label  for=\"GERMPLASM_NAME\" class=\"the-legend\">Germplasm Name</label>\n                            <BR><input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" [(ngModel)]=\"listType\" name=\"listType\" value=\"EXTERNAL_CODE\">\n                            <label for=\"EXTERNAL_CODE\" class=\"the-legend\">External Code</label>\n                            <BR><input type=\"radio\" (change)=\"handleExportTypeSelected($event)\" [(ngModel)]=\"listType\" name=\"listType\" value=\"DNA_SAMPLE\">\n                            <label  for=\"DNA_SAMPLE\" class=\"the-legend\">DNA Sample</label>\n                </form>" // end template
                 }),
                 __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
             ], SampleListTypeComponent);

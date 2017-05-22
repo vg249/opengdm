@@ -23,6 +23,7 @@ public class FileSystemInterface {
 	}
 
 	public static void rmIfExist(String file){
+		if(file==null)return;
 		if(keepAllFiles){
 			return;
 		}

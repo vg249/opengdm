@@ -1,9 +1,8 @@
 package org.gobiiproject.gobiibrapi.calls.calls;
 
-import org.gobiiproject.gobiiapimodel.restresources.RestUri;
-import org.gobiiproject.gobiiapimodel.types.ControllerType;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiibrapi.core.derived.BrapiListResult;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.types.BrapiDataTypes;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 
@@ -24,41 +23,43 @@ public class BrapiResponseMapCalls {
         this.contextRoot = request.getContextPath();
     }
 
-    public List<BrapiResponseCallsItem> getBrapiResponseCallsItems() throws Exception {
+    private List<BrapiResponseCallsItem> getBrapiResponseCallsItems() throws Exception {
 
         List<BrapiResponseCallsItem> returnVal = new ArrayList<>();
 
         returnVal.add(new BrapiResponseCallsItem(new RestUri(this.contextRoot,
-                ControllerType.BRAPI,
-                ServiceRequestId.URL_CALLS),
+                GobiiControllerType.BRAPI.getControllerPath(),
+                GobiiServiceRequestId.URL_CALLS.getResourcePath()),
                 Arrays.asList(RestMethodTypes.GET),
                 Arrays.asList(BrapiDataTypes.JSON)));
 
         returnVal.add(new BrapiResponseCallsItem(new RestUri(this.contextRoot,
-                ControllerType.BRAPI,
-                ServiceRequestId.URL_STUDIES_SEARCH),
+                GobiiControllerType.BRAPI.getControllerPath(),
+                GobiiServiceRequestId.URL_STUDIES_SEARCH.getResourcePath()),
                 Arrays.asList(RestMethodTypes.POST),
                 Arrays.asList(BrapiDataTypes.JSON)));
 
         returnVal.add(new BrapiResponseCallsItem(new RestUri(this.contextRoot,
-                ControllerType.BRAPI,
-                ServiceRequestId.URL_GERMPLASM).addUriParam("id"),
+                GobiiControllerType.BRAPI.getControllerPath(),
+                GobiiServiceRequestId.URL_GERMPLASM.getResourcePath()).addUriParam("id"),
                 Arrays.asList(RestMethodTypes.POST),
                 Arrays.asList(BrapiDataTypes.JSON)));
 
         returnVal.add(new BrapiResponseCallsItem(new RestUri(this.contextRoot,
-                ControllerType.BRAPI,
-                ServiceRequestId.URL_STUDIES).addUriParam("id").appendSegment(ServiceRequestId.URL_OBSERVATION_VARIABLES),
+                GobiiControllerType.BRAPI.getControllerPath(),
+                GobiiServiceRequestId.URL_STUDIES.getResourcePath()).addUriParam("id").appendSegment(GobiiServiceRequestId.URL_OBSERVATION_VARIABLES),
                 Arrays.asList(RestMethodTypes.POST),
                 Arrays.asList(BrapiDataTypes.JSON)));
 
         return returnVal;
     }
 
-    public BrapiListResult<BrapiResponseCallsItem> getBrapiResponseListCalls() throws Exception {
+    public BrapiResponseCalls getBrapiResponseCalls() throws Exception {
 
-        BrapiListResult<BrapiResponseCallsItem> returnVal = new BrapiListResult<>(BrapiResponseCallsItem.class);
-        returnVal.setData(this.getBrapiResponseCallsItems());
+        BrapiResponseCalls returnVal = new BrapiResponseCalls();
+        List<BrapiResponseCallsItem> brapiResponseCallsItems = this.getBrapiResponseCallsItems();
+        returnVal.setData(brapiResponseCallsItems);
+
         return returnVal;
 
     }

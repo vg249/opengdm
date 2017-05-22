@@ -122,6 +122,7 @@ export class FileModelTreeService {
                 .setCategoryType(ExtractorCategoryType.LEAF)
                 .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID])
                 .setCardinality(CardinalityType.ONE_ONLY)
+                .setRequired(true)
             );
 
             submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
@@ -130,6 +131,7 @@ export class FileModelTreeService {
                 .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
                 .setEntityName(Labels.instance().entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY])
                 .setCardinality(CardinalityType.ONE_ONLY)
+                .setRequired(true)
             );
 
             submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.EXPORT_FORMAT, null)
@@ -137,14 +139,15 @@ export class FileModelTreeService {
                 .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT])
                 .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT])
                 .setCardinality(CardinalityType.ONE_ONLY)
+                .setRequired(true)
             );
 
-//            submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.CATEGORY, null)
             submissionItemsForAll.push(FileModelNode.build(ExtractorItemType.ENTITY, null)
                 .setCategoryType(ExtractorCategoryType.LEAF)
                 .setEntityType(EntityType.Mapsets)
                 .setEntityName(Labels.instance().entityNodeLabels[EntityType.Mapsets])
                 .setCardinality(CardinalityType.ZERO_OR_ONE)
+                .setRequired(false)
             );
 
 
@@ -158,7 +161,9 @@ export class FileModelTreeService {
                     .setCategoryType(ExtractorCategoryType.CONTAINER)
                     .setEntityType(EntityType.DataSets)
                     .setEntityName(Labels.instance().entityNodeLabels[EntityType.DataSets])
-                    .setCardinality(CardinalityType.ONE_OR_MORE));
+                    .setCardinality(CardinalityType.ONE_OR_MORE)
+                    .setRequired(false)
+            );
 
             this.fileModelNodeTree.set(GobiiExtractFilterType.WHOLE_DATASET, submissionItemsForDataSet);
 
@@ -173,6 +178,7 @@ export class FileModelTreeService {
                     .setCvFilterType(CvFilterType.DATASET_TYPE)
                     .setEntityName(Labels.instance().cvFilterNodeLabels[CvFilterType.DATASET_TYPE])
                     .setCardinality(CardinalityType.ONE_ONLY)
+                    .setRequired(false)
             );
 
             // -- Sample List Type
@@ -181,6 +187,7 @@ export class FileModelTreeService {
                 .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_TYPE])
                 .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_TYPE])
                 .setCardinality(CardinalityType.ONE_ONLY)
+                .setRequired(true)
             );
 
             // -- Platforms
@@ -189,6 +196,7 @@ export class FileModelTreeService {
                 .setEntityType(EntityType.Platforms)
                 .setEntityName(Labels.instance().entityNodeLabels[EntityType.Platforms])
                 .setCardinality(CardinalityType.ZERO_OR_MORE)
+                .setRequired(false)
             );
 
             // -- Samples Criteria
@@ -200,28 +208,33 @@ export class FileModelTreeService {
                         .setEntityName("Sample Crieria")
                         .setCardinality(CardinalityType.ONE_OR_MORE)
                         .setAlternatePeerTypes([EntityType.Projects, EntityType.Contacts])
+                        .setRequired(false)
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
                             .setCategoryType(ExtractorCategoryType.LEAF)
                             .setEntityType(EntityType.Contacts)
                             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
                             .setEntityName(Labels.instance().entitySubtypeNodeLabels[EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR])
                             .setCardinality(CardinalityType.ONE_ONLY)
+                            .setRequired(false)
                         )
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
                             .setCategoryType(ExtractorCategoryType.LEAF)
                             .setEntityType(EntityType.Projects)
                             .setEntityName(Labels.instance().entityNodeLabels[EntityType.Projects])
                             .setCardinality(CardinalityType.ONE_OR_MORE)
+                            .setRequired(false)
                         ).addChild(FileModelNode.build(ExtractorItemType.SAMPLE_FILE, currentParent)
-                            .setCategoryType(ExtractorCategoryType.LEAF)
-                            .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE])
-                            .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE])
-                            .setCardinality(CardinalityType.ONE_ONLY)
-                        ).addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST_ITEM, currentParent)
-                            .setCategoryType(ExtractorCategoryType.CONTAINER)
-                            .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM])
-                            .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM])
-                            .setCardinality(CardinalityType.ONE_OR_MORE)
+                        .setCategoryType(ExtractorCategoryType.LEAF)
+                        .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE])
+                        .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_FILE])
+                        .setCardinality(CardinalityType.ONE_ONLY)
+                        .setRequired(false)
+                    ).addChild(FileModelNode.build(ExtractorItemType.SAMPLE_LIST_ITEM, currentParent)
+                        .setCategoryType(ExtractorCategoryType.CONTAINER)
+                        .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM])
+                        .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.SAMPLE_LIST_ITEM])
+                        .setCardinality(CardinalityType.ONE_OR_MORE)
+                        .setRequired(false)
                     ));
 
             this.fileModelNodeTree
@@ -240,6 +253,7 @@ export class FileModelTreeService {
                     .setCvFilterType(CvFilterType.DATASET_TYPE)
                     .setEntityName(Labels.instance().cvFilterNodeLabels[CvFilterType.DATASET_TYPE])
                     .setCardinality(CardinalityType.ONE_ONLY)
+                    .setRequired(false)
             );
 
             // the validation algorithm effectively OR's the children: thus the children
@@ -251,21 +265,25 @@ export class FileModelTreeService {
                         .setEntityName("Markers Crieria")
                         .setCardinality(CardinalityType.ONE_OR_MORE)
                         .setAlternatePeerTypes([EntityType.Platforms])
+                        .setRequired(true)
                         .addChild(FileModelNode.build(ExtractorItemType.ENTITY, currentParent)
                             .setCategoryType(ExtractorCategoryType.CONTAINER)
                             .setEntityType(EntityType.Platforms)
                             .setEntityName(Labels.instance().entityNodeLabels[EntityType.Platforms])
                             .setCardinality(CardinalityType.ONE_OR_MORE)
+                            .setRequired(false)
                         ).addChild(FileModelNode.build(ExtractorItemType.MARKER_FILE, currentParent)
                         .setCategoryType(ExtractorCategoryType.LEAF)
                         .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE])
                         .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE])
                         .setCardinality(CardinalityType.ONE_OR_MORE)
+                        .setRequired(false)
                     ).addChild(FileModelNode.build(ExtractorItemType.MARKER_LIST_ITEM, currentParent)
                         .setCategoryType(ExtractorCategoryType.CONTAINER)
                         .setEntityName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM])
                         .setCategoryName(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM])
                         .setCardinality(CardinalityType.ONE_OR_MORE)
+                        .setRequired(false)
                     )
                 );
 
@@ -400,8 +418,22 @@ export class FileModelTreeService {
 
                 } else if (fileItem.getProcessType() === ProcessType.DELETE) {
 
-                    this.removeFromModel(fileModelNode, fileItem);
-                    returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.SUBMISSION_INCOMPLETE, null);
+                    if( this.removeFromModel(fileModelNode, fileItem) ) {
+
+                        returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.SUBMISSION_INCOMPLETE, null);
+
+                    } else {
+                        let message:string = "The specified file item could not be removed because it does not exist in the model";
+
+                        if(fileModelNode && fileModelNode.getCategoryName() ) {
+                            message += "; model category: " + fileModelNode.getCategoryName();
+                        }
+                        if(fileItem && fileItem.getItemName() ) {
+                            message += "; fileitem name: " + fileItem.getItemName();
+                        }
+
+                        returnVal = new FileModelTreeEvent(fileItem, fileModelNode, FileModelState.ERROR, message);
+                    }
 
                 } else {
                     returnVal = new FileModelTreeEvent(fileItem,
@@ -571,14 +603,18 @@ export class FileModelTreeService {
 
     } //
 
-    private removeFromModel(fileModelNode: FileModelNode, fileItem: GobiiFileItem) {
+    private removeFromModel(fileModelNode: FileModelNode, fileItem: GobiiFileItem): boolean {
+
+        let returnVal: boolean = false;
 
 
         if (fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
             // a leaf should never have more than one
-            if (fileModelNode.getFileItems()[0].getFileItemUniqueId() === fileItem.getFileItemUniqueId()) {
-                fileModelNode.getFileItems().splice(0, 1);
+            if (fileModelNode.getFileItems()
+                && fileModelNode.getFileItems().length > 0
+                && fileModelNode.getFileItems()[0].getFileItemUniqueId() === fileItem.getFileItemUniqueId()) {
+                returnVal = (fileModelNode.getFileItems().splice(0, 1)).length > 0;
             }
 
         } else if (fileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER) {
@@ -591,7 +627,7 @@ export class FileModelTreeService {
 
             let idxOfItemToRemove: number = fileModelNode.getFileItems().indexOf(existingItem);
 
-            fileModelNode.getFileItems().splice(idxOfItemToRemove, 1);
+            returnVal = (fileModelNode.getFileItems().splice(idxOfItemToRemove, 1)).length > 0;
 
 
         } else {
@@ -600,6 +636,8 @@ export class FileModelTreeService {
             //     + " for checkbox event " + fileItemEvent.itemName
             //     + " could not be placed in the tree ");
         }
+
+        return returnVal;
 
     }
 

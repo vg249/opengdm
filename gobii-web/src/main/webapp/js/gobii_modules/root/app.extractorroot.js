@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/type-extractor-sample-list", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-node", "../model/type-extract-format", "../model/file-model-tree-event", "../model/name-id-request-params", "../model/file_name", "../views/entity-labels", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/name-id-label-type"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/type-extractor-sample-list", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-node", "../model/type-extract-format", "../model/file-model-tree-event", "../model/dto-header-status-message", "../model/name-id-request-params", "../model/file_name", "../views/entity-labels", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/name-id-label-type", "../model/type-status-level"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, type_extractor_sample_list_1, cv_filter_type_1, file_model_tree_service_1, file_model_node_1, type_extract_format_1, file_model_tree_event_1, name_id_request_params_1, file_name_1, entity_labels_1, dto_request_item_contact_1, authentication_service_1, name_id_label_type_1, ExtractorRoot;
+    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, type_extractor_sample_list_1, cv_filter_type_1, file_model_tree_service_1, file_model_node_1, type_extract_format_1, file_model_tree_event_1, dto_header_status_message_1, name_id_request_params_1, file_name_1, entity_labels_1, dto_request_item_contact_1, authentication_service_1, name_id_label_type_1, type_status_level_1, ExtractorRoot;
     return {
         setters: [
             function (core_1_1) {
@@ -76,6 +76,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             function (file_model_tree_event_1_1) {
                 file_model_tree_event_1 = file_model_tree_event_1_1;
             },
+            function (dto_header_status_message_1_1) {
+                dto_header_status_message_1 = dto_header_status_message_1_1;
+            },
             function (name_id_request_params_1_1) {
                 name_id_request_params_1 = name_id_request_params_1_1;
             },
@@ -93,6 +96,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             },
             function (name_id_label_type_1_1) {
                 name_id_label_type_1 = name_id_label_type_1_1;
+            },
+            function (type_status_level_1_1) {
+                type_status_level_1 = type_status_level_1_1;
             }
         ],
         execute: function () {
@@ -176,10 +182,11 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     // ********************************************************************
                     // ********************************************** Extract file submission
                     this.treeStatusNotification = null;
-                    this.submitButtonStyleDefault = { 'background-color': '#eee' };
-                    this.buttonStyleSubmitReady = { 'background-color': '#99e699' };
-                    this.buttonStyleSubmitNotReady = { 'background-color': '#ffad99' };
+                    this.submitButtonStyleDefault = "btn btn-primary";
+                    this.buttonStyleSubmitReady = "btn btn-success";
+                    this.buttonStyleSubmitNotReady = "btn btn-warning";
                     this.submitButtonStyle = this.buttonStyleSubmitNotReady;
+                    this.clearButtonStyle = this.submitButtonStyleDefault;
                     this.nameIdRequestParamsContactsPi = name_id_request_params_1.NameIdRequestParams
                         .build("Contact-PI", type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Contacts)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
@@ -374,8 +381,16 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleAddMessage = function (arg) {
                     this.messages.unshift(arg);
                 };
+                ExtractorRoot.prototype.handleClearMessages = function () {
+                    this.messages = [];
+                };
                 ExtractorRoot.prototype.handleHeaderStatusMessage = function (statusMessage) {
-                    this.handleAddMessage(statusMessage.message);
+                    if (!statusMessage.statusLevel || statusMessage.statusLevel != type_status_level_1.StatusLevel.WARNING) {
+                        this.handleAddMessage(statusMessage.message);
+                    }
+                    else {
+                        console.log(statusMessage.message);
+                    }
                 };
                 ExtractorRoot.prototype.handleResponseHeader = function (header) {
                     var _this = this;
@@ -429,6 +444,62 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     //#eee
                     var foo = "foo";
                 };
+                ExtractorRoot.prototype.handleClearTree = function () {
+                    var _this = this;
+                    this._fileModelTreeService.put(gobii_file_item_1.GobiiFileItem
+                        .build(this.gobiiExtractFilterType, type_process_1.ProcessType.NOTIFY)
+                        .setExtractorItemType(file_model_node_1.ExtractorItemType.CLEAR_TREE)).subscribe(null, function (headerResponse) {
+                        _this.handleResponseHeader(headerResponse);
+                    });
+                };
+                // In theory this method should be unnecessary because there should not be any duplicates;
+                // however, in testing, it was discovered that there can be duplicate datasets and
+                // duplicate platforms. I suspect that the root cause of this issue is the checkbox component:
+                // because it keeps a history of selected items, it may be reposting existing items in a way that
+                // is not detected by the file item service. In particular, it strikes me that if an item is added
+                // in one extract type (e.g., by data set), and then selected again in another (by samples), there
+                // could be duplicate items in the tree service, because it is specific to extract filter type.
+                // TreeService::getFileItems() should be filtering correctly, but perhaps it's not. In any case,
+                // at this point in the release cycle, it is too late to to do the trouble shooting to figure this out,
+                // because I am unable to reproduce the issue in my local testing. This method at leaset reports
+                // warnings to the effect that the problem exists, but results in an extract that is free of duplicates.
+                // Technically, sample and marker list item duplicates should be eliminated in the list item control,
+                // but it is also too late for that.
+                ExtractorRoot.prototype.eliminateDuplicateEntities = function (extractorItemType, entityType, fileItems) {
+                    var _this = this;
+                    var returnVal = [];
+                    if (fileItems
+                        .filter(function (fi) {
+                        return fi.getExtractorItemType() === extractorItemType
+                            && fi.getEntityType() === entityType;
+                    })
+                        .length == fileItems.length) {
+                        fileItems.forEach(function (ifi) {
+                            if (returnVal.filter(function (rfi) {
+                                return rfi.getItemId() === ifi.getItemId();
+                            }).length === 0) {
+                                returnVal.push(ifi);
+                            }
+                            else {
+                                var message = "A duplicate ";
+                                message += file_model_node_1.ExtractorItemType[extractorItemType];
+                                message += " (" + type_entity_1.EntityType[entityType] + ") ";
+                                message += "item was found; ";
+                                if (ifi.getItemName()) {
+                                    message += "name: " + ifi.getItemName() + "; ";
+                                }
+                                if (ifi.getItemId()) {
+                                    message += "id: " + ifi.getItemId();
+                                }
+                                _this.handleHeaderStatusMessage(new dto_header_status_message_1.HeaderStatusMessage(message, type_status_level_1.StatusLevel.WARNING, null));
+                            }
+                        });
+                    }
+                    else {
+                        this.handleHeaderStatusMessage(new dto_header_status_message_1.HeaderStatusMessage("The elimination array contains mixed entities", type_status_level_1.StatusLevel.WARNING, null));
+                    }
+                    return returnVal;
+                };
                 ExtractorRoot.prototype.handleExtractSubmission = function () {
                     var _this = this;
                     if (this.setSubmitButtonState()) {
@@ -442,36 +513,44 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         var sampleFileName_1 = null;
                         var sampleListType_1;
                         scope$_1._fileModelTreeService.getFileItems(scope$_1.gobiiExtractFilterType).subscribe(function (fileItems) {
+                            // ******** JOB ID
                             var fileItemJobId = fileItems.find(function (item) {
                                 return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.JOB_ID;
                             });
                             if (fileItemJobId != null) {
                                 jobId_1 = fileItemJobId.getItemId();
                             }
+                            // ******** MARKER FILE
                             var fileItemMarkerFile = fileItems.find(function (item) {
                                 return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_FILE;
                             });
                             if (fileItemMarkerFile != null) {
                                 markerFileName_1 = fileItemMarkerFile.getItemId();
                             }
+                            // ******** SAMPLE FILE
                             var fileItemSampleFile = fileItems.find(function (item) {
                                 return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_FILE;
                             });
                             if (fileItemSampleFile != null) {
                                 sampleFileName_1 = fileItemSampleFile.getItemId();
                             }
+                            // ******** SUBMITTER CONTACT
                             var submitterFileItem = fileItems.find(function (item) {
                                 return (item.getEntityType() === type_entity_1.EntityType.Contacts)
                                     && (item.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_SUBMITED_BY);
                             });
                             submitterContactid_1 = Number(submitterFileItem.getItemId());
-                            mapsetIds_1 = fileItems
+                            // ******** MAPSET IDs
+                            var mapsetFileItems = fileItems
                                 .filter(function (item) {
                                 return item.getEntityType() === type_entity_1.EntityType.Mapsets;
-                            })
+                            });
+                            mapsetFileItems = _this.eliminateDuplicateEntities(file_model_node_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.Mapsets, mapsetFileItems);
+                            mapsetIds_1 = mapsetFileItems
                                 .map(function (item) {
                                 return Number(item.getItemId());
                             });
+                            // ******** EXPORT FORMAT
                             var exportFileItem = fileItems.find(function (item) {
                                 return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.EXPORT_FORMAT;
                             });
@@ -487,37 +566,48 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             else if (extractFormat === type_extract_format_1.GobiiExtractFormat.META_DATA_ONLY) {
                                 gobiiFileType = type_gobii_file_1.GobiiFileType.META_DATA;
                             }
+                            // ******** DATA SET TYPE
                             var dataTypeFileItem = fileItems.find(function (item) {
                                 return item.getEntityType() === type_entity_1.EntityType.CvTerms
                                     && item.getCvFilterType() === cv_filter_type_1.CvFilterType.DATASET_TYPE;
                             });
                             var datasetType = dataTypeFileItem != null ? new name_id_1.NameId(dataTypeFileItem.getItemId(), dataTypeFileItem.getItemName(), type_entity_1.EntityType.CvTerms) : null;
+                            // ******** PRINCIPLE INVESTIGATOR CONCEPT
                             var principleInvestigatorFileItem = fileItems.find(function (item) {
                                 return item.getEntityType() === type_entity_1.EntityType.Contacts
                                     && item.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
                             });
                             var principleInvestigator = principleInvestigatorFileItem != null ? new name_id_1.NameId(principleInvestigatorFileItem.getItemId(), principleInvestigatorFileItem.getItemName(), type_entity_1.EntityType.Contacts) : null;
+                            // ******** PROJECT
                             var projectFileItem = fileItems.find(function (item) {
                                 return item.getEntityType() === type_entity_1.EntityType.Projects;
                             });
                             var project = projectFileItem != null ? new name_id_1.NameId(projectFileItem.getItemId(), projectFileItem.getItemName(), type_entity_1.EntityType.Projects) : null;
+                            // ******** PLATFORMS
                             var platformFileItems = fileItems.filter(function (item) {
                                 return item.getEntityType() === type_entity_1.EntityType.Platforms;
                             });
+                            platformFileItems = _this.eliminateDuplicateEntities(file_model_node_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.Platforms, platformFileItems);
                             var platformIds = platformFileItems.map(function (item) {
                                 return Number(item.getItemId());
                             });
-                            var markerList = fileItems
+                            // ******** MARKERS
+                            var markerListItems = fileItems
                                 .filter(function (fi) {
                                 return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM;
-                            })
+                            });
+                            markerListItems = _this.eliminateDuplicateEntities(file_model_node_1.ExtractorItemType.MARKER_LIST_ITEM, type_entity_1.EntityType.UNKNOWN, markerListItems);
+                            var markerList = markerListItems
                                 .map(function (mi) {
                                 return mi.getItemId();
                             });
-                            var sampleList = fileItems
+                            // ******** SAMPLES
+                            var sampleListItems = fileItems
                                 .filter(function (fi) {
                                 return fi.getExtractorItemType() === file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM;
-                            })
+                            });
+                            sampleListItems = _this.eliminateDuplicateEntities(file_model_node_1.ExtractorItemType.SAMPLE_LIST_ITEM, type_entity_1.EntityType.UNKNOWN, sampleListItems);
+                            var sampleList = sampleListItems
                                 .map(function (mi) {
                                 return mi.getItemId();
                             });
@@ -528,11 +618,12 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                 sampleListType_1 = type_extractor_sample_list_1.GobiiSampleListType[sampleListTypeFileItem.getItemId()];
                             }
                             if (_this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET) {
-                                fileItems
+                                var dataSetItems = fileItems
                                     .filter(function (item) {
                                     return item.getEntityType() === type_entity_1.EntityType.DataSets;
-                                })
-                                    .forEach(function (datsetFileItem) {
+                                });
+                                dataSetItems = _this.eliminateDuplicateEntities(file_model_node_1.ExtractorItemType.ENTITY, type_entity_1.EntityType.DataSets, dataSetItems);
+                                dataSetItems.forEach(function (datsetFileItem) {
                                     var dataSet = new name_id_1.NameId(datsetFileItem.getItemId(), datsetFileItem.getItemName(), type_entity_1.EntityType.CvTerms);
                                     gobiiDataSetExtracts_1.push(new data_set_extract_1.GobiiDataSetExtract(gobiiFileType, false, null, _this.gobiiExtractFilterType, null, null, markerFileName_1, null, datasetType, platformIds, null, null, dataSet));
                                 });
@@ -563,7 +654,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                 .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)
                                 .setItemId(newJobId)
                                 .setItemName(newJobId))
-                                .subscribe(null, function (headerStatusMessage) {
+                                .subscribe(function (e) {
+                                _this.handleClearTree();
+                            }, function (headerStatusMessage) {
                                 _this.handleHeaderStatusMessage(headerStatusMessage);
                             });
                         }, function (headerResponse) {
@@ -587,7 +680,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 core_1.Component({
                     selector: 'extractor-root',
                     styleUrls: ['/extractor-ui.css'],
-                    template: "<div class = \"panel panel-default\">\n        \n           <div class = \"panel-heading\">\n                <img src=\"images/gobii_logo.png\" alt=\"GOBii Project\"/>\n\n                    <div class=\"panel panel-primary\">\n                      <div class=\"panel-heading\">\n                        <h3 class=\"panel-title\">Connected to {{currentStatus}}</h3>\n                      </div>\n                      <div class=\"panel-body\">\n                    \n                    <div class=\"col-md-1\">\n                    \n                        <crops-list-box\n                            [serverConfigList]=\"serverConfigList\"\n                            [selectedServerConfig]=\"selectedServerConfig\"\n                            (onServerSelected)=\"handleServerSelected($event)\"></crops-list-box>\n                     </div>\n                                                \n                    <div class=\"col-md-5\">\n                       <export-type\n                        (onExportTypeSelected)=\"handleExportTypeSelected($event)\"></export-type>\n                     </div>\n                    \n\n                        <div class=\"col-md-4\">\n                        <div class = \"well\">\n                            <table>\n                                <tr>\n                                    <td colspan=\"2\">\n                                        <export-format\n                                         [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                         (onFormatSelected)=\"handleFormatSelected($event)\">\n                                          </export-format>\n                              </td>\n                              <td style=\"vertical-align: top;\">\n                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \n                                     <name-id-list-box\n                                        [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                        [nameIdRequestParams]=\"nameIdRequestParamsMapsets\"\n                                        (onError) = \"handleHeaderStatusMessage($event)\">\n                                    </name-id-list-box>\n                              </td>\n                              </tr>\n                              </table>\n                              \n                        </div>\n                        </div>\n    \n                     \n                    <div class=\"col-md-2\">\n                       <p style=\"text-align: right; font-weight: bold;\">{{loggedInUser}}</p>\n                     </div>\n                     \n                    </div> <!-- panel body -->\n                    </div> <!-- panel primary -->\n\n           </div>\n           \n            <div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-4\">\n                    \n                    <div class=\"panel panel-primary\">\n                      <div class=\"panel-heading\">\n                        <h3 class=\"panel-title\">Filters</h3>\n                      </div>\n                      <div class=\"panel-body\">\n\n                          <div *ngIf=\"displaySelectorPi\">\n                            <label class=\"the-label\">Principle Investigator:</label><BR>\n                            <name-id-list-box\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [nameIdRequestParams]=\"nameIdRequestParamsContactsPi\"\n                                [notifyOnInit]=\"!doPrincipleInvestigatorTreeNotifications\"\n                                [doTreeNotifications] = \"doPrincipleInvestigatorTreeNotifications\"\n                                (onNameIdSelected)=\"handleContactForPiSelected($event)\"\n                                (onError) = \"handleHeaderStatusMessage($event)\">\n                            </name-id-list-box>\n                            \n                        </div>\n                        \n                        <div *ngIf=\"displaySelectorProject\" >\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Project:</label><BR>\n                            <project-list-box [primaryInvestigatorId] = \"selectedContactIdForPi\"\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [reinitProjectList] = \"reinitProjectList\"\n                                (onProjectSelected)=\"handleProjectSelected($event)\"\n                                (onAddHeaderStatus)=\"handleHeaderStatusMessage($event)\"></project-list-box>\n                        </div>\n\n                        <div *ngIf=\"displaySelectorDataType\" >\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Dataset Types:</label><BR>\n                            <name-id-list-box\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [notifyOnInit]=\"false\"\n                                [nameIdRequestParams]=\"nameIdRequestParamsDatasetType\"\n                                (onError) = \"handleHeaderStatusMessage($event)\">\n                            </name-id-list-box>\n                        </div>\n\n                        \n                        <div *ngIf=\"displaySelectorExperiment\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Experiment:</label><BR>\n                               <name-id-list-box\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [notifyOnInit]=\"true\"\n                                [doTreeNotifications]= \"false\"\n                                [nameIdRequestParams]=\"nameIdRequestParamsExperiments\"\n                                (onNameIdSelected) = \"handleExperimentSelected($event)\"\n                                (onError) = \"handleHeaderStatusMessage($event)\">\n                            </name-id-list-box>\n                            \n                        </div>\n\n                        <div *ngIf=\"displaySelectorPlatform\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Platforms:</label><BR>\n                            <checklist-box\n                                [nameIdRequestParams] = \"nameIdRequestParamsPlatforms\"\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [retainHistory] = \"false\"\n                                (onAddStatusMessage) = \"handleHeaderStatusMessage($event)\">\n                            </checklist-box>\n                         </div>\n\n\n                        <div *ngIf=\"displayAvailableDatasets\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Data Sets</label><BR>\n                            <dataset-checklist-box\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [experimentId] = \"selectedExperimentId\" \n                                (onAddStatusMessage) = \"handleHeaderStatusMessage($event)\">\n                            </dataset-checklist-box>\n                        </div>\n                    </div> <!-- panel body -->\n                    </div> <!-- panel primary -->\n                       \n\n                        <div *ngIf=\"displaySampleListTypeSelector\">\n                    <div class=\"panel panel-primary\">\n                      <div class=\"panel-heading\">\n                        <h3 class=\"panel-title\">Included Samples</h3>\n                      </div>\n                      <div class=\"panel-body\">\n                                <sample-list-type\n                                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                    (onHeaderStatusMessage)=\"handleHeaderStatusMessage($event)\">\n                                 </sample-list-type>\n                                <hr style=\"width: 100%; color: black; height: 1px; background-color:black;\" />\n                                <sample-marker-box \n                                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                    (onSampleMarkerError)=\"handleHeaderStatusMessage($event)\">\n                                </sample-marker-box>\n                    </div> <!-- panel body -->\n                    </div> <!-- panel primary -->\n                        </div>\n                        \n                        <div *ngIf=\"displaySampleMarkerBox\">\n                    <div class=\"panel panel-primary\">\n                      <div class=\"panel-heading\">\n                        <h3 class=\"panel-title\">Included Markers</h3>\n                      </div>\n                      <div class=\"panel-body\">\n                                <sample-marker-box \n                                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                    (onSampleMarkerError)=\"handleHeaderStatusMessage($event)\">\n                                </sample-marker-box>\n                    </div> <!-- panel body -->\n                    </div> <!-- panel primary -->\n                        </div>\n                       \n                    </div>  <!-- outer grid column 1-->\n                \n                \n                \n                    <div class=\"col-md-4\"> \n\n                    <div class=\"panel panel-primary\">\n                      <div class=\"panel-heading\">\n                        <h3 class=\"panel-title\">Extraction Criteria</h3>\n                      </div>\n                      <div class=\"panel-body\">\n                            <status-display-tree\n                                [fileItemEventChange] = \"treeFileItemEvent\"\n                                [gobiiExtractFilterTypeEvent] = \"gobiiExtractFilterType\"\n                                (onAddMessage)=\"handleHeaderStatusMessage($event)\"\n                                (onTreeReady)=\"handleStatusTreeReady($event)\">\n                            </status-display-tree>\n                            \n                            <BR>\n                            \n                            <button type=\"submit\"\n                            [ngStyle]=\"submitButtonStyle\"\n                            (mouseenter)=\"handleOnMouseOverSubmit($event,true)\"\n                            (mouseleave)=\"handleOnMouseOverSubmit($event,false)\"\n                            (click)=\"handleExtractSubmission()\">Submit</button>\n                               \n                    </div> <!-- panel body -->\n                    </div> <!-- panel primary -->\n\n                    </div>  <!-- outer grid column 2-->\n                    \n                    \n                    <div class=\"col-md-4\">\n\n                            \n                        <div>\n                    <div class=\"panel panel-primary\">\n                      <div class=\"panel-heading\">\n                        <h3 class=\"panel-title\">Status Messages</h3>\n                      </div>\n                      <div class=\"panel-body\">\n                                <status-display [messages] = \"messages\"></status-display>\n                    </div> <!-- panel body -->\n                    </div> <!-- panel primary -->\n                        </div>\n                            \n                                   \n                    </div>  <!-- outer grid column 3 (inner grid)-->\n                                        \n                </div> <!-- .row of outer grid -->\n                \n                    <div class=\"row\"><!-- begin .row 2 of outer grid-->\n                        <div class=\"col-md-3\"><!-- begin column 1 of outer grid -->\n                         \n                         </div><!-- end column 1 of outer grid -->\n                    \n                    </div><!-- end .row 2 of outer grid-->\n                \n            </div>" // end template
+                    template: "<div class = \"panel panel-default\">\n        \n           <div class = \"panel-heading\">\n                <img src=\"images/gobii_logo.png\" alt=\"GOBii Project\"/>\n\n                    <div class=\"panel panel-primary\">\n                      <div class=\"panel-heading\">\n                        <h3 class=\"panel-title\">Connected to {{currentStatus}}</h3>\n                      </div>\n                      <div class=\"panel-body\">\n                    \n                    <div class=\"col-md-1\">\n                    \n                        <crops-list-box\n                            [serverConfigList]=\"serverConfigList\"\n                            [selectedServerConfig]=\"selectedServerConfig\"\n                            (onServerSelected)=\"handleServerSelected($event)\"></crops-list-box>\n                     </div>\n                                                \n                    <div class=\"col-md-5\">\n                       <export-type\n                        (onExportTypeSelected)=\"handleExportTypeSelected($event)\"></export-type>\n                     </div>\n                    \n\n                        <div class=\"col-md-4\">\n                        <div class = \"well\">\n                            <table>\n                                <tr>\n                                    <td colspan=\"2\">\n                                        <export-format\n                                         [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                         (onFormatSelected)=\"handleFormatSelected($event)\">\n                                          </export-format>\n                              </td>\n                              <td style=\"vertical-align: top;\">\n                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \n                                     <name-id-list-box\n                                        [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                        [nameIdRequestParams]=\"nameIdRequestParamsMapsets\"\n                                        (onError) = \"handleHeaderStatusMessage($event)\">\n                                    </name-id-list-box>\n                              </td>\n                              </tr>\n                              </table>\n                              \n                        </div>\n                        </div>\n    \n                     \n                    <div class=\"col-md-2\">\n                       <p style=\"text-align: right; font-weight: bold;\">{{loggedInUser}}</p>\n                     </div>\n                     \n                    </div> <!-- panel body -->\n                    </div> <!-- panel primary -->\n\n           </div>\n           \n            <div class=\"container-fluid\">\n            \n                <div class=\"row\">\n                \n                    <div class=\"col-md-4\">\n                    \n                    <div class=\"panel panel-primary\">\n                      <div class=\"panel-heading\">\n                        <h3 class=\"panel-title\">Filters</h3>\n                      </div>\n                      <div class=\"panel-body\">\n\n                          <div *ngIf=\"displaySelectorPi\">\n                            <label class=\"the-label\">Principle Investigator:</label><BR>\n                            <name-id-list-box\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [nameIdRequestParams]=\"nameIdRequestParamsContactsPi\"\n                                [notifyOnInit]=\"!doPrincipleInvestigatorTreeNotifications\"\n                                [doTreeNotifications] = \"doPrincipleInvestigatorTreeNotifications\"\n                                (onNameIdSelected)=\"handleContactForPiSelected($event)\"\n                                (onError) = \"handleHeaderStatusMessage($event)\">\n                            </name-id-list-box>\n                            \n                        </div>\n                        \n                        <div *ngIf=\"displaySelectorProject\" >\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Project:</label><BR>\n                            <project-list-box [primaryInvestigatorId] = \"selectedContactIdForPi\"\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [reinitProjectList] = \"reinitProjectList\"\n                                (onProjectSelected)=\"handleProjectSelected($event)\"\n                                (onAddHeaderStatus)=\"handleHeaderStatusMessage($event)\"></project-list-box>\n                        </div>\n\n                        <div *ngIf=\"displaySelectorDataType\" >\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Dataset Types:</label><BR>\n                            <name-id-list-box\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [notifyOnInit]=\"false\"\n                                [nameIdRequestParams]=\"nameIdRequestParamsDatasetType\"\n                                (onError) = \"handleHeaderStatusMessage($event)\">\n                            </name-id-list-box>\n                        </div>\n\n                        \n                        <div *ngIf=\"displaySelectorExperiment\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Experiment:</label><BR>\n                               <name-id-list-box\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [notifyOnInit]=\"true\"\n                                [doTreeNotifications]= \"false\"\n                                [nameIdRequestParams]=\"nameIdRequestParamsExperiments\"\n                                (onNameIdSelected) = \"handleExperimentSelected($event)\"\n                                (onError) = \"handleHeaderStatusMessage($event)\">\n                            </name-id-list-box>\n                            \n                        </div>\n\n                        <div *ngIf=\"displaySelectorPlatform\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Platforms:</label><BR>\n                            <checklist-box\n                                [nameIdRequestParams] = \"nameIdRequestParamsPlatforms\"\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [retainHistory] = \"false\"\n                                (onAddStatusMessage) = \"handleHeaderStatusMessage($event)\">\n                            </checklist-box>\n                         </div>\n\n\n                        <div *ngIf=\"displayAvailableDatasets\">\n                            <BR>\n                            <BR>\n                            <label class=\"the-label\">Data Sets</label><BR>\n                            <dataset-checklist-box\n                                [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                [experimentId] = \"selectedExperimentId\" \n                                (onAddStatusMessage) = \"handleHeaderStatusMessage($event)\">\n                            </dataset-checklist-box>\n                        </div>\n                    </div> <!-- panel body -->\n                    </div> <!-- panel primary -->\n                       \n\n                        <div *ngIf=\"displaySampleListTypeSelector\">\n                    <div class=\"panel panel-primary\">\n                      <div class=\"panel-heading\">\n                        <h3 class=\"panel-title\">Included Samples</h3>\n                      </div>\n                      <div class=\"panel-body\">\n                                <sample-list-type\n                                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                    (onHeaderStatusMessage)=\"handleHeaderStatusMessage($event)\">\n                                 </sample-list-type>\n                                <hr style=\"width: 100%; color: black; height: 1px; background-color:black;\" />\n                                <sample-marker-box \n                                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                    (onSampleMarkerError)=\"handleHeaderStatusMessage($event)\">\n                                </sample-marker-box>\n                    </div> <!-- panel body -->\n                    </div> <!-- panel primary -->\n                        </div>\n                        \n                        <div *ngIf=\"displaySampleMarkerBox\">\n                    <div class=\"panel panel-primary\">\n                      <div class=\"panel-heading\">\n                        <h3 class=\"panel-title\">Included Markers</h3>\n                      </div>\n                      <div class=\"panel-body\">\n                                <sample-marker-box \n                                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                                    (onSampleMarkerError)=\"handleHeaderStatusMessage($event)\">\n                                </sample-marker-box>\n                    </div> <!-- panel body -->\n                    </div> <!-- panel primary -->\n                        </div>\n                       \n                    </div>  <!-- outer grid column 1-->\n                \n                \n                \n                    <div class=\"col-md-4\"> \n\n                    <div class=\"panel panel-primary\">\n                      <div class=\"panel-heading\">\n                        <h3 class=\"panel-title\">Extraction Criteria</h3>\n                      </div>\n                      <div class=\"panel-body\">\n                            <status-display-tree\n                                [fileItemEventChange] = \"treeFileItemEvent\"\n                                [gobiiExtractFilterTypeEvent] = \"gobiiExtractFilterType\"\n                                (onAddMessage)=\"handleHeaderStatusMessage($event)\"\n                                (onTreeReady)=\"handleStatusTreeReady($event)\">\n                            </status-display-tree>\n                            \n                            <BR>\n                            \n                            <button type=\"submit\"\n                            [class]=\"submitButtonStyle\"\n                            (mouseenter)=\"handleOnMouseOverSubmit($event,true)\"\n                            (mouseleave)=\"handleOnMouseOverSubmit($event,false)\"\n                            (click)=\"handleExtractSubmission()\">Submit</button>\n                               \n                            <button type=\"clear\"\n                            [class]=\"clearButtonStyle\"\n                            (click)=\"handleClearTree()\">Clear</button>\n                               \n                    </div> <!-- panel body -->\n                    </div> <!-- panel primary -->\n\n                    </div>  <!-- outer grid column 2-->\n                    \n                    \n                    <div class=\"col-md-4\">\n\n                            \n                        <div>\n                    <div class=\"panel panel-primary\">\n                      <div class=\"panel-heading\">\n                        <h3 class=\"panel-title\">Status Messages</h3>\n                      </div>\n                      <div class=\"panel-body\">\n                                <status-display [messages] = \"messages\"></status-display>\n                            <BR>\n                            <button type=\"clear\"\n                            class=\"btn btn-primary\"\n                            (click)=\"handleClearMessages()\">Clear</button>\n                    </div> <!-- panel body -->\n\n                    </div> <!-- panel primary -->\n                        </div>\n                            \n                                   \n                    </div>  <!-- outer grid column 3 (inner grid)-->\n                                        \n                </div> <!-- .row of outer grid -->\n                \n                    <div class=\"row\"><!-- begin .row 2 of outer grid-->\n                        <div class=\"col-md-3\"><!-- begin column 1 of outer grid -->\n                         \n                         </div><!-- end column 1 of outer grid -->\n                    \n                    </div><!-- end .row 2 of outer grid-->\n                \n            </div>" // end template
                 }) // @Component
                 ,
                 __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService,

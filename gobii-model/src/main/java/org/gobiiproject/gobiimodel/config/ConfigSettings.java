@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiimodel.config;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -106,14 +107,21 @@ public class ConfigSettings {
         return this.configValues.isCropDefined(gobiiCropType);
     }
 
-    public CropConfig getCropConfig(String gobiiCropType) throws Exception {
+    public GobiiCropConfig getCropConfig(String gobiiCropType) throws Exception {
 
         return (this.configValues.getCropConfig(gobiiCropType));
     }
 
-    public List<CropConfig> getActiveCropConfigs() throws Exception {
+    public List<GobiiCropConfig> getActiveCropConfigs() throws Exception {
 
         return (this.configValues.getActiveCropConfigs());
+    }
+
+    public List<GobiiCropConfig> getAllCropConfigs() throws Exception {
+
+        return (new ArrayList<>(this.configValues
+                .getCropConfigs()
+                .values()));
     }
 
     public TestExecConfig getTestExecConfig() {
@@ -125,17 +133,23 @@ public class ConfigSettings {
         this.configValues.setTestExecConfig(testExecConfig);
     }
 
+    public ServerConfigKDC getKDCConfig() {
+
+        return this.configValues.getKDCConfig();
+    }
+
+
     public List<String> getActiveCropTypes() throws Exception {
         return this
                 .configValues
                 .getActiveCropConfigs()
                 .stream()
                 .filter(c -> c.isActive() == true)
-                .map(CropConfig::getGobiiCropType)
+                .map(GobiiCropConfig::getGobiiCropType)
                 .collect(Collectors.toList());
     }
 
-    public CropConfig getCurrentCropConfig() throws Exception {
+    public GobiiCropConfig getCurrentCropConfig() throws Exception {
 
         return this.configValues.getCurrentCropConfig();
     }
@@ -148,16 +162,6 @@ public class ConfigSettings {
 
     public String getCurrentGobiiCropType() {
         return this.configValues.getCurrentGobiiCropType();
-    }
-
-    public String getDefaultGobiiCropType() {
-        return this.configValues.getDefaultGobiiCropType();
-    }
-
-
-    public void setDefaultGobiiCropType(String defaultGobiiCropType) throws Exception {
-
-        this.configValues.setDefaultGobiiCropType(defaultGobiiCropType);
     }
 
     public String getEmailSvrPassword() {
@@ -313,5 +317,13 @@ public class ConfigSettings {
     public void setLdapPasswordForBackendProcs(String ldapPassworedForBackendProcs) {
         this.configValues.setLdapPasswordForBackendProcs(ldapPassworedForBackendProcs);
     }
-    
+
+
+    public boolean isAuthenticateBrapi() {
+        return this.configValues.isAuthenticateBrapi();
+    }
+
+    public void setAuthenticateBrapi(boolean authenticateBrapi) {
+        this.configValues.setAuthenticateBrapi(authenticateBrapi);
+    }
 }
