@@ -361,6 +361,56 @@ public class TestGobiiConfig {
     }
 
     @Test
+    public void testSetCropWebServerWithNullContext() throws Exception {
+
+        String testFileFqpn = makeTestFileFqpn("cropwebserver");
+
+        String cropId = "foocrop";
+        String host = "host_" + UUID.randomUUID().toString();
+        Integer port = 8080;
+
+//     * Set crop web options:  -a -wfqpn "c:\gobii-config-test\testconfig.xml" -c "barcrop" -stW -soH "foohost" -soN 8080 -soU "foo userr" -soP "foo password" -soR "foo-web"
+
+        String commandLine = makeCommandline("-a -wfqpn "
+                + testFileFqpn
+                + " -c "
+                + cropId
+                + " -stW "
+                + " -soH "
+                + host
+                + " -soN "
+                + port.toString());
+
+        boolean succeeded = HelperFunctions.tryExec(commandLine, testFileFqpn + ".out", testFileFqpn + ".err");
+        Assert.assertTrue("Command failed: " + commandLine, succeeded);
+
+
+        ConfigSettings configSettings = new ConfigSettings(testFileFqpn);
+
+        GobiiCropConfig gobiiCropConfig = configSettings.getCropConfig(cropId);
+        Assert.assertNotNull("The crop was not created: " + cropId,
+                gobiiCropConfig);
+
+        Assert.assertTrue("The host name does not match",
+                gobiiCropConfig.getHost().equals(host));
+
+        Assert.assertTrue("The port does not match: should be "
+                        + port.toString()
+                        + "; got: "
+                        + gobiiCropConfig.getPort(),
+                gobiiCropConfig.getPort().equals(port));
+
+        Assert.assertTrue("Crop is not set to active by default",
+                gobiiCropConfig.isActive());
+
+        // this file should not pass validation. However, it should also not
+        // cause an NPE
+        String contextPath = gobiiCropConfig.getContextPath(true);
+        Assert.assertTrue(contextPath == "");
+
+    }
+
+    @Test
     public void testSetPostGresForCrop() throws Exception {
         //-a -wfqpn "c:\gobii-config-test\testconfig.xml" -c "barcrop" -stP -soH "foohost" -soN 5433 -soU "foo userr" -soP "foo password" -soR "foodb"
 
