@@ -8,4 +8,6 @@ public class GenericTestValues {
     public static final String NAME_FIRST = "John";
     public static final String NAME_LAST = "Smith";
     public static final String NAME_LAST_UPDATED = "Smith-Barney";
+
+    public static final String FILE_MARKERS = "datasets/ssr_markerdata.txt";
 }
