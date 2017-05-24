@@ -35,9 +35,10 @@ import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
+import org.gobiiproject.gobiiprocess.digester.HelperFunctions.MobileTransform;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.PGArray;
+import org.gobiiproject.gobiiprocess.digester.HelperFunctions.SequenceInPlaceTransform;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
-import static org.gobiiproject.gobiiprocess.digester.utils.IUPACmatrixToBi.convertIUPACtoBi;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
 
@@ -269,74 +270,37 @@ public class GobiiFileReader {
 					break;
 				}
 			}
+			String fromFile = HelperFunctions.getDestinationFile(inst);
+			SequenceInPlaceTransform intermediateFile=new SequenceInPlaceTransform(fromFile,errorPath);
 			if (dst != null && inst.getTable().equals(VARIANT_CALL_TABNAME)) {
 				errorPath = getLogName(inst, gobiiCropConfig, crop, "Matrix_Processing"); //Temporary Error File Name
-				String function = null;
-				boolean functionStripsHeader = false;
-				boolean isSNPSepRemoval=false;
-				String fromFile = HelperFunctions.getDestinationFile(inst);
-				String toFile = HelperFunctions.getDestinationFile(inst) + ".2";
-				boolean hasFunction = false;
+				boolean transformStripsHeader = false;
+				MobileTransform mainTransform=null;
 				switch (dst.toUpperCase()) {
 					case "NUCLEOTIDE_2_LETTER":
-						function = "python " + loaderScriptPath + "etc/SNPSepRemoval.py";
-						functionStripsHeader = true;
-						isSNPSepRemoval=true;
+						mainTransform=MobileTransform.getSNPTransform("python " + loaderScriptPath + "etc/SNPSepRemoval.py",loaderScriptPath + "etc/missingIndicators.txt");
+						transformStripsHeader = true;
 						break;
 					case "IUPAC":
-						convertIUPACtoBi("tab", fromFile, toFile);
-						hasFunction=true;//jdls - need to set flag to know fromfile is now in tofile
+						mainTransform=MobileTransform.IUPACToBI;
 						break;
-					case "SSR_ALLELE_SIZE":
-						//No Translation Needed. Done before GOBII
-						break;
-					case "DOMINANT_NON_NUCLEOTIDE":
-						//No Translation Needed. Done before GOBII
-						break;
-					case "CO_DOMINANT_NON_NUCLEOTIDE":
-						//No Translation Needed. Done before GOBII
+					case "SSR_ALLELE_SIZE": case "DOMINANT_NON_NUCLEOTIDE":case "CO_DOMINANT_NON_NUCLEOTIDE":
+						//No Translation Needed in these cases. Done before GOBII
 						break;
 					case "VCF":
-						hasFunction = true;
 						File markerFile = loaderInstructionMap.get(MARKER_TABNAME);
-						String markerFilename = markerFile.getAbsolutePath();
-						String markerTmp = new File(markerFile.getParentFile(), "marker.mref").getAbsolutePath();
-						generateMarkerReference(markerFilename, markerTmp, errorPath);
-						try {
-							new VCFTransformer(markerTmp, fromFile, toFile);
-						} catch (Exception e) {
-							ErrorLogger.logError("VCFTransformer", "Failure loading dataset", e);
-						}
+						mainTransform=MobileTransform.getVCFTransform(markerFile);
 						break;
 					default:
 						ErrorLogger.logError("GobiiFileReader", "Unknown Data type " + dst);
 						break;
 				}
-				if (function != null) {
-					hasFunction = true;
-					//Try running script (from -> to), then replace original file with new one.
-					if(isSNPSepRemoval){
-						String missingFile=loaderScriptPath + "etc/missingIndicators.txt";
-						HelperFunctions.tryExec(function + " " + fromFile + " " +missingFile+ " " + toFile, null, errorPath);
-					}
-					else {
-						HelperFunctions.tryExec(function + " " + fromFile + " " + toFile, null, errorPath);
-					}
-					rm(fromFile);
+				if (mainTransform != null) {
+					intermediateFile.transform(mainTransform);
 				}
-				if (!hasFunction) {
-					mv(fromFile, toFile);
+				if (!transformStripsHeader) {
+					intermediateFile.transform(MobileTransform.stripHeader);
 				}
-
-				//toFile now contains data, we move it back to original position with second transformation (swap)
-
-				if (!functionStripsHeader) {
-					success &= HelperFunctions.tryExec("tail -n +2 ", fromFile, errorPath, toFile);
-					rm(toFile);
-				} else {
-					success &= HelperFunctions.tryExec("mv " + toFile + " " + fromFile);
-				}
-
 				boolean isSampleFast = false;
 				if (DataSetOrientationType.SAMPLE_FAST.equals(dso)) isSampleFast = true;
 				if (isSampleFast) {
@@ -352,15 +316,15 @@ public class GobiiFileReader {
 				success &= HelperFunctions.tryExec(loaderScriptPath + "LGduplicates.py -i " + HelperFunctions.getDestinationFile(inst));
 			}
 			if (MARKER_TABNAME.equals(instructionName)) {//Convert 'alts' into a jsonb array
-				String dest = HelperFunctions.getDestinationFile(inst);
-				String tmp = dest + ".tmp";
-				success &= HelperFunctions.tryExec("mv " + dest + " " + tmp);
-				new PGArray(tmp, dest, "alts").process();
+				intermediateFile.transform(MobileTransform.PGArray);
 			}
+
 
 			if (qcCheck) {//QC - Subsection #2 of 3
 				setQCExtractPaths(dstDir, inst);
 			}
+
+			intermediateFile.returnFile(); // replace intermediateFile where it came from
 		}
 
 		if(success){
@@ -747,38 +711,6 @@ public class GobiiFileReader {
 			logError("Digester","Exception while processing data sets",e);
 			return;
 		}
-	}
-
-	/**
-	 * Generates a marker reference file from a marker file
-	 * If input is name ref alt blah blah
-	 * output is ref alt
-	 * @param markerFile marker file
-	 * @param outFile
-	 */
-	private static void generateMarkerReference(String markerFile,String outFile,String errorPath) throws IOException {
-		BufferedReader br=new BufferedReader(new FileReader(markerFile));
-		String[] headers = br.readLine().split("\\s+");
-		br.close();
-		String ref="ref",alt="alt";
-		int refPos=-1;
-		int altPos=-1;
-		for(int i=0;i<headers.length;i++){
-			if(headers[i].contains(ref)){
-				refPos=i+1;break;//cut is 1 based
-			}
-		}
-		for(int i=0;i<headers.length;i++){
-			if(headers[i].contains(alt)){
-				altPos=i+1;break;//cut is 1 based
-			}
-
-		}
-		if((refPos==-1)||(altPos==-1)){
-			ErrorLogger.logError("GobiiFileReader","Could not find one of Ref or Alt in file: "+markerFile);
-		}
-
-		HelperFunctions.tryExec("cut -f"+refPos+","+altPos+ " "+markerFile,outFile,errorPath);
 	}
 
 	/**
