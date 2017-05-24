@@ -86,6 +86,7 @@ public class GobiiConfig {
     private static String CONFIG_TST_GLOBAL_CONFIG_CROP_ID = "gtcr";
     private static String CONFIG_TST_GLOBAL_LDAP_USER = "gtldu";
     private static String CONFIG_TST_GLOBAL_LDAP_PASSWORD = "gtldp";
+    private static String CONFIG_TST_GLOBAL_DOWNLOAD_DIR = "dldr";
 
 
     private static String CONFIG_CROP_ID = "c";
@@ -104,7 +105,6 @@ public class GobiiConfig {
     private static String SVR_KDC_STATUS_CHECK_INTERVAL_SECS = "kstTRS";
     private static String SVR_KDC_STATUS_CHECK_MAX_TIME_MINS = "kstTRM";
     private static String SVR_KDC_STATUS_ACTIVE = "kA";
-
 
 
     // we don't actually use the default crop any more, but for now we need to
@@ -267,7 +267,7 @@ public class GobiiConfig {
             setOption(options, CONFIG_TST_GLOBAL_CONFIG_CROP_ID, true, "Crop to use for automated testing", "crop id");
             setOption(options, CONFIG_TST_GLOBAL_LDAP_USER, true, "LDAP user as which unit tests authenticate (if Authentication requires LDAP)", "LDAP test user");
             setOption(options, CONFIG_TST_GLOBAL_LDAP_PASSWORD, true, "LDAP password with which LDAP unit test user authenticates (if Authentication requires LDAP)", "LDAP test user password");
-
+            setOption(options, CONFIG_TST_GLOBAL_DOWNLOAD_DIR,  true, "Destination directory for downloaded files)", "Download Directory");
             setOption(options, VALIDATE_CONFIGURATION, false, "Verify that the specified configuration has all the values necessary for the system to function (does not test that the servers exist); requires " + PROP_FILE_FQPN, "validate");
 
             setOption(options, SVR_KDC, false, "KDC server to add or modify; must be accompanied by a server options and KDC options", "KDC Server options");
@@ -777,6 +777,7 @@ public class GobiiConfig {
                 String testCrop = null;
                 String ldapTestUser = null;
                 String ldapTestPassword = null;
+                String testDownloadDirectory = null;
                 boolean isTestSsh = false;
 
                 if (commandLine.hasOption(CONFIG_TST_GLOBAL_INTIAL_URL)) {
@@ -858,6 +859,12 @@ public class GobiiConfig {
                     configSettings.getTestExecConfig().setLdapPasswordForUnitTest(ldapTestPassword);
                 }
 
+                if (commandLine.hasOption(CONFIG_TST_GLOBAL_DOWNLOAD_DIR)) {
+                    testDownloadDirectory = commandLine.getOptionValue(CONFIG_TST_GLOBAL_DOWNLOAD_DIR);
+                    argsSet.add(CONFIG_TST_GLOBAL_DOWNLOAD_DIR);
+                    valsSet.add(testDownloadDirectory);
+                    configSettings.getTestExecConfig().setTestFileDownloadDirectory(testDownloadDirectory);
+                }
 
                 configSettings.commit();
 

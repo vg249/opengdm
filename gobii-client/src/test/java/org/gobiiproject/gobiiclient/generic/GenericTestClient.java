@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiclient.generic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpStatus;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -12,18 +13,23 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiTestConfiguration;
 import org.gobiiproject.gobiiclient.generic.model.GenericTestValues;
 import org.gobiiproject.gobiiclient.generic.model.Person;
 import org.gobiiproject.gobiimodel.config.ServerBase;
+import org.gobiiproject.gobiimodel.config.TestExecConfig;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
+import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 
 import javax.ws.rs.core.MediaType;
+import java.io.File;
 import java.util.UUID;
 
 /**
@@ -36,11 +42,13 @@ public class GenericTestClient {
     private static Server server = null;
     private static ServerBase serverBase = null;
     private static GenericClientContext genericClientContext = null;
-
+    private static TestExecConfig testExecConfig = null;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeClass
     public static void serverSetup() throws Exception {
+
+        testExecConfig = new GobiiTestConfiguration().getConfigSettings().getTestExecConfig();
 
 
         // We are using a simple Jetty server with Jersey annotations
@@ -71,9 +79,23 @@ public class GenericTestClient {
 
         //System.out.print(server.dump());
         server.start();
-//        server.join();
-
+        //Uncomment server.join() to make server persist so you can curl the server
+        //server.join();
     }
+
+    @AfterClass
+    public static void serverTearDown() throws Exception {
+
+        server.stop();
+
+        String testFileDirectory = testExecConfig.getTestFileDownloadDirectory();
+        File file = new File(testFileDirectory);
+        if ( file.exists() ) {
+            FileUtils.deleteDirectory(file);
+        }
+    }
+
+
 
     public static boolean didHttpMethodSucceed(HttpMethodResult httpMethodResult) {
 
@@ -94,12 +116,6 @@ public class GenericTestClient {
         }
 
         return returnVal;
-    }
-
-    @AfterClass
-    public static void serverTearDown() throws Exception {
-
-        server.stop();
     }
 
     /***
@@ -191,7 +207,7 @@ public class GenericTestClient {
                 .addQueryParam("nameLast")
                 .setParamValue("nameLast", nameLast)
                 .addQueryParam("nameFirst")
-                .setParamValue("nameFirst",nameFirst);
+                .setParamValue("nameFirst", nameFirst);
 
         HttpMethodResult httpMethodResult = genericClientContext
                 .get(restUriGetPerson);
@@ -207,8 +223,8 @@ public class GenericTestClient {
         Assert.assertNotNull(personRetrieved.getPersonId());
 
         //these should equal what we searched for
-        Assert.assertEquals(personRetrieved.getNameLast(),nameLast);
-        Assert.assertEquals(personRetrieved.getNameFirst(),nameFirst);
+        Assert.assertEquals(personRetrieved.getNameLast(), nameLast);
+        Assert.assertEquals(personRetrieved.getNameFirst(), nameFirst);
 
 
     }
@@ -245,9 +261,9 @@ public class GenericTestClient {
         Assert.assertNotNull(personRetrieved.getPersonId());
 
         //these should equal what we sent
-        Assert.assertEquals(personRetrieved.getNameLast(),nameLast);
-        Assert.assertEquals(personRetrieved.getNameFirst(),nameFirst);
-        Assert.assertEquals(personRetrieved.getDescription(),desc);
+        Assert.assertEquals(personRetrieved.getNameLast(), nameLast);
+        Assert.assertEquals(personRetrieved.getNameFirst(), nameFirst);
+        Assert.assertEquals(personRetrieved.getDescription(), desc);
     }
 
     /***
@@ -261,7 +277,7 @@ public class GenericTestClient {
         String nameLast = "nuLasetName";
         String desc = UUID.randomUUID().toString();
         String personId = "1500";
-        Person person = new Person(personId , nameFirst, nameLast, desc);
+        Person person = new Person(personId, nameFirst, nameLast, desc);
 
         RestUri restUriPostPerson = new RestUri(GenericTestPaths.GENERIC_TEST_ROOT,
                 GenericTestPaths.GENERIC_CONTEXT_ONE,
@@ -280,12 +296,12 @@ public class GenericTestClient {
                 Person.class);
 
         //This time we supplied an ID and since it's an update that should not have changed
-        Assert.assertEquals(personRetrieved.getPersonId(),personId);
+        Assert.assertEquals(personRetrieved.getPersonId(), personId);
 
         //But the last name should be set to the one the server updates it  to
-        Assert.assertEquals(personRetrieved.getNameLast(),GenericTestValues.NAME_LAST_UPDATED);
-        Assert.assertEquals(personRetrieved.getNameFirst(),nameFirst);
-        Assert.assertEquals(personRetrieved.getDescription(),desc);
+        Assert.assertEquals(personRetrieved.getNameLast(), GenericTestValues.NAME_LAST_UPDATED);
+        Assert.assertEquals(personRetrieved.getNameFirst(), nameFirst);
+        Assert.assertEquals(personRetrieved.getDescription(), desc);
     }
 
 
@@ -320,4 +336,90 @@ public class GenericTestClient {
         Assert.assertTrue(plainTextResult.contains(GenericTestValues.NAME_LAST));
 
     }
+
+
+    /***
+     * Test download of a file as OctetStream.
+     * The file will be removed at the end of the test -- if you want to physically
+     * inspect that download succeeded, put a break point in tearDown() before th e
+     * deletion
+     * @throws Exception
+     */
+    @Test
+    public void testGetFileOctet() throws Exception {
+
+        String destinationPath = testExecConfig
+                .getTestFileDownloadDirectory();
+
+        Assert.assertNotNull("The test configuration does not define a temp download directory",
+                destinationPath);
+
+        File destinationFolder = new File(destinationPath);
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdir();
+        }
+
+        String fileFqpn = destinationPath + "/" + GenericTestValues.FILE_MARKERS;
+
+        RestUri restUriGetFileDownload = new RestUri(GenericTestPaths.GENERIC_TEST_ROOT,
+                GenericTestPaths.GENERIC_CONTEXT_THREE,
+                GenericTestPaths.FILES_MARKERS)
+                .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+                        MediaType.APPLICATION_OCTET_STREAM)
+                .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+                        MediaType.APPLICATION_OCTET_STREAM)
+                .withDestinationFqpn(fileFqpn);
+
+        HttpMethodResult httpMethodResult = genericClientContext
+                .get(restUriGetFileDownload);
+
+        Assert.assertTrue(didHttpMethodSucceed(httpMethodResult));
+
+        File downloadedFile = new File(httpMethodResult.getFileName());
+        Assert.assertTrue("File download web method succeeded, but the file does not exist on the specified path"
+                        + httpMethodResult.getFileName(),
+                downloadedFile.exists());
+    }
+
+
+    /***
+     * Test download of a file as Multipart.
+     * @throws Exception
+     */
+    @Test
+    public void testGetFileMultiPart() throws Exception {
+
+        String destinationPath = testExecConfig
+                .getTestFileDownloadDirectory();
+
+        Assert.assertNotNull("The test configuration does not define a temp download directory",
+                destinationPath);
+
+        File destinationFolder = new File(destinationPath);
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdir();
+        }
+
+        String fileFqpn = destinationPath + "/" + GenericTestValues.FILE_MARKERS;
+
+        RestUri restUriGetFileDownload = new RestUri(GenericTestPaths.GENERIC_TEST_ROOT,
+                GenericTestPaths.GENERIC_CONTEXT_THREE,
+                GenericTestPaths.FILES_MARKERS)
+                .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+                        MediaType.MULTIPART_FORM_DATA)
+                .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+                        MediaType.MULTIPART_FORM_DATA)
+                .withDestinationFqpn(fileFqpn);
+
+        HttpMethodResult httpMethodResult = genericClientContext
+                .get(restUriGetFileDownload);
+
+        Assert.assertTrue(didHttpMethodSucceed(httpMethodResult));
+
+        File downloadedFile = new File(httpMethodResult.getFileName());
+        Assert.assertTrue("File download web method succeeded, but the file does not exist on the specified path"
+                        + httpMethodResult.getFileName(),
+                downloadedFile.exists());
+    }
+
 }
