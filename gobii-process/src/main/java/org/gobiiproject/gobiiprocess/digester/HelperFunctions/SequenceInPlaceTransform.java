@@ -19,7 +19,13 @@ public class SequenceInPlaceTransform {
         this.baseFileLocation=baseFileLocation;
         this.errorPath=errorPath;
     }
-    private String currentFileLocation(){
+
+    /**
+     * Returns the current position of the file (it's location) based on the increment number.
+     * (if base file is /josh/text.txt and increment is 2, returns /josh/text.txt.2
+     * @return current position of the file
+     */
+    private String currentFilePosition(){
         if(incrementNumber==0) return baseFileLocation;
         else return baseFileLocation+"."+incrementNumber;
     }
@@ -33,9 +39,9 @@ public class SequenceInPlaceTransform {
      * @param transformation Transformation to occur
      */
     public void transform(MobileTransform transformation){
-        String lastLocation=currentFileLocation();
+        String lastLocation= currentFilePosition();
         incrementNumber++;
-        String nextLocation=currentFileLocation();
+        String nextLocation= currentFilePosition();
         transform(transformation,lastLocation,nextLocation, errorPath);
     }
 
@@ -45,7 +51,7 @@ public class SequenceInPlaceTransform {
      */
     public void finalTransform(MobileTransform transformation){
         if(incrementNumber==0)throw new RuntimeException("Invalid call to SeqnenceInPlaceTransform.finalTransform");
-        transform(transformation,currentFileLocation(),baseFileLocation, errorPath);
+        transform(transformation, currentFilePosition(),baseFileLocation, errorPath);
         incrementNumber=0;
     }
 
@@ -59,8 +65,8 @@ public class SequenceInPlaceTransform {
      */
     public void returnFile(){
         if(incrementNumber==0)return;
-        FileSystemInterface.mv(currentFileLocation(),baseFileLocation);
-        FileSystemInterface.rmIfExist(currentFileLocation());
+        FileSystemInterface.mv(currentFilePosition(),baseFileLocation);
+        FileSystemInterface.rmIfExist(currentFilePosition());
         incrementNumber=0;
     }
 }
