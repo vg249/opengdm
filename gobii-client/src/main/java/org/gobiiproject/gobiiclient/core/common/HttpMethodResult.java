@@ -13,8 +13,10 @@ public class HttpMethodResult {
     int responseCode;
 
     String reasonPhrase;
-    JsonObject payLoad;
+    JsonObject jsonPayload;
+    StringBuilder plainPayload = new StringBuilder();
     URI uri;
+    String fileName = null;
 
     public int getResponseCode() {
         return responseCode;
@@ -34,11 +36,27 @@ public class HttpMethodResult {
         this.uri = uri;
     }
 
-    public JsonObject getPayLoad() {
-        return payLoad;
+    public JsonObject getJsonPayload() {
+        return jsonPayload;
     }
 
-    public void setPayLoad(JsonObject payLoad) {
-        this.payLoad = payLoad;
+    public void setJsonPayload(JsonObject jsonPayload) {
+        this.jsonPayload = jsonPayload;
+    }
+
+    public StringBuilder getPlainPayload() {
+        return plainPayload;
+    }
+
+    public void setPlainPayload(StringBuilder plainPayload) {
+        this.plainPayload = plainPayload;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

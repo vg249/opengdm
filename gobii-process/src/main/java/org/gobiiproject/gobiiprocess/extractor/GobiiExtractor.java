@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
-import org.gobiiproject.gobiiapimodel.restresources.UriFactory;
-import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
-import org.gobiiproject.gobiiclient.core.common.ClientContext;
+import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
@@ -39,12 +39,10 @@ import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
 
 public class GobiiExtractor {
 	private static String propertiesFile;
-	private static UriFactory uriFactory;
+	private static GobiiUriFactory gobiiUriFactory;
 	private static boolean verbose;
 	private static String rootDir="../";
 	private static String markerListOverrideLocation=null;
-	//To calculate RunTime of Extraction
-	private static long startTime, endTime, duration;
 
 	public static void main(String[] args) throws Exception {
 
@@ -106,7 +104,8 @@ public class GobiiExtractor {
 			instructionFile=args[0];
 		}
 
-		startTime = System.currentTimeMillis();
+		SimpleTimer.start("Extract");
+
 		List<GobiiExtractorInstruction> list= parseExtractorInstructionFile(instructionFile);
 		if(list==null){
 			ErrorLogger.logError("Extractor","No instruction for file "+instructionFile);
@@ -349,7 +348,7 @@ public class GobiiExtractor {
 					pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
 					pm.addPath("Sample file", new File(sampleFile).getAbsolutePath());
 					pm.addPath("Marker file", new File(markerFile).getAbsolutePath());
-					if(checkFileExistance(mapsetFile)) {
+					if(checkFileExistence(mapsetFile)) {
 						pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
 					}
 
@@ -390,7 +389,7 @@ public class GobiiExtractor {
 						}
 					}
 					GobiiFileType fileType=extract.getGobiiFileType();
-					if(checkFileExistance(genoFile) || (fileType == GobiiFileType.META_DATA)) {
+					if(checkFileExistence(genoFile) || (fileType == GobiiFileType.META_DATA)) {
 						switch (fileType) {
 							case FLAPJACK:
 								String genoOutFile = extractDir + "Dataset.genotype";
@@ -398,7 +397,7 @@ public class GobiiExtractor {
 								pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath());
 								pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath());
 								//Always regenerate requests - may have different parameters
-								boolean extended = HelperFunctions.checkFileExistance(extendedMarkerFile);
+								boolean extended = HelperFunctions.checkFileExistence(extendedMarkerFile);
 								success &= FlapjackTransformer.generateMapFile(extended?extendedMarkerFile:markerFile, sampleFile, chrLengthFile, tempFolder, mapOutFile, errorFile,extended);
 								if(success){
 									pm.addEntity("Map File", FileSystemInterface.lineCount(mapOutFile)+"");
@@ -406,9 +405,7 @@ public class GobiiExtractor {
 								ErrorLogger.logDebug("GobiiExtractor","Executing FlapJack Genotype file Generation");
 								success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile,errorFile);
 								getCounts(success, pm, markerFile, sampleFile);
-								endTime = System.currentTimeMillis();
-								duration = endTime - startTime;
-								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 								break;
 							case HAPMAP:
@@ -417,31 +414,23 @@ public class GobiiExtractor {
 								HapmapTransformer hapmapTransformer = new HapmapTransformer();
 								ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
 								success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
-								endTime = System.currentTimeMillis();
-								duration = endTime - startTime;
 								getCounts(success, pm, markerFile, sampleFile);
-								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 								break;
 							case META_DATA:
-								endTime = System.currentTimeMillis();
-								duration = endTime - startTime;
-								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 								break;
 							default:
 								ErrorLogger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
-								endTime = System.currentTimeMillis();
-								duration = endTime - startTime;
-								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 								mailInterface.send(pm);
 						}
 					}
 					else{ //We had no genotype file, so we aborted
 						ErrorLogger.logError("GobiiExtractor","No genetic data extracted. Extract failed.");
-						endTime = System.currentTimeMillis();
-						duration = endTime - startTime;
-						pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+						pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 						mailInterface.send(pm);
 					}
 
@@ -505,14 +494,14 @@ public class GobiiExtractor {
 		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
 		qcInstructionsDTOToSend.setQualityFileName("Report.xls");
 		PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
-		ClientContext clientContext = ClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
-		if (LineUtils.isNullOrEmpty(clientContext.getUserToken())) {
+		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
+		if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
             ErrorLogger.logError("Digester", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
 			return; //This used to return from the outer method. Why fail here?
         }
-		String currentCropContextRoot = ClientContext.getInstance(null, false).getCurrentCropContextRoot();
-		uriFactory = new UriFactory(currentCropContextRoot);
-		GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(uriFactory.resourceColl(ServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
+		String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
+		gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+		GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(gobiiUriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
 		PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,
                 payloadEnvelope);
 		if (qcInstructionFileDTOResponseEnvelope != null) {

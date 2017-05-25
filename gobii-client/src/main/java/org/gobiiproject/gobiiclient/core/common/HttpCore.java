@@ -14,44 +14,61 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
-import org.gobiiproject.gobiiapimodel.restresources.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.gobiiproject.gobiiapimodel.restresources.ResourceParam;
+import org.gobiiproject.gobiiapimodel.restresources.common.ResourceParam;
 import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.MediaType;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
- * Created by Phil on 5/13/2016.
+ * This class provides generic HTTP rest-oriented client functionality.
+ * For example, it takes a plain string for a post and converts it to
+ * an HTTP entity as the POST body. It is vital that this class not contain
+ * any GOBII specific functionality. For example, serialization and deserialization
+ * of GOBII POJOs is handled by another class that consumes this class. We
+ * want this class to be generic so that it can serve as the workhorse for
+ * all client operations performed by GOBII clients with arbitrary web services,
+ * not just GOBII ones.
  */
 public class HttpCore {
 
     private String host = null;
     private Integer port = null;
-    private String cropId;
     private boolean logJson = false;
 
 
     public HttpCore(String host,
-                    Integer port,
-                    String cropId) {
+                    Integer port) {
 
         this.host = host;
         this.port = port;
-        this.cropId = cropId;
     }
 
 
     Logger LOGGER = LoggerFactory.getLogger(HttpCore.class);
 
+
+    String token = null;
+
+    public String getToken() {
+        return token;
+    }
 
     URIBuilder getBaseBuilder() throws Exception {
         return (new URIBuilder().setScheme("http")
@@ -76,27 +93,43 @@ public class HttpCore {
 
     }
 
-    private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest,
+    private void setAuthenticationHeaders(HttpUriRequest httpUriRequest,
                                           String userName,
-                                          String password,
-                                          String token) throws Exception {
+                                          String password) {
 
-        httpUriRequest.addHeader("Content-Type", "application/json");
-        httpUriRequest.addHeader("Accept", "application/json");
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+                MediaType.APPLICATION_JSON);
 
-        if ((null != token) && (false == token.isEmpty())) {
-            httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_TOKEN, token);
-        } else {
-            httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_USERNAME, userName);
-            httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_PASSWORD, password);
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+                MediaType.APPLICATION_JSON);
+
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_USERNAME, userName);
+
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_PASSWORD, password);
+    }
+
+    private void setTokenHeader(HttpUriRequest httpUriRequest) {
+
+        httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_NAME_TOKEN, this.token);
+
+    }
+
+    private HttpResponse submitUriRequest(HttpUriRequest httpUriRequest, Map<String, String> headers) throws Exception {
+
+
+        if (headers != null) {
+            Iterator it = headers.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry currentPair = (Map.Entry) it.next();
+                httpUriRequest
+                        .addHeader(currentPair.getKey().toString(),
+                                currentPair.getValue().toString());
+            }
         }
 
+        HttpResponse returnVal = (HttpClientBuilder.create().build().execute(httpUriRequest));
 
-        if (!LineUtils.isNullOrEmpty(this.cropId)) {
-            httpUriRequest.addHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP, this.cropId);
-        }
-
-        return (HttpClientBuilder.create().build().execute(httpUriRequest));
+        return returnVal;
 
     }// submitUriRequest()
 
@@ -124,7 +157,10 @@ public class HttpCore {
 
         HttpPost postRequest = new HttpPost(uri);
         this.setHttpBody(postRequest, "empty");
-        returnVal = submitUriRequest(postRequest, userName, password, null);
+        this.setAuthenticationHeaders(postRequest, userName, password);
+
+        // content headers are already set in setAuthenticationHeaders()
+        returnVal = this.submitUriRequest(postRequest, new HashMap<>());
 
         if (HttpStatus.SC_OK != returnVal.getStatusLine().getStatusCode()) {
             throw new Exception("Request did not succeed with http status code "
@@ -138,71 +174,156 @@ public class HttpCore {
 
     }//authenticateWithUser()
 
-    public String getTokenForUser(RestUri restUri, String userName, String password) throws Exception {
+    public boolean authenticate(RestUri restUri, String userName, String password) throws Exception {
 
-        String returnVal = null;
+        boolean returnVal = true;
 
         URI uri = makeUri(restUri);
         HttpResponse response = authenticateWithUser(uri, userName, password);
-        Header tokenHeader = getHeader(response.getAllHeaders(), GobiiHttpHeaderNames.HEADER_TOKEN);
-        returnVal = tokenHeader.getValue();
 
-        if (null == returnVal) {
+        Header tokenHeader = getHeader(response.getAllHeaders(), GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
+        this.token = tokenHeader.getValue();
+
+        returnVal = (false == LineUtils.isNullOrEmpty(this.token));
+
+        if (returnVal == false) {
             LOGGER.error("Unable to get authentication token for user " + userName);
         }
 
         return returnVal;
 
-    } // getTokenForUser()
+    } // authenticate()
 
 
     private HttpMethodResult submitHttpMethod(HttpRequestBase httpRequestBase,
-                                              RestUri restUri,
-                                              String token) throws Exception {
+                                              RestUri restUri) throws Exception {
 
         HttpMethodResult returnVal = new HttpMethodResult();
 
-        HttpResponse httpResponse;
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
 
-        URI uri = makeUri(restUri);
-        httpRequestBase.setURI(uri);
+        try {
 
+            HttpResponse httpResponse;
 
-        httpResponse = submitUriRequest(httpRequestBase, "", "", token);
-
-        int responseCode = httpResponse.getStatusLine().getStatusCode();
-        String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
-        returnVal.setResponse(responseCode, reasonPhrase, uri);
+            URI uri = makeUri(restUri);
+            httpRequestBase.setURI(uri);
 
 
-        if (HttpStatus.SC_NOT_FOUND != responseCode &&
-                HttpStatus.SC_BAD_REQUEST != responseCode &&
-                HttpStatus.SC_METHOD_NOT_ALLOWED != responseCode &&
-                HttpStatus.SC_UNAUTHORIZED != responseCode) {
+            this.setTokenHeader(httpRequestBase);
+            httpResponse = submitUriRequest(httpRequestBase, restUri.getHttpHeaders());
 
-            InputStream inputStream = httpResponse.getEntity().getContent();
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(inputStream));
+            int responseCode = httpResponse.getStatusLine().getStatusCode();
+            String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
+            returnVal.setResponse(responseCode, reasonPhrase, uri);
 
 
-            StringBuilder stringBuilder = new StringBuilder();
-            String currentLine = null;
-            while ((currentLine = bufferedReader.readLine()) != null) {
-                stringBuilder.append(currentLine);
+            // this really needs to be changed so that it allows only the
+            // known-good succeess codes. The problem is that it is not so simple
+            // There can actually be many ways to succeed. For example,
+            // SC_INTERNAL_SERVER_ERROR has to be allowed to go through because
+            // we actually want server exceptions to buble up to the client so he
+            // knows something bad happened. indeed, a significant number of our
+            // unit tests verify the _presence_ of such exceptions as a success
+            // criterion.
+            // What we can do universally in this condition is is to verify that
+            // a content type was set. The absence of a content type is a sure sign that the server
+            // barfed in an unpredicted way. So in this case we report the
+            // condition as an exception with the reason code and
+            // so forth. I would also observe that there are several different classes that are formulating
+            // error based on these response codes. That really needs to be enapsulated.
+            if (HttpStatus.SC_NOT_FOUND != responseCode &&
+                    HttpStatus.SC_BAD_REQUEST != responseCode &&
+                    HttpStatus.SC_METHOD_NOT_ALLOWED != responseCode &&
+                    HttpStatus.SC_UNAUTHORIZED != responseCode &&
+                    HttpStatus.SC_NOT_ACCEPTABLE != responseCode) {
+
+
+                String contentType = null; // default
+                Header headers[] = httpResponse.getHeaders(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
+                if (headers.length > 0) {
+                    contentType = headers[0].getValue();
+                }
+
+
+                if( contentType != null ) {
+
+                    inputStream = httpResponse.getEntity().getContent();
+
+
+                    if (contentType.contains(MediaType.APPLICATION_JSON)
+                            || contentType.contains(MediaType.TEXT_PLAIN)) {
+
+
+                        BufferedReader bufferedReader = new BufferedReader(
+                                new InputStreamReader(inputStream));
+
+
+                        StringBuilder stringBuilder = new StringBuilder();
+                        String currentLine = null;
+                        while ((currentLine = bufferedReader.readLine()) != null) {
+                            stringBuilder.append(currentLine);
+                        }
+
+
+                        if (contentType.contains(MediaType.APPLICATION_JSON)) {
+                            JsonParser parser = new JsonParser();
+                            String jsonAsString = stringBuilder.toString();
+                            JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
+                            returnVal.setJsonPayload(jsonObject);
+                        } else {
+                            returnVal.setPlainPayload(stringBuilder);
+                        }
+
+                    } else if (contentType.contains(MediaType.APPLICATION_OCTET_STREAM)
+                            || contentType.contains(MediaType.MULTIPART_FORM_DATA)) {
+                        outputStream = null;
+                        byte[] buffer = new byte[1024];
+                        String fileName = restUri.getDestinationFqpn();
+                        File outputFile = new File(fileName);
+                        outputFile.createNewFile();
+                        outputStream = new FileOutputStream(outputFile, false);
+                        for (int length; (length = inputStream.read(buffer)) > 0; ) {
+                            outputStream.write(buffer, 0, length);
+                        }
+
+                        returnVal.setFileName(fileName);
+                    }
+
+                } else {
+                    String message = "Unable to process response because no content type was set: "
+                            + httpRequestBase.getMethod()
+                            + ": " + uri.toString() + " "
+                            + returnVal.getResponseCode()
+                            + " (" + returnVal.getReasonPhrase() + ")";
+                    LOGGER.error(message);
+                    throw new Exception(message);
+                }
+
+            }
+        } finally {
+
+            if (inputStream != null) {
+
+                try {
+                    inputStream.close();
+                } catch (Exception e) {
+                    LOGGER.error("Error closing input stream: ", e);
+                }
             }
 
+            if (outputStream != null) {
 
-            JsonParser parser = new JsonParser();
-
-            String jsonAsString = stringBuilder.toString();
-
-            JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
-
-            returnVal.setPayLoad(jsonObject);
+                try {
+                    outputStream.close();
+                } catch (Exception e) {
+                    LOGGER.error("Error closing output stream: ", e);
+                }
+            }
         }
 
-
-        ///returnVal.setPayLoad(getJsonFromInputStream(httpResponse.getEntity().getContent()));
+        ///returnVal.setJsonPayload(getJsonFromInputStream(httpResponse.getEntity().getContent()));
 
         return returnVal;
     }
@@ -234,8 +355,8 @@ public class HttpCore {
 
             System.out.println("Response: ");
 
-            if (httpMethodResult.getPayLoad() != null) {
-                System.out.println(httpMethodResult.getPayLoad().toString());
+            if (httpMethodResult.getJsonPayload() != null) {
+                System.out.println(httpMethodResult.getJsonPayload().toString());
             } else {
                 System.out.println("Null payload");
             }
@@ -246,55 +367,50 @@ public class HttpCore {
 
     }
 
-    public HttpMethodResult get(RestUri restUri,
-                                String token) throws Exception {
+    public HttpMethodResult get(RestUri restUri) throws Exception {
 
-        HttpMethodResult returnVal = this.submitHttpMethod(new HttpGet(), restUri, token);
+        HttpMethodResult returnVal = this.submitHttpMethod(new HttpGet(), restUri);
         this.logRequest(RestMethodTypes.GET, restUri, null, returnVal);
         return returnVal;
 
     }
 
     public HttpMethodResult post(RestUri restUri,
-                                 String body,
-                                 String token) throws Exception {
+                                 String body) throws Exception {
 
         HttpMethodResult returnVal;
 
         HttpPost httpPost = new HttpPost();
         this.setHttpBody(httpPost, body);
-        returnVal = this.submitHttpMethod(httpPost, restUri, token);
+        returnVal = this.submitHttpMethod(httpPost, restUri);
         this.logRequest(RestMethodTypes.POST, restUri, body, returnVal);
 
         return returnVal;
     }
 
     public HttpMethodResult put(RestUri restUri,
-                                String body,
-                                String token) throws Exception {
+                                String body) throws Exception {
 
         HttpMethodResult returnVal;
         HttpPut httpPut = new HttpPut();
         this.setHttpBody(httpPut, body);
-        returnVal = this.submitHttpMethod(httpPut, restUri, token);
+        returnVal = this.submitHttpMethod(httpPut, restUri);
         this.logRequest(RestMethodTypes.PUT, restUri, body, returnVal);
         return returnVal;
     }
 
     public HttpMethodResult patch(RestUri restUri,
-                                  String body,
-                                  String token) throws Exception {
+                                  String body) throws Exception {
 
         HttpPatch httpPatch = new HttpPatch();
         this.setHttpBody(httpPatch, body);
-        return this.submitHttpMethod(httpPatch, restUri, token);
+        return this.submitHttpMethod(httpPatch, restUri);
     }
 
 
-    public HttpMethodResult delete(RestUri restUri,
-                                   String token) throws Exception {
+    public HttpMethodResult delete(RestUri restUri) throws Exception {
 
-        return this.submitHttpMethod(new HttpDelete(), restUri, token);
+        return this.submitHttpMethod(new HttpDelete(), restUri);
     }
 
 }
