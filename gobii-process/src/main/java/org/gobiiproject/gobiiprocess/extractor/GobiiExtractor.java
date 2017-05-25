@@ -11,13 +11,20 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 import org.apache.commons.cli.*;
+import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiiclient.core.common.GenericClientContext;
+import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
+import org.gobiiproject.gobiimodel.config.ServerBase;
+import org.gobiiproject.gobiimodel.config.ServerConfigKDC;
 import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
 import org.gobiiproject.gobiimodel.headerlesscontainer.QCInstructionsDTO;
 import org.gobiiproject.gobiimodel.types.*;
@@ -107,7 +114,12 @@ public class GobiiExtractor {
 		else{
 			instructionFile=args[0];
 		}
-		
+
+		ErrorLogger.logInfo("Extractor", "KDC Host: " + configuration.getKDCConfig().getHost());
+		ErrorLogger.logInfo("Extractor", "KDC Context Path: " + configuration.getKDCConfig().getContextPath());
+		ErrorLogger.logInfo("Extractor", "KDC Port: " + configuration.getKDCConfig().getPort());
+		ErrorLogger.logInfo("Extractor", "KDC Active: " + configuration.getKDCConfig().isActive());
+
 		startTime = System.currentTimeMillis();
 
 		startTime = System.currentTimeMillis();
@@ -467,7 +479,7 @@ public class GobiiExtractor {
 					ErrorLogger.logDebug("Extractor", "DataSet " + datasetName + " Created");
 
 					if (inst.isQcCheck()) {//QC - Subsection #1 of 1
-						performQC(configuration, inst, crop, datasetId);
+						performQC(configuration, inst, crop, datasetId, extractDir);
 					}
 				}
 				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
@@ -491,7 +503,7 @@ public class GobiiExtractor {
 	 * @param datasetId
 	 * @throws Exception
 	 */
-	private static void performQC(ConfigSettings configuration, GobiiExtractorInstruction inst, String crop, Integer datasetId) throws Exception {
+	private static void performQC(ConfigSettings configuration, GobiiExtractorInstruction inst, String crop, Integer datasetId, String extractDir) throws Exception {
 		ErrorLogger.logInfo("Extractor", "qcCheck detected");
 		ErrorLogger.logInfo("Extractor", "Entering into the QC Subsection #1 of 1...");
 		QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
@@ -519,7 +531,56 @@ public class GobiiExtractor {
             	ErrorLogger.logError("Extractor", "Error Sending QC Instructions Request");
         	}
 
-        	// To implement the B plan of the KDCompute integration
+			ErrorLogger.logInfo("Extractor", "KDC Host: " + configuration.getKDCConfig().getHost());
+			ErrorLogger.logInfo("Extractor", "KDC Context Path: " + configuration.getKDCConfig().getContextPath());
+			ErrorLogger.logInfo("Extractor", "KDC Port: " + configuration.getKDCConfig().getPort());
+			ErrorLogger.logInfo("Extractor", "KDC Active: " + configuration.getKDCConfig().isActive());
+
+			//ServerBase serverBase = new ServerBase(configuration.getKDCConfig().getHost(),
+			//		configuration.getKDCConfig().getContextPath(),
+			//		configuration.getKDCConfig().getPort(),
+			//		configuration.getKDCConfig().isActive());
+
+			ServerBase serverBase = new ServerBase("gobiilab03.bti.cornell.edu",
+					"kdcompute/",
+					8080,
+					true);
+
+			GenericClientContext genericClientContext = new GenericClientContext(serverBase);
+
+			RestUri restUriGetQCJobID = new RestUri("/",
+					"kdcompute",
+					"/qcStart");
+
+			restUriGetQCJobID
+					.addQueryParam("datasetId")
+					.setParamValue("datasetId", String.valueOf(datasetId))
+					.addQueryParam("directory")
+					.setParamValue("directory", extractDir);
+
+			HttpMethodResult httpMethodResult = genericClientContext
+					.get(restUriGetQCJobID);
+
+			if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
+				ErrorLogger.logInfo("Extractor", "http method failed: "
+						+ httpMethodResult.getUri().toString()
+						+ "; failure mode: "
+						+ Integer.toString(httpMethodResult.getResponseCode())
+						+ " ("
+						+ httpMethodResult.getReasonPhrase()
+						+ ")");
+			}
+			else {
+				JsonObject jsonObject = httpMethodResult.getJsonPayload();
+				if (jsonObject == null) {
+					ErrorLogger.logInfo("Extractor", "Null JSON Payload");
+				}
+				else {
+					Long qcJobID = jsonObject.get("jobId").getAsLong();
+					ErrorLogger.logInfo("Extractor", "New QC job id: " + qcJobID);
+
+				}
+			}
 
 			ErrorLogger.logInfo("Extractor", "Done with the QC Subsection #1 of 1!");
 		}
@@ -619,7 +680,7 @@ public class GobiiExtractor {
 	}
 
 
-		private static boolean addSlashesToBiAllelicData(String genoFile, String extractDir, GobiiDataSetExtract extract) throws Exception {
+	private static boolean addSlashesToBiAllelicData(String genoFile, String extractDir, GobiiDataSetExtract extract) throws Exception {
 		Path SSRFilePath = Paths.get(genoFile);
 		File SSRFile = new File(SSRFilePath.toString());
 		if (SSRFile.exists()) {
