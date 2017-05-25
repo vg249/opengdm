@@ -1,10 +1,7 @@
 package org.gobiiproject.gobiiprocess.digester;
 
 import java.io.*;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.text.ParseException;
 import java.util.*;
 
@@ -15,10 +12,8 @@ import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
-import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
-import org.gobiiproject.gobiimodel.config.GobiiCropDbConfig;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
-import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
+import org.gobiiproject.gobiimodel.config.*;
+import org.gobiiproject.gobiimodel.dto.instructions.extractor.*;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -26,23 +21,16 @@ import org.gobiiproject.gobiimodel.utils.FileSystemInterface;
 import org.gobiiproject.gobiiapimodel.payload.HeaderStatusMessage;
 import org.gobiiproject.gobiimodel.utils.HelperFunctions;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFile;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
-import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.*;
 import org.gobiiproject.gobiimodel.types.*;
-import org.gobiiproject.gobiimodel.utils.LineUtils;
-import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
-import org.gobiiproject.gobiimodel.utils.email.MailInterface;
+import org.gobiiproject.gobiimodel.utils.*;
+import org.gobiiproject.gobiimodel.utils.email.*;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
-import org.gobiiproject.gobiiprocess.digester.HelperFunctions.MobileTransform;
-import org.gobiiproject.gobiiprocess.digester.HelperFunctions.PGArray;
-import org.gobiiproject.gobiiprocess.digester.HelperFunctions.SequenceInPlaceTransform;
-import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
+import org.gobiiproject.gobiiprocess.digester.HelperFunctions.*;
+import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
-import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
 
-import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.mv;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.parseInstructionFile;
@@ -52,7 +40,7 @@ import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
 /**
  * Base class for processing instruction files. Start of chain of control for Digester. Takes first argument as instruction file, or promts user.
  * The File Reader runs off the Instruction Files, which tell it where the input files are, and how to process them.
- * {@link CSVFileReader} and {@link VCFFileReader} deal with specific file formats. Overall logic and program flow come from this class.
+ * {@link CSVFileReaderV2} and {@link VCFFileReader} deal with specific file formats. Overall logic and program flow come from this class.
  *
  * This class deals with external commands and scripts, and coordinates uploads to the IFL and directly talks to HDF5 and MonetDB.
  * @author jdl232 Josh L.S.
@@ -249,7 +237,7 @@ public class GobiiFileReader {
 			case VCF:
 				//INTENTIONAL FALLTHROUGH
 			case GENERIC:
-				CSVFileReader.parseInstructionFile(list, dstDir.getAbsolutePath(), "/");
+				CSVFileReaderV2.parseInstructionFile(list);
 				break;
 			default:
 				System.err.println("Unable to deal with file type " + zero.getGobiiFile().getGobiiFileType());

@@ -16,7 +16,6 @@ import java.util.Map;
  */
 public class IUPACmatrixToBi {
 
-    private static final String NEWLINE = "\n";
     private static long startTime, endTime, duration;
     private static String fSep;
 
@@ -24,7 +23,7 @@ public class IUPACmatrixToBi {
 
         if (!checkFileExistence(iFile)) {
             ErrorLogger.logError("IUPAC to Bi","Input file provided does not exists.\n");
-            System.exit(1);
+            throw new FileNotFoundException("IUPAC to Bi:\t" + iFile +"does not exists");
         }
 
         Map<String, NucIupacCodes> hash = new HashMap<>();
