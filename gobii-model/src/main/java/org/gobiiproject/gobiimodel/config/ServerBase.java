@@ -74,7 +74,7 @@ public class ServerBase {
 
         String returnVal = this.contextPath;
 
-        if( terminate) {
+        if( terminate && ! LineUtils.isNullOrEmpty(returnVal)) {
             returnVal = LineUtils.terminateDirectoryPath(returnVal);
         }
         return returnVal;

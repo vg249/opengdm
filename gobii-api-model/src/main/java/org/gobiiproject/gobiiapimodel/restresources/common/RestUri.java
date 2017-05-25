@@ -29,6 +29,8 @@ public class RestUri {
     private List<ResourceParam> resourceParams = new ArrayList<>();
 
     private Map<String,String> httpHeaders = new HashMap<>();
+    private String destinationFilenPath = null;
+
 
     public RestUri(String contextRoot, String contextPath, String resourcePath) throws Exception {
         this.contextRoot = this.delimitSegment(contextRoot);
@@ -154,6 +156,15 @@ public class RestUri {
         return this;
     }
 
+
+    public RestUri withDestinationFqpn(String destinationPath) {
+        this.destinationFilenPath = destinationPath;
+        return this;
+    }
+
+    public String getDestinationFqpn() {
+        return this.destinationFilenPath;
+    }
 
     public String makeUrl() throws Exception {
 
