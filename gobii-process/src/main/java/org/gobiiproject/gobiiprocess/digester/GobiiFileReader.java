@@ -696,7 +696,7 @@ public class GobiiFileReader {
 			}
 		}
 		catch(Exception e){
-			logError("Digester","Exception while processing data sets",e);
+			logError("Digester","Exception while referencing data sets in Postgresql",e);
 			return;
 		}
 	}
