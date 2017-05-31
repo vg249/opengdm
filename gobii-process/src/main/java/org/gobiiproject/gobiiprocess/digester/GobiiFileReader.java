@@ -321,7 +321,7 @@ public class GobiiFileReader {
 
 
 			if (qcCheck) {//QC - Subsection #2 of 3
-				setQCExtractPaths(dstDir, inst, configuration, crop);
+				setQCExtractPaths(inst, configuration, crop);
 			}
 
 			intermediateFile.returnFile(); // replace intermediateFile where it came from
@@ -433,14 +433,16 @@ public class GobiiFileReader {
 		return gobiiExtractorInstruction;
 	}
 
-	private static void setQCExtractPaths(File dstDir, GobiiLoaderInstruction inst, ConfigSettings configuration, String crop) throws Exception {
+	private static void setQCExtractPaths(GobiiLoaderInstruction inst, ConfigSettings configuration, String crop) throws Exception {
 		ErrorLogger.logInfo("Digester", "Entering into the QC Subsection #2 of 3...");
 		GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
 		gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
 		gobiiDataSetExtract.setDataSet(inst.getDataSet());
 		gobiiDataSetExtract.setGobiiDatasetType(inst.getDatasetType());
 		Path extractDestinationDirectoryPath = Paths.get(configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_OUTPUT),
+				inst.getContactEmail().split("@")[0],
 				inst.getGobiiFile().getGobiiFileType().toString().toLowerCase(),
+				"whole_dataset",
 				new StringBuilder("ds_").append(inst.getDataSetId()).toString());
 		gobiiDataSetExtract.setExtractDestinationDirectory(extractDestinationDirectoryPath.toString());
 		// According to Liz, the Gobii extract filter type is always "WHOLE_DATASET" for any QC job
