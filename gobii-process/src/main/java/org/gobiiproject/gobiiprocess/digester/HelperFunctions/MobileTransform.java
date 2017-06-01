@@ -26,7 +26,7 @@ public abstract class MobileTransform {
 
     public static final MobileTransform stripHeader=new MobileTransform(){
         public void transform(String fromFile, String toFile, String errorPath){
-            HelperFunctions.tryExec("tail -n +2 ", fromFile, errorPath, toFile);
+            HelperFunctions.tryExec("tail -n +2 ", toFile, errorPath, fromFile);
         }
     };
     public static final MobileTransform IUPACToBI=new MobileTransform(){
