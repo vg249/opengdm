@@ -636,34 +636,42 @@ public class GobiiExtractor {
 						qcStatusPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
 						qcStatusPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
 						if ((status.equals("COMPLETED")) || (status.equals("FAILED"))) {
-							JsonObject resultsUrls = jsonPayload.get("resultsUrls").getAsJsonObject();
-							Set<Map.Entry<String, JsonElement>> entrySet = resultsUrls.entrySet();
-							for (Map.Entry<String, JsonElement> entry : entrySet) {
-								String destinationFqpn = Paths.get(extractDir, entry.getKey()).toString();
-								RestUri restUriGetQCDownload = new RestUri("/",
-										configuration.getKDCConfig().getContextPath(),
-										entry.getValue().getAsString().substring(1))
-										.withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
-												MediaType.APPLICATION_OCTET_STREAM)
-										.withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
-												MediaType.APPLICATION_OCTET_STREAM)
-										.withDestinationFqpn(destinationFqpn);
-								httpMethodResult = genericClientContext.get(restUriGetQCDownload);
-								if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
-									ErrorLogger.logInfo("QC", "The qcDownload method failed: "
-											+ httpMethodResult.getUri().toString()
-											+ "; failure mode: "
-											+ Integer.toString(httpMethodResult.getResponseCode())
-											+ " ("
-											+ httpMethodResult.getReasonPhrase()
-											+ ")");
-								} else {
-									ErrorLogger.logInfo("QC", "The qcDownload http method was successful with "
-											+ httpMethodResult.getFileName());
-									if ((!(entry.getKey().equals("stdout.txt"))) &&
-										(!(entry.getKey().equals("stderr.txt"))) &&
-										(!(entry.getKey().equals("script.groovy")))){
-										qcStatusPm.addPath(entry.getKey(), httpMethodResult.getFileName());
+							// If the extract directory does not exist or is not writable, it always makes the last qcDownload method crashing and
+							// thus this class crashing
+							if (new File(extractDir).exists()) {
+								if (new File(extractDir).canWrite()) {
+									JsonObject resultsUrls = jsonPayload.get("resultsUrls").getAsJsonObject();
+									Set<Map.Entry<String, JsonElement>> entrySet = resultsUrls.entrySet();
+									for (Map.Entry<String, JsonElement> entry : entrySet) {
+										String fileDownloadLink = entry.getValue().getAsString().substring(1);
+										ErrorLogger.logInfo("QC", new StringBuilder("fileDownloadLink: ").append(fileDownloadLink).toString());
+										String destinationFqpn = Paths.get(extractDir, entry.getKey()).toString();
+										ErrorLogger.logInfo("QC", new StringBuilder("destinationFqpn: ").append(destinationFqpn).toString());
+										RestUri restUriGetQCDownload = new RestUri("/",
+												configuration.getKDCConfig().getContextPath(),
+												fileDownloadLink)
+												.withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+														MediaType.APPLICATION_OCTET_STREAM)
+												.withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+														MediaType.APPLICATION_OCTET_STREAM)
+												.withDestinationFqpn(destinationFqpn);
+										httpMethodResult = genericClientContext.get(restUriGetQCDownload);
+										if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
+											ErrorLogger.logInfo("QC", "The qcDownload method failed: "
+													+ httpMethodResult.getUri().toString()
+													+ "; failure mode: "
+													+ Integer.toString(httpMethodResult.getResponseCode())
+													+ " ("
+													+ httpMethodResult.getReasonPhrase()
+													+ ")");
+										}
+										else {
+											ErrorLogger.logInfo("QC", "The qcDownload http method was successful with "
+													+ httpMethodResult.getFileName());
+											if (httpMethodResult.getFileName() != null) {
+												qcStatusPm.addPath(entry.getKey(), httpMethodResult.getFileName());
+											}
+										}
 									}
 								}
 							}
