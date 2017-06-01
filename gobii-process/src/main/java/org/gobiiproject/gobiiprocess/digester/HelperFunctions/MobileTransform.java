@@ -5,9 +5,12 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getDestinationFile;
 import static org.gobiiproject.gobiiprocess.digester.utils.IUPACmatrixToBi.convertIUPACtoBi;
+import static org.gobiiproject.gobiiprocess.digester.utils.TransposeMatrix.transposeMatrix;
 
 /**
  * A class representing a transformation that is not 'in place'. This transformation may take several parameters, but the
@@ -71,6 +74,18 @@ public abstract class MobileTransform {
                     new VCFTransformer(markerTmp, fromFile, toFile);
                 } catch (Exception e) {
                     ErrorLogger.logError("VCFTransformer", "Failure loading dataset", e);
+                }
+            }
+        };
+    }
+
+    public static MobileTransform getTransposeMatrix(String dest){
+        return new MobileTransform(){
+            public void transform(String fromFile, String toFile, String errorPath){
+                try {
+                    transposeMatrix("tab", fromFile, toFile, dest);
+                } catch (FileNotFoundException e) {
+                    ErrorLogger.logError("Matrix Transpose", "Missing File", e);
                 }
             }
         };

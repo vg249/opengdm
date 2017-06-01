@@ -33,6 +33,7 @@ import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getDestinationFile;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.parseInstructionFile;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
@@ -153,7 +154,7 @@ public class GobiiFileReader {
 		pm.addIdentifier("Dataset Type",zero.getDatasetType());
 
 
-		String dstFilePath=HelperFunctions.getDestinationFile(zero);//Intermediate 'file'
+		String dstFilePath= getDestinationFile(zero);//Intermediate 'file'
 		File dstDir=new File(dstFilePath);
 		if(!dstDir.isDirectory()){ //Note: if dstDir is a non-existant
 			dstDir=new File(dstFilePath.substring(0, dstFilePath.lastIndexOf("/")));
@@ -258,7 +259,7 @@ public class GobiiFileReader {
 					break;
 				}
 			}
-			String fromFile = HelperFunctions.getDestinationFile(inst);
+			String fromFile = getDestinationFile(inst);
 			SequenceInPlaceTransform intermediateFile=new SequenceInPlaceTransform(fromFile,errorPath);
 			if (dst != null && inst.getTable().equals(VARIANT_CALL_TABNAME)) {
 				errorPath = getLogName(inst, gobiiCropConfig, crop, "Matrix_Processing"); //Temporary Error File Name
@@ -293,15 +294,15 @@ public class GobiiFileReader {
 				if (DataSetOrientationType.SAMPLE_FAST.equals(dso)) isSampleFast = true;
 				if (isSampleFast) {
 					//Rotate to marker fast before loading it - all data is marker fast in the system
-					HelperFunctions.tryExec("python " + loaderScriptPath + "TransposeMatrix.py -i " + fromFile);
+					intermediateFile.transform(MobileTransform.getTransposeMatrix(getDestinationFile(inst)));
 				}
 			}
 
 			String instructionName = inst.getTable();
-			loaderInstructionMap.put(instructionName, new File(HelperFunctions.getDestinationFile(inst)));
+			loaderInstructionMap.put(instructionName, new File(getDestinationFile(inst)));
 			loaderInstructionList.add(instructionName);//TODO Hack - for ordering
 			if (LINKAGE_GROUP_TABNAME.equals(instructionName) || GERMPLASM_TABNAME.equals(instructionName) || GERMPLASM_PROP_TABNAME.equals(instructionName)) {
-				success &= HelperFunctions.tryExec(loaderScriptPath + "LGduplicates.py -i " + HelperFunctions.getDestinationFile(inst));
+				success &= HelperFunctions.tryExec(loaderScriptPath + "LGduplicates.py -i " + getDestinationFile(inst));
 			}
 			if (MARKER_TABNAME.equals(instructionName)) {//Convert 'alts' into a jsonb array
 				intermediateFile.transform(MobileTransform.PGArray);
