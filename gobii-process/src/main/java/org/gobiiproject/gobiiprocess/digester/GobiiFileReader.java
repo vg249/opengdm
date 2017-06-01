@@ -37,6 +37,7 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.PGArray;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReader;
+import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getDestinationFile;
 import static org.gobiiproject.gobiiprocess.digester.utils.IUPACmatrixToBi.convertIUPACtoBi;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFTransformer;
@@ -47,6 +48,7 @@ import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.parseInstructionFile;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.tryExec;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.logError;
+import static org.gobiiproject.gobiiprocess.digester.utils.TransposeMatrix.transposeMatrix;
 
 /**
  * Base class for processing instruction files. Start of chain of control for Digester. Takes first argument as instruction file, or promts user.
@@ -341,7 +343,9 @@ public class GobiiFileReader {
 				if (DataSetOrientationType.SAMPLE_FAST.equals(dso)) isSampleFast = true;
 				if (isSampleFast) {
 					//Rotate to marker fast before loading it - all data is marker fast in the system
-					HelperFunctions.tryExec("python " + loaderScriptPath + "TransposeMatrix.py -i " + fromFile);
+					transposeMatrix("tab", fromFile, toFile, getDestinationFile(inst));
+					mv(toFile, fromFile);
+//					HelperFunctions.tryExec("python " + loaderScriptPath + "TransposeMatrix.py -i " + fromFile);
 				}
 			}
 
