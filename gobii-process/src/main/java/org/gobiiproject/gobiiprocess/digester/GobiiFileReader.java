@@ -478,8 +478,21 @@ public class GobiiFileReader {
 	 * @return
 	 */
 	private static IFLLineCounts calculateTableStats(ProcessMessage pm, Map<String, File> loaderInstructionMap, File dstDir, String key) {
+
 		String ppdFile=new File(dstDir,"ppd_digest."+key).getAbsolutePath();
+		//If there is a deduplicated PPD file, use it instead of the ppd file
+		String ddpPpdFile=new File(dstDir,"ddp_ppd_digest."+key).getAbsolutePath();
+		if(new File(ddpPpdFile).exists()){
+			ppdFile=ddpPpdFile;
+		}
+
 		String noDupsFile=new File(dstDir,"nodups_ppd_digest."+key).getAbsolutePath();
+		//If there is a deduplicated nodups file, use it instead of the nodups file
+		String ddpNoDupsFile=new File(dstDir,"nodups_ddp_ppd_digest."+key).getAbsolutePath();
+		if(new File(ddpNoDupsFile).exists()){
+			noDupsFile=ddpNoDupsFile;
+		}
+
 
 		//Default to 'we had an error'
 		String totalLinesVal,linesLoadedVal,existingLinesVal,invalidLinesVal;
