@@ -530,10 +530,10 @@ public class GobiiExtractor {
 		qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
 		qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
 		qcInstructionsDTOToSend.setDatasetId(datasetId);
-		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.STARTED);
+		// To create the QC instructions file for the Gobii web services independently of any QC status
+		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
 		// According to Liz, there are several quality files so this method is no longer necessary
 		qcInstructionsDTOToSend.setQualityFileName("");
-		PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
 		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
 		if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
             ErrorLogger.logError("QC", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
@@ -542,7 +542,9 @@ public class GobiiExtractor {
         else {
 			String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
 			gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
-			GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(gobiiUriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
+			PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
+			GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<>(gobiiUriFactory
+					.resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
 			PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,	payloadEnvelope);
 			if (qcInstructionFileDTOResponseEnvelope != null) {
             	ErrorLogger.logInfo("QC", "QC Instructions Request Sent");
@@ -763,6 +765,7 @@ public class GobiiExtractor {
 	 */
 	//Dear next guy - yeah, doing a 'one step unroll' then placing in 'comma - object; comma - object' makes more sense.
 	//Just be happy I used a StringBuilder
+	//Si, soy tan feliz ahora!
 	private static String commaFormat(List inputList){
 		StringBuilder sb=new StringBuilder();
 		for(Object o:inputList){
