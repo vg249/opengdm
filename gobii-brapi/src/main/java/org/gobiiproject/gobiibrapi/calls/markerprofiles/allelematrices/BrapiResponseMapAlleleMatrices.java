@@ -5,6 +5,7 @@ import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSear
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,8 +17,17 @@ public class BrapiResponseMapAlleleMatrices {
 
         List<BrapiResponseAlleleMatricesItem> returnVal = new ArrayList<>();
 
-//        returnVal.add(brapiResponseStudiesSearchItem);
+        for( Integer idx = 0 ; idx < 11 ; idx++) {
 
+            BrapiResponseAlleleMatricesItem brapiResponseAlleleMatricesItem = new BrapiResponseAlleleMatricesItem();
+            brapiResponseAlleleMatricesItem.setName("Dataset " + idx.toString());
+            brapiResponseAlleleMatricesItem.setLastUpdated(new Date().toString());
+            brapiResponseAlleleMatricesItem.setMatrixDbId(idx.toString());
+            brapiResponseAlleleMatricesItem.setStudyDbId("10");
+            brapiResponseAlleleMatricesItem.setDescription("Dummy dataset number " + idx.toString());
+
+            returnVal.add(brapiResponseAlleleMatricesItem);
+        }
 
         return returnVal;
     }

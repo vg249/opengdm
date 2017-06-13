@@ -378,11 +378,11 @@ public class BRAPIIControllerV1 {
     // *************************** ALLELE MATRICES
     // *********************************************
     @RequestMapping(value = "/allelematrices",
-            params = {"studyDbId"},
+//            params = {"studyDbId"},
             method = RequestMethod.GET,
             produces = "application/json")
     @ResponseBody
-    public String getAlleleMatrices(@RequestParam("studyDbId") String studyDbId,
+    public String getAlleleMatrices(//@RequestParam(value = "studyDbId", required = false) String studyDbId,
                                     HttpServletRequest request,
                                     HttpServletResponse response) throws Exception {
 
@@ -393,8 +393,8 @@ public class BRAPIIControllerV1 {
 
         try {
 
-            Integer studyDbIdAsInteger = Integer.parseInt(studyDbId);
-            BrapiResponseAlleleMatrices brapiResponseAlleleMatrices= (new BrapiResponseMapAlleleMatrices()).getBrapiResponseAlleleMatrices(studyDbIdAsInteger);
+            Integer studyDbIdAsInteger = Integer.parseInt("1");
+            BrapiResponseAlleleMatrices brapiResponseAlleleMatrices = (new BrapiResponseMapAlleleMatrices()).getBrapiResponseAlleleMatrices(studyDbIdAsInteger);
 
             BrapiResponseEnvelopeMasterDetail.setResult(brapiResponseAlleleMatrices);
 
