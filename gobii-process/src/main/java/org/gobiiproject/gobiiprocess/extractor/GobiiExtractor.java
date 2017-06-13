@@ -645,35 +645,41 @@ public class GobiiExtractor {
 									JsonObject resultsUrls = jsonPayload.get("resultsUrls").getAsJsonObject();
 									Set<Map.Entry<String, JsonElement>> entrySet = resultsUrls.entrySet();
 									for (Map.Entry<String, JsonElement> entry : entrySet) {
-										String fileDownloadLink = entry.getValue().getAsString().substring(1);
-										ErrorLogger.logInfo("QC", new StringBuilder("fileDownloadLink: ").append(fileDownloadLink).toString());
-										String destinationFqpn = Paths.get(extractDir, entry.getKey()).toString();
-										ErrorLogger.logInfo("QC", new StringBuilder("destinationFqpn: ").append(destinationFqpn).toString());
-										RestUri restUriGetQCDownload = new RestUri("/",
-												configuration.getKDCConfig().getContextPath(),
-												fileDownloadLink)
-												.withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
-														MediaType.APPLICATION_OCTET_STREAM)
-												.withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
-														MediaType.APPLICATION_OCTET_STREAM)
-												.withDestinationFqpn(destinationFqpn);
-										httpMethodResult = genericClientContext.get(restUriGetQCDownload);
-										if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
-											ErrorLogger.logInfo("QC", "The qcDownload method failed: "
-													+ httpMethodResult.getUri().toString()
-													+ "; failure mode: "
-													+ Integer.toString(httpMethodResult.getResponseCode())
-													+ " ("
-													+ httpMethodResult.getReasonPhrase()
-													+ ")");
-										}
-										else {
-											ErrorLogger.logInfo("QC", "The qcDownload http method was successful with "
-													+ httpMethodResult.getFileName());
-											if (httpMethodResult.getFileName() != null) {
-												qcStatusPm.addPath(entry.getKey(), httpMethodResult.getFileName());
-											}
-										}
+									    String key = entry.getKey();
+									    // Avoiding any downloadable non-data file susceptible to be shown for the gobii user
+                                        if ((!(key.equals("stdout.txt"))) &&
+                                            (!(key.equals("stderr.txt"))) &&
+                                            (!(key.equals("script.groovy")))) {
+										    String fileDownloadLink = entry.getValue().getAsString().substring(1);
+										    ErrorLogger.logInfo("QC", new StringBuilder("fileDownloadLink: ").append(fileDownloadLink).toString());
+										    String destinationFqpn = Paths.get(extractDir, key).toString();
+										    ErrorLogger.logInfo("QC", new StringBuilder("destinationFqpn: ").append(destinationFqpn).toString());
+										    RestUri restUriGetQCDownload = new RestUri("/",
+												    configuration.getKDCConfig().getContextPath(),
+												    fileDownloadLink)
+												    .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+														    MediaType.APPLICATION_OCTET_STREAM)
+												    .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+														    MediaType.APPLICATION_OCTET_STREAM)
+												    .withDestinationFqpn(destinationFqpn);
+										    httpMethodResult = genericClientContext.get(restUriGetQCDownload);
+										    if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
+											    ErrorLogger.logInfo("QC", "The qcDownload method failed: "
+													    + httpMethodResult.getUri().toString()
+													    + "; failure mode: "
+													    + Integer.toString(httpMethodResult.getResponseCode())
+													    + " ("
+													    + httpMethodResult.getReasonPhrase()
+													    + ")");
+										    }
+										    else {
+                                                ErrorLogger.logInfo("QC", "The qcDownload http method was successful with "
+                                                        + httpMethodResult.getFileName());
+                                                if (httpMethodResult.getFileName() != null) {
+                                                    qcStatusPm.addPath(key, httpMethodResult.getFileName());
+                                                }
+                                            }
+                                        }
 									}
 								}
 							}
