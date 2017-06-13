@@ -382,7 +382,7 @@ public class BRAPIIControllerV1 {
             method = RequestMethod.GET,
             produces = "application/json")
     @ResponseBody
-    public String getAlleleMatrices(//@RequestParam(value = "studyDbId", required = false) String studyDbId,
+    public String getAlleleMatrices(//@xRequestParam(value = "studyDbId", required = false) String studyDbId,
                                     HttpServletRequest request,
                                     HttpServletResponse response) throws Exception {
 
