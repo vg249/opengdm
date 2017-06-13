@@ -51,6 +51,12 @@ public class BrapiResponseMapCalls {
                 Arrays.asList(RestMethodTypes.POST),
                 Arrays.asList(BrapiDataTypes.JSON)));
 
+        returnVal.add(new BrapiResponseCallsItem(new RestUri(this.contextRoot,
+                GobiiControllerType.BRAPI.getControllerPath(),
+                GobiiServiceRequestId.URL_ALLELE_MATRICES.getResourcePath()).addQueryParam("studyDbId"),
+                Arrays.asList(RestMethodTypes.GET),
+                Arrays.asList(BrapiDataTypes.JSON)));
+
         return returnVal;
     }
 
