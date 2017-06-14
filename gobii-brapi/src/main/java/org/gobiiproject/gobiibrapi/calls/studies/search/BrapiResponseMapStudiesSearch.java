@@ -30,6 +30,7 @@ public class BrapiResponseMapStudiesSearch {
             BrapiResponseStudiesSearchItem brapiResponseStudiesSearchItem = new BrapiResponseStudiesSearchItem();
             brapiResponseStudiesSearchItem.setStudyType("genotype");
             brapiResponseStudiesSearchItem.setName(projectDTO.getProjectName());
+            brapiResponseStudiesSearchItem.setStudyDbId(projectDTO.getProjectId());
 
             returnVal.add(brapiResponseStudiesSearchItem);
         }

@@ -131,8 +131,9 @@ public class BRAPIIControllerV1 {
     @Autowired
     private PingService pingService = null;
 
+
     @Autowired
-    private ProjectService projectService = null;
+    private BrapiResponseMapStudiesSearch brapiResponseMapStudiesSearch = null;
 
     @Autowired
     private ContactService contactService = null;
@@ -253,7 +254,7 @@ public class BRAPIIControllerV1 {
             BrapiRequestReader<BrapiRequestStudiesSearch> brapiRequestReader = new BrapiRequestReader<>(BrapiRequestStudiesSearch.class);
             BrapiRequestStudiesSearch brapiRequestStudiesSearch = brapiRequestReader.makeRequestObj(studiesRequestBody);
 
-            BrapiResponseStudiesSearch brapiResponseStudySearch = (new BrapiResponseMapStudiesSearch()).getBrapiResponseStudySearch(brapiRequestStudiesSearch);
+            BrapiResponseStudiesSearch brapiResponseStudySearch = brapiResponseMapStudiesSearch.getBrapiResponseStudySearch(brapiRequestStudiesSearch);
 
             BrapiResponseEnvelopeMasterDetail.setResult(brapiResponseStudySearch);
 
