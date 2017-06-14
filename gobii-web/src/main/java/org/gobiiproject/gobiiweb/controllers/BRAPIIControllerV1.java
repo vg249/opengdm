@@ -56,6 +56,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 
 /**
@@ -378,11 +379,10 @@ public class BRAPIIControllerV1 {
     // *************************** ALLELE MATRICES
     // *********************************************
     @RequestMapping(value = "/allelematrices",
-//            params = {"studyDbId"},
             method = RequestMethod.GET,
             produces = "application/json")
     @ResponseBody
-    public String getAlleleMatrices(//@xRequestParam(value = "studyDbId", required = false) String studyDbId,
+    public String getAlleleMatrices(@RequestParam("studyDbId") Optional<String> studyDbIdd,
                                     HttpServletRequest request,
                                     HttpServletResponse response) throws Exception {
 
@@ -393,8 +393,14 @@ public class BRAPIIControllerV1 {
 
         try {
 
-            Integer studyDbIdAsInteger = Integer.parseInt("1");
-            BrapiResponseAlleleMatrices brapiResponseAlleleMatrices = (new BrapiResponseMapAlleleMatrices()).getBrapiResponseAlleleMatrices(studyDbIdAsInteger);
+            BrapiResponseAlleleMatrices brapiResponseAlleleMatrices;
+            if(studyDbIdd.isPresent()){
+                Integer studyDbIdAsInteger = Integer.parseInt(studyDbIdd.get());
+                brapiResponseAlleleMatrices = (new BrapiResponseMapAlleleMatrices()).getBrapiResponseAlleleMatricesItemsByStudyDbId(studyDbIdAsInteger);
+            }
+            else{
+                brapiResponseAlleleMatrices = (new BrapiResponseMapAlleleMatrices()).getBrapiResponseAlleleMatrices();
+            }
 
             BrapiResponseEnvelopeMasterDetail.setResult(brapiResponseAlleleMatrices);
 
