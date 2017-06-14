@@ -37,6 +37,13 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>org.gobiiproject</groupId>
+            <artifactId>gobii-domain</artifactId>
+            <version>1.0.1-DEV</version>
+        </dependency>
+
+
         <!-- Jackson JSON Processor -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
