@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Created by Phil on 12/18/2016.
  */
-public class ObservationMethhod {
+public class ObservationMethod {
 
-    public ObservationMethhod() {}
+    public ObservationMethod() {}
 
-    public ObservationMethhod(String methodDbId, String name) {
+    public ObservationMethod(String methodDbId, String name) {
         this.methodDbId = methodDbId;
         this.name = name;
     }
