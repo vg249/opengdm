@@ -381,7 +381,7 @@ public class BRAPIIControllerV1 {
     }
 
     @RequestMapping(value = "/allelematrix-search",
-            method = RequestMethod.GET,
+            method = {RequestMethod.GET,RequestMethod.POST},
             produces = "application/json")
     @ResponseBody
     public String getAlleleMatrix(@RequestParam("matrixDbId") String matrixDbId,

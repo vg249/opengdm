@@ -6,7 +6,10 @@ import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSear
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem;
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
+import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
+
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +46,7 @@ public class BrapiResponseMapAlleleMatrices {
 
                 BrapiResponseAlleleMatricesItem brapiResponseAlleleMatricesItem = new BrapiResponseAlleleMatricesItem();
                 brapiResponseAlleleMatricesItem.setName(experimentDTO.getExperimentName() + "-" +dataSetDTO.getName());
-                brapiResponseAlleleMatricesItem.setLastUpdated(new Date().toString());
+                brapiResponseAlleleMatricesItem.setLastUpdated(DateUtils.makeDateYYYYMMDD());
                 brapiResponseAlleleMatricesItem.setMatrixDbId(dataSetDTO.getDataSetId().toString());
                 brapiResponseAlleleMatricesItem.setStudyDbId(experimentDTO.getProjectId().toString());
                 brapiResponseAlleleMatricesItem.setDescription("Dummy description " + dataSetDTO.getDataSetId().toString());
@@ -56,17 +59,6 @@ public class BrapiResponseMapAlleleMatrices {
         return returnVal;
 
 
-    }
-
-    private BrapiResponseAlleleMatricesItem getBrapiResponseAlleleMatricesItem(Integer idx) {
-        BrapiResponseAlleleMatricesItem brapiResponseAlleleMatricesItem;
-        brapiResponseAlleleMatricesItem = new BrapiResponseAlleleMatricesItem();
-        brapiResponseAlleleMatricesItem.setName("Dataset " + idx.toString());
-        brapiResponseAlleleMatricesItem.setLastUpdated(new Date().toString());
-        brapiResponseAlleleMatricesItem.setMatrixDbId(idx.toString());
-        brapiResponseAlleleMatricesItem.setStudyDbId("10");
-        brapiResponseAlleleMatricesItem.setDescription("Dummy dataset number " + idx.toString());
-        return brapiResponseAlleleMatricesItem;
     }
 
     private List<BrapiResponseAlleleMatricesItem> getBrapiJsonResponseAlleleMatricesItemsByStudyDbId(Integer studyDbId) {

@@ -57,6 +57,13 @@ public class BrapiResponseMapCalls {
                 Arrays.asList(RestMethodTypes.GET),
                 Arrays.asList(BrapiDataTypes.JSON)));
 
+        returnVal.add(new BrapiResponseCallsItem(new RestUri(this.contextRoot,
+                GobiiControllerType.BRAPI.getControllerPath(),
+                GobiiServiceRequestId.URL_ALLELE_MATRIX_SEARCH .getResourcePath()),
+                Arrays.asList(RestMethodTypes.GET,RestMethodTypes.POST),
+                Arrays.asList(BrapiDataTypes.FLAPJACK)));
+
+
         return returnVal;
     }
 
