@@ -444,21 +444,7 @@
     <!-- ********************** BrAPI Beans ******************************* -->
 
     <bean id="brapiResponseMapStudiesSearch" class="org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch"/>
-
-    <!--
-    <bean id="brapiRequestStudiesSearch" class="org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch"/>
-    <bean id="brapiResponseStudiesSearch" class="org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch"/>
-    <bean id="brapiResponseStudiesSearchItem" class="org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearchItem"/>
-
-    <bean id="brapiResponseMapObservationVariables" class="org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseMapObservationVariables"/>
-    <bean id="brapiResponseObservationVariablesDetail" class="org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseObservationVariablesDetail"/>
-    <bean id="brapiResponseObservationVariablesMaster" class="org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseObservationVariablesMaster"/>
-    <bean id="observationMethhod" class="org.gobiiproject.gobiibrapi.calls.studies.observationvariables.ObservationMethod/>
-    <bean id="observationScale" class="org.gobiiproject.gobiibrapi.calls.studies.observationvariables.ObservationScale"/>
-    <bean id="observationTrait" class="org.gobiiproject.gobiibrapi.calls.studies.observationvariables.ObservationTrait"/>
-    <bean id="scaleValidValues" class="org.gobiiproject.gobiibrapi.calls.studies.observationvariables.ScaleValidValues"/>
-* -->
-
+    <bean id="brapiResponseMapAlleleMatrixSearch" class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch.BrapiResponseMapAlleleMatrixSearch"/>
 
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 

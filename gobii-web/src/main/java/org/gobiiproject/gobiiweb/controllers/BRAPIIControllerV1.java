@@ -7,43 +7,25 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.gobiiproject.gobidomain.services.AnalysisService;
-import org.gobiiproject.gobidomain.services.ConfigSettingsService;
-import org.gobiiproject.gobidomain.services.ContactService;
-import org.gobiiproject.gobidomain.services.CvService;
-import org.gobiiproject.gobidomain.services.DataSetService;
-import org.gobiiproject.gobidomain.services.DisplayService;
-import org.gobiiproject.gobidomain.services.ExperimentService;
-import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
-import org.gobiiproject.gobidomain.services.LoaderFilesService;
-import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
-import org.gobiiproject.gobidomain.services.ManifestService;
-import org.gobiiproject.gobidomain.services.MapsetService;
-import org.gobiiproject.gobidomain.services.MarkerGroupService;
-import org.gobiiproject.gobidomain.services.MarkerService;
-import org.gobiiproject.gobidomain.services.NameIdListService;
-import org.gobiiproject.gobidomain.services.OrganizationService;
-import org.gobiiproject.gobidomain.services.PingService;
-import org.gobiiproject.gobidomain.services.PlatformService;
-import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
 import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseGermplasmByDbId;
 import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseMapGermplasmByDbId;
 import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseAlleleMatrices;
 import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseMapAlleleMatrices;
+import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch.BrapiResponseMapAlleleMatrixSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseMapObservationVariables;
 import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiResponseObservationVariablesMaster;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
+import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
+import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -130,65 +112,10 @@ public class BRAPIIControllerV1 {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV1.class);
 
     @Autowired
-    private PingService pingService = null;
-
-
-    @Autowired
     private BrapiResponseMapStudiesSearch brapiResponseMapStudiesSearch = null;
 
     @Autowired
-    private ContactService contactService = null;
-
-    @Autowired
-    private ReferenceService referenceService = null;
-
-    @Autowired
-    private AnalysisService analysisService = null;
-
-    @Autowired
-    private ManifestService manifestService = null;
-
-    @Autowired
-    private MarkerGroupService markerGroupService = null;
-
-    @Autowired
-    private OrganizationService organizationService = null;
-
-    @Autowired
-    private ExperimentService experimentService = null;
-
-    @Autowired
-    private NameIdListService nameIdListService = null;
-
-    @Autowired
-    private LoaderInstructionFilesService loaderInstructionFilesService = null;
-
-    @Autowired
-    private ExtractorInstructionFilesService extractorInstructionFilesService = null;
-
-    @Autowired
-    private LoaderFilesService loaderFilesService = null;
-
-    @Autowired
-    private DisplayService displayService = null;
-
-    @Autowired
-    private CvService cvService = null;
-
-    @Autowired
-    private MarkerService markerService = null;
-
-    @Autowired
-    private DataSetService dataSetService = null;
-
-    @Autowired
-    private PlatformService platformService = null;
-
-    @Autowired
-    private MapsetService mapsetService = null;
-
-    @Autowired
-    private ConfigSettingsService configSettingsService;
+    private BrapiResponseMapAlleleMatrixSearch brapiResponseMapAlleleMatrixSearch = null;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -395,11 +322,10 @@ public class BRAPIIControllerV1 {
         try {
 
             BrapiResponseAlleleMatrices brapiResponseAlleleMatrices;
-            if(studyDbIdd.isPresent()){
+            if (studyDbIdd.isPresent()) {
                 Integer studyDbIdAsInteger = Integer.parseInt(studyDbIdd.get());
                 brapiResponseAlleleMatrices = (new BrapiResponseMapAlleleMatrices()).getBrapiResponseAlleleMatricesItemsByStudyDbId(studyDbIdAsInteger);
-            }
-            else{
+            } else {
                 brapiResponseAlleleMatrices = (new BrapiResponseMapAlleleMatrices()).getBrapiResponseAlleleMatrices();
             }
 
@@ -423,5 +349,39 @@ public class BRAPIIControllerV1 {
         return returnVal;
     }
 
+    @RequestMapping(value = "/allelematrix-search",
+            method = RequestMethod.GET,
+            produces = "application/json")
+    @ResponseBody
+    public String getAlleleMatrix(@RequestParam("matrixDbId") String matrixDbId,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response) throws Exception {
+
+        String returnVal = null;
+
+        BrapiMetaData brapiMetaData = new BrapiMetaData();
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            brapiMetaData = brapiResponseMapAlleleMatrixSearch.submitExtractRequest(cropType, matrixDbId);
+
+
+        } catch (GobiiException e) {
+
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            brapiMetaData.addStatusMessage("exception", message);
+
+        } catch (Exception e) {
+
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            brapiMetaData.addStatusMessage("exception", message);
+        }
+
+        returnVal = objectMapper.writeValueAsString(brapiMetaData);
+
+        return returnVal;
+    }
 
 }// BRAPIController
