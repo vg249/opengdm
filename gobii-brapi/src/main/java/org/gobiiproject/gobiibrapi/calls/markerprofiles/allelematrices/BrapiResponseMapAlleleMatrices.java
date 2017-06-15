@@ -7,6 +7,8 @@ import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSear
 import org.gobiiproject.gobiimodel.headerlesscontainer.DataSetDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.gobiiproject.gobiimodel.headerlesscontainer.ExperimentDTO;
+
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,7 +59,6 @@ public class BrapiResponseMapAlleleMatrices {
 
 
     }
-
 
     private List<BrapiResponseAlleleMatricesItem> getBrapiJsonResponseAlleleMatricesItemsByStudyDbId(Integer studyDbId) {
 

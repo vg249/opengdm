@@ -7,7 +7,28 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.gobiiproject.gobidomain.services.AnalysisService;
+import org.gobiiproject.gobidomain.services.ConfigSettingsService;
+import org.gobiiproject.gobidomain.services.ContactService;
+import org.gobiiproject.gobidomain.services.CvService;
+import org.gobiiproject.gobidomain.services.DataSetService;
+import org.gobiiproject.gobidomain.services.DisplayService;
+import org.gobiiproject.gobidomain.services.ExperimentService;
+import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
+import org.gobiiproject.gobidomain.services.LoaderFilesService;
+import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
+import org.gobiiproject.gobidomain.services.ManifestService;
+import org.gobiiproject.gobidomain.services.MapsetService;
+import org.gobiiproject.gobidomain.services.MarkerGroupService;
+import org.gobiiproject.gobidomain.services.MarkerService;
+import org.gobiiproject.gobidomain.services.NameIdListService;
+import org.gobiiproject.gobidomain.services.OrganizationService;
+import org.gobiiproject.gobidomain.services.PingService;
+import org.gobiiproject.gobidomain.services.PlatformService;
+import org.gobiiproject.gobidomain.services.ProjectService;
+import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
 import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseGermplasmByDbId;
@@ -20,7 +41,7 @@ import org.gobiiproject.gobiibrapi.calls.studies.observationvariables.BrapiRespo
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch;
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
-import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
+
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapResponseEnvelope;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
@@ -113,10 +134,19 @@ public class BRAPIIControllerV1 {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BRAPIIControllerV1.class);
 
     @Autowired
+    private PingService pingService = null;
+
+
+    @Autowired
     private BrapiResponseMapStudiesSearch brapiResponseMapStudiesSearch = null;
+
 
     @Autowired
     private BrapiResponseMapAlleleMatrixSearch brapiResponseMapAlleleMatrixSearch = null;
+
+
+    @Autowired
+    private BrapiResponseMapAlleleMatrices brapiResponseMapAlleleMatrices = null;
 
     private ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -325,9 +355,9 @@ public class BRAPIIControllerV1 {
             BrapiResponseAlleleMatrices brapiResponseAlleleMatrices;
             if (studyDbIdd.isPresent()) {
                 Integer studyDbIdAsInteger = Integer.parseInt(studyDbIdd.get());
-                brapiResponseAlleleMatrices = (new BrapiResponseMapAlleleMatrices()).getBrapiResponseAlleleMatricesItemsByStudyDbId(studyDbIdAsInteger);
+                brapiResponseAlleleMatrices = brapiResponseMapAlleleMatrices.getBrapiResponseAlleleMatricesItemsByStudyDbId(studyDbIdAsInteger);
             } else {
-                brapiResponseAlleleMatrices = (new BrapiResponseMapAlleleMatrices()).getBrapiResponseAlleleMatrices();
+                brapiResponseAlleleMatrices = brapiResponseMapAlleleMatrices.getBrapiResponseAlleleMatrices();
             }
 
             BrapiResponseEnvelopeMasterDetail.setResult(brapiResponseAlleleMatrices);
@@ -390,8 +420,8 @@ public class BRAPIIControllerV1 {
             produces = "application/json")
     @ResponseBody
     public String getAlleleMatrixStatus(@PathVariable("jobId") String jobId,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response) throws Exception {
+                                        HttpServletRequest request,
+                                        HttpServletResponse response) throws Exception {
 
         String returnVal = null;
 

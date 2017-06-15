@@ -445,7 +445,7 @@
 
     <bean id="brapiResponseMapStudiesSearch" class="org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch"/>
     <bean id="brapiResponseMapAlleleMatrixSearch" class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch.BrapiResponseMapAlleleMatrixSearch"/>
-
+    <bean id="brapiResponseMapAlleleMatrices" class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseMapAlleleMatrices"/>
     <!-- ************************ DATA ACCESS BEANS ************************* -->
 
     <!--&lt;!&ndash;************************** SET UP CONFIGURAITON FOR JDBC settings&ndash;&gt;-->
