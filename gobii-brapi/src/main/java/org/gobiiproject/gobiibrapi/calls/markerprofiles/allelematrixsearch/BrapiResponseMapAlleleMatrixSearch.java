@@ -10,6 +10,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInst
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
+import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,7 +27,7 @@ public class BrapiResponseMapAlleleMatrixSearch {
     @Autowired
     private ExtractorInstructionFilesService extractorInstructionFilesService;
 
-    public BrapiMetaData submitExtractRequest(String crop, String matrixDbId) {
+    public BrapiMetaData search(String crop, String matrixDbId) {
 
         BrapiMetaData brapiMetaData = new BrapiMetaData();
 
@@ -55,5 +56,45 @@ public class BrapiResponseMapAlleleMatrixSearch {
         return brapiMetaData;
     }
 
+    public BrapiMetaData getStatus(String crop, String jobId) {
+
+        BrapiMetaData brapiMetaData = new BrapiMetaData();
+
+        ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
+                .getStatus(crop,jobId);
+
+        GobiiJobStatus gobiiJobStatus = extractorInstructionFilesDTONew
+                .getGobiiExtractorInstructions()
+                .get(0)
+                .getDataSetExtracts()
+                .get(0)
+                .getGobiiJobStatus();
+
+        String brapiAsynchStatus = null;
+        switch (gobiiJobStatus) {
+
+            case FAILED:
+                brapiAsynchStatus = "FAILED";
+                break;
+
+            case STARTED:
+                brapiAsynchStatus = "PENDING";
+                break;
+
+            case COMPLETED:
+                brapiAsynchStatus = "FINISHED";
+                break;
+
+            case IN_PROGRESS:
+                brapiAsynchStatus = "INPROCESS";
+                break;
+
+        }
+
+
+        brapiMetaData.addStatusMessage("asynchstatus", brapiAsynchStatus);
+
+        return brapiMetaData;
+    }
 
 }

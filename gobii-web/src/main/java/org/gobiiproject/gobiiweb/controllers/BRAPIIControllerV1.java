@@ -363,7 +363,42 @@ public class BRAPIIControllerV1 {
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            brapiMetaData = brapiResponseMapAlleleMatrixSearch.submitExtractRequest(cropType, matrixDbId);
+            brapiMetaData = brapiResponseMapAlleleMatrixSearch.search(cropType, matrixDbId);
+
+
+        } catch (GobiiException e) {
+
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            brapiMetaData.addStatusMessage("exception", message);
+
+        } catch (Exception e) {
+
+            String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
+
+            brapiMetaData.addStatusMessage("exception", message);
+        }
+
+        returnVal = objectMapper.writeValueAsString(brapiMetaData);
+
+        return returnVal;
+    }
+
+    @RequestMapping(value = "/allelematrix-search/status/{jobId}",
+            method = RequestMethod.GET,
+            produces = "application/json")
+    @ResponseBody
+    public String getAlleleMatrixStatus(@PathVariable("jobId") String jobId,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response) throws Exception {
+
+        String returnVal = null;
+
+        BrapiMetaData brapiMetaData = new BrapiMetaData();
+        try {
+
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            brapiMetaData = brapiResponseMapAlleleMatrixSearch.getStatus(cropType, jobId);
 
 
         } catch (GobiiException e) {
