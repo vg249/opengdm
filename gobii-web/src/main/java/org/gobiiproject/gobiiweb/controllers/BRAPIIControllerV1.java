@@ -137,6 +137,9 @@ public class BRAPIIControllerV1 {
     private BrapiResponseMapStudiesSearch brapiResponseMapStudiesSearch = null;
 
     @Autowired
+    private BrapiResponseMapAlleleMatrices brapiResponseMapAlleleMatrices = null;
+
+    @Autowired
     private ContactService contactService = null;
 
     @Autowired
@@ -153,9 +156,6 @@ public class BRAPIIControllerV1 {
 
     @Autowired
     private OrganizationService organizationService = null;
-
-    @Autowired
-    private ExperimentService experimentService = null;
 
     @Autowired
     private NameIdListService nameIdListService = null;
@@ -397,10 +397,10 @@ public class BRAPIIControllerV1 {
             BrapiResponseAlleleMatrices brapiResponseAlleleMatrices;
             if(studyDbIdd.isPresent()){
                 Integer studyDbIdAsInteger = Integer.parseInt(studyDbIdd.get());
-                brapiResponseAlleleMatrices = (new BrapiResponseMapAlleleMatrices()).getBrapiResponseAlleleMatricesItemsByStudyDbId(studyDbIdAsInteger);
+                brapiResponseAlleleMatrices = brapiResponseMapAlleleMatrices.getBrapiResponseAlleleMatricesItemsByStudyDbId(studyDbIdAsInteger);
             }
             else{
-                brapiResponseAlleleMatrices = (new BrapiResponseMapAlleleMatrices()).getBrapiResponseAlleleMatrices();
+                brapiResponseAlleleMatrices = brapiResponseMapAlleleMatrices.getBrapiResponseAlleleMatrices();
             }
 
             BrapiResponseEnvelopeMasterDetail.setResult(brapiResponseAlleleMatrices);
