@@ -3,7 +3,9 @@ package org.gobiiproject.gobiimodel.headerlesscontainer;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityColumn;
 import org.gobiiproject.gobiimodel.dto.annotations.GobiiEntityParam;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Angel on 4/13/2016.
@@ -26,6 +28,7 @@ public class ExperimentDTO extends DTOBase {
     private Integer modifiedBy;
     private Date modifiedDate;
     private Integer statusId;
+    private List<DataSetDTO> datasets = new ArrayList<>();
 
 
     @Override
@@ -158,6 +161,10 @@ public class ExperimentDTO extends DTOBase {
     public void setStatusId(Integer statusId) {
         this.statusId = statusId;
     }
+
+    public List<DataSetDTO> getDatasets() { return datasets; }
+
+    public void setDatasets(List<DataSetDTO> datasets) { this.datasets = datasets;}
 
 
 }

@@ -444,6 +444,7 @@
     <!-- ********************** BrAPI Beans ******************************* -->
 
     <bean id="brapiResponseMapStudiesSearch" class="org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesSearch"/>
+    <bean id="brapiResponseMapAlleleMatrices" class="org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseMapAlleleMatrices"/>
 
     <!--
     <bean id="brapiRequestStudiesSearch" class="org.gobiiproject.gobiibrapi.calls.studies.search.BrapiRequestStudiesSearch"/>
