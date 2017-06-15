@@ -22,6 +22,7 @@ import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesS
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
+import org.gobiiproject.gobiibrapi.core.responsemodel.BrapResponseEnvelope;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -359,27 +360,27 @@ public class BRAPIIControllerV1 {
 
         String returnVal = null;
 
-        BrapiMetaData brapiMetaData = new BrapiMetaData();
+        BrapResponseEnvelope brapResponseEnvelope = new BrapResponseEnvelope();
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            brapiMetaData = brapiResponseMapAlleleMatrixSearch.search(cropType, matrixDbId);
+            brapResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.search(cropType, matrixDbId));
 
 
         } catch (GobiiException e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiMetaData.addStatusMessage("exception", message);
+            brapResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
 
         } catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiMetaData.addStatusMessage("exception", message);
+            brapResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
-        returnVal = objectMapper.writeValueAsString(brapiMetaData);
+        returnVal = objectMapper.writeValueAsString(brapResponseEnvelope);
 
         return returnVal;
     }
@@ -394,27 +395,27 @@ public class BRAPIIControllerV1 {
 
         String returnVal = null;
 
-        BrapiMetaData brapiMetaData = new BrapiMetaData();
+        BrapResponseEnvelope brapResponseEnvelope = new BrapResponseEnvelope();
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            brapiMetaData = brapiResponseMapAlleleMatrixSearch.getStatus(cropType, jobId);
+            brapResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.getStatus(cropType, jobId));
 
 
         } catch (GobiiException e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiMetaData.addStatusMessage("exception", message);
+            brapResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
 
         } catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapiMetaData.addStatusMessage("exception", message);
+            brapResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
-        returnVal = objectMapper.writeValueAsString(brapiMetaData);
+        returnVal = objectMapper.writeValueAsString(brapResponseEnvelope);
 
         return returnVal;
     }
