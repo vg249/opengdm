@@ -54,6 +54,16 @@ public class ErrorLogger {
 	}
 
 	/**
+	 * Returns the file of the first FileAppender in the logging method.
+	 * @return the file path
+	 */
+	public static String getLogFilepath(){
+		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+		FileAppender<ILoggingEvent> appender = (FileAppender<ILoggingEvent>)context.getLoggerList().get(0).getAppender("FILE");
+		return appender.getFile();
+	}
+
+	/**
 	 * Sets Root level logging level for Logback.
 	 * If string is not a valid logging level, sets logging level to 'ERROR' only.
 	 * @param level Level of logging to set to. One of {ERROR, INFO, TRACE, DEBUG, WARN,ALL,OFF}

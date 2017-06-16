@@ -136,7 +136,6 @@ public class GobiiFileReader {
 
 		//Error logs go to a file based on crop (for human readability) and
 		pm.addPath("instruction file",new File(instructionFile).getAbsolutePath());
-		startTime = System.currentTimeMillis();
 		ErrorLogger.logInfo("Digester","Beginning read of "+instructionFile);
 		List<GobiiLoaderInstruction> list= parseInstructionFile(instructionFile);
 		if(list==null || list.isEmpty()){
@@ -191,13 +190,19 @@ public class GobiiFileReader {
 		pm.setUser(jobUser);
 
 		String logDir=configuration.getFileSystemLog();
+		String logFile=null;
 		if(logDir!=null) {
-			String logFile=logDir+"/"+jobUser.substring(0,jobUser.indexOf('@'))+"_"+getSourceFileName(zero.getGobiiFile())+".log";
+			String instructionName=new File(instructionFile).getName();
+			instructionName=instructionName.substring(0,instructionName.lastIndexOf('.'));
+			logFile=logDir+"/"+instructionName+".log";
+			String oldLogFile=ErrorLogger.getLogFilepath();
 			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
 			ErrorLogger.setLogFilepath(logFile);
-			pm.addPath("Error Log",logFile);
 			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
+			FileSystemInterface.rmIfExist(oldLogFile);
 		}
+
+		SimpleTimer.start("FileRead");
 
 		boolean qcCheck = zero.isQcCheck();
 		if (qcCheck) {//QC - Subsection #1 of 3
@@ -380,9 +385,8 @@ public class GobiiFileReader {
 		}
 
 		try{
-			endTime = System.currentTimeMillis();
-			duration = endTime - startTime;
-			pm.setBody(jobName,zero.getGobiiFile().getGobiiFileType().name(),duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+			pm.addPath("Error Log", logFile);
+			pm.setBody(jobName,zero.getGobiiFile().getGobiiFileType().name(),SimpleTimer.stop("FileRead"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 			mailInterface.send(pm);
 		}catch(Exception e){
 			ErrorLogger.logError("MailInterface","Error Sending Mail",e);

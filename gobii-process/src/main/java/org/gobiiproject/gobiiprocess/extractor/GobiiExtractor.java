@@ -45,6 +45,10 @@ import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiimodel.utils.HelperFunctions.*;
 import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
 
+/**
+ * Core class for Extraction. Contains the main method for extraction, as well as the overall workflow.
+ * @author jdl232
+ */
 public class GobiiExtractor {
 	private static String propertiesFile;
 	private static GobiiUriFactory gobiiUriFactory;
@@ -52,41 +56,46 @@ public class GobiiExtractor {
 	private static String rootDir="../";
 	private static String markerListOverrideLocation=null;
 
+	/**
+	 * Main class of Extractor. Takes optional arguments + location of a json-based instruction file
+	 * @param args Command line arguments
+	 * @throws Exception If a critical exception occurs.
+	 */
 	public static void main(String[] args) throws Exception {
 
 		Options o = new Options()
-         		.addOption("v", "verbose", false, "Verbose output")
-         		.addOption("e", "errlog", true, "Error log override location")
-         		.addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
-         		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
-         		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
+				.addOption("v", "verbose", false, "Verbose output")
+				.addOption("e", "errlog", true, "Error log override location")
+				.addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
+				.addOption("c","config",true,"Fully qualified path to gobii configuration file")
+				.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files")
 				.addOption("m", "markerList", true, "Fully qualified path to marker list files - (Debugging, forces marker list extract)");
 		ExtractorGlobalConfigs.addOptions(o);
 
-        CommandLineParser parser = new DefaultParser();
-        try{
-            CommandLine cli = parser.parse( o, args );
-            if(cli.hasOption("verbose")) verbose=true;
-            if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
-            if(cli.hasOption("rootDir")){
-                rootDir = cli.getOptionValue("rootDir");
-            }
-            if(cli.hasOption("hdfFiles")) HDF5Interface.setPathToHDF5Files(cli.getOptionValue("hdfFiles"));
-            if(cli.hasOption("markerList")) markerListOverrideLocation=cli.getOptionValue("markerList");
+		CommandLineParser parser = new DefaultParser();
+		try{
+			CommandLine cli = parser.parse( o, args );
+			if(cli.hasOption("verbose")) verbose=true;
+			if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
+			if(cli.hasOption("rootDir")){
+				rootDir = cli.getOptionValue("rootDir");
+			}
+			if(cli.hasOption("hdfFiles")) HDF5Interface.setPathToHDF5Files(cli.getOptionValue("hdfFiles"));
+			if(cli.hasOption("markerList")) markerListOverrideLocation=cli.getOptionValue("markerList");
 			ExtractorGlobalConfigs.setFromFlags(cli);
-            args=cli.getArgs();//Remaining args passed through
+			args=cli.getArgs();//Remaining args passed through
 
-        }catch(org.apache.commons.cli.ParseException exp ) {
-            new HelpFormatter().printHelp("java -jar Extractor.jar ","Also accepts input file directly after arguments\n"
-                    + "Example: java -jar Extractor.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json",o,null,true);
+		}catch(org.apache.commons.cli.ParseException exp ) {
+			new HelpFormatter().printHelp("java -jar Extractor.jar ","Also accepts input file directly after arguments\n"
+					+ "Example: java -jar Extractor.jar -c /home/jdl232/customConfig.properties -v /home/jdl232/testLoad.json",o,null,true);
 
-            System.exit(2);
-        }
+			System.exit(2);
+		}
 
-     	String extractorScriptPath=rootDir+"extractors/";
-    	HDF5Interface.setPathToHDF5(extractorScriptPath+"hdf5/bin/");
+		String extractorScriptPath=rootDir+"extractors/";
+		HDF5Interface.setPathToHDF5(extractorScriptPath+"hdf5/bin/");
 
-    	if(propertiesFile==null)propertiesFile=rootDir+"config/gobii-web.xml";
+		if(propertiesFile==null)propertiesFile=rootDir+"config/gobii-web.xml";
 
 		boolean success=true;
 		ConfigSettings configuration=null;
@@ -112,10 +121,11 @@ public class GobiiExtractor {
 			instructionFile=args[0];
 		}
 
+		ErrorLogger.logInfo("Extractor","Beginning extract of "+instructionFile);
 		SimpleTimer.start("Extract");
 
 		List<GobiiExtractorInstruction> list= parseExtractorInstructionFile(instructionFile);
-		if(list==null){
+		if(list==null || list.isEmpty()){
 			ErrorLogger.logError("Extractor","No instruction for file "+instructionFile);
 			return;
 		}
@@ -126,22 +136,22 @@ public class GobiiExtractor {
 			String instructionName=new File(instructionFile).getName();
 			instructionName=instructionName.substring(0,instructionName.lastIndexOf('.'));
 			logFile=logDir+"/"+instructionName+".log";
+			String oldLogFile=ErrorLogger.getLogFilepath();
 			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
 			ErrorLogger.setLogFilepath(logFile);
 			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
+			FileSystemInterface.rmIfExist(oldLogFile);
 		}
 		else{
 			ErrorLogger.logError("Extractor","log directory is not defined in config file");
 			return;
 		}
 
-
-
-			for (GobiiExtractorInstruction inst : list) {
-				String crop = inst.getGobiiCropType();
-				String extractType="";
-				if (crop == null) crop = divineCrop(instructionFile);
-				try {
+		for (GobiiExtractorInstruction inst : list) {
+			String crop = inst.getGobiiCropType();
+			String extractType="";
+			if (crop == null) crop = divineCrop(instructionFile);
+			try {
 				Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
 				if (!(Files.exists(cropPath) &&
 						Files.isDirectory(cropPath))) {
@@ -473,10 +483,10 @@ public class GobiiExtractor {
 
 	/***
 	 * Get marker and sample count for Email notification Table
-	 * @param success
-	 * @param pm
-	 * @param markerFile
-	 * @param sampleFile
+	 * @param success if existing process is 'successful'
+	 * @param pm Process Message to append to
+	 * @param markerFile Marker file location
+	 * @param sampleFile Sample file location
 	 */
 	private static void getCounts(boolean success, ProcessMessage pm, String markerFile, String sampleFile) {
 		if(success){
@@ -719,6 +729,12 @@ public class GobiiExtractor {
 	}
 
 
+	/**
+	 * Parses the extractor instruction file from the JSON object using the Object Mapper
+	 * @param filename File to parse
+	 * @return List of Extractor Instructions to work on
+	 */
+	//Interesting fact, there are no global settings of any kind, each instruction is an island
 	public static List<GobiiExtractorInstruction> parseExtractorInstructionFile(String filename){
 		ObjectMapper objectMapper = new ObjectMapper();
 		GobiiExtractorInstruction[] file = null;
@@ -733,9 +749,10 @@ public class GobiiExtractor {
 	}
 
 	/**
-	 * Determine crop type by looking at the instruction file's location for the name of a Socrop.
-	 * @param instructionFile
-	 * @return GobiiCropType
+	 * Determine crop type by looking at the instruction file's location for the name of a crop.
+	 * This is a backup in case the JSON file doesn't specify the crop internally.
+	 * @param instructionFile Location of the instruction file
+	 * @return String representation of the Gobii Crop
 	 */
 	private static String divineCrop(String instructionFile) {
 		String upper=instructionFile.toUpperCase();
