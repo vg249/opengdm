@@ -1,8 +1,10 @@
 package org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch;
 
 import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseAlleleMatrices;
-import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseAlleleMatricesItem;
+import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
+import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
+import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
+import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiimodel.dto.instructions.GobiiFilePropNameId;
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtract;
@@ -15,9 +17,8 @@ import org.gobiiproject.gobiimodel.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 
 /**
  * Created by Phil on 12/15/2016.
@@ -47,7 +48,6 @@ public class BrapiResponseMapAlleleMatrixSearch {
         extractorInstructionFilesDTO.setInstructionFileName(jobId);
 
 
-
         ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
                 .createInstruction(crop, extractorInstructionFilesDTO);
 
@@ -56,12 +56,12 @@ public class BrapiResponseMapAlleleMatrixSearch {
         return brapiMetaData;
     }
 
-    public BrapiMetaData getStatus(String crop, String jobId) {
+    public BrapiMetaData getStatus(String crop, String jobId, HttpServletRequest request) {
 
         BrapiMetaData brapiMetaData = new BrapiMetaData();
 
         ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
-                .getStatus(crop,jobId);
+                .getStatus(crop, jobId);
 
         GobiiJobStatus gobiiJobStatus = extractorInstructionFilesDTONew
                 .getGobiiExtractorInstructions()
@@ -89,6 +89,50 @@ public class BrapiResponseMapAlleleMatrixSearch {
                 brapiAsynchStatus = "INPROCESS";
                 break;
 
+        }
+
+
+        // this is only for test purposes!!! -- it should
+        if (!gobiiJobStatus.equals(GobiiJobStatus.COMPLETED)) {
+
+            try {
+
+                Thread.sleep(4000); // make it look like we're processing
+
+                String testFileName = "illumina.data";
+                ClassLoader classLoader = getClass().getClassLoader();
+                File testResultFile = new File(classLoader.getResource(testFileName).getFile());
+
+
+                if (testResultFile.exists()) {
+
+                    RestUri restUri = new GobiiUriFactory(request.getContextPath(),
+                            GobiiControllerType.BRAPI)
+                            .resourceColl(GobiiServiceRequestId.URL_FILES);
+
+
+                    String serverName = request.getServerName();
+                    int portNumber = request.getServerPort();
+
+                    String fileUri = "http://"
+                            + serverName
+                            + ":"
+                            + portNumber
+                            + "/"
+                            + restUri.makeUrl()
+                            + "?fqpn=" + testResultFile.getAbsolutePath();
+
+                    brapiMetaData.getDatafiles().add(fileUri);
+
+                    brapiAsynchStatus = "FINISHED";
+                } else {
+                    brapiMetaData.addStatusMessage("error", "The test file is not present: " + testFileName);
+                }
+
+
+            } catch (Exception e) {
+                brapiMetaData.addStatusMessage("Exception", e.getMessage());
+            }
         }
 
 
