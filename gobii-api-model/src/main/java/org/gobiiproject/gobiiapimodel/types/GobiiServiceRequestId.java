@@ -47,7 +47,8 @@ public enum GobiiServiceRequestId {
     URL_VENDORS("vendors"),
     URL_FILE_QC_INSTRUCTIONS("/instructions/qualitycontrol"),
     URL_ALLELE_MATRIX_SEARCH("allelematrix-search"),
-    URL_ALLELE_MATRICES("allelematrices");
+    URL_ALLELE_MATRICES("allelematrices"),
+    URL_FILES("files");
 
 
     private String requestPath;

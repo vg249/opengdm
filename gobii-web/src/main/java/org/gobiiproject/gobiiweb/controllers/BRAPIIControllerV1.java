@@ -50,6 +50,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,6 +61,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
 
 
@@ -429,7 +433,9 @@ public class BRAPIIControllerV1 {
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            brapResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.getStatus(cropType, jobId));
+            brapResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.getStatus(cropType,
+                    jobId,
+                    request));
 
 
         } catch (GobiiException e) {
@@ -449,5 +455,39 @@ public class BRAPIIControllerV1 {
 
         return returnVal;
     }
+
+
+    /***
+     * Returns a stream for the at at the path specified by the query parameter. This method is not
+     * defined by the BRAPI spec, nor should it be: the spec only stipulates that entries in the files
+     * section of the metadata object be accessible to the client.
+     *
+     * @param fqpn: fully qualified path of file to download
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/files",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public void getFile(@RequestParam("fqpn") String fqpn,
+                                        HttpServletRequest request,
+                                        HttpServletResponse response) throws Exception {
+
+        try {
+
+            response.setContentType("application/text");
+            InputStream inputStream = new FileInputStream(fqpn);
+            // copy it to response's OutputStream
+            org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+
+        } catch (IOException ex) {
+            throw new RuntimeException("IOError writing file " + fqpn + "to output stream: " + ex.getMessage());
+        }
+    }
+
 
 }// BRAPIController
