@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.*;
 
 import org.apache.commons.cli.*;
+import org.gobiiproject.gobiiapimodel.payload.Header;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
@@ -463,8 +464,29 @@ public class GobiiFileReader {
 				.resourceColl(GobiiServiceRequestId.URL_FILE_EXTRACTOR_INSTRUCTIONS));
 		PayloadEnvelope<ExtractorInstructionFilesDTO> extractorInstructionFileDTOResponseEnvelope = gobiiEnvelopeRestResourceForPost.post(ExtractorInstructionFilesDTO.class,
 				payloadEnvelope);
+
 		if (extractorInstructionFileDTOResponseEnvelope != null) {
-			ErrorLogger.logInfo("Digester","Extractor Request Sent");
+
+			Header header = extractorInstructionFileDTOResponseEnvelope.getHeader();
+			if (header.getStatus().isSucceeded() &&
+					header
+							.getStatus()
+							.getStatusMessages()
+							.stream()
+							.filter(headerStatusMessage -> headerStatusMessage.getGobiiStatusLevel().equals(GobiiStatusLevel.VALIDATION))
+							.count() == 0) {
+
+				ErrorLogger.logInfo("Digester", "Extractor Request Sent");
+
+			} else {
+				String message = null;
+				for (HeaderStatusMessage currentStatusMesage : header.getStatus().getStatusMessages()) {
+					message += (currentStatusMesage.getMessage()) + "; ";
+				}
+
+				ErrorLogger.logError("Digester", "Error sending extract request: " + message);
+
+			}
 		}
 		else {
 			ErrorLogger.logInfo("Digester","Error Sending Extractor Request");
