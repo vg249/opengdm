@@ -347,6 +347,11 @@ public class GobiiFileReader {
 					}
 
 				}
+
+				if (qcCheck) {//QC - Subsection #3 of 3
+					sendQCExtract(configuration, crop);
+				}
+
 			}
 			if(!loadedData){
 				ErrorLogger.logError("FileReader", "No new data was uploaded.");
@@ -390,9 +395,6 @@ public class GobiiFileReader {
 		}
 		HelperFunctions.completeInstruction(instructionFile,configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
 
-		if (qcCheck) {//QC - Subsection #3 of 3
-			sendQCExtract(configuration, crop);
-		}
 	}
 
 	private static void uploadToMonet(Integer dataSetId, GobiiCropConfig gobiiCropConfig, String errorPath, File variantFile, String markerFileLoc, String sampleFileLoc) {

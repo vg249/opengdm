@@ -525,32 +525,32 @@ public class GobiiExtractor {
 		ErrorLogger.logInfo("QC", "KDC Context Path: " + configuration.getKDCConfig().getContextPath());
 		ErrorLogger.logInfo("QC", "KDC Port: " + configuration.getKDCConfig().getPort());
 		ErrorLogger.logInfo("QC", "KDC Active: " + configuration.getKDCConfig().isActive());
-		QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
-		qcInstructionsDTOToSend.setContactId(inst.getContactId());
-		qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
-		qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
-		qcInstructionsDTOToSend.setDatasetId(datasetId);
-		// To create the QC instructions file for the Gobii web services independently of any QC status
-		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
-		// According to Liz, there are several quality files so this method is no longer necessary
-		qcInstructionsDTOToSend.setQualityFileName("");
-		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
-		if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
-            ErrorLogger.logError("QC", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
-            return;
-        }
-        else {
-			String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-			gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
-			PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
-			GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<>(gobiiUriFactory
-					.resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
-			PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,	payloadEnvelope);
-			if (qcInstructionFileDTOResponseEnvelope != null) {
-            	ErrorLogger.logInfo("QC", "QC Instructions Request Sent");
-        	} else {
-            	ErrorLogger.logError("QC", "Error Sending QC Instructions Request");
-        	}
+//		QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
+//		qcInstructionsDTOToSend.setContactId(inst.getContactId());
+//		qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
+//		qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
+//		qcInstructionsDTOToSend.setDatasetId(datasetId);
+//		// To create the QC instructions file for the Gobii web services independently of any QC status
+//		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
+//		// According to Liz, there are several quality files so this method is no longer necessary
+//		qcInstructionsDTOToSend.setQualityFileName("");
+//		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
+//		if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
+//            ErrorLogger.logError("QC", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
+//            return;
+//        }
+//        else {
+//			String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
+//			gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+//			PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
+//			GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<>(gobiiUriFactory
+//					.resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
+//			PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,	payloadEnvelope);
+//			if (qcInstructionFileDTOResponseEnvelope != null) {
+//            	ErrorLogger.logInfo("QC", "QC Instructions Request Sent");
+//        	} else {
+//            	ErrorLogger.logError("QC", "Error Sending QC Instructions Request");
+//        	}
 			ServerBase serverBase = new ServerBase(configuration.getKDCConfig().getHost(),
 					configuration.getKDCConfig().getContextPath(),
 					configuration.getKDCConfig().getPort(),
@@ -710,7 +710,7 @@ public class GobiiExtractor {
 				}
 			}
 			ErrorLogger.logInfo("QC", "Done with the QC Subsection #1 of 1!");
-		}
+//		}
 	}
 
 	/**
