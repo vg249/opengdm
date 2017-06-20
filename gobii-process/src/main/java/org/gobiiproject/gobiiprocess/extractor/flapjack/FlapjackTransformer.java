@@ -18,7 +18,6 @@ public class FlapjackTransformer {
 	 * @param markerFile marker file name *extended* if the extended flag is true (has map info)
 	 * @param sampleFile sample file name
 	 * @param chrLengthFile chromosome length file
-	 * @param datasetId ID number of the dataset (unused)
 	 * @param tempDir directory for temp (and output) files. This function does not distinguish between the two
 	 * @param outFile output map file
 	 * @param errorFile temporary file to redirect error stream to
@@ -64,7 +63,6 @@ public class FlapjackTransformer {
 	 * @param markerFile MDE output of markers
 	 * @param sampleFile Sample MDE output file
 	 * @param genotypeFile Genotype MDE output file
-	 * @param datasetId Unused
 	 * @param tempDir Directory to write temporary files
 	 * @param outFile Output genotype file
 	 * @param errorFile Temporary file to write error logs to
@@ -144,7 +142,7 @@ public class FlapjackTransformer {
 	 * @param execString
 	 * @param outputFile
 	 * @param errorFile
-	 * @param Status : Status of execution till now.
+	 * @param status Status of execution till now.
 	 * @return
 	 */
 	private static boolean invokeTryExec(String execString,String outputFile, String errorFile, boolean status){
