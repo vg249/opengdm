@@ -535,30 +535,32 @@ public class GobiiExtractor {
 		ErrorLogger.logInfo("QC", "KDC Context Path: " + configuration.getKDCConfig().getContextPath());
 		ErrorLogger.logInfo("QC", "KDC Port: " + configuration.getKDCConfig().getPort());
 		ErrorLogger.logInfo("QC", "KDC Active: " + configuration.getKDCConfig().isActive());
-		QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
-		qcInstructionsDTOToSend.setContactId(inst.getContactId());
-		qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
-		qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
-		qcInstructionsDTOToSend.setDatasetId(datasetId);
-		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.STARTED);
-		// According to Liz, there are several quality files so this method is no longer necessary
-		qcInstructionsDTOToSend.setQualityFileName("");
-		PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
-		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
-		if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
-            ErrorLogger.logError("QC", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
-            return;
-        }
-        else {
-			String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
-			gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
-			GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<QCInstructionsDTO>(gobiiUriFactory.resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
-			PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,	payloadEnvelope);
-			if (qcInstructionFileDTOResponseEnvelope != null) {
-            	ErrorLogger.logInfo("QC", "QC Instructions Request Sent");
-        	} else {
-            	ErrorLogger.logError("QC", "Error Sending QC Instructions Request");
-        	}
+//		QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
+//		qcInstructionsDTOToSend.setContactId(inst.getContactId());
+//		qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
+//		qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
+//		qcInstructionsDTOToSend.setDatasetId(datasetId);
+//		// To create the QC instructions file for the Gobii web services independently of any QC status
+//		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.COMPLETED);
+//		// According to Liz, there are several quality files so this method is no longer necessary
+//		qcInstructionsDTOToSend.setQualityFileName("");
+//		GobiiClientContext gobiiClientContext = GobiiClientContext.getInstance(configuration, crop, GobiiAutoLoginType.USER_RUN_AS);
+//		if (LineUtils.isNullOrEmpty(gobiiClientContext.getUserToken())) {
+//            ErrorLogger.logError("QC", "Unable to log in with user: " + GobiiAutoLoginType.USER_RUN_AS.toString());
+//            return;
+//        }
+//        else {
+//			String currentCropContextRoot = GobiiClientContext.getInstance(null, false).getCurrentCropContextRoot();
+//			gobiiUriFactory = new GobiiUriFactory(currentCropContextRoot);
+//			PayloadEnvelope<QCInstructionsDTO> payloadEnvelope = new PayloadEnvelope<>(qcInstructionsDTOToSend, GobiiProcessType.CREATE);
+//			GobiiEnvelopeRestResource<QCInstructionsDTO> restResourceForPost = new GobiiEnvelopeRestResource<>(gobiiUriFactory
+//					.resourceColl(GobiiServiceRequestId.URL_FILE_QC_INSTRUCTIONS));
+//			PayloadEnvelope<QCInstructionsDTO> qcInstructionFileDTOResponseEnvelope = restResourceForPost.post(QCInstructionsDTO.class,	payloadEnvelope);
+//			if (qcInstructionFileDTOResponseEnvelope != null) {
+//            	ErrorLogger.logInfo("QC", "QC Instructions Request Sent");
+//        	} else {
+//            	ErrorLogger.logError("QC", "Error Sending QC Instructions Request");
+//        	}
 			ServerBase serverBase = new ServerBase(configuration.getKDCConfig().getHost(),
 					configuration.getKDCConfig().getContextPath(),
 					configuration.getKDCConfig().getPort(),
@@ -653,35 +655,41 @@ public class GobiiExtractor {
 									JsonObject resultsUrls = jsonPayload.get("resultsUrls").getAsJsonObject();
 									Set<Map.Entry<String, JsonElement>> entrySet = resultsUrls.entrySet();
 									for (Map.Entry<String, JsonElement> entry : entrySet) {
-										String fileDownloadLink = entry.getValue().getAsString().substring(1);
-										ErrorLogger.logInfo("QC", new StringBuilder("fileDownloadLink: ").append(fileDownloadLink).toString());
-										String destinationFqpn = Paths.get(extractDir, entry.getKey()).toString();
-										ErrorLogger.logInfo("QC", new StringBuilder("destinationFqpn: ").append(destinationFqpn).toString());
-										RestUri restUriGetQCDownload = new RestUri("/",
-												configuration.getKDCConfig().getContextPath(),
-												fileDownloadLink)
-												.withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
-														MediaType.APPLICATION_OCTET_STREAM)
-												.withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
-														MediaType.APPLICATION_OCTET_STREAM)
-												.withDestinationFqpn(destinationFqpn);
-										httpMethodResult = genericClientContext.get(restUriGetQCDownload);
-										if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
-											ErrorLogger.logInfo("QC", "The qcDownload method failed: "
-													+ httpMethodResult.getUri().toString()
-													+ "; failure mode: "
-													+ Integer.toString(httpMethodResult.getResponseCode())
-													+ " ("
-													+ httpMethodResult.getReasonPhrase()
-													+ ")");
-										}
-										else {
-											ErrorLogger.logInfo("QC", "The qcDownload http method was successful with "
-													+ httpMethodResult.getFileName());
-											if (httpMethodResult.getFileName() != null) {
-												qcStatusPm.addPath(entry.getKey(), httpMethodResult.getFileName());
-											}
-										}
+									    String key = entry.getKey();
+									    // Avoiding any downloadable non-data file susceptible to be shown for the gobii user
+                                        if ((!(key.equals("stdout.txt"))) &&
+                                            (!(key.equals("stderr.txt"))) &&
+                                            (!(key.equals("script.groovy")))) {
+										    String fileDownloadLink = entry.getValue().getAsString().substring(1);
+										    ErrorLogger.logInfo("QC", new StringBuilder("fileDownloadLink: ").append(fileDownloadLink).toString());
+										    String destinationFqpn = Paths.get(extractDir, key).toString();
+										    ErrorLogger.logInfo("QC", new StringBuilder("destinationFqpn: ").append(destinationFqpn).toString());
+										    RestUri restUriGetQCDownload = new RestUri("/",
+												    configuration.getKDCConfig().getContextPath(),
+												    fileDownloadLink)
+												    .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE,
+														    MediaType.APPLICATION_OCTET_STREAM)
+												    .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT,
+														    MediaType.APPLICATION_OCTET_STREAM)
+												    .withDestinationFqpn(destinationFqpn);
+										    httpMethodResult = genericClientContext.get(restUriGetQCDownload);
+										    if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
+											    ErrorLogger.logInfo("QC", "The qcDownload method failed: "
+													    + httpMethodResult.getUri().toString()
+													    + "; failure mode: "
+													    + Integer.toString(httpMethodResult.getResponseCode())
+													    + " ("
+													    + httpMethodResult.getReasonPhrase()
+													    + ")");
+										    }
+										    else {
+                                                ErrorLogger.logInfo("QC", "The qcDownload http method was successful with "
+                                                        + httpMethodResult.getFileName());
+                                                if (httpMethodResult.getFileName() != null) {
+                                                    qcStatusPm.addPath(key, httpMethodResult.getFileName());
+                                                }
+                                            }
+                                        }
 									}
 								}
 							}
@@ -712,7 +720,7 @@ public class GobiiExtractor {
 				}
 			}
 			ErrorLogger.logInfo("QC", "Done with the QC Subsection #1 of 1!");
-		}
+//		}
 	}
 
 	/**
@@ -780,6 +788,7 @@ public class GobiiExtractor {
 	 */
 	//Dear next guy - yeah, doing a 'one step unroll' then placing in 'comma - object; comma - object' makes more sense.
 	//Just be happy I used a StringBuilder
+	//Si, soy tan feliz ahora!
 	private static String commaFormat(List inputList){
 		StringBuilder sb=new StringBuilder();
 		for(Object o:inputList){
