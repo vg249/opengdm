@@ -479,7 +479,7 @@ public class GobiiFileReader {
 
 			} else {
 
-				String messages = extractorInstructionFileDTOResponseEnvelope.getHeader().getStatus().getMessages();
+				String messages = extractorInstructionFileDTOResponseEnvelope.getHeader().getStatus().messages();
 
 				for (HeaderStatusMessage currentStatusMesage : header.getStatus().getStatusMessages()) {
 					messages += (currentStatusMesage.getMessage()) + "; ";
