@@ -125,7 +125,7 @@ public class GobiiFileReader {
 		MailInterface mailInterface=new MailInterface(configuration);
 
 		String instructionFile=null;
-		if(args.length==0 ||args[0]==""){
+		if(args.length==0 ||"".equals(args[0])){
 			Scanner s=new Scanner(System.in);
 			System.out.println("Enter Loader Instruction File Location:");
 			instructionFile=s.nextLine();

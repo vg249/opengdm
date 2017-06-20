@@ -538,7 +538,7 @@ public class GobiiExtractor {
 		QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
 		qcInstructionsDTOToSend.setContactId(inst.getContactId());
 		qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
-		qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
+		qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_"+DateUtils.makeDateIdString()).toString());
 		qcInstructionsDTOToSend.setDatasetId(datasetId);
 		qcInstructionsDTOToSend.setGobiiJobStatus(GobiiJobStatus.STARTED);
 		// According to Liz, there are several quality files so this method is no longer necessary
