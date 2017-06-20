@@ -20,10 +20,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupMarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,9 +105,19 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         markerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
         markerGroupMarkerDTOToAdd.setFavorableAllele("N");
 
+
         List<MarkerGroupMarkerDTO> markerGroupMarkerDTOS = new ArrayList<>();
 
         markerGroupMarkerDTOS.add(markerGroupMarkerDTOToAdd);
+
+        testMarkerName = "20215";
+
+        markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
+        markerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
+        markerGroupMarkerDTOToAdd.setFavorableAllele("T,A");
+
+        markerGroupMarkerDTOS.add(markerGroupMarkerDTOToAdd);
+
 
         MarkerGroupDTO newMarkerGroupDto = TestDtoFactory
                 .makePopulatedMarkerGroupDTO(GobiiProcessType.CREATE, 1, markerGroupMarkerDTOS);
@@ -121,11 +128,10 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
                 .resourceColl(GobiiServiceRequestId.URL_MARKERGROUP));
         PayloadEnvelope<MarkerGroupDTO> markerGroupDTOResponseEnvelope = gobiiEnvelopeRestResource.post(MarkerGroupDTO.class,
                 payloadEnvelope);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOResponseEnvelope.getHeader()));
         MarkerGroupDTO markerGroupDTOResponse = markerGroupDTOResponseEnvelope.getPayload().getData().get(0);
-
         Assert.assertNotEquals(null, markerGroupDTOResponse);
         Assert.assertTrue(markerGroupDTOResponse.getMarkerGroupId() > 0);
-        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOResponseEnvelope.getHeader()));
 
         GlobalPkValues.getInstance().addPkVal(GobiiEntityNameType.MARKERGROUPS, markerGroupDTOResponse.getMarkerGroupId());
 
@@ -161,7 +167,7 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         Assert.assertNotNull(markerGroupDTOList.get(0).getName());
 
         // use an arbitrary marker group id
-        Integer markerGroupId = markerGroupDTOList.get(0).getMarkerGroupId();
+        Integer markerGroupId = 27;//markerGroupDTOList.get(0).getMarkerGroupId();
         RestUri restUriMapsetForGetById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(GobiiServiceRequestId.URL_MARKERGROUP);
@@ -235,6 +241,17 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
 
         String newName = UUID.randomUUID().toString();
         markerGroupDTOReceived.setName(newName);
+
+        MarkerGroupMarkerDTO newMarkerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
+        newMarkerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
+        newMarkerGroupMarkerDTOToAdd.setFavorableAllele("T");
+
+        List<MarkerGroupMarkerDTO> newMarkerGroupMarkerDTOS = new ArrayList<>();
+
+        newMarkerGroupMarkerDTOS.add(newMarkerGroupMarkerDTOToAdd);
+
+        markerGroupDTOReceived.setMarkers(newMarkerGroupMarkerDTOS);
+
         gobiiEnvelopeRestResourceForGetById.setParamValue("id", markerGroupDTOReceived.getMarkerGroupId().toString());
         PayloadEnvelope<MarkerGroupDTO> markerGroupDTOResponseEnvelopeUpdate = gobiiEnvelopeRestResourceForGetById.put(MarkerGroupDTO.class,
                 new PayloadEnvelope<>(markerGroupDTOReceived, GobiiProcessType.UPDATE));
