@@ -38,7 +38,6 @@ public class IUPACmatrixToBi {
                 break;
             default:
                 ErrorLogger.logError("IUPAC to Bi","Given file format can not be processed.");
-                System.exit(1);
                 break;
         }
         startTime = System.currentTimeMillis();
