@@ -86,6 +86,18 @@ public class Status implements Serializable {
         return succeeded;
     }
 
+    public String getMessages() {
+
+        String returnVal = null;
+
+        for (HeaderStatusMessage currentStatusMesage : this.statusMessages) {
+            returnVal += (currentStatusMesage.getMessage()) + "; ";
+        }
+
+        return returnVal;
+
+    }
+
     public void setSucceeded(boolean succeeded) {
         this.succeeded = succeeded;
     }

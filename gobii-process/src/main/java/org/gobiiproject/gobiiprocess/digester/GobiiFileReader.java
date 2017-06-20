@@ -468,23 +468,18 @@ public class GobiiFileReader {
 		if (extractorInstructionFileDTOResponseEnvelope != null) {
 
 			Header header = extractorInstructionFileDTOResponseEnvelope.getHeader();
-			if (header.getStatus().isSucceeded() &&
-					header
-							.getStatus()
-							.getStatusMessages()
-							.stream()
-							.filter(headerStatusMessage -> headerStatusMessage.getGobiiStatusLevel().equals(GobiiStatusLevel.VALIDATION))
-							.count() == 0) {
-
+			if (header.getStatus().isSucceeded() ){
 				ErrorLogger.logInfo("Digester", "Extractor Request Sent");
 
 			} else {
-				String message = null;
+
+				String messages = extractorInstructionFileDTOResponseEnvelope.getHeader().getStatus().getMessages();
+
 				for (HeaderStatusMessage currentStatusMesage : header.getStatus().getStatusMessages()) {
-					message += (currentStatusMesage.getMessage()) + "; ";
+					messages += (currentStatusMesage.getMessage()) + "; ";
 				}
 
-				ErrorLogger.logError("Digester", "Error sending extract request: " + message);
+				ErrorLogger.logError("Digester", "Error sending extract request: " + messages);
 
 			}
 		}
