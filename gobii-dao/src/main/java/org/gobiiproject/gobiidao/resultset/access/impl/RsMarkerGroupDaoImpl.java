@@ -6,13 +6,7 @@ import org.gobiiproject.gobiidao.resultset.access.RsPlatformDao;
 import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
 import org.gobiiproject.gobiidao.resultset.core.SpRunnerCallable;
 import org.gobiiproject.gobiidao.resultset.core.StoredProcExec;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpDelMarkerGroupMarkerById;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysis;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsAnalysisParameters;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMarkerGroup;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpInsMarkerGroupMarkers;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdAnalysis;
-import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.SpUpdMarkerGroup;
+import org.gobiiproject.gobiidao.resultset.sqlworkers.modify.*;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetAnalysisDetailsByAnalysisId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkerGroupDetailsByMarkerGroupId;
 import org.gobiiproject.gobiidao.resultset.sqlworkers.read.SpGetMarkerGroupNames;
@@ -211,6 +205,23 @@ public class RsMarkerGroupDaoImpl implements RsMarkerGroupDao {
         } catch (SQLGrammarException  e) {
 
             LOGGER.error("Error updating marker group with SQL " + e.getSQL() , e.getSQLException());
+            throw (new GobiiDaoException(e.getSQLException()));
+        }
+
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateMarkerGroupName(Map<String, Object> parameters) throws GobiiDaoException {
+
+        try {
+
+            spRunnerCallable.run(new SpUpdMarkerGroupName(), parameters);
+
+
+        } catch (SQLGrammarException e) {
+
+            LOGGER.error("Error update marker group name with SQL " + e.getSQL(), e.getSQLException());
             throw (new GobiiDaoException(e.getSQLException()));
         }
 

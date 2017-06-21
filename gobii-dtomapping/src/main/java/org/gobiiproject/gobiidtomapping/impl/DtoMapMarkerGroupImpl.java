@@ -350,6 +350,18 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
             }
 
+            // update marker group name first if marker group name is changed.
+
+            MarkerGroupDTO existingMapsetDTO = getMarkerGroupDetails(markerGroupId);
+
+            if(existingMapsetDTO.getName() != markerGroupDTO.getName()) {
+
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("markerGroupId", existingMapsetDTO.getMarkerGroupId());
+                parameters.put("name", markerGroupDTO.getName());
+                rsMarkerGroupDao.updateMarkerGroupName(parameters);
+            }
+
             Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
             parameters.put("markerGroupId", markerGroupId);
             parameters.put("markers", markers);
