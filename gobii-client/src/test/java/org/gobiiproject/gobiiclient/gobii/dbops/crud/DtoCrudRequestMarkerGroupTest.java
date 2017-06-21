@@ -112,6 +112,7 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
 
         testMarkerName = "20215";
 
+        makeMarker(testMarkerName);
         markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
         markerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
         markerGroupMarkerDTOToAdd.setFavorableAllele("T,A");

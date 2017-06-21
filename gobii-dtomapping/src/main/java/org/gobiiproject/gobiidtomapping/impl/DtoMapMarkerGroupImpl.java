@@ -1,5 +1,8 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsMarkerGroupDao;
 import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
@@ -186,6 +189,30 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
     } // upsertMarkers
 
+    private String buildMarkers(List<MarkerGroupMarkerDTO> markerGroupMarkerDTOS) {
+
+        JsonObject returnVal = new JsonObject();
+
+        String returnStr = "";
+
+
+        for (MarkerGroupMarkerDTO currentMarkerGroupMarkerDTO : markerGroupMarkerDTOS) {
+
+            returnVal.addProperty(currentMarkerGroupMarkerDTO.getMarkerId().toString(), currentMarkerGroupMarkerDTO.getFavorableAllele());
+
+
+        }
+
+        Gson gson = new GsonBuilder().create();
+        returnStr = gson.toJson(returnVal);
+
+
+        return returnStr;
+
+
+
+    }
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED) // if we throw a runtime exception, we'll rollback
     public MarkerGroupDTO createMarkerGroup(MarkerGroupDTO markerGroupDTO) throws GobiiDtoMappingException {
@@ -215,11 +242,6 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
             }
 
-
-            Map<String, Object> parameters = ParamExtractor.makeParamVals(markerGroupDTO);
-            Integer markerGroupId = rsMarkerGroupDao.createMarkerGroup(parameters);
-            returnVal.setMarkerGroupId(markerGroupId);
-
             // populate marker DTO's in a way that deals with case of
             // multiple markers with that name
 
@@ -228,11 +250,21 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
                     .filter(m -> m.isMarkerExists())
                     .collect(Collectors.toList());
 
+            String markers = "";
+
             if (existingMarkers.size() > 0) {
 
-                upsertMarkers(returnVal.getMarkerGroupId(), existingMarkers);
+//                upsertMarkers(returnVal.getMarkerGroupId(), existingMarkers);
+                markers = buildMarkers(existingMarkers);
 
             }
+
+
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(markerGroupDTO);
+            parameters.put("markers", markers);
+            Integer markerGroupId = rsMarkerGroupDao.createMarkerGroup(parameters);
+            returnVal.setMarkerGroupId(markerGroupId);
+
 
 
 
@@ -256,7 +288,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
             List<MarkerGroupMarkerDTO> markerGroupMarkersToCreate =
                     returnVal.getMarkers()
                             .stream()
-                            .filter(m -> m.getGobiiProcessType() == GobiiProcessType.CREATE)
+                            //.filter(m -> m.getGobiiProcessType() == GobiiProcessType.CREATE)
                             .collect(Collectors.toList());
 
             populateMarkers(markerGroupMarkersToCreate);
