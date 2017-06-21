@@ -15,6 +15,7 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContextAuth;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.gobii.Helpers.*;
+import org.gobiiproject.gobiidao.entity.pojos.MarkerGroup;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerGroupMarkerDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.MarkerDTO;
@@ -104,18 +105,19 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         MarkerGroupMarkerDTO markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
         markerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
         markerGroupMarkerDTOToAdd.setFavorableAllele("N");
+        markerGroupMarkerDTOToAdd.setPlatformName("1New Platform");
 
 
         List<MarkerGroupMarkerDTO> markerGroupMarkerDTOS = new ArrayList<>();
 
         markerGroupMarkerDTOS.add(markerGroupMarkerDTOToAdd);
 
-        testMarkerName = "20215";
+        testMarkerName = "m1";
 
-        makeMarker(testMarkerName);
         markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
         markerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
         markerGroupMarkerDTOToAdd.setFavorableAllele("T,A");
+        markerGroupMarkerDTOToAdd.setPlatformName("1New Platform");
 
         markerGroupMarkerDTOS.add(markerGroupMarkerDTOToAdd);
 
@@ -210,6 +212,7 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         MarkerGroupMarkerDTO markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
         markerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
         markerGroupMarkerDTOToAdd.setFavorableAllele("N");
+        markerGroupMarkerDTOToAdd.setPlatformName("1New Platform");
 
         List<MarkerGroupMarkerDTO> markerGroupMarkerDTOS = new ArrayList<>();
 
@@ -225,6 +228,8 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
                 .resourceColl(GobiiServiceRequestId.URL_MARKERGROUP));
         PayloadEnvelope<MarkerGroupDTO> markerGroupDTOResponseEnvelope = gobiiEnvelopeRestResource.post(MarkerGroupDTO.class,
                 payloadEnvelope);
+        Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(markerGroupDTOResponseEnvelope.getHeader()));
+
         MarkerGroupDTO newMarkerGroupDTOResponse = markerGroupDTOResponseEnvelope.getPayload().getData().get(0);
 
         // re-retrieve the marker group we just created so we start with a fresh READ mode dto
@@ -246,6 +251,7 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         MarkerGroupMarkerDTO newMarkerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
         newMarkerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
         newMarkerGroupMarkerDTOToAdd.setFavorableAllele("T");
+        newMarkerGroupMarkerDTOToAdd.setPlatformName("1New Platform");
 
         List<MarkerGroupMarkerDTO> newMarkerGroupMarkerDTOS = new ArrayList<>();
 

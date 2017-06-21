@@ -141,6 +141,23 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
         return returnVal;
     }
 
+    private List<MarkerGroupMarkerDTO> getMarkerGroupMarkersByMarkerAndPlatformName(String markerName, String platformName) throws SQLException, GobiiDaoException {
+
+        List<MarkerGroupMarkerDTO> returnVal = new ArrayList<>();
+
+        ResultSet markersResultSet = rsMarkerGroupDao.getMarkersByMarkerAndPlatformName(markerName, platformName);
+        while (markersResultSet.next()) {
+
+            MarkerGroupMarkerDTO currentMarkerGroupMarkerDTO = new MarkerGroupMarkerDTO();
+            ResultColumnApplicator.applyColumnValues(markersResultSet, currentMarkerGroupMarkerDTO);
+            returnVal.add(currentMarkerGroupMarkerDTO);
+
+        }
+
+        return returnVal;
+
+    }
+
 
     private void populateMarkers(List<MarkerGroupMarkerDTO> markerGroupMarkers) throws SQLException, GobiiDaoException {
 
@@ -154,7 +171,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
             MarkerGroupMarkerDTO currentMarkerGroupMarkerDto = iterator.next();
 
             List<MarkerGroupMarkerDTO> markerDTOsForMarkerName =
-                    getMarkerGroupMarkersByMarkerName(currentMarkerGroupMarkerDto.getMarkerName());
+                    getMarkerGroupMarkersByMarkerAndPlatformName(currentMarkerGroupMarkerDto.getMarkerName(), currentMarkerGroupMarkerDto.getPlatformName());
 
             if (markerDTOsForMarkerName.size() > 0) {
 
@@ -265,7 +282,7 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
                     throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                             GobiiValidationStatusType.NONEXISTENT_FK_ENTITY,
-                            "The following markers don't exist.");
+                            "Some markers don't exist.");
 
                 }
 

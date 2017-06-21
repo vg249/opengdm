@@ -31,4 +31,6 @@ public interface RsMarkerGroupDao {
 
     ResultSet getMarkersForMarkerGroup(Integer markerGroupId) throws GobiiDaoException;
 
+    ResultSet getMarkersByMarkerAndPlatformName(String markerName, String platformName) throws GobiiDaoException;
+
 }
