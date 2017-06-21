@@ -448,7 +448,7 @@ public class GobiiFileReader {
 		gobiiDataSetExtract.setExtractDestinationDirectory(extractDestinationDirectory);
 		// According to Liz, the Gobii extract filter type is always "WHOLE_DATASET" for any QC job
 		gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
-		gobiiDataSetExtract.setGobiiFileType(inst.getGobiiFile().getGobiiFileType());
+		gobiiDataSetExtract.setGobiiFileType(GobiiFileType.HAPMAP);
 		// It is going to be set by the Gobii web services
 		gobiiDataSetExtract.setGobiiJobStatus(null);
 		qcExtractInstruction.getDataSetExtracts().add(gobiiDataSetExtract);
