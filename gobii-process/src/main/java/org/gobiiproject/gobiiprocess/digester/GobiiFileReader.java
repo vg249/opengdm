@@ -347,6 +347,10 @@ public class GobiiFileReader {
 					}
 					else{
 						loadedData=true;
+						
+						if (qcCheck) {//QC - Subsection #3 of 3
+							sendQCExtract(configuration, crop);
+						}
 					}
 					if(counts.invalidData >0 && !isVariableLengthTable(key)){
 						ErrorLogger.logError("FileReader","Error in table "+key);
@@ -354,9 +358,6 @@ public class GobiiFileReader {
 
 				}
 
-				if (qcCheck) {//QC - Subsection #3 of 3
-					sendQCExtract(configuration, crop);
-				}
 
 			}
 			if(!loadedData){
