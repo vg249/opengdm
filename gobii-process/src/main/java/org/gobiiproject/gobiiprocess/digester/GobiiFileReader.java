@@ -29,6 +29,7 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.*;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
+import org.gobiiproject.gobiiprocess.digester.utils.InstructionFileValidator;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;
@@ -142,6 +143,25 @@ public class GobiiFileReader {
 			logError("Digester","No instruction for file "+instructionFile);
 			return;
 		}
+
+		// Instruction file Validation
+		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(list);
+		instructionFileValidator.processInstructionFile();
+		String validationStatus = instructionFileValidator.validateMarkerUpload();
+		if(validationStatus != null){
+			ErrorLogger.logError("Marker validation failed.", validationStatus);
+		}
+
+		validationStatus = instructionFileValidator.validateSampleUpload();
+		if(validationStatus != null){
+			ErrorLogger.logError("Sample validation failed.",validationStatus);
+		}
+
+		validationStatus = instructionFileValidator.validate();
+		if(validationStatus != null){
+			ErrorLogger.logError("Validation failed.", validationStatus );
+		}
+
 		GobiiLoaderInstruction zero=list.iterator().next();
 		Integer dataSetId=zero.getDataSetId();
 
