@@ -27,6 +27,7 @@ import org.gobiiproject.gobiimodel.types.*;
 import org.gobiiproject.gobiimodel.utils.*;
 import org.gobiiproject.gobiimodel.utils.email.*;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
+import org.gobiiproject.gobiiprocess.GobiiConfig;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.*;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
@@ -346,6 +347,10 @@ public class GobiiFileReader {
 					}
 					else{
 						loadedData=true;
+						
+						if (qcCheck) {//QC - Subsection #3 of 3
+							sendQCExtract(configuration, crop);
+						}
 					}
 					if(counts.invalidData >0 && !isVariableLengthTable(key)){
 						ErrorLogger.logError("FileReader","Error in table "+key);
@@ -353,9 +358,6 @@ public class GobiiFileReader {
 
 				}
 
-				if (qcCheck) {//QC - Subsection #3 of 3
-					sendQCExtract(configuration, crop);
-				}
 
 			}
 			if(!loadedData){
@@ -753,6 +755,9 @@ public class GobiiFileReader {
 		else{
 			return i.getDatasetType().getName(); //Get the name from the instruction.
 		}
+	}
+	private static String getJDBCConnectionString(GobiiCropConfig config){
+		return 	config.getCropDbConfig(GobiiDbType.POSTGRESQL).getConnectionString();
 	}
 
 	/**
