@@ -168,7 +168,7 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         Assert.assertNotNull(markerGroupDTOList.get(0).getName());
 
         // use an arbitrary marker group id
-        Integer markerGroupId = 27;//markerGroupDTOList.get(0).getMarkerGroupId();
+        Integer markerGroupId = markerGroupDTOList.get(0).getMarkerGroupId();
         RestUri restUriMapsetForGetById = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
                 .resourceByUriIdParam(GobiiServiceRequestId.URL_MARKERGROUP);

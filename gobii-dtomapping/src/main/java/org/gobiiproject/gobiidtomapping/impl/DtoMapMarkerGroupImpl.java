@@ -1,8 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.resultset.access.RsMarkerGroupDao;
 import org.gobiiproject.gobiidao.resultset.core.EntityPropertyParamNames;
@@ -60,12 +58,33 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
                 Integer currentMarkerId = markersForMarkerGroupResultSet.getInt("marker_id");
                 String favorableAllele = markersForMarkerGroupResultSet.getString("favorable_allele");
+
+                JsonParser parser = new JsonParser();
+                JsonElement alleleElement = parser.parse(favorableAllele);
+                JsonArray alleleArray = alleleElement.getAsJsonArray();
+
+                String newFavorableAllele = "";
+
+                // parse json string, convert to comma delimited string
+                for (JsonElement allele : alleleArray) {
+
+                    String s = allele.getAsString().replace("\"", "");
+
+                    if (newFavorableAllele != ""){
+                        newFavorableAllele = newFavorableAllele + ",";
+                    }
+
+                    newFavorableAllele = newFavorableAllele + s;
+
+                }
+
+
                 ResultSet markerDetailsResultSet = rsMarkerGroupDao.getMarkerByMarkerId(currentMarkerId);
                 MarkerGroupMarkerDTO currentMarkerGroupMarkerDTO = new MarkerGroupMarkerDTO();
                 if (markerDetailsResultSet.next()) {
                     ResultColumnApplicator.applyColumnValues(markerDetailsResultSet, currentMarkerGroupMarkerDTO);
                     currentMarkerGroupMarkerDTO.setMarkerExists(true);
-                    currentMarkerGroupMarkerDTO.setFavorableAllele(favorableAllele);
+                    currentMarkerGroupMarkerDTO.setFavorableAllele(newFavorableAllele);
                 } else {
                     currentMarkerGroupMarkerDTO.setMarkerId(currentMarkerId);
                     currentMarkerGroupMarkerDTO.setMarkerExists(false);
@@ -195,15 +214,25 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
         String returnStr = "";
 
+        Gson gson = new GsonBuilder().create();
 
         for (MarkerGroupMarkerDTO currentMarkerGroupMarkerDTO : markerGroupMarkerDTOS) {
 
-            returnVal.addProperty(currentMarkerGroupMarkerDTO.getMarkerId().toString(), currentMarkerGroupMarkerDTO.getFavorableAllele());
+            String[] alleleStr = currentMarkerGroupMarkerDTO.getFavorableAllele().split(",");
 
+            JsonArray favorableAllele = new JsonArray();
+
+            for (String s : alleleStr) {
+
+                favorableAllele.add(s);
+
+            }
+
+            returnVal.add(currentMarkerGroupMarkerDTO.getMarkerId().toString(), favorableAllele);
 
         }
 
-        Gson gson = new GsonBuilder().create();
+
         returnStr = gson.toJson(returnVal);
 
 
@@ -313,17 +342,18 @@ public class DtoMapMarkerGroupImpl implements DtoMapMarkerGroup {
 
             }
 
-
-            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
-            parameters.put("markerGroupId", markerGroupId);
-            rsMarkerGroupDao.updateMarkerGroup(parameters);
-
+            String markers = "";
             if (existingMarkers.size() > 0) {
 
-                upsertMarkers(returnVal.getMarkerGroupId(), existingMarkers);
+//                upsertMarkers(returnVal.getMarkerGroupId(), existingMarkers);
+                markers = buildMarkers(existingMarkers);
 
             }
 
+            Map<String, Object> parameters = ParamExtractor.makeParamVals(returnVal);
+            parameters.put("markerGroupId", markerGroupId);
+            parameters.put("markers", markers);
+            rsMarkerGroupDao.updateMarkerGroup(parameters);
 
 
         } catch (Exception e) {
