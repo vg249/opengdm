@@ -49,12 +49,8 @@ class HapmapTransformerHelper {
                 dnaIndex = entry.getKey();
                 continue;
             }
-            StringBuilder stringBuilderNewLine = new StringBuilder("#\t\t\t\t\t\t\t\t\t\t");
-            stringBuilderNewLine.append(header);
-            stringBuilderNewLine.append("\t");
-            stringBuilderNewLine.append(StringUtils.join(entry.getValue(), "\t"));
-            stringBuilderNewLine.append(System.lineSeparator());
-            fileWriter.write(stringBuilderNewLine.toString());
+           String stringNewLine="#\t\t\t\t\t\t\t\t\t\t"+header+"\t"+StringUtils.join(entry.getValue(), "\t")+System.lineSeparator();
+            fileWriter.write(stringNewLine);
         }
         fileWriter.flush();
         return dnaIndex;
