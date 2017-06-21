@@ -17,7 +17,6 @@ public class InstructionFileValidator {
     private final String DNA_SAMPLE_NAME = "dnasample_name";
     private final String DNA_RUN_NAME = "dnarun_name";
     private final String MATRIX = "matrix";
-    private final String OK = "OK";
 
     private static String statusMessage = null;
 
@@ -26,6 +25,7 @@ public class InstructionFileValidator {
 
     public InstructionFileValidator(List<GobiiLoaderInstruction> instructionList) {
         this.instructionList = instructionList;
+        statusMessage = null;
     }
 
 
