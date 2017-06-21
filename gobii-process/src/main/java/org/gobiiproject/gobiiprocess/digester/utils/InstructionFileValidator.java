@@ -164,7 +164,7 @@ public class InstructionFileValidator {
             Validation Rule:
                 digest.germplasm_prop (external_code) == digest.germplasm (external_code)
         */
-        if (validateColumn(GobiiTableType.GERMPLASM_PROP, EXTERNAL_CODE, GobiiTableType.GERMPLASM, EXTERNAL_CODE)) {
+        if (!validateColumn(GobiiTableType.GERMPLASM_PROP, EXTERNAL_CODE, GobiiTableType.GERMPLASM, EXTERNAL_CODE)) {
             return statusMessage;
         }
 

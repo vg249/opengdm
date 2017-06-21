@@ -25,10 +25,6 @@ public class InstructionFileValidationMarkerUploadTest {
 	private final String LINKAGE_GROUP_NAME = "linkage_group_name";
 	private final String STOP = "stop";
 	private final String START = "start";
-	private final String EXTERNAL_CODE = "external_code";
-	private final String DNA_SAMPLE_NAME = "dnasample_name";
-	private final String DNA_RUN_NAME = "dnarun_name";
-	private final String MATRIX = "matrix";
 
 	int rCoord = 1, cCoord = 2;
 
