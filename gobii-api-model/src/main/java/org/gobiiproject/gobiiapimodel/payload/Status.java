@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiapimodel.payload;
 
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
 import org.gobiiproject.gobiimodel.types.GobiiValidationStatusType;
@@ -85,6 +86,23 @@ public class Status implements Serializable {
     public boolean isSucceeded() {
         return succeeded;
     }
+
+
+
+
+    // if you name this as getMessages(), Jackson will insist on it having a setter as well, which we don't want
+    public String messages() {
+
+        String returnVal = null;
+
+        for (HeaderStatusMessage currentStatusMesage : this.statusMessages) {
+            returnVal += (currentStatusMesage.getMessage()) + "; ";
+        }
+
+        return returnVal;
+
+    }
+
 
     public void setSucceeded(boolean succeeded) {
         this.succeeded = succeeded;
