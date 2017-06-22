@@ -1,10 +1,9 @@
-package org.gobiiproject.gobiiprocess.digester.utils.Validator;
+package org.gobiiproject.gobiiprocess.digester.utils.validation;
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
-import org.gobiiproject.gobiiprocess.digester.utils.GobiiTableType;
-
+import org.gobiiproject.gobiimodel.types.GobiiTableType;
 import java.util.*;
 
 public class InstructionFileValidator {

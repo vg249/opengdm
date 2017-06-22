@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester.Validation;
+package org.gobiiproject.gobiiprocess.digester.validation;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
-import org.gobiiproject.gobiiprocess.digester.utils.GobiiTableType;
-import org.gobiiproject.gobiiprocess.digester.utils.Validator.InstructionFileValidator;
+import org.gobiiproject.gobiimodel.types.GobiiTableType;
+import org.gobiiproject.gobiiprocess.digester.utils.validation.InstructionFileValidator;
 import org.junit.Test;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -145,9 +145,9 @@ public class InstructionFileValidationSampleUploadTest {
 	@VisibleForTesting
 	private String callValidateSampleUpload(String[] params) {
 		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();	
-		instructionList.add(InstructionFileValidationUtil.createInstruction(params[0], params[1], Integer.parseInt(params[2]), Integer.parseInt(params[3])));
-		if(params.length > 4)instructionList.add(InstructionFileValidationUtil.createInstruction(params[4], params[5], Integer.parseInt(params[6]), Integer.parseInt(params[7])));
-
+		for(int i= 0; i < params.length; i= i+4){
+			instructionList.add(InstructionFileValidationUtil.createInstruction(params[i+0], params[i+1], Integer.parseInt(params[i+2]), Integer.parseInt(params[i+3])));
+		}
 		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
 		instructionFileValidator.processInstructionFile();
 		return instructionFileValidator.validateSampleUpload();

@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester.Validation;
+package org.gobiiproject.gobiiprocess.digester.validation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,7 @@ import java.util.List;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiFileColumn;
 import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.types.GobiiColumnType;
-import org.gobiiproject.gobiiprocess.digester.utils.GobiiTableType;
-
+import org.gobiiproject.gobiimodel.types.GobiiTableType;
 import com.google.common.annotations.VisibleForTesting;
 
 /**
