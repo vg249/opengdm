@@ -1,13 +1,9 @@
 package org.gobiiproject.gobiiprocess;
 
-import org.gobiiproject.gobiimodel.config.GobiiCropConfig;
 import org.gobiiproject.gobiimodel.config.GobiiCropDbConfig;
-import org.gobiiproject.gobiimodel.types.GobiiDbType;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import java.sql.*;
-import java.util.Properties;
 
 /**
  * Created by jdl232 on 6/21/2017.
