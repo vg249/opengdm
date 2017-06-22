@@ -46,11 +46,23 @@ public class IUPACmatrixToBi {
         {
             String iLine;
             while ((iLine = buffIn.readLine()) != null) {
+                if(iLine.equals("matrix")){
+                    buffOut.newLine();
+                    continue;
+                }
                 String[] iNucl = iLine.split(fSep);
                 String[] oNucl;
                 oNucl = new String[(iNucl.length)];
                 for (int i = 0; i < iNucl.length; i++) {
-                    oNucl[i] = hash.get(iNucl[i].toUpperCase()).toString();
+                    if(iNucl[i].length() > 1){ // takes care of "+/+" or "+/-" or "-/-" cases
+                        oNucl[i] = Character.toString(iNucl[i].charAt(0)) + Character.toString(iNucl[i].charAt(iNucl[i].length()-1));
+                    }
+                    else{
+                        oNucl[i] = hash.get(iNucl[i].toUpperCase()).toString();
+                        if(oNucl[i].equals(null)){
+                            oNucl[i] = iNucl[i] + iNucl[i]; // takes care of "+" or "-" in the input. Converts to "++" and "--" respectively
+                        }
+                    }
                 }
                 buffOut.write(StringUtils.join(oNucl, fSep));
                 buffOut.newLine();
