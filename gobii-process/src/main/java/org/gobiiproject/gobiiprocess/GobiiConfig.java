@@ -1469,7 +1469,7 @@ public class GobiiConfig {
 //                    }
 //                } else {
 //                    for (HeaderStatusMessage currentHeader : resultEnvelopePing.getHeader().getStatus().getStatusMessages()) {
-//                        GobiiConfig.printField("Service error " + (responseNum++).toString(), currentHeader.getMessage());
+//                        GobiiConfig.printField("Service error " + (responseNum++).toString(), currentHeader.messages());
 //                        returnVal = false;
 //                    }
 //                }

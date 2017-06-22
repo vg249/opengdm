@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static org.gobiiproject.gobiimodel.utils.HelperFunctions.getDestinationFile;
+import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rmIfExist;
 import static org.gobiiproject.gobiiprocess.digester.utils.IUPACmatrixToBi.convertIUPACtoBi;
 import static org.gobiiproject.gobiiprocess.digester.utils.TransposeMatrix.transposeMatrix;
 
@@ -52,14 +52,16 @@ public abstract class MobileTransform {
     public static MobileTransform getTransformFromExecString(String exec){
         return new MobileTransform(){
             public void transform(String fromFile, String toFile, String errorPath){
-                HelperFunctions.tryExec(exec+ " " + fromFile + " " + toFile, null, errorPath);
+                HelperFunctions.tryExec(exec+ " " + fromFile + " " + toFile, errorPath+".tfmlog", errorPath);
+                rmIfExist(errorPath+".tfmlog");
             }
         };
     }
     public static MobileTransform getSNPTransform(String exec, String missingFile){
         return new MobileTransform(){
             public void transform(String fromFile, String toFile, String errorPath){
-                HelperFunctions.tryExec(exec+ " " + fromFile + " " + missingFile+ " " + toFile, null, errorPath);
+                HelperFunctions.tryExec(exec+ " " + fromFile + " " + missingFile+ " " + toFile, errorPath+".tfmlog", errorPath);
+                rmIfExist(errorPath+".tfmlog");
             }
         };
     }
