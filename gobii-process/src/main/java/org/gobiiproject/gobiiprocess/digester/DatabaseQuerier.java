@@ -49,7 +49,7 @@ public class DatabaseQuerier {
         return true;
     }
     public boolean checkDNARunInExperiment(File dnarunFile, int experiment){
-        ColReader reader=new ColReader(dnarunFile,"name");
+        ColReader reader=new ColReader(dnarunFile,"dnarun_name");
         while(reader.hasNext()){
             String dnarun=reader.next();
             if(!connector.hasDNARuninExperiment(dnarun,experiment)){
@@ -60,7 +60,7 @@ public class DatabaseQuerier {
         return true;
     }
     public boolean checkMarkerInPlatform(File markerFile, int platform){
-        ColReader reader=new ColReader(markerFile,"name");
+        ColReader reader=new ColReader(markerFile,"marker_name");
         while(reader.hasNext()){
             String marker=reader.next();
             if(!connector.hasDNARuninExperiment(marker,platform)){

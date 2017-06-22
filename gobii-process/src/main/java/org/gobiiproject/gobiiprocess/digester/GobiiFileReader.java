@@ -286,12 +286,12 @@ public class GobiiFileReader {
 		DatabaseQuerier querier=new DatabaseQuerier(gobiiCropConfig.getCropDbConfig(GobiiDbType.POSTGRESQL));
 
 		//If we're doing a DS upload and there is no DS_Marker
-		if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME) && !loaderInstructionMap.containsKey(DS_MARKER_TABNAME) && loaderInstructionMap.containsKey(MARKER_TABNAME)) {
-			querier.checkMarkerInPlatform(loaderInstructionMap.get(MARKER_TABNAME),zero.getPlatform().getId());
+		if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME) && loaderInstructionMap.containsKey(DS_MARKER_TABNAME) && !loaderInstructionMap.containsKey(MARKER_TABNAME)) {
+			querier.checkMarkerInPlatform(loaderInstructionMap.get(DS_MARKER_TABNAME),zero.getPlatform().getId());
 		}
 		//If we're doing a DS upload and there is no DS_Sample
-		if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME) && !loaderInstructionMap.containsKey(DS_SAMPLE_TABNAME) && loaderInstructionMap.containsKey(SAMPLE_TABNAME)) {
-			querier.checkDNARunInExperiment(loaderInstructionMap.get(SAMPLE_TABNAME),zero.getExperiment().getId());
+		if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME) && loaderInstructionMap.containsKey(DS_SAMPLE_TABNAME) && !loaderInstructionMap.containsKey(SAMPLE_TABNAME)) {
+			querier.checkDNARunInExperiment(loaderInstructionMap.get(DS_SAMPLE_TABNAME),zero.getExperiment().getId());
 		}
 
 
