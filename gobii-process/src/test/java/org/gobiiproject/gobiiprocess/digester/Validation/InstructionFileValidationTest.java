@@ -1,4 +1,4 @@
-package org.gobiiproject.gobiiprocess.digester;
+package org.gobiiproject.gobiiprocess.digester.Validation;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
