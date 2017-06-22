@@ -113,6 +113,7 @@ public class DtoCrudRequestMarkerGroupTest implements DtoCrudRequestTest {
         markerGroupMarkerDTOS.add(markerGroupMarkerDTOToAdd);
 
         testMarkerName = "m1";
+        makeMarker(testMarkerName);
 
         markerGroupMarkerDTOToAdd = new MarkerGroupMarkerDTO(GobiiProcessType.CREATE);
         markerGroupMarkerDTOToAdd.setMarkerName(testMarkerName);
