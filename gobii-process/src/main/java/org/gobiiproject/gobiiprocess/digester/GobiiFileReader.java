@@ -303,6 +303,7 @@ public class GobiiFileReader {
 			querier.checkGermplasmTypeExistence(loaderInstructionMap.get(GERMPLASM_TABNAME));
 			querier.checkGermplasmSpeciesExistence(loaderInstructionMap.get(GERMPLASM_TABNAME));
 		}
+		querier.close();
 
 		for (GobiiLoaderInstruction inst:list) {
 			//Section - Matrix Post-processing
