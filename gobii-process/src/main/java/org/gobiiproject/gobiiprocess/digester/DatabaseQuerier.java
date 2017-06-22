@@ -8,7 +8,7 @@ import org.gobiiproject.gobiiprocess.SimplePostgresConnector;
 import java.io.*;
 
 /**
- * Created by Joshua on 6/22/2017.
+ * A series of simple existance queries
  */
 public class DatabaseQuerier {
     SimplePostgresConnector connector;
@@ -69,6 +69,13 @@ public class DatabaseQuerier {
             }
         }
         return true;
+    }
+
+    /**
+     * Call when you're done with this.
+     */
+    public void close(){
+        connector.close();
     }
 }
 class ColReader{
