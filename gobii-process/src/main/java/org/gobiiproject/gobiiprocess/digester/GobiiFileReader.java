@@ -29,7 +29,7 @@ import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
 import org.gobiiproject.gobiiprocess.digester.HelperFunctions.*;
 import org.gobiiproject.gobiiprocess.digester.csv.CSVFileReaderV2;
-import org.gobiiproject.gobiiprocess.digester.utils.InstructionFileValidator;
+import org.gobiiproject.gobiiprocess.digester.utils.Validator.InstructionFileValidator;
 import org.gobiiproject.gobiiprocess.digester.vcf.VCFFileReader;
 
 import static org.gobiiproject.gobiimodel.utils.FileSystemInterface.rm;

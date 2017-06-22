@@ -18,161 +18,122 @@ import com.google.common.annotations.VisibleForTesting;
 /**
  * Unit test for InstructionFileValidationTest.
  */
-public class InstructionFileValidationMarkerUploadTest {
+public class InstructionFileValidationTest {
 
 	private final String NAME = "name";
 	private final String MARKER_NAME = "marker_name";
 	private final String LINKAGE_GROUP_NAME = "linkage_group_name";
 	private final String STOP = "stop";
 	private final String START = "start";
+	private final String MATRIX = "matrix";
+    private final String DNA_RUN_NAME = "dnarun_name";
 
 	int rCoord = 1, cCoord = 2;
 
 	/**
-	 * Test case for digest.marker (name) == digest.lg_marker (marker_name)
+	 * Test case for (IF digest.matrix EXISTS) 
+	 * 					digest.dataset_marker exists
+	 * 					digest.dataset_dnarun exists
 	 */
 	@Test
-	public void testMarker2lgMarker() {
+	public void testMatrix2DatasetMarkerANDDatasetDNARunExist() {
+
+		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
+		
+		instructionList.add(createInstruction(GobiiTableType.MATRIX, MATRIX, rCoord, cCoord));
+		instructionList.add(createInstruction(GobiiTableType.DATASET_MARKER, MARKER_NAME,rCoord, cCoord));
+		instructionList.add(createInstruction(GobiiTableType.DATASET_DNARUN, DNA_RUN_NAME,rCoord, cCoord));
+
+		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
+		instructionFileValidator.processInstructionFile();
+		assertNull(instructionFileValidator.validate());
+	}
+
+	/**
+	 * Test case for (IF digest.matrix EXISTS) digest.dataset_marker exists
+	 */
+	@Test
+	public void testMatrix2DatasetMarkerANDDatasetDNARunExist_Failure() {
+
+		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
+		
+		instructionList.add(createInstruction(GobiiTableType.MATRIX, MATRIX, rCoord, cCoord));
+
+		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
+		instructionFileValidator.processInstructionFile();
+		assertNotNull(instructionFileValidator.validate());
+	}
+
+	/**
+	 * Test case for 
+                    if digest.marker file exists
+                    digest.marker (name) == digest.dataset_marker (marker_name)
+      */
+	@Test
+	public void testMarker2DatasetMarkerExist() {
 
 		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
 		
 		instructionList.add(createInstruction(GobiiTableType.MARKER, NAME, rCoord, cCoord));
-		instructionList.add(createlgMarkerInstruction(rCoord, cCoord));
+		instructionList.add(createInstruction(GobiiTableType.DATASET_MARKER, MARKER_NAME,rCoord, cCoord));
 
 		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
 		instructionFileValidator.processInstructionFile();
-		assertNull(instructionFileValidator.validateMarkerUpload());
+		assertNull(instructionFileValidator.validate());
 	}
 
 	/**
-	 * Test case for digest.marker (name) == digest.lg_marker (marker_name)
+	 * Test case for (IF digest.matrix EXISTS) digest.dataset_marker exists
 	 */
 	@Test
-	public void testMarker2lgMarker_Failure() {
+	public void testMarker2DatasetMarkerExist_Failure() {
 
 		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
 		
 		instructionList.add(createInstruction(GobiiTableType.MARKER, NAME, rCoord, cCoord));
-		instructionList.add(createlgMarkerInstruction(rCoord+1, cCoord+1));
+		instructionList.add(createInstruction(GobiiTableType.DATASET_MARKER, MARKER_NAME,rCoord+1, cCoord));
 
 		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
 		instructionFileValidator.processInstructionFile();
-		assertNotNull(instructionFileValidator.validateMarkerUpload());
-	}
-
-	
-	/**
-	 * Test case for digest.lg_marker (lg_name) == digest.linkage_group (name)
-	 */
-	@Test
-	public void testlgMarker2linkageGroup() {
-
-		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
-
-		instructionList.add(createlgMarkerInstruction(rCoord, cCoord));
-		instructionList.add(createInstruction(GobiiTableType.LINKAGE_GROUP, NAME, rCoord,	cCoord));
-
-		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
-		instructionFileValidator.processInstructionFile();
-		assertNull(instructionFileValidator.validateMarkerUpload());
+		assertNotNull(instructionFileValidator.validate());
 	}
 
 	/**
-	 * Test case for digest.lg_marker (lg_name) == digest.linkage_group (name)
-	 */
+	 * Test case for 
+                   if digest.dnarun exists
+   						digest.dnarun (name) == digest.ds_dnarun (dnarun_name)
+     */
 	@Test
-	public void testlgMarker2linkageGroup_Failure() {
+	public void testDNARun2DatasetDNARunExist() {
 
 		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
-
-		instructionList.add(createlgMarkerInstruction(rCoord, cCoord));
-		instructionList.add(createInstruction(GobiiTableType.LINKAGE_GROUP, NAME, rCoord+1,	cCoord+1));
+		
+		instructionList.add(createInstruction(GobiiTableType.DNARUN, NAME, rCoord, cCoord));
+		instructionList.add(createInstruction(GobiiTableType.DATASET_DNARUN, DNA_RUN_NAME, rCoord, cCoord));
 
 		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
 		instructionFileValidator.processInstructionFile();
-		assertNotNull(instructionFileValidator.validateMarkerUpload());
+		assertNull(instructionFileValidator.validate());
 	}
-
 	
 	/**
-	 * Test case for digest.marker_prop (marker_name) == digest.marker (name)
-	 */
+	 * Test case for 
+                   if digest.dnarun exists
+   						digest.dnarun (name) == digest.ds_dnarun (dnarun_name)
+     */
 	@Test
-	public void testMarkerProp2Marker() {
+	public void testDNARun2DatasetDNARunExist_Failure() {
 
 		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
-
-		instructionList.add(createInstruction(GobiiTableType.MARKER_PROP, MARKER_NAME, rCoord, cCoord));
-		instructionList.add(createInstruction(GobiiTableType.MARKER, NAME, rCoord, cCoord));
+		
+		instructionList.add(createInstruction(GobiiTableType.DNARUN, NAME, rCoord, cCoord));
+		instructionList.add(createInstruction(GobiiTableType.DATASET_DNARUN, DNA_RUN_NAME, rCoord+1, cCoord));
 
 		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
 		instructionFileValidator.processInstructionFile();
-		assertNull(instructionFileValidator.validateMarkerUpload());
+		assertNotNull(instructionFileValidator.validate());
 	}
 
-	/**
-	 * Test case for digest.marker_prop (marker_name) == digest.marker (name)
-	 */
-	@Test
-	public void testMarkerProp2Marker_Failure() {
-
-		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
-
-		instructionList.add(createInstruction(GobiiTableType.MARKER_PROP, MARKER_NAME, rCoord, cCoord));
-		instructionList.add(createInstruction(GobiiTableType.MARKER, NAME, rCoord+1, cCoord+1));
-
-		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
-		instructionFileValidator.processInstructionFile();
-		assertNotNull(instructionFileValidator.validateMarkerUpload());
-	}
-	
-	/*
-	 * Tests case for digest.marker_prop upload only if digest.marker exist
-	 */
-	@Test
-	public void testMarkerProp2MarkerExist() {
-
-		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
-
-		instructionList.add(createInstruction(GobiiTableType.MARKER_PROP, NAME, rCoord, cCoord));
-		instructionList.add(createInstruction(GobiiTableType.MARKER, NAME, rCoord, cCoord));
-
-		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
-		instructionFileValidator.processInstructionFile();
-		assertNull(instructionFileValidator.validateMarkerUpload());
-	}
-
-	/*
-	 * Tests case for digest.marker_prop upload only if digest.marker exist
-	 */
-	@Test
-	public void testMarkerProp2MarkerExist_Failure() {
-
-		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
-
-		instructionList.add(createInstruction(GobiiTableType.MARKER_PROP, NAME, rCoord, cCoord));
-
-		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
-		instructionFileValidator.processInstructionFile();
-		assertNotNull(instructionFileValidator.validateMarkerUpload());
-	}
-	
-	/*
-	 * Test case for if digest.marker_linkage_group exists, then file must contain all columns lg_name, marker_name, start and stop
-	 */
-	@Test
-	public void testMarkerLinkageGroup() {
-
-		List<GobiiLoaderInstruction> instructionList = new ArrayList<>();
-
-		GobiiLoaderInstruction lgMarkerInstruction = createlgMarkerInstruction(rCoord, cCoord);
-		lgMarkerInstruction.getGobiiFileColumns().remove(0);
-		instructionList.add(lgMarkerInstruction);
-
-		InstructionFileValidator instructionFileValidator = new InstructionFileValidator(instructionList);
-		instructionFileValidator.processInstructionFile();
-		assertNotNull(instructionFileValidator.validateMarkerUpload());
-	}
 	
 	@VisibleForTesting
 	private GobiiLoaderInstruction createInstruction(String tableName, String nameValue, int rCoord, int cCoord) {
