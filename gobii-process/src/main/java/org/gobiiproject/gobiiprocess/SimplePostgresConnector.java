@@ -51,19 +51,52 @@ public class SimplePostgresConnector {
         String statement="SELECT 1 from "+table+" WHERE "+entity+" = '"+ name + "' LIMIT 1";
         return boolQuery(statement);
     }
-    public boolean hasMarker(String markerName) throws SQLException{
-        return hasEntry("marker","name",markerName);
+
+    public boolean hasMarkerInPlatform(String name, int platform) {
+        String statement="SELECT 1 from marker WHERE name = '"+ name + "' and platform_id = "+platform+" LIMIT 1";
+        try {
+            return boolQuery(statement);
+        }catch(SQLException e){ErrorLogger.logError("Postgres Connector",e);}
+        return false;
+    }
+
+    public boolean hasMarker(String markerName){
+        try {
+            return hasEntry("marker", "name", markerName);
+        }catch(SQLException e){
+            ErrorLogger.logError("Postgres Connector",e);
+        }
+        return false;
+    }
+
+
+    public boolean hasDNARuninExperiment(String name, int experiment) {
+        String statement="SELECT 1 from dnarun WHERE name = '"+ name + "' and experiment_id = "+experiment+" LIMIT 1";
+        try {
+            return boolQuery(statement);
+        }catch(SQLException e){ErrorLogger.logError("Postgres Connector",e);}
+        return false;
     }
 
     public boolean hasCVEntry(String cvGroupName, String cvName) throws SQLException{
         String statement="SELECT 1 from cv join cvgroup b on cv.cvgroup_id = b.cvgroup_id where b.name = '"+cvGroupName+"' and cv.term = '"+cvName+"' LIMIT 1";
         return boolQuery(statement);
     }
-    public boolean hasGermplasmType(String germplasmType) throws SQLException{
-        return hasCVEntry("germplasm_type",germplasmType);
+    public boolean hasGermplasmType(String germplasmType) {
+        try{
+            return hasCVEntry("germplasm_type",germplasmType);
+        }catch(SQLException e){
+            ErrorLogger.logError("Postgres Connector",e);
+        }
+        return false;
     }
-    public boolean hasGermplasmSpecies(String germplasmSpecies) throws SQLException{
-        return hasCVEntry("germplasm_species",germplasmSpecies);
+    public boolean hasGermplasmSpecies(String germplasmSpecies) {
+        try{
+            return hasCVEntry("germplasm_species",germplasmSpecies);
+        }catch(SQLException e){
+            ErrorLogger.logError("Postgres Connector",e);
+        }
+        return false;
     }
 
     public boolean close(){
