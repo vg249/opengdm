@@ -59,6 +59,9 @@ public class GobiiFileReader {
 	private static final String GERMPLASM_PROP_TABNAME="germplasm_prop";
 	private static final String GERMPLASM_TABNAME="germplasm";
 	private static final String MARKER_TABNAME="marker";
+	private static final String DS_MARKER_TABNAME="dataset_marker";
+	private static final String DS_SAMPLE_TABNAME="dataset_dnarun";
+	private static final String SAMPLE_TABNAME="dnarun";
 	private static String pathToHDF5Files;
 	private static boolean verbose;
 	private static String errorLogOverride;
@@ -277,6 +280,27 @@ public class GobiiFileReader {
 			default:
 				System.err.println("Unable to deal with file type " + zero.getGobiiFile().getGobiiFileType());
 				break;
+		}
+
+		//Database Validation
+		DatabaseQuerier querier=new DatabaseQuerier(gobiiCropConfig.getCropDbConfig(GobiiDbType.POSTGRESQL));
+
+		//If we're doing a DS upload and there is no DS_Marker
+		if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME) && loaderInstructionMap.containsKey(DS_MARKER_TABNAME) && !loaderInstructionMap.containsKey(MARKER_TABNAME)) {
+			querier.checkMarkerInPlatform(loaderInstructionMap.get(DS_MARKER_TABNAME),zero.getPlatform().getId());
+		}
+		//If we're doing a DS upload and there is no DS_Sample
+		if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME) && loaderInstructionMap.containsKey(DS_SAMPLE_TABNAME) && !loaderInstructionMap.containsKey(SAMPLE_TABNAME)) {
+			querier.checkDNARunInExperiment(loaderInstructionMap.get(DS_SAMPLE_TABNAME),zero.getExperiment().getId());
+		}
+
+
+		if(loaderInstructionMap.containsKey(MARKER_TABNAME)){
+			querier.checkMarkerExistence(loaderInstructionMap.get(MARKER_TABNAME));
+		}
+		if(loaderInstructionMap.containsKey(GERMPLASM_TABNAME)){
+			querier.checkGermplasmTypeExistence(loaderInstructionMap.get(GERMPLASM_TABNAME));
+			querier.checkGermplasmSpeciesExistence(loaderInstructionMap.get(GERMPLASM_TABNAME));
 		}
 
 		for (GobiiLoaderInstruction inst:list) {
