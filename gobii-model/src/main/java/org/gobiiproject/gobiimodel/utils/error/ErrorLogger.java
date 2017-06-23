@@ -97,6 +97,10 @@ public static boolean setLogLevel(String level){
 		log.error(name+":"+message,e);
 	}
 
+	public static void logError(String name, Throwable e){
+		logError(name,e.getMessage(),e);
+	}
+
 	//For Debugging Purposes Only
 	public static void logError(String name, String message, Throwable e,boolean ignore){
 		if(!ignore){
