@@ -67,10 +67,10 @@ public class DigestMatrix {
                  * since ssr data has only digits (upto 8)
                  */
                 for (String base : rowList){
-                    if (base.matches("/")){
+                    if (base.contains("/")){
                         String[] bases = base.split("/");
                         for(String digit: bases){
-                            if(!digit.matches("\\d+") && !digit.equals("N")){
+                            if(!digit.matches("\\d+") && !digit.equals("N") && (digit.length() > 8)){//Checks of the data length if more that 8 digits. (to save it from HDF5)
                                 return digit;
                             }
                         }
