@@ -537,7 +537,7 @@ public class GobiiExtractor {
 		ErrorLogger.logInfo("QC", "KDC Active: " + configuration.getKDCConfig().isActive());
 //		QCInstructionsDTO qcInstructionsDTOToSend = new QCInstructionsDTO();
 //		qcInstructionsDTOToSend.setContactId(inst.getContactId());
-//		qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_NOTIFICATIONS));
+//		qcInstructionsDTOToSend.setDataFileDirectory(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_OUTPUT));
 //		qcInstructionsDTOToSend.setDataFileName(new StringBuilder("qc_").append(DateUtils.makeDateIdString()).toString());
 //		qcInstructionsDTOToSend.setDatasetId(datasetId);
 //		// To create the QC instructions file for the Gobii web services independently of any QC status

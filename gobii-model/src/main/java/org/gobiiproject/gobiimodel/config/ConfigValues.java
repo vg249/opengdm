@@ -50,7 +50,7 @@ class ConfigValues {
         put(GobiiFileProcessDir.EXTRACTOR_INPROGRESS, "extractor/inprogress/");
         put(GobiiFileProcessDir.EXTRACTOR_DONE, "extractor/done/");
         put(GobiiFileProcessDir.EXTRACTOR_OUTPUT, "extractor/output/");
-        put(GobiiFileProcessDir.QC_NOTIFICATIONS, "qcnotifications/");
+        put(GobiiFileProcessDir.QC_OUTPUT, "loader/qc/");
 
     }};
 

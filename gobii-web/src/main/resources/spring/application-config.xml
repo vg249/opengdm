@@ -212,12 +212,6 @@
           class="org.gobiiproject.gobidomain.services.impl.ExtractorInstructionFileServiceImpl"/>
 
 
-    <!-- **** QC Check Beans *************************************** -->
-    <bean id="dtoMapQCInstructions"
-          class="org.gobiiproject.gobiidtomapping.impl.DtoMapQCInstructionsImpl"/>
-    <bean id="QCInstuctionFilesService"
-          class="org.gobiiproject.gobidomain.services.impl.QCInstructionFilesServiceImpl"/>
-
     <!-- **** Contact Beans *************************************** -->
     <bean id="dtoMapContact" class="org.gobiiproject.gobiidtomapping.impl.DtoMapContactImpl"/>
     <bean id="contactService" class="org.gobiiproject.gobidomain.services.impl.ContactServiceImpl"/>
