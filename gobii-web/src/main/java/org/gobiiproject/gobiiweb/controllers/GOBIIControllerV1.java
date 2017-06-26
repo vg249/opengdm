@@ -1791,7 +1791,7 @@ public class GOBIIControllerV1 {
 
     }
 
-    @RequestMapping(value = "/marker-search",
+        @RequestMapping(value = "/marker-search",
             params = {"name"},
             method = RequestMethod.GET)
     @ResponseBody
