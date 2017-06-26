@@ -54,7 +54,7 @@ public class DtoRequestFileQCInstructionsTest {
         //get intended path for the created directory and check if file has been created
         /*GobiiTestConfiguration testConfiguration = new GobiiTestConfiguration();
         String testCrop = testConfiguration.getConfigSettings().getTestExecConfig().getTestCrop();
-        String destinationDirectory = testConfiguration.getConfigSettings().getProcessingPath(testCrop, GobiiFileProcessDir.QC_NOTIFICATIONS);
+        String destinationDirectory = testConfiguration.getConfigSettings().getProcessingPath(testCrop, GobiiFileProcessDir.QC_OUTPUT);
         String createdFile = destinationDirectory +  qcInstructionsDTO.getGobiiQCComplete().getDataFileName()+".json";
         Assert.assertTrue(new File(createdFile).exists());*/
 

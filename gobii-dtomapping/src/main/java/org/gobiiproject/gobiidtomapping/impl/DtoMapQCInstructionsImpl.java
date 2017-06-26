@@ -58,7 +58,7 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
             ConfigSettings configSettings = new ConfigSettings();
 
             String instructionFileDirectory = configSettings.getProcessingPath(cropType,
-                    GobiiFileProcessDir.QC_NOTIFICATIONS);
+                    GobiiFileProcessDir. QC_OUTPUT);
 
             createDirectories(instructionFileDirectory);
 
@@ -136,7 +136,7 @@ public class DtoMapQCInstructionsImpl implements DtoMapQCInstructions {
             ConfigSettings configSettings = new ConfigSettings();
 
             String instructionFileDirectory = configSettings.getProcessingPath(cropType,
-                    GobiiFileProcessDir.QC_NOTIFICATIONS);
+                    GobiiFileProcessDir.QC_OUTPUT);
 
             String instructionFileFqpn = instructionFileDirectory
                     + instructionFileName
