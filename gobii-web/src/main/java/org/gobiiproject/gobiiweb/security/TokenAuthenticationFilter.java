@@ -80,7 +80,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                 if (hasValidToken) {
 
                     //header data
-                    this.addHeadersToValidRequest(httpResponse,null,gobiiCropType,tokenHeaderVal);
+                    this.addHeadersToValidRequest(httpResponse, null, gobiiCropType, tokenHeaderVal);
                     chain.doFilter(request, response);
                 } else {
 
@@ -117,7 +117,11 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                                     + gobiiCropType
                                     + "; a contact record must have username = "
                                     + userName;
-                            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, message );
+                            httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            httpResponse.getOutputStream().print(message);
+                            httpResponse.getOutputStream().flush();
+                            httpResponse.getOutputStream().close();
+
                             LOGGER.error(message);
                         }
 
@@ -137,7 +141,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
             LOGGER.error("Error in authentication filter", e);
 
-            if( httpResponse != null ) {
+            if (httpResponse != null) {
                 httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }
@@ -154,7 +158,6 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
         httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, token);
         httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP, gobiiCropType);
         httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_USERNAME, userName);
-
 
 
     }
