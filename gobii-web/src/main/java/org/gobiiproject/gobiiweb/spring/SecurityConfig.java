@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiweb.spring;
 import org.gobiiproject.gobidomain.security.TokenManager;
 import org.gobiiproject.gobidomain.security.impl.TokenManagerSingle;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
+import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobidomain.services.impl.AuthenticationServiceDefault;
 import org.gobiiproject.gobidomain.services.impl.UserDetailsServiceImpl;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
@@ -10,6 +11,7 @@ import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiiweb.security.TokenAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -34,6 +36,9 @@ import sun.net.www.content.text.Generic;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private ContactService contactService;
 
 
     @Override
@@ -135,12 +140,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean(name = "authenticationService")
     public AuthenticationService authenticationService() throws Exception {
-        return new AuthenticationServiceDefault(this.authenticationManager(), this.tokenManager());
+        return new AuthenticationServiceDefault(this.authenticationManager(),
+                this.tokenManager());
     }
 
     @Bean(name = "restAuthenticationFilter")
     public GenericFilterBean filterBean() throws Exception {
-        return new TokenAuthenticationFilter(this.authenticationService(), "");
+        return new TokenAuthenticationFilter(this.authenticationService(),
+                "",
+                this.contactService);
     }
 
 }
