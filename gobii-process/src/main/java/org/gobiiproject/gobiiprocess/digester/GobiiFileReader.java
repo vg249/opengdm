@@ -230,7 +230,7 @@ public class GobiiFileReader {
 
 		SimpleTimer.start("FileRead");
 
-		boolean qcCheck = zero.isQcCheck();
+		boolean qcCheck;//  zero.isQcCheck();
 //		if (qcCheck) {//QC - Subsection #1 of 3
 //			qcExtractInstruction = createQCExtractInstruction(zero, crop);
 //		}
