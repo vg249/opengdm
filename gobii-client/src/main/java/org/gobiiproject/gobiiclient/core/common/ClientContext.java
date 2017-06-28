@@ -120,7 +120,12 @@ public final class ClientContext {
                 }
 
                 if (!LineUtils.isNullOrEmpty(userName) && !LineUtils.isNullOrEmpty(password)) {
-                    clientContext.login(userName, password);
+                    if (!clientContext.login(userName, password)) {
+                        throw new Exception("Login with auth type "
+                                + gobiiAutoLoginType.toString()
+                                + " failed: "
+                                + clientContext.getLoginFailure());
+                    }
                 }
             }
         }
@@ -350,16 +355,50 @@ public final class ClientContext {
         return returnVal;
     }
 
+
+    public String loginFailure;
+
+    public String getLoginFailure() {
+        return loginFailure;
+    }
+
+    /**
+     * Authenticates the user and sets the token for subseqeunt requests. If the return
+     * value is false, getLoginFailure() will indicate the reason that the login() failed.
+     * @param userName
+     * @param password
+     * @return
+     * @throws Exception
+     */
     public boolean login(String userName, String password) throws Exception {
-        boolean returnVal = true;
+
+        boolean returnVal = false;
 
         try {
+
             String authUrl = ServiceRequestId.URL_AUTH
                     .getRequestUrl(this.getCurrentCropContextRoot(),
                             ControllerType.GOBII);
 
             RestUri authUri = this.getUriFactory().RestUriFromUri(authUrl);
-            userToken = this.getHttp().getTokenForUser(authUri, userName, password);
+            HttpMethodResult httpMethodResult = this.getHttp().authenticateWithUser(authUri, userName, password);
+
+            if (httpMethodResult.getResponseCode() == HttpStatus.SC_OK) {
+                this.userToken = httpMethodResult.getToken();
+                if (this.userToken != null) {
+                    returnVal = true;
+                }
+
+            } else {
+                this.loginFailure = httpMethodResult.getResponseCode()
+                        + ": ";
+
+                if (!LineUtils.isNullOrEmpty(httpMethodResult.getMessage())) {
+                    this.loginFailure += httpMethodResult.getMessage();
+                } else {
+                    this.loginFailure += httpMethodResult.getReasonPhrase();
+                }
+            }
 
         } catch (Exception e) {
             LOGGER.error("Authenticating", e);

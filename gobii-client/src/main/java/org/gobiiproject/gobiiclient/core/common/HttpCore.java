@@ -118,49 +118,55 @@ public class HttpCore {
 
     }// getHeader()
 
-    private HttpResponse authenticateWithUser(URI uri, String userName, String password) throws Exception {
+    public HttpMethodResult authenticateWithUser(RestUri authenticationUri, String userName, String password) throws Exception {
 
-        HttpResponse returnVal = null;
+        URI uri = makeUri(authenticationUri);
 
         HttpPost postRequest = new HttpPost(uri);
         this.setHttpBody(postRequest, "empty");
-        returnVal = submitUriRequest(postRequest, userName, password, null);
+        HttpResponse httpResponse = submitUriRequest(postRequest, userName, password, null);
+        HttpMethodResult returnVal = new HttpMethodResult(httpResponse);
 
-        if (HttpStatus.SC_OK != returnVal.getStatusLine().getStatusCode()) {
-            throw new Exception("Request did not succeed with http status code "
-                    + returnVal.getStatusLine().getStatusCode()
-                    + "; the url is: "
-                    + uri.toString());
+        if (HttpStatus.SC_OK == returnVal.getResponseCode() ) {
+            Header tokenHeader = getHeader(httpResponse.getAllHeaders(), GobiiHttpHeaderNames.HEADER_TOKEN);
+            if (tokenHeader != null) {
+                returnVal.setToken(tokenHeader.getValue());
+            }
+        } else {
+            // if we got SC_FORBIDDEN, we're expecting a meaingful response body from the server
+            if( HttpStatus.SC_FORBIDDEN == returnVal.getResponseCode() ) {
+                returnVal.setMessage(this.extractBody(httpResponse));
+            }
         }
-
 
         return (returnVal);
 
     }//authenticateWithUser()
 
-    public String getTokenForUser(RestUri restUri, String userName, String password) throws Exception {
+    private String extractBody(HttpResponse httpResponse) throws Exception {
 
-        String returnVal = null;
+        String returnVal;
 
-        URI uri = makeUri(restUri);
-        HttpResponse response = authenticateWithUser(uri, userName, password);
-        Header tokenHeader = getHeader(response.getAllHeaders(), GobiiHttpHeaderNames.HEADER_TOKEN);
-        returnVal = tokenHeader.getValue();
+        InputStream inputStream = httpResponse.getEntity().getContent();
+        BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(inputStream));
 
-        if (null == returnVal) {
-            LOGGER.error("Unable to get authentication token for user " + userName);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        String currentLine = null;
+        while ((currentLine = bufferedReader.readLine()) != null) {
+            stringBuilder.append(currentLine);
         }
 
+        returnVal = stringBuilder.toString();
+
         return returnVal;
-
-    } // getTokenForUser()
-
+    }
 
     private HttpMethodResult submitHttpMethod(HttpRequestBase httpRequestBase,
                                               RestUri restUri,
                                               String token) throws Exception {
 
-        HttpMethodResult returnVal = new HttpMethodResult();
 
         HttpResponse httpResponse;
 
@@ -169,40 +175,26 @@ public class HttpCore {
 
 
         httpResponse = submitUriRequest(httpRequestBase, "", "", token);
-
-        int responseCode = httpResponse.getStatusLine().getStatusCode();
-        String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
-        returnVal.setResponse(responseCode, reasonPhrase, uri);
+        HttpMethodResult returnVal = new HttpMethodResult(httpResponse);
+        returnVal.setUri(uri);
 
 
-        if (HttpStatus.SC_NOT_FOUND != responseCode &&
-                HttpStatus.SC_BAD_REQUEST != responseCode &&
-                HttpStatus.SC_METHOD_NOT_ALLOWED != responseCode &&
-                HttpStatus.SC_UNAUTHORIZED != responseCode) {
-
-            InputStream inputStream = httpResponse.getEntity().getContent();
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(inputStream));
+        if (HttpStatus.SC_NOT_FOUND != returnVal.getResponseCode() &&
+                HttpStatus.SC_BAD_REQUEST != returnVal.getResponseCode() &&
+                HttpStatus.SC_METHOD_NOT_ALLOWED != returnVal.getResponseCode() &&
+                HttpStatus.SC_UNAUTHORIZED != returnVal.getResponseCode()) {
 
 
-            StringBuilder stringBuilder = new StringBuilder();
-            String currentLine = null;
-            while ((currentLine = bufferedReader.readLine()) != null) {
-                stringBuilder.append(currentLine);
-            }
-
+            String jsonAsString = this.extractBody(httpResponse);
 
             JsonParser parser = new JsonParser();
 
-            String jsonAsString = stringBuilder.toString();
 
             JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
 
             returnVal.setPayLoad(jsonObject);
         }
 
-
-        ///returnVal.setPayLoad(getJsonFromInputStream(httpResponse.getEntity().getContent()));
 
         return returnVal;
     }
