@@ -371,10 +371,13 @@ public class GobiiFileReader {
 				intermediateFile.transform(MobileTransform.PGArray);
 			}
 
-			success = DigestMatrix.validatematrix(loaderInstructionMap.get(VARIANT_CALL_TABNAME), zero.getDatasetType().getName().toString());
-            if(!success){
-                ErrorLogger.logError("Validate Dataset Matrix", "Matrix validation Failed.");
-            }
+			if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME)) {
+				boolean valid=DigestMatrix.validatematrix(loaderInstructionMap.get(VARIANT_CALL_TABNAME), zero.getDatasetType().getName().toString());
+				if (!valid) {
+					ErrorLogger.logError("Validate Dataset Matrix", "Matrix validation Failed.");
+					success=false;
+				}
+			}
 
 			if (qcCheck) {//QC - Subsection #2 of 3
 				setQCExtractPaths(inst, configuration, crop);
