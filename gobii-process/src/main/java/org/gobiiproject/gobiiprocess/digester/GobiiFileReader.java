@@ -230,10 +230,10 @@ public class GobiiFileReader {
 
 		SimpleTimer.start("FileRead");
 
-		boolean qcCheck = zero.isQcCheck();
-		if (qcCheck) {//QC - Subsection #1 of 3
-			qcExtractInstruction = createQCExtractInstruction(zero, crop);
-		}
+		boolean qcCheck;//  zero.isQcCheck();
+//		if (qcCheck) {//QC - Subsection #1 of 3
+//			qcExtractInstruction = createQCExtractInstruction(zero, crop);
+//		}
 
 		//Pre-processing - make sure all files exist, find the cannonical dataset id
 		for(GobiiLoaderInstruction inst:list) {
@@ -304,6 +304,7 @@ public class GobiiFileReader {
 		}
 		querier.close();
 
+		boolean sendQc= false;
 		for (GobiiLoaderInstruction inst:list) {
 			qcCheck = inst.isQcCheck();
 			//Section - Matrix Post-processing
@@ -380,7 +381,9 @@ public class GobiiFileReader {
 			}
 
 			if (qcCheck) {//QC - Subsection #2 of 3
+				qcExtractInstruction = createQCExtractInstruction(zero, crop);
 				setQCExtractPaths(inst, configuration, crop);
+				sendQc = true;
 			}
 
 			intermediateFile.returnFile(); // replace intermediateFile where it came from
@@ -439,7 +442,7 @@ public class GobiiFileReader {
                 HDF5Interface.createHDF5FromDataset(pm, dst, configuration, dataSetId, crop, errorPath, variantFilename, variantFile);
                 rmIfExist(variantFile.getPath());
 
-                if (qcCheck) {//QC - Subsection #3 of 3
+                if (sendQc) {//QC - Subsection #3 of 3
                     sendQCExtract(configuration, crop);
                 }
             }
