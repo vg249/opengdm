@@ -45,6 +45,9 @@ public class DigestMatrix {
         catch (IOException e){
             ErrorLogger.logError("Validation Matrix", "Unable to open the matrix file.", e);
         }
+        catch(Exception e){
+            ErrorLogger.logError("Digest Matrix",e);
+        }
         return true;
     }
 
