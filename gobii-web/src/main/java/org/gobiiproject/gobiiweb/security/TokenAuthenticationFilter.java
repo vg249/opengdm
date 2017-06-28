@@ -10,11 +10,13 @@ import org.gobiiproject.gobidomain.security.TokenInfo;
 import org.gobiiproject.gobidomain.services.AuthenticationService;
 
 
+import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiimodel.tobemovedtoapimodel.HeaderAuth;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.filter.GenericFilterBean;
@@ -44,14 +46,16 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
     private final String logoutLink;
     private final AuthenticationService authenticationService;
+    private ContactService contactService;
 
 
     public TokenAuthenticationFilter(AuthenticationService authenticationService,
-                                     String logoutLink) {
+                                     String logoutLink,
+                                     ContactService contactService) {
 
         this.authenticationService = authenticationService;
         this.logoutLink = logoutLink;
-
+        this.contactService = contactService;
     }
 
 
@@ -76,7 +80,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                 if (hasValidToken) {
 
                     //header data
-                    this.addHeadersToValidRequest(httpResponse,null,gobiiCropType,tokenHeaderVal);
+                    this.addHeadersToValidRequest(httpResponse, null, gobiiCropType, tokenHeaderVal);
                     chain.doFilter(request, response);
                 } else {
 
@@ -100,8 +104,26 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
                     if (null != tokenInfo) {
 
-                        this.addHeadersToValidRequest(httpResponse,userName,gobiiCropType,tokenInfo.getToken());
-                        chain.doFilter(request, response);
+                        if (this.contactService.getContactByUserName(userName).getContactId() > 0) {
+
+                            this.addHeadersToValidRequest(httpResponse, userName, gobiiCropType, tokenInfo.getToken());
+                            chain.doFilter(request, response);
+
+                        } else {
+
+                            String message = "Missing contact info for user "
+                                    + userName
+                                    + " in crop database "
+                                    + gobiiCropType
+                                    + "; a contact record must have username = "
+                                    + userName;
+                            httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            httpResponse.getOutputStream().print(message);
+                            httpResponse.getOutputStream().flush();
+                            httpResponse.getOutputStream().close();
+
+                            LOGGER.error(message);
+                        }
 
                     } else {
                         httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -119,7 +141,7 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
 
             LOGGER.error("Error in authentication filter", e);
 
-            if( httpResponse != null ) {
+            if (httpResponse != null) {
                 httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }
@@ -136,7 +158,6 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
         httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_TOKEN, token);
         httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_GOBII_CROP, gobiiCropType);
         httpResponse.setHeader(GobiiHttpHeaderNames.HEADER_USERNAME, userName);
-
 
 
     }

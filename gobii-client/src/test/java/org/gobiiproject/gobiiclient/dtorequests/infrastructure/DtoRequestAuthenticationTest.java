@@ -14,11 +14,14 @@ import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
 import org.gobiiproject.gobiiclient.core.common.TestConfiguration;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
 import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
+import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
+import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -188,7 +191,7 @@ public class DtoRequestAuthenticationTest {
     }
 
     @Test
-    public void testSwitchToSecondCrop () throws Exception {
+    public void testSwitchToSecondCrop() throws Exception {
 
 
         // these steps require physical access to a config file. Other clients do not have
@@ -211,9 +214,9 @@ public class DtoRequestAuthenticationTest {
                     .setCurrentClientCrop(cropIdOne);
             ClientContext.getInstance(null, false).login(testUser, testPassword);
             Assert.assertNotNull("Authentication with first crop failed: " + cropIdOne,
-                    ClientContext.getInstance(null,true).getUserToken());
+                    ClientContext.getInstance(null, true).getUserToken());
 
-            String cropOneToken = ClientContext.getInstance(null,true).getUserToken();
+            String cropOneToken = ClientContext.getInstance(null, true).getUserToken();
 
             // ****************** SECOND LOGIN
 
@@ -221,12 +224,76 @@ public class DtoRequestAuthenticationTest {
                     .setCurrentClientCrop(cropIdTwo);
             ClientContext.getInstance(null, false).login(testUser, testPassword);
             Assert.assertNotNull("Authentication with second crop failed: " + cropIdTwo,
-                    ClientContext.getInstance(null,true).getUserToken());
+                    ClientContext.getInstance(null, true).getUserToken());
 
-            String cropTwoToken = ClientContext.getInstance(null,true).getUserToken();
+            String cropTwoToken = ClientContext.getInstance(null, true).getUserToken();
 
             Assert.assertFalse("The tokens for the two authentications should be different: " + cropOneToken + "," + cropTwoToken,
                     cropOneToken.equals(cropTwoToken));
+
+        }
+    }
+
+
+    @Test
+    public void testUnknownContactError() throws Exception {
+
+        TestConfiguration testConfiguration = new TestConfiguration();
+        ConfigSettings configSettings = testConfiguration.getConfigSettings();
+        List<CropConfig> activeCropConfigs = testConfiguration.getConfigSettings().getActiveCropConfigs();
+        if (activeCropConfigs.size() > 0) {
+            // http://localhost:8282/gobii-dev/
+
+
+            // this login should succeeed
+            CropConfig cropConfigOne = activeCropConfigs.get(0);
+            String serviceUrl = makeUrl(cropConfigOne);
+            ClientContext.resetConfiguration();
+            String cropId = cropConfigOne.getGobiiCropType();
+            ClientContext clientContext = ClientContext.getInstance(configSettings, cropId, GobiiAutoLoginType.USER_TEST);
+            Assert.assertNotNull("No user token was created for initial login: " + clientContext.getLoginFailure(),
+                    clientContext.getUserToken());
+
+            // now break the test user login
+            String testLoginUser = testConfiguration.getConfigSettings().getTestExecConfig().getLdapUserForUnitTest();
+            RestUri restUriContactSearch = ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .contactsByQueryParams();
+            restUriContactSearch.setParamValue("userName", testLoginUser);
+            GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceForGet = new GobiiEnvelopeRestResource<>(restUriContactSearch);
+            PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResourceForGet
+                    .get(ContactDTO.class);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+            Assert.assertTrue("Test user was not retrieved: " + testLoginUser, resultEnvelope.getPayload().getData().size() == 1);
+            ContactDTO contactDTOFromGet = resultEnvelope.getPayload().getData().get(0);
+            contactDTOFromGet.setUserName("not");
+
+            RestUri restUriContactUpdate = ClientContext.getInstance(null, false)
+                    .getUriFactory()
+                    .resourceColl(ServiceRequestId.URL_CONTACTS)
+                    .addUriParam("id")
+                    .setParamValue("id", contactDTOFromGet.getContactId().toString());
+
+            GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceForPut = new GobiiEnvelopeRestResource<>(restUriContactUpdate);
+            PayloadEnvelope<ContactDTO> payloadEnvelopeForPut = new PayloadEnvelope<>(contactDTOFromGet, GobiiProcessType.UPDATE);
+            PayloadEnvelope<ContactDTO> contactDTOPayloadEnvelope =  gobiiEnvelopeRestResourceForPut.put(ContactDTO.class,payloadEnvelopeForPut);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOPayloadEnvelope.getHeader()));
+
+
+            // now test that we get the correct borken response
+            ClientContext newClientContext = ClientContext.getInstance(serviceUrl,true);
+
+            String testUserName = testConfiguration.getConfigSettings().getTestExecConfig().getLdapUserForUnitTest();
+            String testPassword = testConfiguration.getConfigSettings().getTestExecConfig().getLdapPasswordForUnitTest();
+            Assert.assertFalse("Login should have failed", newClientContext.login(testUserName,testPassword));
+            Assert.assertTrue("Message does not contain expected error: " + newClientContext.getLoginFailure(),
+                    newClientContext.getLoginFailure().toLowerCase().contains("missing contact info for user"));
+
+
+            // restore user name
+            contactDTOFromGet.setUserName(testUserName);
+            PayloadEnvelope<ContactDTO> contactDTOPayloadEnvelopeRestore =  gobiiEnvelopeRestResourceForPut.put(ContactDTO.class,payloadEnvelopeForPut);
+            Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOPayloadEnvelopeRestore.getHeader()));
 
         }
     }
