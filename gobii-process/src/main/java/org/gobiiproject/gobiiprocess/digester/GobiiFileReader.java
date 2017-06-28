@@ -304,9 +304,8 @@ public class GobiiFileReader {
 		}
 		querier.close();
 
-		boolean callQcPath;
 		for (GobiiLoaderInstruction inst:list) {
-			callQcPath = false;
+			qcCheck = inst.isQcCheck();
 			//Section - Matrix Post-processing
 			//Dataset is the first non-empty dataset type
 			for (GobiiFileColumn gfc : inst.getGobiiFileColumns()) {
@@ -318,10 +317,6 @@ public class GobiiFileReader {
 					}
 					if (gfc.getDataSetOrientationType() != null) dso = gfc.getDataSetOrientationType();
 
-					if(qcCheck) {
-						callQcPath = true;
-					}
-					
 					break;
 				}
 			}
@@ -381,7 +376,7 @@ public class GobiiFileReader {
                 ErrorLogger.logError("Validate Dataset Matrix", "Matrix validation Failed.");
             }
 
-			if (qcCheck && callQcPath) {//QC - Subsection #2 of 3
+			if (qcCheck) {//QC - Subsection #2 of 3
 				setQCExtractPaths(inst, configuration, crop);
 			}
 
