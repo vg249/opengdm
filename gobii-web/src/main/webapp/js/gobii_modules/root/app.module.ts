@@ -2,7 +2,7 @@ import {NgModule} from "@angular/core";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {BrowserModule} from "@angular/platform-browser";
-
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {ExportFormatComponent} from "../views/export-format.component";
 import {ProjectListBoxComponent} from "../views/project-list-box.component";
 import {DataSetCheckListBoxComponent} from "../views/dataset-checklist-box.component";
@@ -30,7 +30,7 @@ import {routing} from "./app.routing";
 import {APP_BASE_HREF} from "@angular/common";
 import {AuthGuard} from "../services/core/auth.guard";
 import {Button} from "primeng/components/button/button";
-import {FORBIDDEN} from "@types/http-status-codes";
+
 
 
 @NgModule({
@@ -40,7 +40,8 @@ import {FORBIDDEN} from "@types/http-status-codes";
         ReactiveFormsModule,
         TreeModule,
         SharedModule,
-        routing],
+        routing,
+        BrowserAnimationsModule],
     declarations: [
         AppComponent,
         ExtractorRoot,
