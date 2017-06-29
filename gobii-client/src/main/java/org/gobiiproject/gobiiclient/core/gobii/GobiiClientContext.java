@@ -161,7 +161,12 @@ public final class GobiiClientContext {
                 }
 
                 if (!LineUtils.isNullOrEmpty(userName) && !LineUtils.isNullOrEmpty(password)) {
-                    gobiiClientContext.login(cropId, userName, password);
+                    if (!gobiiClientContext.login(cropId, userName, password)) {
+                        throw new Exception("Login with auth type "
+                                + gobiiAutoLoginType.toString()
+                                + " failed: "
+                                + gobiiClientContext.getLoginFailure());
+                    }
                 }
             }
         }
@@ -410,9 +415,24 @@ public final class GobiiClientContext {
     }
 
 
+    public String loginFailure;
+
+    public String getLoginFailure() {
+        return loginFailure;
+    }
+
+    /**
+     * Authenticates the user and sets the token for subseqeunt requests. If the return
+     * value is false, getLoginFailure() will indicate the reason that the login() failed.
+     *
+     * @param userName
+     * @param password
+     * @return
+     * @throws Exception
+     */
     public boolean login(String cropId, String userName, String password) throws Exception {
 
-        boolean returnVal = true;
+        boolean returnVal = false;
 
         if (LineUtils.isNullOrEmpty(cropId)) {
             throw new Exception("CropId must not be null");
@@ -435,8 +455,21 @@ public final class GobiiClientContext {
                     this.getCurrentCropPort());
 
 
-            returnVal = this.httpCore.authenticate(authUri, userName, password);
+            HttpMethodResult httpMethodResult = this.getHttp().authenticateWithUser(authUri, userName, password);
 
+            if (httpMethodResult.getResponseCode() == HttpStatus.SC_OK) {
+                returnVal = true;
+
+            } else {
+                this.loginFailure = httpMethodResult.getResponseCode()
+                        + ": ";
+
+                if (!LineUtils.isNullOrEmpty(httpMethodResult.getMessage())) {
+                    this.loginFailure += httpMethodResult.getMessage();
+                } else {
+                    this.loginFailure += httpMethodResult.getReasonPhrase();
+                }
+            }
         } catch (Exception e) {
             LOGGER.error("Authenticating", e);
             throw new Exception(e);
@@ -447,6 +480,10 @@ public final class GobiiClientContext {
 
     public String getUserToken() throws Exception {
         return this.getHttp().getToken();
+    }
+
+    public String setUserToken(String token) throws Exception {
+        return this.getHttp().setToken(token);
     }
 
     public String getFileSystemRoot() {

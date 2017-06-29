@@ -1,6 +1,7 @@
 package org.gobiiproject.gobiiclient.core.common;
 
 import com.google.gson.JsonObject;
+import org.apache.http.HttpResponse;
 
 import java.net.URI;
 
@@ -10,13 +11,19 @@ import java.net.URI;
  */
 public class HttpMethodResult {
 
-    int responseCode;
 
+    HttpMethodResult(HttpResponse httpResponse) {
+        this.responseCode = httpResponse.getStatusLine().getStatusCode();
+        this.reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
+    }
+
+    int responseCode;
     String reasonPhrase;
     JsonObject jsonPayload;
-    StringBuilder plainPayload = new StringBuilder();
+    String plainPayload = null;
     URI uri;
     String fileName = null;
+    String message;
 
     public int getResponseCode() {
         return responseCode;
@@ -30,9 +37,7 @@ public class HttpMethodResult {
         return uri;
     }
 
-    public void setResponse(int responseCode, String reasonPhrase, URI uri) {
-        this.responseCode = responseCode;
-        this.reasonPhrase = reasonPhrase;
+    public void setUri(URI uri) {
         this.uri = uri;
     }
 
@@ -44,11 +49,11 @@ public class HttpMethodResult {
         this.jsonPayload = jsonPayload;
     }
 
-    public StringBuilder getPlainPayload() {
+    public String getPlainPayload() {
         return plainPayload;
     }
 
-    public void setPlainPayload(StringBuilder plainPayload) {
+    public void setPlainPayload(String plainPayload) {
         this.plainPayload = plainPayload;
     }
 
@@ -58,5 +63,13 @@ public class HttpMethodResult {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

@@ -70,6 +70,10 @@ public class HttpCore {
         return token;
     }
 
+    public String setToken(String token) {
+        return this.token = token;
+    }
+
     URIBuilder getBaseBuilder() throws Exception {
         return (new URIBuilder().setScheme("http")
                 .setHost(host)
@@ -151,54 +155,59 @@ public class HttpCore {
 
     }// getHeader()
 
-    private HttpResponse authenticateWithUser(URI uri, String userName, String password) throws Exception {
 
-        HttpResponse returnVal = null;
+    private String extractBody(HttpResponse httpResponse) throws Exception {
 
+        String returnVal;
+
+        InputStream inputStream = httpResponse.getEntity().getContent();
+        BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(inputStream));
+
+
+        StringBuilder stringBuilder = new StringBuilder();
+        String currentLine = null;
+        while ((currentLine = bufferedReader.readLine()) != null) {
+            stringBuilder.append(currentLine);
+        }
+
+        returnVal = stringBuilder.toString();
+
+        return returnVal;
+    }
+
+    public HttpMethodResult authenticateWithUser(RestUri restUri,String userName, String password) throws Exception {
+
+        URI uri = makeUri(restUri);
         HttpPost postRequest = new HttpPost(uri);
         this.setHttpBody(postRequest, "empty");
         this.setAuthenticationHeaders(postRequest, userName, password);
 
         // content headers are already set in setAuthenticationHeaders()
-        returnVal = this.submitUriRequest(postRequest, new HashMap<>());
+        HttpResponse httpResponse = this.submitUriRequest(postRequest, new HashMap<>());
 
-        if (HttpStatus.SC_OK != returnVal.getStatusLine().getStatusCode()) {
-            throw new Exception("Request did not succeed with http status code "
-                    + returnVal.getStatusLine().getStatusCode()
-                    + "; the url is: "
-                    + uri.toString());
+        HttpMethodResult returnVal = new HttpMethodResult(httpResponse);
+
+        if (HttpStatus.SC_OK == returnVal.getResponseCode() ) {
+            Header tokenHeader = getHeader(httpResponse.getAllHeaders(), GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
+            if (tokenHeader != null) {
+                this.token = tokenHeader.getValue();
+            }
+        } else {
+            // if we got SC_FORBIDDEN, we're expecting a meaingful response body from the server
+            if( HttpStatus.SC_FORBIDDEN == returnVal.getResponseCode() ) {
+                returnVal.setMessage(this.extractBody(httpResponse));
+            }
         }
-
 
         return (returnVal);
 
     }//authenticateWithUser()
 
-    public boolean authenticate(RestUri restUri, String userName, String password) throws Exception {
-
-        boolean returnVal = true;
-
-        URI uri = makeUri(restUri);
-        HttpResponse response = authenticateWithUser(uri, userName, password);
-
-        Header tokenHeader = getHeader(response.getAllHeaders(), GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
-        this.token = tokenHeader.getValue();
-
-        returnVal = (false == LineUtils.isNullOrEmpty(this.token));
-
-        if (returnVal == false) {
-            LOGGER.error("Unable to get authentication token for user " + userName);
-        }
-
-        return returnVal;
-
-    } // authenticate()
-
-
     private HttpMethodResult submitHttpMethod(HttpRequestBase httpRequestBase,
                                               RestUri restUri) throws Exception {
 
-        HttpMethodResult returnVal = new HttpMethodResult();
+        HttpMethodResult returnVal = null;
 
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -213,10 +222,8 @@ public class HttpCore {
 
             this.setTokenHeader(httpRequestBase);
             httpResponse = submitUriRequest(httpRequestBase, restUri.getHttpHeaders());
-
-            int responseCode = httpResponse.getStatusLine().getStatusCode();
-            String reasonPhrase = httpResponse.getStatusLine().getReasonPhrase();
-            returnVal.setResponse(responseCode, reasonPhrase, uri);
+            returnVal = new HttpMethodResult(httpResponse);
+            returnVal.setUri(uri);
 
 
             // this really needs to be changed so that it allows only the
@@ -233,11 +240,11 @@ public class HttpCore {
             // condition as an exception with the reason code and
             // so forth. I would also observe that there are several different classes that are formulating
             // error based on these response codes. That really needs to be enapsulated.
-            if (HttpStatus.SC_NOT_FOUND != responseCode &&
-                    HttpStatus.SC_BAD_REQUEST != responseCode &&
-                    HttpStatus.SC_METHOD_NOT_ALLOWED != responseCode &&
-                    HttpStatus.SC_UNAUTHORIZED != responseCode &&
-                    HttpStatus.SC_NOT_ACCEPTABLE != responseCode) {
+            if (HttpStatus.SC_NOT_FOUND != returnVal.getResponseCode()&&
+                    HttpStatus.SC_BAD_REQUEST != returnVal.getResponseCode() &&
+                    HttpStatus.SC_METHOD_NOT_ALLOWED != returnVal.getResponseCode() &&
+                    HttpStatus.SC_UNAUTHORIZED != returnVal.getResponseCode() &&
+                    HttpStatus.SC_NOT_ACCEPTABLE != returnVal.getResponseCode()) {
 
 
                 String contentType = null; // default
@@ -256,24 +263,14 @@ public class HttpCore {
                             || contentType.contains(MediaType.TEXT_PLAIN)) {
 
 
-                        BufferedReader bufferedReader = new BufferedReader(
-                                new InputStreamReader(inputStream));
-
-
-                        StringBuilder stringBuilder = new StringBuilder();
-                        String currentLine = null;
-                        while ((currentLine = bufferedReader.readLine()) != null) {
-                            stringBuilder.append(currentLine);
-                        }
-
+                        String resultAsString = this.extractBody(httpResponse);
 
                         if (contentType.contains(MediaType.APPLICATION_JSON)) {
                             JsonParser parser = new JsonParser();
-                            String jsonAsString = stringBuilder.toString();
-                            JsonObject jsonObject = parser.parse(jsonAsString).getAsJsonObject();
+                            JsonObject jsonObject = parser.parse(resultAsString).getAsJsonObject();
                             returnVal.setJsonPayload(jsonObject);
                         } else {
-                            returnVal.setPlainPayload(stringBuilder);
+                            returnVal.setPlainPayload(resultAsString);
                         }
 
                     } else if (contentType.contains(MediaType.APPLICATION_OCTET_STREAM)

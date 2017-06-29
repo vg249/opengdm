@@ -330,7 +330,7 @@ public class GenericTestClient {
 
         Assert.assertTrue(didHttpMethodSucceed(httpMethodResult));
 
-        String plainTextResult = httpMethodResult.getPlainPayload().toString();
+        String plainTextResult = httpMethodResult.getPlainPayload();
         Assert.assertNotNull(plainTextResult);
         Assert.assertTrue(plainTextResult.contains(GenericTestValues.NAME_FIRST));
         Assert.assertTrue(plainTextResult.contains(GenericTestValues.NAME_LAST));
