@@ -382,7 +382,7 @@ public class GobiiFileReader {
 
 			if (qcCheck) {//QC - Subsection #2 of 3
 				qcExtractInstruction = createQCExtractInstruction(zero, crop);
-				setQCExtractPaths(inst, configuration, crop);
+				setQCExtractPaths(inst, configuration, crop, instructionFile);
 				sendQc = true;
 			}
 
@@ -495,18 +495,21 @@ public class GobiiFileReader {
 		return gobiiExtractorInstruction;
 	}
 
-	private static void setQCExtractPaths(GobiiLoaderInstruction inst, ConfigSettings configuration, String crop) throws Exception {
+	private static void setQCExtractPaths(GobiiLoaderInstruction inst, ConfigSettings configuration, String crop, String instructionFile) throws Exception {
         ErrorLogger.logInfo("Digester", "Entering into the QC Subsection #2 of 3...");
         GobiiDataSetExtract gobiiDataSetExtract = new GobiiDataSetExtract();
         gobiiDataSetExtract.setAccolate(false);  // It is unused/unsupported at the moment
         gobiiDataSetExtract.setDataSet(inst.getDataSet());
         gobiiDataSetExtract.setGobiiDatasetType(inst.getDatasetType());
+
+        // Get Instruction file Name
+		String instructionName = new File(instructionFile).getName();
+		instructionName = instructionName.substring(0, instructionName.lastIndexOf('.'));
+
         // Example: .../extractor/output/av484/hapmap/whole_dataset/(timestamp)/
-        Path extractDestinationDirectoryPath = Paths.get(configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_OUTPUT),
-                inst.getContactEmail().split("@")[0],
-                inst.getGobiiFile().getGobiiFileType().toString().toLowerCase(),
-                GobiiExtractFilterType.WHOLE_DATASET.toString().toLowerCase(),
-                DateUtils.makeDateIdString());
+
+		Path extractDestinationDirectoryPath = Paths.get(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_OUTPUT),
+				instructionName);
         String extractDestinationDirectory = extractDestinationDirectoryPath.toString();
         ErrorLogger.logInfo("Digester", "New Extract Destination Directory: " + extractDestinationDirectory);
         gobiiDataSetExtract.setExtractDestinationDirectory(extractDestinationDirectory);
