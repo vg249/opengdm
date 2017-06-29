@@ -1,4 +1,4 @@
-import {Component, OnInit, SimpleChange, EventEmitter} from "@angular/core";
+import {Component, OnInit, SimpleChange, EventEmitter, OnChanges} from "@angular/core";
 import {SampleMarkerList} from "../model/sample-marker-list";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
@@ -21,13 +21,22 @@ import {Labels} from "./entity-labels";
                                 name="listType" 
                                 value="itemFile"
                                 [(ngModel)]="selectedListType">
-                          <label class="the-legend">File:&nbsp;</label>
-                            <input type="radio" 
+                          <label class="the-legend">File&nbsp;</label>
+                          <input type="radio" 
                                 (click)="handleTextBoxChanged($event)" 
                                 name="listType" 
                                 value="itemArray"
                                 [(ngModel)]="selectedListType">
-                          <label class="the-legend">List:&nbsp;</label>
+                          <label class="the-legend">List&nbsp;</label>
+                              <input *ngIf="displayMarkerGroupList" 
+                                    type="radio" 
+                                    (click)="handleTextBoxChanged($event)" 
+                                    name="listType" 
+                                    value="markerGroupsType"
+                                    [(ngModel)]="selectedListType">
+                              <label *ngIf="displayMarkerGroupList" 
+                                class="the-legend">Marker Groups&nbsp;</label>
+
                  </div>
                  
                 <div class="row">
@@ -67,7 +76,7 @@ import {Labels} from "./entity-labels";
 
 })
 
-export class SampleMarkerBoxComponent implements OnInit {
+export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
     public constructor(private _fileModelTreeService: FileModelTreeService) {
 
@@ -82,6 +91,7 @@ export class SampleMarkerBoxComponent implements OnInit {
 
     private displayUploader: boolean = true;
     private displayListBox: boolean = false;
+    private displayMarkerGroupList: boolean = false;
 
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     private onSampleMarkerError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
@@ -299,10 +309,36 @@ export class SampleMarkerBoxComponent implements OnInit {
         this.onSampleMarkerError.emit(statusMessage);
     }
 
+
+
     ngOnInit(): any {
 
 //        this.extractTypeLabel = Labels.instance().extractorFilterTypeLabels[this.gobiiExtractFilterType];
         return null;
     }
+
+
+    ngOnChanges(changes: {[propName: string]: SimpleChange}) {
+
+        if (changes['gobiiExtractFilterType']
+            && ( changes['gobiiExtractFilterType'].currentValue != null )
+            && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
+
+            if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
+
+                //this.notificationSent = false;
+
+                if( this.gobiiExtractFilterType == GobiiExtractFilterType.BY_MARKER ) {
+                    this.displayMarkerGroupList = true;
+                } else {
+                    this.displayMarkerGroupList = false
+                }
+
+            } // if we have a new filter type
+
+        } // if filter type changed
+
+
+    } // ngonChanges
 
 }
