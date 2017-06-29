@@ -226,7 +226,7 @@ public class GobiiExtractor {
 							if (markerList != null && !markerList.isEmpty()) {
 								markerListLocation = " -X " + createTempFileForMarkerList(extractDir, markerList);
 							} else if (extract.getListFileName() != null) {
-								markerListLocation = " -X " + extractDir + extract.getListFileName();
+								markerListLocation = " -X " + extract.getListFileName();
 							}
 							//else if file is null and list is empty or null - > no term
 
