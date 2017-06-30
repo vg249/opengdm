@@ -7,6 +7,8 @@ import {GobiiFileItem} from "../model/gobii-file-item";
 import {ProcessType} from "../model/type-process";
 import {ExtractorItemType} from "../model/file-model-node";
 import {Labels} from "./entity-labels";
+import {NameIdRequestParams} from "../model/name-id-request-params";
+import {EntityType} from "../model/type-entity";
 
 @Component({
     selector: 'sample-marker-box',
@@ -28,13 +30,13 @@ import {Labels} from "./entity-labels";
                                 value="itemArray"
                                 [(ngModel)]="selectedListType">
                           <label class="the-legend">List&nbsp;</label>
-                              <input *ngIf="displayMarkerGroupList" 
+                              <input *ngIf="displayMarkerGroupRadio" 
                                     type="radio" 
-                                    (click)="handleTextBoxChanged($event)" 
+                                    (click)="handleMarkerGroupChanged($event)" 
                                     name="listType" 
                                     value="markerGroupsType"
                                     [(ngModel)]="selectedListType">
-                              <label *ngIf="displayMarkerGroupList" 
+                              <label *ngIf="displayMarkerGroupRadio" 
                                 class="the-legend">Marker Groups&nbsp;</label>
 
                  </div>
@@ -53,6 +55,15 @@ import {Labels} from "./entity-labels";
                     </div> 
                     <div *ngIf="displayListBox" class="col-md-4">
                           <p class="text-warning">{{maxListItems}} maximum</p>
+                    </div> 
+                    
+                    <div *ngIf="selectedListType == 'markerGroupsType'" class="col-md-8">
+                            <checklist-box
+                                [nameIdRequestParams] = "nameIdRequestParamsMarkerGroups"
+                                [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                [retainHistory] = "false"
+                                (onAddStatusMessage) = "handleHeaderStatusMessage($event)">
+                            </checklist-box>
                     </div> 
                     
                  </div>
@@ -78,7 +89,13 @@ import {Labels} from "./entity-labels";
 
 export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
+    private nameIdRequestParamsMarkerGroups: NameIdRequestParams;
     public constructor(private _fileModelTreeService: FileModelTreeService) {
+
+        this.nameIdRequestParamsMarkerGroups= NameIdRequestParams
+            .build("Marker Groups",
+                this.gobiiExtractFilterType,
+                EntityType.MarkerGroups);
 
     }
 
@@ -91,7 +108,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
     private displayUploader: boolean = true;
     private displayListBox: boolean = false;
-    private displayMarkerGroupList: boolean = false;
+    private displayMarkerGroupRadio: boolean = false;
 
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     private onSampleMarkerError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
@@ -99,6 +116,8 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
 
     private extractTypeLabelExisting: string;
     private extractTypeLabelProposed: string;
+
+
 
     // private handleUserSelected(arg) {
     //     this.onUserSelected.emit(this.nameIdList[arg.srcElement.selectedIndex].id);
@@ -256,8 +275,8 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
                     });
             });
         } else {
-            // we leave things as they are; hwoever, because the user clicked a radio button,
-            // we have to reset it to match the currently diusplayed list selector
+            // we leave things as they are; however, because the user clicked a radio button,
+            // we have to reset it to match the currently displayed list selector
             if (this.selectedListType === "itemFile") {
 
                 this.displayListBox = true;
@@ -304,6 +323,14 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
         }
     }
 
+    handleMarkerGroupChanged($event) {
+        if (this.handleSampleMarkerChoicesExist() === false) {
+
+            this.displayListBox = false;
+            this.displayUploader = false;
+        }
+    }
+
     private handleStatusHeaderMessage(statusMessage: HeaderStatusMessage) {
 
         this.onSampleMarkerError.emit(statusMessage);
@@ -329,9 +356,9 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
                 //this.notificationSent = false;
 
                 if( this.gobiiExtractFilterType == GobiiExtractFilterType.BY_MARKER ) {
-                    this.displayMarkerGroupList = true;
+                    this.displayMarkerGroupRadio = true;
                 } else {
-                    this.displayMarkerGroupList = false
+                    this.displayMarkerGroupRadio = false
                 }
 
             } // if we have a new filter type
