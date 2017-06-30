@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
@@ -214,7 +215,11 @@ public class GobiiExtractor {
 					String platformTerm, mapIdTerm, markerListLocation, sampleListLocation, verboseTerm;
 					String samplePosFile = "";//Location of sample position indices (see markerList for an example
 					platformTerm = mapIdTerm = markerListLocation = sampleListLocation = verboseTerm = "";
-					List<Integer> platforms = extract.getPlatformIds();
+					List<Integer> platforms = extract
+							.getPlatforms()
+							.stream()
+							.map(gobiiFilePropNameId -> gobiiFilePropNameId.getId() )
+							.collect(Collectors.toList());
 					if (platforms != null && !platforms.isEmpty()) {
 						platformTerm = " --platformList " + commaFormat(platforms);
 					}

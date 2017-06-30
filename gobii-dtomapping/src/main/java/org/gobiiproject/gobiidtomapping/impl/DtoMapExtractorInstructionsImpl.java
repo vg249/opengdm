@@ -40,7 +40,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
     @Autowired
     DtoMapContact dtoMapContact;
-    private  InstructionFileAccess<GobiiExtractorInstruction> instructionFileAccessGobiiExtractorInstruction = new InstructionFileAccess<>(GobiiExtractorInstruction.class);
+    private InstructionFileAccess<GobiiExtractorInstruction> instructionFileAccessGobiiExtractorInstruction = new InstructionFileAccess<>(GobiiExtractorInstruction.class);
 
     @Override
     public void writeDataFile(String cropType, GobiiExtractFilterType gobiiExtractFilterType, String jobId, byte[] byteArray) throws GobiiException {
@@ -211,17 +211,17 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     } else if (currentGobiiDataSetExtract.getGobiiExtractFilterType()
                             .equals(GobiiExtractFilterType.BY_SAMPLE)) {
 
-                        if((currentGobiiDataSetExtract.getProject() == null)
+                        if ((currentGobiiDataSetExtract.getProject() == null)
                                 && (currentGobiiDataSetExtract.getPrincipleInvestigator() == null)
                                 && (currentGobiiDataSetExtract.getListFileName() == null)
                                 && ((currentGobiiDataSetExtract.getSampleList() == null) ||
-                                    (currentGobiiDataSetExtract.getSampleList().size() <= 0 ))){
+                                (currentGobiiDataSetExtract.getSampleList().size() <= 0))) {
 
                             throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                     GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
                                     "The specified extract type is "
-                                        + currentGobiiDataSetExtract.getGobiiExtractFilterType()
-                                        + ". Please provide at least one of the following: " +
+                                            + currentGobiiDataSetExtract.getGobiiExtractFilterType()
+                                            + ". Please provide at least one of the following: " +
                                             "Principle Investigator, Project, Sample list, or sample file.");
 
 
@@ -232,16 +232,18 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                         if ((currentGobiiDataSetExtract.getListFileName() == null)
                                 && ((currentGobiiDataSetExtract.getMarkerList() == null) ||
-                                (currentGobiiDataSetExtract.getMarkerList().size() <= 0))) {
+                                (currentGobiiDataSetExtract.getMarkerList().size() <= 0))
+                                && ((currentGobiiDataSetExtract.getMarkerGroups() == null)
+                                || (currentGobiiDataSetExtract.getMarkerGroups().size() <= 0))) {
 
-                            if( currentGobiiDataSetExtract.getPlatformIds() == null ||
-                                    currentGobiiDataSetExtract.getPlatformIds().size() <= 0 ) {
+                            if (currentGobiiDataSetExtract.getPlatforms() == null ||
+                                    currentGobiiDataSetExtract.getPlatforms().size() <= 0) {
 
                                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                         GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
                                         "The specified extract type is "
                                                 + currentGobiiDataSetExtract.getGobiiExtractFilterType()
-                                                + " but no marker list is specified and no platforms are specified");
+                                                + " but no markers and no platforms are specified");
                             }
                         }
 
@@ -335,7 +337,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 //check if file  is in InProgress
 
                 List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccessGobiiExtractorInstruction.
-                        getInstructions(fileDirExtractorInProgressFqpn,GobiiExtractorInstruction[].class);
+                        getInstructions(fileDirExtractorInProgressFqpn, GobiiExtractorInstruction[].class);
 
                 gobiiExtractorInstructionsWithStatus = setGobiiExtractorInstructionsStatus(gobiiExtractorInstructionsFromFile,
                         GobiiFileProcessDir.EXTRACTOR_INPROGRESS);
@@ -347,7 +349,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 //check if file just started
 
                 List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccessGobiiExtractorInstruction.
-                        getInstructions(fileDirExtractorInstructionsFqpn,GobiiExtractorInstruction[].class);
+                        getInstructions(fileDirExtractorInstructionsFqpn, GobiiExtractorInstruction[].class);
 
                 gobiiExtractorInstructionsWithStatus = setGobiiExtractorInstructionsStatus(gobiiExtractorInstructionsFromFile,
                         GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS);
@@ -358,7 +360,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                 //check if file  is already done
 
                 List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccessGobiiExtractorInstruction.
-                        getInstructions(fileDirExtractorDoneFqpn,GobiiExtractorInstruction[].class);
+                        getInstructions(fileDirExtractorDoneFqpn, GobiiExtractorInstruction[].class);
 
                 gobiiExtractorInstructionsWithStatus = setGobiiExtractorInstructionsStatus(gobiiExtractorInstructionsFromFile,
                         GobiiFileProcessDir.EXTRACTOR_DONE);

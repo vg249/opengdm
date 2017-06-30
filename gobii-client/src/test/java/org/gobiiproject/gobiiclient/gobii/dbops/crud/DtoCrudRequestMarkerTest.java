@@ -25,6 +25,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
+import java.util.Calendar;
+
 public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
 
     @BeforeClass
@@ -99,8 +102,11 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
     public void create() throws Exception {
 
 
+        Integer millisecond = Calendar.getInstance().get(Calendar.MILLISECOND);
+        Integer second = Calendar.getInstance().get(Calendar.SECOND);
+        String uniqueSuffix =  second + "_" + millisecond;
         MarkerDTO markerDTORequest = TestDtoFactory
-                .makeMarkerDTO("testmarker");
+                .makeMarkerDTO("mkr_" + uniqueSuffix);
 
         RestUri markerCollUri = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
@@ -161,7 +167,7 @@ public class DtoCrudRequestMarkerTest implements DtoCrudRequestTest {
     @Override
     public void getList() throws Exception {
 
-
+        (new GlobalPkColl<DtoCrudRequestMarkerTest>()).getPkVals(DtoCrudRequestMarkerTest.class, GobiiEntityNameType.MARKERS, 100);
 
     }
 }

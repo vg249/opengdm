@@ -477,8 +477,12 @@
                                         <include>@angular/router/bundles/router.umd.js</include>
                                         <include>@angular/http/bundles/http.umd.js</include>
                                         <include>@angular/platform-browser/bundles/platform-browser.umd.js</include>
+                                        <include>@angular/platform-browser/bundles/platform-browser-animations.umd.js</include>
                                         <include>@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js</include>
                                         <include>@angular/forms/bundles/forms.umd.js</include>
+                                        <include>@angular/animations/bundles/animations.umd.js</include>
+                                        <include>@angular/animations/bundles/animations-browser.umd.js</include>
+                                        <include>@angular/animations/bundles/animations-browser.umd.js</include>
 
                                     </includes>
                                     <filtering>false</filtering>
