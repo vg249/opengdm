@@ -1003,8 +1003,8 @@ export class ExtractorRoot implements OnInit {
                         EntityType.Platforms,
                         platformFileItems);
 
-                    let platformIds: number[] = platformFileItems.map(item => {
-                        return Number(item.getItemId())
+                    let platforms: NameId[] = platformFileItems.map(item => {
+                        return new NameId(item.getItemId(),item.getItemName(),EntityType.Platforms)
                     });
 
                     let markerGroupItems: GobiiFileItem[] = fileItems.filter(item => {
@@ -1085,7 +1085,7 @@ export class ExtractorRoot implements OnInit {
                                 markerFileName,
                                 null,
                                 datasetType,
-                                platformIds,
+                                platforms,
                                 null,
                                 null,
                                 dataSet,
@@ -1101,7 +1101,7 @@ export class ExtractorRoot implements OnInit {
                             markerFileName,
                             null,
                             datasetType,
-                            platformIds,
+                            platforms,
                             null,
                             null,
                             null,
@@ -1116,7 +1116,7 @@ export class ExtractorRoot implements OnInit {
                             sampleFileName,
                             sampleListType,
                             datasetType,
-                            platformIds,
+                            platforms,
                             principleInvestigator,
                             project,
                             null,

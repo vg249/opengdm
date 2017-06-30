@@ -236,8 +236,8 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                 && ((currentGobiiDataSetExtract.getMarkerGroups() == null)
                                 || (currentGobiiDataSetExtract.getMarkerGroups().size() <= 0))) {
 
-                            if (currentGobiiDataSetExtract.getPlatformIds() == null ||
-                                    currentGobiiDataSetExtract.getPlatformIds().size() <= 0) {
+                            if (currentGobiiDataSetExtract.getPlatforms() == null ||
+                                    currentGobiiDataSetExtract.getPlatforms().size() <= 0) {
 
                                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                                         GobiiValidationStatusType.MISSING_REQUIRED_VALUE,
