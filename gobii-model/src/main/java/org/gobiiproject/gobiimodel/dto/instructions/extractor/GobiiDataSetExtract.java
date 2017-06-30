@@ -35,6 +35,7 @@ public class GobiiDataSetExtract {
     private GobiiFilePropNameId dataSet = new GobiiFilePropNameId();
     private List<Integer> platformIds = new ArrayList<>();
     private GobiiSampleListType gobiiSampleListType;
+    private List<GobiiFilePropNameId> markerGroups = new ArrayList<>();
 
 
     public GobiiExtractFilterType getGobiiExtractFilterType() {
@@ -150,4 +151,11 @@ public class GobiiDataSetExtract {
         this.dataSet = dataSet;
     }
 
+    public List<GobiiFilePropNameId> getMarkerGroups() {
+        return markerGroups;
+    }
+
+    public void setMarkerGroups(List<GobiiFilePropNameId> markerGroups) {
+        this.markerGroups = markerGroups;
+    }
 }

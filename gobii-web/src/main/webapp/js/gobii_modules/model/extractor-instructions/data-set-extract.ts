@@ -17,7 +17,8 @@ export class GobiiDataSetExtract {
                        public platformIds: number[],
                        public principleInvestigator: NameId,
                        public  project: NameId,
-                       public dataSet: NameId) {
+                       public dataSet: NameId,
+                       public markerGroups: NameId[]) {
 
         // this.setGobiiFileType(gobiiFileType);
         // this.setAccolate(accolate);
@@ -110,7 +111,6 @@ export class GobiiDataSetExtract {
         this.platformIds = value;
     }
 
-
     public getJson(): any {
 
         let returnVal: any = {};
@@ -128,6 +128,7 @@ export class GobiiDataSetExtract {
         returnVal.principleInvestigator = this.principleInvestigator;
         returnVal.project = this.project;
         returnVal.dataSet = this.dataSet;
+        returnVal.markerGroups = this.markerGroups;
 
         return returnVal;
     }
@@ -148,7 +149,8 @@ export class GobiiDataSetExtract {
                 json.platformIds,
                 json.principleInvestigator,
                 json.project,
-                json.dataSet);
+                json.dataSet,
+                json.markerGroups);
 
         return returnVal;
     }
