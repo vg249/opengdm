@@ -28,7 +28,7 @@ public class RestUri {
     private Map<String, ResourceParam> paramMap = new HashMap<>();
     private List<ResourceParam> resourceParams = new ArrayList<>();
 
-    private Map<String,String> httpHeaders = new HashMap<>();
+    private Map<String, String> httpHeaders = new HashMap<>();
     private String destinationFilenPath = null;
 
 
@@ -52,6 +52,32 @@ public class RestUri {
 
     public Map<String, String> getHttpHeaders() {
         return httpHeaders;
+    }
+
+    public String getResource() throws Exception {
+
+
+        StringBuilder stringBuilder = new StringBuilder(this.getResourcePath());
+
+        if (stringBuilder.charAt(0) == URL_SEPARATOR) {
+            stringBuilder.deleteCharAt(0);
+        }
+
+        Integer ctxRootIdx = stringBuilder.indexOf(this.contextRoot);
+        if( ctxRootIdx >= 0 ) {
+            stringBuilder.delete(ctxRootIdx,this.contextRoot.length());
+        }
+
+        Integer ctxPathIdx = stringBuilder.indexOf(this.contextPath);
+        if( ctxPathIdx >= 0 ) {
+            stringBuilder.delete(ctxPathIdx,this.contextPath.length());
+        }
+
+        String returnVal = stringBuilder.toString();
+
+        returnVal = stringBuilder.toString();
+        return returnVal;
+
     }
 
     public String getResourcePath() throws Exception {
@@ -83,7 +109,6 @@ public class RestUri {
 
         return returnVal;
     }
-
 
 
     public List<ResourceParam> getRequestParams() {
@@ -152,7 +177,7 @@ public class RestUri {
     }
 
     public RestUri withHttpHeader(String headerName, String headerValue) {
-        this.httpHeaders.put(headerName,headerValue);
+        this.httpHeaders.put(headerName, headerValue);
         return this;
     }
 
