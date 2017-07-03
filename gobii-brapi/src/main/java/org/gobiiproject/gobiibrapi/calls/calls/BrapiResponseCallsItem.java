@@ -16,7 +16,7 @@ public class BrapiResponseCallsItem {
     public BrapiResponseCallsItem() {}
 
     public BrapiResponseCallsItem(RestUri restUri, List<RestMethodTypes> methods, List<BrapiDataTypes> dataTypes) throws Exception {
-        this.call = restUri.getResourcePath();
+        this.call = restUri.getResource();
         this.methods = methods;
         this.datatypes = dataTypes;
     }
