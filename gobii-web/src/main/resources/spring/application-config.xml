@@ -201,10 +201,6 @@
     <bean id="loaderInstructionFilesService"
           class="org.gobiiproject.gobidomain.services.impl.LoaderInstructionFileServiceImpl"/>
 
-    <!-- **** Instruction File Beans *************************************** -->
-    <bean id="instructionFilesDAO"
-          class="org.gobiiproject.gobiidao.filesystem.impl.InstructionFilesDAOImpl"/>
-
     <!-- **** Extractor File Beans *************************************** -->
     <bean id="dtoMapExtractorInstructions"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapExtractorInstructionsImpl"/>

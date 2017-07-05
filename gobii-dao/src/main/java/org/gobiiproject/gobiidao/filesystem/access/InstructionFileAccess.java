@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -178,6 +181,25 @@ public class InstructionFileAccess<T> {
             throw new GobiiDaoException("The specified path already exists: " + pathName);
         }
     }
+
+    public void writePlainFile(String fileFqpn, byte[] byteArray) throws GobiiDaoException {
+
+        try {
+
+            File file = new File(fileFqpn);
+
+            BufferedOutputStream stream = new BufferedOutputStream(
+                    new FileOutputStream(file));
+            stream.write(byteArray);
+            stream.close();
+
+        } catch (IOException e) {
+            throw new GobiiDaoException("Error wriring file " + fileFqpn + ": " + e.getMessage());
+        }
+
+
+    }
+
 
 
 }

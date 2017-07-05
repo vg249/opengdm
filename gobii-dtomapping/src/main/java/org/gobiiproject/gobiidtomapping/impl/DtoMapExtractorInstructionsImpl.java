@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.filesystem.InstructionFilesDAO;
 import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.DtoMapContact;
 import org.gobiiproject.gobiidtomapping.DtoMapExtractorInstructions;
@@ -38,9 +37,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
     private final String DATA_FILE_EXT = ".txt";
 
     @Autowired
-    private InstructionFilesDAO extractorInstructionsDAO;
-
-    @Autowired
     DtoMapContact dtoMapContact;
     private InstructionFileAccess<GobiiExtractorInstruction> instructionFileAccessGobiiExtractorInstruction = new InstructionFileAccess<>(GobiiExtractorInstruction.class);
 
@@ -60,7 +56,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
             fqpn += DATA_FILE_EXT;
 
-            this.extractorInstructionsDAO.writePlainFile(fqpn, byteArray);
+            this.instructionFileAccessGobiiExtractorInstruction.writePlainFile(fqpn, byteArray);
 
 
         } catch (GobiiException e) {

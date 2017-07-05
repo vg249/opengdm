@@ -1,7 +1,6 @@
 package org.gobiiproject.gobiidtomapping.impl;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.filesystem.InstructionFilesDAO;
 import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.*;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -28,9 +27,6 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
     Logger LOGGER = LoggerFactory.getLogger(DtoMapLoaderInstructionsImpl.class);
 
     private final String INSTRUCTION_FILE_EXT = ".json";
-
-    @Autowired
-    private InstructionFilesDAO instructionsFilesDAO;
 
     @Autowired
     DtoMapExperiment dtoMapExperiment;
