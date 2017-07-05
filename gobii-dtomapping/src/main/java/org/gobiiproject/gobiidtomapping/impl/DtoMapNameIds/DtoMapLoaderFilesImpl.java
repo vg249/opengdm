@@ -2,8 +2,10 @@ package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
 import org.gobiiproject.gobiidao.filesystem.InstructionFilesDAO;
+import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.DtoMapLoaderFiles;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderFilePreviewDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -24,7 +26,8 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapLoaderFilesImpl.class);
 
-    private final String INSTRUCTION_FILE_EXT = ".json";
+    private InstructionFileAccess<List<GobiiLoaderInstruction>> instructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
+
 
     @Autowired
     private InstructionFilesDAO instructionFilesDAO;
@@ -53,19 +56,19 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
                     + GobiiFileProcessDir.RAW_USER_FILES.toString());
         }
 
-        if (!instructionFilesDAO.doesPathExist(fileCropDirectory)) {
-            instructionFilesDAO.makeDirectory(fileCropDirectory);
+        if (!instructionFileAccess.doesPathExist(fileCropDirectory)) {
+            instructionFileAccess.makeDirectory(fileCropDirectory);
         } else {
-            instructionFilesDAO.verifyDirectoryPermissions(fileCropDirectory);
+            instructionFileAccess.verifyDirectoryPermissions(fileCropDirectory);
         }
 
 
         String directoryPath = fileCropDirectory + directoryName;
-        if (!instructionFilesDAO.doesPathExist(directoryPath)) {
-            instructionFilesDAO.makeDirectory(directoryPath);
+        if (!instructionFileAccess.doesPathExist(directoryPath)) {
+            instructionFileAccess.makeDirectory(directoryPath);
 
         } else {
-            instructionFilesDAO.verifyDirectoryPermissions(directoryPath);
+            instructionFileAccess.verifyDirectoryPermissions(directoryPath);
         }
 
         returnVal.setDirectoryName(directoryPath);
@@ -107,7 +110,7 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
 
         String directoryPath = fileCropDirectory + directoryName;
 
-        if (!instructionFilesDAO.doesPathExist(directoryPath)) {
+        if (!instructionFileAccess.doesPathExist(directoryPath)) {
             throw new GobiiDaoException("The specified directory does not exist: " + directoryPath);
         } else {
 

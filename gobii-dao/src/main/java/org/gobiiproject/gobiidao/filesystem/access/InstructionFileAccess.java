@@ -136,4 +136,48 @@ public class InstructionFileAccess<T> {
 
     }
 
+    public boolean doesPathExist(String pathName) throws GobiiDaoException {
+        return new File(pathName).exists();
+    }
+
+    public void verifyDirectoryPermissions(String pathName) throws GobiiDaoException {
+
+        File pathToCreate = new File(pathName);
+        if (!pathToCreate.canRead() && !pathToCreate.setReadable(true, false)) {
+            throw new GobiiDaoException("Unable to set read permissions on directory " + pathName);
+        }
+
+        if (!pathToCreate.canWrite() && !pathToCreate.setWritable(true, false)) {
+            throw new GobiiDaoException("Unable to set write permissions on directory " + pathName);
+        }
+    }
+
+
+    public void makeDirectory(String pathName) throws GobiiDaoException {
+
+        if (!doesPathExist(pathName)) {
+
+            File pathToCreate = new File(pathName);
+
+            if (!pathToCreate.mkdirs()) {
+                throw new GobiiDaoException("Unable to create directory " + pathName);
+            }
+
+            if ((!pathToCreate.canRead()) && !(pathToCreate.setReadable(true, false))) {
+                throw new GobiiDaoException("Unable to set read on directory " + pathName);
+            }
+
+            if ((!pathToCreate.canWrite()) && !(pathToCreate.setWritable(true, false))) {
+                throw new GobiiDaoException("Unable to set write on directory " + pathName);
+            }
+
+
+
+
+        } else {
+            throw new GobiiDaoException("The specified path already exists: " + pathName);
+        }
+    }
+
+
 }
