@@ -25,6 +25,4 @@ public interface InstructionFilesDAO {
 
     List<GobiiExtractorInstruction> setGobiiJobStatus(boolean applyToAll, List<GobiiExtractorInstruction> instructions, GobiiFileProcessDir extractorInstructions) throws GobiiDaoException;
 
-    List<List<String>> getFilePreview(File file, String fileFormat);
-
 }

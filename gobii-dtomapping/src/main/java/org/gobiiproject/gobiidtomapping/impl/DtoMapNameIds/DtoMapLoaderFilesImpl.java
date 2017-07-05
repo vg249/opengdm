@@ -12,6 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * Created by Angel on 11/2016.
@@ -120,7 +124,7 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
                 for (File file : files) {
                     if (file.getName().endsWith(extension)) {
                         if (returnVal.getFileList().isEmpty()) {//if first file in directory, get preview
-                            returnVal.setFilePreview(instructionFilesDAO.getFilePreview(file, fileFormat));
+                            returnVal.setFilePreview(this.getFilePreview(file, fileFormat));
                         }
                         returnVal.getFileList().add(file.getName());
                     }
@@ -136,5 +140,54 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
 
     } // createDirectories()
 
+    private List<List<String>> getFilePreview(File file, String fileFormat) {
+        List<List<String>> returnVal = new ArrayList<List<String>>();
+        Scanner input = new Scanner(System.in);
+        try {
+            int lineCtr = 0; //count lines read
+            input = new Scanner(file);
+
+            while (input.hasNextLine() && lineCtr < 50) { //read first 50 lines only
+                int ctr = 0; //count words stored
+                List<String> lineRead = new ArrayList<String>();
+                String line = input.nextLine();
+                for (String s : line.split(getDelimiterFor(fileFormat))) {
+                    if (ctr == 50) break;
+                    else {
+                        lineRead.add(s);
+                        ctr++;
+                    }
+                }
+                returnVal.add(lineRead);
+                lineCtr++;
+            }
+            input.close();
+        } catch (FileNotFoundException e) {
+            throw new GobiiDaoException("Cannot find file. " + e.getMessage());
+        }
+
+        return returnVal;
+    }
+
+    private String getDelimiterFor(String fileFormat) {
+        String delimiter;
+        switch (fileFormat) {
+            case "csv":
+                delimiter = ",";
+                break;
+            case "txt":
+                delimiter = "\t";
+                break;
+            case "vcf":
+                delimiter = "\t";
+                break;
+            case "hmp.txt":
+                delimiter = "\t";
+                break;
+            default:
+                throw new GobiiDaoException("File Format not supported: " + fileFormat);
+        }
+        return delimiter;
+    }
 
 }
