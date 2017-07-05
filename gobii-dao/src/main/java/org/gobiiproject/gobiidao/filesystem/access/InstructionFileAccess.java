@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gobiiproject.gobiidao.GobiiDaoException;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -135,5 +138,68 @@ public class InstructionFileAccess<T> {
         return returnVal;
 
     }
+
+    public boolean doesPathExist(String pathName) throws GobiiDaoException {
+        return new File(pathName).exists();
+    }
+
+    public void verifyDirectoryPermissions(String pathName) throws GobiiDaoException {
+
+        File pathToCreate = new File(pathName);
+        if (!pathToCreate.canRead() && !pathToCreate.setReadable(true, false)) {
+            throw new GobiiDaoException("Unable to set read permissions on directory " + pathName);
+        }
+
+        if (!pathToCreate.canWrite() && !pathToCreate.setWritable(true, false)) {
+            throw new GobiiDaoException("Unable to set write permissions on directory " + pathName);
+        }
+    }
+
+
+    public void makeDirectory(String pathName) throws GobiiDaoException {
+
+        if (!doesPathExist(pathName)) {
+
+            File pathToCreate = new File(pathName);
+
+            if (!pathToCreate.mkdirs()) {
+                throw new GobiiDaoException("Unable to create directory " + pathName);
+            }
+
+            if ((!pathToCreate.canRead()) && !(pathToCreate.setReadable(true, false))) {
+                throw new GobiiDaoException("Unable to set read on directory " + pathName);
+            }
+
+            if ((!pathToCreate.canWrite()) && !(pathToCreate.setWritable(true, false))) {
+                throw new GobiiDaoException("Unable to set write on directory " + pathName);
+            }
+
+
+
+
+        } else {
+            throw new GobiiDaoException("The specified path already exists: " + pathName);
+        }
+    }
+
+    public void writePlainFile(String fileFqpn, byte[] byteArray) throws GobiiDaoException {
+
+        try {
+
+            File file = new File(fileFqpn);
+
+            BufferedOutputStream stream = new BufferedOutputStream(
+                    new FileOutputStream(file));
+            stream.write(byteArray);
+            stream.close();
+
+        } catch (IOException e) {
+            throw new GobiiDaoException("Error wriring file " + fileFqpn + ": " + e.getMessage());
+        }
+
+
+    }
+
+
 
 }

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "ng2-file-upload", "../services/core/authentication.service", "../model/header-names", "../model/dto-header-status-message", "../model/file_name", "../services/core/file-model-tree-service", "../model/gobii-file-item", "../model/type-extractor-filter", "../model/type-process", "../model/file-model-node", "../model/type-event-origin"], function (exports_1, context_1) {
+System.register(["@angular/core", "ng2-file-upload", "../services/core/authentication.service", "../model/header-names", "../model/dto-header-status-message", "../services/core/file-model-tree-service", "../model/gobii-file-item", "../model/type-extractor-filter", "../model/type-process", "../model/file-model-node", "../model/type-event-origin"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, ng2_file_upload_1, authentication_service_1, header_names_1, dto_header_status_message_1, file_name_1, file_model_tree_service_1, gobii_file_item_1, type_extractor_filter_1, type_process_1, file_model_node_1, type_event_origin_1, URL, UploaderComponent;
+    var core_1, ng2_file_upload_1, authentication_service_1, header_names_1, dto_header_status_message_1, file_model_tree_service_1, gobii_file_item_1, type_extractor_filter_1, type_process_1, file_model_node_1, type_event_origin_1, URL, UploaderComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -27,9 +27,6 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
             },
             function (dto_header_status_message_1_1) {
                 dto_header_status_message_1 = dto_header_status_message_1_1;
-            },
-            function (file_name_1_1) {
-                file_name_1 = file_name_1_1;
             },
             function (file_model_tree_service_1_1) {
                 file_model_tree_service_1 = file_model_tree_service_1_1;
@@ -51,10 +48,9 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
             }
         ],
         execute: function () {
-            URL = 'gobii/v1/uploadfile?gobiiExtractFilterType=BY_MARKER';
+            URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?gobiiExtractFilterType=BY_MARKER';
             UploaderComponent = (function () {
                 function UploaderComponent(_authenticationService, _fileModelTreeService) {
-                    var _this = this;
                     this._authenticationService = _authenticationService;
                     this._fileModelTreeService = _fileModelTreeService;
                     this.onUploaderError = new core_1.EventEmitter();
@@ -63,49 +59,6 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                     this.hasBaseDropZoneOver = false;
                     this.hasAnotherDropZoneOver = false;
                     this.onClickBrowse = new core_1.EventEmitter();
-                    var fileUploaderOptions = {};
-                    fileUploaderOptions.url = URL;
-                    fileUploaderOptions.headers = [];
-                    fileUploaderOptions.removeAfterUpload = true;
-                    var authHeader = { name: '', value: '' };
-                    authHeader.name = header_names_1.HeaderNames.headerToken;
-                    var token = _authenticationService.getToken();
-                    if (token) {
-                        authHeader.value = token;
-                        fileUploaderOptions.headers.push(authHeader);
-                        this.uploader = new ng2_file_upload_1.FileUploader(fileUploaderOptions);
-                        this.uploader.onBeforeUploadItem = function (fileItem) {
-                            _this._fileModelTreeService.getFileItems(_this.gobiiExtractFilterType).subscribe(function (fileItems) {
-                                var fileItemJobId = fileItems.find(function (item) {
-                                    return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.JOB_ID;
-                                });
-                                var jobId = fileItemJobId.getItemId();
-                                fileItem.file.name = file_name_1.FileName.makeFileNameFromJobId(_this.gobiiExtractFilterType, jobId);
-                            });
-                        };
-                        this.uploader.onCompleteItem = function (item, response, status, headers) {
-                            if (status == 200) {
-                                var listItemType = _this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER ?
-                                    file_model_node_1.ExtractorItemType.MARKER_FILE : file_model_node_1.ExtractorItemType.SAMPLE_FILE;
-                                _fileModelTreeService.put(gobii_file_item_1.GobiiFileItem
-                                    .build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                                    .setExtractorItemType(listItemType)
-                                    .setItemId(item.file.name)
-                                    .setItemName(item.file.name))
-                                    .subscribe(function (fme) {
-                                    _this.uploadComplete = true;
-                                }, function (headerStatusMessage) {
-                                    _this.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage(headerStatusMessage, null, null));
-                                });
-                            }
-                            else {
-                                _this.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage(response, null, null));
-                            }
-                        };
-                    }
-                    else {
-                        this.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage("Unauthenticated", null, null));
-                    }
                 } // ctor
                 UploaderComponent.prototype.fileOverBase = function (e) {
                     this.hasBaseDropZoneOver = e;
@@ -121,6 +74,47 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                 };
                 UploaderComponent.prototype.ngOnInit = function () {
                     var _this = this;
+                    var scope$ = this;
+                    this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(function (fileItems) {
+                        var fileItemJobId = fileItems.find(function (item) {
+                            return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.JOB_ID;
+                        });
+                        var jobId = fileItemJobId.getItemId();
+                        var fileUploaderOptions = {};
+                        fileUploaderOptions.url = URL.replace("{gobiiJobId}", jobId);
+                        fileUploaderOptions.headers = [];
+                        fileUploaderOptions.removeAfterUpload = true;
+                        var authHeader = { name: '', value: '' };
+                        authHeader.name = header_names_1.HeaderNames.headerToken;
+                        var token = scope$._authenticationService.getToken();
+                        if (token) {
+                            authHeader.value = token;
+                            fileUploaderOptions.headers.push(authHeader);
+                            scope$.uploader = new ng2_file_upload_1.FileUploader(fileUploaderOptions);
+                            scope$.uploader.onCompleteItem = function (item, response, status, headers) {
+                                if (status == 200) {
+                                    var listItemType = _this.gobiiExtractFilterType === type_extractor_filter_1.GobiiExtractFilterType.BY_MARKER ?
+                                        file_model_node_1.ExtractorItemType.MARKER_FILE : file_model_node_1.ExtractorItemType.SAMPLE_FILE;
+                                    scope$._fileModelTreeService.put(gobii_file_item_1.GobiiFileItem
+                                        .build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                                        .setExtractorItemType(listItemType)
+                                        .setItemId(item.file.name)
+                                        .setItemName(item.file.name))
+                                        .subscribe(function (fme) {
+                                        _this.uploadComplete = true;
+                                    }, function (headerStatusMessage) {
+                                        scope$.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage(headerStatusMessage, null, null));
+                                    });
+                                }
+                                else {
+                                    scope$.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage(response, null, null));
+                                }
+                            };
+                        }
+                        else {
+                            _this.onUploaderError.emit(new dto_header_status_message_1.HeaderStatusMessage("Unauthenticated", null, null));
+                        }
+                    });
                     this._fileModelTreeService
                         .fileItemNotifications()
                         .subscribe(function (eventedFileItem) {

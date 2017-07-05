@@ -16,7 +16,7 @@ import {ProcessType} from "../model/type-process";
 import {ExtractorItemType} from "../model/file-model-node";
 import {GobiiUIEventOrigin} from "../model/type-event-origin";
 
-const URL = 'gobii/v1/uploadfile?gobiiExtractFilterType=BY_MARKER';
+const URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?gobiiExtractFilterType=BY_MARKER';
 
 @Component({
     selector: 'uploader',
@@ -164,64 +164,9 @@ export class UploaderComponent implements OnInit {
     constructor(private _authenticationService: AuthenticationService,
                 private _fileModelTreeService: FileModelTreeService) {
 
-        let fileUploaderOptions: FileUploaderOptions = {}
-        fileUploaderOptions.url = URL;
-        fileUploaderOptions.headers = [];
-        fileUploaderOptions.removeAfterUpload = true;
 
-        let authHeader: Headers = {name: '', value: ''};
-        authHeader.name = HeaderNames.headerToken;
 
-        let token: string = _authenticationService.getToken();
 
-        if (token) {
-            authHeader.value = token;
-
-            fileUploaderOptions.headers.push(authHeader);
-
-            this.uploader = new FileUploader(fileUploaderOptions);
-
-            this.uploader.onBeforeUploadItem = (fileItem: FileItem) => {
-
-                this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(
-                    fileItems => {
-                        let fileItemJobId: GobiiFileItem = fileItems.find(item => {
-                            return item.getExtractorItemType() === ExtractorItemType.JOB_ID
-                        });
-
-                        let jobId: string = fileItemJobId.getItemId();
-                        fileItem.file.name = FileName.makeFileNameFromJobId(this.gobiiExtractFilterType, jobId);
-                    });
-            }
-
-            this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-
-                if (status == 200) {
-                    let listItemType: ExtractorItemType =
-                        this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ?
-                            ExtractorItemType.MARKER_FILE : ExtractorItemType.SAMPLE_FILE;
-
-                    _fileModelTreeService.put(GobiiFileItem
-                        .build(this.gobiiExtractFilterType, ProcessType.CREATE)
-                        .setExtractorItemType(listItemType)
-                        .setItemId(item.file.name)
-                        .setItemName(item.file.name))
-                        .subscribe(fme => {
-                                this.uploadComplete = true;
-                            },
-                            headerStatusMessage => {
-                                this.onUploaderError.emit(new HeaderStatusMessage(headerStatusMessage, null, null));
-                            });
-                } else {
-
-                    this.onUploaderError.emit(new HeaderStatusMessage(response, null, null));
-
-                }
-
-            };
-        } else {
-            this.onUploaderError.emit(new HeaderStatusMessage("Unauthenticated", null, null));
-        }
 
     } // ctor
 
@@ -254,6 +199,63 @@ export class UploaderComponent implements OnInit {
     }
 
     ngOnInit(): any {
+
+        let scope$ = this;
+        this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(
+            fileItems => {
+                let fileItemJobId: GobiiFileItem = fileItems.find(item => {
+                    return item.getExtractorItemType() === ExtractorItemType.JOB_ID
+                });
+
+                let jobId: string = fileItemJobId.getItemId();
+                let fileUploaderOptions: FileUploaderOptions = {}
+                fileUploaderOptions.url = URL.replace("{gobiiJobId}", jobId);
+                fileUploaderOptions.headers = [];
+                fileUploaderOptions.removeAfterUpload = true;
+
+                let authHeader: Headers = {name: '', value: ''};
+                authHeader.name = HeaderNames.headerToken;
+
+                let token: string = scope$._authenticationService.getToken();
+
+                if (token) {
+                    authHeader.value = token;
+
+                    fileUploaderOptions.headers.push(authHeader);
+
+                    scope$.uploader = new FileUploader(fileUploaderOptions);
+
+                    scope$.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+
+                        if (status == 200) {
+                            let listItemType: ExtractorItemType =
+                                this.gobiiExtractFilterType === GobiiExtractFilterType.BY_MARKER ?
+                                    ExtractorItemType.MARKER_FILE : ExtractorItemType.SAMPLE_FILE;
+
+                            scope$._fileModelTreeService.put(GobiiFileItem
+                                .build(this.gobiiExtractFilterType, ProcessType.CREATE)
+                                .setExtractorItemType(listItemType)
+                                .setItemId(item.file.name)
+                                .setItemName(item.file.name))
+                                .subscribe(fme => {
+                                        this.uploadComplete = true;
+                                    },
+                                    headerStatusMessage => {
+                                        scope$.onUploaderError.emit(new HeaderStatusMessage(headerStatusMessage, null, null));
+                                    });
+                        } else {
+
+                            scope$.onUploaderError.emit(new HeaderStatusMessage(response, null, null));
+
+                        }
+
+                    };
+                } else {
+                    this.onUploaderError.emit(new HeaderStatusMessage("Unauthenticated", null, null));
+                }
+            });
+
+
 
         this._fileModelTreeService
             .fileItemNotifications()

@@ -1,9 +1,10 @@
 package org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds;
 
 import org.gobiiproject.gobiidao.GobiiDaoException;
-import org.gobiiproject.gobiidao.filesystem.InstructionFilesDAO;
+import org.gobiiproject.gobiidao.filesystem.access.InstructionFileAccess;
 import org.gobiiproject.gobiidtomapping.DtoMapLoaderFiles;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.dto.instructions.loader.GobiiLoaderInstruction;
 import org.gobiiproject.gobiimodel.headerlesscontainer.LoaderFilePreviewDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
@@ -12,6 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * Created by Angel on 11/2016.
@@ -20,10 +25,8 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
 
     Logger LOGGER = LoggerFactory.getLogger(DtoMapLoaderFilesImpl.class);
 
-    private final String INSTRUCTION_FILE_EXT = ".json";
+    private InstructionFileAccess<List<GobiiLoaderInstruction>> instructionFileAccess = new InstructionFileAccess<>(GobiiLoaderInstruction.class);
 
-    @Autowired
-    private InstructionFilesDAO instructionFilesDAO;
 
     public LoaderFilePreviewDTO makeDirectory(String cropType, String directoryName) throws GobiiDaoException {
 
@@ -49,19 +52,19 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
                     + GobiiFileProcessDir.RAW_USER_FILES.toString());
         }
 
-        if (!instructionFilesDAO.doesPathExist(fileCropDirectory)) {
-            instructionFilesDAO.makeDirectory(fileCropDirectory);
+        if (!instructionFileAccess.doesPathExist(fileCropDirectory)) {
+            instructionFileAccess.makeDirectory(fileCropDirectory);
         } else {
-            instructionFilesDAO.verifyDirectoryPermissions(fileCropDirectory);
+            instructionFileAccess.verifyDirectoryPermissions(fileCropDirectory);
         }
 
 
         String directoryPath = fileCropDirectory + directoryName;
-        if (!instructionFilesDAO.doesPathExist(directoryPath)) {
-            instructionFilesDAO.makeDirectory(directoryPath);
+        if (!instructionFileAccess.doesPathExist(directoryPath)) {
+            instructionFileAccess.makeDirectory(directoryPath);
 
         } else {
-            instructionFilesDAO.verifyDirectoryPermissions(directoryPath);
+            instructionFileAccess.verifyDirectoryPermissions(directoryPath);
         }
 
         returnVal.setDirectoryName(directoryPath);
@@ -103,7 +106,7 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
 
         String directoryPath = fileCropDirectory + directoryName;
 
-        if (!instructionFilesDAO.doesPathExist(directoryPath)) {
+        if (!instructionFileAccess.doesPathExist(directoryPath)) {
             throw new GobiiDaoException("The specified directory does not exist: " + directoryPath);
         } else {
 
@@ -120,7 +123,7 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
                 for (File file : files) {
                     if (file.getName().endsWith(extension)) {
                         if (returnVal.getFileList().isEmpty()) {//if first file in directory, get preview
-                            returnVal.setFilePreview(instructionFilesDAO.getFilePreview(file, fileFormat));
+                            returnVal.setFilePreview(this.getFilePreview(file, fileFormat));
                         }
                         returnVal.getFileList().add(file.getName());
                     }
@@ -136,5 +139,54 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
 
     } // createDirectories()
 
+    private List<List<String>> getFilePreview(File file, String fileFormat) {
+        List<List<String>> returnVal = new ArrayList<List<String>>();
+        Scanner input = new Scanner(System.in);
+        try {
+            int lineCtr = 0; //count lines read
+            input = new Scanner(file);
+
+            while (input.hasNextLine() && lineCtr < 50) { //read first 50 lines only
+                int ctr = 0; //count words stored
+                List<String> lineRead = new ArrayList<String>();
+                String line = input.nextLine();
+                for (String s : line.split(getDelimiterFor(fileFormat))) {
+                    if (ctr == 50) break;
+                    else {
+                        lineRead.add(s);
+                        ctr++;
+                    }
+                }
+                returnVal.add(lineRead);
+                lineCtr++;
+            }
+            input.close();
+        } catch (FileNotFoundException e) {
+            throw new GobiiDaoException("Cannot find file. " + e.getMessage());
+        }
+
+        return returnVal;
+    }
+
+    private String getDelimiterFor(String fileFormat) {
+        String delimiter;
+        switch (fileFormat) {
+            case "csv":
+                delimiter = ",";
+                break;
+            case "txt":
+                delimiter = "\t";
+                break;
+            case "vcf":
+                delimiter = "\t";
+                break;
+            case "hmp.txt":
+                delimiter = "\t";
+                break;
+            default:
+                throw new GobiiDaoException("File Format not supported: " + fileFormat);
+        }
+        return delimiter;
+    }
 
 }
