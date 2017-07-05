@@ -83,10 +83,10 @@ System.register([], function (exports_1, context_1) {
                 GobiiDataSetExtract.prototype.setgobiiDatasetType = function (value) {
                     this.gobiiDatasetType = value;
                 };
-                GobiiDataSetExtract.prototype.getplatformIds = function () {
+                GobiiDataSetExtract.prototype.getplatforms = function () {
                     return this.platforms;
                 };
-                GobiiDataSetExtract.prototype.setplatformIds = function (value) {
+                GobiiDataSetExtract.prototype.setplatforms = function (value) {
                     this.platforms = value;
                 };
                 GobiiDataSetExtract.prototype.getJson = function () {

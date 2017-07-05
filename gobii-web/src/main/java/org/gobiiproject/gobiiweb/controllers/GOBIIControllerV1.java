@@ -20,6 +20,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.*;
 import org.gobiiproject.gobiiapimodel.payload.HeaderAuth;
 import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFilterType;
 import org.gobiiproject.gobiimodel.types.GobiiCvGroupType;
 import org.gobiiproject.gobiimodel.types.GobiiStatusLevel;
@@ -49,6 +50,7 @@ import java.io.FileOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.PathParam;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -906,8 +908,8 @@ public class GOBIIControllerV1 {
     @RequestMapping(value = "/cvgroups/{cvGroupTypeId}", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<CvGroupDTO> getCvGroupsByType(@PathVariable Integer cvGroupTypeId,
-                                                   HttpServletRequest request,
-                                                   HttpServletResponse response) {
+                                                         HttpServletRequest request,
+                                                         HttpServletResponse response) {
 
         PayloadEnvelope<CvGroupDTO> returnVal = new PayloadEnvelope<>();
 
@@ -915,7 +917,7 @@ public class GOBIIControllerV1 {
 
             GobiiCvGroupType gobiiCvGroupType = GobiiCvGroupType.fromInt(cvGroupTypeId);
 
-            if( gobiiCvGroupType != GobiiCvGroupType.GROUP_TYPE_UNKNOWN ) {
+            if (gobiiCvGroupType != GobiiCvGroupType.GROUP_TYPE_UNKNOWN) {
 
                 List<CvGroupDTO> cvGroupDTOS = cvGroupService.getCvsForType(gobiiCvGroupType);
 
@@ -1569,7 +1571,6 @@ public class GOBIIControllerV1 {
     }
 
 
-
     @RequestMapping(value = "/manifests", method = RequestMethod.GET)
     @ResponseBody
     public PayloadEnvelope<ManifestDTO> getManifests(HttpServletRequest request,
@@ -1791,7 +1792,7 @@ public class GOBIIControllerV1 {
 
     }
 
-        @RequestMapping(value = "/marker-search",
+    @RequestMapping(value = "/marker-search",
             params = {"name"},
             method = RequestMethod.GET)
     @ResponseBody
@@ -3434,12 +3435,14 @@ public class GOBIIControllerV1 {
     // *********************************************
     // *************************** FILE UPLOAD
     // *********************************************
-    @RequestMapping(value = "/uploadfile",
+    @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
             params = {"gobiiExtractFilterType"},
             method = RequestMethod.POST)
     public
     @ResponseBody
-    String uploadFileHandler(@RequestParam("gobiiExtractFilterType") String gobiiExtractFilterType,
+    String uploadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
+                             @PathVariable("destinationType") String destinationType,
+                             @RequestParam("gobiiExtractFilterType") String gobiiExtractFilterType,
                              @RequestParam("file") MultipartFile file,
                              HttpServletRequest request,
                              HttpServletResponse response) {
@@ -3455,32 +3458,18 @@ public class GOBIIControllerV1 {
                 byte[] byteArray = file.getBytes();
 
                 String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-                String jobId = file.getOriginalFilename();
+                //String jobId = file.getOriginalFilename();
                 GobiiExtractFilterType gobiiExtractFilterTypeParsed = GobiiExtractFilterType.valueOf(gobiiExtractFilterType);
-                this.extractorInstructionFilesService.writeDataFile(cropType, gobiiExtractFilterTypeParsed, jobId, byteArray);
-
-//                // Creating the directory to store file
-//                String rootPath = System.getProperty("catalina.home");
-//                File dir = new File(rootPath + File.separator + "tmpFiles");
-//                if (!dir.exists())
-//                    dir.mkdirs();
-//
-//                // Create the file on server
-//                File serverFile = new File(dir.getAbsolutePath()
-//                        + File.separator + name);
-//                BufferedOutputStream stream = new BufferedOutputStream(
-//                        new FileOutputStream(serverFile));
-//                stream.write(byteArray);
-//                stream.close();
-
-//                logger.info("Server File Location="
-//                        + serverFile.getAbsolutePath());
+                GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
+                this.extractorInstructionFilesService.writeDataFile(cropType, gobiiExtractFilterTypeParsed, gobiiJobId, byteArray);
 
                 return "You successfully uploaded file=" + name;
+
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return "You failed to upload " + name + " => " + e.getMessage();
             }
+
         } else {
 
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
