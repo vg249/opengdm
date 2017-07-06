@@ -3468,8 +3468,12 @@ public class GOBIIControllerV1 {
                 String fileName = gobiiJobId;
 
                 String extension = "";
-                if( gobiiFileProcessDir.equals(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS)) {
-                    fileName += "_samples";
+                if (gobiiFileProcessDir.equals(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS)) {
+                    if (gobiiExtractFilterTypeParsed.equals(GobiiExtractFilterType.BY_SAMPLE)) {
+                        fileName += "_samples";
+                    } else if (gobiiExtractFilterTypeParsed.equals(GobiiExtractFilterType.BY_MARKER)) {
+                        fileName += "_markers";
+                    }
                     extension += ".txt";
                 }
 
@@ -3477,7 +3481,6 @@ public class GOBIIControllerV1 {
                         .writeDataFile(cropType,
                                 fileName,
                                 gobiiFileProcessDir,
-//                                gobiiExtractFilterTypeParsed,
                                 extension,
                                 byteArray);
 

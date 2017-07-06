@@ -51,7 +51,7 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
             }
         ],
         execute: function () {
-            URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?gobiiExtractFilterType=BY_MARKER';
+            URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?gobiiExtractFilterType=';
             UploaderComponent = (function () {
                 function UploaderComponent(_authenticationService, _fileModelTreeService) {
                     this._authenticationService = _authenticationService;
@@ -84,7 +84,9 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                         });
                         var jobId = fileItemJobId.getItemId();
                         var fileUploaderOptions = {};
-                        fileUploaderOptions.url = URL.replace("{gobiiJobId}", jobId);
+                        var url = URL.replace("{gobiiJobId}", jobId);
+                        url += type_extractor_filter_1.GobiiExtractFilterType[_this.gobiiExtractFilterType];
+                        fileUploaderOptions.url = url;
                         fileUploaderOptions.headers = [];
                         fileUploaderOptions.removeAfterUpload = true;
                         var authHeader = { name: '', value: '' };
