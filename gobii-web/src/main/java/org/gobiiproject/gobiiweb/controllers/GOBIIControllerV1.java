@@ -51,6 +51,7 @@ import java.io.FileOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -131,6 +132,9 @@ public class GOBIIControllerV1 {
 
     @Autowired
     private ProtocolService protocolService = null;
+
+    @Autowired
+    private FilesService fileService = null;
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
@@ -3433,7 +3437,7 @@ public class GOBIIControllerV1 {
     }
 
     // *********************************************
-    // *************************** FILE UPLOAD
+    // *************************** FILE UPLOAD/DOWNLOAD
     // *********************************************
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
             params = {"gobiiExtractFilterType"},
@@ -3461,7 +3465,21 @@ public class GOBIIControllerV1 {
                 //String jobId = file.getOriginalFilename();
                 GobiiExtractFilterType gobiiExtractFilterTypeParsed = GobiiExtractFilterType.valueOf(gobiiExtractFilterType);
                 GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
-                this.extractorInstructionFilesService.writeDataFile(cropType, gobiiExtractFilterTypeParsed, gobiiJobId, byteArray);
+                String fileName = gobiiJobId;
+
+                String extension = "";
+                if( gobiiFileProcessDir.equals(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS)) {
+                    fileName += "_samples";
+                    extension += ".txt";
+                }
+
+                this.fileService
+                        .writeDataFile(cropType,
+                                fileName,
+                                gobiiFileProcessDir,
+//                                gobiiExtractFilterTypeParsed,
+                                extension,
+                                byteArray);
 
                 return "You successfully uploaded file=" + name;
 
@@ -3476,6 +3494,34 @@ public class GOBIIControllerV1 {
             return "You failed to upload because the file was empty.";
         }
     }
+
+    @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
+            method = RequestMethod.GET)
+    public
+    @ResponseBody
+    String downloadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
+                               @PathVariable("destinationType") String destinationType,
+                               HttpServletRequest request,
+                               HttpServletResponse response) {
+
+        String returnVal = "";
+        try {
+
+//            // get your file as InputStream
+//            InputStream is = ...;
+//            // copy it to response's OutputStream
+//            org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+//            response.flushBuffer();
+
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            returnVal = "You failed to upload " + gobiiJobId + " => " + e.getMessage();
+        }
+
+        return returnVal;
+
+    }
+
 
     /**
      * Upload multiple file using Spring Controller

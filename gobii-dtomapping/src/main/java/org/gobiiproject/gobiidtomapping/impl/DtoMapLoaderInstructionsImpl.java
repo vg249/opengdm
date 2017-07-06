@@ -51,26 +51,14 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
 
 
         if (null != instructionFileDirectory) {
-            if (!instructionFileAccess.doesPathExist(instructionFileDirectory)) {
-                instructionFileAccess.makeDirectory(instructionFileDirectory);
-            } else {
-                instructionFileAccess.verifyDirectoryPermissions(instructionFileDirectory);
-            }
+            instructionFileAccess.createDirectory(instructionFileDirectory);
         }
 
         if (gobiiFile.isCreateSource()) {
-            if (!instructionFileAccess.doesPathExist(gobiiFile.getSource())) {
-                instructionFileAccess.makeDirectory(gobiiFile.getSource());
-            } else {
-                instructionFileAccess.verifyDirectoryPermissions(gobiiFile.getSource());
-            }
+            instructionFileAccess.createDirectory(gobiiFile.getSource());
         }
 
-        if (!instructionFileAccess.doesPathExist(gobiiFile.getDestination())) {
-            instructionFileAccess.makeDirectory(gobiiFile.getDestination());
-        } else {
-            instructionFileAccess.verifyDirectoryPermissions(gobiiFile.getDestination());
-        }
+        instructionFileAccess.createDirectory(gobiiFile.getDestination());
 
     } // createDirectories()
 
@@ -97,8 +85,6 @@ public class DtoMapLoaderInstructionsImpl implements DtoMapLoaderInstructions {
             }
 
             String instructionFileDirectory = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.LOADER_INSTRUCTIONS);
-//                .getCropConfig(cropType)
-//                .getLoaderInstructionFilesDirectory();
 
             String instructionFileFqpn = instructionFileDirectory
                     + loaderInstructionFilesDTO.getInstructionFileName()

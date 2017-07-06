@@ -3,6 +3,9 @@ package org.gobiiproject.gobiidao.filesystem.access;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gobiiproject.gobiidao.GobiiDaoException;
+import org.gobiiproject.gobiimodel.config.ConfigSettings;
+import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -182,6 +185,24 @@ public class InstructionFileAccess<T> {
         }
     }
 
+
+    public void createDirectory(String instructionFileDirectory) throws GobiiDaoException {
+
+
+        if (null != instructionFileDirectory) {
+
+            if (!this.doesPathExist(instructionFileDirectory)) {
+
+                this.makeDirectory(instructionFileDirectory);
+
+            } else {
+                this.verifyDirectoryPermissions(instructionFileDirectory);
+            }
+        }
+
+    } // createDirectories()
+
+
     public void writePlainFile(String fileFqpn, byte[] byteArray) throws GobiiDaoException {
 
         try {
@@ -197,9 +218,28 @@ public class InstructionFileAccess<T> {
             throw new GobiiDaoException("Error wriring file " + fileFqpn + ": " + e.getMessage());
         }
 
-
     }
 
+    public void writeFileToFileProcDir(String cropType,
+                                       String fileNameStem,
+                                       GobiiFileProcessDir gobiiFileProcessDir,
+                                       String extension,
+                                       byte[] byteArray) throws Exception{
+
+
+        ConfigSettings configSettings = new ConfigSettings();
+
+        String instructionFileDirectory = configSettings.getProcessingPath(cropType,
+                gobiiFileProcessDir);
+
+        this.createDirectory(instructionFileDirectory);
+
+        String fqpn = instructionFileDirectory + fileNameStem;
+        fqpn += extension;
+
+        this.writePlainFile(fqpn,byteArray);
+
+    }
 
 
 }

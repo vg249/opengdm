@@ -165,9 +165,6 @@ export class UploaderComponent implements OnInit {
                 private _fileModelTreeService: FileModelTreeService) {
 
 
-
-
-
     } // ctor
 
 
@@ -225,6 +222,19 @@ export class UploaderComponent implements OnInit {
 
                     scope$.uploader = new FileUploader(fileUploaderOptions);
 
+                    this.uploader.onBeforeUploadItem = (fileItem: FileItem) => {
+
+                        // this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(
+                        //     fileItems => {
+                        //         let fileItemJobId: GobiiFileItem = fileItems.find(item => {
+                        //             return item.getExtractorItemType() === ExtractorItemType.JOB_ID
+                        //         });
+                        //
+                        //         let jobId: string = fileItemJobId.getItemId();
+                        fileItem.file.name = FileName.makeFileNameFromJobId(this.gobiiExtractFilterType, jobId);
+                        // });
+                    }
+
                     scope$.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
 
                         if (status == 200) {
@@ -254,7 +264,6 @@ export class UploaderComponent implements OnInit {
                     this.onUploaderError.emit(new HeaderStatusMessage("Unauthenticated", null, null));
                 }
             });
-
 
 
         this._fileModelTreeService

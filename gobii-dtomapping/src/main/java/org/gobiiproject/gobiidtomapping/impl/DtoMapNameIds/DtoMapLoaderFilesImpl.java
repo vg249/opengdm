@@ -52,20 +52,11 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
                     + GobiiFileProcessDir.RAW_USER_FILES.toString());
         }
 
-        if (!instructionFileAccess.doesPathExist(fileCropDirectory)) {
-            instructionFileAccess.makeDirectory(fileCropDirectory);
-        } else {
-            instructionFileAccess.verifyDirectoryPermissions(fileCropDirectory);
-        }
 
+        instructionFileAccess.createDirectory(fileCropDirectory);
 
         String directoryPath = fileCropDirectory + directoryName;
-        if (!instructionFileAccess.doesPathExist(directoryPath)) {
-            instructionFileAccess.makeDirectory(directoryPath);
-
-        } else {
-            instructionFileAccess.verifyDirectoryPermissions(directoryPath);
-        }
+        instructionFileAccess.createDirectory(fileCropDirectory);
 
         returnVal.setDirectoryName(directoryPath);
         returnVal.setId(1);//this is arbitrary for now
