@@ -220,6 +220,13 @@ public class InstructionFileAccess<T> {
 
     }
 
+    private String makeFileName(String pathToFile, String fileNameStem, String extension) {
+        String returnVal  = pathToFile + fileNameStem;
+        returnVal += extension;
+        return returnVal;
+
+    }
+
     public void writeFileToFileProcDir(String cropType,
                                        String fileNameStem,
                                        GobiiFileProcessDir gobiiFileProcessDir,
@@ -229,17 +236,35 @@ public class InstructionFileAccess<T> {
 
         ConfigSettings configSettings = new ConfigSettings();
 
-        String instructionFileDirectory = configSettings.getProcessingPath(cropType,
+        String pathToFile = configSettings.getProcessingPath(cropType,
                 gobiiFileProcessDir);
 
-        this.createDirectory(instructionFileDirectory);
+        this.createDirectory(pathToFile);
 
-        String fqpn = instructionFileDirectory + fileNameStem;
-        fqpn += extension;
-
+        String fqpn = this.makeFileName(pathToFile,fileNameStem,extension);
         this.writePlainFile(fqpn,byteArray);
 
     }
 
+    public File readFileFromProcDir(String cropType,
+                                    String fileName,
+                                    GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
+
+        File returnVal = null;
+
+        ConfigSettings configSettings = new ConfigSettings();
+
+        String pathToFile = configSettings.getProcessingPath(cropType,
+                gobiiFileProcessDir);
+
+
+        String fqpn = this.makeFileName(pathToFile,fileName,"");
+
+        File file = new File(fqpn);
+        if( file.exists() ) {
+            returnVal = file;
+        }
+        return returnVal;
+    }
 
 }

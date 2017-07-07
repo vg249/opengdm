@@ -6,6 +6,7 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -33,7 +34,11 @@ import org.gobiiproject.gobiiweb.automation.PayloadReader;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,12 +50,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.PathParam;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Enumeration;
@@ -3478,7 +3483,7 @@ public class GOBIIControllerV1 {
                 }
 
                 this.fileService
-                        .writeDataFile(cropType,
+                        .writeFile(cropType,
                                 fileName,
                                 gobiiFileProcessDir,
                                 extension,
@@ -3500,75 +3505,37 @@ public class GOBIIControllerV1 {
 
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
             method = RequestMethod.GET)
-    public
-    @ResponseBody
-    String downloadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
-                               @PathVariable("destinationType") String destinationType,
-                               HttpServletRequest request,
-                               HttpServletResponse response) {
+    public ResponseEntity<InputStreamResource> downloadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
+                                                                   @PathVariable("destinationType") String destinationType,
+                                                                   @RequestParam("fileName") String fileName,
+                                                                   HttpServletRequest request,
+                                                                   HttpServletResponse response) {
 
-        String returnVal = "";
+        ResponseEntity<InputStreamResource> returnVal = null;
         try {
 
-//            // get your file as InputStream
-//            InputStream is = ...;
-//            // copy it to response's OutputStream
-//            org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
+            File file = this.fileService.readFile(cropType, fileName, gobiiFileProcessDir);
+            HttpHeaders respHeaders = new HttpHeaders();
+            respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            respHeaders.setContentLength(file.length());
+            respHeaders.setContentDispositionFormData("attachment", fileName);
+
+            InputStreamResource inputStreamResource = new InputStreamResource(new FileInputStream(file));
+            returnVal = new ResponseEntity<>(inputStreamResource, respHeaders, HttpStatus.OK);
+//            InputStream inputStream = new FileInputStream(file);
+//            IOUtils.copy(inputStream, response.getOutputStream());
 //            response.flushBuffer();
+
 
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            returnVal = "You failed to upload " + gobiiJobId + " => " + e.getMessage();
+
         }
 
         return returnVal;
 
-    }
-
-
-    /**
-     * Upload multiple file using Spring Controller
-     */
-    @RequestMapping(value = "/uploadMultipleFile", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    String uploadMultipleFileHandler(@RequestParam("name") String[] names,
-                                     @RequestParam("file") MultipartFile[] files) {
-
-        if (files.length != names.length)
-            return "Mandatory information missing";
-
-        String message = "";
-        for (int i = 0; i < files.length; i++) {
-            MultipartFile file = files[i];
-            String name = names[i];
-            try {
-                byte[] bytes = file.getBytes();
-
-                // Creating the directory to store file
-                String rootPath = System.getProperty("catalina.home");
-                File dir = new File(rootPath + File.separator + "tmpFiles");
-                if (!dir.exists())
-                    dir.mkdirs();
-
-                // Create the file on server
-                File serverFile = new File(dir.getAbsolutePath()
-                        + File.separator + name);
-                BufferedOutputStream stream = new BufferedOutputStream(
-                        new FileOutputStream(serverFile));
-                stream.write(bytes);
-                stream.close();
-
-//                logger.info("Server File Location="
-//                        + serverFile.getAbsolutePath());
-
-                message = message + "You successfully uploaded file=" + name
-                        + "<br />";
-            } catch (Exception e) {
-                return "You failed to upload " + name + " => " + e.getMessage();
-            }
-        }
-        return message;
     }
 
 

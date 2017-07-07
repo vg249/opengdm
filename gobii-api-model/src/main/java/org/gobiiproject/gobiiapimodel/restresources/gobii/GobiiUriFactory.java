@@ -4,6 +4,8 @@ package org.gobiiproject.gobiiapimodel.restresources.gobii;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 
 /**
  * Created by Phil on 9/7/2016.
@@ -142,6 +144,23 @@ public class GobiiUriFactory {
         return returnVal;
 
     } //
+
+    public RestUri file(String jobId,
+                        GobiiFileProcessDir gobiiFileProcessDir,
+                        String fileName) throws Exception {
+
+        RestUri returnVal = new RestUri(this.cropContextRoot,
+                this.gobiiControllerType.getControllerPath(),
+                GobiiServiceRequestId.URL_FILES.getResourcePath())
+                .addUriParam("gobiiJobId")
+                .setParamValue("gobiiJobId",jobId)
+                .addUriParam("destinationType")
+                .setParamValue("destinationType",gobiiFileProcessDir.toString())
+                .addQueryParam("gobiiExtractFilterType")
+                .setParamValue("gobiiExtractFilterType", GobiiExtractFilterType.BY_MARKER.toString());
+
+        return returnVal;
+    }
 }
 
 

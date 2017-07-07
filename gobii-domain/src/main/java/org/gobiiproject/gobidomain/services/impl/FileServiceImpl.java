@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
+
 
 /**
  * Created by Angel on 6/8/2016.
@@ -26,11 +28,11 @@ public class FileServiceImpl implements FilesService {
     InstructionFileAccess<Void> instructionFileAccess = new InstructionFileAccess<>(Void.class);
 
     @Override
-    public void writeDataFile(String cropType,
-                              String fileNameStem,
-                              GobiiFileProcessDir gobiiFileProcessDir,
-                              String extension,
-                              byte[] byteArray) throws GobiiException, Exception {
+    public void writeFile(String cropType,
+                          String fileNameStem,
+                          GobiiFileProcessDir gobiiFileProcessDir,
+                          String extension,
+                          byte[] byteArray) throws GobiiException, Exception {
 
         instructionFileAccess.writeFileToFileProcDir(cropType,
                 fileNameStem,
@@ -38,6 +40,21 @@ public class FileServiceImpl implements FilesService {
                 extension,
                 byteArray);
     }
+
+    @Override
+    public File readFile(String cropType,
+                  String fileName,
+                  GobiiFileProcessDir gobiiFileProcessDir) throws GobiiException, Exception {
+
+        File returnVal;
+
+        returnVal = instructionFileAccess.readFileFromProcDir(cropType,
+                fileName,
+                gobiiFileProcessDir);
+
+        return returnVal;
+    }
+
 
 
 } // ExtractorInstructionFileServiceImpl
