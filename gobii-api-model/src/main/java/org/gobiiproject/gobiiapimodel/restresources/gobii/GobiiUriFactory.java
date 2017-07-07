@@ -156,8 +156,8 @@ public class GobiiUriFactory {
                 .setParamValue("gobiiJobId",jobId)
                 .addUriParam("destinationType")
                 .setParamValue("destinationType",gobiiFileProcessDir.toString())
-                .addQueryParam("gobiiExtractFilterType")
-                .setParamValue("gobiiExtractFilterType", GobiiExtractFilterType.BY_MARKER.toString());
+                .addQueryParam("fileName")
+                .setParamValue("fileName", fileName);
 
         return returnVal;
     }

@@ -3459,6 +3459,10 @@ public class GOBIIControllerV1 {
         String name = file.getName();
 
 
+        //we aren't using jobId here yet. For some destination types it will be required
+        //for example, if we wanted to put files into the extractor/output directory, we would need
+        //to use the jobid. But we don't suppor that use case yet.
+
         Enumeration<String> headers = request.getHeaders("Content-Disposition");
 
         if (!file.isEmpty()) {
@@ -3510,10 +3514,6 @@ public class GOBIIControllerV1 {
 
             InputStreamResource inputStreamResource = new InputStreamResource(new FileInputStream(file));
             returnVal = new ResponseEntity<>(inputStreamResource, respHeaders, HttpStatus.OK);
-//            InputStream inputStream = new FileInputStream(file);
-//            IOUtils.copy(inputStream, response.getOutputStream());
-//            response.flushBuffer();
-
 
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());

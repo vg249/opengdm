@@ -43,7 +43,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * This class provides generic HTTP rest-oriented client functionality.
