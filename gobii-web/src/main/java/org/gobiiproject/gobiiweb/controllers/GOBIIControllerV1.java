@@ -3445,13 +3445,13 @@ public class GOBIIControllerV1 {
     // *************************** FILE UPLOAD/DOWNLOAD
     // *********************************************
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
-            params = {"gobiiExtractFilterType"},
+            params = {"fileName"},
             method = RequestMethod.POST)
     public
     @ResponseBody
     String uploadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
                              @PathVariable("destinationType") String destinationType,
-                             @RequestParam("gobiiExtractFilterType") String gobiiExtractFilterType,
+                             @RequestParam("fileName") String fileName,
                              @RequestParam("file") MultipartFile file,
                              HttpServletRequest request,
                              HttpServletResponse response) {
@@ -3467,26 +3467,12 @@ public class GOBIIControllerV1 {
                 byte[] byteArray = file.getBytes();
 
                 String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-                //String jobId = file.getOriginalFilename();
-                GobiiExtractFilterType gobiiExtractFilterTypeParsed = GobiiExtractFilterType.valueOf(gobiiExtractFilterType);
                 GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
-                String fileName = gobiiJobId;
-
-                String extension = "";
-                if (gobiiFileProcessDir.equals(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS)) {
-                    if (gobiiExtractFilterTypeParsed.equals(GobiiExtractFilterType.BY_SAMPLE)) {
-                        fileName += "_samples";
-                    } else if (gobiiExtractFilterTypeParsed.equals(GobiiExtractFilterType.BY_MARKER)) {
-                        fileName += "_markers";
-                    }
-                    extension += ".txt";
-                }
 
                 this.fileService
                         .writeFile(cropType,
                                 fileName,
                                 gobiiFileProcessDir,
-                                extension,
                                 byteArray);
 
                 return "You successfully uploaded file=" + name;

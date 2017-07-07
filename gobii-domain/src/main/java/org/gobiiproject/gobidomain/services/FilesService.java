@@ -17,7 +17,6 @@ public interface FilesService {
     void writeFile(String cropType,
                    String fileNameStem,
                    GobiiFileProcessDir gobiiFileProcessDir,
-                   String extension,
                    byte[] byteArray) throws GobiiException, Exception;
 
     File readFile(String cropType,

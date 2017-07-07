@@ -16,7 +16,7 @@ import {ProcessType} from "../model/type-process";
 import {ExtractorItemType} from "../model/file-model-node";
 import {GobiiUIEventOrigin} from "../model/type-event-origin";
 
-const URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?gobiiExtractFilterType=';
+const URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?fileName=';
 
 @Component({
     selector: 'uploader',
@@ -207,7 +207,9 @@ export class UploaderComponent implements OnInit {
                 let jobId: string = fileItemJobId.getItemId();
                 let fileUploaderOptions: FileUploaderOptions = {}
                 let url:string = URL.replace("{gobiiJobId}", jobId);
-                url += GobiiExtractFilterType[ this.gobiiExtractFilterType];
+                let fileName = FileName.makeFileNameFromJobId(this.gobiiExtractFilterType, jobId);
+
+                url += fileName;
                 fileUploaderOptions.url = url;
                 fileUploaderOptions.headers = [];
                 fileUploaderOptions.removeAfterUpload = true;
@@ -226,15 +228,8 @@ export class UploaderComponent implements OnInit {
 
                     this.uploader.onBeforeUploadItem = (fileItem: FileItem) => {
 
-                        // this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(
-                        //     fileItems => {
-                        //         let fileItemJobId: GobiiFileItem = fileItems.find(item => {
-                        //             return item.getExtractorItemType() === ExtractorItemType.JOB_ID
-                        //         });
-                        //
-                        //         let jobId: string = fileItemJobId.getItemId();
-                        fileItem.file.name = FileName.makeFileNameFromJobId(this.gobiiExtractFilterType, jobId);
-                        // });
+                        fileItem.file.name = fileName;
+
                     }
 
                     scope$.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {

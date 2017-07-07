@@ -51,7 +51,7 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
             }
         ],
         execute: function () {
-            URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?gobiiExtractFilterType=';
+            URL = 'gobii/v1/files/{gobiiJobId}/EXTRACTOR_INSTRUCTIONS?fileName=';
             UploaderComponent = (function () {
                 function UploaderComponent(_authenticationService, _fileModelTreeService) {
                     this._authenticationService = _authenticationService;
@@ -85,7 +85,8 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                         var jobId = fileItemJobId.getItemId();
                         var fileUploaderOptions = {};
                         var url = URL.replace("{gobiiJobId}", jobId);
-                        url += type_extractor_filter_1.GobiiExtractFilterType[_this.gobiiExtractFilterType];
+                        var fileName = file_name_1.FileName.makeFileNameFromJobId(_this.gobiiExtractFilterType, jobId);
+                        url += fileName;
                         fileUploaderOptions.url = url;
                         fileUploaderOptions.headers = [];
                         fileUploaderOptions.removeAfterUpload = true;
@@ -97,15 +98,7 @@ System.register(["@angular/core", "ng2-file-upload", "../services/core/authentic
                             fileUploaderOptions.headers.push(authHeader);
                             scope$.uploader = new ng2_file_upload_1.FileUploader(fileUploaderOptions);
                             _this.uploader.onBeforeUploadItem = function (fileItem) {
-                                // this._fileModelTreeService.getFileItems(this.gobiiExtractFilterType).subscribe(
-                                //     fileItems => {
-                                //         let fileItemJobId: GobiiFileItem = fileItems.find(item => {
-                                //             return item.getExtractorItemType() === ExtractorItemType.JOB_ID
-                                //         });
-                                //
-                                //         let jobId: string = fileItemJobId.getItemId();
-                                fileItem.file.name = file_name_1.FileName.makeFileNameFromJobId(_this.gobiiExtractFilterType, jobId);
-                                // });
+                                fileItem.file.name = fileName;
                             };
                             scope$.uploader.onCompleteItem = function (item, response, status, headers) {
                                 if (status == 200) {

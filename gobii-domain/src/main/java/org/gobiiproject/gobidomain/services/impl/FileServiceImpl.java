@@ -31,13 +31,11 @@ public class FileServiceImpl implements FilesService {
     public void writeFile(String cropType,
                           String fileNameStem,
                           GobiiFileProcessDir gobiiFileProcessDir,
-                          String extension,
                           byte[] byteArray) throws GobiiException, Exception {
 
         instructionFileAccess.writeFileToFileProcDir(cropType,
                 fileNameStem,
                 gobiiFileProcessDir,
-                extension,
                 byteArray);
     }
 

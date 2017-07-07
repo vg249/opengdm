@@ -32,9 +32,9 @@ public class InstructionFileAccess<T> {
     }
 
     public Boolean writeInstructions(String instructionFileFqpn,
-                                    T instructions) throws GobiiDaoException {
+                                     T instructions) throws GobiiDaoException {
 
-         Boolean returnVal = null;
+        Boolean returnVal = null;
 
         try {
 
@@ -178,8 +178,6 @@ public class InstructionFileAccess<T> {
             }
 
 
-
-
         } else {
             throw new GobiiDaoException("The specified path already exists: " + pathName);
         }
@@ -220,9 +218,11 @@ public class InstructionFileAccess<T> {
 
     }
 
-    private String makeFileName(String pathToFile, String fileNameStem, String extension) {
-        String returnVal  = pathToFile + fileNameStem;
-        returnVal += extension;
+    private String makeFileName(String pathToFile, String fileNameStem) {
+        if (pathToFile.charAt(pathToFile.length() - 1) != '/') {
+            pathToFile += '/';
+        }
+        String returnVal = pathToFile + fileNameStem;
         return returnVal;
 
     }
@@ -230,8 +230,7 @@ public class InstructionFileAccess<T> {
     public void writeFileToFileProcDir(String cropType,
                                        String fileNameStem,
                                        GobiiFileProcessDir gobiiFileProcessDir,
-                                       String extension,
-                                       byte[] byteArray) throws Exception{
+                                       byte[] byteArray) throws Exception {
 
 
         ConfigSettings configSettings = new ConfigSettings();
@@ -241,8 +240,8 @@ public class InstructionFileAccess<T> {
 
         this.createDirectory(pathToFile);
 
-        String fqpn = this.makeFileName(pathToFile,fileNameStem,extension);
-        this.writePlainFile(fqpn,byteArray);
+        String fqpn = this.makeFileName(pathToFile, fileNameStem);
+        this.writePlainFile(fqpn, byteArray);
 
     }
 
@@ -258,10 +257,10 @@ public class InstructionFileAccess<T> {
                 gobiiFileProcessDir);
 
 
-        String fqpn = this.makeFileName(pathToFile,fileName,"");
+        String fqpn = this.makeFileName(pathToFile, fileName);
 
         File file = new File(fqpn);
-        if( file.exists() ) {
+        if (file.exists()) {
             returnVal = file;
         }
         return returnVal;

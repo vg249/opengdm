@@ -136,7 +136,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                     if (currentGobiiDataSetExtract.getListFileName() != null) {
 
-                        String presumptiveListFileFqpn = instructionFileDirectory + currentGobiiDataSetExtract.getListFileName() + DATA_FILE_EXT;
+                        String presumptiveListFileFqpn = instructionFileDirectory + currentGobiiDataSetExtract.getListFileName();
 
                         if (this.instructionFileAccess.doesPathExist(presumptiveListFileFqpn)) {
                             currentGobiiDataSetExtract.setListFileName(presumptiveListFileFqpn);
