@@ -3,8 +3,10 @@ package org.gobiiproject.gobiiclient.core.common;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -14,6 +16,11 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -27,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.MediaType;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -381,6 +389,37 @@ public class HttpCore {
         this.setHttpBody(httpPost, body);
         returnVal = this.submitHttpMethod(httpPost, restUri);
         this.logRequest(RestMethodTypes.POST, restUri, body, returnVal);
+
+        return returnVal;
+    }
+
+    public HttpMethodResult upload(RestUri restUri,
+                                 File file) throws Exception {
+
+        HttpMethodResult returnVal;
+
+        // remove the default headers
+        restUri.getHttpHeaders().remove(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
+        restUri.getHttpHeaders().remove(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT);
+
+        HttpPost httpPost = new HttpPost();
+
+        // getting this to work required a bit of dabbling in the Dark Arts
+        // thank goodness for the kindness of strangers:
+        // https://stackoverflow.com/questions/1378920/how-can-i-make-a-multipart-form-data-post-request-using-java
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.addTextBody("field1", "yes", ContentType.TEXT_PLAIN);
+        builder.addBinaryBody(
+                "file",
+                new FileInputStream(file),
+                ContentType.APPLICATION_OCTET_STREAM,
+                file.getName()
+        );
+        HttpEntity multipart = builder.build();
+        httpPost.setEntity(multipart);
+
+        returnVal = this.submitHttpMethod(httpPost, restUri);
+        this.logRequest(RestMethodTypes.POST, restUri, file.getAbsolutePath(), returnVal);
 
         return returnVal;
     }

@@ -6,6 +6,7 @@
 package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.gobiiproject.gobidomain.services.*;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
@@ -33,7 +34,11 @@ import org.gobiiproject.gobiiweb.automation.PayloadReader;
 import org.gobiiproject.gobiiweb.automation.PayloadWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,12 +50,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.PathParam;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -131,6 +137,9 @@ public class GOBIIControllerV1 {
 
     @Autowired
     private ProtocolService protocolService = null;
+
+    @Autowired
+    private FilesService fileService = null;
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
@@ -3433,22 +3442,26 @@ public class GOBIIControllerV1 {
     }
 
     // *********************************************
-    // *************************** FILE UPLOAD
+    // *************************** FILE UPLOAD/DOWNLOAD
     // *********************************************
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
-            params = {"gobiiExtractFilterType"},
+            params = {"fileName"},
             method = RequestMethod.POST)
     public
     @ResponseBody
     String uploadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
                              @PathVariable("destinationType") String destinationType,
-                             @RequestParam("gobiiExtractFilterType") String gobiiExtractFilterType,
+                             @RequestParam("fileName") String fileName,
                              @RequestParam("file") MultipartFile file,
                              HttpServletRequest request,
                              HttpServletResponse response) {
 
         String name = file.getName();
 
+
+        //we aren't using jobId here yet. For some destination types it will be required
+        //for example, if we wanted to put files into the extractor/output directory, we would need
+        //to use the jobid. But we don't suppor that use case yet.
 
         Enumeration<String> headers = request.getHeaders("Content-Disposition");
 
@@ -3458,10 +3471,13 @@ public class GOBIIControllerV1 {
                 byte[] byteArray = file.getBytes();
 
                 String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-                //String jobId = file.getOriginalFilename();
-                GobiiExtractFilterType gobiiExtractFilterTypeParsed = GobiiExtractFilterType.valueOf(gobiiExtractFilterType);
                 GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
-                this.extractorInstructionFilesService.writeDataFile(cropType, gobiiExtractFilterTypeParsed, gobiiJobId, byteArray);
+
+                this.fileService
+                        .writeFile(cropType,
+                                fileName,
+                                gobiiFileProcessDir,
+                                byteArray);
 
                 return "You successfully uploaded file=" + name;
 
@@ -3477,49 +3493,35 @@ public class GOBIIControllerV1 {
         }
     }
 
-    /**
-     * Upload multiple file using Spring Controller
-     */
-    @RequestMapping(value = "/uploadMultipleFile", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    String uploadMultipleFileHandler(@RequestParam("name") String[] names,
-                                     @RequestParam("file") MultipartFile[] files) {
+    @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
+            method = RequestMethod.GET)
+    public ResponseEntity<InputStreamResource> downloadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
+                                                                   @PathVariable("destinationType") String destinationType,
+                                                                   @RequestParam("fileName") String fileName,
+                                                                   HttpServletRequest request,
+                                                                   HttpServletResponse response) {
 
-        if (files.length != names.length)
-            return "Mandatory information missing";
+        ResponseEntity<InputStreamResource> returnVal = null;
+        try {
 
-        String message = "";
-        for (int i = 0; i < files.length; i++) {
-            MultipartFile file = files[i];
-            String name = names[i];
-            try {
-                byte[] bytes = file.getBytes();
+            String cropType = CropRequestAnalyzer.getGobiiCropType(request);
+            GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
+            File file = this.fileService.readFile(cropType, fileName, gobiiFileProcessDir);
+            HttpHeaders respHeaders = new HttpHeaders();
+            respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            respHeaders.setContentLength(file.length());
+            respHeaders.setContentDispositionFormData("attachment", fileName);
 
-                // Creating the directory to store file
-                String rootPath = System.getProperty("catalina.home");
-                File dir = new File(rootPath + File.separator + "tmpFiles");
-                if (!dir.exists())
-                    dir.mkdirs();
+            InputStreamResource inputStreamResource = new InputStreamResource(new FileInputStream(file));
+            returnVal = new ResponseEntity<>(inputStreamResource, respHeaders, HttpStatus.OK);
 
-                // Create the file on server
-                File serverFile = new File(dir.getAbsolutePath()
-                        + File.separator + name);
-                BufferedOutputStream stream = new BufferedOutputStream(
-                        new FileOutputStream(serverFile));
-                stream.write(bytes);
-                stream.close();
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
-//                logger.info("Server File Location="
-//                        + serverFile.getAbsolutePath());
-
-                message = message + "You successfully uploaded file=" + name
-                        + "<br />";
-            } catch (Exception e) {
-                return "You failed to upload " + name + " => " + e.getMessage();
-            }
         }
-        return message;
+
+        return returnVal;
+
     }
 
 

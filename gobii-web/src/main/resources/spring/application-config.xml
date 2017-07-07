@@ -190,6 +190,10 @@
           class="org.gobiiproject.gobidomain.services.impl.NameIdListServiceImpl"/>
 
     <!-- **** Loader File Beans *************************************** -->
+
+    <bean id="filesService"
+          class="org.gobiiproject.gobidomain.services.impl.FileServiceImpl"/>
+
     <bean id="dtoMapLoaderFiles"
           class="org.gobiiproject.gobiidtomapping.impl.DtoMapNameIds.DtoMapLoaderFilesImpl"/>
     <bean id="loaderFilesService"

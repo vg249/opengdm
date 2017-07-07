@@ -1097,7 +1097,7 @@ export class ExtractorRoot implements OnInit {
                             null,
                             this.gobiiExtractFilterType,
                             markerList,
-                            null,
+                            null,\
                             markerFileName,
                             null,
                             datasetType,

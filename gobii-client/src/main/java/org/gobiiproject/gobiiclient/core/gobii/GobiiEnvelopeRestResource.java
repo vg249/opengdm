@@ -12,6 +12,8 @@ import org.gobiiproject.gobiimodel.types.RestMethodTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 /**
  * This class adds the GOBII-specific type handling on top of the generic
  * HTTP functionality of HttpCore. It wraps the generic HTTP method methods
@@ -101,6 +103,15 @@ public class GobiiEnvelopeRestResource<T> {
 
         return returnVal;
 
+    }
+
+    public HttpMethodResult upload(File file) throws Exception {
+
+        HttpMethodResult returnVal = getHttp()
+                .upload(this.restUri,
+                        file);
+
+        return returnVal;
     }
 
     public PayloadEnvelope<T> put(Class<T> dtoType,
