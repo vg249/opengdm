@@ -63,78 +63,104 @@ public class BrapiResponseMapAlleleMatrixSearch {
         ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
                 .getStatus(crop, jobId);
 
-        GobiiJobStatus gobiiJobStatus = extractorInstructionFilesDTONew
-                .getGobiiExtractorInstructions()
-                .get(0)
-                .getDataSetExtracts()
-                .get(0)
-                .getGobiiJobStatus();
 
         String brapiAsynchStatus = null;
-        switch (gobiiJobStatus) {
+        if( ( extractorInstructionFilesDTONew
+                .getGobiiExtractorInstructions().size() > 0 ) &&
+                (extractorInstructionFilesDTONew
+                        .getGobiiExtractorInstructions().get(0).getDataSetExtracts().size() > 0 ) ) {
 
-            case FAILED:
-                brapiAsynchStatus = "FAILED";
-                break;
+            GobiiDataSetExtract gobiiDataSetExtract = extractorInstructionFilesDTONew
+                    .getGobiiExtractorInstructions()
+                    .get(0)
+                    .getDataSetExtracts()
+                    .get(0);
 
-            case STARTED:
-                brapiAsynchStatus = "PENDING";
-                break;
+            GobiiJobStatus gobiiJobStatus = gobiiDataSetExtract
+                    .getGobiiJobStatus();
 
-            case COMPLETED:
-                brapiAsynchStatus = "FINISHED";
-                break;
+            switch (gobiiJobStatus) {
 
-            case IN_PROGRESS:
-                brapiAsynchStatus = "INPROCESS";
-                break;
+                case FAILED:
+                    brapiAsynchStatus = "FAILED";
+                    break;
 
-        }
+                case STARTED:
+                    brapiAsynchStatus = "PENDING";
+                    break;
 
-
-        // this is only for test purposes!!! -- it should
-        if (!gobiiJobStatus.equals(GobiiJobStatus.COMPLETED)) {
-
-            try {
-
-                Thread.sleep(4000); // make it look like we're processing
-
-                String testFileName = "illumina.data";
-                ClassLoader classLoader = getClass().getClassLoader();
-                File testResultFile = new File(classLoader.getResource(testFileName).getFile());
-
-            
-                if (testResultFile.exists()) {
-
-                    RestUri restUri = new GobiiUriFactory(request.getContextPath(),
-                            GobiiControllerType.BRAPI)
-                            .resourceColl(GobiiServiceRequestId.URL_FILES);
-
-
-                    String serverName = request.getServerName();
-                    int portNumber = request.getServerPort();
-
-                    String fileUri = "http://"
-                            + serverName
-                            + ":"
-                            + portNumber
-                            + "/"
-                            + restUri.makeUrl()
-                            + "?fqpn=" + testResultFile.getAbsolutePath();
-
-                    brapiMetaData.getDatafiles().add(fileUri);
-
+                case COMPLETED:
                     brapiAsynchStatus = "FINISHED";
-                } else {
-                    brapiMetaData.addStatusMessage("error", "The test file is not present: " + testFileName);
-                }
+                    break;
 
+                case IN_PROGRESS:
+                    brapiAsynchStatus = "INPROCESS";
+                    break;
 
-            } catch (Exception e) {
-                brapiMetaData.addStatusMessage("Exception", e.getMessage());
             }
-        }
 
+
+            // this is only for test purposes!!! -- it should
+            if (!gobiiJobStatus.equals(GobiiJobStatus.COMPLETED)) {
+
+                try {
+
+                    String extractDirectory = gobiiDataSetExtract.getExtractDestinationDirectory();
+                    File extractDirectoryFile = new File(extractDirectory);
+                    if( extractDirectoryFile.exists() ) {
+
+                        File[] extractedFiles = extractDirectoryFile.listFiles();
+                        for(Integer idx = 0; idx < extractedFiles.length; idx++ ) {
+                            File currentFile = extractedFiles[idx];
+
+                        }
+
+                    } else {
+                        brapiMetaData.addStatusMessage("error", "The extract directory does not exist: " + extractDirectory);
+                    }
+
+//                Thread.sleep(4000); // make it look like we're processing
+//
+//                String testFileName = "illumina.data";
+//                ClassLoader classLoader = getClass().getClassLoader();
+//                File testResultFile = new File(classLoader.getResource(testFileName).getFile());
+//
+//
+//                if (testResultFile.exists()) {
+//
+//                    RestUri restUri = new GobiiUriFactory(request.getContextPath(),
+//                            GobiiControllerType.BRAPI)
+//                            .resourceColl(GobiiServiceRequestId.URL_FILES);
+//
+//
+//                    String serverName = request.getServerName();
+//                    int portNumber = request.getServerPort();
+//
+//                    String fileUri = "http://"
+//                            + serverName
+//                            + ":"
+//                            + portNumber
+//                            + "/"
+//                            + restUri.makeUrl()
+//                            + "?fqpn=" + testResultFile.getAbsolutePath();
+//
+//                    brapiMetaData.getDatafiles().add(fileUri);
+//
+//                    brapiAsynchStatus = "FINISHED";
+//
+//                } else {
+//                    brapiMetaData.addStatusMessage("error", "The test file is not present: " + testFileName);
+//                }
+//
+
+                } catch (Exception e) {
+                    brapiMetaData.addStatusMessage("Exception", e.getMessage());
+                }
+            }
+
+        } else {
+            brapiMetaData.addStatusMessage("error", "There are not extractor instructions for job : " + jobId);
+        }
 
         brapiMetaData.addStatusMessage("asynchstatus", brapiAsynchStatus);
 
