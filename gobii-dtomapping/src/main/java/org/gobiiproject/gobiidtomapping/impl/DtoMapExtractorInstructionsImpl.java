@@ -214,6 +214,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                         extractorFileDestinationLocation += "/" + idx.toString();
                     }
 
+
                     if (!instructionFileAccess.doesPathExist(extractorFileDestinationLocation)) {
 
                         instructionFileAccess.makeDirectory(extractorFileDestinationLocation);
@@ -221,8 +222,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     } else {
                         instructionFileAccess.verifyDirectoryPermissions(extractorFileDestinationLocation);
                     }
-
-
+                    
                     currentGobiiDataSetExtract.setExtractDestinationDirectory(extractorFileDestinationLocation);
 
                 }
