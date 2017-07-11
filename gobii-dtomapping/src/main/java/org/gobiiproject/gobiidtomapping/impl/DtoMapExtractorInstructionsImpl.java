@@ -222,9 +222,12 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     } else {
                         instructionFileAccess.verifyDirectoryPermissions(extractorFileDestinationLocation);
                     }
-                    
-                    currentGobiiDataSetExtract.setExtractDestinationDirectory(extractorFileDestinationLocation);
 
+                    if(!currentExtractorInstruction.isQcCheck()) {
+
+                        currentGobiiDataSetExtract.setExtractDestinationDirectory(extractorFileDestinationLocation);
+
+                    }
                 }
             } // iterate instructions/files
 
