@@ -271,9 +271,11 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                         extractorInstructionsDAO.verifyDirectoryPermissions(extractorFileDestinationLocation);
                     }
 
+                    if(!currentExtractorInstruction.isQcCheck()) {
 
-                    currentGobiiDataSetExtract.setExtractDestinationDirectory(extractorFileDestinationLocation);
+                        currentGobiiDataSetExtract.setExtractDestinationDirectory(extractorFileDestinationLocation);
 
+                    }
                 }
             } // iterate instructions/files
 
