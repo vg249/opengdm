@@ -263,6 +263,10 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                         extractorFileDestinationLocation += "/" + idx.toString();
                     }
 
+                    if(currentExtractorInstruction.isQcCheck()) {
+                        extractorFileDestinationLocation = currentGobiiDataSetExtract.getExtractDestinationDirectory();
+                    }
+
                     if (!extractorInstructionsDAO.doesPathExist(extractorFileDestinationLocation)) {
 
                         extractorInstructionsDAO.makeDirectory(extractorFileDestinationLocation);
@@ -270,12 +274,9 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     } else {
                         extractorInstructionsDAO.verifyDirectoryPermissions(extractorFileDestinationLocation);
                     }
+                    
+                    currentGobiiDataSetExtract.setExtractDestinationDirectory(extractorFileDestinationLocation);
 
-                    if(!currentExtractorInstruction.isQcCheck()) {
-
-                        currentGobiiDataSetExtract.setExtractDestinationDirectory(extractorFileDestinationLocation);
-
-                    }
                 }
             } // iterate instructions/files
 
