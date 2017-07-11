@@ -20,6 +20,7 @@ public interface FilesService {
                    byte[] byteArray) throws GobiiException, Exception;
 
     File readFile(String cropType,
+                  String gobiiJobId,
                   String fileName,
                   GobiiFileProcessDir gobiiFileProcessDir) throws GobiiException, Exception;
 }

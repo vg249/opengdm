@@ -3506,7 +3506,8 @@ public class GOBIIControllerV1 {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
             GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
-            File file = this.fileService.readFile(cropType, fileName, gobiiFileProcessDir);
+            File file = this.fileService.readFile(cropType, gobiiJobId, fileName, gobiiFileProcessDir);
+
             HttpHeaders respHeaders = new HttpHeaders();
             respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             respHeaders.setContentLength(file.length());

@@ -152,12 +152,9 @@ public class GobiiUriFactory {
         RestUri returnVal = new RestUri(this.cropContextRoot,
                 this.gobiiControllerType.getControllerPath(),
                 GobiiServiceRequestId.URL_FILES.getResourcePath())
-                .addUriParam("gobiiJobId")
-                .setParamValue("gobiiJobId",jobId)
-                .addUriParam("destinationType")
-                .setParamValue("destinationType",gobiiFileProcessDir.toString())
-                .addQueryParam("fileName")
-                .setParamValue("fileName", fileName);
+                .addUriParam("gobiiJobId",jobId)
+                .addUriParam("destinationType",gobiiFileProcessDir.toString())
+                .addQueryParam("fileName",fileName);
 
         return returnVal;
     }

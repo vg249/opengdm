@@ -6,6 +6,7 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 
 
 import javax.ws.rs.core.MediaType;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,13 +65,13 @@ public class RestUri {
         }
 
         Integer ctxRootIdx = stringBuilder.indexOf(this.contextRoot);
-        if( ctxRootIdx >= 0 ) {
-            stringBuilder.delete(ctxRootIdx,this.contextRoot.length());
+        if (ctxRootIdx >= 0) {
+            stringBuilder.delete(ctxRootIdx, this.contextRoot.length());
         }
 
         Integer ctxPathIdx = stringBuilder.indexOf(this.contextPath);
-        if( ctxPathIdx >= 0 ) {
-            stringBuilder.delete(ctxPathIdx,this.contextPath.length());
+        if (ctxPathIdx >= 0) {
+            stringBuilder.delete(ctxPathIdx, this.contextPath.length());
         }
 
         String returnVal = stringBuilder.toString();
@@ -118,15 +119,26 @@ public class RestUri {
                 .collect(Collectors.toList());
     }
 
-
     public RestUri addQueryParam(String name) {
         this.addParam(ResourceParam.ResourceParamType.QueryParam, name);
+        return this;
+    }
+
+    public RestUri addQueryParam(String name, String value) throws Exception {
+        this.addQueryParam(name);
+        this.setParamValue(name, value);
         return this;
     }
 
 
     public RestUri addUriParam(String name) {
         this.addParam(ResourceParam.ResourceParamType.UriParam, name);
+        return this;
+    }
+
+    public RestUri addUriParam(String name, String value) throws Exception {
+        this.addUriParam(name);
+        this.setParamValue(name, value);
         return this;
     }
 
@@ -189,6 +201,26 @@ public class RestUri {
 
     public String getDestinationFqpn() {
         return this.destinationFilenPath;
+    }
+
+
+    /***
+     * Makes a url with current uri parameters and adds current query parameters.
+     * We don't add the query parameters by default because the components in
+     * HttpCore want to to add these params through its API. So in the nominal case
+     * we don't add the query params.
+     * @return
+     * @throws Exception
+     */
+    public String makeUrlWithQueryParams() throws Exception {
+
+        String returnVal = this.makeUrl();
+        returnVal += "?";
+        for (ResourceParam currentParam : this.getRequestParams()) {
+            returnVal += currentParam.getName() + "=" + currentParam.getValue();
+        }
+
+        return returnVal;
     }
 
     public String makeUrl() throws Exception {

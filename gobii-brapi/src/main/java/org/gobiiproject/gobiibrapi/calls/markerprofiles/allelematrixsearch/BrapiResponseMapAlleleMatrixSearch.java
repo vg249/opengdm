@@ -11,6 +11,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtrac
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -111,8 +112,18 @@ public class BrapiResponseMapAlleleMatrixSearch {
 
                         File[] extractedFiles = extractDirectoryFile.listFiles();
                         for(Integer idx = 0; idx < extractedFiles.length; idx++ ) {
-                            File currentFile = extractedFiles[idx];
 
+                            File currentFile = extractedFiles[idx];
+                            RestUri restUri = new GobiiUriFactory(request.getContextPath(),
+                                    GobiiControllerType.GOBII)
+                                    .resourceColl(GobiiServiceRequestId.URL_FILES)
+                                    .addUriParam("gobiiJobId",jobId)
+                                    .addUriParam("destinationType", GobiiFileProcessDir.EXTRACTOR_OUTPUT.toString().toLowerCase())
+                                    .addQueryParam("fileName", currentFile.getName());
+
+                            String fileUri = restUri.makeUrlWithQueryParams();
+
+                            brapiMetaData.getDatafiles().add(fileUri);
                         }
 
                     } else {
