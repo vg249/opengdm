@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch;
 
+import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
@@ -114,6 +115,8 @@ public class BrapiResponseMapAlleleMatrixSearch {
                         for(Integer idx = 0; idx < extractedFiles.length; idx++ ) {
 
                             File currentFile = extractedFiles[idx];
+
+                            // first make the http link
                             RestUri restUri = new GobiiUriFactory(request.getServerName(),
                                     request.getServerPort(),
                                     request.getContextPath(),
@@ -124,8 +127,11 @@ public class BrapiResponseMapAlleleMatrixSearch {
                                     .addQueryParam("fileName", currentFile.getName());
 
                             String fileUri = restUri.makeUrlComplete();
-
                             brapiMetaData.getDatafiles().add(fileUri);
+
+                            // now the absolute path to the file
+                            String filePath = FilenameUtils.normalize(currentFile.getAbsolutePath());
+                            brapiMetaData.getDatafiles().add(filePath);
                         }
 
                     } else {
