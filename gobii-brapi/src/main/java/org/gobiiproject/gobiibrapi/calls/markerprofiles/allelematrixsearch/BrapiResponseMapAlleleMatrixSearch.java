@@ -114,14 +114,16 @@ public class BrapiResponseMapAlleleMatrixSearch {
                         for(Integer idx = 0; idx < extractedFiles.length; idx++ ) {
 
                             File currentFile = extractedFiles[idx];
-                            RestUri restUri = new GobiiUriFactory(request.getContextPath(),
+                            RestUri restUri = new GobiiUriFactory(request.getServerName(),
+                                    request.getServerPort(),
+                                    request.getContextPath(),
                                     GobiiControllerType.GOBII)
                                     .resourceColl(GobiiServiceRequestId.URL_FILES)
                                     .addUriParam("gobiiJobId",jobId)
                                     .addUriParam("destinationType", GobiiFileProcessDir.EXTRACTOR_OUTPUT.toString().toLowerCase())
                                     .addQueryParam("fileName", currentFile.getName());
 
-                            String fileUri = restUri.makeUrlWithQueryParams();
+                            String fileUri = restUri.makeUrlComplete();
 
                             brapiMetaData.getDatafiles().add(fileUri);
                         }
@@ -130,39 +132,6 @@ public class BrapiResponseMapAlleleMatrixSearch {
                         brapiMetaData.addStatusMessage("error", "The extract directory does not exist: " + extractDirectory);
                     }
 
-//                Thread.sleep(4000); // make it look like we're processing
-//
-//                String testFileName = "illumina.data";
-//                ClassLoader classLoader = getClass().getClassLoader();
-//                File testResultFile = new File(classLoader.getResource(testFileName).getFile());
-//
-//
-//                if (testResultFile.exists()) {
-//
-//                    RestUri restUri = new GobiiUriFactory(request.getContextPath(),
-//                            GobiiControllerType.BRAPI)
-//                            .resourceColl(GobiiServiceRequestId.URL_FILES);
-//
-//
-//                    String serverName = request.getServerName();
-//                    int portNumber = request.getServerPort();
-//
-//                    String fileUri = "http://"
-//                            + serverName
-//                            + ":"
-//                            + portNumber
-//                            + "/"
-//                            + restUri.makeUrl()
-//                            + "?fqpn=" + testResultFile.getAbsolutePath();
-//
-//                    brapiMetaData.getDatafiles().add(fileUri);
-//
-//                    brapiAsynchStatus = "FINISHED";
-//
-//                } else {
-//                    brapiMetaData.addStatusMessage("error", "The test file is not present: " + testFileName);
-//                }
-//
 
                 } catch (Exception e) {
                     brapiMetaData.addStatusMessage("Exception", e.getMessage());

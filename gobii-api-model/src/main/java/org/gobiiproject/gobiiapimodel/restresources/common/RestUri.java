@@ -6,7 +6,6 @@ import org.gobiiproject.gobiimodel.utils.LineUtils;
 
 
 import javax.ws.rs.core.MediaType;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +21,8 @@ public class RestUri {
     private final String DELIM_PARAM_BEGIN = "{";
     private final String DELIM_PARAM_END = "}";
 
+    private String domain = null;
+    private Integer port = null;
     private String contextPath;
     private String contextRoot;
 
@@ -32,6 +33,12 @@ public class RestUri {
     private Map<String, String> httpHeaders = new HashMap<>();
     private String destinationFilenPath = null;
 
+
+    public RestUri(String domain, Integer port, String contextRoot, String contextPath, String resourcePath) throws Exception {
+        this(contextRoot,contextPath,resourcePath);
+        this.domain = domain;
+        this.port = port;
+    }
 
     public RestUri(String contextRoot, String contextPath, String resourcePath) throws Exception {
         this.contextRoot = this.delimitSegment(contextRoot);
@@ -203,6 +210,22 @@ public class RestUri {
         return this.destinationFilenPath;
     }
 
+    public String makeUrlComplete() throws Exception {
+
+        if(LineUtils.isNullOrEmpty(this.domain) || this.port == null ) {
+            throw new Exception("Domain and Port values are required");
+        }
+
+        String returnVal = this.domain + ":" + this.port + "/" + this.makeUrlWithQueryParams();
+
+        returnVal = returnVal.replace("//", "/");
+
+        returnVal = "http://" + returnVal;
+
+        return returnVal;
+
+    }
+
 
     /***
      * Makes a url with current uri parameters and adds current query parameters.
@@ -214,7 +237,7 @@ public class RestUri {
      */
     public String makeUrlWithQueryParams() throws Exception {
 
-        String returnVal = this.makeUrl();
+        String returnVal = this.makeUrlPath();
         returnVal += "?";
         for (ResourceParam currentParam : this.getRequestParams()) {
             returnVal += currentParam.getName() + "=" + currentParam.getValue();
@@ -223,7 +246,7 @@ public class RestUri {
         return returnVal;
     }
 
-    public String makeUrl() throws Exception {
+    public String makeUrlPath() throws Exception {
 
         String returnVal = this.requestTemplate; // in case there are no path variables
 
@@ -268,6 +291,6 @@ public class RestUri {
 
         return returnVal;
 
-    } // makeUrl
+    } // makeUrlPath
 
 } // class RestUri

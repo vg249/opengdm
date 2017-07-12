@@ -54,12 +54,7 @@ public class FileServiceImpl implements FilesService {
         ConfigSettings configSettings = new ConfigSettings();
 
         String path = null;
-        if (gobiiFileProcessDir.equals(GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS)) {
-
-            path = configSettings.getProcessingPath(cropType,
-                    gobiiFileProcessDir);
-
-        } else if (gobiiFileProcessDir.equals(GobiiFileProcessDir.EXTRACTOR_OUTPUT)) {
+        if (gobiiFileProcessDir.equals(GobiiFileProcessDir.EXTRACTOR_OUTPUT)) {
 
             ExtractorInstructionFilesDTO extractorInstructionFilesDTO = extractorInstructions.getStatus(cropType, gobiiJobId);
             if (extractorInstructionFilesDTO
@@ -81,6 +76,10 @@ public class FileServiceImpl implements FilesService {
             } else {
                 throw new GobiiDomainException(GobiiStatusLevel.ERROR, GobiiValidationStatusType.NONE, "There is no instruction for the job ");
             }
+
+        } else {
+            path = configSettings.getProcessingPath(cropType,
+                    gobiiFileProcessDir);
         }
 
         String fqpn = instructionFileAccess.makeFileName(path, fileName);
