@@ -218,8 +218,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                         extractorFileDestinationLocation = currentGobiiDataSetExtract.getExtractDestinationDirectory();
                     }
 
-                    if (!extractorInstructionsDAO.doesPathExist(extractorFileDestinationLocation)) {
-
                     if (!instructionFileAccess.doesPathExist(extractorFileDestinationLocation)) {
 
                         instructionFileAccess.makeDirectory(extractorFileDestinationLocation);
