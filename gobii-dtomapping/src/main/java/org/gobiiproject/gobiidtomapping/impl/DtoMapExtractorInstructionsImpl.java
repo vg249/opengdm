@@ -203,7 +203,14 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                                         + currentGobiiDataSetExtract.getGobiiExtractFilterType());
                     }
 
-                    String extractionFileDestinationPath = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_OUTPUT);
+                    String extractionFileDestinationPath;
+
+                    if(!currentExtractorInstruction.isQcCheck()) {
+                        extractionFileDestinationPath = configSettings.getProcessingPath(cropType, GobiiFileProcessDir.EXTRACTOR_OUTPUT);
+                    } else {
+                        extractionFileDestinationPath = configSettings.getProcessingPath(cropType,GobiiFileProcessDir.QC_OUTPUT);
+                    }
+
                     extractorFileDestinationLocation = this.makeDestinationDirectoryName(currentExtractorInstruction.getContactEmail(),
                             currentGobiiDataSetExtract.getGobiiExtractFilterType(),
                             currentGobiiDataSetExtract.getGobiiFileType(),
@@ -214,9 +221,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                         extractorFileDestinationLocation += "/" + idx.toString();
                     }
 
-                    if(currentExtractorInstruction.isQcCheck()) {
-                        extractorFileDestinationLocation = currentGobiiDataSetExtract.getExtractDestinationDirectory();
-                    }
 
                     if (!instructionFileAccess.doesPathExist(extractorFileDestinationLocation)) {
 
