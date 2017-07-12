@@ -3449,7 +3449,7 @@ public class GOBIIControllerV1 {
             method = RequestMethod.POST)
     public
     @ResponseBody
-    void uploadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
+    String uploadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
                              @PathVariable("destinationType") String destinationType,
                              @RequestParam("fileName") String fileName,
                              @RequestParam("file") MultipartFile file,
@@ -3495,6 +3495,10 @@ public class GOBIIControllerV1 {
             LOGGER.error("Error uploading file",message);
 
         }
+
+        // this method has to return _something_ in order for a content-type to be set in the response (this makes
+        // our client framework happy)
+        return "";
     }
 
     @RequestMapping(value = "/files/{gobiiJobId}/{destinationType}",
