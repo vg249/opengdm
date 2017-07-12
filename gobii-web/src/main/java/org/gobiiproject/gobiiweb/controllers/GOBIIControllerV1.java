@@ -3449,12 +3449,12 @@ public class GOBIIControllerV1 {
             method = RequestMethod.POST)
     public
     @ResponseBody
-    String uploadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
+    void uploadFileHandler(@PathVariable("gobiiJobId") String gobiiJobId,
                              @PathVariable("destinationType") String destinationType,
                              @RequestParam("fileName") String fileName,
                              @RequestParam("file") MultipartFile file,
                              HttpServletRequest request,
-                             HttpServletResponse response) {
+                             HttpServletResponse response) throws Exception{
 
         String name = file.getName();
 
@@ -3479,17 +3479,21 @@ public class GOBIIControllerV1 {
                                 gobiiFileProcessDir,
                                 byteArray);
 
-                return "You successfully uploaded file=" + name;
-
             } catch (Exception e) {
-                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return "You failed to upload " + name + " => " + e.getMessage();
+                ControllerUtils.writeRawResponse(response,
+                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        e.getMessage());
+                LOGGER.error("Error uploading file",e);
             }
 
         } else {
 
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return "You failed to upload because the file was empty.";
+            String message = "You failed to upload because the file was empty.";
+            ControllerUtils.writeRawResponse(response,
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    message);
+            LOGGER.error("Error uploading file",message);
+
         }
     }
 
@@ -3499,13 +3503,13 @@ public class GOBIIControllerV1 {
                                                                    @PathVariable("destinationType") String destinationType,
                                                                    @RequestParam("fileName") String fileName,
                                                                    HttpServletRequest request,
-                                                                   HttpServletResponse response) {
+                                                                   HttpServletResponse response) throws Exception {
 
         ResponseEntity<InputStreamResource> returnVal = null;
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType);
+            GobiiFileProcessDir gobiiFileProcessDir = GobiiFileProcessDir.valueOf(destinationType.toUpperCase());
             File file = this.fileService.readFile(cropType, gobiiJobId, fileName, gobiiFileProcessDir);
 
             HttpHeaders respHeaders = new HttpHeaders();
@@ -3517,7 +3521,11 @@ public class GOBIIControllerV1 {
             returnVal = new ResponseEntity<>(inputStreamResource, respHeaders, HttpStatus.OK);
 
         } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+
+            ControllerUtils.writeRawResponse(response,
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    e.getMessage());
+            LOGGER.error("Error downloading file", e);
 
         }
 

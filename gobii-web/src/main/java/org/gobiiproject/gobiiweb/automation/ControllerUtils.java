@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiweb.automation;
 import org.gobiiproject.gobiiapimodel.payload.Header;
 import org.springframework.http.HttpStatus;
 
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -20,6 +21,17 @@ public class ControllerUtils {
         } else {
             response.setStatus(failureResponseCode.value());
         }
+
+    }
+
+    public static void writeRawResponse(HttpServletResponse httpResponse,
+                                        int httpServletResponse,
+                                        String message) throws Exception {
+
+        httpResponse.setStatus(httpServletResponse);
+        httpResponse.getOutputStream().print(message);
+        httpResponse.getOutputStream().flush();
+        httpResponse.getOutputStream().close();
 
     }
 

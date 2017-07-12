@@ -54,16 +54,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         String configSettingsUrl = GobiiServiceRequestId.URL_CONFIGSETTINGS.getRequestUrl(null, GobiiControllerType.GOBII.getControllerPath());
-        web.ignoring().antMatchers( configSettingsUrl,
+        web.ignoring().antMatchers(configSettingsUrl,
                 "/login",
                 "/index.html",
                 "/css/**",
                 "/images/**",
                 "/js/**");
 
-        if(! CONFIG_SETTINGS.isAuthenticateBrapi() ) {
+        if (!CONFIG_SETTINGS.isAuthenticateBrapi()) {
             String allBrapiUrls = GobiiControllerType.BRAPI.getControllerPath() + "**";
-            web.ignoring().antMatchers(allBrapiUrls );
+            String gobiiFIlesUrl = GobiiServiceRequestId.URL_FILES.getRequestUrl(null, GobiiControllerType.GOBII.getControllerPath()) + "/**";;
+            web.ignoring().antMatchers(allBrapiUrls, gobiiFIlesUrl);
+
         }
     }
 
