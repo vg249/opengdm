@@ -103,7 +103,7 @@ public class BrapiResponseMapAlleleMatrixSearch {
 
 
             // this is only for test purposes!!! -- it should
-            if (!gobiiJobStatus.equals(GobiiJobStatus.COMPLETED)) {
+            if (gobiiJobStatus.equals(GobiiJobStatus.COMPLETED)) {
 
                 try {
 

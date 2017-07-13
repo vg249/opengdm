@@ -46,6 +46,7 @@ public enum GobiiServiceRequestId {
     URL_PROTOCOL("protocols"),
     URL_VENDORS("vendors"),
     URL_ALLELE_MATRIX_SEARCH("allelematrix-search"),
+    URL_ALLELE_MATRIX_SEARCH_STATUS("allelematrix-search/status"),
     URL_ALLELE_MATRICES("allelematrices"),
     URL_FILES("files");
 
