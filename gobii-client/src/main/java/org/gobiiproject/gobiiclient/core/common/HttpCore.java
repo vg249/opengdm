@@ -248,7 +248,7 @@ public class HttpCore {
                     HttpStatus.SC_BAD_REQUEST != returnVal.getResponseCode() &&
                     HttpStatus.SC_METHOD_NOT_ALLOWED != returnVal.getResponseCode() &&
                     HttpStatus.SC_UNAUTHORIZED != returnVal.getResponseCode() &&
-                    HttpStatus.SC_NOT_ACCEPTABLE != returnVal.getResponseCode()) {
+                    HttpStatus.SC_NOT_ACCEPTABLE != returnVal.getResponseCode() ) {
 
 
                 String contentType = null; // default
@@ -302,6 +302,8 @@ public class HttpCore {
                     throw new Exception(message);
                 }
 
+            } else {
+                returnVal.setPlainPayload(this.extractBody(httpResponse));
             }
         } finally {
 

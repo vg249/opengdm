@@ -31,32 +31,16 @@ public class FileServiceImpl implements FilesService {
     @Autowired
     DtoMapExtractorInstructions extractorInstructions;
 
-    @Override
-    public void writeFile(String cropType,
-                          String fileNameStem,
-                          GobiiFileProcessDir gobiiFileProcessDir,
-                          byte[] byteArray) throws GobiiException, Exception {
 
-        instructionFileAccess.writeFileToFileProcDir(cropType,
-                fileNameStem,
-                gobiiFileProcessDir,
-                byteArray);
-    }
+    private String getFilePath(String cropType, String jobId, GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
 
-    @Override
-    public File readFile(String cropType,
-                         String gobiiJobId,
-                         String fileName,
-                         GobiiFileProcessDir gobiiFileProcessDir) throws GobiiException, Exception {
-
-        File returnVal;
+        String returnVal = null;
 
         ConfigSettings configSettings = new ConfigSettings();
 
-        String path = null;
         if (gobiiFileProcessDir.equals(GobiiFileProcessDir.EXTRACTOR_OUTPUT)) {
 
-            ExtractorInstructionFilesDTO extractorInstructionFilesDTO = extractorInstructions.getStatus(cropType, gobiiJobId);
+            ExtractorInstructionFilesDTO extractorInstructionFilesDTO = extractorInstructions.getStatus(cropType, jobId);
             if (extractorInstructionFilesDTO
                     .getGobiiExtractorInstructions().size() > 0
                     && extractorInstructionFilesDTO
@@ -70,7 +54,7 @@ public class FileServiceImpl implements FilesService {
                         .getDataSetExtracts()
                         .get(0);
 
-                path = gobiiDataSetExtract.getExtractDestinationDirectory();
+                returnVal = gobiiDataSetExtract.getExtractDestinationDirectory();
 
 
             } else {
@@ -78,9 +62,36 @@ public class FileServiceImpl implements FilesService {
             }
 
         } else {
-            path = configSettings.getProcessingPath(cropType,
+            returnVal = configSettings.getProcessingPath(cropType,
                     gobiiFileProcessDir);
         }
+
+        return returnVal;
+    }
+
+
+    @Override
+    public void writeFile(String cropType,
+                          String jobId,
+                          String fileName,
+                          GobiiFileProcessDir gobiiFileProcessDir,
+                          byte[] byteArray) throws GobiiException, Exception {
+
+        String path = this.getFilePath(cropType, jobId, gobiiFileProcessDir);
+        String fqpn = instructionFileAccess.makeFileName(path, fileName);
+        instructionFileAccess.writeFile(fqpn,byteArray);
+    }
+
+    @Override
+    public File readFile(String cropType,
+                         String gobiiJobId,
+                         String fileName,
+                         GobiiFileProcessDir gobiiFileProcessDir) throws GobiiException, Exception {
+
+        File returnVal;
+
+
+        String path = this.getFilePath(cropType, gobiiJobId, gobiiFileProcessDir);
 
         String fqpn = instructionFileAccess.makeFileName(path, fileName);
 

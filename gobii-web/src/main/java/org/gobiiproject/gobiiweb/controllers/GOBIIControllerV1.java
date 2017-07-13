@@ -3475,13 +3475,14 @@ public class GOBIIControllerV1 {
 
                 this.fileService
                         .writeFile(cropType,
+                                gobiiJobId,
                                 fileName,
                                 gobiiFileProcessDir,
                                 byteArray);
 
             } catch (Exception e) {
                 ControllerUtils.writeRawResponse(response,
-                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        HttpServletResponse.SC_NOT_ACCEPTABLE,
                         e.getMessage());
                 LOGGER.error("Error uploading file",e);
             }
@@ -3490,7 +3491,7 @@ public class GOBIIControllerV1 {
 
             String message = "You failed to upload because the file was empty.";
             ControllerUtils.writeRawResponse(response,
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    HttpServletResponse.SC_NOT_ACCEPTABLE,
                     message);
             LOGGER.error("Error uploading file",message);
 
@@ -3527,7 +3528,7 @@ public class GOBIIControllerV1 {
         } catch (Exception e) {
 
             ControllerUtils.writeRawResponse(response,
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    HttpServletResponse.SC_NOT_ACCEPTABLE,
                     e.getMessage());
             LOGGER.error("Error downloading file", e);
 
