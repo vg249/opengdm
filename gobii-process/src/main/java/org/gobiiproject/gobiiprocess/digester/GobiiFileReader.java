@@ -502,17 +502,6 @@ public class GobiiFileReader {
         gobiiDataSetExtract.setDataSet(inst.getDataSet());
         gobiiDataSetExtract.setGobiiDatasetType(inst.getDatasetType());
 
-        // Get Instruction file Name
-		String instructionName = new File(instructionFile).getName();
-		instructionName = instructionName.substring(0, instructionName.lastIndexOf('.'));
-
-        // Example: .../extractor/output/av484/hapmap/whole_dataset/(timestamp)/
-
-		Path extractDestinationDirectoryPath = Paths.get(configuration.getProcessingPath(crop, GobiiFileProcessDir.QC_OUTPUT),
-				instructionName);
-        String extractDestinationDirectory = extractDestinationDirectoryPath.toString();
-        ErrorLogger.logInfo("Digester", "New Extract Destination Directory: " + extractDestinationDirectory);
-        gobiiDataSetExtract.setExtractDestinationDirectory(extractDestinationDirectory);
         // According to Liz, the Gobii extract filter type is always "WHOLE_DATASET" for any QC job
         gobiiDataSetExtract.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
         gobiiDataSetExtract.setGobiiFileType(GobiiFileType.HAPMAP);
