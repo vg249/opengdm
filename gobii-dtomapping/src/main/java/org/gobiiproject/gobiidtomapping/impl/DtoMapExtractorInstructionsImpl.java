@@ -415,7 +415,6 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                         case FLAPJACK:
                             datasetExtractFiles.add(fileName + ".map");
-
                             datasetExtractFiles.add(fileName + ".genotype");
 
                             break;

@@ -1,12 +1,12 @@
 package org.gobiiproject.gobiiclient.brapi;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.payload.PayloadEnvelope;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
-import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 import org.gobiiproject.gobiibrapi.core.common.BrapiStatus;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseDataList;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
@@ -32,7 +32,10 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.ws.rs.core.MediaType;
 import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +46,7 @@ public class BrapiTestAlleleMatrixSearch {
 
     private static TestExecConfig testExecConfig = null;
 
+    private static List<File> filesToCleanUp = new ArrayList<>();
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
@@ -53,9 +57,17 @@ public class BrapiTestAlleleMatrixSearch {
     @AfterClass
     public static void tearDownUpClass() throws Exception {
         Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
+        for( File currentFile : filesToCleanUp ) {
+            currentFile.delete();
+        }
     }
 
 
+    /***
+     * Submit an extractor instruction and return the job ID that was used
+     * @return
+     * @throws Exception
+     */
     private String makeJobId() throws Exception {
 
         String returnVal = DateUtils.makeDateIdString();
@@ -77,7 +89,7 @@ public class BrapiTestAlleleMatrixSearch {
         // ************** DATA SET EXTRACT ONE
         GobiiDataSetExtract gobiiDataSetExtractOne = new GobiiDataSetExtract();
         gobiiDataSetExtractOne.setGobiiExtractFilterType(GobiiExtractFilterType.WHOLE_DATASET);
-        GobiiFileType DataSetExtractOneFileType = GobiiFileType.HAPMAP;
+        GobiiFileType DataSetExtractOneFileType = GobiiFileType.FLAPJACK;
         gobiiDataSetExtractOne.setGobiiFileType(DataSetExtractOneFileType);
         String dataSetExtractOneName = "1my_foo_Dataset1";
         gobiiDataSetExtractOne.setDataSet(new GobiiFilePropNameId(1, dataSetExtractOneName));
@@ -104,54 +116,39 @@ public class BrapiTestAlleleMatrixSearch {
         Assert.assertNotEquals(null, extractorInstructionFileDTOResponseEnvelope);
 
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(extractorInstructionFileDTOResponseEnvelope.getHeader()));
-        // ************** NOW RETRIFVE THE FILE WE JUST CREATED AND MAKE SURE IT'S REALLY THERE, IMPLICITLY TESTING LINK
-
-//        ExtractorInstructionFilesDTO extractorInstructionFilesDTOResult = extractorInstructionFileDTOResponseEnvelope
-//                .getPayload()
-//                .getData()
-//                .get(0);
-//
-//        returnVal = extractorInstructionFilesDTOResult
-//                .getGobiiExtractorInstructions()
-//                .get(0)
-//                .getDataSetExtracts()
-//                .get(0)
-//                .getExtractDestinationDirectory();
 
         return returnVal;
     }
 
-    @Test
-    public void getAlleleMatrix() throws Exception {
 
-        // STEP ONE: SUBMIT AN EXTRACTION JOB SO THAT THE DESTINATION DIRECTORY GETS CREATED BY THE SERVER
-        String jobId = this.makeJobId();
-        Assert.assertNotNull("Job ID was not created",
-                jobId);
-
-
-        // STEP TWO: UPLOAD A FILE TO THE JOB'S EXTRACT DESTINATION DIRECTORY
-        String testFileName = "ssr_allele_samples.txt";
-        String resourcePath = "datasets/" + testFileName;
-        ClassLoader classLoader = getClass().getClassLoader();
-        File testResultFile = new File(classLoader.getResource(resourcePath).getFile());
-        Assert.assertTrue("The specified test file does not exist: " + testResultFile.getAbsolutePath(),
-                testResultFile.exists());
+    /***
+     * Upload a file and return the File object for the local file
+     * @param jobId
+     * @param sourceFileName
+     * @param destinationFileName
+     * @param gobiiFileProcessDir
+     * @return
+     * @throws Exception
+     */
+    private void uploadFile(String jobId,
+                            File sourceFile,
+                            String destinationFileName,
+                            GobiiFileProcessDir gobiiFileProcessDir) throws Exception {
 
 
-        // For the call to the service, we are supplying the artificial file name "DS1.hmp.txt"
+        Assert.assertTrue("The specified test file does not exist: " + sourceFile.getAbsolutePath(),
+                sourceFile.exists());
+
+        // For the call to the service, we are supplying artifical file names
         // But we have to do it so that
         // the extractor files service will "correctly" report
         // that the job is done because there is a file there
         RestUri restUriUpload = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .file(jobId, GobiiFileProcessDir.EXTRACTOR_OUTPUT, "DS1.hmp.txt");
-
-
+                .file(jobId, gobiiFileProcessDir, destinationFileName);
         HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
                 .getHttp()
-                .upload(restUriUpload, testResultFile);
-
+                .upload(restUriUpload, sourceFile);
         Assert.assertTrue("Expected "
                         + HttpStatus.SC_OK
                         + " got: "
@@ -160,22 +157,35 @@ public class BrapiTestAlleleMatrixSearch {
                         + httpMethodResult.getReasonPhrase() + ": " + httpMethodResult.getPlainPayload(),
                 httpMethodResult.getResponseCode() == HttpStatus.SC_OK);
 
+    }
 
-        // STEP THREE: MOVE THE JOB'S INSTRUCTION FILE TO THE DIRECTORY IT SHOULD BE IN IN ORDER
-        // FOR THE STATUS TO BE REPORTED AS "FINISHED"
-        // 3-A : Download the instruction file
-        String instructionFileName = jobId + ".json";
+    /***
+     * Download a file and return the File object for the downloaded file
+     * @param jobId
+     * @param gobiiFileProcessDir
+     * @param sourceFileName
+     * @param destinationFileName
+     * @return
+     * @throws Exception
+     */
+    private File downloadFile(String jobId,
+                              GobiiFileProcessDir gobiiFileProcessDir,
+                              String sourceFileName,
+                              String destinationFileName) throws Exception {
+
+        File returnVal = null;
+
         String tesetClientDestinationPath = testExecConfig
-                .getTestFileDownloadDirectory() + "/" + instructionFileName;
-        RestUri restUriForInstructionFileDownload = GobiiClientContext.getInstance(null, false)
+                .getTestFileDownloadDirectory() + "/" + destinationFileName;
+        RestUri restUriForDownload = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .file(jobId, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, instructionFileName)
+                .file(jobId, GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS, sourceFileName)
                 .withDestinationFqpn(tesetClientDestinationPath);
 
 
         HttpMethodResult httpMethodResultFromDownload = GobiiClientContext.getInstance(null, false)
                 .getHttp()
-                .get(restUriForInstructionFileDownload);
+                .get(restUriForDownload);
 
         Assert.assertTrue("Expected "
                         + HttpStatus.SC_OK
@@ -188,28 +198,52 @@ public class BrapiTestAlleleMatrixSearch {
         Assert.assertNotNull("File name is null",
                 httpMethodResultFromDownload.getFileName());
 
-        File downloadedInstructionFile = new File(httpMethodResultFromDownload.getFileName());
+        returnVal = new File(httpMethodResultFromDownload.getFileName());
+        filesToCleanUp.add(returnVal);
+        return returnVal;
+    }
 
-        // 3-A : UPLOAD THE FILE TO THE "FINISHED" DIRECTORY
-        restUriUpload.setParamValue("destinationType",GobiiFileProcessDir.EXTRACTOR_DONE.toString());
-        restUriUpload.setParamValue("fileName",instructionFileName);
-        HttpMethodResult httpMethodResultUploadInstructionFile = GobiiClientContext.getInstance(null, false)
-                .getHttp()
-                .upload(restUriUpload, downloadedInstructionFile);
+    @Test
+    public void getAlleleMatrix() throws Exception {
 
-        Assert.assertTrue("Expected "
-                        + HttpStatus.SC_OK
-                        + " got: "
-                        + httpMethodResultUploadInstructionFile.getResponseCode()
-                        + ": "
-                        + httpMethodResultUploadInstructionFile.getReasonPhrase() + ": " + httpMethodResultUploadInstructionFile.getPlainPayload(),
-                httpMethodResultUploadInstructionFile.getResponseCode() == HttpStatus.SC_OK);
+        // STEP ONE: SUBMIT AN EXTRACTION JOB SO THAT THE DESTINATION DIRECTORY GETS CREATED BY THE SERVER
+        String jobId = this.makeJobId();
+        Assert.assertNotNull("Job ID was not created",
+                jobId);
+        ClassLoader classLoader = getClass().getClassLoader();
 
+
+        // STEP TWO: UPLOAD FILES TO THE JOB'S EXTRACT DESTINATION DIRECTORY
+        // the file we're uploading are arbitrary, but they are named per what the
+        // extract status service expects with respect to the files that need to be present
+        // in order for an extract to be considered completed
+        String expectedExractDsNameMap = "DS1.map";
+        String testSourceFileNameMap = "ssr_allele_samples.txt";
+        String resourcePathMap = "datasets/" + testSourceFileNameMap;
+        File testResultFileMap = new File(classLoader.getResource(resourcePathMap).getFile());
+        this.uploadFile(jobId,testResultFileMap,expectedExractDsNameMap,GobiiFileProcessDir.EXTRACTOR_OUTPUT);
+
+        String expectedExractDsNameGenotype = "DS1.genotype";
+        String testSourceFileNameGenotype = "ssr_alleledata.txt";
+        String resourcePathGenotype = "datasets/" + testSourceFileNameGenotype;
+        File testResultFileGenotype = new File(classLoader.getResource(resourcePathGenotype).getFile());
+        uploadFile(jobId,testResultFileGenotype,expectedExractDsNameGenotype,GobiiFileProcessDir.EXTRACTOR_OUTPUT);
+
+        // 3-A : Download the instruction file
+        String instructionFileName = jobId + ".json";
+        File downloadedInstructionFile = this.downloadFile(jobId,
+                GobiiFileProcessDir.EXTRACTOR_INSTRUCTIONS,
+                instructionFileName,
+                instructionFileName);
+
+        this.uploadFile(jobId,
+                downloadedInstructionFile,
+                instructionFileName,
+                GobiiFileProcessDir.EXTRACTOR_DONE);
 
 
 
         // STEP FOUR: CALL ALLELE MATRICES SEARCH
-        // /gobii-test/brapi/v1/allelematrix-search/status/2017_07_07_15_30_49
         RestUri restUriStudiesSearch = GobiiClientContext.getInstance(null, false)
                 .getUriFactory(GobiiControllerType.BRAPI)
                 .resourceColl(GobiiServiceRequestId.URL_ALLELE_MATRIX_SEARCH_STATUS)
@@ -240,6 +274,63 @@ public class BrapiTestAlleleMatrixSearch {
 
         Assert.assertTrue("The status of the job should be FINISHED",
                 brapiStati.get(0).getMessage().equals("FINISHED"));
+
+
+        Assert.assertTrue("File list should contain two items",
+                searchResult.getBrapiMetaData().getDatafiles().size() == 4);
+
+        String fileHttpLinkMap = searchResult
+                .getBrapiMetaData()
+                .getDatafiles()
+                .stream()
+                .filter(f -> f.contains("http") && f.contains("map"))
+                .collect(Collectors.toList())
+                .get(0);
+
+        String fileHttpLinkGenotype = searchResult
+                .getBrapiMetaData()
+                .getDatafiles()
+                .stream()
+                .filter(f -> f.contains("http") && f.contains("genotype"))
+                .collect(Collectors.toList())
+                .get(0);
+
+        Assert.assertTrue("file result " + fileHttpLinkMap + " does not contain expected file: " + expectedExractDsNameMap,
+                fileHttpLinkMap.contains(expectedExractDsNameMap));
+
+        Assert.assertTrue("file result " + fileHttpLinkGenotype + " does not contain expected file: " + expectedExractDsNameGenotype,
+                fileHttpLinkGenotype.contains(expectedExractDsNameGenotype));
+
+
+        // STEP 5: Download the files with generic components as would be done by a BRAPI consumer
+        String destinationPath = testExecConfig
+                .getTestFileDownloadDirectory();
+
+        // map file
+        String downloadedFilePathMap = destinationPath + "/" + expectedExractDsNameMap + ".downloaded";
+        File downloadedFileMap = new File(downloadedFilePathMap);
+        filesToCleanUp.add(downloadedFileMap);
+        URL urlMap = new URL(fileHttpLinkMap);
+        FileUtils.copyURLToFile(urlMap, downloadedFileMap);
+
+        Assert.assertTrue("The file from the BRAPI service's link was not downloaded: " + fileHttpLinkMap,
+                downloadedFileMap.exists());
+
+        FileUtils.contentEquals(testResultFileMap,downloadedFileMap);
+
+        // genotype file
+        String downloadedFilePathGenotype = destinationPath + "/" + expectedExractDsNameGenotype + ".downloaded";
+        File downloadedFileGenotype = new File(downloadedFilePathGenotype);
+        filesToCleanUp.add(downloadedFileGenotype);
+        URL urlGenotype = new URL(fileHttpLinkGenotype);
+        FileUtils.copyURLToFile(urlGenotype, downloadedFileGenotype);
+
+        Assert.assertTrue("The file from the BRAPI service's link was not downloaded: " + fileHttpLinkGenotype,
+                downloadedFileGenotype.exists());
+
+        FileUtils.contentEquals(testResultFileGenotype,downloadedFileGenotype);
+
+
 
     }
 }
