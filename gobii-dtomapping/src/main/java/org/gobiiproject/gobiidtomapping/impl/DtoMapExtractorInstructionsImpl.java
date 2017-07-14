@@ -282,7 +282,18 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
 
             List<GobiiExtractorInstruction> gobiiExtractorInstructionsWithStatus;
-            if (instructionFileAccess.doesPathExist(fileDirExtractorInProgressFqpn)) {
+            if (instructionFileAccess.doesPathExist(fileDirExtractorDoneFqpn)) {
+                //check if file  is already done
+
+                List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccess.
+                        getInstructions(fileDirExtractorDoneFqpn, GobiiExtractorInstruction[].class);
+
+                gobiiExtractorInstructionsWithStatus = setGobiiExtractorInstructionsStatus(gobiiExtractorInstructionsFromFile,
+                        GobiiFileProcessDir.EXTRACTOR_DONE);
+
+                returnVal.setGobiiExtractorInstructions(gobiiExtractorInstructionsWithStatus);
+
+            } else if (instructionFileAccess.doesPathExist(fileDirExtractorInProgressFqpn)) {
                 //check if file  is in InProgress
 
                 List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccess.
@@ -305,18 +316,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
                 returnVal.setGobiiExtractorInstructions(gobiiExtractorInstructionsWithStatus);
 
-            } else if (instructionFileAccess.doesPathExist(fileDirExtractorDoneFqpn)) {
-                //check if file  is already done
-
-                List<GobiiExtractorInstruction> gobiiExtractorInstructionsFromFile = instructionFileAccess.
-                        getInstructions(fileDirExtractorDoneFqpn, GobiiExtractorInstruction[].class);
-
-                gobiiExtractorInstructionsWithStatus = setGobiiExtractorInstructionsStatus(gobiiExtractorInstructionsFromFile,
-                        GobiiFileProcessDir.EXTRACTOR_DONE);
-
-                returnVal.setGobiiExtractorInstructions(gobiiExtractorInstructionsWithStatus);
-
-            } else {
+            }  else {
                 throw new GobiiDtoMappingException(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.ENTITY_DOES_NOT_EXIST,
                         "The specified instruction file does not exist: " +
@@ -342,7 +342,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
 
         if (null != instructions) {
 
-            if (gobiiFileDir.toString().equals("EXTRACTOR_DONE")) {
+            if (gobiiFileDir.equals(GobiiFileProcessDir.EXTRACTOR_DONE)) {
 
                 returnVal = this.setGobiiJobStatus(false, instructions, gobiiFileDir); //individually check and set status of files based on if written in the output directories
             } else {
@@ -410,7 +410,7 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                             break;
 
                         case HAPMAP:
-                            datasetExtractFiles.add(fileName + "hmp.txt");
+                            datasetExtractFiles.add(fileName + ".hmp.txt");
                             break;
 
                         case FLAPJACK:
@@ -429,9 +429,9 @@ public class DtoMapExtractorInstructionsImpl implements DtoMapExtractorInstructi
                     }
 
 
-                    for (String s : datasetExtractFiles) {
+                    for (String currentFileName : datasetExtractFiles) {
 
-                        String currentExtractFile = extractDestinationDirectory + s;
+                        String currentExtractFile = extractDestinationDirectory + "/" + currentFileName;
 
                         if (instructionFileAccess.doesPathExist(currentExtractFile)) dataSetExtract.setGobiiJobStatus(gobiiJobStatus);
 

@@ -135,11 +135,17 @@ public class BrapiTestAlleleMatrixSearch {
         String resourcePath = "datasets/" + testFileName;
         ClassLoader classLoader = getClass().getClassLoader();
         File testResultFile = new File(classLoader.getResource(resourcePath).getFile());
+        Assert.assertTrue("The specified test file does not exist: " + testResultFile.getAbsolutePath(),
+                testResultFile.exists());
 
 
+        // For the call to the service, we are supplying the artificial file name "DS1.hmp.txt"
+        // But we have to do it so that
+        // the extractor files service will "correctly" report
+        // that the job is done because there is a file there
         RestUri restUriUpload = GobiiClientContext.getInstance(null, false)
                 .getUriFactory()
-                .file(jobId, GobiiFileProcessDir.EXTRACTOR_OUTPUT, testFileName);
+                .file(jobId, GobiiFileProcessDir.EXTRACTOR_OUTPUT, "DS1.hmp.txt");
 
 
         HttpMethodResult httpMethodResult = GobiiClientContext.getInstance(null, false)
