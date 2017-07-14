@@ -352,6 +352,12 @@ public class GobiiExtractor {
 						pm.addIdentifier("Sample List Type", uppercaseFirstLetter(extract.getGobiiSampleListType().toString().toLowerCase()), null);
 						pm.addIdentifier("Sample List", (sampleListFile==null?"No Sample list provided":sampleListFile), null);
 					}
+					if(filterType==GobiiExtractFilterType.BY_MARKER){
+						for (Integer platformId: platforms) {
+							pm.addIdentifier("Platform", (platformId != null ? platformId.toString() : "No Platform info available"), platformId.toString());
+						}
+						pm.addIdentifier("Marker List", markerListLocation, null); //TODO - marker list has an 'on empty,
+					}
 					pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath());
 					pm.addPath("Output Directory", extractDir);
 					pm.addPath("Error Log", logFile);

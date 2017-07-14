@@ -192,8 +192,9 @@ public class GobiiFileReader {
 		pm.setUser(jobUser);
 
 		String logDir=configuration.getFileSystemLog();
+		String logFile=null;
 		if(logDir!=null) {
-			String logFile=logDir+"/"+jobUser.substring(0,jobUser.indexOf('@'))+"_"+getSourceFileName(zero.getGobiiFile())+".log";
+			logFile=logDir+"/"+jobUser.substring(0,jobUser.indexOf('@'))+"_"+getSourceFileName(zero.getGobiiFile())+".log";
 			ErrorLogger.logDebug("Error Logger","Moving error log to "+logFile);
 			ErrorLogger.setLogFilepath(logFile);
 			pm.addPath("Error Log",logFile);
@@ -469,6 +470,7 @@ public class GobiiFileReader {
 		try{
 			endTime = System.currentTimeMillis();
 			duration = endTime - startTime;
+			pm.addPath("Error Log", logFile);
 			pm.setBody(jobName,zero.getGobiiFile().getGobiiFileType().name(),duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 			mailInterface.send(pm);
 		}catch(Exception e){
