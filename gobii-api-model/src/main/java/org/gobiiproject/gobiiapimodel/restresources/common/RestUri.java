@@ -21,6 +21,8 @@ public class RestUri {
     private final String DELIM_PARAM_BEGIN = "{";
     private final String DELIM_PARAM_END = "}";
 
+    private String domain = null;
+    private Integer port = null;
     private String contextPath;
     private String contextRoot;
 
@@ -31,6 +33,12 @@ public class RestUri {
     private Map<String, String> httpHeaders = new HashMap<>();
     private String destinationFilenPath = null;
 
+
+    public RestUri(String domain, Integer port, String contextRoot, String contextPath, String resourcePath) throws Exception {
+        this(contextRoot,contextPath,resourcePath);
+        this.domain = domain;
+        this.port = port;
+    }
 
     public RestUri(String contextRoot, String contextPath, String resourcePath) throws Exception {
         this.contextRoot = this.delimitSegment(contextRoot);
@@ -64,13 +72,13 @@ public class RestUri {
         }
 
         Integer ctxRootIdx = stringBuilder.indexOf(this.contextRoot);
-        if( ctxRootIdx >= 0 ) {
-            stringBuilder.delete(ctxRootIdx,this.contextRoot.length());
+        if (ctxRootIdx >= 0) {
+            stringBuilder.delete(ctxRootIdx, this.contextRoot.length());
         }
 
         Integer ctxPathIdx = stringBuilder.indexOf(this.contextPath);
-        if( ctxPathIdx >= 0 ) {
-            stringBuilder.delete(ctxPathIdx,this.contextPath.length());
+        if (ctxPathIdx >= 0) {
+            stringBuilder.delete(ctxPathIdx, this.contextPath.length());
         }
 
         String returnVal = stringBuilder.toString();
@@ -118,15 +126,26 @@ public class RestUri {
                 .collect(Collectors.toList());
     }
 
-
     public RestUri addQueryParam(String name) {
         this.addParam(ResourceParam.ResourceParamType.QueryParam, name);
+        return this;
+    }
+
+    public RestUri addQueryParam(String name, String value) throws Exception {
+        this.addQueryParam(name);
+        this.setParamValue(name, value);
         return this;
     }
 
 
     public RestUri addUriParam(String name) {
         this.addParam(ResourceParam.ResourceParamType.UriParam, name);
+        return this;
+    }
+
+    public RestUri addUriParam(String name, String value) throws Exception {
+        this.addUriParam(name);
+        this.setParamValue(name, value);
         return this;
     }
 
@@ -191,7 +210,43 @@ public class RestUri {
         return this.destinationFilenPath;
     }
 
-    public String makeUrl() throws Exception {
+    public String makeUrlComplete() throws Exception {
+
+        if(LineUtils.isNullOrEmpty(this.domain) || this.port == null ) {
+            throw new Exception("Domain and Port values are required");
+        }
+
+        String returnVal = this.domain + ":" + this.port + "/" + this.makeUrlWithQueryParams();
+
+        returnVal = returnVal.replace("//", "/");
+
+        returnVal = "http://" + returnVal;
+
+        return returnVal;
+
+    }
+
+
+    /***
+     * Makes a url with current uri parameters and adds current query parameters.
+     * We don't add the query parameters by default because the components in
+     * HttpCore want to to add these params through its API. So in the nominal case
+     * we don't add the query params.
+     * @return
+     * @throws Exception
+     */
+    public String makeUrlWithQueryParams() throws Exception {
+
+        String returnVal = this.makeUrlPath();
+        returnVal += "?";
+        for (ResourceParam currentParam : this.getRequestParams()) {
+            returnVal += currentParam.getName() + "=" + currentParam.getValue();
+        }
+
+        return returnVal;
+    }
+
+    public String makeUrlPath() throws Exception {
 
         String returnVal = this.requestTemplate; // in case there are no path variables
 
@@ -236,6 +291,6 @@ public class RestUri {
 
         return returnVal;
 
-    } // makeUrl
+    } // makeUrlPath
 
 } // class RestUri

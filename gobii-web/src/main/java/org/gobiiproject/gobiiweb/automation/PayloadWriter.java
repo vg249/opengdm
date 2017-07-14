@@ -59,7 +59,7 @@ public class PayloadWriter<T extends DTOBase> {
                 restUri.setParamValue("id", id);
                 //And hence we can create the link ehre
 
-                String uri = restUri.makeUrl();
+                String uri = restUri.makeUrlPath();
                 Link link = new Link(uri, "Link to " + dtoType + ", id " + id);
 
                 for (GobiiProcessType currentProcessType : itemToWrite.getAllowedProcessTypes()) {

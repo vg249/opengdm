@@ -7,28 +7,8 @@ package org.gobiiproject.gobiiweb.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.gobiiproject.gobidomain.services.AnalysisService;
-import org.gobiiproject.gobidomain.services.ConfigSettingsService;
-import org.gobiiproject.gobidomain.services.ContactService;
-import org.gobiiproject.gobidomain.services.CvService;
-import org.gobiiproject.gobidomain.services.DataSetService;
-import org.gobiiproject.gobidomain.services.DisplayService;
-import org.gobiiproject.gobidomain.services.ExperimentService;
-import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
-import org.gobiiproject.gobidomain.services.LoaderFilesService;
-import org.gobiiproject.gobidomain.services.LoaderInstructionFilesService;
-import org.gobiiproject.gobidomain.services.ManifestService;
-import org.gobiiproject.gobidomain.services.MapsetService;
-import org.gobiiproject.gobidomain.services.MarkerGroupService;
-import org.gobiiproject.gobidomain.services.MarkerService;
-import org.gobiiproject.gobidomain.services.NameIdListService;
-import org.gobiiproject.gobidomain.services.OrganizationService;
 import org.gobiiproject.gobidomain.services.PingService;
-import org.gobiiproject.gobidomain.services.PlatformService;
-import org.gobiiproject.gobidomain.services.ProjectService;
-import org.gobiiproject.gobidomain.services.ReferenceService;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
-import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
 import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseMapCalls;
 import org.gobiiproject.gobiibrapi.calls.germplasm.BrapiResponseGermplasmByDbId;
@@ -43,7 +23,7 @@ import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseMapStudiesS
 import org.gobiiproject.gobiibrapi.calls.studies.search.BrapiResponseStudiesSearch;
 
 import org.gobiiproject.gobiibrapi.core.common.BrapiRequestReader;
-import org.gobiiproject.gobiibrapi.core.responsemodel.BrapResponseEnvelope;
+import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiimodel.config.GobiiException;
@@ -394,27 +374,27 @@ public class BRAPIIControllerV1 {
 
         String returnVal = null;
 
-        BrapResponseEnvelope brapResponseEnvelope = new BrapResponseEnvelope();
+        BrapiResponseEnvelope brapiResponseEnvelope = new BrapiResponseEnvelope();
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            brapResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.search(cropType, matrixDbId));
+            brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.search(cropType, matrixDbId));
 
 
         } catch (GobiiException e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
 
         } catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
-        returnVal = objectMapper.writeValueAsString(brapResponseEnvelope);
+        returnVal = objectMapper.writeValueAsString(brapiResponseEnvelope);
 
         return returnVal;
     }
@@ -429,11 +409,11 @@ public class BRAPIIControllerV1 {
 
         String returnVal = null;
 
-        BrapResponseEnvelope brapResponseEnvelope = new BrapResponseEnvelope();
+        BrapiResponseEnvelope brapiResponseEnvelope = new BrapiResponseEnvelope();
         try {
 
             String cropType = CropRequestAnalyzer.getGobiiCropType(request);
-            brapResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.getStatus(cropType,
+            brapiResponseEnvelope.setBrapiMetaData(brapiResponseMapAlleleMatrixSearch.getStatus(cropType,
                     jobId,
                     request));
 
@@ -442,16 +422,16 @@ public class BRAPIIControllerV1 {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
 
         } catch (Exception e) {
 
             String message = e.getMessage() + ": " + e.getCause() + ": " + e.getStackTrace().toString();
 
-            brapResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
+            brapiResponseEnvelope.getBrapiMetaData().addStatusMessage("exception", message);
         }
 
-        returnVal = objectMapper.writeValueAsString(brapResponseEnvelope);
+        returnVal = objectMapper.writeValueAsString(brapiResponseEnvelope);
 
         return returnVal;
     }

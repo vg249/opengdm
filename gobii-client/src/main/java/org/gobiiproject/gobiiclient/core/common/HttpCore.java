@@ -6,7 +6,6 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -17,10 +16,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -93,7 +89,7 @@ public class HttpCore {
         URI returnVal;
 
         URIBuilder baseBuilder = getBaseBuilder()
-                .setPath(restUri.makeUrl());
+                .setPath(restUri.makeUrlPath());
 
         for (ResourceParam currentParam : restUri.getRequestParams()) {
             baseBuilder.addParameter(currentParam.getName(), currentParam.getValue());
@@ -252,7 +248,7 @@ public class HttpCore {
                     HttpStatus.SC_BAD_REQUEST != returnVal.getResponseCode() &&
                     HttpStatus.SC_METHOD_NOT_ALLOWED != returnVal.getResponseCode() &&
                     HttpStatus.SC_UNAUTHORIZED != returnVal.getResponseCode() &&
-                    HttpStatus.SC_NOT_ACCEPTABLE != returnVal.getResponseCode()) {
+                    HttpStatus.SC_NOT_ACCEPTABLE != returnVal.getResponseCode() ) {
 
 
                 String contentType = null; // default
@@ -306,6 +302,8 @@ public class HttpCore {
                     throw new Exception(message);
                 }
 
+            } else {
+                returnVal.setPlainPayload(this.extractBody(httpResponse));
             }
         } finally {
 
@@ -350,7 +348,7 @@ public class HttpCore {
 
         if (logJson) {
 
-            System.out.println("=========method: " + restMethodType.toString() + " on resource: " + restUri.makeUrl());
+            System.out.println("=========method: " + restMethodType.toString() + " on resource: " + restUri.makeUrlPath());
 
             if (!LineUtils.isNullOrEmpty(body)) {
 

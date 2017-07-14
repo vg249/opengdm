@@ -273,17 +273,19 @@ public class DtoRequestFileExtractorInstructionsTest {
         resultEnvelopeForGetStatusByFileName = gobiiEnvelopeRestResourceForGetById.get(ExtractorInstructionFilesDTO.class);
         Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopeForGetStatusByFileName.getHeader()));
         resultExtractorInstructionFilesDTO = resultEnvelopeForGetStatusByFileName.getPayload().getData().get(0);
-        Assert.assertTrue(doesInstructionHaveAnExtractWithStatusEqualTo(GobiiJobStatus.FAILED, resultExtractorInstructionFilesDTO));
+        Assert.assertTrue("Expected job status " + GobiiJobStatus.FAILED.toString() + ": got "
+                + resultExtractorInstructionFilesDTO.getGobiiExtractorInstructions().get(0).getDataSetExtracts().get(0).getGobiiJobStatus().toString(),
+                doesInstructionHaveAnExtractWithStatusEqualTo(GobiiJobStatus.FAILED, resultExtractorInstructionFilesDTO));
     }
 
-    private void deleteFiles(ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO) throws IOException {
+    private void deleteFiles(ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO) throws Exception {
         List<GobiiExtractorInstruction> returnVal = resultExtractorInstructionFilesDTO.getGobiiExtractorInstructions();
 
         for (GobiiExtractorInstruction instruction : returnVal) {
 
             for (GobiiDataSetExtract dataSetExtract : instruction.getDataSetExtracts()) {
 
-                String extractDestinationDirectory = dataSetExtract.getExtractDestinationDirectory();
+                String extractDestinationDirectory = dataSetExtract.getExtractDestinationDirectory() + "/";
                 List<String> dataExtractFileNames = getFileNamesFor("DS" + Integer.toString(dataSetExtract.getDataSet().getId()), dataSetExtract.getGobiiFileType());
 
                 for (String currentFileName : dataExtractFileNames) {
@@ -297,7 +299,7 @@ public class DtoRequestFileExtractorInstructionsTest {
         } // iterate instructions
     }
 
-    private void createFiles(ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO) throws IOException {
+    private void createFiles(ExtractorInstructionFilesDTO resultExtractorInstructionFilesDTO) throws Exception {
 
         List<GobiiExtractorInstruction> returnVal = resultExtractorInstructionFilesDTO.getGobiiExtractorInstructions();
 
@@ -305,7 +307,7 @@ public class DtoRequestFileExtractorInstructionsTest {
 
             for (GobiiDataSetExtract dataSetExtract : instruction.getDataSetExtracts()) {
 
-                String extractDestinationDirectory = dataSetExtract.getExtractDestinationDirectory();
+                String extractDestinationDirectory = dataSetExtract.getExtractDestinationDirectory() + "/";
                 List<String> dataExtractFileNames = getFileNamesFor("DS" + Integer.toString(dataSetExtract.getDataSet().getId()), dataSetExtract.getGobiiFileType());
 
                 for (String currentFileName : dataExtractFileNames) {
@@ -359,26 +361,30 @@ public class DtoRequestFileExtractorInstructionsTest {
         return returnVal;
     }
 
-    private List<String> getFileNamesFor(String fileName, GobiiFileType gobiiFileType) {
+    private List<String> getFileNamesFor(String fileName, GobiiFileType gobiiFileType) throws Exception {
 
         List<String> fileNames = new ArrayList<String>();
 
-        switch (gobiiFileType.toString().toLowerCase()) {
-            case "hapmap":
-                fileNames.add(fileName + "hmp.txt");
+        switch (gobiiFileType) {
+            case HAPMAP:
+                fileNames.add(fileName + ".hmp.txt");
                 break;
 
-            case "flapjack":
+            case FLAPJACK:
                 fileNames.add(fileName + ".map");
                 fileNames.add(fileName + ".genotype");
                 break;
 
-            case "vcf":
+            case VCF:
                 //fileNames.add(fileName+"hmp.txt"); to be added
                 break;
 
-            default://GENERIC
+            case GENERIC:
                 fileNames.add(fileName + ".txt"); //to be added
+
+            default:
+                throw new Exception("Unknown GobiiFileType: " + gobiiFileType.toString());
+
         }
 
         return fileNames;

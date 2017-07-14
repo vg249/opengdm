@@ -3,6 +3,7 @@ package org.gobiiproject.gobiiclient.core.brapi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
+import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseDataList;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMaster;
@@ -115,6 +116,21 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
                         .get(this.restUri);
 
         returnVal = this.getMasterObjFromResult(httpMethodResult);
+
+        return returnVal;
+    }
+
+    public BrapiResponseEnvelope getMetaDataResponse() throws Exception {
+
+        BrapiResponseEnvelope returnVal = new BrapiResponseEnvelope();
+
+        HttpMethodResult httpMethodResult =
+                GobiiClientContext.getInstance(null, false).getHttp()
+                        .get(this.restUri);
+
+        String metaDataAsString = httpMethodResult.getJsonPayload().get(BrapiJsonKeys.METADATA).toString();
+        BrapiMetaData brapiMetaData = objectMapper.readValue(metaDataAsString, BrapiMetaData.class);
+        returnVal.setBrapiMetaData(brapiMetaData);
 
         return returnVal;
     }

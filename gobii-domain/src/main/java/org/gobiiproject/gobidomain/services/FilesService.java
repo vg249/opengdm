@@ -15,11 +15,13 @@ import java.io.File;
 public interface FilesService {
 
     void writeFile(String cropType,
-                   String fileNameStem,
+                   String jobId,
+                   String fileName,
                    GobiiFileProcessDir gobiiFileProcessDir,
                    byte[] byteArray) throws GobiiException, Exception;
 
     File readFile(String cropType,
+                  String gobiiJobId,
                   String fileName,
                   GobiiFileProcessDir gobiiFileProcessDir) throws GobiiException, Exception;
 }

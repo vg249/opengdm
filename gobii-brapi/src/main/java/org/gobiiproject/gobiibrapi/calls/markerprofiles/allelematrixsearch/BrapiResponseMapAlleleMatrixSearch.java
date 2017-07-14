@@ -1,5 +1,6 @@
 package org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrixsearch;
 
+import org.apache.commons.io.FilenameUtils;
 import org.gobiiproject.gobidomain.services.ExtractorInstructionFilesService;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.restresources.gobii.GobiiUriFactory;
@@ -11,6 +12,7 @@ import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiDataSetExtrac
 import org.gobiiproject.gobiimodel.dto.instructions.extractor.GobiiExtractorInstruction;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ExtractorInstructionFilesDTO;
 import org.gobiiproject.gobiimodel.types.GobiiExtractFilterType;
+import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
 import org.gobiiproject.gobiimodel.types.GobiiFileType;
 import org.gobiiproject.gobiimodel.types.GobiiJobStatus;
 import org.gobiiproject.gobiimodel.utils.DateUtils;
@@ -63,78 +65,88 @@ public class BrapiResponseMapAlleleMatrixSearch {
         ExtractorInstructionFilesDTO extractorInstructionFilesDTONew = extractorInstructionFilesService
                 .getStatus(crop, jobId);
 
-        GobiiJobStatus gobiiJobStatus = extractorInstructionFilesDTONew
-                .getGobiiExtractorInstructions()
-                .get(0)
-                .getDataSetExtracts()
-                .get(0)
-                .getGobiiJobStatus();
 
         String brapiAsynchStatus = null;
-        switch (gobiiJobStatus) {
+        if( ( extractorInstructionFilesDTONew
+                .getGobiiExtractorInstructions().size() > 0 ) &&
+                (extractorInstructionFilesDTONew
+                        .getGobiiExtractorInstructions().get(0).getDataSetExtracts().size() > 0 ) ) {
 
-            case FAILED:
-                brapiAsynchStatus = "FAILED";
-                break;
+            GobiiDataSetExtract gobiiDataSetExtract = extractorInstructionFilesDTONew
+                    .getGobiiExtractorInstructions()
+                    .get(0)
+                    .getDataSetExtracts()
+                    .get(0);
 
-            case STARTED:
-                brapiAsynchStatus = "PENDING";
-                break;
+            GobiiJobStatus gobiiJobStatus = gobiiDataSetExtract
+                    .getGobiiJobStatus();
 
-            case COMPLETED:
-                brapiAsynchStatus = "FINISHED";
-                break;
+            switch (gobiiJobStatus) {
 
-            case IN_PROGRESS:
-                brapiAsynchStatus = "INPROCESS";
-                break;
+                case FAILED:
+                    brapiAsynchStatus = "FAILED";
+                    break;
 
-        }
+                case STARTED:
+                    brapiAsynchStatus = "PENDING";
+                    break;
 
-
-        // this is only for test purposes!!! -- it should
-        if (!gobiiJobStatus.equals(GobiiJobStatus.COMPLETED)) {
-
-            try {
-
-                Thread.sleep(4000); // make it look like we're processing
-
-                String testFileName = "illumina.data";
-                ClassLoader classLoader = getClass().getClassLoader();
-                File testResultFile = new File(classLoader.getResource(testFileName).getFile());
-
-            
-                if (testResultFile.exists()) {
-
-                    RestUri restUri = new GobiiUriFactory(request.getContextPath(),
-                            GobiiControllerType.BRAPI)
-                            .resourceColl(GobiiServiceRequestId.URL_FILES);
-
-
-                    String serverName = request.getServerName();
-                    int portNumber = request.getServerPort();
-
-                    String fileUri = "http://"
-                            + serverName
-                            + ":"
-                            + portNumber
-                            + "/"
-                            + restUri.makeUrl()
-                            + "?fqpn=" + testResultFile.getAbsolutePath();
-
-                    brapiMetaData.getDatafiles().add(fileUri);
-
+                case COMPLETED:
                     brapiAsynchStatus = "FINISHED";
-                } else {
-                    brapiMetaData.addStatusMessage("error", "The test file is not present: " + testFileName);
-                }
+                    break;
 
+                case IN_PROGRESS:
+                    brapiAsynchStatus = "INPROCESS";
+                    break;
 
-            } catch (Exception e) {
-                brapiMetaData.addStatusMessage("Exception", e.getMessage());
             }
-        }
 
+
+            // this is only for test purposes!!! -- it should
+            if (gobiiJobStatus.equals(GobiiJobStatus.COMPLETED)) {
+
+                try {
+
+                    String extractDirectory = gobiiDataSetExtract.getExtractDestinationDirectory();
+                    File extractDirectoryFile = new File(extractDirectory);
+                    if( extractDirectoryFile.exists() ) {
+
+                        File[] extractedFiles = extractDirectoryFile.listFiles();
+                        for(Integer idx = 0; idx < extractedFiles.length; idx++ ) {
+
+                            File currentFile = extractedFiles[idx];
+
+                            // first make the http link
+                            RestUri restUri = new GobiiUriFactory(request.getServerName(),
+                                    request.getServerPort(),
+                                    request.getContextPath(),
+                                    GobiiControllerType.GOBII)
+                                    .resourceColl(GobiiServiceRequestId.URL_FILES)
+                                    .addUriParam("gobiiJobId",jobId)
+                                    .addUriParam("destinationType", GobiiFileProcessDir.EXTRACTOR_OUTPUT.toString().toLowerCase())
+                                    .addQueryParam("fileName", currentFile.getName());
+
+                            String fileUri = restUri.makeUrlComplete();
+                            brapiMetaData.getDatafiles().add(fileUri);
+
+                            // now the absolute path to the file
+                            String filePath = FilenameUtils.normalize(currentFile.getAbsolutePath());
+                            brapiMetaData.getDatafiles().add(filePath);
+                        }
+
+                    } else {
+                        brapiMetaData.addStatusMessage("error", "The extract directory does not exist: " + extractDirectory);
+                    }
+
+
+                } catch (Exception e) {
+                    brapiMetaData.addStatusMessage("Exception", e.getMessage());
+                }
+            }
+
+        } else {
+            brapiMetaData.addStatusMessage("error", "There are not extractor instructions for job : " + jobId);
+        }
 
         brapiMetaData.addStatusMessage("asynchstatus", brapiAsynchStatus);
 

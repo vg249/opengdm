@@ -11,6 +11,7 @@ import org.gobiiproject.gobidomain.services.AuthenticationService;
 
 import org.gobiiproject.gobidomain.services.ContactService;
 import org.gobiiproject.gobiiweb.CropRequestAnalyzer;
+import org.gobiiproject.gobiiweb.automation.ControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.gobiiproject.gobiimodel.types.GobiiHttpHeaderNames;
@@ -114,10 +115,8 @@ public final class TokenAuthenticationFilter extends GenericFilterBean {
                                     + gobiiCropType
                                     + "; a contact record must have username = "
                                     + userName;
-                            httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                            httpResponse.getOutputStream().print(message);
-                            httpResponse.getOutputStream().flush();
-                            httpResponse.getOutputStream().close();
+
+                            ControllerUtils.writeRawResponse(httpResponse,HttpServletResponse.SC_FORBIDDEN,message);
 
                             LOGGER.error(message);
                         }

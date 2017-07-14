@@ -6,7 +6,7 @@ import org.gobiiproject.gobiibrapi.core.common.BrapiMetaData;
 /**
  * Created by Phil on 5/1/2017.
  */
-public class BrapResponseEnvelope {
+public class BrapiResponseEnvelope {
 
     private BrapiMetaData brapiMetaData = new BrapiMetaData();
     @JsonProperty("metadata")
