@@ -26,6 +26,11 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
 
         try {
             ConfigSettings configSettings = new ConfigSettings();
+
+            if( configSettings.getKDCConfig() != null ) {
+                returnVal.setIsKdcActive(configSettings.getKDCConfig().isActive());
+            }
+
             for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
                 ServerConfig currentServerConfig = new ServerConfig(currentGobiiCropConfig,
