@@ -34,4 +34,14 @@ public class ConfigSettingsDTO extends DTOBase {
 
     String defaultCrop;
 
+
+    boolean isKdcActive = false;
+
+    public boolean isKdcActive() {
+        return isKdcActive;
+    }
+
+    public void setKdcActive(boolean kdcActive) {
+        isKdcActive = kdcActive;
+    }
 }
