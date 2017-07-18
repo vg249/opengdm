@@ -6,9 +6,12 @@ import org.apache.http.HttpStatus;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiiapimodel.types.GobiiServiceRequestId;
+import org.gobiiproject.gobiibrapi.calls.calls.BrapiResponseCalls;
+import org.gobiiproject.gobiibrapi.calls.markerprofiles.allelematrices.BrapiResponseAlleleMatrices;
 import org.gobiiproject.gobiibrapi.core.common.BrapiStatus;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseDataList;
 import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelope;
+import org.gobiiproject.gobiibrapi.core.responsemodel.BrapiResponseEnvelopeMasterDetail;
 import org.gobiiproject.gobiiclient.core.brapi.BrapiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.common.HttpMethodResult;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiClientContext;
@@ -35,6 +38,7 @@ public class BrapiTestAlleleMatrixSearch {
     private static TestExecConfig testExecConfig = null;
 
     private static List<File> filesToCleanUp = new ArrayList<>();
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         Assert.assertTrue(GobiiClientContextAuth.authenticate());
@@ -45,7 +49,7 @@ public class BrapiTestAlleleMatrixSearch {
     @AfterClass
     public static void tearDownUpClass() throws Exception {
         Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
-        for( File currentFile : filesToCleanUp ) {
+        for (File currentFile : filesToCleanUp) {
             currentFile.delete();
         }
     }
@@ -195,13 +199,13 @@ public class BrapiTestAlleleMatrixSearch {
         String testSourceFileNameMap = "ssr_allele_samples.txt";
         String resourcePathMap = "datasets/" + testSourceFileNameMap;
         File testResultFileMap = new File(classLoader.getResource(resourcePathMap).getFile());
-        this.uploadFile(jobId,testResultFileMap,expectedExractDsNameMap,GobiiFileProcessDir.EXTRACTOR_OUTPUT);
+        this.uploadFile(jobId, testResultFileMap, expectedExractDsNameMap, GobiiFileProcessDir.EXTRACTOR_OUTPUT);
 
         String expectedExractDsNameGenotype = "DS1.genotype";
         String testSourceFileNameGenotype = "ssr_alleledata.txt";
         String resourcePathGenotype = "datasets/" + testSourceFileNameGenotype;
         File testResultFileGenotype = new File(classLoader.getResource(resourcePathGenotype).getFile());
-        uploadFile(jobId,testResultFileGenotype,expectedExractDsNameGenotype,GobiiFileProcessDir.EXTRACTOR_OUTPUT);
+        uploadFile(jobId, testResultFileGenotype, expectedExractDsNameGenotype, GobiiFileProcessDir.EXTRACTOR_OUTPUT);
 
         // STEP 3-A : DOWNLOAD THE EXTRACTOR INSTRUCTION FILE
         String instructionFileName = jobId + ".json";
@@ -215,7 +219,6 @@ public class BrapiTestAlleleMatrixSearch {
                 downloadedInstructionFile,
                 instructionFileName,
                 GobiiFileProcessDir.EXTRACTOR_DONE);
-
 
 
         // STEP FOUR: CALL ALLELE MATRICES SEARCH STATUS
@@ -291,7 +294,7 @@ public class BrapiTestAlleleMatrixSearch {
         Assert.assertTrue("The file from the BRAPI service's link was not downloaded: " + fileHttpLinkMap,
                 downloadedFileMap.exists());
 
-        FileUtils.contentEquals(testResultFileMap,downloadedFileMap);
+        FileUtils.contentEquals(testResultFileMap, downloadedFileMap);
 
         // genotype file
         String downloadedFilePathGenotype = destinationPath + "/" + expectedExractDsNameGenotype + ".downloaded";
@@ -303,9 +306,8 @@ public class BrapiTestAlleleMatrixSearch {
         Assert.assertTrue("The file from the BRAPI service's link was not downloaded: " + fileHttpLinkGenotype,
                 downloadedFileGenotype.exists());
 
-        FileUtils.contentEquals(testResultFileGenotype,downloadedFileGenotype);
-
-
+        FileUtils.contentEquals(testResultFileGenotype, downloadedFileGenotype);
 
     }
+
 }
