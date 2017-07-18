@@ -120,6 +120,16 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
         return returnVal;
     }
 
+
+    private BrapiMetaData getMetaDataFromResponse(HttpMethodResult httpMethodResult) throws Exception{
+
+        String metaDataAsString = httpMethodResult.getJsonPayload().get(BrapiJsonKeys.METADATA).toString();
+        BrapiMetaData returnVal = objectMapper.readValue(metaDataAsString, BrapiMetaData.class);
+
+        return returnVal;
+
+    }
+
     public BrapiResponseEnvelope getMetaDataResponse() throws Exception {
 
         BrapiResponseEnvelope returnVal = new BrapiResponseEnvelope();
@@ -128,11 +138,26 @@ public class BrapiEnvelopeRestResource<T_POST_OBJ_TYPE, T_RESPONSE_TYPE_MASTER, 
                 GobiiClientContext.getInstance(null, false).getHttp()
                         .get(this.restUri);
 
-        String metaDataAsString = httpMethodResult.getJsonPayload().get(BrapiJsonKeys.METADATA).toString();
-        BrapiMetaData brapiMetaData = objectMapper.readValue(metaDataAsString, BrapiMetaData.class);
+        BrapiMetaData brapiMetaData = this.getMetaDataFromResponse(httpMethodResult);
         returnVal.setBrapiMetaData(brapiMetaData);
 
         return returnVal;
+    }
+
+    // post request with request params only -- no body
+    public BrapiResponseEnvelope posttQueryRequest() throws Exception {
+
+        BrapiResponseEnvelope returnVal = new BrapiResponseEnvelope();
+
+        HttpMethodResult httpMethodResult =
+                GobiiClientContext.getInstance(null, false).getHttp()
+                        .post(this.restUri, null);
+
+        BrapiMetaData brapiMetaData = this.getMetaDataFromResponse(httpMethodResult);
+        returnVal.setBrapiMetaData(brapiMetaData);
+
+        return returnVal;
+
     }
 
 }
