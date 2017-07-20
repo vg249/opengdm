@@ -661,10 +661,8 @@ public class GobiiExtractor {
 									Set<Map.Entry<String, JsonElement>> entrySet = resultsUrls.entrySet();
 									for (Map.Entry<String, JsonElement> entry : entrySet) {
 									    String key = entry.getKey();
-									    // Avoiding any downloadable non-data file susceptible to be shown for the gobii user
-                                        if ((!(key.equals("stdout.txt"))) &&
-                                            (!(key.equals("stderr.txt"))) &&
-                                            (!(key.equals("script.groovy")))) {
+									    // Avoiding any downloadable non-data file susceptible to be shown for 	the gobii user
+                                        if (!key.equals("script.groovy")){
 										    String fileDownloadLink = entry.getValue().getAsString().substring(1);
 										    ErrorLogger.logInfo("QC", new StringBuilder("fileDownloadLink: ").append(fileDownloadLink).toString());
 										    String destinationFqpn = Paths.get(extractDir, key).toString();
@@ -692,6 +690,10 @@ public class GobiiExtractor {
                                                         + httpMethodResult.getFileName());
                                                 if (httpMethodResult.getFileName() != null) {
                                                     qcStatusPm.addPath(key, httpMethodResult.getFileName());
+
+                                                    if(key.equals("stdout.txt") || key.equals("stderr.txt")){
+                                                    	qcStatusPm.getFileAttachments().add(httpMethodResult.getFileName());
+													}
                                                 }
                                             }
                                         }
