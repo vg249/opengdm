@@ -55,10 +55,10 @@ public class DtoMapLoaderFilesImpl implements DtoMapLoaderFiles {
 
         instructionFileAccess.createDirectory(fileCropDirectory);
 
-        String directoryPath = fileCropDirectory + directoryName;
-        instructionFileAccess.createDirectory(fileCropDirectory);
+        String newDirectoryPath = fileCropDirectory + directoryName;
+        instructionFileAccess.createDirectory(newDirectoryPath);
 
-        returnVal.setDirectoryName(directoryPath);
+        returnVal.setDirectoryName(newDirectoryPath);
         returnVal.setId(1);//this is arbitrary for now
 
         return returnVal;
