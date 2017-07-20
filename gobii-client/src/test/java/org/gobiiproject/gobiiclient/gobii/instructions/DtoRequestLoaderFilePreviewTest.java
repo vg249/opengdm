@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Scanner;
 
@@ -76,7 +77,7 @@ public class DtoRequestLoaderFilePreviewTest {
     //Fails on SYS_INT due to the fact that it physically copies files; this test
     // mechanism does not work unless the unit tests run on the same system as the
     // as the web server.
-    @Ignore
+    @Test
     public void testGetFilePreview() throws Exception {
         //Create newFolder
         LoaderFilePreviewDTO loaderFileCreateDTO = new LoaderFilePreviewDTO();
@@ -100,6 +101,9 @@ public class DtoRequestLoaderFilePreviewTest {
         String testCrop = gobiiTestConfiguration.getConfigSettings().getTestExecConfig().getTestCrop();
         String destinationDirectory = gobiiTestConfiguration.getConfigSettings().getProcessingPath(testCrop, GobiiFileProcessDir.RAW_USER_FILES);
         String createdFileDirectory = destinationDirectory + new File(resultLoaderFilePreviewDTOCreated.getDirectoryName()).getName();
+
+        Assert.assertTrue(  "Destination file directory was not created: " + createdFileDirectory,
+                ( new File(createdFileDirectory)).exists());
 
         //copyContentsFromCreatedFolder
         File resourcesDirectory = new File("src/test/resources/datasets");
