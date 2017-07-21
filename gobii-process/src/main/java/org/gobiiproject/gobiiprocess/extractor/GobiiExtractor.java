@@ -697,6 +697,7 @@ public class GobiiExtractor {
 														BufferedWriter out = new BufferedWriter(new FileWriter(destinationFqpn));
 														out.write(httpMethodResult.getPlainPayload());
 														out.close();
+														qcStatusPm.addPath(key, destinationFqpn);
 														qcStatusPm.getFileAttachments().add(destinationFqpn);
 													} catch (Exception e) {
                                                 		ErrorLogger.logInfo("QC", "Error copying " + key + " to " + destinationFqpn);
