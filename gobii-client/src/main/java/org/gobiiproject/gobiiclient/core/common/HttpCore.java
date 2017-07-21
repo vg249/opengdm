@@ -164,26 +164,6 @@ public class HttpCore {
     }// getHeader()
 
 
-    private String extractBody(HttpResponse httpResponse) throws Exception {
-
-        String returnVal;
-
-        InputStream inputStream = httpResponse.getEntity().getContent();
-        BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(inputStream));
-
-
-        StringBuilder stringBuilder = new StringBuilder();
-        String currentLine = null;
-        while ((currentLine = bufferedReader.readLine()) != null) {
-            stringBuilder.append(currentLine);
-        }
-
-        returnVal = stringBuilder.toString();
-
-        return returnVal;
-    }
-
     public HttpMethodResult authenticateWithUser(RestUri restUri, String userName, String password) throws Exception {
 
         URI uri = makeUri(restUri);
@@ -212,70 +192,15 @@ public class HttpCore {
 
     }//authenticateWithUser()
 
-    private void makeDownloadedFile(HttpResponse httpResponse,
+    private void makeDownloadedFile(String content,
                                     HttpMethodResult httpMethodResult,
                                     RestUri restUri) throws Exception {
 
 
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
-            BufferedWriter bufferedWriter = null;
-
-            try {
-
-                String destinationFqpn = restUri.getDestinationFqpn();
-
-
-                if (httpResponse.getEntity().isStreaming()) {
-
-                    inputStream = httpResponse.getEntity().getContent();
-                    outputStream = null;
-                    byte[] buffer = new byte[1024];
-                    File outputFile = new File(destinationFqpn);
-                    outputFile.createNewFile();
-                    outputStream = new FileOutputStream(outputFile, false);
-                    for (int length; (length = inputStream.read(buffer)) > 0; ) {
-                        outputStream.write(buffer, 0, length);
-                    }
-
-                } else {
-                    bufferedWriter = new BufferedWriter(new FileWriter(destinationFqpn));
-                    bufferedWriter.write(httpMethodResult.getPlainPayload());
-                    bufferedWriter.close();
-                }
-
-                httpMethodResult.setFileName(destinationFqpn);
-
-            } finally {
-
-                if (inputStream != null) {
-
-                    try {
-                        inputStream.close();
-                    } catch (Exception e) {
-                        LOGGER.error("Error closing input stream: ", e);
-                    }
-                }
-
-                if (outputStream != null) {
-
-                    try {
-                        outputStream.close();
-                    } catch (Exception e) {
-                        LOGGER.error("Error closing output stream: ", e);
-                    }
-                }
-
-                if (bufferedWriter != null) {
-
-                    try {
-                        bufferedWriter.close();
-                    } catch (Exception e) {
-                        LOGGER.error("Error closing buffered writer: ", e);
-                    }
-                }
-
-            }
+        String destinationFqpn = restUri.getDestinationFqpn();
+        File outputFile = new File(destinationFqpn);
+        FileUtils.writeStringToFile(outputFile, content);
+        httpMethodResult.setFileName(destinationFqpn);
 
     }
 
@@ -324,31 +249,28 @@ public class HttpCore {
                 contentType = headers[0].getValue();
             }
 
+            String resultAsString = EntityUtils.toString(httpResponse.getEntity());
 
             if (contentType != null) {
 
-                if (contentType.contains(MediaType.APPLICATION_JSON)
-                        || contentType.contains(MediaType.TEXT_PLAIN)) {
+                if (contentType.contains(MediaType.APPLICATION_JSON)) {
 
-                    String resultAsString = EntityUtils.toString(httpResponse.getEntity());
+                    JsonParser parser = new JsonParser();
+                    JsonObject jsonObject = parser.parse(resultAsString).getAsJsonObject();
+                    returnVal.setJsonPayload(jsonObject);
 
-                    if (contentType.contains(MediaType.APPLICATION_JSON)) {
-                        JsonParser parser = new JsonParser();
-                        JsonObject jsonObject = parser.parse(resultAsString).getAsJsonObject();
-                        returnVal.setJsonPayload(jsonObject);
-                    } else {
+                } else if (contentType.contains(MediaType.TEXT_PLAIN)) {
 
-                        returnVal.setPlainPayload(resultAsString);
-                        if (!LineUtils.isNullOrEmpty(restUri.getDestinationFqpn())) {
-                            this.makeDownloadedFile(httpResponse, returnVal, restUri);
-                        }
+                    returnVal.setPlainPayload(resultAsString);
+                    if (!LineUtils.isNullOrEmpty(restUri.getDestinationFqpn())) {
+                        this.makeDownloadedFile(resultAsString, returnVal, restUri);
                     }
 
                 } else if (contentType.contains(MediaType.APPLICATION_OCTET_STREAM)
                         || contentType.contains(MediaType.MULTIPART_FORM_DATA)) {
 
                     if (!LineUtils.isNullOrEmpty(restUri.getDestinationFqpn())) {
-                        this.makeDownloadedFile(httpResponse, returnVal, restUri);
+                        this.makeDownloadedFile(resultAsString, returnVal, restUri);
                     }
                 }
 

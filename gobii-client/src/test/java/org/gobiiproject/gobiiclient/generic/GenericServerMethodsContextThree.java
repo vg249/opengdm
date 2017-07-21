@@ -97,9 +97,10 @@ public class GenericServerMethodsContextThree {
     @GET
     @Path(GenericTestPaths.FILES_PLAIN_TEXT)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response getFilePlainText() throws Exception {
+    public String getFilePlainText() throws Exception {
 
-        return this.makeTestFileResponse();
+       //return this.makeTestFileResponse();
+        return "Plain text";
     }
 
 }
