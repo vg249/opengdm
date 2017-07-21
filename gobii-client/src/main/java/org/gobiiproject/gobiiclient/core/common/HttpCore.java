@@ -263,12 +263,13 @@ public class HttpCore {
                     inputStream = httpResponse.getEntity().getContent();
 
 
-                    if (contentType.contains(MediaType.APPLICATION_JSON)) {
+                    if (contentType.contains(MediaType.APPLICATION_JSON)
+                            || contentType.contains(MediaType.TEXT_PLAIN)) {
 
 
                         String resultAsString = this.extractBody(httpResponse);
 
-                        if (contentType.contains(MediaType.APPLICATION_JSON)) {
+                        if (contentType.contains(MediaType.APPLICATION_JSON) ) {
                             JsonParser parser = new JsonParser();
                             JsonObject jsonObject = parser.parse(resultAsString).getAsJsonObject();
                             returnVal.setJsonPayload(jsonObject);
