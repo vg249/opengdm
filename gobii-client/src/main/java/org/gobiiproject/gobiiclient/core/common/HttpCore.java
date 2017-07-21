@@ -263,8 +263,7 @@ public class HttpCore {
                     inputStream = httpResponse.getEntity().getContent();
 
 
-                    if (contentType.contains(MediaType.APPLICATION_JSON)
-                            || contentType.contains(MediaType.TEXT_PLAIN)) {
+                    if (contentType.contains(MediaType.APPLICATION_JSON)) {
 
 
                         String resultAsString = this.extractBody(httpResponse);
