@@ -2,6 +2,7 @@ package org.gobiiproject.gobiiclient.core.common;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -17,6 +18,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.util.EntityUtils;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -29,9 +31,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MediaType;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -160,27 +164,7 @@ public class HttpCore {
     }// getHeader()
 
 
-    private String extractBody(HttpResponse httpResponse) throws Exception {
-
-        String returnVal;
-
-        InputStream inputStream = httpResponse.getEntity().getContent();
-        BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(inputStream));
-
-
-        StringBuilder stringBuilder = new StringBuilder();
-        String currentLine = null;
-        while ((currentLine = bufferedReader.readLine()) != null) {
-            stringBuilder.append(currentLine);
-        }
-
-        returnVal = stringBuilder.toString();
-
-        return returnVal;
-    }
-
-    public HttpMethodResult authenticateWithUser(RestUri restUri,String userName, String password) throws Exception {
+    public HttpMethodResult authenticateWithUser(RestUri restUri, String userName, String password) throws Exception {
 
         URI uri = makeUri(restUri);
         HttpPost postRequest = new HttpPost(uri);
@@ -192,15 +176,15 @@ public class HttpCore {
 
         HttpMethodResult returnVal = new HttpMethodResult(httpResponse);
 
-        if (HttpStatus.SC_OK == returnVal.getResponseCode() ) {
+        if (HttpStatus.SC_OK == returnVal.getResponseCode()) {
             Header tokenHeader = getHeader(httpResponse.getAllHeaders(), GobiiHttpHeaderNames.HEADER_NAME_TOKEN);
             if (tokenHeader != null) {
                 this.token = tokenHeader.getValue();
             }
         } else {
             // if we got SC_FORBIDDEN, we're expecting a meaingful response body from the server
-            if( HttpStatus.SC_FORBIDDEN == returnVal.getResponseCode() ) {
-                returnVal.setMessage(this.extractBody(httpResponse));
+            if (HttpStatus.SC_FORBIDDEN == returnVal.getResponseCode()) {
+                returnVal.setMessage(EntityUtils.toString(httpResponse.getEntity()));
             }
         }
 
@@ -208,122 +192,113 @@ public class HttpCore {
 
     }//authenticateWithUser()
 
+    /***
+     * The strategy of extracting the entire contents of streamed file to a string and
+     * then writing that string to a file is probably not going to work well when we are
+     * dealing with large files, because you basically have to copy the content twice.
+     * For now, this approach simplifies the matter and enables us to use pre-existing
+     * library utilities in order to either stream a file or write the plain-text body
+     * of a response to a file.
+     *
+     * @param content The String content that will be written to the file
+     * @param httpMethodResult The method result to which the file name will be written
+     * @param restUri The RestUri that should contain the destination file name
+     * @throws Exception
+     */
+    private void makeDownloadedFile(String content,
+                                    HttpMethodResult httpMethodResult,
+                                    RestUri restUri) throws Exception {
+
+
+        String destinationFqpn = restUri.getDestinationFqpn();
+        File outputFile = new File(destinationFqpn);
+        FileUtils.writeStringToFile(outputFile, content);
+        httpMethodResult.setFileName(destinationFqpn);
+
+    }
+
     private HttpMethodResult submitHttpMethod(HttpRequestBase httpRequestBase,
                                               RestUri restUri) throws Exception {
 
         HttpMethodResult returnVal = null;
 
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
 
-        try {
+        HttpResponse httpResponse;
 
-            HttpResponse httpResponse;
-
-            URI uri = makeUri(restUri);
-            httpRequestBase.setURI(uri);
+        URI uri = makeUri(restUri);
+        httpRequestBase.setURI(uri);
 
 
-            this.setTokenHeader(httpRequestBase);
-            httpResponse = submitUriRequest(httpRequestBase, restUri.getHttpHeaders());
-            returnVal = new HttpMethodResult(httpResponse);
-            returnVal.setUri(uri);
+        this.setTokenHeader(httpRequestBase);
+        httpResponse = submitUriRequest(httpRequestBase, restUri.getHttpHeaders());
+        returnVal = new HttpMethodResult(httpResponse);
+        returnVal.setUri(uri);
 
 
-            // this really needs to be changed so that it allows only the
-            // known-good succeess codes. The problem is that it is not so simple
-            // There can actually be many ways to succeed. For example,
-            // SC_INTERNAL_SERVER_ERROR has to be allowed to go through because
-            // we actually want server exceptions to buble up to the client so he
-            // knows something bad happened. indeed, a significant number of our
-            // unit tests verify the _presence_ of such exceptions as a success
-            // criterion.
-            // What we can do universally in this condition is is to verify that
-            // a content type was set. The absence of a content type is a sure sign that the server
-            // barfed in an unpredicted way. So in this case we report the
-            // condition as an exception with the reason code and
-            // so forth. I would also observe that there are several different classes that are formulating
-            // error based on these response codes. That really needs to be enapsulated.
-            if (HttpStatus.SC_NOT_FOUND != returnVal.getResponseCode()&&
-                    HttpStatus.SC_BAD_REQUEST != returnVal.getResponseCode() &&
-                    HttpStatus.SC_METHOD_NOT_ALLOWED != returnVal.getResponseCode() &&
-                    HttpStatus.SC_UNAUTHORIZED != returnVal.getResponseCode() &&
-                    HttpStatus.SC_NOT_ACCEPTABLE != returnVal.getResponseCode() ) {
+        // this really needs to be changed so that it allows only the
+        // known-good succeess codes. The problem is that it is not so simple
+        // There can actually be many ways to succeed. For example,
+        // SC_INTERNAL_SERVER_ERROR has to be allowed to go through because
+        // we actually want server exceptions to buble up to the client so he
+        // knows something bad happened. indeed, a significant number of our
+        // unit tests verify the _presence_ of such exceptions as a success
+        // criterion.
+        // What we can do universally in this condition is is to verify that
+        // a content type was set. The absence of a content type is a sure sign that the server
+        // barfed in an unpredicted way. So in this case we report the
+        // condition as an exception with the reason code and
+        // so forth. I would also observe that there are several different classes that are formulating
+        // error based on these response codes. That really needs to be enapsulated.
+        if (HttpStatus.SC_NOT_FOUND != returnVal.getResponseCode() &&
+                HttpStatus.SC_BAD_REQUEST != returnVal.getResponseCode() &&
+                HttpStatus.SC_METHOD_NOT_ALLOWED != returnVal.getResponseCode() &&
+                HttpStatus.SC_UNAUTHORIZED != returnVal.getResponseCode() &&
+                HttpStatus.SC_NOT_ACCEPTABLE != returnVal.getResponseCode()) {
 
 
-                String contentType = null; // default
-                Header headers[] = httpResponse.getHeaders(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
-                if (headers.length > 0) {
-                    contentType = headers[0].getValue();
-                }
+            String contentType = null; // default
+            Header headers[] = httpResponse.getHeaders(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
+            if (headers.length > 0) {
+                contentType = headers[0].getValue();
+            }
 
+            String resultAsString = EntityUtils.toString(httpResponse.getEntity());
 
-                if( contentType != null ) {
+            if (contentType != null) {
 
-                    inputStream = httpResponse.getEntity().getContent();
+                if (contentType.contains(MediaType.APPLICATION_JSON)) {
 
+                    JsonParser parser = new JsonParser();
+                    JsonObject jsonObject = parser.parse(resultAsString).getAsJsonObject();
+                    returnVal.setJsonPayload(jsonObject);
 
-                    if (contentType.contains(MediaType.APPLICATION_JSON)
-                            || contentType.contains(MediaType.TEXT_PLAIN)) {
+                } else if (contentType.contains(MediaType.TEXT_PLAIN)) {
 
-
-                        String resultAsString = this.extractBody(httpResponse);
-
-                        if (contentType.contains(MediaType.APPLICATION_JSON)) {
-                            JsonParser parser = new JsonParser();
-                            JsonObject jsonObject = parser.parse(resultAsString).getAsJsonObject();
-                            returnVal.setJsonPayload(jsonObject);
-                        } else {
-                            returnVal.setPlainPayload(resultAsString);
-                        }
-
-                    } else if (contentType.contains(MediaType.APPLICATION_OCTET_STREAM)
-                            || contentType.contains(MediaType.MULTIPART_FORM_DATA)) {
-                        outputStream = null;
-                        byte[] buffer = new byte[1024];
-                        String fileName = restUri.getDestinationFqpn();
-                        File outputFile = new File(fileName);
-                        outputFile.createNewFile();
-                        outputStream = new FileOutputStream(outputFile, false);
-                        for (int length; (length = inputStream.read(buffer)) > 0; ) {
-                            outputStream.write(buffer, 0, length);
-                        }
-
-                        returnVal.setFileName(fileName);
+                    returnVal.setPlainPayload(resultAsString);
+                    if (!LineUtils.isNullOrEmpty(restUri.getDestinationFqpn())) {
+                        this.makeDownloadedFile(resultAsString, returnVal, restUri);
                     }
 
-                } else {
-                    String message = "Unable to process response because no content type was set: "
-                            + httpRequestBase.getMethod()
-                            + ": " + uri.toString() + " "
-                            + returnVal.getResponseCode()
-                            + " (" + returnVal.getReasonPhrase() + ")";
-                    LOGGER.error(message);
-                    throw new Exception(message);
+                } else if (contentType.contains(MediaType.APPLICATION_OCTET_STREAM)
+                        || contentType.contains(MediaType.MULTIPART_FORM_DATA)) {
+
+                    if (!LineUtils.isNullOrEmpty(restUri.getDestinationFqpn())) {
+                        this.makeDownloadedFile(resultAsString, returnVal, restUri);
+                    }
                 }
 
             } else {
-                returnVal.setPlainPayload(this.extractBody(httpResponse));
-            }
-        } finally {
-
-            if (inputStream != null) {
-
-                try {
-                    inputStream.close();
-                } catch (Exception e) {
-                    LOGGER.error("Error closing input stream: ", e);
-                }
+                String message = "Unable to process response because no content type was set: "
+                        + httpRequestBase.getMethod()
+                        + ": " + uri.toString() + " "
+                        + returnVal.getResponseCode()
+                        + " (" + returnVal.getReasonPhrase() + ")";
+                LOGGER.error(message);
+                throw new Exception(message);
             }
 
-            if (outputStream != null) {
-
-                try {
-                    outputStream.close();
-                } catch (Exception e) {
-                    LOGGER.error("Error closing output stream: ", e);
-                }
-            }
+        } else {
+            returnVal.setPlainPayload(EntityUtils.toString(httpResponse.getEntity()));
         }
 
         ///returnVal.setJsonPayload(getJsonFromInputStream(httpResponse.getEntity().getContent()));
@@ -392,7 +367,7 @@ public class HttpCore {
     }
 
     public HttpMethodResult upload(RestUri restUri,
-                                 File file) throws Exception {
+                                   File file) throws Exception {
 
         HttpMethodResult returnVal;
 

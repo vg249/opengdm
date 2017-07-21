@@ -86,4 +86,21 @@ public class GenericServerMethodsContextThree {
 
         return this.makeTestFileResponse();
     }
+
+    /***
+     * Note that the only difference between this method and the previous ones the @Produces() value;
+     * The resource name is different however. We are verifying that we can download plain text with the
+     * client framework.
+     * @return
+     * @throws Exception
+     */
+    @GET
+    @Path(GenericTestPaths.FILES_PLAIN_TEXT)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getFilePlainText() throws Exception {
+
+       //return this.makeTestFileResponse();
+        return "Plain text";
+    }
+
 }

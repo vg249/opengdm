@@ -13,5 +13,6 @@ public class GenericTestPaths {
     public static final String RESOURCE_PERSON = "/person";
     public static final String RESOURCE_PERSON_SEARCH = "/person-search";
     public static final String FILES_MARKERS = "/markers";
+    public static final String FILES_PLAIN_TEXT = "/plaintext";
 
 }
