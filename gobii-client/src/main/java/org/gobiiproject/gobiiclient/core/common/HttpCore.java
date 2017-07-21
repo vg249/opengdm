@@ -18,6 +18,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.util.EntityUtils;
 import org.gobiiproject.gobiiapimodel.restresources.common.RestUri;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -203,7 +204,7 @@ public class HttpCore {
         } else {
             // if we got SC_FORBIDDEN, we're expecting a meaingful response body from the server
             if (HttpStatus.SC_FORBIDDEN == returnVal.getResponseCode()) {
-                returnVal.setMessage(this.extractBody(httpResponse));
+                returnVal.setMessage(EntityUtils.toString(httpResponse.getEntity()));
             }
         }
 
@@ -215,8 +216,6 @@ public class HttpCore {
                                     HttpMethodResult httpMethodResult,
                                     RestUri restUri) throws Exception {
 
-
-        if (!LineUtils.isNullOrEmpty(restUri.getDestinationFqpn())) {
 
             InputStream inputStream = null;
             OutputStream outputStream = null;
@@ -278,10 +277,6 @@ public class HttpCore {
 
             }
 
-        } else {
-            throw new Exception("Unable to create output file: the restUri does not have a destination fqpn");
-        }
-
     }
 
     private HttpMethodResult submitHttpMethod(HttpRequestBase httpRequestBase,
@@ -332,26 +327,29 @@ public class HttpCore {
 
             if (contentType != null) {
 
-
                 if (contentType.contains(MediaType.APPLICATION_JSON)
                         || contentType.contains(MediaType.TEXT_PLAIN)) {
 
-
-                    String resultAsString = this.extractBody(httpResponse);
+                    String resultAsString = EntityUtils.toString(httpResponse.getEntity());
 
                     if (contentType.contains(MediaType.APPLICATION_JSON)) {
                         JsonParser parser = new JsonParser();
                         JsonObject jsonObject = parser.parse(resultAsString).getAsJsonObject();
                         returnVal.setJsonPayload(jsonObject);
                     } else {
+
                         returnVal.setPlainPayload(resultAsString);
-                        this.makeDownloadedFile(httpResponse, returnVal, restUri);
+                        if (!LineUtils.isNullOrEmpty(restUri.getDestinationFqpn())) {
+                            this.makeDownloadedFile(httpResponse, returnVal, restUri);
+                        }
                     }
 
                 } else if (contentType.contains(MediaType.APPLICATION_OCTET_STREAM)
                         || contentType.contains(MediaType.MULTIPART_FORM_DATA)) {
 
-                    this.makeDownloadedFile(httpResponse, returnVal, restUri);
+                    if (!LineUtils.isNullOrEmpty(restUri.getDestinationFqpn())) {
+                        this.makeDownloadedFile(httpResponse, returnVal, restUri);
+                    }
                 }
 
             } else {
@@ -365,7 +363,7 @@ public class HttpCore {
             }
 
         } else {
-            returnVal.setPlainPayload(this.extractBody(httpResponse));
+            returnVal.setPlainPayload(EntityUtils.toString(httpResponse.getEntity()));
         }
 
         ///returnVal.setJsonPayload(getJsonFromInputStream(httpResponse.getEntity().getContent()));
