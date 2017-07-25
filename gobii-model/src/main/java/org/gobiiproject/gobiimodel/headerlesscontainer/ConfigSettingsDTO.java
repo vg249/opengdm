@@ -1,8 +1,10 @@
 package org.gobiiproject.gobiimodel.headerlesscontainer;
 
 import org.gobiiproject.gobiimodel.config.ServerConfig;
+import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -32,16 +34,13 @@ public class ConfigSettingsDTO extends DTOBase {
         this.serverConfigs = serverConfigs;
     }
 
-    String defaultCrop;
+    private Map<ServerCapabilityType,Boolean> serverCapabilities = new HashMap<>();
 
-
-    boolean isKdcActive = false;
-
-    public boolean isKdcActive() {
-        return isKdcActive;
+    public Map<ServerCapabilityType, Boolean> getServerCapabilities() {
+        return serverCapabilities;
     }
 
-    public void setKdcActive(boolean kdcActive) {
-        isKdcActive = kdcActive;
+    public void setServerCapabilities(Map<ServerCapabilityType, Boolean> serverCapabilities) {
+        this.serverCapabilities = serverCapabilities;
     }
 }

@@ -21,6 +21,7 @@ import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.headerlesscontainer.PingDTO;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
+import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -28,6 +29,7 @@ import org.junit.Test;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class DtoRequestConfigSettingsPropsTest {
 
@@ -171,7 +173,6 @@ public class DtoRequestConfigSettingsPropsTest {
         }
 
         Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
-
     }
 
     @Test
@@ -215,8 +216,37 @@ public class DtoRequestConfigSettingsPropsTest {
         Assert.assertTrue(pingDTOResponse.getPingResponses().size()
                 >= pingDTORequest.getDbMetaData().size());
 
+
         Assert.assertTrue(GobiiClientContextAuth.deAuthenticate());
 
     } // testInitContextFromConfigSettings()
 
+
+    @Test
+    public void testGetServerCapabilities() throws Exception {
+
+        GobiiClientContext.resetConfiguration();
+        ConfigSettings configSettings = new GobiiTestConfiguration().getConfigSettings();
+        Map<ServerCapabilityType,Boolean> serverCapabilitiesFromConfigFile = configSettings.getServerCapabilities();
+
+        Assert.assertNotNull("There is no KDC configuration to test with",
+                configSettings.getKDCConfig());
+
+        Boolean kdcIsActiveFromLocalFile = configSettings.getKDCConfig().isActive();
+
+
+        Map<ServerCapabilityType,Boolean> serverCapabilitiesFromServer =  getConfigSettingsFromServer()
+                .getPayload()
+                .getData()
+                .get(0)
+                .getServerCapabilities();
+
+        Assert.assertEquals("The KDC setting from the server is not the same as from the local config file",
+                kdcIsActiveFromLocalFile,
+                serverCapabilitiesFromServer.get(ServerCapabilityType.KDC));
+
+        Assert.assertTrue( "The locally derived map and the remote map are not equal",
+                serverCapabilitiesFromServer.equals(serverCapabilitiesFromConfigFile));
+
+    }
 }

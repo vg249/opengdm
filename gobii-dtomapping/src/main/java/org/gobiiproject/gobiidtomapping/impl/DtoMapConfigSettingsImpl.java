@@ -8,6 +8,7 @@ import org.gobiiproject.gobiimodel.config.GobiiException;
 import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +28,7 @@ public class DtoMapConfigSettingsImpl implements DtoMapConfigSettings {
         try {
             ConfigSettings configSettings = new ConfigSettings();
 
-            if( configSettings.getKDCConfig() != null ) {
-                returnVal.setKdcActive(configSettings.getKDCConfig().isActive());
-            }
+             returnVal.setServerCapabilities(configSettings.getServerCapabilities());
 
             for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
