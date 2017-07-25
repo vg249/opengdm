@@ -2,11 +2,14 @@ package org.gobiiproject.gobiimodel.config;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.gobiiproject.gobiimodel.types.GobiiAuthenticationType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +84,30 @@ public class ConfigSettings {
         return returnVal;
 
     } //
+
+
+    /***
+     * Creates a map of server capability settings that are derived from various
+     * configuration values. This map could itself have been stored in the configuration.
+     * However, that would have resulted in reduntant values.
+     * @return
+     */
+    public Map<ServerCapabilityType,Boolean> getServerCapabilities() {
+
+        Map<ServerCapabilityType,Boolean> returnVal = new HashMap<>();
+
+        if( this.configValues.getKDCConfig() != null ) {
+            returnVal.put(ServerCapabilityType.KDC, this.configValues.getKDCConfig().isActive());
+        } else {
+            returnVal.put(ServerCapabilityType.KDC, false);
+        }
+
+        // for now we are not controlling this value though configuraiton
+        returnVal.put(ServerCapabilityType.BRAPI,true);
+
+        return returnVal;
+    }
+
 
     public void commit() throws Exception {
         ConfigValuesFactory.commitConfigValues(this.configValues, this.configFileFqpn);

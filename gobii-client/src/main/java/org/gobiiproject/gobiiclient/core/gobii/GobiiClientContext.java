@@ -15,6 +15,7 @@ import org.gobiiproject.gobiimodel.config.ServerConfig;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ConfigSettingsDTO;
 import org.gobiiproject.gobiiapimodel.types.GobiiControllerType;
 import org.gobiiproject.gobiimodel.types.GobiiFileProcessDir;
+import org.gobiiproject.gobiimodel.types.ServerCapabilityType;
 import org.gobiiproject.gobiimodel.utils.LineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,6 +122,7 @@ public final class GobiiClientContext {
             gobiiClientContext = new GobiiClientContext();
             gobiiClientContext.cropId = cropId;
             gobiiClientContext.fileSystemRoot = configSettings.getFileSystemRoot();
+            gobiiClientContext.serverCapabilities = configSettings.getServerCapabilities();
 
             for (GobiiCropConfig currentGobiiCropConfig : configSettings.getActiveCropConfigs()) {
 
@@ -256,6 +258,7 @@ public final class GobiiClientContext {
 
             ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
             returnVal.serverConfigs = configSettingsDTOResponse.getServerConfigs();
+            this.serverCapabilities = configSettingsDTOResponse.getServerCapabilities();
 
         } else {
             throw new Exception("Unable to get server configuration from "
@@ -277,6 +280,8 @@ public final class GobiiClientContext {
     String fileSystemRoot;
 
     private Map<String, ServerConfig> serverConfigs = new HashMap<>();
+    private Map<ServerCapabilityType, Boolean> serverCapabilities = new HashMap<>();
+
 
 
     String cropId;
@@ -321,6 +326,14 @@ public final class GobiiClientContext {
 
         return returnVal;
 
+    }
+
+    public Map<ServerCapabilityType, Boolean> getServerCapabilities() {
+        return serverCapabilities;
+    }
+
+    public void setServerCapabilities(Map<ServerCapabilityType, Boolean> serverCapabilities) {
+        this.serverCapabilities = serverCapabilities;
     }
 
     public GobiiUriFactory getUriFactory() throws Exception {
