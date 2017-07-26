@@ -288,7 +288,7 @@ public class GobiiExtractor {
 							if (sampleList != null && !sampleList.isEmpty()) {
 								sampleListLocation = " -Y " + createTempFileForMarkerList(extractDir, sampleList,"sampleList");
 							} else if (extract.getListFileName() != null) {
-								sampleListLocation = " -Y " + extractDir + extract.getListFileName();
+								sampleListLocation = " -Y " + extract.getListFileName();
 							}
 
 							GobiiSampleListType type = extract.getGobiiSampleListType();
