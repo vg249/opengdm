@@ -228,8 +228,6 @@ public class GOBIIControllerV1 {
                                 GobiiServiceRequestId.URL_CONFIGSETTINGS),
                         configSettingsDTO);
 
-                returnVal.getPayload().getData().add(configSettingsDTO);
-
             } else {
                 returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.ERROR,
                         GobiiValidationStatusType.NONE,

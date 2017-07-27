@@ -80,7 +80,7 @@ public class DtoRequestConfigSettingsPropsTest {
         Assert.assertTrue(configSettingsDTOResponse.getServerConfigs().size() > 0);
 
 
-        String randomCrop = new ArrayList<String>( configSettingsDTOResponse
+        String randomCrop = new ArrayList<String>(configSettingsDTOResponse
                 .getServerConfigs()
                 .keySet())
                 .get(0);
@@ -227,7 +227,7 @@ public class DtoRequestConfigSettingsPropsTest {
 
         GobiiClientContext.resetConfiguration();
         ConfigSettings configSettings = new GobiiTestConfiguration().getConfigSettings();
-        Map<ServerCapabilityType,Boolean> serverCapabilitiesFromConfigFile = configSettings.getServerCapabilities();
+        Map<ServerCapabilityType, Boolean> serverCapabilitiesFromConfigFile = configSettings.getServerCapabilities();
 
         Assert.assertNotNull("There is no KDC configuration to test with",
                 configSettings.getKDCConfig());
@@ -235,7 +235,7 @@ public class DtoRequestConfigSettingsPropsTest {
         Boolean kdcIsActiveFromLocalFile = configSettings.getKDCConfig().isActive();
 
 
-        Map<ServerCapabilityType,Boolean> serverCapabilitiesFromServer =  getConfigSettingsFromServer()
+        Map<ServerCapabilityType, Boolean> serverCapabilitiesFromServer = getConfigSettingsFromServer()
                 .getPayload()
                 .getData()
                 .get(0)
@@ -245,8 +245,21 @@ public class DtoRequestConfigSettingsPropsTest {
                 kdcIsActiveFromLocalFile,
                 serverCapabilitiesFromServer.get(ServerCapabilityType.KDC));
 
-        Assert.assertTrue( "The locally derived map and the remote map are not equal",
+        Assert.assertTrue("The locally derived map and the remote map are not equal",
                 serverCapabilitiesFromServer.equals(serverCapabilitiesFromConfigFile));
+
+        String initConfigUrl = configSettings.getTestExecConfig().getInitialConfigUrl();
+
+        Map<ServerCapabilityType, Boolean> serverCapabilities = GobiiClientContext.getInstance(initConfigUrl, true)
+                .getServerCapabilities();
+
+        Assert.assertNotNull("There is no KDC capability setting",
+                serverCapabilities.get(ServerCapabilityType.KDC));
+
+        Assert.assertTrue(
+                serverCapabilities.get(ServerCapabilityType.KDC)
+                        .equals(serverCapabilitiesFromConfigFile.get(ServerCapabilityType.KDC)));
+
 
     }
 }
