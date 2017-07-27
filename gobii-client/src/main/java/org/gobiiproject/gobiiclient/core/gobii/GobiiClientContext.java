@@ -258,7 +258,7 @@ public final class GobiiClientContext {
 
             ConfigSettingsDTO configSettingsDTOResponse = resultEnvelope.getPayload().getData().get(0);
             returnVal.serverConfigs = configSettingsDTOResponse.getServerConfigs();
-            this.serverCapabilities = configSettingsDTOResponse.getServerCapabilities();
+            returnVal.serverCapabilities = configSettingsDTOResponse.getServerCapabilities();
 
         } else {
             throw new Exception("Unable to get server configuration from "
