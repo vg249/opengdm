@@ -23,6 +23,10 @@ public class SystemUsers {
         userDetails.put(userReaderName ,
                 new SystemUserDetail(userReaderName , "reader", "READER"));
 
+        String userBackendName = "USER_BACKEND";
+        userDetails.put(userBackendName,
+                new SystemUserDetail(userBackendName , "reader", "READER"));
+
         String userImporterName = "USER_IMPORTER";
         userDetails.put(userImporterName,
                 new SystemUserDetail(userImporterName, "password2", "ADMIN"));

@@ -120,9 +120,12 @@ public final class ClientContext {
                 }
 
                 if (!LineUtils.isNullOrEmpty(userName) && !LineUtils.isNullOrEmpty(password)) {
-                    if (!clientContext.login(userName, password)) {
+                    if (clientContext.login(userName, password)) {
+                        LOGGER.debug("Process user " + userName + " has authenticated");
+                    } else {
                         throw new Exception("Login with auth type "
                                 + gobiiAutoLoginType.toString()
+                                + " (user: " + userName + ") "
                                 + " failed: "
                                 + clientContext.getLoginFailure());
                     }
@@ -365,6 +368,7 @@ public final class ClientContext {
     /**
      * Authenticates the user and sets the token for subseqeunt requests. If the return
      * value is false, getLoginFailure() will indicate the reason that the login() failed.
+     *
      * @param userName
      * @param password
      * @return
