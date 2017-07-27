@@ -141,351 +141,330 @@ public class GobiiExtractor {
 				String extractType="";
 				if (crop == null) crop = divineCrop(instructionFile);
 				try {
-				Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
-				if (!(Files.exists(cropPath) &&
-						Files.isDirectory(cropPath))) {
-					ErrorLogger.logError("Extractor", "Unknown Crop Type: " + crop);
-					return;
-				}
-				CropConfig cropConfig = null;
-				try {
-					cropConfig = configuration.getCropConfig(crop);
-				} catch (Exception e) {
-					logError("Extractor", "Unknown exception getting crop", e);
-					return;
-				}
-				if (cropConfig == null) {
-					logError("Extractor", "Unknown Crop Type: " + crop + " in the Configuration File");
-					return;
-				}
-				if (pathToHDF5Files == null) pathToHDF5Files = cropPath.toString() + "/hdf5/";
-
-
-				Integer mapId;
-				List<Integer> mapIds = inst.getMapsetIds();
-				if (mapIds.isEmpty() || mapIds.get(0) == null) {
-					mapId = null;
-				} else if (mapIds.size() > 1) {
-					logError("Extraction Instruction", "Too many map IDs for extractor. Expected one, recieved " + mapIds.size());
-					mapId = null;
-				} else {
-					mapId = mapIds.get(0);
-				}
-
-				for (GobiiDataSetExtract extract : inst.getDataSetExtracts()) {
-
-					String jobName = getJobName(crop, extract);
-					String jobUser=inst.getContactEmail();
-					pm.setUser(jobUser);
-
-					GobiiExtractFilterType filterType = extract.getGobiiExtractFilterType();
-					if (filterType == null) filterType = GobiiExtractFilterType.WHOLE_DATASET;
-					if (markerListOverrideLocation != null) filterType = GobiiExtractFilterType.BY_MARKER;
-					String extractDir = extract.getExtractDestinationDirectory() + "/";
-					tryExec("rm -f " + extractDir + "*");
-
-					String markerFile = extractDir + "marker.file";
-					String extendedMarkerFile = markerFile + ".ext";
-					String mapsetFile = extractDir + "mapset.file";
-					String markerPosFile = markerFile + ".pos";
-					String sampleFile = extractDir + "sample.file";
-					String projectFile = extractDir + "summary.file";
-					String chrLengthFile = markerFile + ".chr";
-					Path mdePath = FileSystems.getDefault().getPath(extractorScriptPath + "postgres/gobii_mde/gobii_mde.py");
-					if (!mdePath.toFile().isFile()) {
-						ErrorLogger.logDebug("Extractor", mdePath + " does not exist!");
+					Path cropPath = Paths.get(rootDir + "crops/" + crop.toLowerCase());
+					if (!(Files.exists(cropPath) &&
+							Files.isDirectory(cropPath))) {
+						ErrorLogger.logError("Extractor", "Unknown Crop Type: " + crop);
 						return;
 					}
-
-					String gobiiMDE;//Output of switch
-
-					//Common terms
-					String platformTerm, mapIdTerm, markerListLocation, sampleListLocation, verboseTerm;
-					String samplePosFile = "";//Location of sample position indices (see markerList for an example
-					platformTerm = mapIdTerm = markerListLocation = sampleListLocation = verboseTerm = "";
-					List<Integer> platforms = extract.getPlatformIds();
-					if (platforms != null && !platforms.isEmpty()) {
-						platformTerm = " --platformList " + commaFormat(platforms);
+					CropConfig cropConfig = null;
+					try {
+						cropConfig = configuration.getCropConfig(crop);
+					} catch (Exception e) {
+						logError("Extractor", "Unknown exception getting crop", e);
+						return;
 					}
-					if (mapId != null) {
-						mapIdTerm = " -D " + mapId;
+					if (cropConfig == null) {
+						logError("Extractor", "Unknown Crop Type: " + crop + " in the Configuration File");
+						return;
 					}
-					if (verbose) {
-						verboseTerm = " -v";
+					if (pathToHDF5Files == null) pathToHDF5Files = cropPath.toString() + "/hdf5/";
+
+
+					Integer mapId;
+					List<Integer> mapIds = inst.getMapsetIds();
+					if (mapIds.isEmpty() || mapIds.get(0) == null) {
+						mapId = null;
+					} else if (mapIds.size() > 1) {
+						logError("Extraction Instruction", "Too many map IDs for extractor. Expected one, recieved " + mapIds.size());
+						mapId = null;
+					} else {
+						mapId = mapIds.get(0);
 					}
+					String jobName = getJobName(crop, inst.getDataSetExtracts().get(0));
+					String jobUser=inst.getContactEmail();
+					pm.setUser(jobUser);
+					for (GobiiDataSetExtract extract : inst.getDataSetExtracts()) {
+						GobiiExtractFilterType filterType = extract.getGobiiExtractFilterType();
+						if (filterType == null) filterType = GobiiExtractFilterType.WHOLE_DATASET;
+						if (markerListOverrideLocation != null) filterType = GobiiExtractFilterType.BY_MARKER;
+						String extractDir = extract.getExtractDestinationDirectory() + "/";
+						tryExec("rm -f " + extractDir + "*");
 
-					//Dataset can be null
-					Integer datasetId = null;
-					String datasetName = "null";
-					GobiiFilePropNameId datasetPropNameId = extract.getDataSet();
-					if (datasetPropNameId != null) {
-						datasetId = datasetPropNameId.getId();
-						datasetName = datasetPropNameId.getName();
-					}
+						String markerFile = extractDir + "marker.file";
+						String extendedMarkerFile = markerFile + ".ext";
+						String mapsetFile = extractDir + "mapset.file";
+						String markerPosFile = markerFile + ".pos";
+						String sampleFile = extractDir + "sample.file";
+						String projectFile = extractDir + "summary.file";
+						String chrLengthFile = markerFile + ".chr";
+						Path mdePath = FileSystems.getDefault().getPath(extractorScriptPath + "postgres/gobii_mde/gobii_mde.py");
+						if (!mdePath.toFile().isFile()) {
+							ErrorLogger.logDebug("Extractor", mdePath + " does not exist!");
+							return;
+						}
 
-					String sampleListFile=null;
+						String gobiiMDE;//Output of switch
 
-					switch (filterType) {
-						case WHOLE_DATASET:
-							extractType="Extract by Dataset";
-							gobiiMDE = "python " + mdePath +
-									" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
-									" --extractByDataset" +
-									" -m " + markerFile +
-									" -b " + mapsetFile +
-									" -s " + sampleFile +
-									" -p " + projectFile +
-									(mapId == null ? "" : (" -D " + mapId)) +
-									" -d " + datasetId +
-									" -l" +
-									verboseTerm + " ";
+						//Common terms
+						String platformTerm, mapIdTerm, markerListLocation, sampleListLocation, verboseTerm;
+						String samplePosFile = "";//Location of sample position indices (see markerList for an example
+						platformTerm = mapIdTerm = markerListLocation = sampleListLocation = verboseTerm = "";
+						List<Integer> platforms = extract.getPlatformIds();
+						if (platforms != null && !platforms.isEmpty()) {
+							platformTerm = " --platformList " + commaFormat(platforms);
+						}
+						if (mapId != null) {
+							mapIdTerm = " -D " + mapId;
+						}
+						if (verbose) {
+							verboseTerm = " -v";
+						}
+
+						//Dataset can be null
+						Integer datasetId = null;
+						String datasetName = "null";
+						GobiiFilePropNameId datasetPropNameId = extract.getDataSet();
+						if (datasetPropNameId != null) {
+							datasetId = datasetPropNameId.getId();
+							datasetName = datasetPropNameId.getName();
+						}
+
+						String sampleListFile=null;
+
+						switch (filterType) {
+							case WHOLE_DATASET:
+								extractType="Extract by Dataset";
+								gobiiMDE = "python " + mdePath +
+										" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
+										" --extractByDataset" +
+										" -m " + markerFile +
+										" -b " + mapsetFile +
+										" -s " + sampleFile +
+										" -p " + projectFile +
+										(mapId == null ? "" : (" -D " + mapId)) +
+										" -d " + datasetId +
+										" -l" +
+										verboseTerm + " ";
+								break;
+							case BY_MARKER:
+								extractType="Extract by Marker";
+								//List takes extra work, as it might be a <List> or a <File>
+								//Create a file out of the List if non-null, else use the <File>
+								List<String> markerList = extract.getMarkerList();
+								if (markerList != null && !markerList.isEmpty()) {
+									markerListLocation = " -X " + createTempFileForMarkerList(extractDir, markerList);
+								} else if (extract.getListFileName() != null) {
+									markerListLocation = " -X " + extract.getListFileName();
+								}
+								//else if file is null and list is empty or null - > no term
+
+								if (markerListOverrideLocation != null)
+									markerListLocation = " -x " + markerListOverrideLocation;
+
+								//Actually call the thing
+								gobiiMDE = "python " + mdePath +
+										" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
+										" --extractByMarkers" +
+										" -m " + markerFile +
+										" -b " + mapsetFile +
+										" -s " + sampleFile +
+										" -p " + projectFile +
+										markerListLocation +
+										" --datasetType " + extract.getGobiiDatasetType().getId() +
+										mapIdTerm +
+										platformTerm +
+										" -l" +
+										verboseTerm + " ";
+
+
+								//Email Identifiers
+								for (Integer platformId: platforms) {
+									pm.addIdentifier("Platform", (platformId != null ? platformId.toString() : "No Platform info available"), platformId.toString());
+								}
+								pm.addIdentifier("Marker List", markerListLocation, null); //TODO - marker list has an 'on empty,
+								break;
+							case BY_SAMPLE:
+								extractType="Extract by Sample";
+								//List takes extra work, as it might be a <List> or a <File>
+								//Create a file out of the List if non-null, else use the <File>
+								List<String> sampleList = extract.getSampleList();
+								if (sampleList != null && !sampleList.isEmpty()) {
+									sampleListLocation = " -Y " + createTempFileForMarkerList(extractDir, sampleList,"sampleList");
+								} else if (extract.getListFileName() != null) {
+									sampleListLocation = " -Y " + extract.getListFileName();
+								}
+
+								GobiiSampleListType type = extract.getGobiiSampleListType();
+								String sampleListTypeTerm = (type == null) ? "" : " --sampleType " + getNumericType(type);
+
+								String PITerm, projectTerm;
+								PITerm = projectTerm = "";
+								GobiiFilePropNameId PI = extract.getPrincipleInvestigator();
+								GobiiFilePropNameId project = extract.getProject();
+								if (PI != null) {
+									PITerm = " --piId " + PI.getId();
+								}
+								if (project != null) {
+									projectTerm = " --projectId " + project.getId();
+								}
+
+								gobiiMDE = "python " + mdePath +
+										" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
+										" --extractBySamples" +
+										" -m " + markerFile +
+										" -b " + mapsetFile +
+										" -s " + sampleFile +
+										" -p " + projectFile +
+										sampleListLocation +
+										sampleListTypeTerm +
+										PITerm +
+										projectTerm +
+										" --datasetType " + extract.getGobiiDatasetType().getId() +
+										mapIdTerm +
+										platformTerm +
+										" -l" +
+										verboseTerm + " ";
 							break;
-						case BY_MARKER:
-							extractType="Extract by Marker";
-							//List takes extra work, as it might be a <List> or a <File>
-							//Create a file out of the List if non-null, else use the <File>
-							List<String> markerList = extract.getMarkerList();
-							if (markerList != null && !markerList.isEmpty()) {
-								markerListLocation = " -X " + createTempFileForMarkerList(extractDir, markerList);
-							} else if (extract.getListFileName() != null) {
-								markerListLocation = " -X " + extract.getListFileName();
-							}
-							//else if file is null and list is empty or null - > no term
+							default:
+								gobiiMDE = "";
+								ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
+								break;
+						}
+						samplePosFile = sampleFile + ".pos";
 
-							if (markerListOverrideLocation != null)
-								markerListLocation = " -x " + markerListOverrideLocation;
-
-							//Actually call the thing
-							gobiiMDE = "python " + mdePath +
-									" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
-									" --extractByMarkers" +
-									" -m " + markerFile +
-									" -b " + mapsetFile +
-									" -s " + sampleFile +
-									" -p " + projectFile +
-									markerListLocation +
-									" --datasetType " + extract.getGobiiDatasetType().getId() +
-									mapIdTerm +
-									platformTerm +
-									" -l" +
-									verboseTerm + " ";
+						String errorFile = getLogName(extract, cropConfig, datasetId);
+						ErrorLogger.logInfo("Extractor", "Executing MDEs");
+						tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
 
 
-							//Email Identifiers
+						//Email Identifiers part 2
+						pm.addIdentifier("PI",extract.getPrincipleInvestigator());
+						pm.addIdentifier("Project",extract.getProject());
+						pm.addIdentifier("Dataset", extract.getDataSet());
+						pm.addIdentifier("Dataset Type",extract.getGobiiDatasetType());
+						pm.addIdentifier("Mapset", (mapId!=null?mapId.toString():"No Mapset info available"), null);
+						pm.addIdentifier("Export Type", uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase()), null);
+						if(filterType==GobiiExtractFilterType.BY_SAMPLE){
+							pm.addIdentifier("Sample List Type", uppercaseFirstLetter(extract.getGobiiSampleListType().toString().toLowerCase()), null);
+							pm.addIdentifier("Sample List", (sampleListFile==null?"No Sample list provided":sampleListFile), null);
+						}
+						if(filterType==GobiiExtractFilterType.BY_MARKER){
 							for (Integer platformId: platforms) {
 								pm.addIdentifier("Platform", (platformId != null ? platformId.toString() : "No Platform info available"), platformId.toString());
 							}
 							pm.addIdentifier("Marker List", markerListLocation, null); //TODO - marker list has an 'on empty,
-
-
-
-							break;
-						case BY_SAMPLE:
-							extractType="Extract by Sample";
-							//List takes extra work, as it might be a <List> or a <File>
-							//Create a file out of the List if non-null, else use the <File>
-							List<String> sampleList = extract.getSampleList();
-							if (sampleList != null && !sampleList.isEmpty()) {
-								sampleListLocation = " -Y " + createTempFileForMarkerList(extractDir, sampleList,"sampleList");
-							} else if (extract.getListFileName() != null) {
-								sampleListLocation = " -Y " + extract.getListFileName();
-							}
-
-							GobiiSampleListType type = extract.getGobiiSampleListType();
-							String sampleListTypeTerm = (type == null) ? "" : " --sampleType " + getNumericType(type);
-
-							String PITerm, projectTerm;
-							PITerm = projectTerm = "";
-							GobiiFilePropNameId PI = extract.getPrincipleInvestigator();
-							GobiiFilePropNameId project = extract.getProject();
-							if (PI != null) {
-								PITerm = " --piId " + PI.getId();
-							}
-							if (project != null) {
-								projectTerm = " --projectId " + project.getId();
-							}
-
-							gobiiMDE = "python " + mdePath +
-									" -c " + HelperFunctions.getPostgresConnectionString(cropConfig) +
-									" --extractBySamples" +
-									" -m " + markerFile +
-									" -b " + mapsetFile +
-									" -s " + sampleFile +
-									" -p " + projectFile +
-									sampleListLocation +
-									sampleListTypeTerm +
-									PITerm +
-									projectTerm +
-									" --datasetType " + extract.getGobiiDatasetType().getId() +
-									mapIdTerm +
-									platformTerm +
-									" -l" +
-									verboseTerm + " ";
-
-
-							//Email Identifiers
-
-
-
-
-							break;
-						default:
-							gobiiMDE = "";
-							ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
-							break;
-					}
-					samplePosFile = sampleFile + ".pos";
-
-					String errorFile = getLogName(extract, cropConfig, datasetId);
-					ErrorLogger.logInfo("Extractor", "Executing MDEs");
-					tryExec(gobiiMDE, extractDir + "mdeOut", errorFile);
-
-
-					//Email Identifiers part 2
-					pm.addIdentifier("PI",extract.getPrincipleInvestigator());
-					pm.addIdentifier("Project",extract.getProject());
-					pm.addIdentifier("Dataset", extract.getDataSet());
-					pm.addIdentifier("Dataset Type",extract.getGobiiDatasetType());
-					pm.addIdentifier("Mapset", (mapId!=null?mapId.toString():"No Mapset info available"), null);
-					pm.addIdentifier("Export Type", uppercaseFirstLetter(extract.getGobiiFileType().toString().toLowerCase()), null);
-					if(filterType==GobiiExtractFilterType.BY_SAMPLE){
-						pm.addIdentifier("Sample List Type", uppercaseFirstLetter(extract.getGobiiSampleListType().toString().toLowerCase()), null);
-						pm.addIdentifier("Sample List", (sampleListFile==null?"No Sample list provided":sampleListFile), null);
-					}
-					if(filterType==GobiiExtractFilterType.BY_MARKER){
-						for (Integer platformId: platforms) {
-							pm.addIdentifier("Platform", (platformId != null ? platformId.toString() : "No Platform info available"), platformId.toString());
 						}
-						pm.addIdentifier("Marker List", markerListLocation, null); //TODO - marker list has an 'on empty,
-					}
-					pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath());
-					pm.addPath("Output Directory", extractDir);
-					pm.addPath("Error Log", logFile);
-					pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
-					pm.addPath("Sample file", new File(sampleFile).getAbsolutePath());
-					pm.addPath("Marker file", new File(markerFile).getAbsolutePath());
-					if(checkFileExistance(mapsetFile)) {
-						pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
-					}
-
-
-					//HDF5
-					String tempFolder = extractDir;
-					String genoFile = null;
-					if (!extract.getGobiiFileType().equals(GobiiFileType.META_DATA)) {
-						GobiiFileType fileType = extract.getGobiiFileType();
-						boolean markerFast = (fileType == GobiiFileType.HAPMAP);
-
-						switch (filterType) {
-							case WHOLE_DATASET:
-								genoFile = getHDF5Genotype(markerFast, errorFile, datasetId, tempFolder);
-								break;
-							case BY_MARKER:
-								genoFile = getHDF5GenoFromMarkerList(markerFast, errorFile, tempFolder, markerPosFile);
-								break;
-							case BY_SAMPLE:
-								genoFile = getHDF5GenoFromSampleList(markerFast, errorFile, tempFolder, markerPosFile, samplePosFile);
-								break;
-							default:
-								genoFile = null;
-								ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
-								break;
+						pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true);
+						pm.addPath("Output Directory", extractDir,true);
+						pm.addPath("Error Log", logFile,true);
+						pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
+						pm.addPath("Sample file", new File(sampleFile).getAbsolutePath());
+						pm.addPath("Marker file", new File(markerFile).getAbsolutePath());
+						if(checkFileExistance(mapsetFile)) {
+							pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
 						}
 
-						// Adding "/" back to the bi-allelic data made from HDF5
-						if (datasetName != null) {
-							if (datasetName.toLowerCase().equals("ssr_allele_size")) {
-								ErrorLogger.logInfo("Extractor", "Adding slashes to bi allelic data in " + genoFile);
-								if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
-									ErrorLogger.logInfo("Extractor", "Added slashes to all the bi-allelic data in " + genoFile);
-								} else {
-									ErrorLogger.logError("Extractor", "Not added slashes to all the bi-allelic data in " + genoFile);
+
+						//HDF5
+						String tempFolder = extractDir;
+						String genoFile = null;
+						if (!extract.getGobiiFileType().equals(GobiiFileType.META_DATA)) {
+							GobiiFileType fileType = extract.getGobiiFileType();
+							boolean markerFast = (fileType == GobiiFileType.HAPMAP);
+
+							switch (filterType) {
+								case WHOLE_DATASET:
+									genoFile = getHDF5Genotype(markerFast, errorFile, datasetId, tempFolder);
+									break;
+								case BY_MARKER:
+									genoFile = getHDF5GenoFromMarkerList(markerFast, errorFile, tempFolder, markerPosFile);
+									break;
+								case BY_SAMPLE:
+									genoFile = getHDF5GenoFromSampleList(markerFast, errorFile, tempFolder, markerPosFile, samplePosFile);
+									break;
+								default:
+									genoFile = null;
+									ErrorLogger.logError("GobiiExtractor", "UnknownFilterType " + filterType);
+									break;
+							}
+
+							// Adding "/" back to the bi-allelic data made from HDF5
+							if (datasetName != null) {
+								if (datasetName.toLowerCase().equals("ssr_allele_size")) {
+									ErrorLogger.logInfo("Extractor", "Adding slashes to bi allelic data in " + genoFile);
+									if (addSlashesToBiAllelicData(genoFile, extractDir, extract)) {
+										ErrorLogger.logInfo("Extractor", "Added slashes to all the bi-allelic data in " + genoFile);
+									} else {
+										ErrorLogger.logError("Extractor", "Not added slashes to all the bi-allelic data in " + genoFile);
+									}
 								}
 							}
 						}
-					}
-					GobiiFileType fileType=extract.getGobiiFileType();
-					if(checkFileExistance(genoFile) || (fileType == GobiiFileType.META_DATA)) {
-						switch (fileType) {
-							case FLAPJACK:
-								String genoOutFile = extractDir + "Dataset.genotype";
-								String mapOutFile = extractDir + "Dataset.map";
-								pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath());
-								pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath());
-								//Always regenerate requests - may have different parameters
-								boolean extended = HelperFunctions.checkFileExistance(extendedMarkerFile);
-								success &= FlapjackTransformer.generateMapFile(extended?extendedMarkerFile:markerFile, sampleFile, chrLengthFile, tempFolder, mapOutFile, errorFile,extended);
-								if(success){
-									pm.addEntity("Map File", FileSystemInterface.lineCount(mapOutFile)+"");
-								}
-								ErrorLogger.logDebug("GobiiExtractor","Executing FlapJack Genotype file Generation");
-								success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile,errorFile);
-								if(success){
-									pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
-									pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
-								}
-								endTime = System.currentTimeMillis();
-								duration = endTime - startTime;
-								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-								mailInterface.send(pm);
-								break;
-							case HAPMAP:
-								String hapmapOutFile = extractDir + "Dataset.hmp.txt";
-								pm.addPath("Hapmap file", new File(hapmapOutFile).getAbsolutePath());
-								HapmapTransformer hapmapTransformer = new HapmapTransformer();
-								ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
-								success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
-								endTime = System.currentTimeMillis();
-								duration = endTime - startTime;
-								if(success){
-									pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
-									pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
-								}
-								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-								mailInterface.send(pm);
-								break;
-							case META_DATA:
-								endTime = System.currentTimeMillis();
-								duration = endTime - startTime;
-								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-								mailInterface.send(pm);
-								break;
-							default:
-								ErrorLogger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
-								endTime = System.currentTimeMillis();
-								duration = endTime - startTime;
-								pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-								mailInterface.send(pm);
+						GobiiFileType fileType=extract.getGobiiFileType();
+						if(checkFileExistance(genoFile) || (fileType == GobiiFileType.META_DATA)) {
+							switch (fileType) {
+								case FLAPJACK:
+									String genoOutFile = extractDir + "Dataset.genotype";
+									String mapOutFile = extractDir + "Dataset.map";
+									//Always regenerate requests - may have different parameters
+									boolean extended = HelperFunctions.checkFileExistance(extendedMarkerFile);
+									success &= FlapjackTransformer.generateMapFile(extended?extendedMarkerFile:markerFile, sampleFile, chrLengthFile, tempFolder, mapOutFile, errorFile,extended);
+									pm.addPath("FlapJack Map file", new File(mapOutFile).getAbsolutePath());
+									if(success){
+										pm.addEntity("Map File", FileSystemInterface.lineCount(mapOutFile)+"");
+									}
+									ErrorLogger.logDebug("GobiiExtractor","Executing FlapJack Genotype file Generation");
+									success &= FlapjackTransformer.generateGenotypeFile(markerFile, sampleFile, genoFile, tempFolder, genoOutFile,errorFile);
+									pm.addPath("FlapJack Genotype file", new File(genoOutFile).getAbsolutePath());
+									if(success){
+										pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
+										pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
+									}
+									endTime = System.currentTimeMillis();
+									duration = endTime - startTime;
+									break;
+								case HAPMAP:
+									String hapmapOutFile = extractDir + "Dataset.hmp.txt";
+									pm.addPath("Hapmap file", new File(hapmapOutFile).getAbsolutePath());
+									HapmapTransformer hapmapTransformer = new HapmapTransformer();
+									ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
+									success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
+									endTime = System.currentTimeMillis();
+									duration = endTime - startTime;
+									if(success){
+										pm.addEntity("Marker", (FileSystemInterface.lineCount(markerFile)-1)+"");
+										pm.addEntity("Sample", (FileSystemInterface.lineCount(sampleFile)-1)+"");
+									}
+									break;
+								case META_DATA:
+									endTime = System.currentTimeMillis();
+									duration = endTime - startTime;
+									break;
+								default:
+									ErrorLogger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
+									endTime = System.currentTimeMillis();
+									duration = endTime - startTime;
+							}
+						}
+						else{ //We had no genotype file, so we aborted
+							ErrorLogger.logError("GobiiExtractor","No genetic data extracted. Extract failed.");
+							endTime = System.currentTimeMillis();
+							duration = endTime - startTime;
+						}
+
+						//Clean Temporary Files
+						rmIfExist(genoFile);
+						rmIfExist(chrLengthFile);
+						rmIfExist(markerPosFile);
+						rmIfExist(extendedMarkerFile);
+						rmIfExist(extractDir + extract.getListFileName()); //remove the list
+						rmIfExist(extractDir + "mdeOut");//remove mde output file
+
+						ErrorLogger.logDebug("Extractor", "DataSet " + datasetName + " Created");
+
+						if (inst.isQcCheck()) {//QC - Subsection #1 of 1
+							performQC(configuration, inst, crop, datasetId);
 						}
 					}
-					else{ //We had no genotype file, so we aborted
-						ErrorLogger.logError("GobiiExtractor","No genetic data extracted. Extract failed.");
-						endTime = System.currentTimeMillis();
-						duration = endTime - startTime;
-						pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-						mailInterface.send(pm);
-					}
-
-					//Clean Temporary Files
-					rmIfExist(genoFile);
-					rmIfExist(chrLengthFile);
-					rmIfExist(markerPosFile);
-					rmIfExist(extendedMarkerFile);
-					rmIfExist(extractDir + extract.getListFileName()); //remove the list
-					rmIfExist(extractDir + "mdeOut");//remove mde output file
-
-					ErrorLogger.logDebug("Extractor", "DataSet " + datasetName + " Created");
-
-					if (inst.isQcCheck()) {//QC - Subsection #1 of 1
-						performQC(configuration, inst, crop, datasetId);
-					}
-				}
-				HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
+					HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.EXTRACTOR_DONE));
+					//Only send body when whole extract is done
+					pm.setBody(jobName,extractType,duration,ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+					mailInterface.send(pm);
 			}catch(Exception e){
 				//TODO - make better email here
 					ErrorLogger.logError("GobiiExtractor","Uncaught fatal error found in program. Contact a programmer.",e);
 					HelperFunctions.sendEmail("Hi.\n\n"+
-
 							"I'm sorry, but your extract failed for reasons beyond your control.\n"+
 							"I'm going to dump a message of the error here so a programmer can determine why.\n\n\n"+
 							org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(e), null, false, null, configuration, inst.getContactEmail());

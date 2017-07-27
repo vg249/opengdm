@@ -145,11 +145,24 @@ public class ProcessMessage extends MailMessage {
      * @param path filepath
      * @return this object
      */
-    public ProcessMessage addPath(String type,String path){
+    public ProcessMessage addPath(String type,String path,boolean alwaysShow){
     	if(new File(path).length() > 1){
-//    		paths.add(new HTMLTableEntity(type,path,sizeToReadable(new File(path).length())));
+   		paths.add(new HTMLTableEntity(type,path,sizeToReadable(new File(path).length())));
     	}
+    	else if(alwaysShow){
+    	    paths.add(new HTMLTableEntity(type,path,""));
+        }
         return this;
+    }
+
+    /**
+     * As ProcessMessage(type,path,False)
+     * @param type
+     * @param path
+     * @return
+     */
+    public ProcessMessage addPath(String type, String path){
+        return addPath(type,path,false);
     }
 
     /***
