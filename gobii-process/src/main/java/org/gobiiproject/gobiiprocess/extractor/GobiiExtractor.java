@@ -396,9 +396,9 @@ public class GobiiExtractor {
 						}
 						pm.addIdentifier("Marker List", markerListLocation, null); //TODO - marker list has an 'on empty,
 					}
-					pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath());
-					pm.addPath("Output Directory", extractDir);
-					pm.addPath("Error Log", logFile);
+					pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true);
+					pm.addPath("Output Directory", extractDir,true);
+					pm.addPath("Error Log", logFile,true);
 					pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
 					pm.addPath("Sample file", new File(sampleFile).getAbsolutePath());
 					pm.addPath("Marker file", new File(markerFile).getAbsolutePath());
@@ -488,7 +488,6 @@ public class GobiiExtractor {
                     } else { //We had no genotype file, so we aborted
                         ErrorLogger.logError("GobiiExtractor", "No genetic data extracted. Extract failed.");
                         pm.setBody(jobReadableIdentifier, extractType, SimpleTimer.stop("Extract"), ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
-                        mailInterface.send(pm);
 						jobStatus.setError("Unsuccessful Data Extract");
                     }
 
