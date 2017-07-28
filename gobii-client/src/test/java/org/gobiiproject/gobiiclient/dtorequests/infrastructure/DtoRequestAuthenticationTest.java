@@ -370,6 +370,19 @@ public class DtoRequestAuthenticationTest {
                                 GobiiAutoLoginType.USER_RUN_AS);
 
 
+                // since getInstance() did not throw, we _should_ be able to assume that we're fully
+                // authenticated now. But just to be sure, let's do another simple request (against
+                // /contacts because that's the URI we've got handy) and verify that we can hit
+                // resources that require authentication
+                PayloadEnvelope<ContactDTO> resultEnvelopePostRunAsAuthentication = gobiiEnvelopeRestResourceGet
+                        .get(ContactDTO.class);
+                Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopePostRunAsAuthentication.getHeader()));
+
+                ContactDTO contactDTOPostRunAsAuthentication = resultEnvelope.getPayload().getData().get(0);
+                Assert.assertTrue("The contact retrieved post run as authenticaiton is not the same as the one before",
+                        contactDTOPostRunAsAuthentication.getUserName().equals(knownRunAsBackendUserName));
+
+
 
             }
 
