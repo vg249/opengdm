@@ -13,7 +13,10 @@ import org.gobiiproject.gobiiclient.core.common.ClientContext;
 import org.gobiiproject.gobiiclient.core.gobii.GobiiEnvelopeRestResource;
 import org.gobiiproject.gobiiclient.core.common.Authenticator;
 import org.gobiiproject.gobiiclient.core.common.TestConfiguration;
+import org.gobiiproject.gobiiclient.dtorequests.Helpers.GlobalPkColl;
 import org.gobiiproject.gobiiclient.dtorequests.Helpers.TestUtils;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestContactTest;
+import org.gobiiproject.gobiiclient.dtorequests.dbops.crud.DtoCrudRequestOrganizationTest;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
 import org.gobiiproject.gobiimodel.config.CropConfig;
 import org.gobiiproject.gobiimodel.headerlesscontainer.AnalysisDTO;
@@ -21,6 +24,7 @@ import org.gobiiproject.gobiiapimodel.types.ControllerType;
 import org.gobiiproject.gobiiapimodel.types.ServiceRequestId;
 import org.gobiiproject.gobiimodel.headerlesscontainer.ContactDTO;
 import org.gobiiproject.gobiimodel.types.GobiiAutoLoginType;
+import org.gobiiproject.gobiimodel.types.GobiiEntityNameType;
 import org.gobiiproject.gobiimodel.types.GobiiProcessType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -276,26 +280,114 @@ public class DtoRequestAuthenticationTest {
 
             GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceForPut = new GobiiEnvelopeRestResource<>(restUriContactUpdate);
             PayloadEnvelope<ContactDTO> payloadEnvelopeForPut = new PayloadEnvelope<>(contactDTOFromGet, GobiiProcessType.UPDATE);
-            PayloadEnvelope<ContactDTO> contactDTOPayloadEnvelope =  gobiiEnvelopeRestResourceForPut.put(ContactDTO.class,payloadEnvelopeForPut);
+            PayloadEnvelope<ContactDTO> contactDTOPayloadEnvelope = gobiiEnvelopeRestResourceForPut.put(ContactDTO.class, payloadEnvelopeForPut);
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOPayloadEnvelope.getHeader()));
 
 
             // now test that we get the correct borken response
-            ClientContext newClientContext = ClientContext.getInstance(serviceUrl,true);
+            ClientContext newClientContext = ClientContext.getInstance(serviceUrl, true);
 
             String testUserName = testConfiguration.getConfigSettings().getTestExecConfig().getLdapUserForUnitTest();
             String testPassword = testConfiguration.getConfigSettings().getTestExecConfig().getLdapPasswordForUnitTest();
-            Assert.assertFalse("Login should have failed", newClientContext.login(testUserName,testPassword));
+            Assert.assertFalse("Login should have failed", newClientContext.login(testUserName, testPassword));
             Assert.assertTrue("Message does not contain expected error: " + newClientContext.getLoginFailure(),
                     newClientContext.getLoginFailure().toLowerCase().contains("missing contact info for user"));
 
 
             // restore user name
             contactDTOFromGet.setUserName(testUserName);
-            PayloadEnvelope<ContactDTO> contactDTOPayloadEnvelopeRestore =  gobiiEnvelopeRestResourceForPut.put(ContactDTO.class,payloadEnvelopeForPut);
+            PayloadEnvelope<ContactDTO> contactDTOPayloadEnvelopeRestore = gobiiEnvelopeRestResourceForPut.put(ContactDTO.class, payloadEnvelopeForPut);
             Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(contactDTOPayloadEnvelopeRestore.getHeader()));
 
         }
+    }
+
+    @Test
+    public void testLoginWithRunAsUser() throws Exception {
+
+        String knownRunAsBackendUserName = "USER_BACKEND";
+        String knownRunAsBackendPassword = "reader";
+
+        // We already know from TestGobiiConfig::testSetAuthenticationlServer() that
+        // the backend user and bind user are correctly written to and read from the
+        // config file as a distinct
+
+        TestConfiguration testConfiguration = new TestConfiguration();
+        ConfigSettings configSettings = testConfiguration.getConfigSettings();
+
+        // If the test configuration is not set up for this test, we're just going to
+        // do nothing -- for now this test is really for bench testing more than for
+        // integration testing
+        if (!configSettings.getLdapBindUser()
+                .equals(configSettings.getLdapUserForBackendProcs())) {
+
+            if (configSettings.getLdapUserForBackendProcs().equals(knownRunAsBackendUserName) &&
+                    configSettings.getLdapPasswordForBackendProcs().equals(knownRunAsBackendPassword)) {
+
+                //STEP ONE -- create a contact with the backend user user name
+                Assert.assertTrue(Authenticator.authenticate());
+
+                Integer contactId = (new GlobalPkColl<DtoCrudRequestContactTest>()).getAPkVal(DtoCrudRequestContactTest.class,
+                        GobiiEntityNameType.CONTACTS);
+
+                RestUri restUriContact = ClientContext.getInstance(null, false)
+                        .getUriFactory()
+                        .resourceByUriIdParam(ServiceRequestId.URL_CONTACTS);
+                restUriContact.setParamValue("id", contactId.toString());
+                GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceGet = new GobiiEnvelopeRestResource<>(restUriContact);
+                PayloadEnvelope<ContactDTO> resultEnvelope = gobiiEnvelopeRestResourceGet
+                        .get(ContactDTO.class);
+                Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelope.getHeader()));
+
+                ContactDTO contactDTO = resultEnvelope.getPayload().getData().get(0);
+
+                contactDTO.setUserName(knownRunAsBackendUserName);
+
+                GobiiEnvelopeRestResource<ContactDTO> gobiiEnvelopeRestResourceContactById = new GobiiEnvelopeRestResource<>(restUriContact);
+                PayloadEnvelope<ContactDTO> gobiiEnvelopeRestResourceUpdate = gobiiEnvelopeRestResourceContactById
+                        .put(ContactDTO.class, resultEnvelope);
+
+                Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(gobiiEnvelopeRestResourceUpdate.getHeader()));
+
+
+                // VERIFY THAT RAW LOGIN NOW WORKS
+                boolean loggedIn = ClientContext.getInstance(null, false).login(knownRunAsBackendUserName,
+                        knownRunAsBackendPassword);
+
+                Assert.assertTrue("Login with background user did not succceed: "
+                                + ClientContext.getInstance(null, false).getLoginFailure(),
+                        loggedIn);
+
+                // reset configuration for RUN AS user
+                // via corp ID, this will be the same crop db in which we added the background user to the
+                // contacts table
+                // this should throw if the login failed
+                ClientContext.resetConfiguration();
+                String testCropId = testConfiguration.getConfigSettings().getTestExecConfig().getTestCrop();
+                ClientContext clientContext =
+                        ClientContext.getInstance(configSettings,
+                                testCropId,
+                                GobiiAutoLoginType.USER_RUN_AS);
+
+
+                // since getInstance() did not throw, we _should_ be able to assume that we're fully
+                // authenticated now. But just to be sure, let's do another simple request (against
+                // /contacts because that's the URI we've got handy) and verify that we can hit
+                // resources that require authentication
+                PayloadEnvelope<ContactDTO> resultEnvelopePostRunAsAuthentication = gobiiEnvelopeRestResourceGet
+                        .get(ContactDTO.class);
+                Assert.assertFalse(TestUtils.checkAndPrintHeaderMessages(resultEnvelopePostRunAsAuthentication.getHeader()));
+
+                ContactDTO contactDTOPostRunAsAuthentication = resultEnvelope.getPayload().getData().get(0);
+                Assert.assertTrue("The contact retrieved post run as authenticaiton is not the same as the one before",
+                        contactDTOPostRunAsAuthentication.getUserName().equals(knownRunAsBackendUserName));
+
+
+
+            }
+
+        }
+
     }
 
 }
