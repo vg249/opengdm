@@ -347,11 +347,11 @@ public class GobiiExtractor {
 							pm.addIdentifier("Marker List", markerListLocation, null); //TODO - marker list has an 'on empty,
 						}
 						pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true);
-						pm.addPath("Output Directory", extractDir,true);
+						pm.addFolderPath("Output Directory", extractDir);
 						pm.addPath("Error Log", logFile,true);
-						pm.addPath("Summary file", new File(projectFile).getAbsolutePath());
-						pm.addPath("Sample file", new File(sampleFile).getAbsolutePath());
-						pm.addPath("Marker file", new File(markerFile).getAbsolutePath());
+						pm.addPath("Summary File", new File(projectFile).getAbsolutePath());
+						pm.addPath("Sample File", new File(sampleFile).getAbsolutePath());
+						pm.addPath("Marker File", new File(markerFile).getAbsolutePath());
 						if(checkFileExistance(mapsetFile)) {
 							pm.addPath("Mapset File", new File(mapsetFile).getAbsolutePath());
 						}
@@ -417,10 +417,10 @@ public class GobiiExtractor {
 									break;
 								case HAPMAP:
 									String hapmapOutFile = extractDir + "Dataset.hmp.txt";
-									pm.addPath("Hapmap file", new File(hapmapOutFile).getAbsolutePath());
 									HapmapTransformer hapmapTransformer = new HapmapTransformer();
 									ErrorLogger.logDebug("GobiiExtractor", "Executing Hapmap Generation");
 									success &= hapmapTransformer.generateFile(markerFile, sampleFile, extendedMarkerFile, genoFile, hapmapOutFile, errorFile);
+									pm.addPath("Hapmap File", new File(hapmapOutFile).getAbsolutePath());
 									endTime = System.currentTimeMillis();
 									duration = endTime - startTime;
 									if(success){

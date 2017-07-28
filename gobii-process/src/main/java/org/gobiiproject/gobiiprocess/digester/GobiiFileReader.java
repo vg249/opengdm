@@ -137,7 +137,7 @@ public class GobiiFileReader {
 		}
 
 		//Error logs go to a file based on crop (for human readability) and
-		pm.addPath("instruction file",new File(instructionFile).getAbsolutePath(),true);
+		pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true);
 		startTime = System.currentTimeMillis();
 		ErrorLogger.logInfo("Digester","Beginning read of "+instructionFile);
 		List<GobiiLoaderInstruction> list= parseInstructionFile(instructionFile);
@@ -161,8 +161,8 @@ public class GobiiFileReader {
 		if(!dstDir.isDirectory()){ //Note: if dstDir is a non-existant
 			dstDir=new File(dstFilePath.substring(0, dstFilePath.lastIndexOf("/")));
 		}
-		pm.addPath("Destination Directory",dstDir.getAbsolutePath(),true);//Convert to directory
-		pm.addPath("Input Directory",zero.getGobiiFile().getSource(),true);
+		pm.addFolderPath("Destination Directory",dstDir.getAbsolutePath());//Convert to directory
+		pm.addFolderPath("Input Directory",zero.getGobiiFile().getSource());
 
 		String crop=zero.getGobiiCropType();
 		if(crop==null) crop=divineCrop(instructionFile);
@@ -440,7 +440,7 @@ public class GobiiFileReader {
 				//HDF-5
 				//Usage: %s <datasize> <input file> <output HDF5 file
 				String loadHDF5=pathToHDF5+"loadHDF5";
-				pm.addPath("Matrix Directory",pathToHDF5Files,true);
+				pm.addFolderPath("Matrix Directory",pathToHDF5Files);
 				String HDF5File=pathToHDF5Files+"DS_"+dataSetId+".h5";
 				int size=8;
 				switch(dst.toUpperCase()){

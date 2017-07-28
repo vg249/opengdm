@@ -137,15 +137,18 @@ public class ProcessMessage extends MailMessage {
         if(entity==null)return this;//Don't add a null ID to the table
         return addEntity(type,entity.getName()+"");
     }
-    
-    
-    /**
-     * Add item to the filepaths entry
-     * @param type type of file
-     * @param path filepath
-     * @return this object
-     */
-    public ProcessMessage addPath(String type,String path,boolean alwaysShow){
+
+    public ProcessMessage addFolderPath(String type,String path) {
+        paths.add(new HTMLTableEntity(type,path,""));
+        return this;
+    }
+        /**
+         * Add item to the filepaths entry
+         * @param type type of file
+         * @param path filepath
+         * @return this object
+         */
+    public ProcessMessage addPath(String type,String path, boolean alwaysShow){
     	if(new File(path).length() > 1){
    		paths.add(new HTMLTableEntity(type,path,sizeToReadable(new File(path).length())));
     	}
