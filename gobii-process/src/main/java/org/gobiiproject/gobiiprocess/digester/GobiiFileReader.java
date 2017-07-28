@@ -144,8 +144,8 @@ public class GobiiFileReader {
             instructionFile = args[0];
         }
 
-        //Error logs go to a file based on crop (for human readability) and
-        pm.addPath("instruction file", new File(instructionFile).getAbsolutePath(),true);
+		//Error logs go to a file based on crop (for human readability) and
+		pm.addPath("Instruction File",new File(instructionFile).getAbsolutePath(),true);
         ErrorLogger.logInfo("Digester", "Beginning read of " + instructionFile);
         List<GobiiLoaderInstruction> list = parseInstructionFile(instructionFile);
 		if(list==null || list.isEmpty()){
@@ -183,8 +183,8 @@ public class GobiiFileReader {
 		if(!dstDir.isDirectory()){ //Note: if dstDir is a non-existant
 			dstDir=new File(dstFilePath.substring(0, dstFilePath.lastIndexOf("/")));
 		}
-		pm.addPath("destination directory",dstDir.getAbsolutePath(),true);//Convert to directory
-		pm.addPath("input directory",zero.getGobiiFile().getSource(),true);
+		pm.addFolderPath("Destination Directory",dstDir.getAbsolutePath());//Convert to directory
+		pm.addFolderPath("Input Directory",zero.getGobiiFile().getSource());
 
 		Path cropPath = Paths.get(rootDir+"crops/"+crop.toLowerCase());
 		if (!(Files.exists(cropPath) &&
