@@ -119,6 +119,7 @@ public class GobiiFileReader {
 		ConfigSettings configuration=null;
 		try {
 			configuration = new ConfigSettings(propertiesFile);
+			ErrorLogger.logDebug("Config file path","Opened config settings at " + propertiesFile);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
