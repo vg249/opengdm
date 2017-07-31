@@ -575,10 +575,9 @@ public class GobiiExtractor {
 					configuration.getKDCConfig().getContextPath(),
 					configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_START));
 			restUriGetQCJobID
-					.addQueryParam("datasetId")
-					.setParamValue("datasetId", String.valueOf(datasetId))
-					.addQueryParam("directory")
-					.setParamValue("directory", extractDir);
+					.addQueryParam("datasetId", String.valueOf(datasetId))
+					.addQueryParam("directory", extractDir)
+					.addQueryParam("forcerestart", "true");
 			HttpMethodResult httpMethodResult = genericClientContext
 					.get(restUriGetQCJobID);
 			if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
