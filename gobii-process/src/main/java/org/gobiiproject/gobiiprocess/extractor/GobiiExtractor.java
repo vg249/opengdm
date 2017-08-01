@@ -731,8 +731,7 @@ public class GobiiExtractor {
 								configuration.getKDCConfig().getContextPath(),
 								"qcPurge");
 						restUriGetPurge
-								.addQueryParam("jobid")
-								.setParamValue("jobid", String.valueOf(qcJobID));
+								.addQueryParam("jobid", String.valueOf(qcJobID));
 
 						httpMethodResult = genericClientContext
 								.get(restUriGetPurge);
