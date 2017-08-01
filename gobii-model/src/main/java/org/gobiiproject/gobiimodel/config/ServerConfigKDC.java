@@ -15,7 +15,8 @@ public class ServerConfigKDC extends ServerBase {
     public enum KDCResource {
         QC_START,
         QC_STATUS_,
-        QC_DOWNLOAD
+        QC_DOWNLOAD,
+        QC_PURGE
     }
 
     @ElementMap(required = false)
