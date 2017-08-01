@@ -68,6 +68,7 @@ public class GobiiFileReader {
 	private static UriFactory uriFactory;
 	//To calculate RunTime of Extraction
 	private static long startTime, endTime, duration;
+	private static boolean updatePostgres = false;
 
 	/**
 	 * Main class of Digester Jar file. Uses command line parameters to determine instruction file, and runs whole program.
@@ -84,6 +85,7 @@ public class GobiiFileReader {
 				.addOption("e", "errlog", true, "Error log override location")
          		.addOption("r", "rootDir", true, "Fully qualified path to gobii root directory")
          		.addOption("c","config",true,"Fully qualified path to gobii configuration file")
+				.addOption("up","updatePostgres",false,"Update Postgresql when done with a dataset load")
          		.addOption("h", "hdfFiles", true, "Fully qualified path to hdf files");
 		LoaderGlobalConfigurations.addOptions(o);
 		ProcessMessage pm = new ProcessMessage();
@@ -95,6 +97,7 @@ public class GobiiFileReader {
             if(cli.hasOption("errLog")) errorLogOverride = cli.getOptionValue("errLog");
             if(cli.hasOption("config")) propertiesFile = cli.getOptionValue("config");
             if(cli.hasOption("hdfFiles")) pathToHDF5Files = cli.getOptionValue("hdfFiles");
+			if(cli.hasOption("updatePostgres")) updatePostgres = true;
 			LoaderGlobalConfigurations.setFromFlags(cli);
             args=cli.getArgs();//Remaining args passed through
                 
@@ -694,6 +697,11 @@ public class GobiiFileReader {
 	 * @param hdfFileName Name of the HDF5 file for this dataset (Note, these should be obvious)
 	 */
 	public static void updateValues(ConfigSettings config,String cropName, Integer dataSetId,String monetTableName,String hdfFileName) {
+		//TODO: Error being seen at CG centers related to authentication needs to be silenced. Asked to disable process requiring authentication
+		//Process is now disabled unless --updatePostgres flag is enabled. PLEASE DON"T MAKE THIS PERMANENT. Remember to remove the flag as well.
+		if(!updatePostgres)return;
+
+
 		try{
 			// set up authentication and so forth
 			// you'll need to get the current from the instruction file
