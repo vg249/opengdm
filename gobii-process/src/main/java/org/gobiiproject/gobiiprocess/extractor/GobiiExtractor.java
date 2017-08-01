@@ -729,7 +729,7 @@ public class GobiiExtractor {
 						ErrorLogger.logInfo("QC", "Calling QC Purge");
 						RestUri restUriGetPurge = new RestUri("/",
 								configuration.getKDCConfig().getContextPath(),
-								configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_PURGE));
+								"qcPurge");
 						restUriGetPurge
 								.addQueryParam("jobid")
 								.setParamValue("jobid", String.valueOf(qcJobID));
