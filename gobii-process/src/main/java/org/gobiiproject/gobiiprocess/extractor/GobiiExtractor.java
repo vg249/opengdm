@@ -1,5 +1,4 @@
-package org.gobiiproject.gobiiprocess.extractor;
-
+//package org.gobiiproject.gobiiprocess.extractor;
 import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -33,6 +32,7 @@ import org.gobiiproject.gobiimodel.utils.email.MailInterface;
 import org.gobiiproject.gobiimodel.utils.email.ProcessMessage;
 import org.gobiiproject.gobiimodel.utils.error.ErrorLogger;
 import org.gobiiproject.gobiiprocess.HDF5Interface;
+import org.gobiiproject.gobiiprocess.extractor.ExtractorGlobalConfigs;
 import org.gobiiproject.gobiiprocess.extractor.flapjack.FlapjackTransformer;
 import org.gobiiproject.gobiiprocess.extractor.hapmap.HapmapTransformer;
 import org.gobiiproject.gobiimodel.config.ConfigSettings;
@@ -729,7 +729,7 @@ public class GobiiExtractor {
 						ErrorLogger.logInfo("QC", "Calling QC Purge");
 						RestUri restUriGetPurge = new RestUri("/",
 								configuration.getKDCConfig().getContextPath(),
-								"qcPurge");
+                                configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_PURGE));
 						restUriGetPurge
 								.addQueryParam("jobid", String.valueOf(qcJobID));
 

@@ -600,6 +600,7 @@ public class TestGobiiConfig {
         String resourceQCStart = "qcStart";
         String resourceQCStatus = "qcStatus";
         String resourceQCDownload = "qcDownload";
+        String resourceQCPurge = "qcPurge";
         Integer statusCheckIntervalSecs = 60;
         Integer statusWaitThresholdMinutes = 20;
         boolean active = false;
@@ -619,6 +620,8 @@ public class TestGobiiConfig {
                 + resourceQCStatus
                 + " -krscDLD "
                 + resourceQCDownload
+                + " -krscPRG "
+                + resourceQCPurge
                 + " -kstTRS "
                 + statusCheckIntervalSecs
                 + " -kstTRM "
@@ -653,6 +656,9 @@ public class TestGobiiConfig {
 
         Assert.assertTrue("The download resource does not not match",
                 configSettings.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_DOWNLOAD).equals(resourceQCDownload));
+
+        Assert.assertTrue("The purge resource does not not match",
+                configSettings.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_PURGE).equals(resourceQCPurge));
 
         Assert.assertTrue("The status check interval does not match",
                 configSettings.getKDCConfig().getStatusCheckIntervalSecs().equals(statusCheckIntervalSecs));

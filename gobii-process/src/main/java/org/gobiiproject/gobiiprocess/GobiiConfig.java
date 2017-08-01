@@ -102,6 +102,7 @@ public class GobiiConfig {
     private static String SVR_KDC_RESOURCE_START = "krscSTA";
     private static String SVR_KDC_RESOURCE_STATUS = "krscSTT";
     private static String SVR_KDC_RESOURCE_DOWNLOAD = "krscDLD";
+    private static String SVR_KDC_RESOURCE_PURGE = "krscPRG";
     private static String SVR_KDC_STATUS_CHECK_INTERVAL_SECS = "kstTRS";
     private static String SVR_KDC_STATUS_CHECK_MAX_TIME_MINS = "kstTRM";
     private static String SVR_KDC_STATUS_ACTIVE = "kA";
@@ -274,6 +275,7 @@ public class GobiiConfig {
             setOption(options, SVR_KDC_RESOURCE_START, true, "KDC qcStart resource path", "qcStart resource");
             setOption(options, SVR_KDC_RESOURCE_STATUS, true, "KDC qcStatus resource path", "qcStatus resource");
             setOption(options, SVR_KDC_RESOURCE_DOWNLOAD, true, "KDC qcDownload resource path", "qcDownload resource");
+            setOption(options, SVR_KDC_RESOURCE_PURGE, true, "KDC qcPurge resource path", "qcPurge resource");
             setOption(options, SVR_KDC_STATUS_CHECK_INTERVAL_SECS, true, "Status check interval for KDC jobs in seconds", "KDC status check interval");
             setOption(options, SVR_KDC_STATUS_CHECK_MAX_TIME_MINS, true, "Total time to wait for KDC job completion in minutes", "KDC job wait threshold");
             setOption(options, SVR_KDC_STATUS_ACTIVE, true, "Mark KDC server inactive 'false'", "KDC active");
@@ -604,6 +606,7 @@ public class GobiiConfig {
             String resourceQCStart;
             String resourceQCStatus;
             String resourceQCDownload;
+            String resourceQCPurge;
             Integer statusCheckIntervalSecs;
             Integer statusWaitThresholdMinutes;
             boolean active;
@@ -649,6 +652,13 @@ public class GobiiConfig {
                 argsSet.add(SVR_KDC_RESOURCE_DOWNLOAD);
                 valsSet.add(resourceQCDownload);
                 configSettings.getKDCConfig().addPath(ServerConfigKDC.KDCResource.QC_DOWNLOAD, resourceQCDownload);
+            }
+
+            if (commandLine.hasOption(SVR_KDC_RESOURCE_PURGE)) {
+                resourceQCPurge = commandLine.getOptionValue(SVR_KDC_RESOURCE_PURGE);
+                argsSet.add(SVR_KDC_RESOURCE_PURGE);
+                valsSet.add(resourceQCPurge);
+                configSettings.getKDCConfig().addPath(ServerConfigKDC.KDCResource.QC_PURGE, resourceQCPurge);
             }
 
             if (commandLine.hasOption(SVR_KDC_STATUS_CHECK_INTERVAL_SECS)) {
