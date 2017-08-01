@@ -647,15 +647,17 @@ public class GobiiExtractor {
 							status = jsonPayload.get("status").getAsString();
 						} while ((status.equals("NEW")) || (status.equals("RUNNING")));
 
-						Integer start = null;
-						Integer end = null;
-						Integer qcDuration = null;
 						ProcessMessage qcStatusPm = new ProcessMessage();
 						qcStatusPm.setUser(inst.getContactEmail());
 						qcStartPm.setSubject(new StringBuilder("QC Job #").append(qcJobID).append(" status").toString());
 						qcStatusPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
 						qcStatusPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
-						if ((status.equals("COMPLETED")) || (status.equals("FAILED"))) {
+
+                        Integer start = jsonPayload.get("start").getAsInt();
+                        Integer end = jsonPayload.get("end").getAsInt();
+                        Integer qcDuration = end - start;
+
+                        if ((status.equals("COMPLETED")) || (status.equals("FAILED"))) {
 							// If the extract directory does not exist or is not writable, it always makes the last qcDownload method crashing and
 							// thus this class crashing
 							if (new File(extractDir).exists()) {
@@ -712,25 +714,20 @@ public class GobiiExtractor {
 								}
 							}
 
-							start = jsonPayload.get("start").getAsInt();
-							end = jsonPayload.get("end").getAsInt();
-							qcDuration = end - start;
 							if (status.equals("COMPLETED")) {
 								ErrorLogger.logError("QC", new StringBuilder("The QC job #").append(qcJobID).append(" was completed").toString());
-								qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, qcDuration, ErrorLogger.getFirstErrorReason(), true, ErrorLogger.getAllErrorStringsHTML());
 							}
 							else {
 								if (status.equals("FAILED")) {
 									ErrorLogger.logError("QC", new StringBuilder("The QC job #").append(qcJobID).append(" was failed").toString());
-									qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, qcDuration, ErrorLogger.getFirstErrorReason(), false, ErrorLogger.getAllErrorStringsHTML());
 								}
 							}
+
+							if( qcDuration != null ) {
+                                qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, qcDuration, ErrorLogger.getFirstErrorReason(), false, ErrorLogger.getAllErrorStringsHTML());
+                            }
 						}
 						else {
-
-							start = jsonPayload.get("start").getAsInt();
-							end = jsonPayload.get("end").getAsInt();
-							qcDuration = end - start;
 
 							if ((status.equals("CANCELLED")) || (status.equals("UNKNOWN"))) {
 								ErrorLogger.logError("QC", new StringBuilder("The QC job #").append(qcJobID)
