@@ -163,7 +163,9 @@ public final class GobiiClientContext {
                 }
 
                 if (!LineUtils.isNullOrEmpty(userName) && !LineUtils.isNullOrEmpty(password)) {
-                    if (!gobiiClientContext.login(cropId, userName, password)) {
+                    if (gobiiClientContext.login(cropId, userName, password)) {
+                        LOGGER.debug("Process user " + userName + " has authenticated");
+                    } else {
                         throw new Exception("Login with auth type "
                                 + gobiiAutoLoginType.toString()
                                 + " failed: "
@@ -281,7 +283,6 @@ public final class GobiiClientContext {
 
     private Map<String, ServerConfig> serverConfigs = new HashMap<>();
     private Map<ServerCapabilityType, Boolean> serverCapabilities = new HashMap<>();
-
 
 
     String cropId;
