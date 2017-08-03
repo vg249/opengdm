@@ -418,6 +418,9 @@ public class GobiiFileReader {
 					if(counts.invalidData >0 && !isVariableLengthTable(key)){
 						ErrorLogger.logError("FileReader","Error in table "+key);
 					}
+					else{
+						deleteIFLFiles(dstDir,key);
+					}
 
 				}
 
@@ -836,8 +839,21 @@ public class GobiiFileReader {
     private static boolean isVariableLengthTable(String tableKey) {
         return tableKey.contains("_prop");
     }
+	/**
+	 * Deletes all files in directory that contain '.tablename' suffix
+	 * @param directory
+	 * @param tableName
+	 */
+	private static void deleteIFLFiles(File directory, String tableName) {
+		File[] fileList = directory.listFiles();
+		if (fileList == null) return;
+		for (File f : fileList) {
+			if (f.getName().endsWith("." + tableName)) {
+				rmIfExist(f);
+			}
+		}
+	}
 }
-
 class IFLLineCounts {
     int loadedData, existingData, invalidData;
 }

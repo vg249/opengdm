@@ -22,15 +22,19 @@ public class FileSystemInterface {
 		HelperFunctions.tryExec("rm "+file);
 	}
 
-	public static void rmIfExist(String file){
+	public static void rmIfExist(File file){
 		if(file==null)return;
 		if(keepAllFiles){
 			return;
 		}
-		File f=new File(file);
-		if(f.exists()){
-			f.delete();
+		if(file.exists()){
+			file.delete();
 		}
+	}
+	public static void rmIfExist(String file){
+		if(file==null)return;
+		File f=new File(file);
+		rmIfExist(f);
 	}
 	/**
 	 * As unix MV command.
