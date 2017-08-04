@@ -1,4 +1,4 @@
-//package org.gobiiproject.gobiiprocess.extractor;
+package org.gobiiproject.gobiiprocess.extractor;
 
 import java.io.*;
 import java.nio.file.FileSystems;
