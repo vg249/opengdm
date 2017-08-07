@@ -1,4 +1,5 @@
-//package org.gobiiproject.gobiiprocess.extractor;
+package org.gobiiproject.gobiiprocess.extractor;
+
 import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -48,6 +49,7 @@ import static org.gobiiproject.gobiimodel.utils.error.ErrorLogger.*;
 
 /**
  * Core class for Extraction. Contains the main method for extraction, as well as the overall workflow.
+ *
  * @author jdl232
  */
 public class GobiiExtractor {
@@ -59,6 +61,7 @@ public class GobiiExtractor {
 
 	/**
 	 * Main class of Extractor. Takes optional arguments + location of a json-based instruction file
+     *
 	 * @param args Command line arguments
 	 * @throws Exception If a critical exception occurs.
 	 */
@@ -118,8 +121,7 @@ public class GobiiExtractor {
 			instructionFile=s.nextLine();
 		    if(instructionFile.equals("")) instructionFile="scripts//jdl232_01_pretty.json";
 		    s.close();
-		}
-		else{
+        } else {
 			instructionFile=args[0];
 		}
 
@@ -143,8 +145,7 @@ public class GobiiExtractor {
 			ErrorLogger.setLogFilepath(logFile);
 			ErrorLogger.logDebug("Error Logger","Moved error log to "+logFile);
 			FileSystemInterface.rmIfExist(oldLogFile);
-		}
-		else{
+        } else {
 			ErrorLogger.logError("Extractor","log directory is not defined in config file");
 			return;
 		}
@@ -171,7 +172,8 @@ public class GobiiExtractor {
 					logError("Extractor", "Unknown Crop Type: " + crop + " in the Configuration File");
 					return;
 				}
-				if (HDF5Interface.getPathToHDF5Files() == null) HDF5Interface.setPathToHDF5Files(cropPath.toString() + "/hdf5/");
+                if (HDF5Interface.getPathToHDF5Files() == null)
+                    HDF5Interface.setPathToHDF5Files(cropPath.toString() + "/hdf5/");
 
 
 				Integer mapId;
@@ -294,16 +296,15 @@ public class GobiiExtractor {
 							extractType="Extract by Sample";
 							//List takes extra work, as it might be a <List> or a <File>
 							//Create a file out of the List if non-null, else use the <File>
-							List<String> sampleList = extract.getSampleList();
-							if(sampleList!=null && !sampleList.isEmpty()){
-								sampleListFile = createTempFileForMarkerList(extractDir,sampleList, "sampleList");
-							}
-							else if(extract.getListFileName()!=null){
-								sampleListFile = extractDir+extract.getListFileName();
-							}
-							if(sampleListFile!=null) {
-								sampleListLocation = " -Y " + sampleListFile;
-							}
+                            List<String> sampleList = extract.getSampleList();
+                            if (sampleList != null && !sampleList.isEmpty()) {
+                                sampleListFile = createTempFileForMarkerList(extractDir, sampleList, "sampleList");
+                            } else if (extract.getListFileName() != null) {
+                                sampleListFile = extractDir + extract.getListFileName();
+                            }
+                            if (sampleListFile != null) {
+                                sampleListLocation = " -Y " + sampleListFile;
+                            }
 
 							GobiiSampleListType type = extract.getGobiiSampleListType();
 							String sampleListTypeTerm = (type == null) ? "" : " --sampleType " + getNumericType(type);
@@ -449,18 +450,17 @@ public class GobiiExtractor {
 							default:
 								ErrorLogger.logError("Extractor", "Unknown Extract Type " + extract.getGobiiFileType());
 								pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-								mailInterface.send(pm);
-						}
-					}
-					else{ //We had no genotype file, so we aborted
-						ErrorLogger.logError("GobiiExtractor","No genetic data extracted. Extract failed.");
-						pm.setBody(jobName,extractType,SimpleTimer.stop("Extract"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
-						mailInterface.send(pm);
-					}
+                                mailInterface.send(pm);
+                        }
+                    } else { //We had no genotype file, so we aborted
+                        ErrorLogger.logError("GobiiExtractor", "No genetic data extracted. Extract failed.");
+                        pm.setBody(jobName, extractType, SimpleTimer.stop("Extract"), ErrorLogger.getFirstErrorReason(), ErrorLogger.success(), ErrorLogger.getAllErrorStringsHTML());
+                        mailInterface.send(pm);
+                    }
 
-					//Clean Temporary Files
-					rmIfExist(genoFile);
-					rmIfExist(chrLengthFile);
+                    //Clean Temporary Files
+                    rmIfExist(genoFile);
+                    rmIfExist(chrLengthFile);
 					rmIfExist(markerPosFile);
 					rmIfExist(extendedMarkerFile);
 					rmIfExist(extractDir + extract.getListFileName()); //remove the list
@@ -503,6 +503,7 @@ public class GobiiExtractor {
 
 	/**
 	 * Extractor QC subsection 1
+     *
 	 * @param configuration
 	 * @param inst
 	 * @param crop
@@ -510,31 +511,29 @@ public class GobiiExtractor {
 	 * @param extractDir
 	 * @param mailInterface
 	 * @param extractType
-	 * @throws Exception
-	 */
-	private static void performQC(ConfigSettings configuration, GobiiExtractorInstruction inst, String crop, Integer datasetId, String extractDir, MailInterface mailInterface, String extractType) throws Exception {
-		if (configuration.getKDCConfig().getHost() == null) {
-			ErrorLogger.logInfo("QC", "Unable to continue QC with the KDC host name being null");
-			return;
-		}
-		else {
-			if (configuration.getKDCConfig().getHost().equals("")) {
-				ErrorLogger.logInfo("QC", "Unable to continue QC with the KDC host name being empty");
-				return;
-			}
-		}
-		if (configuration.getKDCConfig().getContextPath() == null) {
-			ErrorLogger.logInfo("QC", "Unable to continue QC with the KDC context path being null");
-			return;
-		}
-		else {
-			if (configuration.getKDCConfig().getContextPath().equals("")) {
-				ErrorLogger.logInfo("QC", "Unable to continue QC with the KDC context path being empty");
-				return;
-			}
-		}
-		if (configuration.getKDCConfig().isActive() == false) {
-			ErrorLogger.logInfo("QC", "Unable to continue QC with the KDC server inactive");
+     * @throws Exception
+     */
+    private static void performQC(ConfigSettings configuration, GobiiExtractorInstruction inst, String crop, Integer datasetId, String extractDir, MailInterface mailInterface, String extractType) throws Exception {
+        if (configuration.getKDCConfig().getHost() == null) {
+            ErrorLogger.logInfo("QC", "Unable to continue QC with the KDC host name being null");
+            return;
+        } else {
+            if (configuration.getKDCConfig().getHost().equals("")) {
+                ErrorLogger.logInfo("QC", "Unable to continue QC with the KDC host name being empty");
+                return;
+            }
+        }
+        if (configuration.getKDCConfig().getContextPath() == null) {
+            ErrorLogger.logInfo("QC", "Unable to continue QC with the KDC context path being null");
+            return;
+        } else {
+            if (configuration.getKDCConfig().getContextPath().equals("")) {
+                ErrorLogger.logInfo("QC", "Unable to continue QC with the KDC context path being empty");
+                return;
+            }
+        }
+        if (configuration.getKDCConfig().isActive() == false) {
+            ErrorLogger.logInfo("QC", "Unable to continue QC with the KDC server inactive");
 			return;
 		}
 		ErrorLogger.logInfo("QC", "KDC Host: " + configuration.getKDCConfig().getHost());
@@ -583,27 +582,24 @@ public class GobiiExtractor {
 					.get(restUriGetQCJobID);
 			if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
 				ErrorLogger.logInfo("QC", "The qcStart method failed: "
-						+ httpMethodResult.getUri().toString()
-						+ "; failure mode: "
-						+ Integer.toString(httpMethodResult.getResponseCode())
-						+ " ("
-						+ httpMethodResult.getReasonPhrase()
-						+ ")");
-			}
-			else {
-				JsonObject jsonPayload = httpMethodResult.getJsonPayload();
-				if (jsonPayload == null) {
-					ErrorLogger.logInfo("QC", "Null JSON payload");
-				}
-				else {
-					if (jsonPayload.get("jobId").toString().equals("")) {
-						ErrorLogger.logInfo("QC", "Empty JSON payload");
-					}
-					else{
-						Long qcJobID = jsonPayload.get("jobId").getAsLong();
-						ErrorLogger.logInfo("QC", "New QC job id: " + qcJobID);
-						ProcessMessage qcStartPm = new ProcessMessage();
-						qcStartPm.setUser(inst.getContactEmail());
+                    + httpMethodResult.getUri().toString()
+                    + "; failure mode: "
+                    + Integer.toString(httpMethodResult.getResponseCode())
+                    + " ("
+                    + httpMethodResult.getReasonPhrase()
+                    + ")");
+        } else {
+            JsonObject jsonPayload = httpMethodResult.getJsonPayload();
+            if (jsonPayload == null) {
+                ErrorLogger.logInfo("QC", "Null JSON payload");
+            } else {
+                if (jsonPayload.get("jobId").toString().equals("")) {
+                    ErrorLogger.logInfo("QC", "Empty JSON payload");
+                } else {
+                    Long qcJobID = jsonPayload.get("jobId").getAsLong();
+                    ErrorLogger.logInfo("QC", "New QC job id: " + qcJobID);
+                    ProcessMessage qcStartPm = new ProcessMessage();
+                    qcStartPm.setUser(inst.getContactEmail());
 						qcStartPm.setSubject(new StringBuilder("new QC Job #").append(qcJobID).toString());
 						qcStartPm.addIdentifier("QC Job Identifier", String.valueOf(qcJobID), String.valueOf(qcJobID));
 						qcStartPm.addIdentifier("Dataset Identifier", String.valueOf(datasetId), String.valueOf(qcJobID));
@@ -685,18 +681,17 @@ public class GobiiExtractor {
 											    ErrorLogger.logInfo("QC", "The qcDownload method failed: "
 													    + httpMethodResult.getUri().toString()
 													    + "; failure mode: "
-													    + Integer.toString(httpMethodResult.getResponseCode())
-													    + " ("
-													    + httpMethodResult.getReasonPhrase()
-													    + ")");
-										    }
-										    else {
-                                                ErrorLogger.logInfo("QC", "The qcDownload http method was successful with "
-                                                        + httpMethodResult.getFileName());
-                                                if (httpMethodResult.getFileName() != null) {
-                                                    qcStatusPm.addPath(key, httpMethodResult.getFileName());
+                                                    + Integer.toString(httpMethodResult.getResponseCode())
+                                                    + " ("
+                                                    + httpMethodResult.getReasonPhrase()
+                                                    + ")");
+                                        } else {
+                                            ErrorLogger.logInfo("QC", "The qcDownload http method was successful with "
+                                                    + httpMethodResult.getFileName());
+                                            if (httpMethodResult.getFileName() != null) {
+                                                qcStatusPm.addPath(key, httpMethodResult.getFileName());
 
-                                                    if(key.equals("stdout.txt") || key.equals("stderr.txt")){
+                                                if (key.equals("stdout.txt") || key.equals("stderr.txt")) {
 
                                                     	qcStatusPm.getFileAttachments().add(httpMethodResult.getFileName());
 													}
@@ -706,15 +701,15 @@ public class GobiiExtractor {
                                         }
 									}
 								}
-							}
-
-							if (status.equals("COMPLETED")) {
-								ErrorLogger.logError("QC", new StringBuilder("The QC job #").append(qcJobID).append(" was completed").toString());
-							}
-							else {
-								if (status.equals("FAILED")) {
-									ErrorLogger.logError("QC", new StringBuilder("The QC job #").append(qcJobID).append(" was failed").toString());
-								}
+                        }
+                        if (status.equals("COMPLETED")) {
+                            ErrorLogger.logError("QC", new StringBuilder("The QC job #").append(qcJobID).append(" was completed").toString());
+                            qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, SimpleTimer.stop("QC"), ErrorLogger.getFirstErrorReason(), true, ErrorLogger.getAllErrorStringsHTML());
+                        } else {
+                            if (status.equals("FAILED")) {
+                                ErrorLogger.logError("QC", new StringBuilder("The QC job #").append(qcJobID).append(" was failed").toString());
+                                qcStatusPm.setBody(new StringBuilder("[GOBII - QC]: job #").append(qcJobID).toString(), extractType, SimpleTimer.stop("QC"), ErrorLogger.getFirstErrorReason(), false, ErrorLogger.getAllErrorStringsHTML());
+                            }
 							}
 
 							if( qcDuration != null ) {
@@ -736,17 +731,17 @@ public class GobiiExtractor {
 						mailInterface.send(qcStatusPm);
 
 						//purge data
-						ErrorLogger.logInfo("QC", "Calling QC Purge");
-						RestUri restUriGetPurge = new RestUri("/",
-								configuration.getKDCConfig().getContextPath(),
-                                configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_PURGE));
-						restUriGetPurge
-								.addQueryParam("jobid", String.valueOf(qcJobID));
+                    ErrorLogger.logInfo("QC", "Calling QC Purge");
+                    RestUri restUriGetPurge = new RestUri("/",
+                            configuration.getKDCConfig().getContextPath(),
+                            configuration.getKDCConfig().getPath(ServerConfigKDC.KDCResource.QC_PURGE))
+                            .addQueryParam("jobid", String.valueOf(qcJobID))
+                            .withHttpHeader(GobiiHttpHeaderNames.HEADER_NAME_ACCEPT, MediaType.WILDCARD);
 
-						httpMethodResult = genericClientContext
-								.get(restUriGetPurge);
-						if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
-							ErrorLogger.logInfo("QC", "The qcPurge method failed: "
+                    httpMethodResult = genericClientContext
+                            .get(restUriGetPurge);
+                    if (httpMethodResult.getResponseCode() != HttpStatus.SC_OK) {
+                        ErrorLogger.logInfo("QC", "The qcPurge method failed: "
 									+ httpMethodResult.getUri().toString()
 									+ "; failure mode: "
 									+ Integer.toString(httpMethodResult.getResponseCode())
@@ -766,6 +761,7 @@ public class GobiiExtractor {
 
 	/**
      * To draft JobName for eMail notification
+     *
      * @param cropName - From inst
      * @param extract
      * @return
@@ -780,6 +776,7 @@ public class GobiiExtractor {
 
 	/**
 	 * Parses the extractor instruction file from the JSON object using the Object Mapper
+     *
 	 * @param filename File to parse
 	 * @return List of Extractor Instructions to work on
 	 */
@@ -800,6 +797,7 @@ public class GobiiExtractor {
 	/**
 	 * Determine crop type by looking at the instruction file's location for the name of a crop.
 	 * This is a backup in case the JSON file doesn't specify the crop internally.
+     *
 	 * @param instructionFile Location of the instruction file
 	 * @return String representation of the Gobii Crop
 	 */
@@ -824,6 +822,7 @@ public class GobiiExtractor {
 
 	/**
 	 * Brute force method to create a list of object,object,object,object
+     *
 	 * @param inputList Nonempty list of elements
 	 * @return the string value of elements comma separated
 	 */
@@ -842,6 +841,7 @@ public class GobiiExtractor {
 
 	/**
 	 * Turns a list into a newline delimited file.
+     *
 	 * @param tmpDir File path - will append 'markerList.tmp' and return
 	 * @param markerList List to go into file, newline delimited
 	 * @return location of new file.
@@ -853,14 +853,14 @@ public class GobiiExtractor {
 			for(String marker:markerList){
 				f.write(marker);
 				f.write("\n");
-			}
-			f.close();
-		}
-		catch(Exception e){
-			ErrorLogger.logError("Extractor","Could not create temp file "+tempFileLocation,e);
-		}
+            }
+            f.close();
+        } catch (Exception e) {
+            ErrorLogger.logError("Extractor", "Could not create temp file " + tempFileLocation, e);
+        }
 		return tempFileLocation;
 	}
+
 	private static String createTempFileForMarkerList(String tmpDir,List<String> markerList){
 		return createTempFileForMarkerList(tmpDir,markerList,"markerList");
 	}
@@ -875,19 +875,18 @@ public class GobiiExtractor {
 			rmIfExist(AddedSSRFilePath.toString());
 			File AddedSSRFile = new File(AddedSSRFilePath.toString());
 			if (AddedSSRFile.createNewFile()) {
-				Scanner scanner = new Scanner(new FileReader(SSRFile));
-				FileWriter fileWriter = new FileWriter(AddedSSRFile);
-				// Copying the header
-				if (scanner.hasNextLine()) {
-					fileWriter.write((new StringBuilder (scanner.nextLine())).append(System.lineSeparator()).toString());
-				}
-				else {
-					ErrorLogger.logError("Extractor", "Genotype file emtpy");
-					return false;
-				}
-				if (!(scanner.hasNextLine())) {
-					ErrorLogger.logError("Extractor", "No genotype data");
-					return false;
+                Scanner scanner = new Scanner(new FileReader(SSRFile));
+                FileWriter fileWriter = new FileWriter(AddedSSRFile);
+                // Copying the header
+                if (scanner.hasNextLine()) {
+                    fileWriter.write((new StringBuilder(scanner.nextLine())).append(System.lineSeparator()).toString());
+                } else {
+                    ErrorLogger.logError("Extractor", "Genotype file emtpy");
+                    return false;
+                }
+                if (!(scanner.hasNextLine())) {
+                    ErrorLogger.logError("Extractor", "No genotype data");
+                    return false;
 				}
 				Pattern pattern = Pattern.compile("^[0-9]{1,8}$");
 				while (scanner.hasNextLine()) {
@@ -897,40 +896,35 @@ public class GobiiExtractor {
 					// Converting each column from the next ones
 					for (int index = 1; index < lineParts.length; index++) {
 						addedLineStringBuilder.append("\t");
-						if (!(pattern.matcher(lineParts[index]).find())) {
-							ErrorLogger.logError("Extractor","Incorrect SSR allele size format (1): " + lineParts[index]);
-							addedLineStringBuilder.append(lineParts[index]);
-						}
-						else {
-							if ((5 <= lineParts[index].length()) && (lineParts[index].length() <= 8)) {
-								int leftNumber = Integer.parseInt(lineParts[index].substring(0, lineParts[index].length() - 4));
-								int rightNumber = Integer.parseInt(lineParts[index].substring(lineParts[index].length() - 4));
-								if ((leftNumber == 0) && (rightNumber == 0)) {
-									addedLineStringBuilder.append("N/N");
-								}
-								else {
-									addedLineStringBuilder.append(leftNumber);
-									addedLineStringBuilder.append("/");
-									addedLineStringBuilder.append(rightNumber);
-								}
-							}
-							else {
-								if ((1 <= lineParts[index].length()) && (lineParts[index].length() <= 4)) {
-									int number = Integer.parseInt(lineParts[index]);
-									if (number == 0) {
-										addedLineStringBuilder.append("N/N");
-									}
-									else {
-										addedLineStringBuilder.append("0/");
-										addedLineStringBuilder.append(number);
-									}
-								}
-								else {
-									ErrorLogger.logError("Extractor","Incorrect SSR allele size format (2): " + lineParts[index]);
-									addedLineStringBuilder.append(lineParts[index]);
-								}
-							}
-						}
+                        if (!(pattern.matcher(lineParts[index]).find())) {
+                            ErrorLogger.logError("Extractor", "Incorrect SSR allele size format (1): " + lineParts[index]);
+                            addedLineStringBuilder.append(lineParts[index]);
+                        } else {
+                            if ((5 <= lineParts[index].length()) && (lineParts[index].length() <= 8)) {
+                                int leftNumber = Integer.parseInt(lineParts[index].substring(0, lineParts[index].length() - 4));
+                                int rightNumber = Integer.parseInt(lineParts[index].substring(lineParts[index].length() - 4));
+                                if ((leftNumber == 0) && (rightNumber == 0)) {
+                                    addedLineStringBuilder.append("N/N");
+                                } else {
+                                    addedLineStringBuilder.append(leftNumber);
+                                    addedLineStringBuilder.append("/");
+                                    addedLineStringBuilder.append(rightNumber);
+                                }
+                            } else {
+                                if ((1 <= lineParts[index].length()) && (lineParts[index].length() <= 4)) {
+                                    int number = Integer.parseInt(lineParts[index]);
+                                    if (number == 0) {
+                                        addedLineStringBuilder.append("N/N");
+                                    } else {
+                                        addedLineStringBuilder.append("0/");
+                                        addedLineStringBuilder.append(number);
+                                    }
+                                } else {
+                                    ErrorLogger.logError("Extractor", "Incorrect SSR allele size format (2): " + lineParts[index]);
+                                    addedLineStringBuilder.append(lineParts[index]);
+                                }
+                            }
+                        }
 					}
 					addedLineStringBuilder.append(System.lineSeparator());
 					fileWriter.write(addedLineStringBuilder.toString());
@@ -940,24 +934,24 @@ public class GobiiExtractor {
 				// Deleting any original data backup file existent
 				rmIfExist(Paths.get(SSRFilePath.toString() + ".bak").toString());
 				// Backing up the original data file
-				mv(SSRFilePath.toString(), SSRFilePath.toString() + ".bak");
-				// Renaming the converted data file to the original data file name
-				mv(AddedSSRFilePath.toString(), SSRFilePath.toString());
-			}
-			else {
-				ErrorLogger.logError("Extractor","Unable to create the added SSR file: "+AddedSSRFilePath.toString());
-				return false;
-			}
-		} else {
-			ErrorLogger.logError("Extractor", "No genotype file: " + SSRFilePath.toString());
-			return false;
-		}
+                mv(SSRFilePath.toString(), SSRFilePath.toString() + ".bak");
+                // Renaming the converted data file to the original data file name
+                mv(AddedSSRFilePath.toString(), SSRFilePath.toString());
+            } else {
+                ErrorLogger.logError("Extractor", "Unable to create the added SSR file: " + AddedSSRFilePath.toString());
+                return false;
+            }
+        } else {
+            ErrorLogger.logError("Extractor", "No genotype file: " + SSRFilePath.toString());
+            return false;
+        }
 
 		return true;
 	}
 
 	/**
 	 * Simple Look-Up Table
+     *
 	 * @param type Un-numbered Enum
 	 * @return Database numeric
 	 */

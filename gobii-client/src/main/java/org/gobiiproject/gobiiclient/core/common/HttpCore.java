@@ -256,35 +256,45 @@ public class HttpCore {
                 HttpStatus.SC_NOT_ACCEPTABLE != returnVal.getResponseCode()) {
 
 
-            String contentType = null; // default
-            Header headers[] = httpResponse.getHeaders(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
-            if (headers.length > 0) {
-                contentType = headers[0].getValue();
+            String responseContentType = null; // default
+            Header responseHeaders[] = httpResponse.getHeaders(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
+            if (responseHeaders.length > 0) {
+                responseContentType = responseHeaders[0].getValue();
             }
+
+            String requestContentType = restUri
+                    .getHttpHeaders()
+                    .get(GobiiHttpHeaderNames.HEADER_NAME_CONTENT_TYPE);
+
 
             String resultAsString = EntityUtils.toString(httpResponse.getEntity());
 
-            if (contentType != null) {
+            // for now, if we specify MediaType.WILDCARD in our own request, we essentially don't
+            // know about and/or expect to see a content type in the response. We need this
+            // condition for kdcompute's /qcpurge resource
+            if ((responseContentType != null) || requestContentType.equals(MediaType.WILDCARD)) {
 
-                if (contentType.contains(MediaType.APPLICATION_JSON)) {
+                if (responseContentType.contains(MediaType.APPLICATION_JSON)) {
 
                     JsonParser parser = new JsonParser();
                     JsonObject jsonObject = parser.parse(resultAsString).getAsJsonObject();
                     returnVal.setJsonPayload(jsonObject);
 
-                } else if (contentType.contains(MediaType.TEXT_PLAIN)) {
+                } else if (responseContentType.contains(MediaType.TEXT_PLAIN)) {
 
                     returnVal.setPlainPayload(resultAsString);
                     if (!LineUtils.isNullOrEmpty(restUri.getDestinationFqpn())) {
                         this.makeDownloadedFile(resultAsString, returnVal, restUri);
                     }
 
-                } else if (contentType.contains(MediaType.APPLICATION_OCTET_STREAM)
-                        || contentType.contains(MediaType.MULTIPART_FORM_DATA)) {
+                } else if (responseContentType.contains(MediaType.APPLICATION_OCTET_STREAM)
+                        || responseContentType.contains(MediaType.MULTIPART_FORM_DATA)) {
 
                     if (!LineUtils.isNullOrEmpty(restUri.getDestinationFqpn())) {
                         this.makeDownloadedFile(resultAsString, returnVal, restUri);
                     }
+                } else {
+                    // do nothing (e.g., we use MediaType.WILDCARD when the response has no body
                 }
 
             } else {
