@@ -27,3 +27,4 @@ gobii-web/.tscache
 
 gobii-model/src/main/resources/gobii.properties
 gobii-client/gobii-web.xml
+gobii-web/package-lock.json
