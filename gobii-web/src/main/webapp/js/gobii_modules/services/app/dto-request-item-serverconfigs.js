@@ -50,12 +50,12 @@ System.register(["@angular/core", "../../model/type-process", "../../model/serve
                     return returnVal;
                     //return [new NameId(1, 'foo'), new NameId(2, 'bar')];
                 };
+                DtoRequestItemServerConfigs = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [])
+                ], DtoRequestItemServerConfigs);
                 return DtoRequestItemServerConfigs;
-            }()); // DtoRequestItemNameIds() 
-            DtoRequestItemServerConfigs = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [])
-            ], DtoRequestItemServerConfigs);
+            }());
             exports_1("DtoRequestItemServerConfigs", DtoRequestItemServerConfigs);
         }
     };

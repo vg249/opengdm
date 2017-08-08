@@ -32,17 +32,17 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                 StatusDisplayComponent.prototype.ngOnChanges = function (changes) {
                     this.messages = changes['messages'].currentValue;
                 };
+                StatusDisplayComponent = __decorate([
+                    core_1.Component({
+                        selector: 'status-display',
+                        inputs: ['messages'],
+                        //directives: [RADIO_GROUP_DIRECTIVES]
+                        template: "<div style=\"overflow:auto; height: 240px; border: 1px solid #336699; padding-left: 5px;\">\n                    <div *ngFor=\"let message of messages\">{{message}}\n                    <hr style=\"height:1px;border:none;color:#333;background-color:#333;\">\n                    </div>\n                </div>" // end template
+                    }),
+                    __metadata("design:paramtypes", [])
+                ], StatusDisplayComponent);
                 return StatusDisplayComponent;
             }());
-            StatusDisplayComponent = __decorate([
-                core_1.Component({
-                    selector: 'status-display',
-                    inputs: ['messages'],
-                    //directives: [RADIO_GROUP_DIRECTIVES]
-                    template: "<div style=\"overflow:auto; height: 240px; border: 1px solid #336699; padding-left: 5px;\">\n                    <div *ngFor=\"let message of messages\">{{message}}\n                    <hr style=\"height:1px;border:none;color:#333;background-color:#333;\">\n                    </div>\n                </div>" // end template
-                }),
-                __metadata("design:paramtypes", [])
-            ], StatusDisplayComponent);
             exports_1("StatusDisplayComponent", StatusDisplayComponent);
         }
     };

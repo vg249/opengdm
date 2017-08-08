@@ -151,19 +151,19 @@ System.register(["@angular/core", "../model/type-extract-format", "../services/c
                         } // if we have a new filter type
                     } // if filter type changed
                 }; // ngonChanges
+                ExportFormatComponent = __decorate([
+                    core_1.Component({
+                        selector: 'export-format',
+                        outputs: ['onFormatSelected', 'onError'],
+                        inputs: ['gobiiExtractFilterType'],
+                        //directives: [RADIO_GROUP_DIRECTIVES]
+                        //  directives: [Alert]
+                        template: "<form>\n                            <label class=\"the-legend\">Select Format:&nbsp;</label>\n                            <BR><input type=\"radio\" (change)=\"handleFormatSelected($event)\" [(ngModel)]=\"fileFormat\" name=\"fileFormat\" value=\"HAPMAP\" checked=\"checked\">\n                            <label  for=\"HAPMAP\" class=\"the-legend\">Hapmap</label>\n                            <BR><input type=\"radio\" (change)=\"handleFormatSelected($event)\" [(ngModel)]=\"fileFormat\" name=\"fileFormat\" value=\"FLAPJACK\">\n                            <label for=\"FLAPJACK\" class=\"the-legend\">Flapjack</label>\n                            <BR><input type=\"radio\" (change)=\"handleFormatSelected($event)\" [(ngModel)]=\"fileFormat\" name=\"fileFormat\" value=\"META_DATA_ONLY\">\n                            <label  for=\"META_DATA_ONLY\" class=\"the-legend\">{{metaDataExtractname}}</label>\n                </form>" // end template
+                    }),
+                    __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
+                ], ExportFormatComponent);
                 return ExportFormatComponent;
             }());
-            ExportFormatComponent = __decorate([
-                core_1.Component({
-                    selector: 'export-format',
-                    outputs: ['onFormatSelected', 'onError'],
-                    inputs: ['gobiiExtractFilterType'],
-                    //directives: [RADIO_GROUP_DIRECTIVES]
-                    //  directives: [Alert]
-                    template: "<form>\n                            <label class=\"the-legend\">Select Format:&nbsp;</label>\n                            <BR><input type=\"radio\" (change)=\"handleFormatSelected($event)\" [(ngModel)]=\"fileFormat\" name=\"fileFormat\" value=\"HAPMAP\" checked=\"checked\">\n                            <label  for=\"HAPMAP\" class=\"the-legend\">Hapmap</label>\n                            <BR><input type=\"radio\" (change)=\"handleFormatSelected($event)\" [(ngModel)]=\"fileFormat\" name=\"fileFormat\" value=\"FLAPJACK\">\n                            <label for=\"FLAPJACK\" class=\"the-legend\">Flapjack</label>\n                            <BR><input type=\"radio\" (change)=\"handleFormatSelected($event)\" [(ngModel)]=\"fileFormat\" name=\"fileFormat\" value=\"META_DATA_ONLY\">\n                            <label  for=\"META_DATA_ONLY\" class=\"the-legend\">{{metaDataExtractname}}</label>\n                </form>" // end template
-                }),
-                __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
-            ], ExportFormatComponent);
             exports_1("ExportFormatComponent", ExportFormatComponent);
         }
     };

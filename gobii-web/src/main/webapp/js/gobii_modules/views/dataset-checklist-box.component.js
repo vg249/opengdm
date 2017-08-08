@@ -170,21 +170,22 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     if (changes['experimentId']) {
                         this.experimentId = changes['experimentId'].currentValue;
                         this.nameIdRequestParamsDataset.setEntityFilterValue(this.experimentId);
+                        //this.setList();
                     }
                 };
+                DataSetCheckListBoxComponent = __decorate([
+                    core_1.Component({
+                        selector: 'dataset-checklist-box',
+                        inputs: ['experimentId', 'fileItemEventChange', 'gobiiExtractFilterType'],
+                        outputs: ['onItemChecked', 'onAddStatusMessage'],
+                        template: "<checklist-box\n                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                    [nameIdRequestParams] = \"nameIdRequestParamsDataset\"\n                    [retainHistory] = \"true\"\n                    (onError) = \"handleAddStatusMessage($event)\"\n                    (onItemSelected)=\"handleItemSelected($event)\">\n                </checklist-box>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        <b>Name:</b> {{dataSet.name}}<BR>\n                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>\n                        <b>Data File:</b> {{dataSet.dataFile}}<BR>\n                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>\n                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                            <b>Analyses:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                    </ul>\n                        </div>\n                        <div *ngIf=\"analysisTypes && (analysisTypes.length > 0)\">\n                            <b>Analysis Types:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisType of analysisTypes\" >{{analysisType}}</li>\n                                    </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
+                    }),
+                    __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService,
+                        dto_request_service_1.DtoRequestService,
+                        file_model_tree_service_1.FileModelTreeService])
+                ], DataSetCheckListBoxComponent);
                 return DataSetCheckListBoxComponent;
             }());
-            DataSetCheckListBoxComponent = __decorate([
-                core_1.Component({
-                    selector: 'dataset-checklist-box',
-                    inputs: ['experimentId', 'fileItemEventChange', 'gobiiExtractFilterType'],
-                    outputs: ['onItemChecked', 'onAddStatusMessage'],
-                    template: "<checklist-box\n                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                    [nameIdRequestParams] = \"nameIdRequestParamsDataset\"\n                    [retainHistory] = \"true\"\n                    (onError) = \"handleAddStatusMessage($event)\"\n                    (onItemSelected)=\"handleItemSelected($event)\">\n                </checklist-box>\n                <div *ngIf=\"dataSet\">\n                    <BR>\n                     <fieldset>\n                        <b>Name:</b> {{dataSet.name}}<BR>\n                        <b>Data Table:</b> {{dataSet.dataTable}}<BR>\n                        <b>Data File:</b> {{dataSet.dataFile}}<BR>\n                        <b>Quality Table:</b> {{dataSet.qualityTable}}<BR>\n                        <b>Quality File:</b> {{dataSet.qualityFile}}<BR>\n                        <div *ngIf=\"analysisNames && (analysisNames.length > 0)\">\n                            <b>Analyses:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisName of analysisNames\" >{{analysisName}}</li>\n                                    </ul>\n                        </div>\n                        <div *ngIf=\"analysisTypes && (analysisTypes.length > 0)\">\n                            <b>Analysis Types:</b> <ul style=\"list-style-type:none\">\n                                            <li *ngFor= \"let analysisType of analysisTypes\" >{{analysisType}}</li>\n                                    </ul>\n                        </div>\n                      </fieldset> \n                </div>                \n" // end template
-                }),
-                __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService,
-                    dto_request_service_1.DtoRequestService,
-                    file_model_tree_service_1.FileModelTreeService])
-            ], DataSetCheckListBoxComponent);
             exports_1("DataSetCheckListBoxComponent", DataSetCheckListBoxComponent);
         }
     };

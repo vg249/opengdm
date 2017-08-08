@@ -74,12 +74,12 @@ System.register(["@angular/core", "../../model/type-process", "../../model/conta
                     }
                     return returnVal;
                 };
+                DtoRequestItemContact = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [Number, String])
+                ], DtoRequestItemContact);
                 return DtoRequestItemContact;
-            }()); //
-            DtoRequestItemContact = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [Number, String])
-            ], DtoRequestItemContact);
+            }());
             exports_1("DtoRequestItemContact", DtoRequestItemContact);
         }
     };

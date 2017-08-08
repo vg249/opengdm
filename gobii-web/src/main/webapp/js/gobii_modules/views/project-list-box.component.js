@@ -87,20 +87,20 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     }
                     this.nameIdRequestParamsProject.setMameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN);
                 };
+                ProjectListBoxComponent = __decorate([
+                    core_1.Component({
+                        selector: 'project-list-box',
+                        inputs: ['primaryInvestigatorId',
+                            'gobiiExtractFilterType',
+                            'reinitProjectList'],
+                        outputs: ['onProjectSelected',
+                            'onAddHeaderStatus'],
+                        template: "<name-id-list-box\n                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                    [notifyOnInit]=\"true\"\n                    [doTreeNotifications] = \"reinitProjectList\"\n                    [nameIdRequestParams] = \"nameIdRequestParamsProject\"\n                    (onNameIdSelected) = \"handleProjectSelected($event)\"\n                    (onError) = \"handleHeaderStatus($event)\">\n                </name-id-list-box>\n\t\t        \n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        <b>Name:</b> {{project.projectName}}<BR>\n                        <b>Description:</b> {{project.projectDescription}}<BR>\n                        <b>Principle Investigator:</b> {{primaryInvestigatorName}}\n                      </fieldset> \n                </div>\t\t        \n" // end template
+                    }),
+                    __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService])
+                ], ProjectListBoxComponent);
                 return ProjectListBoxComponent;
             }());
-            ProjectListBoxComponent = __decorate([
-                core_1.Component({
-                    selector: 'project-list-box',
-                    inputs: ['primaryInvestigatorId',
-                        'gobiiExtractFilterType',
-                        'reinitProjectList'],
-                    outputs: ['onProjectSelected',
-                        'onAddHeaderStatus'],
-                    template: "<name-id-list-box\n                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                    [notifyOnInit]=\"true\"\n                    [doTreeNotifications] = \"reinitProjectList\"\n                    [nameIdRequestParams] = \"nameIdRequestParamsProject\"\n                    (onNameIdSelected) = \"handleProjectSelected($event)\"\n                    (onError) = \"handleHeaderStatus($event)\">\n                </name-id-list-box>\n\t\t        \n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        <b>Name:</b> {{project.projectName}}<BR>\n                        <b>Description:</b> {{project.projectDescription}}<BR>\n                        <b>Principle Investigator:</b> {{primaryInvestigatorName}}\n                      </fieldset> \n                </div>\t\t        \n" // end template
-                }),
-                __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService])
-            ], ProjectListBoxComponent);
             exports_1("ProjectListBoxComponent", ProjectListBoxComponent);
         }
     };

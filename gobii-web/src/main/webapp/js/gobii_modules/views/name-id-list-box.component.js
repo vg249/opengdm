@@ -162,11 +162,13 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                             }
                             else {
                                 scope$.selectedFileItemId = scope$.fileItemList[0].getItemId();
+                                //scope$.selectedFileItemId = "0";
                             }
                             scope$.currentSelection = scope$.fileItemList[0];
                             if (_this.notifyOnInit
                                 && (_this.nameIdRequestParams.getMameIdLabelType() === name_id_label_type_1.NameIdLabelType.UNKNOWN)) {
                                 _this.updateTreeService(scope$.fileItemList[0]);
+                                //                            this.notificationSent = true;
                             }
                         }
                     }, function (responseHeader) {
@@ -244,22 +246,22 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                         }
                     }
                 };
+                NameIdListBoxComponent = __decorate([
+                    core_1.Component({
+                        selector: 'name-id-list-box',
+                        inputs: ['gobiiExtractFilterType',
+                            'notifyOnInit',
+                            'nameIdRequestParams',
+                            'doTreeNotifications'],
+                        outputs: ['onNameIdSelected', 'onError'],
+                        template: "<select [(ngModel)]=\"selectedFileItemId\" (change)=\"handleFileItemSelected($event)\" >\n\t\t\t        <option *ngFor=\"let fileItem of fileItemList\" \n\t\t\t\t        [value]=\"fileItem.getItemId()\">{{fileItem.getItemName()}}</option>\n\t\t        </select>\n" // end template
+                    }),
+                    __metadata("design:paramtypes", [name_id_service_1.NameIdService,
+                        file_model_tree_service_1.FileModelTreeService,
+                        core_1.KeyValueDiffers])
+                ], NameIdListBoxComponent);
                 return NameIdListBoxComponent;
-            }()); // class
-            NameIdListBoxComponent = __decorate([
-                core_1.Component({
-                    selector: 'name-id-list-box',
-                    inputs: ['gobiiExtractFilterType',
-                        'notifyOnInit',
-                        'nameIdRequestParams',
-                        'doTreeNotifications'],
-                    outputs: ['onNameIdSelected', 'onError'],
-                    template: "<select [(ngModel)]=\"selectedFileItemId\" (change)=\"handleFileItemSelected($event)\" >\n\t\t\t        <option *ngFor=\"let fileItem of fileItemList\" \n\t\t\t\t        [value]=\"fileItem.getItemId()\">{{fileItem.getItemName()}}</option>\n\t\t        </select>\n" // end template
-                }),
-                __metadata("design:paramtypes", [name_id_service_1.NameIdService,
-                    file_model_tree_service_1.FileModelTreeService,
-                    core_1.KeyValueDiffers])
-            ], NameIdListBoxComponent);
+            }());
             exports_1("NameIdListBoxComponent", NameIdListBoxComponent);
         }
     };

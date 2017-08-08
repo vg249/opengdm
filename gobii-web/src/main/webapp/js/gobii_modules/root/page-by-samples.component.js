@@ -28,15 +28,15 @@ System.register(["@angular/core"], function (exports_1, context_1) {
                               .then(hero => this.hero = hero);
                     */
                 };
+                SearchCriteriaBySamplesComponent = __decorate([
+                    core_1.Component({
+                        selector: 'search-criteria-samples',
+                        template: "\n\t\t\t<form>\n\t\t\t\t<fieldset class=\"well the-fieldset\">\n\t\t\t\t<legend class=\"the-legend\">Search Criteria</legend>\n\t\t\t\t\n\t\t\t\tSamples:\n\t\t\t\t<input type=\"file\"/>\n\t\t\t\t<BR>\n\t\t\t\tMarkers:\n\t\t\t\t<input type=\"file/>\n\t\t\t\t\n\t\t\t\t</fieldset>\n\t\t\t</form>\n  " // end template
+                    }),
+                    __metadata("design:paramtypes", [])
+                ], SearchCriteriaBySamplesComponent);
                 return SearchCriteriaBySamplesComponent;
             }());
-            SearchCriteriaBySamplesComponent = __decorate([
-                core_1.Component({
-                    selector: 'search-criteria-samples',
-                    template: "\n\t\t\t<form>\n\t\t\t\t<fieldset class=\"well the-fieldset\">\n\t\t\t\t<legend class=\"the-legend\">Search Criteria</legend>\n\t\t\t\t\n\t\t\t\tSamples:\n\t\t\t\t<input type=\"file\"/>\n\t\t\t\t<BR>\n\t\t\t\tMarkers:\n\t\t\t\t<input type=\"file/>\n\t\t\t\t\n\t\t\t\t</fieldset>\n\t\t\t</form>\n  " // end template
-                }),
-                __metadata("design:paramtypes", [])
-            ], SearchCriteriaBySamplesComponent);
             exports_1("SearchCriteriaBySamplesComponent", SearchCriteriaBySamplesComponent);
         }
     };

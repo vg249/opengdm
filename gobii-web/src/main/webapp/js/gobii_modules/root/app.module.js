@@ -111,50 +111,50 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
             AppModule = (function () {
                 function AppModule() {
                 }
+                AppModule = __decorate([
+                    core_1.NgModule({
+                        imports: [platform_browser_1.BrowserModule,
+                            http_1.HttpModule,
+                            forms_1.FormsModule,
+                            forms_1.ReactiveFormsModule,
+                            primeng_1.TreeModule,
+                            primeng_1.SharedModule,
+                            app_routing_1.routing,
+                            animations_1.BrowserAnimationsModule],
+                        declarations: [
+                            app_component_1.AppComponent,
+                            app_extractorroot_1.ExtractorRoot,
+                            login_component_1.LoginComponent,
+                            export_format_component_1.ExportFormatComponent,
+                            project_list_box_component_1.ProjectListBoxComponent,
+                            dataset_checklist_box_component_1.DataSetCheckListBoxComponent,
+                            status_display_box_component_1.StatusDisplayComponent,
+                            crops_list_box_component_1.CropsListBoxComponent,
+                            export_type_component_1.ExportTypeComponent,
+                            dataset_types_list_box_component_1.DatasetTypeListBoxComponent,
+                            checklist_box_component_1.CheckListBoxComponent,
+                            sample_marker_box_component_1.SampleMarkerBoxComponent,
+                            ng2_file_upload_1.FileSelectDirective,
+                            ng2_file_upload_1.FileDropDirective,
+                            text_area_component_1.TextAreaComponent,
+                            uploader_component_1.UploaderComponent,
+                            sample_list_type_component_1.SampleListTypeComponent,
+                            name_id_list_box_component_1.NameIdListBoxComponent,
+                            status_display_tree_component_1.StatusDisplayTreeComponent,
+                            primeng_1.Dialog,
+                            button_1.Button
+                        ],
+                        providers: [auth_guard_1.AuthGuard,
+                            authentication_service_1.AuthenticationService,
+                            dto_request_service_1.DtoRequestService,
+                            file_model_tree_service_1.FileModelTreeService,
+                            name_id_service_1.NameIdService,
+                            { provide: common_1.APP_BASE_HREF, useValue: './' }],
+                        bootstrap: [app_component_1.AppComponent]
+                    })
+                ], AppModule);
                 return AppModule;
             }());
-            AppModule = __decorate([
-                core_1.NgModule({
-                    imports: [platform_browser_1.BrowserModule,
-                        http_1.HttpModule,
-                        forms_1.FormsModule,
-                        forms_1.ReactiveFormsModule,
-                        primeng_1.TreeModule,
-                        primeng_1.SharedModule,
-                        app_routing_1.routing,
-                        animations_1.BrowserAnimationsModule],
-                    declarations: [
-                        app_component_1.AppComponent,
-                        app_extractorroot_1.ExtractorRoot,
-                        login_component_1.LoginComponent,
-                        export_format_component_1.ExportFormatComponent,
-                        project_list_box_component_1.ProjectListBoxComponent,
-                        dataset_checklist_box_component_1.DataSetCheckListBoxComponent,
-                        status_display_box_component_1.StatusDisplayComponent,
-                        crops_list_box_component_1.CropsListBoxComponent,
-                        export_type_component_1.ExportTypeComponent,
-                        dataset_types_list_box_component_1.DatasetTypeListBoxComponent,
-                        checklist_box_component_1.CheckListBoxComponent,
-                        sample_marker_box_component_1.SampleMarkerBoxComponent,
-                        ng2_file_upload_1.FileSelectDirective,
-                        ng2_file_upload_1.FileDropDirective,
-                        text_area_component_1.TextAreaComponent,
-                        uploader_component_1.UploaderComponent,
-                        sample_list_type_component_1.SampleListTypeComponent,
-                        name_id_list_box_component_1.NameIdListBoxComponent,
-                        status_display_tree_component_1.StatusDisplayTreeComponent,
-                        primeng_1.Dialog,
-                        button_1.Button
-                    ],
-                    providers: [auth_guard_1.AuthGuard,
-                        authentication_service_1.AuthenticationService,
-                        dto_request_service_1.DtoRequestService,
-                        file_model_tree_service_1.FileModelTreeService,
-                        name_id_service_1.NameIdService,
-                        { provide: common_1.APP_BASE_HREF, useValue: './' }],
-                    bootstrap: [app_component_1.AppComponent]
-                })
-            ], AppModule);
             exports_1("AppModule", AppModule);
         }
     };

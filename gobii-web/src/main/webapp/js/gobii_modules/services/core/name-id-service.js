@@ -99,12 +99,12 @@ System.register(["@angular/core", "../../model/name-id", "./dto-request.service"
                         });
                     });
                 };
+                NameIdService = __decorate([
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService])
+                ], NameIdService);
                 return NameIdService;
             }());
-            NameIdService = __decorate([
-                core_1.Injectable(),
-                __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService])
-            ], NameIdService);
             exports_1("NameIdService", NameIdService);
         }
     };

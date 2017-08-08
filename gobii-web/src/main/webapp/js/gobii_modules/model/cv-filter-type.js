@@ -23,9 +23,9 @@ System.register([], function (exports_1, context_1) {
                     }
                     return this.cvValues[cvFilterType];
                 };
+                CvFilters.cvValues = null;
                 return CvFilters;
             }());
-            CvFilters.cvValues = null;
             exports_1("CvFilters", CvFilters);
         }
     };
