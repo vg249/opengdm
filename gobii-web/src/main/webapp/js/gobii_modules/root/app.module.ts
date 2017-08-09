@@ -30,6 +30,7 @@ import {routing} from "./app.routing";
 import {APP_BASE_HREF} from "@angular/common";
 import {AuthGuard} from "../services/core/auth.guard";
 import {Button} from "primeng/components/button/button";
+import {SearchCriteriaBySamplesComponent} from "./page-by-samples.component";
 
 
 
@@ -63,7 +64,8 @@ import {Button} from "primeng/components/button/button";
         NameIdListBoxComponent,
         StatusDisplayTreeComponent,
         Dialog,
-        Button],
+        Button,
+        SearchCriteriaBySamplesComponent],
     providers: [AuthGuard,
         AuthenticationService,
         DtoRequestService,

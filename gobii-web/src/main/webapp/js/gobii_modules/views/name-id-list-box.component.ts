@@ -189,7 +189,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
     }
 
     // useg
-    private fileItemList: GobiiFileItem[] = [];
+    public fileItemList: GobiiFileItem[] = [];
 
     private notifyOnInit: boolean = false;
     private doTreeNotifications: boolean = true;
@@ -199,9 +199,9 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
-    private selectedFileItemId: string = null;
-    private onNameIdSelected: EventEmitter<NameId> = new EventEmitter();
-    private onError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
+    public selectedFileItemId: string = null;
+    public onNameIdSelected: EventEmitter<NameId> = new EventEmitter();
+    public onError: EventEmitter<HeaderStatusMessage> = new EventEmitter();
 
 
     private handleHeaderStatus(headerStatusMessage: HeaderStatusMessage) {

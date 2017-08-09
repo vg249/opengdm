@@ -25,8 +25,7 @@ import {ExtractorItemType} from "../model/file-model-node";
     template: `<form>
                     <div style="overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px">
                         <div *ngFor="let fileItemEvent of fileItemEvents" 
-                            (click)=handleItemSelected($event) 
-                            (hover)=handleItemHover($event)>
+                            (click)=handleItemSelected($event)>
                             <input  type="checkbox" 
                                 (click)=handleItemChecked($event)
                                 [checked]="fileItemEvent.getChecked()"
@@ -57,11 +56,11 @@ export class CheckListBoxComponent implements OnInit,OnChanges,DoCheck {
 
 
     // useg
-    private nameIdList: NameId[];
-    private fileItemEvents: GobiiFileItem[] = [];
-    private onItemChecked: EventEmitter<GobiiFileItem> = new EventEmitter();
-    private onItemSelected: EventEmitter<GobiiFileItem> = new EventEmitter();
-    private checkedFileItemHistory: GobiiFileItem[] = [];
+    public nameIdList: NameId[];
+    public fileItemEvents: GobiiFileItem[] = [];
+    public onItemChecked: EventEmitter<GobiiFileItem> = new EventEmitter();
+    public onItemSelected: EventEmitter<GobiiFileItem> = new EventEmitter();
+    public checkedFileItemHistory: GobiiFileItem[] = [];
 
     private handleItemChecked(arg) {
 

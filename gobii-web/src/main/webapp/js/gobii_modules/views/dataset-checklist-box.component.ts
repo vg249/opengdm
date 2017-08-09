@@ -68,15 +68,15 @@ export class DataSetCheckListBoxComponent implements OnInit,OnChanges {
     } // ctor
 
     // useg
-    private gobiiExtractFilterType: GobiiExtractFilterType;
-    private nameIdRequestParamsDataset: NameIdRequestParams;
-    private experimentId: string;
-    private onItemChecked: EventEmitter<GobiiFileItem> = new EventEmitter();
-    private onAddStatusMessage: EventEmitter<HeaderStatusMessage> = new EventEmitter();
-    private dataSet: DataSet;
-    private analysisNames: string[] = [];
-    private analysisTypes: string[] = [];
-    private nameIdListAnalysisTypes: NameId[];
+    public gobiiExtractFilterType: GobiiExtractFilterType;
+    public nameIdRequestParamsDataset: NameIdRequestParams;
+    public experimentId: string;
+    public onItemChecked: EventEmitter<GobiiFileItem> = new EventEmitter();
+    public onAddStatusMessage: EventEmitter<HeaderStatusMessage> = new EventEmitter();
+    public dataSet: DataSet;
+    public analysisNames: string[] = [];
+    public analysisTypes: string[] = [];
+    public nameIdListAnalysisTypes: NameId[];
 
 
     private handleItemChecked(arg: GobiiFileItem) {

@@ -101,10 +101,10 @@ export class ExportFormatComponent implements OnInit, OnChanges {
     }
 
 
-    private fileFormat: string = "HAPMAP";
-    private gobiiExtractFilterType: GobiiExtractFilterType;
-    private onFormatSelected: EventEmitter<GobiiExtractFormat> = new EventEmitter();
-    private onError: EventEmitter<Header> = new EventEmitter();
+    public fileFormat: string = "HAPMAP";
+    public gobiiExtractFilterType: GobiiExtractFilterType;
+    public onFormatSelected: EventEmitter<GobiiExtractFormat> = new EventEmitter();
+    public onError: EventEmitter<Header> = new EventEmitter();
 
     private handleFormatSelected(arg) {
         if (arg.srcElement.checked) {
@@ -142,7 +142,7 @@ export class ExportFormatComponent implements OnInit, OnChanges {
         //console.log("selected contact itemId:" + arg);
     }
 
-    private metaDataExtractname: string;
+    public metaDataExtractname: string;
 
     ngOnChanges(changes: {[propName: string]: SimpleChange}) {
 

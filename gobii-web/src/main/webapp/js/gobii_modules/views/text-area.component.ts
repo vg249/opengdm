@@ -16,8 +16,8 @@ import {Component, EventEmitter} from "@angular/core";
 })
 export class TextAreaComponent {
 
-    private textValue;
-    private log: string ='';
+    public textValue;
+    public log: string ='';
 
     private logText(value: string): void {
         this.log += `Text changed to '${value}'\n`

@@ -31,7 +31,7 @@ export class SampleListTypeComponent implements OnInit, OnChanges {
 
     private onHeaderStatusMessage: EventEmitter<HeaderStatusMessage> = new EventEmitter();
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
-    private listType: string = "GERMPLASM_NAME";
+    public listType: string = "GERMPLASM_NAME";
 
     private handleExportTypeSelected(arg) {
         if (arg.srcElement.checked) {

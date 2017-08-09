@@ -1,6 +1,7 @@
-import { createSelector } from 'reselect';
+import {createSelector} from 'reselect';
 import * as gobiiFileItem from '../actions/fileitem';
 import {GobiiFileItem} from "../../model/gobii-file-item";
+import * as gobiiFileItemAction from "../actions/fileitem";
 
 
 /***
@@ -10,67 +11,58 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
  * will be handled each in their own reducer.
  */
 export interface State {
-  fileItemIdsAll: string[];
-  fileItemIdsSelectedForExtract: string[];
-  fileItems: { [id: string]: GobiiFileItem };
+    fileItemUniqueIdsSelected: string[];
+    fileItems: GobiiFileItem[] ;
 };
 
 export const initialState: State = {
-  fileItemIdsAll: [],
-  fileItemIdsSelectedForExtract: [],
-  fileItems: {},
+    fileItemUniqueIdsSelected: [],
+    fileItems: [],
 };
 
-export function reducer(state:State = initialState, action: gobiiFileItem.Actions ): State {
+export function reducer(state: State = initialState, action: gobiiFileItem.Actions): State {
 
-  switch (action.type) {
+    let returnVal: State = state;
 
-    case gobiiFileItem.FIND_COMPLETE: {
-      const gobiiFileItemsPayload = action.payload;
-      const newGobiiFileItems = gobiiFileItemsPayload.filter(gobiiFileItem => !state.fileItems[gobiiFileItem.id]);
+    switch (action.type) {
 
-      const newGobiiFileItemIds = newGobiiFileItems.map(gobiiFileItem => gobiiFileItem.id);
-      const newGobiiFileItemEntities = newGobiiFileItems.reduce((fileItems: { [id: string]: GobiiFileItem}, gobiiFileItem: GobiiFileItem) => {
-        return Object.assign(fileItems, {
-          [gobiiFileItem.id]: gobiiFileItem
-        });
-      }, {});
+        case gobiiFileItemAction.LOAD: {
+            const gobiiFileItemsPayload = action.payload;
 
-      return {
-        fileItemIdsAll: [ ...state.fileItemIdsAll, ...newGobiiFileItemIds ],
-        fileItems: Object.assign({}, state.fileItems, newGobiiFileItemEntities),
-        selectedBookId: state.selectedBookId
-      };
-    }
+            const newGobiiFileItems = gobiiFileItemsPayload.filter(newItem =>
+                state
+                    .fileItems
+                    .filter(stateItem =>
+                        stateItem.getExtractorItemType() != newItem.getExtractorItemType() &&
+                        stateItem.getEntityType() != newItem.getEntityType() &&
+                        stateItem.getEntitySubType() != newItem.getEntitySubType() &&
+                        stateItem.getItemId() != newItem.getItemId()
+                    )
+            );
 
-    case gobiiFileItem.LOAD: {
-      const book = action.payload;
+            // const newGobiiFileItemEntities = newGobiiFileItems
+            //     .reduce((fileItems: { [id: string]: GobiiFileItem }, gobiiFileItem: GobiiFileItem) => {
+            //         return Object.assign(fileItems, {
+            //             [gobiiFileItem.getFileItemUniqueId()]: gobiiFileItem
+            //         });
+            //     }, {});
 
-      if (state.fileItemIdsAll.indexOf(book.id) > -1) {
-        return state;
-      }
+            returnVal = {
+                fileItems: Object.assign({}, state.fileItems, newGobiiFileItems),
+                fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected
+            };
+        } // LOAD
 
-      return {
-        fileItemIdsAll: [ ...state.fileItemIdsAll, book.id ],
-        fileItems: Object.assign({}, state.fileItems, {
-          [book.id]: book
-        }),
-        selectedBookId: state.selectedBookId
-      };
-    }
+        case gobiiFileItemAction.SELECT_FOR_EXTRACT: {
 
-    case gobiiFileItem.SELECT: {
-      return {
-        fileItemIdsAll: state.fileItemIdsAll,
-        fileItems: state.fileItems,
-        selectedBookId: action.payload
-      };
-    }
+            const gobiiFileItemPayload:GobiiFileItem = action.payload;
 
-    default: {
-      return state;
-    }
-  }
+
+        }
+
+    } // switch()
+
+    return returnVal;
 }
 
 /**
@@ -82,16 +74,18 @@ export function reducer(state:State = initialState, action: gobiiFileItem.Action
  * use-case.
  */
 
-export const getEntities = (state: State) => state.fileItems;
+export const getFileItems = (state: State) => state.fileItems;
 
-export const getIds = (state: State) => state.fileItemIdsAll;
+export const getUniqueIds = (state: State) => state.fileItems.map(fileItem => fileItem.getFileItemUniqueId());
 
-export const getSelectedId = (state: State) => state.selectedBookId;
+export const getSelectedUniqueIds = (state: State) => state.fileItemUniqueIdsSelected;
 
-export const getSelected = createSelector(getEntities, getSelectedId, (entities, selectedId) => {
-  return entities[selectedId];
+export const getSelected = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
+    return fileItems.filter(fileItem => {
+        selectedUniqueIds.filter(uniqueId => fileItem.getFileItemUniqueId() === uniqueId)
+    });
 });
 
-export const getAll = createSelector(getEntities, getIds, (entities, ids) => {
-  return ids.map(id => entities[id]);
+export const getAll = createSelector(getFileItems, getUniqueIds, (entities, ids) => {
+    return ids.map(id => entities[id]);
 });

@@ -41,19 +41,19 @@ import {NameIdLabelType} from "../model/name-id-label-type";
 
 export class ProjectListBoxComponent implements OnInit,OnChanges {
 
-    private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+    public gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     // *** You cannot use an Enum directly as a template type parameter, so we need
     //     to assign them to properties
-    private nameIdRequestParamsProject: NameIdRequestParams;
+    public nameIdRequestParamsProject: NameIdRequestParams;
 
 
     // useg    privatre
-    private project: Project;
-    private primaryInvestigatorId: string;
-    private primaryInvestigatorName: string;
-    private onProjectSelected: EventEmitter<string> = new EventEmitter();
-    private onAddHeaderStatus: EventEmitter<Header> = new EventEmitter();
-    private reinitProjectList: boolean = false;
+    public project: Project;
+    public primaryInvestigatorId: string;
+    public primaryInvestigatorName: string;
+    public onProjectSelected: EventEmitter<string> = new EventEmitter();
+    public onAddHeaderStatus: EventEmitter<Header> = new EventEmitter();
+    public reinitProjectList: boolean = false;
 
     private handleProjectSelected(arg) {
         let selectedProjectId = arg.id;
