@@ -1,4 +1,4 @@
-System.register(["reselect", "../actions/fileitem"], function (exports_1, context_1) {
+System.register(["reselect", "../actions/fileitem-action"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function reducer(state, action) {
@@ -17,21 +17,46 @@ System.register(["reselect", "../actions/fileitem"], function (exports_1, contex
                             stateItem.getItemId() != newItem.getItemId();
                     });
                 });
-                // const newGobiiFileItemEntities = newGobiiFileItems
-                //     .reduce((fileItems: { [id: string]: GobiiFileItem }, gobiiFileItem: GobiiFileItem) => {
-                //         return Object.assign(fileItems, {
-                //             [gobiiFileItem.getFileItemUniqueId()]: gobiiFileItem
-                //         });
-                //     }, {});
                 returnVal = {
                     fileItems: Object.assign({}, state.fileItems, newGobiiFileItems),
                     fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected
                 };
             } // LOAD
+            // Technically, and according to the ngrx/store example app,
+            // it should be possible for different actions to have a different
+            // payload type, such that it's possible for a payload to be a single
+            // GobiiFileItem rather than an array of. However, I cannot get this
+            // to compile properly. See this issue I submitted:
+            // https://github.com/ngrx/platform/issues/255
+            // For now in the interest of making progress I am using
+            // an array type for all action payloads
             case gobiiFileItemAction.SELECT_FOR_EXTRACT: {
                 var gobiiFileItemPayload = action.payload;
-            }
-        } // switch()
+                var selectedUniqueItemIds = gobiiFileItemPayload
+                    .filter(function (selectedFileItem) {
+                    return state
+                        .fileItemUniqueIdsSelected
+                        .filter(function (selectedFileItemId) { return selectedFileItemId !== selectedFileItem.getFileItemUniqueId(); });
+                })
+                    .map(function (selectedFileItem) { return selectedFileItem.getFileItemUniqueId(); });
+                returnVal = {
+                    fileItems: state.fileItems,
+                    fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected.concat(selectedUniqueItemIds) // spread syntax
+                };
+            } // SELECT_FOR_EXTRACT
+            case gobiiFileItemAction.DESELECT_FOR_EXTRACT: {
+                var gobiiFileItemPayload_1 = action.payload;
+                var newSelectedUniqueItemIds = state
+                    .fileItemUniqueIdsSelected
+                    .filter(function (selectedId) {
+                    return gobiiFileItemPayload_1.filter(function (deselectedItem) { return deselectedItem.getFileItemUniqueId() != selectedId; });
+                });
+                returnVal = {
+                    fileItems: state.fileItems,
+                    fileItemUniqueIdsSelected: newSelectedUniqueItemIds
+                };
+            } // switch()
+        }
         return returnVal;
     }
     exports_1("reducer", reducer);
@@ -73,4 +98,4 @@ System.register(["reselect", "../actions/fileitem"], function (exports_1, contex
         }
     };
 });
-//# sourceMappingURL=fileitems.js.map
+//# sourceMappingURL=fileitems-reducer.js.map

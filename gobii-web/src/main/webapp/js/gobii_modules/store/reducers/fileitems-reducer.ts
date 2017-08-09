@@ -1,7 +1,6 @@
 import {createSelector} from 'reselect';
-import * as gobiiFileItem from '../actions/fileitem';
 import {GobiiFileItem} from "../../model/gobii-file-item";
-import * as gobiiFileItemAction from "../actions/fileitem";
+import * as gobiiFileItemAction from "../actions/fileitem-action";
 
 
 /***
@@ -20,7 +19,7 @@ export const initialState: State = {
     fileItems: [],
 };
 
-export function reducer(state: State = initialState, action: gobiiFileItem.Actions): State {
+export function reducer(state: State = initialState, action: gobiiFileItemAction.All): State {
 
     let returnVal: State = state;
 
@@ -40,29 +39,58 @@ export function reducer(state: State = initialState, action: gobiiFileItem.Actio
                     )
             );
 
-            // const newGobiiFileItemEntities = newGobiiFileItems
-            //     .reduce((fileItems: { [id: string]: GobiiFileItem }, gobiiFileItem: GobiiFileItem) => {
-            //         return Object.assign(fileItems, {
-            //             [gobiiFileItem.getFileItemUniqueId()]: gobiiFileItem
-            //         });
-            //     }, {});
-
             returnVal = {
                 fileItems: Object.assign({}, state.fileItems, newGobiiFileItems),
                 fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected
             };
         } // LOAD
 
+        // Technically, and according to the ngrx/store example app,
+        // it should be possible for different actions to have a different
+        // payload type, such that it's possible for a payload to be a single
+        // GobiiFileItem rather than an array of. However, I cannot get this
+        // to compile properly. See this issue I submitted:
+        // https://github.com/ngrx/platform/issues/255
+        // For now in the interest of making progress I am using
+        // an array type for all action payloads
         case gobiiFileItemAction.SELECT_FOR_EXTRACT: {
 
-            const gobiiFileItemPayload:GobiiFileItem = action.payload;
+            const gobiiFileItemPayload: GobiiFileItem[] = action.payload;
+            const selectedUniqueItemIds = gobiiFileItemPayload
+                .filter(selectedFileItem =>
+                    state
+                        .fileItemUniqueIdsSelected
+                        .filter(selectedFileItemId => selectedFileItemId !== selectedFileItem.getFileItemUniqueId()))
+                .map(selectedFileItem => selectedFileItem.getFileItemUniqueId());
+
+            returnVal = {
+                fileItems: state.fileItems,
+                fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...selectedUniqueItemIds] // spread syntax
+            };
+        } // SELECT_FOR_EXTRACT
+
+        case gobiiFileItemAction.DESELECT_FOR_EXTRACT: {
+
+            const gobiiFileItemPayload: GobiiFileItem[] = action.payload;
+            const newSelectedUniqueItemIds = state
+                .fileItemUniqueIdsSelected
+                .filter(selectedId =>
+                    gobiiFileItemPayload.filter(deselectedItem => deselectedItem.getFileItemUniqueId() != selectedId)
+                );
 
 
-        }
+            returnVal = {
+                fileItems: state.fileItems,
+                fileItemUniqueIdsSelected: newSelectedUniqueItemIds
+            };
 
-    } // switch()
+
+        } // switch()
+
+    }
 
     return returnVal;
+
 }
 
 /**
