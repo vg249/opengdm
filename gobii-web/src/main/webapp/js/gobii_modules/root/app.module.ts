@@ -31,7 +31,11 @@ import {APP_BASE_HREF} from "@angular/common";
 import {AuthGuard} from "../services/core/auth.guard";
 import {Button} from "primeng/components/button/button";
 import {SearchCriteriaBySamplesComponent} from "./page-by-samples.component";
+// import {StoreModule} from '@ngrx/store';
+// import {reducer} from '../store/reducers';
+// import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 
+//import {environmentSettings} from "../environments/environment";
 
 
 @NgModule({
@@ -42,7 +46,11 @@ import {SearchCriteriaBySamplesComponent} from "./page-by-samples.component";
         TreeModule,
         SharedModule,
         routing,
-        BrowserAnimationsModule],
+        BrowserAnimationsModule,
+//        StoreModule.forRoot(reducer),
+//        !environmentSettings.production ? StoreDevtoolsModule.instrument() : [],],
+//         StoreDevtoolsModule.instrument(),
+    ],
     declarations: [
         AppComponent,
         ExtractorRoot,

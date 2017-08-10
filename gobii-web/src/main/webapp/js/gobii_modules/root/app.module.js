@@ -123,7 +123,8 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
                             primeng_1.TreeModule,
                             primeng_1.SharedModule,
                             app_routing_1.routing,
-                            animations_1.BrowserAnimationsModule],
+                            animations_1.BrowserAnimationsModule,
+                        ],
                         declarations: [
                             app_component_1.AppComponent,
                             app_extractorroot_1.ExtractorRoot,
