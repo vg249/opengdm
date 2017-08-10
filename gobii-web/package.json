@@ -21,7 +21,7 @@
     "ng2-bootstrap": "1.6.3",
     "reflect-metadata": "^0.1.8",
     "rxjs": "5.4.2",
-    "systemjs": "^0.20.17",
+    "systemjs": "^0.19.8",
     "zone.js": "^0.8.4",
     "primeng": "4.1.0-rc.2",
     "font-awesome": "4.7.0",
