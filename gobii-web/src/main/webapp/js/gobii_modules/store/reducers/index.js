@@ -1,23 +1,30 @@
-System.register(["reselect", "@ngrx/store", "./fileitems-reducer"], function (exports_1, context_1) {
+System.register(["reselect", "../../environments/environment", "@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function reducer(state, action) {
-        // if (environmentSettings.production) {
-        //     return productionReducer(state, action);
-        // } else {
-        //return developmentReducer(state, action);
-        return null;
-        // }
+        if (environment_1.environmentSettings.production) {
+            return productionReducer(state, action);
+        }
+        else {
+            return developmentReducer(state, action);
+        }
     }
     exports_1("reducer", reducer);
-    var reselect_1, store_1, fromFileItems, reducers, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds;
+    var reselect_1, environment_1, store_1, ngrx_store_freeze_1, store_2, fromFileItems, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds;
     return {
         setters: [
             function (reselect_1_1) {
                 reselect_1 = reselect_1_1;
             },
+            function (environment_1_1) {
+                environment_1 = environment_1_1;
+            },
             function (store_1_1) {
                 store_1 = store_1_1;
+                store_2 = store_1_1;
+            },
+            function (ngrx_store_freeze_1_1) {
+                ngrx_store_freeze_1 = ngrx_store_freeze_1_1;
             },
             function (fromFileItems_1) {
                 fromFileItems = fromFileItems_1;
@@ -38,8 +45,8 @@ System.register(["reselect", "@ngrx/store", "./fileitems-reducer"], function (ex
                 // layout: fromLayout.fileItemsReducer,
                 // router: fromRouter.routerReducer,
             };
-            //const developmentReducer: ActionReducer<State> = compose(storeFreeze, combineReducers)(reducers);
-            productionReducer = store_1.combineReducers(reducers);
+            developmentReducer = store_1.compose(ngrx_store_freeze_1.storeFreeze, store_2.combineReducers)(reducers);
+            productionReducer = store_2.combineReducers(reducers);
             /**
              * A selector function is a map function factory. We pass it parameters and it
              * returns a function that maps from the larger state tree into a smaller
