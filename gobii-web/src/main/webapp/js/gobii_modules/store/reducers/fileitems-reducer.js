@@ -1,7 +1,7 @@
 System.register(["reselect", "../actions/fileitem-action"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    function reducer(state, action) {
+    function fileItemsReducer(state, action) {
         if (state === void 0) { state = initialState; }
         var returnVal = state;
         switch (action.type) {
@@ -59,7 +59,7 @@ System.register(["reselect", "../actions/fileitem-action"], function (exports_1,
         }
         return returnVal;
     }
-    exports_1("reducer", reducer);
+    exports_1("fileItemsReducer", fileItemsReducer);
     var reselect_1, gobiiFileItemAction, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getSelected, getAll;
     return {
         setters: [
@@ -77,7 +77,7 @@ System.register(["reselect", "../actions/fileitem-action"], function (exports_1,
                 fileItems: [],
             });
             /**
-             * Because the data structure is defined within the reducer it is optimal to
+             * Because the data structure is defined within the fileItemsReducer it is optimal to
              * locate our selector functions at this level. If store is to be thought of
              * as a database, and reducers the tables, selectors can be considered the
              * queries into said database. Remember to keep your selectors small and

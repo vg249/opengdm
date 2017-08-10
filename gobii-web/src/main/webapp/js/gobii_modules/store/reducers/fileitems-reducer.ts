@@ -7,7 +7,7 @@ import * as gobiiFileItemAction from "../actions/fileitem-action";
  * By definition, GobiiFileItems are read-only; we only every get them
  * from the server and display them and select them for an extract.
  * CRUD operations on the entities themselves (e.g., Projects, Experiments, etc.)
- * will be handled each in their own reducer.
+ * will be handled each in their own fileItemsReducer.
  */
 export interface State {
     fileItemUniqueIdsSelected: string[];
@@ -19,7 +19,7 @@ export const initialState: State = {
     fileItems: [],
 };
 
-export function reducer(state: State = initialState, action: gobiiFileItemAction.All): State {
+export function fileItemsReducer(state: State = initialState, action: gobiiFileItemAction.All): State {
 
     let returnVal: State = state;
 
@@ -94,7 +94,7 @@ export function reducer(state: State = initialState, action: gobiiFileItemAction
 }
 
 /**
- * Because the data structure is defined within the reducer it is optimal to
+ * Because the data structure is defined within the fileItemsReducer it is optimal to
  * locate our selector functions at this level. If store is to be thought of
  * as a database, and reducers the tables, selectors can be considered the
  * queries into said database. Remember to keep your selectors small and
