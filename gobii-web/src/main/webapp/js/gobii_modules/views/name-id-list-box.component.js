@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../model/type-entity", "../model/cv-filter-type", "../model/gobii-file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service", "../model/dto-header-status-message", "./entity-labels", "../model/type-event-origin", "../model/name-id-label-type"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../model/type-entity", "../model/cv-filter-type", "../model/gobii-file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service", "../model/dto-header-status-message", "./entity-labels", "../model/type-event-origin", "../model/name-id-label-type", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, type_entity_1, cv_filter_type_1, gobii_file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, dto_header_status_message_1, entity_labels_1, type_event_origin_1, name_id_label_type_1, NameIdListBoxComponent;
+    var core_1, name_id_1, type_entity_1, cv_filter_type_1, gobii_file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, dto_header_status_message_1, entity_labels_1, type_event_origin_1, name_id_label_type_1, store_1, fromRoot, fileAction, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -54,11 +54,21 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
             },
             function (name_id_label_type_1_1) {
                 name_id_label_type_1 = name_id_label_type_1_1;
+            },
+            function (store_1_1) {
+                store_1 = store_1_1;
+            },
+            function (fromRoot_1) {
+                fromRoot = fromRoot_1;
+            },
+            function (fileAction_1) {
+                fileAction = fileAction_1;
             }
         ],
         execute: function () {
             NameIdListBoxComponent = (function () {
-                function NameIdListBoxComponent(_nameIdService, _fileModelTreeService, differs) {
+                function NameIdListBoxComponent(store, _nameIdService, _fileModelTreeService, differs) {
+                    this.store = store;
                     this._nameIdService = _nameIdService;
                     this._fileModelTreeService = _fileModelTreeService;
                     this.differs = differs;
@@ -72,6 +82,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this.onError = new core_1.EventEmitter();
                     this.currentSelection = null;
                     this.differ = differs.find({}).create(null);
+                    this.fileItems$ = store.select(fromRoot.getAllFileItems);
                 } // ctor
                 // private notificationSent = false;
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
@@ -170,6 +181,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                                 _this.updateTreeService(scope$.fileItemList[0]);
                                 //                            this.notificationSent = true;
                             }
+                            _this.store.dispatch(new fileAction.LoadAction(scope$.fileItemList));
                         }
                     }, function (responseHeader) {
                         _this.handleHeaderStatus(responseHeader);
@@ -256,7 +268,8 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                         outputs: ['onNameIdSelected', 'onError'],
                         template: "<select [(ngModel)]=\"selectedFileItemId\" (change)=\"handleFileItemSelected($event)\" >\n\t\t\t        <option *ngFor=\"let fileItem of fileItemList\" \n\t\t\t\t        [value]=\"fileItem.getItemId()\">{{fileItem.getItemName()}}</option>\n\t\t        </select>\n" // end template
                     }),
-                    __metadata("design:paramtypes", [name_id_service_1.NameIdService,
+                    __metadata("design:paramtypes", [store_1.Store,
+                        name_id_service_1.NameIdService,
                         file_model_tree_service_1.FileModelTreeService,
                         core_1.KeyValueDiffers])
                 ], NameIdListBoxComponent);

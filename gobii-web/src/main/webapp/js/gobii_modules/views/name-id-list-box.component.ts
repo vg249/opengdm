@@ -18,6 +18,10 @@ import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {Labels} from "./entity-labels";
 import {GobiiUIEventOrigin} from "../model/type-event-origin";
 import {NameIdLabelType} from "../model/name-id-label-type";
+import {Store} from "@ngrx/store";
+import * as fromRoot from '../store/reducers';
+import * as fileAction from '../store/actions/fileitem-action';
+import {Observable} from "rxjs/Observable";
 
 
 @Component({
@@ -41,12 +45,16 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     differ: any;
 
-    constructor(private _nameIdService: NameIdService,
+    fileItems$: Observable<GobiiFileItem[]>;
+
+    constructor(private store: Store<fromRoot.State>,
+                private _nameIdService: NameIdService,
                 private _fileModelTreeService: FileModelTreeService,
                 private differs: KeyValueDiffers) {
 
         this.differ = differs.find({}).create(null);
 
+        this.fileItems$ = store.select(fromRoot.getAllFileItems);
 
     } // ctor
 
@@ -180,6 +188,8 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                             this.updateTreeService(scope$.fileItemList[0]);
 //                            this.notificationSent = true;
                         }
+
+                    this.store.dispatch(new fileAction.LoadAction(scope$.fileItemList))
                     }
                 },
                 responseHeader => {
