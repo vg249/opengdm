@@ -40,9 +40,11 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             );
 
             returnVal = {
-                fileItems: Object.assign({}, state.fileItems, newGobiiFileItems),
-                fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected
+                fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
+                fileItems: [...state.fileItems, ...newGobiiFileItems]
             };
+
+            break;
         } // LOAD
 
         // Technically, and according to the ngrx/store example app,
@@ -67,6 +69,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                 fileItems: state.fileItems,
                 fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...selectedUniqueItemIds] // spread syntax
             };
+
+            break;
         } // SELECT_FOR_EXTRACT
 
         case gobiiFileItemAction.DESELECT_FOR_EXTRACT: {
@@ -84,6 +88,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                 fileItemUniqueIdsSelected: newSelectedUniqueItemIds
             };
 
+            break;
 
         } // switch()
 

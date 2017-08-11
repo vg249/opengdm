@@ -18,9 +18,10 @@ System.register(["reselect", "../actions/fileitem-action"], function (exports_1,
                     });
                 });
                 returnVal = {
-                    fileItems: Object.assign({}, state.fileItems, newGobiiFileItems),
-                    fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected
+                    fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
+                    fileItems: state.fileItems.concat(newGobiiFileItems)
                 };
+                break;
             } // LOAD
             // Technically, and according to the ngrx/store example app,
             // it should be possible for different actions to have a different
@@ -43,6 +44,7 @@ System.register(["reselect", "../actions/fileitem-action"], function (exports_1,
                     fileItems: state.fileItems,
                     fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected.concat(selectedUniqueItemIds) // spread syntax
                 };
+                break;
             } // SELECT_FOR_EXTRACT
             case gobiiFileItemAction.DESELECT_FOR_EXTRACT: {
                 var gobiiFileItemPayload_1 = action.payload;
@@ -55,6 +57,7 @@ System.register(["reselect", "../actions/fileitem-action"], function (exports_1,
                     fileItems: state.fileItems,
                     fileItemUniqueIdsSelected: newSelectedUniqueItemIds
                 };
+                break;
             } // switch()
         }
         return returnVal;
