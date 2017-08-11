@@ -32,7 +32,7 @@ import {AuthGuard} from "../services/core/auth.guard";
 import {Button} from "primeng/components/button/button";
 import {SearchCriteriaBySamplesComponent} from "./page-by-samples.component";
 import {StoreModule} from '@ngrx/store';
-import {reducer} from '../store/reducers';
+import {reducer, reducers} from '../store/reducers';
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 import {environmentSettings} from "../environments/environment";
 
@@ -46,7 +46,7 @@ import {environmentSettings} from "../environments/environment";
         SharedModule,
         routing,
         BrowserAnimationsModule,
-        StoreModule.forRoot(reducer),
+        StoreModule.forRoot(reducers),
         !environmentSettings.production ? StoreDevtoolsModule.instrument() : [],
         StoreDevtoolsModule.instrument(),
     ],

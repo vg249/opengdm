@@ -136,7 +136,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/http", "@angular/p
                             primeng_1.SharedModule,
                             app_routing_1.routing,
                             animations_1.BrowserAnimationsModule,
-                            store_1.StoreModule.forRoot(reducers_1.reducer),
+                            store_1.StoreModule.forRoot(reducers_1.reducers),
                             !environment_1.environmentSettings.production ? store_devtools_1.StoreDevtoolsModule.instrument() : [],
                             store_devtools_1.StoreDevtoolsModule.instrument(),
                         ],

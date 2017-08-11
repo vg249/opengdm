@@ -181,7 +181,8 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                                 _this.updateTreeService(scope$.fileItemList[0]);
                                 //                            this.notificationSent = true;
                             }
-                            _this.store.dispatch(new fileAction.LoadAction(scope$.fileItemList));
+                            var loadAction = new fileAction.LoadAction(scope$.fileItemList);
+                            _this.store.dispatch(loadAction);
                         }
                     }, function (responseHeader) {
                         _this.handleHeaderStatus(responseHeader);
@@ -266,7 +267,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                             'nameIdRequestParams',
                             'doTreeNotifications'],
                         outputs: ['onNameIdSelected', 'onError'],
-                        template: "<select [(ngModel)]=\"selectedFileItemId\" (change)=\"handleFileItemSelected($event)\" >\n\t\t\t        <option *ngFor=\"let fileItem of fileItemList\" \n\t\t\t\t        [value]=\"fileItem.getItemId()\">{{fileItem.getItemName()}}</option>\n\t\t        </select>\n" // end template
+                        template: "<select [(ngModel)]=\"selectedFileItemId\" (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItemList\"\n                [value]=\"fileItem.getItemId()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         name_id_service_1.NameIdService,

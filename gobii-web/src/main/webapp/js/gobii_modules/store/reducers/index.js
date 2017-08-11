@@ -1,23 +1,11 @@
-System.register(["reselect", "../../environments/environment", "@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer"], function (exports_1, context_1) {
+System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    function reducer(state, action) {
-        if (environment_1.environmentSettings.production) {
-            return productionReducer(state, action);
-        }
-        else {
-            return developmentReducer(state, action);
-        }
-    }
-    exports_1("reducer", reducer);
-    var reselect_1, environment_1, store_1, ngrx_store_freeze_1, store_2, fromFileItems, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds;
+    var reselect_1, store_1, ngrx_store_freeze_1, store_2, fromFileItems, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds;
     return {
         setters: [
             function (reselect_1_1) {
                 reselect_1 = reselect_1_1;
-            },
-            function (environment_1_1) {
-                environment_1 = environment_1_1;
             },
             function (store_1_1) {
                 store_1 = store_1_1;
@@ -31,6 +19,9 @@ System.register(["reselect", "../../environments/environment", "@ngrx/store", "n
             }
         ],
         execute: function () {
+            exports_1("reducers", reducers = {
+                fileItems: fromFileItems.fileItemsReducer,
+            });
             /**
              * Because metareducers take a fileItemsReducer function and return a new fileItemsReducer,
              * we can use our compose helper to chain them together. Here we are
@@ -38,15 +29,22 @@ System.register(["reselect", "../../environments/environment", "@ngrx/store", "n
              * wrapping that in storeLogger. Remember that compose applies
              * the result from right to left.
              */
-            reducers = {
-                fileItems: fromFileItems.fileItemsReducer
-                // books: fromBooks.fileItemsReducer,
-                // collection: fromCollection.fileItemsReducer,
-                // layout: fromLayout.fileItemsReducer,
-                // router: fromRouter.routerReducer,
-            };
+            // const reducers = {
+            //     fileItems: fromFileItems.fileItemsReducer
+            //     // books: fromBooks.fileItemsReducer,
+            //     // collection: fromCollection.fileItemsReducer,
+            //     // layout: fromLayout.fileItemsReducer,
+            //     // router: fromRouter.routerReducer,
+            // };
             developmentReducer = store_1.compose(ngrx_store_freeze_1.storeFreeze, store_2.combineReducers)(reducers);
             productionReducer = store_2.combineReducers(reducers);
+            // export function reducer(state: any, action: any) {
+            //     if (environmentSettings.production) {
+            //         return productionReducer(state, action);
+            //     } else {
+            //         return developmentReducer(state, action);
+            //     }
+            //  }
             /**
              * A selector function is a map function factory. We pass it parameters and it
              * returns a function that maps from the larger state tree into a smaller

@@ -31,11 +31,12 @@ import {Observable} from "rxjs/Observable";
         'nameIdRequestParams',
         'doTreeNotifications'],
     outputs: ['onNameIdSelected', 'onError'],
-    template: `<select [(ngModel)]="selectedFileItemId" (change)="handleFileItemSelected($event)" >
-			        <option *ngFor="let fileItem of fileItemList" 
-				        [value]="fileItem.getItemId()">{{fileItem.getItemName()}}</option>
-		        </select>
-` // end template
+    template: `<select [(ngModel)]="selectedFileItemId" (change)="handleFileItemSelected($event)">
+        <option *ngFor="let fileItem of fileItemList"
+                [value]="fileItem.getItemId()">{{fileItem.getItemName()}}
+        </option>
+    </select>
+    ` // end template
 
 })
 
@@ -133,7 +134,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
                         if (this.nameIdRequestParams.getMameIdLabelType() != NameIdLabelType.UNKNOWN) {
 
-                            let entityName:string = "";
+                            let entityName: string = "";
                             if (scope$.nameIdRequestParams.getCvFilterType() !== CvFilterType.UNKNOWN) {
                                 entityName += Labels.instance().cvFilterNodeLabels[scope$.nameIdRequestParams.getCvFilterType()];
                             } else if (scope$.nameIdRequestParams.getEntitySubType() !== EntitySubType.UNKNOWN) {
@@ -143,10 +144,10 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                             }
 
                             let label: string = "";
-                            switch( this.nameIdRequestParams.getMameIdLabelType() ) {
+                            switch (this.nameIdRequestParams.getMameIdLabelType()) {
 
                                 case NameIdLabelType.SELECT_A:
-                                    label = "Select a " +  entityName;
+                                    label = "Select a " + entityName;
                                     break;
 
                                 // we require that these entity labels all be in the singular
@@ -155,14 +156,13 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                                     break;
 
                                 case NameIdLabelType.NO:
-                                    label = "No " +  entityName;
+                                    label = "No " + entityName;
                                     break;
 
                                 default:
                                     this.handleHeaderStatus(new HeaderStatusMessage("Unknown label type "
-                                        + NameIdLabelType[this.nameIdRequestParams.getMameIdLabelType()],null,null))
+                                        + NameIdLabelType[this.nameIdRequestParams.getMameIdLabelType()], null, null))
                             }
-
 
 
                             let labelFileItem: GobiiFileItem = this.makeFileItemFromNameId(
@@ -189,7 +189,9 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 //                            this.notificationSent = true;
                         }
 
-                    this.store.dispatch(new fileAction.LoadAction(scope$.fileItemList))
+
+                        let loadAction: fileAction.LoadAction = new fileAction.LoadAction(scope$.fileItemList)
+                        this.store.dispatch(loadAction)
                     }
                 },
                 responseHeader => {
@@ -227,7 +229,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                 eventedfileItem.getItemName(),
                 eventedfileItem.getEntityType()));
 
-        if( eventedfileItem.getItemId() != "0") {
+        if (eventedfileItem.getItemId() != "0") {
             if (this.doTreeNotifications) {
                 this._fileModelTreeService.put(eventedfileItem)
                     .subscribe(
@@ -269,7 +271,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
     }
 
 
-    ngOnChanges(changes: {[propName: string]: SimpleChange}) {
+    ngOnChanges(changes: { [propName: string]: SimpleChange }) {
 
         if (changes['gobiiExtractFilterType']
             && ( changes['gobiiExtractFilterType'].currentValue != null )

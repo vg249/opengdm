@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import {ActionReducer} from '@ngrx/store';
+import {ActionReducer, ActionReducerMap} from '@ngrx/store';
 //import * as fromRouter from '@ngrx/router-store';
 import {environmentSettings} from '../../environments/environment';
 
@@ -56,6 +56,11 @@ export interface State {
 }
 
 
+export const reducers: ActionReducerMap<State> = {
+    fileItems: fromFileItems.fileItemsReducer,
+};
+
+
 /**
  * Because metareducers take a fileItemsReducer function and return a new fileItemsReducer,
  * we can use our compose helper to chain them together. Here we are
@@ -63,24 +68,26 @@ export interface State {
  * wrapping that in storeLogger. Remember that compose applies
  * the result from right to left.
  */
-const reducers = {
-    fileItems: fromFileItems.fileItemsReducer
-    // books: fromBooks.fileItemsReducer,
-    // collection: fromCollection.fileItemsReducer,
-    // layout: fromLayout.fileItemsReducer,
-    // router: fromRouter.routerReducer,
-};
+// const reducers = {
+//     fileItems: fromFileItems.fileItemsReducer
+//     // books: fromBooks.fileItemsReducer,
+//     // collection: fromCollection.fileItemsReducer,
+//     // layout: fromLayout.fileItemsReducer,
+//     // router: fromRouter.routerReducer,
+// };
 
 const developmentReducer: ActionReducer<State> = compose(storeFreeze, combineReducers)(reducers);
 const productionReducer: ActionReducer<State> = combineReducers(reducers);
 
-export function reducer(state: any, action: any) {
-    if (environmentSettings.production) {
-        return productionReducer(state, action);
-    } else {
-        return developmentReducer(state, action);
-    }
- }
+// export function reducer(state: any, action: any) {
+//     if (environmentSettings.production) {
+//         return productionReducer(state, action);
+//     } else {
+//         return developmentReducer(state, action);
+//     }
+//  }
+
+
 
 
 /**
