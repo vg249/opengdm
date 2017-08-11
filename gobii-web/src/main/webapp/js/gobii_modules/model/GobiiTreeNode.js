@@ -20,52 +20,147 @@ System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./gu
         execute: function () {
             GobiiTreeNode = (function () {
                 function GobiiTreeNode(parent, fileModelNodeId, fileItemId, required) {
-                    this._itemType = file_model_node_1.ExtractorItemType.ENTITY;
-                    this._entityType = type_entity_1.EntityType.UNKNOWN;
-                    this._entitySubType = type_entity_1.EntitySubType.UNKNOWN;
-                    this._cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
+                    this.itemType = file_model_node_1.ExtractorItemType.ENTITY;
+                    this.entityType = type_entity_1.EntityType.UNKNOWN;
+                    this.entitySubType = type_entity_1.EntitySubType.UNKNOWN;
+                    this.cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
                     this.children = [];
                     this.required = false;
-                    this._active = false;
-                    this._id = guid_1.Guid.generateUUID();
+                    this.active = false;
+                    this.id = guid_1.Guid.generateUUID();
                     this.parent = parent;
                     this.fileModelNodeId = fileModelNodeId;
                     this.fileItemId = fileItemId;
                     this.required = required;
                 }
+                GobiiTreeNode.build = function (extractoItemType, entityType) {
+                    var returnVal = new GobiiTreeNode(null, null, null, null);
+                    returnVal.setItemType(extractoItemType);
+                    returnVal.setEntityType(entityType);
+                    return returnVal;
+                }; //build
                 GobiiTreeNode.prototype.getId = function () {
-                    return this._id;
+                    return this.id;
                 };
                 //unique identifiers
                 GobiiTreeNode.prototype.getItemType = function () {
-                    return this._itemType;
+                    return this.itemType;
                 };
                 GobiiTreeNode.prototype.setItemType = function (value) {
-                    this._itemType = value;
+                    this.itemType = value;
+                    return this;
                 };
                 GobiiTreeNode.prototype.getEntityType = function () {
-                    return this._entityType;
+                    return this.entityType;
                 };
                 GobiiTreeNode.prototype.setEntityType = function (value) {
-                    this._entityType = value;
+                    this.entityType = value;
+                    return this;
                 };
                 GobiiTreeNode.prototype.getEntitySubType = function () {
-                    return this._entitySubType;
+                    return this.entitySubType;
                 };
                 GobiiTreeNode.prototype.setEntitySubType = function (value) {
-                    this._entitySubType = value;
-                };
-                GobiiTreeNode.prototype.getCvFilterType = function () {
-                    return this._cvFilterType;
-                };
-                GobiiTreeNode.prototype.setCvFilterType = function (value) {
-                    this._cvFilterType = value;
+                    this.entitySubType = value;
+                    return this;
                 };
                 GobiiTreeNode.prototype.getActive = function () {
-                    return this._active;
+                    return this.active;
                 };
                 GobiiTreeNode.prototype.setActive = function (value) {
-                    this._active = value;
+                    this.active = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getCvFilterType = function () {
+                    return this.cvFilterType;
+                };
+                GobiiTreeNode.prototype.setCvFilterType = function (value) {
+                    this.cvFilterType = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getLabel = function () {
+                    return this.label;
+                };
+                GobiiTreeNode.prototype.setLabel = function (value) {
+                    this.label = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getData = function () {
+                    return this.data;
+                };
+                GobiiTreeNode.prototype.setData = function (value) {
+                    this.data = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getIcon = function () {
+                    return this.icon;
+                };
+                GobiiTreeNode.prototype.setIcon = function (value) {
+                    this.icon = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getExpandedIcon = function () {
+                    return this.expandedIcon;
+                };
+                GobiiTreeNode.prototype.setExpandedIcon = function (value) {
+                    this.expandedIcon = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getCollapsedIcon = function () {
+                    return this.collapsedIcon;
+                };
+                GobiiTreeNode.prototype.setCollapsedIcon = function (value) {
+                    this.collapsedIcon = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getChildren = function () {
+                    return this.children;
+                };
+                GobiiTreeNode.prototype.setChildren = function (value) {
+                    this.children = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getLeaf = function () {
+                    return this.leaf;
+                };
+                GobiiTreeNode.prototype.setLeaf = function (value) {
+                    this.leaf = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getExpanded = function () {
+                    return this.expanded;
+                };
+                GobiiTreeNode.prototype.setExpanded = function (value) {
+                    this.expanded = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getType = function () {
+                    return this.type;
+                };
+                GobiiTreeNode.prototype.setType = function (value) {
+                    this.type = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getPartialSelected = function () {
+                    return this.partialSelected;
+                };
+                GobiiTreeNode.prototype.setPartialSelected = function (value) {
+                    this.partialSelected = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getFileItemId = function () {
+                    return this.fileItemId;
+                };
+                GobiiTreeNode.prototype.setFileItemId = function (value) {
+                    this.fileItemId = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getRequired = function () {
+                    return this.required;
+                };
+                GobiiTreeNode.prototype.setRequired = function (value) {
+                    this.required = value;
+                    return this;
                 };
                 return GobiiTreeNode;
             }());

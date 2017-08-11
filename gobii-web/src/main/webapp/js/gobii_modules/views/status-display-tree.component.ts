@@ -26,23 +26,38 @@ import {StatusLevel} from "../model/type-status-level";
     selector: 'status-display-tree',
     inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
-    template: ` 
-                    <p-tree [value]="gobiiTreeNodes" 
-                    selectionMode="checkbox" 
-                    propagateSelectionUp="false"
-                    propagateSelectionDown="false"
-                    [(selection)]="selectedGobiiNodes"
-                    (onNodeUnselect)="nodeUnselect($event)"
-                    (onNodeSelect)="nodeSelect($event)"
-                    (onNodeExpand)="nodeExpand($event)"
-                    (onNodeCollapse)="nodeCollapse($event)"
-                    [style]="{'width':'100%'}"
-                    styleClass="criteria-tree"></p-tree>
-                    <!--<p-tree [value]="demoTreeNodes" selectionMode="checkbox" [(selection)]="selectedDemoNodes"></p-tree>-->
-                    <!--<div>Selected Nodes: <span *ngFor="let file of selectedFiles2">{{file.label}} </span></div>-->
-`
+    template: `
+        <p-tree [value]="gobiiTreeNodes"
+                selectionMode="checkbox"
+                propagateSelectionUp="false"
+                propagateSelectionDown="false"
+                [(selection)]="selectedGobiiNodes"
+                (onNodeUnselect)="nodeUnselect($event)"
+                (onNodeSelect)="nodeSelect($event)"
+                (onNodeExpand)="nodeExpand($event)"
+                (onNodeCollapse)="nodeCollapse($event)"
+                [style]="{'width':'100%'}"
+                styleClass="criteria-tree"></p-tree>
+        <!--<p-tree [value]="demoTreeNodes" selectionMode="checkbox" [(selection)]="selectedDemoNodes"></p-tree>-->
+        <!--<div>Selected Nodes: <span *ngFor="let file of selectedFiles2">{{file.label}} </span></div>-->
+    `
 })
 export class StatusDisplayTreeComponent implements OnInit, OnChanges {
+
+
+    treeNodesByExtractionType: Map<GobiiExtractFilterType, Array<GobiiTreeNode>> = null;
+
+    private initTreeNodes() {
+
+        if (this.treeNodesByExtractionType === null) {
+            this.treeNodesByExtractionType = new Map<GobiiExtractFilterType, Array<GobiiTreeNode>>();
+
+            // **** FOR ALL EXTRACTION TYPES **********************************************************************
+            // **** THESE ARE ALL ROOT LEVEL NODES
+
+        }
+    }
+
 
     private containerCollapseThreshold = 10;
     private onAddMessage: EventEmitter<HeaderStatusMessage> = new EventEmitter();
@@ -265,10 +280,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                 let currentTreeNode: GobiiTreeNode = gobiiTreeNode.children[idx];
                 thereAreSelectedChildren = this.selectedGobiiNodes.find(fi => {
 
-                        return fi
-                            && fi.fileItemId
-                            && (fi.fileItemId === currentTreeNode.fileItemId)
-                    }) != undefined;
+                    return fi
+                        && fi.fileItemId
+                        && (fi.fileItemId === currentTreeNode.fileItemId)
+                }) != undefined;
             }
 
             if (thereAreSelectedChildren) {
@@ -476,9 +491,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         } else if (entityType === EntityType.MarkerGroups) {
 
             // if (isParent) {
-                treeNode.icon = "fa-pencil";
-                treeNode.expandedIcon = "fa-pencil";
-                treeNode.collapsedIcon = "fa-pencil";
+            treeNode.icon = "fa-pencil";
+            treeNode.expandedIcon = "fa-pencil";
+            treeNode.collapsedIcon = "fa-pencil";
             // } else {
             //     treeNode.icon = "fa-map-marker";
             //     treeNode.expandedIcon = "fa-map-marker";
@@ -897,7 +912,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             ); // iterate child model node
         } else {
             this.handleAddStatusMessage(new
-                HeaderStatusMessage("Unable to make tree node for file model of type " + Labels.instance().treeExtractorTypeLabels[fileModelNode.getItemType()], null, null));
+            HeaderStatusMessage("Unable to make tree node for file model of type " + Labels.instance().treeExtractorTypeLabels[fileModelNode.getItemType()], null, null));
         }// if we created a tree node
 
         return returnVal;
@@ -910,8 +925,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
-    onItemChecked: EventEmitter < GobiiFileItem > = new EventEmitter();
-    onItemSelected: EventEmitter < GobiiFileItem > = new EventEmitter();
+    onItemChecked: EventEmitter<GobiiFileItem> = new EventEmitter();
+    onItemSelected: EventEmitter<GobiiFileItem> = new EventEmitter();
 
 
     ngOnChanges(changes: {

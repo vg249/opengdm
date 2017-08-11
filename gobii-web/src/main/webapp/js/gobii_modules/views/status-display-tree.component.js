@@ -64,6 +64,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                 function StatusDisplayTreeComponent(_fileModelTreeService) {
                     var _this = this;
                     this._fileModelTreeService = _fileModelTreeService;
+                    this.treeNodesByExtractionType = null;
                     this.containerCollapseThreshold = 10;
                     this.onAddMessage = new core_1.EventEmitter();
                     this.onTreeReady = new core_1.EventEmitter();
@@ -117,6 +118,13 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         }
                     });
                 }
+                StatusDisplayTreeComponent.prototype.initTreeNodes = function () {
+                    if (this.treeNodesByExtractionType === null) {
+                        this.treeNodesByExtractionType = new Map();
+                        // **** FOR ALL EXTRACTION TYPES **********************************************************************
+                        // **** THESE ARE ALL ROOT LEVEL NODES
+                    }
+                };
                 StatusDisplayTreeComponent.prototype.handleAddStatusMessage = function (headerStatusMessage) {
                     this.onAddMessage.emit(headerStatusMessage);
                 };
@@ -823,7 +831,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         selector: 'status-display-tree',
                         inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
                         outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
-                        template: " \n                    <p-tree [value]=\"gobiiTreeNodes\" \n                    selectionMode=\"checkbox\" \n                    propagateSelectionUp=\"false\"\n                    propagateSelectionDown=\"false\"\n                    [(selection)]=\"selectedGobiiNodes\"\n                    (onNodeUnselect)=\"nodeUnselect($event)\"\n                    (onNodeSelect)=\"nodeSelect($event)\"\n                    (onNodeExpand)=\"nodeExpand($event)\"\n                    (onNodeCollapse)=\"nodeCollapse($event)\"\n                    [style]=\"{'width':'100%'}\"\n                    styleClass=\"criteria-tree\"></p-tree>\n                    <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n                    <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n"
+                        template: "\n        <p-tree [value]=\"gobiiTreeNodes\"\n                selectionMode=\"checkbox\"\n                propagateSelectionUp=\"false\"\n                propagateSelectionDown=\"false\"\n                [(selection)]=\"selectedGobiiNodes\"\n                (onNodeUnselect)=\"nodeUnselect($event)\"\n                (onNodeSelect)=\"nodeSelect($event)\"\n                (onNodeExpand)=\"nodeExpand($event)\"\n                (onNodeCollapse)=\"nodeCollapse($event)\"\n                [style]=\"{'width':'100%'}\"\n                styleClass=\"criteria-tree\"></p-tree>\n        <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n        <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n    "
                     }),
                     __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService])
                 ], StatusDisplayTreeComponent);
