@@ -38,7 +38,7 @@ import {combineReducers} from '@ngrx/store';
  * notation packages up all of the exports into a single object.
  */
 import * as fromFileItems from './fileitems-reducer';
-// import * as fromBooks from './books';
+import * as fromGobiiTreeNodes from './treenode-reducer';
 // import * as fromCollection from './collection';
 // import * as fromLayout from './layout';
 
@@ -49,7 +49,7 @@ import * as fromFileItems from './fileitems-reducer';
  */
 export interface State {
     fileItems: fromFileItems.State;
-    // books: fromBooks.State;
+    gobiiTreeNodes: fromGobiiTreeNodes.State;
     // collection: fromCollection.State;
     // layout: fromLayout.State;
     // router: fromRouter.RouterState;
@@ -58,6 +58,7 @@ export interface State {
 
 export const reducers: ActionReducerMap<State> = {
     fileItems: fromFileItems.fileItemsReducer,
+    gobiiTreeNodes: fromGobiiTreeNodes.gobiiTreeNodesReducer,
 };
 
 

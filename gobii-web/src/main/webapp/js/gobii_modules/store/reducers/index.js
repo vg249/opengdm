@@ -1,7 +1,7 @@
-System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer"], function (exports_1, context_1) {
+System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./treenode-reducer"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var reselect_1, store_1, ngrx_store_freeze_1, store_2, fromFileItems, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds;
+    var reselect_1, store_1, ngrx_store_freeze_1, store_2, fromFileItems, fromGobiiTreeNodes, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds;
     return {
         setters: [
             function (reselect_1_1) {
@@ -16,11 +16,15 @@ System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-re
             },
             function (fromFileItems_1) {
                 fromFileItems = fromFileItems_1;
+            },
+            function (fromGobiiTreeNodes_1) {
+                fromGobiiTreeNodes = fromGobiiTreeNodes_1;
             }
         ],
         execute: function () {
             exports_1("reducers", reducers = {
                 fileItems: fromFileItems.fileItemsReducer,
+                gobiiTreeNodes: fromGobiiTreeNodes.gobiiTreeNodesReducer,
             });
             /**
              * Because metareducers take a fileItemsReducer function and return a new fileItemsReducer,
