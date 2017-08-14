@@ -1,7 +1,7 @@
 System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./treenode-reducer"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var reselect_1, store_1, ngrx_store_freeze_1, store_2, fromFileItems, fromGobiiTreeNodes, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds;
+    var reselect_1, store_1, ngrx_store_freeze_1, store_2, fromFileItems, fromGobiiTreeNodes, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes;
     return {
         setters: [
             function (reselect_1_1) {
@@ -81,12 +81,18 @@ System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-re
             exports_1("getSelectedUniqueIds", getSelectedUniqueIds = reselect_1.createSelector(getFileItemsState, fromFileItems.getSelectedUniqueIds));
             exports_1("getUniqueIds", getUniqueIds = reselect_1.createSelector(getFileItemsState, fromFileItems.getUniqueIds));
             //
+            exports_1("getGobiiTreeNodesState", getGobiiTreeNodesState = function (state) { return state.gobiiTreeNodes; });
+            exports_1("getAllGobiiTreeNodes", getAllGobiiTreeNodes = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getAll));
+            exports_1("getGobiiTreeNodesForExtractFilter", getGobiiTreeNodesForExtractFilter = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getForSelectedFilter));
+            exports_1("getSelectedGobiiTreeNodes", getSelectedGobiiTreeNodes = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getSelected));
+            exports_1("getSelectedGobiiTreeNodeIds", getSelectedGobiiTreeNodeIds = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getGobiiTreeItemIds));
+            exports_1("getIdsOfActivatedGobiiTreeNodes", getIdsOfActivatedGobiiTreeNodes = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getIdsOfActivated));
             /**
              * Just like with the books selectors, we also have to compose the search
              * fileItemsReducer's and collection fileItemsReducer's selectors.
              */
             // export const getSearchState = (state: State) => state.search;
-            // export const getSearchBookIds = createSelector(getSearchState, fromSearch.getIds);
+            // export const getSearchBookIds = createSelector(getSearchState, fromSearch.getGobiiTreeItemIds);
             // export const getSearchQuery = createSelector(getSearchState, fromSearch.getQuery);
             // export const getSearchLoading = createSelector(getSearchState, fromSearch.getLoading);
             /**
@@ -100,7 +106,7 @@ System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-re
             //
             // export const getCollectionLoaded = createSelector(getCollectionState, fromCollection.getLoaded);
             // export const getCollectionLoading = createSelector(getCollectionState, fromCollection.getLoading);
-            // export const getCollectionBookIds = createSelector(getCollectionState, fromCollection.getIds);
+            // export const getCollectionBookIds = createSelector(getCollectionState, fromCollection.getGobiiTreeItemIds);
             //
             // export const getBookCollection = createSelector(getAllFileItems, getCollectionBookIds, (entities, ids) => {
             //     return ids.map(id => entities[id]);

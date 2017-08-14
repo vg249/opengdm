@@ -3,7 +3,10 @@ import {EntityType, EntitySubType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {ExtractorItemType} from "./file-model-node";
 import {Guid} from "./guid";
+import {GobiiExtractFilterType} from "./type-extractor-filter";
 
+
+export enum ContainerType {NONE,TREE_NODE,ITEM_NODE}
 
 export class GobiiTreeNode implements TreeNode {
 
@@ -22,8 +25,8 @@ export class GobiiTreeNode implements TreeNode {
     }
 
 
-    public static build(extractoItemType: ExtractorItemType,
-                        entityType: EntityType): GobiiTreeNode {
+    public static build(gobiiExtractFilterType: GobiiExtractFilterType,
+                        extractoItemType: ExtractorItemType): GobiiTreeNode {
 
         let returnVal: GobiiTreeNode = new GobiiTreeNode(
             null,
@@ -32,8 +35,8 @@ export class GobiiTreeNode implements TreeNode {
             null
         );
 
+        returnVal.gobiiExtractFilterType = gobiiExtractFilterType;
         returnVal.setItemType(extractoItemType);
-        returnVal.setEntityType(entityType);
 
         return returnVal;
 
@@ -80,6 +83,7 @@ export class GobiiTreeNode implements TreeNode {
 
 
 //UI properties
+    private gobiiExtractFilterType:GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     public label: string;
     public data: any;
     public icon: any;
@@ -95,6 +99,12 @@ export class GobiiTreeNode implements TreeNode {
     public fileItemId: string;
     public required: boolean = false;
     public active: boolean = false;
+    private containerType: ContainerType = ContainerType.NONE;
+
+
+    getGobiiExtractFilterType(): GobiiExtractFilterType {
+        return this.gobiiExtractFilterType;
+    }
 
     getActive(): boolean {
         return this.active;
@@ -220,6 +230,16 @@ export class GobiiTreeNode implements TreeNode {
 
     setRequired(value: boolean) : GobiiTreeNode {
         this.required = value;
+        return this;
+    }
+
+
+    getContainerTYpe(): ContainerType {
+        return this.containerType;
+    }
+
+    setContainerType(value: ContainerType): GobiiTreeNode {
+        this.containerType = value;
         return this;
     }
 }

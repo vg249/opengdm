@@ -1,7 +1,7 @@
-System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./guid"], function (exports_1, context_1) {
+System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./guid", "./type-extractor-filter"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var type_entity_1, cv_filter_type_1, file_model_node_1, guid_1, GobiiTreeNode;
+    var type_entity_1, cv_filter_type_1, file_model_node_1, guid_1, type_extractor_filter_1, ContainerType, GobiiTreeNode;
     return {
         setters: [
             function (type_entity_1_1) {
@@ -15,28 +15,40 @@ System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./gu
             },
             function (guid_1_1) {
                 guid_1 = guid_1_1;
+            },
+            function (type_extractor_filter_1_1) {
+                type_extractor_filter_1 = type_extractor_filter_1_1;
             }
         ],
         execute: function () {
+            (function (ContainerType) {
+                ContainerType[ContainerType["NONE"] = 0] = "NONE";
+                ContainerType[ContainerType["TREE_NODE"] = 1] = "TREE_NODE";
+                ContainerType[ContainerType["ITEM_NODE"] = 2] = "ITEM_NODE";
+            })(ContainerType || (ContainerType = {}));
+            exports_1("ContainerType", ContainerType);
             GobiiTreeNode = (function () {
                 function GobiiTreeNode(parent, fileModelNodeId, fileItemId, required) {
                     this.itemType = file_model_node_1.ExtractorItemType.ENTITY;
                     this.entityType = type_entity_1.EntityType.UNKNOWN;
                     this.entitySubType = type_entity_1.EntitySubType.UNKNOWN;
                     this.cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
+                    //UI properties
+                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.children = [];
                     this.required = false;
                     this.active = false;
+                    this.containerType = ContainerType.NONE;
                     this.id = guid_1.Guid.generateUUID();
                     this.parent = parent;
                     this.fileModelNodeId = fileModelNodeId;
                     this.fileItemId = fileItemId;
                     this.required = required;
                 }
-                GobiiTreeNode.build = function (extractoItemType, entityType) {
+                GobiiTreeNode.build = function (gobiiExtractFilterType, extractoItemType) {
                     var returnVal = new GobiiTreeNode(null, null, null, null);
+                    returnVal.gobiiExtractFilterType = gobiiExtractFilterType;
                     returnVal.setItemType(extractoItemType);
-                    returnVal.setEntityType(entityType);
                     return returnVal;
                 }; //build
                 GobiiTreeNode.prototype.getId = function () {
@@ -63,6 +75,9 @@ System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./gu
                 GobiiTreeNode.prototype.setEntitySubType = function (value) {
                     this.entitySubType = value;
                     return this;
+                };
+                GobiiTreeNode.prototype.getGobiiExtractFilterType = function () {
+                    return this.gobiiExtractFilterType;
                 };
                 GobiiTreeNode.prototype.getActive = function () {
                     return this.active;
@@ -160,6 +175,13 @@ System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./gu
                 };
                 GobiiTreeNode.prototype.setRequired = function (value) {
                     this.required = value;
+                    return this;
+                };
+                GobiiTreeNode.prototype.getContainerTYpe = function () {
+                    return this.containerType;
+                };
+                GobiiTreeNode.prototype.setContainerType = function (value) {
+                    this.containerType = value;
                     return this;
                 };
                 return GobiiTreeNode;

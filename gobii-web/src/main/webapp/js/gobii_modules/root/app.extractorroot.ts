@@ -38,6 +38,12 @@ import {FileItem} from "ng2-file-upload";
 import {isNullOrUndefined} from "util";
 import {NameIdLabelType} from "../model/name-id-label-type";
 import {StatusLevel} from "../model/type-status-level";
+import {Store} from "@ngrx/store";
+import * as fromRoot from '../store/reducers';
+import * as fileItemAction from '../store/actions/fileitem-action';
+import * as treeNodeAction from '../store/actions/treenode-action';
+import treeStructure from "../model/GobiiTreeStructure";
+
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -336,7 +342,10 @@ export class ExtractorRoot implements OnInit {
                 private _dtoRequestServiceContact: DtoRequestService<Contact>,
                 private _authenticationService: AuthenticationService,
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
-                private _fileModelTreeService: FileModelTreeService) {
+                private _fileModelTreeService: FileModelTreeService,
+                private store: Store<fromRoot.State>) {
+
+        this.store.dispatch(new treeNodeAction.LoadAction(treeStructure));
 
         this.nameIdRequestParamsContactsPi = NameIdRequestParams
             .build("Contact-PI",

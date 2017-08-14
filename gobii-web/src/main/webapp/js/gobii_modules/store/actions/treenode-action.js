@@ -1,12 +1,13 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var LOAD, ACTIVATE, LoadAction, ActivateForExtractAction;
+    var LOAD, ACTIVATE, SELECT_EXTRACT_TYPE, LoadAction, ActivateForExtractAction, SelectExtractType;
     return {
         setters: [],
         execute: function () {
             exports_1("LOAD", LOAD = '[GobiiTreeNode] Load');
             exports_1("ACTIVATE", ACTIVATE = '[GobiiTreeNode] Activate');
+            exports_1("SELECT_EXTRACT_TYPE", SELECT_EXTRACT_TYPE = '[GobiiTreeNode] Select Extract Type');
             /**
              * Every action is comprised of at least a type and an optional
              * payload. Expressing actions as classes enables powerful
@@ -30,6 +31,14 @@ System.register([], function (exports_1, context_1) {
                 return ActivateForExtractAction;
             }());
             exports_1("ActivateForExtractAction", ActivateForExtractAction);
+            SelectExtractType = (function () {
+                function SelectExtractType(payload) {
+                    this.payload = payload;
+                    this.type = SELECT_EXTRACT_TYPE;
+                }
+                return SelectExtractType;
+            }());
+            exports_1("SelectExtractType", SelectExtractType);
         }
     };
 });

@@ -18,6 +18,12 @@ import {Labels} from "./entity-labels";
 import {Header} from "../model/payload/header";
 import {GobiiUIEventOrigin} from "../model/type-event-origin";
 import {StatusLevel} from "../model/type-status-level";
+import * as fromRoot from '../store/reducers';
+import * as fileItemAction from '../store/actions/fileitem-action';
+import * as treeNodeAction from '../store/actions/treenode-action';
+import treeStructure from "../model/GobiiTreeStructure";
+import {Store} from "@ngrx/store";
+import {Observable} from "rxjs/Observable";
 
 
 //Documentation of p-tree: http://www.primefaces.org/primeng/#/tree
@@ -27,7 +33,7 @@ import {StatusLevel} from "../model/type-status-level";
     inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
     template: `
-        <p-tree [value]="gobiiTreeNodes"
+        <p-tree [value]="gobiiTreeNodes$ | async"
                 selectionMode="checkbox"
                 propagateSelectionUp="false"
                 propagateSelectionDown="false"
@@ -69,7 +75,15 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     }
 
-    constructor(private _fileModelTreeService: FileModelTreeService) {
+    constructor(private _fileModelTreeService: FileModelTreeService,
+                private store: Store<fromRoot.State>) {
+
+        // this.gobiiTreeNodes$ = store
+        //     .select(fromRoot.getAllGobiiTreeNodes)
+        //     .map( gti => gti);
+
+
+
 
         // has to be in ctor because if you put it in ngOnInit(), there can be ngOnChange events
         // before ngOnInit() is called.
@@ -161,7 +175,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         let itemsToRemove: GobiiFileItem[] = [];
 
-        this.gobiiTreeNodes.forEach(fin => {
+        this.gobiiTreeNodes$.forEach(fin => {
 
             let childItemsToRemove: GobiiFileItem[] = this.findRemovableFileItems(fin);
             itemsToRemove.push.apply(itemsToRemove, childItemsToRemove);
@@ -202,7 +216,8 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     selectedDemoNodes: TreeNode[] = [];
 
 
-    gobiiTreeNodes: GobiiTreeNode[] = [];
+//    gobiiTreeNodes$: Observable<GobiiTreeNode[]>;
+    gobiiTreeNodes$: GobiiTreeNode[];
     selectedGobiiNodes: GobiiTreeNode[] = [];
 
     experimentId: string;
@@ -407,13 +422,13 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
     expandAll() {
-        this.gobiiTreeNodes.forEach(node => {
+        this.gobiiTreeNodes$.forEach(node => {
             this.expandRecursive(node, true);
         });
     }
 
     collapseAll() {
-        this.gobiiTreeNodes.forEach(node => {
+        this.gobiiTreeNodes$.forEach(node => {
             this.expandRecursive(node, false);
         });
     }
@@ -647,7 +662,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
-                let gobiiTreeNodeToBeRemoved: GobiiTreeNode = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes, fileModelTreeEvent.fileItem.getFileItemUniqueId());
+                let gobiiTreeNodeToBeRemoved: GobiiTreeNode = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes$, fileModelTreeEvent.fileItem.getFileItemUniqueId());
 
                 if (gobiiTreeNodeToBeRemoved !== null) {
 
@@ -662,7 +677,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER) {
 
                 // there should not be a file item associated with the model because it's a container -- the file items are just for the children
-                let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
+                let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes$, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                 if (parentTreeNode != null) {
 
 
@@ -699,7 +714,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
             if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.LEAF) {
 
-                let gobiiTreeLeafNodeTobeMutated: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
+                let gobiiTreeLeafNodeTobeMutated: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes$, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
 
                 if (gobiiTreeLeafNodeTobeMutated != null) {
 
@@ -744,7 +759,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             } else if (fileModelTreeEvent.fileModelNode.getCategoryType() === ExtractorCategoryType.CONTAINER) {
 
                 // there should not be a file item associated with the model because it's a container -- the file items are just for the children
-                let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
+                let parentTreeNode: GobiiTreeNode = this.findTreeNodebyModelNodeId(this.gobiiTreeNodes$, fileModelTreeEvent.fileModelNode.getFileModelNodeUniqueId());
                 if (parentTreeNode != null) {
 
                     let existingFileModelItem: GobiiFileItem = fileModelTreeEvent
@@ -757,7 +772,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
                     if (existingFileModelItem !== null) {
 
 
-                        let existingGobiiTreeNodeChild: GobiiTreeNode = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes, existingFileModelItem.getFileItemUniqueId());
+                        let existingGobiiTreeNodeChild: GobiiTreeNode = this.findTreeNodebyFileItemUniqueId(this.gobiiTreeNodes$, existingFileModelItem.getFileItemUniqueId());
 
                         if (existingGobiiTreeNodeChild === null) {
 
@@ -819,7 +834,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
         this.treeIsInitialized = false;
 
-        this.gobiiTreeNodes = [];
+        this.gobiiTreeNodes$ = [];
 
         let fileModelNodes: FileModelNode[] = []
         this._fileModelTreeService.getFileModel(gobiiExtractorFilterType).subscribe(
@@ -833,7 +848,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
                 let currentTreeNode: GobiiTreeNode = this.makeTreeNodeFromTemplate(null, currentFirstLevelFileModelNode);
                 if (currentTreeNode != null) {
-                    this.gobiiTreeNodes.push(currentTreeNode);
+                    this.gobiiTreeNodes$.push(currentTreeNode);
                 }
             }
         );
@@ -965,9 +980,10 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             && ( changes['gobiiExtractFilterTypeEvent'].currentValue != undefined )) {
 
             if (changes['gobiiExtractFilterTypeEvent'].currentValue !== changes['gobiiExtractFilterTypeEvent'].previousValue) {
-                this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
-                this.setUpRequredItems(this.gobiiExtractFilterType);
+                // this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
+                // this.setUpRequredItems(this.gobiiExtractFilterType);
 
+                this.store.dispatch(new treeNodeAction.SelectExtractType(this.gobiiExtractFilterType));
             }
 
             // this.setList(changes['nameIdList'].currentValue);

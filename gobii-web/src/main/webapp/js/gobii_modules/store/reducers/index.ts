@@ -125,12 +125,21 @@ export const getSelectedUniqueIds = createSelector(getFileItemsState, fromFileIt
 export const getUniqueIds = createSelector(getFileItemsState, fromFileItems.getUniqueIds);
 //
 
+
+
+export const getGobiiTreeNodesState = (state: State) => state.gobiiTreeNodes;
+export const getAllGobiiTreeNodes = createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getAll);
+export const getGobiiTreeNodesForExtractFilter = createSelector(getGobiiTreeNodesState,fromGobiiTreeNodes.getForSelectedFilter);
+export const getSelectedGobiiTreeNodes = createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getSelected);
+export const getSelectedGobiiTreeNodeIds = createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getGobiiTreeItemIds);
+export const getIdsOfActivatedGobiiTreeNodes = createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getIdsOfActivated);
+
 /**
  * Just like with the books selectors, we also have to compose the search
  * fileItemsReducer's and collection fileItemsReducer's selectors.
  */
 // export const getSearchState = (state: State) => state.search;
-// export const getSearchBookIds = createSelector(getSearchState, fromSearch.getIds);
+// export const getSearchBookIds = createSelector(getSearchState, fromSearch.getGobiiTreeItemIds);
 // export const getSearchQuery = createSelector(getSearchState, fromSearch.getQuery);
 // export const getSearchLoading = createSelector(getSearchState, fromSearch.getLoading);
 
@@ -148,7 +157,7 @@ export const getUniqueIds = createSelector(getFileItemsState, fromFileItems.getU
 //
 // export const getCollectionLoaded = createSelector(getCollectionState, fromCollection.getLoaded);
 // export const getCollectionLoading = createSelector(getCollectionState, fromCollection.getLoading);
-// export const getCollectionBookIds = createSelector(getCollectionState, fromCollection.getIds);
+// export const getCollectionBookIds = createSelector(getCollectionState, fromCollection.getGobiiTreeItemIds);
 //
 // export const getBookCollection = createSelector(getAllFileItems, getCollectionBookIds, (entities, ids) => {
 //     return ids.map(id => entities[id]);

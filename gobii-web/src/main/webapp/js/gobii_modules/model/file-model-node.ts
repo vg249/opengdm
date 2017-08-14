@@ -18,7 +18,8 @@ export enum ExtractorItemType {
     SAMPLE_LIST_TYPE,
     LABEL,
     CLEAR_TREE,
-    MARKER_GROUP_LIST_ITEM}
+    MARKER_GROUP_LIST_ITEM,
+TREE_STRUCTURE}
 
 export enum ExtractorCategoryType {CONTAINER, LEAF }
 export enum CardinalityType {ZERO_OR_ONE,

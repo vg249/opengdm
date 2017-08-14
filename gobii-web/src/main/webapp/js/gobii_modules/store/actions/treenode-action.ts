@@ -1,8 +1,10 @@
 import {Action} from '@ngrx/store';
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
+import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 
 export const LOAD = '[GobiiTreeNode] Load';
 export const ACTIVATE = '[GobiiTreeNode] Activate';
+export const SELECT_EXTRACT_TYPE = '[GobiiTreeNode] Select Extract Type';
 
 
 /**
@@ -27,6 +29,13 @@ export class ActivateForExtractAction implements Action {
     }
 }
 
+export class SelectExtractType implements Action {
+    readonly type = SELECT_EXTRACT_TYPE;
+
+    constructor(public payload: GobiiExtractFilterType) {
+    }
+}
+
 
 /**
  * Export a type alias of all actions in this action group
@@ -34,5 +43,6 @@ export class ActivateForExtractAction implements Action {
  */
 export type All
     = LoadAction
-    | ActivateForExtractAction;
+    | ActivateForExtractAction
+    | SelectExtractType;
 
