@@ -49,7 +49,7 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
                     this.initTreeNOdes$ = this.actions$
                         .ofType(treeNodeActions.INIT)
                         .map(function (action) {
-                        return new treeNodeActions.LoadAction(_this.treeStructureService.treeStructure);
+                        return new treeNodeActions.LoadAction(_this.treeStructureService.getInitialTree());
                     });
                 }
                 __decorate([

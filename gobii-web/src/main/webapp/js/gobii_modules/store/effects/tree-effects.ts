@@ -16,7 +16,7 @@ export class TreeEffects {
     initTreeNOdes$ = this.actions$
         .ofType(treeNodeActions.INIT)
         .map((action: treeNodeActions.InitAction) =>
-            new treeNodeActions.LoadAction(this.treeStructureService.treeStructure));
+            new treeNodeActions.LoadAction(this.treeStructureService.getInitialTree()));
     constructor(
         private actions$: Actions,
         private treeStructureService: TreeStructureService,
