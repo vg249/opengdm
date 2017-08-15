@@ -1,13 +1,21 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var LOAD, ACTIVATE, SELECT_EXTRACT_TYPE, LoadAction, ActivateForExtractAction, SelectExtractType;
+    var INIT, LOAD, ACTIVATE, SELECT_EXTRACT_TYPE, InitAction, LoadAction, ActivateForExtractAction, SelectExtractType;
     return {
         setters: [],
         execute: function () {
+            exports_1("INIT", INIT = '[GobiiTreeNode] Init');
             exports_1("LOAD", LOAD = '[GobiiTreeNode] Load');
             exports_1("ACTIVATE", ACTIVATE = '[GobiiTreeNode] Activate');
             exports_1("SELECT_EXTRACT_TYPE", SELECT_EXTRACT_TYPE = '[GobiiTreeNode] Select Extract Type');
+            InitAction = (function () {
+                function InitAction() {
+                    this.type = INIT;
+                }
+                return InitAction;
+            }());
+            exports_1("InitAction", InitAction);
             /**
              * Every action is comprised of at least a type and an optional
              * payload. Expressing actions as classes enables powerful

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/type-extractor-sample-list", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-node", "../model/type-extract-format", "../model/file-model-tree-event", "../model/dto-header-status-message", "../model/name-id-request-params", "../model/file_name", "../views/entity-labels", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/name-id-label-type", "../model/type-status-level", "@ngrx/store", "../store/actions/treenode-action", "../model/GobiiTreeStructure"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/type-extractor-sample-list", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-node", "../model/type-extract-format", "../model/file-model-tree-event", "../model/dto-header-status-message", "../model/name-id-request-params", "../model/file_name", "../views/entity-labels", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/name-id-label-type", "../model/type-status-level", "@ngrx/store", "../store/actions/treenode-action"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, type_extractor_sample_list_1, cv_filter_type_1, file_model_tree_service_1, file_model_node_1, type_extract_format_1, file_model_tree_event_1, dto_header_status_message_1, name_id_request_params_1, file_name_1, entity_labels_1, dto_request_item_contact_1, authentication_service_1, name_id_label_type_1, type_status_level_1, store_1, treeNodeAction, GobiiTreeStructure_1, ExtractorRoot;
+    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, type_extractor_sample_list_1, cv_filter_type_1, file_model_tree_service_1, file_model_node_1, type_extract_format_1, file_model_tree_event_1, dto_header_status_message_1, name_id_request_params_1, file_name_1, entity_labels_1, dto_request_item_contact_1, authentication_service_1, name_id_label_type_1, type_status_level_1, store_1, treeNodeAction, ExtractorRoot;
     return {
         setters: [
             function (core_1_1) {
@@ -105,9 +105,6 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             },
             function (treeNodeAction_1) {
                 treeNodeAction = treeNodeAction_1;
-            },
-            function (GobiiTreeStructure_1_1) {
-                GobiiTreeStructure_1 = GobiiTreeStructure_1_1;
             }
         ],
         execute: function () {
@@ -197,7 +194,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     this.buttonStyleSubmitNotReady = "btn btn-warning";
                     this.submitButtonStyle = this.buttonStyleSubmitNotReady;
                     this.clearButtonStyle = this.submitButtonStyleDefault;
-                    this.store.dispatch(new treeNodeAction.LoadAction(GobiiTreeStructure_1.default));
+                    this.store.dispatch(new treeNodeAction.InitAction());
                     this.nameIdRequestParamsContactsPi = name_id_request_params_1.NameIdRequestParams
                         .build("Contact-PI", type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Contacts)
                         .setEntitySubType(type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);

@@ -2,9 +2,17 @@ import {Action} from '@ngrx/store';
 import {GobiiTreeNode} from "../../model/GobiiTreeNode";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 
+export const INIT = '[GobiiTreeNode] Init';
 export const LOAD = '[GobiiTreeNode] Load';
 export const ACTIVATE = '[GobiiTreeNode] Activate';
 export const SELECT_EXTRACT_TYPE = '[GobiiTreeNode] Select Extract Type';
+
+
+export class InitAction implements Action {
+    readonly type = INIT;
+
+}
+
 
 
 /**
@@ -44,5 +52,6 @@ export class SelectExtractType implements Action {
 export type All
     = LoadAction
     | ActivateForExtractAction
-    | SelectExtractType;
+    | SelectExtractType
+    | InitAction;
 

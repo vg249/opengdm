@@ -42,8 +42,6 @@ import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import * as fileItemAction from '../store/actions/fileitem-action';
 import * as treeNodeAction from '../store/actions/treenode-action';
-import treeStructure from "../model/GobiiTreeStructure";
-
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -345,7 +343,9 @@ export class ExtractorRoot implements OnInit {
                 private _fileModelTreeService: FileModelTreeService,
                 private store: Store<fromRoot.State>) {
 
-        this.store.dispatch(new treeNodeAction.LoadAction(treeStructure));
+
+        this.store.dispatch(new treeNodeAction.InitAction());
+
 
         this.nameIdRequestParamsContactsPi = NameIdRequestParams
             .build("Contact-PI",

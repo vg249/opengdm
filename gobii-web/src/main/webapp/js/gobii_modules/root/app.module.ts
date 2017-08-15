@@ -35,6 +35,9 @@ import {StoreModule} from '@ngrx/store';
 import {reducers} from '../store/reducers';
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 import {environmentSettings} from "../environments/environment";
+import {EffectsModule} from "@ngrx/effects";
+import {TreeEffects} from "../store/effects/tree-effects";
+import {TreeStructureService} from "../services/core/tree-structure-service";
 
 
 @NgModule({
@@ -47,6 +50,7 @@ import {environmentSettings} from "../environments/environment";
         routing,
         BrowserAnimationsModule,
         StoreModule.forRoot(reducers),
+        EffectsModule.forRoot([TreeEffects]),
         !environmentSettings.production ? StoreDevtoolsModule.instrument() : [],
         StoreDevtoolsModule.instrument(),
     ],
@@ -78,6 +82,7 @@ import {environmentSettings} from "../environments/environment";
         DtoRequestService,
         FileModelTreeService,
         NameIdService,
+        TreeStructureService,
         {provide: APP_BASE_HREF, useValue: './'}],
     bootstrap: [AppComponent]
 })

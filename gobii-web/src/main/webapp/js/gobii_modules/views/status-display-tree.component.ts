@@ -21,7 +21,6 @@ import {StatusLevel} from "../model/type-status-level";
 import * as fromRoot from '../store/reducers';
 import * as fileItemAction from '../store/actions/fileitem-action';
 import * as treeNodeAction from '../store/actions/treenode-action';
-import treeStructure from "../model/GobiiTreeStructure";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs/Observable";
 
