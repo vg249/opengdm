@@ -501,6 +501,7 @@ export class ExtractorRoot implements OnInit {
 
         let foo: string = "foo";
 
+        this.store.dispatch(new treeNodeAction.SelectExtractType(arg));
 
         this._fileModelTreeService
             .fileItemNotifications()

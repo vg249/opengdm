@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/file-model-node", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-tree-event", "../model/type-process", "../model/type-extract-format", "../model/dto-header-status-message", "./entity-labels", "../model/type-event-origin", "../model/type-status-level", "../store/actions/treenode-action", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTreeNode", "../model/type-entity", "../model/type-extractor-filter", "../model/file-model-node", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-tree-event", "../model/type-process", "../model/type-extract-format", "../model/dto-header-status-message", "./entity-labels", "../model/type-event-origin", "../model/type-status-level", "../store/reducers", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, gobii_file_item_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, file_model_node_1, cv_filter_type_1, file_model_tree_service_1, file_model_tree_event_1, type_process_1, type_extract_format_1, dto_header_status_message_1, entity_labels_1, type_event_origin_1, type_status_level_1, treeNodeAction, store_1, StatusDisplayTreeComponent;
+    var core_1, gobii_file_item_1, GobiiTreeNode_1, type_entity_1, type_extractor_filter_1, file_model_node_1, cv_filter_type_1, file_model_tree_service_1, file_model_tree_event_1, type_process_1, type_extract_format_1, dto_header_status_message_1, entity_labels_1, type_event_origin_1, type_status_level_1, fromRoot, store_1, StatusDisplayTreeComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -58,8 +58,8 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
             function (type_status_level_1_1) {
                 type_status_level_1 = type_status_level_1_1;
             },
-            function (treeNodeAction_1) {
-                treeNodeAction = treeNodeAction_1;
+            function (fromRoot_1) {
+                fromRoot = fromRoot_1;
             },
             function (store_1_1) {
                 store_1 = store_1_1;
@@ -68,9 +68,6 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
         execute: function () {
             StatusDisplayTreeComponent = (function () {
                 function StatusDisplayTreeComponent(_fileModelTreeService, store) {
-                    // this.gobiiTreeNodes$ = store
-                    //     .select(fromRoot.getAllGobiiTreeNodes)
-                    //     .map( gti => gti);
                     var _this = this;
                     this._fileModelTreeService = _fileModelTreeService;
                     this.store = store;
@@ -89,6 +86,8 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onItemChecked = new core_1.EventEmitter();
                     this.onItemSelected = new core_1.EventEmitter();
+                    this.gobiiTreeNodesFromStore$ = store
+                        .select(fromRoot.getGobiiTreeNodesForExtractFilter);
                     // has to be in ctor because if you put it in ngOnInit(), there can be ngOnChange events
                     // before ngOnInit() is called.
                     this._fileModelTreeService
@@ -755,9 +754,8 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         && (changes['gobiiExtractFilterTypeEvent'].currentValue != null)
                         && (changes['gobiiExtractFilterTypeEvent'].currentValue != undefined)) {
                         if (changes['gobiiExtractFilterTypeEvent'].currentValue !== changes['gobiiExtractFilterTypeEvent'].previousValue) {
-                            // this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
-                            // this.setUpRequredItems(this.gobiiExtractFilterType);
-                            this.store.dispatch(new treeNodeAction.SelectExtractType(this.gobiiExtractFilterType));
+                            this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
+                            this.setUpRequredItems(this.gobiiExtractFilterType);
                         }
                         // this.setList(changes['nameIdList'].currentValue);
                     }
@@ -841,7 +839,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         selector: 'status-display-tree',
                         inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
                         outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
-                        template: "\n        <p-tree [value]=\"gobiiTreeNodes$ | async\"\n                selectionMode=\"checkbox\"\n                propagateSelectionUp=\"false\"\n                propagateSelectionDown=\"false\"\n                [(selection)]=\"selectedGobiiNodes\"\n                (onNodeUnselect)=\"nodeUnselect($event)\"\n                (onNodeSelect)=\"nodeSelect($event)\"\n                (onNodeExpand)=\"nodeExpand($event)\"\n                (onNodeCollapse)=\"nodeCollapse($event)\"\n                [style]=\"{'width':'100%'}\"\n                styleClass=\"criteria-tree\"></p-tree>\n        <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n        <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n    "
+                        template: "\n        <p-tree [value]=\"gobiiTreeNodesFromStore$ | async\"\n                selectionMode=\"checkbox\"\n                propagateSelectionUp=\"false\"\n                propagateSelectionDown=\"false\"\n                [(selection)]=\"selectedGobiiNodes\"\n                (onNodeUnselect)=\"nodeUnselect($event)\"\n                (onNodeSelect)=\"nodeSelect($event)\"\n                (onNodeExpand)=\"nodeExpand($event)\"\n                (onNodeCollapse)=\"nodeCollapse($event)\"\n                [style]=\"{'width':'100%'}\"\n                styleClass=\"criteria-tree\"></p-tree>\n        <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n        <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n    "
                     }),
                     __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService,
                         store_1.Store])

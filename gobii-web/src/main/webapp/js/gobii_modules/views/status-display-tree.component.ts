@@ -33,7 +33,7 @@ import {Observable} from "rxjs/Observable";
     inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
     outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
     template: `
-        <p-tree [value]="gobiiTreeNodes$ | async"
+        <p-tree [value]="gobiiTreeNodesFromStore$ | async"
                 selectionMode="checkbox"
                 propagateSelectionUp="false"
                 propagateSelectionDown="false"
@@ -75,15 +75,13 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
 
     }
 
+    gobiiTreeNodesFromStore$: Observable<GobiiTreeNode[]>;
+
     constructor(private _fileModelTreeService: FileModelTreeService,
                 private store: Store<fromRoot.State>) {
 
-        // this.gobiiTreeNodes$ = store
-        //     .select(fromRoot.getAllGobiiTreeNodes)
-        //     .map( gti => gti);
-
-
-
+        this.gobiiTreeNodesFromStore$ = store
+            .select(fromRoot.getGobiiTreeNodesForExtractFilter);
 
         // has to be in ctor because if you put it in ngOnInit(), there can be ngOnChange events
         // before ngOnInit() is called.
@@ -980,10 +978,9 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
             && ( changes['gobiiExtractFilterTypeEvent'].currentValue != undefined )) {
 
             if (changes['gobiiExtractFilterTypeEvent'].currentValue !== changes['gobiiExtractFilterTypeEvent'].previousValue) {
-                // this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
-                // this.setUpRequredItems(this.gobiiExtractFilterType);
+                this.gobiiExtractFilterType = changes['gobiiExtractFilterTypeEvent'].currentValue;
+                this.setUpRequredItems(this.gobiiExtractFilterType);
 
-                this.store.dispatch(new treeNodeAction.SelectExtractType(this.gobiiExtractFilterType));
             }
 
             // this.setList(changes['nameIdList'].currentValue);

@@ -102,6 +102,11 @@ export class GobiiTreeNode implements TreeNode {
     private containerType: ContainerType = ContainerType.NONE;
 
 
+    setGobiiExtractFilterType(gobiiExtractFilterType :GobiiExtractFilterType ): GobiiTreeNode {
+        this.gobiiExtractFilterType = gobiiExtractFilterType ;
+        return this;
+    }
+
     getGobiiExtractFilterType(): GobiiExtractFilterType {
         return this.gobiiExtractFilterType;
     }

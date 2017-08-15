@@ -285,6 +285,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                 ExtractorRoot.prototype.handleExportTypeSelected = function (arg) {
                     var _this = this;
                     var foo = "foo";
+                    this.store.dispatch(new treeNodeAction.SelectExtractType(arg));
                     this._fileModelTreeService
                         .fileItemNotifications()
                         .subscribe(function (fileItem) {

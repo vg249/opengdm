@@ -76,6 +76,10 @@ System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./gu
                     this.entitySubType = value;
                     return this;
                 };
+                GobiiTreeNode.prototype.setGobiiExtractFilterType = function (gobiiExtractFilterType) {
+                    this.gobiiExtractFilterType = gobiiExtractFilterType;
+                    return this;
+                };
                 GobiiTreeNode.prototype.getGobiiExtractFilterType = function () {
                     return this.gobiiExtractFilterType;
                 };

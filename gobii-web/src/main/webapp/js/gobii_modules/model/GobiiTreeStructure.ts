@@ -8,37 +8,41 @@ import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {Labels} from "../views/entity-labels";
 
 
+class TreeNodeUtil {
+
+    public static makeCommonNodes(gobiiExtractFilterType: GobiiExtractFilterType): GobiiTreeNode[] {
+
+        let returnVal: GobiiTreeNode[] = [
+
+            GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.JOB_ID)
+                .setLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]),
+            GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.ENTITY)
+                .setEntityType(EntityType.Contacts)
+                .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
+                .setLabel(Labels.instance().entityNodeLabels[EntitySubType.CONTACT_SUBMITED_BY]),
+            GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.EXPORT_FORMAT)
+                .setLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT]),
+            GobiiTreeNode.build(gobiiExtractFilterType, ExtractorItemType.ENTITY)
+                .setEntityType(EntityType.Mapsets)
+                .setLabel(Labels.instance().entityNodeLabels[EntityType.Mapsets]),
+        ]
+
+        return returnVal;
+    }
+}
+
+
 let treeStructure: GobiiTreeNode[] = [
 
     // BY DATASET
-    GobiiTreeNode.build(GobiiExtractFilterType.WHOLE_DATASET, ExtractorItemType.JOB_ID)
-        .setLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]),
-    GobiiTreeNode.build(GobiiExtractFilterType.WHOLE_DATASET, ExtractorItemType.ENTITY)
-        .setEntityType(EntityType.Contacts)
-        .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
-        .setLabel(Labels.instance().entityNodeLabels[EntitySubType.CONTACT_SUBMITED_BY]),
-    GobiiTreeNode.build(GobiiExtractFilterType.WHOLE_DATASET, ExtractorItemType.EXPORT_FORMAT)
-        .setLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT]),
-    GobiiTreeNode.build(GobiiExtractFilterType.WHOLE_DATASET, ExtractorItemType.ENTITY)
-        .setEntityType(EntityType.Mapsets)
-        .setLabel(Labels.instance().entityNodeLabels[EntityType.Mapsets]),
+    ...TreeNodeUtil.makeCommonNodes(GobiiExtractFilterType.WHOLE_DATASET),
     GobiiTreeNode.build(GobiiExtractFilterType.WHOLE_DATASET, ExtractorItemType.ENTITY)
         .setEntityType(EntityType.DataSets)
         .setLabel(Labels.instance().entityNodeLabels[EntityType.DataSets])
         .setContainerType(ContainerType.ITEM_NODE),
 
     // BY SAMPLE
-    GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.JOB_ID)
-        .setLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.JOB_ID]),
-    GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
-        .setEntityType(EntityType.Contacts)
-        .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
-        .setLabel(Labels.instance().entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY]),
-    GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.EXPORT_FORMAT)
-        .setLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT]),
-    GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
-        .setEntityType(EntityType.Mapsets)
-        .setLabel(Labels.instance().entityNodeLabels[EntityType.Mapsets]),
+    ...TreeNodeUtil.makeCommonNodes(GobiiExtractFilterType.BY_SAMPLE),
     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
         .setEntityType(EntityType.CvTerms)
         .setCvFilterType(CvFilterType.DATASET_TYPE)
@@ -50,6 +54,8 @@ let treeStructure: GobiiTreeNode[] = [
         .setLabel(Labels.instance().entityNodeLabels[EntityType.Platforms]),
     GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.TREE_STRUCTURE)
         .setContainerType(ContainerType.TREE_NODE)
+        .setLabel("Samples Criteria")
+        .setExpanded(true)
         .setChildren([
             GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
                 .setEntityType(EntityType.Contacts)
@@ -68,22 +74,15 @@ let treeStructure: GobiiTreeNode[] = [
 
 
     // BY MARKER
-    GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.JOB_ID),
-    GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)
-        .setEntityType(EntityType.Contacts)
-        .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
-        .setLabel(Labels.instance().entitySubtypeNodeLabels[EntitySubType.CONTACT_SUBMITED_BY]),
-    GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.EXPORT_FORMAT)
-        .setLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.EXPORT_FORMAT]),
-    GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)
-        .setEntityType(EntityType.Mapsets)
-        .setLabel(Labels.instance().entityNodeLabels[EntityType.Mapsets]),
+    ...TreeNodeUtil.makeCommonNodes(GobiiExtractFilterType.BY_MARKER),
     GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)
         .setEntityType(EntityType.CvTerms)
         .setCvFilterType(CvFilterType.DATASET_TYPE)
         .setLabel(Labels.instance().cvFilterNodeLabels[CvFilterType.DATASET_TYPE]),
-    GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.TREE_STRUCTURE)
+    GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.TREE_STRUCTURE)
         .setContainerType(ContainerType.TREE_NODE)
+        .setLabel("Markers Criteria")
+        .setExpanded(true)
         .setChildren([
             GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)
                 .setEntityType(EntityType.Platforms)
@@ -91,10 +90,10 @@ let treeStructure: GobiiTreeNode[] = [
                 .setContainerType(ContainerType.ITEM_NODE),
             GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.MARKER_FILE)
                 .setLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_FILE]),
-            GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.MARKER_LIST_ITEM)
+            GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.MARKER_LIST_ITEM)
                 .setLabel(Labels.instance().treeExtractorTypeLabels[ExtractorItemType.MARKER_LIST_ITEM])
                 .setContainerType(ContainerType.ITEM_NODE),
-            GobiiTreeNode.build(GobiiExtractFilterType.BY_SAMPLE, ExtractorItemType.ENTITY)
+            GobiiTreeNode.build(GobiiExtractFilterType.BY_MARKER, ExtractorItemType.ENTITY)
                 .setEntityType(EntityType.MarkerGroups)
                 .setLabel(Labels.instance().entityNodeLabels[EntityType.MarkerGroups])
                 .setContainerType(ContainerType.ITEM_NODE)
