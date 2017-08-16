@@ -88,6 +88,16 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                     this.onItemSelected = new core_1.EventEmitter();
                     this.gobiiTreeNodesFromStore$ = store
                         .select(fromRoot.getGobiiTreeNodesForExtractFilter);
+                    // this.gobiiTreeNodesFromStore$
+                    //     .subscribe( n => {
+                    //         console.log( "new tree nodes" + n);
+                    //     });
+                    this.gobiiSelectedNodesFromStore$ = store
+                        .select(fromRoot.getSelectedGobiiTreeNodes);
+                    // this.gobiiSelectedNodesFromStore$
+                    //     .subscribe( n => {
+                    //         console.log( "new selected nodes" + n);
+                    //     });
                     // has to be in ctor because if you put it in ngOnInit(), there can be ngOnChange events
                     // before ngOnInit() is called.
                     this._fileModelTreeService
@@ -839,7 +849,7 @@ System.register(["@angular/core", "../model/gobii-file-item", "../model/GobiiTre
                         selector: 'status-display-tree',
                         inputs: ['fileItemEventChange', 'gobiiExtractFilterTypeEvent'],
                         outputs: ['onItemSelected', 'onItemChecked', 'onAddMessage', 'onTreeReady'],
-                        template: "\n        <p-tree [value]=\"gobiiTreeNodesFromStore$ | async\"\n                selectionMode=\"checkbox\"\n                propagateSelectionUp=\"false\"\n                propagateSelectionDown=\"false\"\n                [(selection)]=\"selectedGobiiNodes\"\n                (onNodeUnselect)=\"nodeUnselect($event)\"\n                (onNodeSelect)=\"nodeSelect($event)\"\n                (onNodeExpand)=\"nodeExpand($event)\"\n                (onNodeCollapse)=\"nodeCollapse($event)\"\n                [style]=\"{'width':'100%'}\"\n                styleClass=\"criteria-tree\"></p-tree>\n        <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n        <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n    "
+                        template: "\n        <p-tree [value]=\"gobiiTreeNodesFromStore$ | async\"\n                selectionMode=\"checkbox\"\n                propagateSelectionUp=\"false\"\n                propagateSelectionDown=\"false\"\n                [selection]=\"gobiiSelectedNodesFromStore$ | async\"\n                (onNodeUnselect)=\"nodeUnselect($event)\"\n                (onNodeSelect)=\"nodeSelect($event)\"\n                (onNodeExpand)=\"nodeExpand($event)\"\n                (onNodeCollapse)=\"nodeCollapse($event)\"\n                [style]=\"{'width':'100%'}\"\n                styleClass=\"criteria-tree\"></p-tree>\n        <!--<p-tree [value]=\"demoTreeNodes\" selectionMode=\"checkbox\" [(selection)]=\"selectedDemoNodes\"></p-tree>-->\n        <!--<div>Selected Nodes: <span *ngFor=\"let file of selectedFiles2\">{{file.label}} </span></div>-->\n    "
                     }),
                     __metadata("design:paramtypes", [file_model_tree_service_1.FileModelTreeService,
                         store_1.Store])

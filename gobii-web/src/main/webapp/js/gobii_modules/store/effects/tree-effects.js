@@ -51,11 +51,20 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
                         .map(function (action) {
                         return new treeNodeActions.LoadTreeNodeAction(_this.treeStructureService.getInitialTree());
                     });
+                    this.placeNodeInTree$ = this.actions$
+                        .ofType(treeNodeActions.PLACE_TREE_NODE)
+                        .map(function (action) {
+                        return new treeNodeActions.ActivateForExtractAction(action.payload);
+                    });
                 }
                 __decorate([
                     effects_1.Effect(),
                     __metadata("design:type", Object)
                 ], TreeEffects.prototype, "initTreeNodes$", void 0);
+                __decorate([
+                    effects_1.Effect(),
+                    __metadata("design:type", Object)
+                ], TreeEffects.prototype, "placeNodeInTree$", void 0);
                 TreeEffects = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [effects_1.Actions,

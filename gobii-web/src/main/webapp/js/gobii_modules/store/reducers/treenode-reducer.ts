@@ -97,26 +97,12 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
         case gobiiTreeNodeAction.ACTIVATE: {
 
-            const gobiigobiiTreeItemsPayload = action.payload;
-
-            const treeItemsToDeactivate = gobiigobiiTreeItemsPayload.filter(newItem =>
-                state
-                    .gobiiTreeNodes
-                    .filter(stateItem =>
-                        stateItem.getItemType() != newItem.getItemType() &&
-                        stateItem.getEntityType() != newItem.getEntityType() &&
-                        stateItem.getEntitySubType() != newItem.getEntitySubType() &&
-                        stateItem.getCvFilterType() != newItem.getCvFilterType()
-                    )
-            );
-
-            treeItemsToDeactivate.forEach(gti => gti.setActive(false));
-            gobiigobiiTreeItemsPayload.forEach(gti => gti.setActive(true));
+            const gobiiTreeNodeToActivate: GobiiTreeNode = action.payload;
 
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
-                gobiiTreeNodesActive: gobiigobiiTreeItemsPayload.map(gti => gti.getId()),
-                gobiiTreeNodes: [...treeItemsToDeactivate, ...gobiigobiiTreeItemsPayload]
+                gobiiTreeNodesActive: [...state.gobiiTreeNodesActive, ...[gobiiTreeNodeToActivate.getId()]],
+                gobiiTreeNodes: state.gobiiTreeNodes
             };
 
             break;
@@ -139,7 +125,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
 }
 
-export const getGobiiTreeItems = (state: State) => state.gobiiTreeNodes;
+export const getGobiiTreeNodes = (state: State) => state.gobiiTreeNodes;
 
 export const getGobiiTreeItemIds = (state: State) => state.gobiiTreeNodes.map(gti => gti.getId());
 
@@ -147,16 +133,28 @@ export const getIdsOfActivated = (state: State) => state.gobiiTreeNodesActive;
 
 export const getExtractFilterType = (state: State) => state.gobiiExtractFilterType;
 
-export const getSelected = createSelector(getGobiiTreeItems, getIdsOfActivated, (gobiiTreeItems, selectedUniqueIds) => {
-    return gobiiTreeItems.filter(gti => {
-        selectedUniqueIds.filter(id => gti.getId() === id)
-    });
+export const getSelected = createSelector(getGobiiTreeNodes, getIdsOfActivated, (gobiiTreeNodes, selectedUniqueIds) => {
+
+    // this needs to be done in a more filterish way. For now it works
+    let returnVal: GobiiTreeNode[] = [];
+
+    gobiiTreeNodes.forEach(n => {
+
+            selectedUniqueIds.forEach(i => {
+                if (n.getId() === i)
+                    returnVal.push(n);
+            })
+
+        }
+    );
+
+    return returnVal;
 });
 
-export const getAll = createSelector(getGobiiTreeItems, getGobiiTreeItemIds, (treeItems, ids) => {
+export const getAll = createSelector(getGobiiTreeNodes, getGobiiTreeItemIds, (treeItems, ids) => {
     return ids.map(id => treeItems[id]);
 });
 
-export const getForSelectedFilter = createSelector(getGobiiTreeItems, getExtractFilterType, (treeItems, extractFilterType) => {
+export const getForSelectedFilter = createSelector(getGobiiTreeNodes, getExtractFilterType, (treeItems, extractFilterType) => {
     return treeItems.filter(ti => ti.getGobiiExtractFilterType() === extractFilterType);
 });

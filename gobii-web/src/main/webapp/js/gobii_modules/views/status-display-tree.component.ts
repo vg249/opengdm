@@ -36,7 +36,7 @@ import {Observable} from "rxjs/Observable";
                 selectionMode="checkbox"
                 propagateSelectionUp="false"
                 propagateSelectionDown="false"
-                [(selection)]="selectedGobiiNodes"
+                [selection]="gobiiSelectedNodesFromStore$ | async"
                 (onNodeUnselect)="nodeUnselect($event)"
                 (onNodeSelect)="nodeSelect($event)"
                 (onNodeExpand)="nodeExpand($event)"
@@ -75,12 +75,28 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
     }
 
     gobiiTreeNodesFromStore$: Observable<GobiiTreeNode[]>;
+    gobiiSelectedNodesFromStore$: Observable<GobiiTreeNode[]>;
 
     constructor(private _fileModelTreeService: FileModelTreeService,
                 private store: Store<fromRoot.State>) {
 
         this.gobiiTreeNodesFromStore$ = store
             .select(fromRoot.getGobiiTreeNodesForExtractFilter);
+
+        // this.gobiiTreeNodesFromStore$
+        //     .subscribe( n => {
+        //         console.log( "new tree nodes" + n);
+        //     });
+
+
+        this.gobiiSelectedNodesFromStore$ = store
+            .select(fromRoot.getSelectedGobiiTreeNodes);
+
+        // this.gobiiSelectedNodesFromStore$
+        //     .subscribe( n => {
+        //         console.log( "new selected nodes" + n);
+        //     });
+
 
         // has to be in ctor because if you put it in ngOnInit(), there can be ngOnChange events
         // before ngOnInit() is called.
@@ -229,6 +245,7 @@ export class StatusDisplayTreeComponent implements OnInit, OnChanges {
         // yes this is a bit of a kludge; version 4 of PrimeNG will add a selectable proeprty
         // to TreeNode which will enable us to approch selectability of nodes in general in
         // a more systematic and elegant way
+
 
 
         let selectedGobiiTreeNode: GobiiTreeNode = event.node;

@@ -62,23 +62,11 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                 break;
             } // LOAD_TREE_NODE
             case gobiiTreeNodeAction.ACTIVATE: {
-                var gobiigobiiTreeItemsPayload = action.payload;
-                var treeItemsToDeactivate = gobiigobiiTreeItemsPayload.filter(function (newItem) {
-                    return state
-                        .gobiiTreeNodes
-                        .filter(function (stateItem) {
-                        return stateItem.getItemType() != newItem.getItemType() &&
-                            stateItem.getEntityType() != newItem.getEntityType() &&
-                            stateItem.getEntitySubType() != newItem.getEntitySubType() &&
-                            stateItem.getCvFilterType() != newItem.getCvFilterType();
-                    });
-                });
-                treeItemsToDeactivate.forEach(function (gti) { return gti.setActive(false); });
-                gobiigobiiTreeItemsPayload.forEach(function (gti) { return gti.setActive(true); });
+                var gobiiTreeNodeToActivate = action.payload;
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,
-                    gobiiTreeNodesActive: gobiigobiiTreeItemsPayload.map(function (gti) { return gti.getId(); }),
-                    gobiiTreeNodes: treeItemsToDeactivate.concat(gobiigobiiTreeItemsPayload)
+                    gobiiTreeNodesActive: state.gobiiTreeNodesActive.concat([gobiiTreeNodeToActivate.getId()]),
+                    gobiiTreeNodes: state.gobiiTreeNodes
                 };
                 break;
             } // SELECT_FOR_EXTRACT
@@ -93,7 +81,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
         return returnVal;
     }
     exports_1("gobiiTreeNodesReducer", gobiiTreeNodesReducer);
-    var reselect_1, gobiiTreeNodeAction, GobiiTreeNode_1, type_extractor_filter_1, initialState, getGobiiTreeItems, getGobiiTreeItemIds, getIdsOfActivated, getExtractFilterType, getSelected, getAll, getForSelectedFilter;
+    var reselect_1, gobiiTreeNodeAction, GobiiTreeNode_1, type_extractor_filter_1, initialState, getGobiiTreeNodes, getGobiiTreeItemIds, getIdsOfActivated, getExtractFilterType, getSelected, getAll, getForSelectedFilter;
     return {
         setters: [
             function (reselect_1_1) {
@@ -116,19 +104,25 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                 gobiiTreeNodesActive: [],
                 gobiiTreeNodes: [],
             });
-            exports_1("getGobiiTreeItems", getGobiiTreeItems = function (state) { return state.gobiiTreeNodes; });
+            exports_1("getGobiiTreeNodes", getGobiiTreeNodes = function (state) { return state.gobiiTreeNodes; });
             exports_1("getGobiiTreeItemIds", getGobiiTreeItemIds = function (state) { return state.gobiiTreeNodes.map(function (gti) { return gti.getId(); }); });
             exports_1("getIdsOfActivated", getIdsOfActivated = function (state) { return state.gobiiTreeNodesActive; });
             exports_1("getExtractFilterType", getExtractFilterType = function (state) { return state.gobiiExtractFilterType; });
-            exports_1("getSelected", getSelected = reselect_1.createSelector(getGobiiTreeItems, getIdsOfActivated, function (gobiiTreeItems, selectedUniqueIds) {
-                return gobiiTreeItems.filter(function (gti) {
-                    selectedUniqueIds.filter(function (id) { return gti.getId() === id; });
+            exports_1("getSelected", getSelected = reselect_1.createSelector(getGobiiTreeNodes, getIdsOfActivated, function (gobiiTreeNodes, selectedUniqueIds) {
+                // this needs to be done in a more filterish way. For now it works
+                var returnVal = [];
+                gobiiTreeNodes.forEach(function (n) {
+                    selectedUniqueIds.forEach(function (i) {
+                        if (n.getId() === i)
+                            returnVal.push(n);
+                    });
                 });
+                return returnVal;
             }));
-            exports_1("getAll", getAll = reselect_1.createSelector(getGobiiTreeItems, getGobiiTreeItemIds, function (treeItems, ids) {
+            exports_1("getAll", getAll = reselect_1.createSelector(getGobiiTreeNodes, getGobiiTreeItemIds, function (treeItems, ids) {
                 return ids.map(function (id) { return treeItems[id]; });
             }));
-            exports_1("getForSelectedFilter", getForSelectedFilter = reselect_1.createSelector(getGobiiTreeItems, getExtractFilterType, function (treeItems, extractFilterType) {
+            exports_1("getForSelectedFilter", getForSelectedFilter = reselect_1.createSelector(getGobiiTreeNodes, getExtractFilterType, function (treeItems, extractFilterType) {
                 return treeItems.filter(function (ti) { return ti.getGobiiExtractFilterType() === extractFilterType; });
             }));
         }

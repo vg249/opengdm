@@ -20,6 +20,14 @@ export class TreeEffects {
         );
 
 
+    @Effect()
+    placeNodeInTree$ = this.actions$
+        .ofType(treeNodeActions.PLACE_TREE_NODE)
+        .map((action: treeNodeActions.PlaceTreeNodeAction) =>
+            new treeNodeActions.ActivateForExtractAction(action.payload)
+        );
+
+
     constructor(private actions$: Actions,
                 private treeStructureService: TreeStructureService,
                 private router: Router) {

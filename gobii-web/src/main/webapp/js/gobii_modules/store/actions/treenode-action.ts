@@ -40,7 +40,7 @@ export class PlaceTreeNodeAction implements Action {
 export class ActivateForExtractAction implements Action {
     readonly type = ACTIVATE;
 
-    constructor(public payload: GobiiTreeNode[]) {
+    constructor(public payload: GobiiTreeNode) {
     }
 }
 
