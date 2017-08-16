@@ -23,8 +23,8 @@ System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./gu
         execute: function () {
             (function (ContainerType) {
                 ContainerType[ContainerType["NONE"] = 0] = "NONE";
-                ContainerType[ContainerType["TREE_NODE"] = 1] = "TREE_NODE";
-                ContainerType[ContainerType["ITEM_NODE"] = 2] = "ITEM_NODE";
+                ContainerType[ContainerType["STRUCTURE"] = 1] = "STRUCTURE";
+                ContainerType[ContainerType["DATA"] = 2] = "DATA";
             })(ContainerType || (ContainerType = {}));
             exports_1("ContainerType", ContainerType);
             GobiiTreeNode = (function () {
@@ -181,7 +181,7 @@ System.register(["./type-entity", "./cv-filter-type", "./file-model-node", "./gu
                     this.required = value;
                     return this;
                 };
-                GobiiTreeNode.prototype.getContainerTYpe = function () {
+                GobiiTreeNode.prototype.getContainerType = function () {
                     return this.containerType;
                 };
                 GobiiTreeNode.prototype.setContainerType = function (value) {

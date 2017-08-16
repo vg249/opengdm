@@ -503,6 +503,14 @@ export class ExtractorRoot implements OnInit {
 
         this.store.dispatch(new treeNodeAction.SelectExtractType(arg));
 
+        let jobId: string = FileName.makeUniqueFileId();
+        this.store.dispatch(new fileItemAction.SelectForExtractAction(
+            GobiiFileItem.build(arg,ProcessType.CREATE)
+                .setExtractorItemType(ExtractorItemType.JOB_ID)
+                .setItemId(jobId)
+                .setItemName(jobId)
+        ));
+
         this._fileModelTreeService
             .fileItemNotifications()
             .subscribe(fileItem => {

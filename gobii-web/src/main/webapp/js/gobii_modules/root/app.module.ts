@@ -38,6 +38,7 @@ import {environmentSettings} from "../environments/environment";
 import {EffectsModule} from "@ngrx/effects";
 import {TreeEffects} from "../store/effects/tree-effects";
 import {TreeStructureService} from "../services/core/tree-structure-service";
+import {FileItemEffects} from "../store/effects/file-item-effects";
 
 
 @NgModule({
@@ -50,7 +51,7 @@ import {TreeStructureService} from "../services/core/tree-structure-service";
         routing,
         BrowserAnimationsModule,
         StoreModule.forRoot(reducers),
-        EffectsModule.forRoot([TreeEffects]),
+        EffectsModule.forRoot([TreeEffects,FileItemEffects]),
         !environmentSettings.production ? StoreDevtoolsModule.instrument() : [],
         StoreDevtoolsModule.instrument(),
     ],

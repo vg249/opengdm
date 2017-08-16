@@ -1,4 +1,4 @@
-System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/operator/exhaustMap", "rxjs/add/operator/map", "rxjs/add/operator/take", "@angular/core", "@angular/router", "@ngrx/effects", "../../services/core/tree-structure-service", "../actions/treenode-action"], function (exports_1, context_1) {
+System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/operator/exhaustMap", "rxjs/add/operator/map", "rxjs/add/operator/take", "@angular/core", "@angular/router", "@ngrx/effects", "../actions/fileitem-action", "../actions/treenode-action", "../../services/core/tree-structure-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, router_1, effects_1, tree_structure_service_1, treeNodeActions, TreeEffects;
+    var core_1, router_1, effects_1, fileItemActions, treeNodeActions, tree_structure_service_1, FileItemEffects;
     return {
         setters: [
             function (_1) {
@@ -32,39 +32,43 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
             function (effects_1_1) {
                 effects_1 = effects_1_1;
             },
-            function (tree_structure_service_1_1) {
-                tree_structure_service_1 = tree_structure_service_1_1;
+            function (fileItemActions_1) {
+                fileItemActions = fileItemActions_1;
             },
             function (treeNodeActions_1) {
                 treeNodeActions = treeNodeActions_1;
+            },
+            function (tree_structure_service_1_1) {
+                tree_structure_service_1 = tree_structure_service_1_1;
             }
         ],
         execute: function () {
-            TreeEffects = (function () {
-                function TreeEffects(actions$, treeStructureService, router) {
+            FileItemEffects = (function () {
+                function FileItemEffects(actions$, treeStructureService, router) {
                     var _this = this;
                     this.actions$ = actions$;
                     this.treeStructureService = treeStructureService;
                     this.router = router;
-                    this.initTreeNodes$ = this.actions$
-                        .ofType(treeNodeActions.INIT)
+                    this.loadFileItems$ = this.actions$
+                        .ofType(fileItemActions.SELECT_FOR_EXTRACT)
                         .map(function (action) {
-                        return new treeNodeActions.LoadTreeNodeAction(_this.treeStructureService.getInitialTree());
+                        var treeNode = _this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
+                        return new treeNodeActions.PlaceTreeNodeAction(treeNode);
                     });
                 }
                 __decorate([
                     effects_1.Effect(),
                     __metadata("design:type", Object)
-                ], TreeEffects.prototype, "initTreeNodes$", void 0);
-                TreeEffects = __decorate([
+                ], FileItemEffects.prototype, "loadFileItems$", void 0);
+                FileItemEffects = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [effects_1.Actions,
                         tree_structure_service_1.TreeStructureService,
                         router_1.Router])
-                ], TreeEffects);
-                return TreeEffects;
+                ], FileItemEffects);
+                return FileItemEffects;
             }());
-            exports_1("TreeEffects", TreeEffects);
+            exports_1("FileItemEffects", FileItemEffects);
             /*
             * export class TreeEffects {
                 @Effect()
@@ -88,4 +92,4 @@ System.register(["rxjs/add/operator/catch", "rxjs/add/operator/do", "rxjs/add/op
         }
     };
 });
-//# sourceMappingURL=tree-effects.js.map
+//# sourceMappingURL=file-item-effects.js.map

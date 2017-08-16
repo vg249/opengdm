@@ -1,20 +1,51 @@
 import {createSelector} from 'reselect';
 import * as gobiiTreeNodeAction from "../actions/treenode-action";
-import {GobiiTreeNode} from "../../model/GobiiTreeNode";
+import {ContainerType, GobiiTreeNode} from "../../model/GobiiTreeNode";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 
 
 export interface State {
     gobiiExtractFilterType: GobiiExtractFilterType;
     gobiiTreeNodesActive: string[];
-    gobiiTreeItems: GobiiTreeNode[] ;
+    gobiiTreeNodes: GobiiTreeNode[] ;
 };
 
 export const initialState: State = {
     gobiiExtractFilterType: GobiiExtractFilterType.UNKNOWN,
     gobiiTreeNodesActive: [],
-    gobiiTreeItems: [],
+    gobiiTreeNodes: [],
 };
+
+
+function placeNodeInTree(nodeToPlace: GobiiTreeNode, treeNodes: GobiiTreeNode[]): boolean {
+
+    let returnVal: boolean = false;
+
+    for (let idx: number = 0; !returnVal && (idx < treeNodes.length); idx++) {
+
+        let currentTreenode: GobiiTreeNode = treeNodes[idx];
+        if (currentTreenode.getItemType() === nodeToPlace.getItemType() &&
+            currentTreenode.getEntityType() === nodeToPlace.getEntityType() &&
+            currentTreenode.getEntitySubType() === nodeToPlace.getEntitySubType() &&
+            currentTreenode.getCvFilterType() === nodeToPlace.getCvFilterType() &&
+            currentTreenode.getContainerType() !== ContainerType.STRUCTURE
+        ) {
+            if (currentTreenode.getContainerType() === ContainerType.NONE) {
+                treeNodes[idx] = nodeToPlace;
+            } else if (currentTreenode.getContainerType() === ContainerType.DATA) {
+                nodeToPlace.parent = nodeToPlace;
+                nodeToPlace.getChildren().push(nodeToPlace);
+            }
+
+            returnVal = true;
+
+        } else {
+            returnVal = placeNodeInTree(nodeToPlace, currentTreenode.getChildren());
+        }
+    }
+
+    return returnVal;
+}
 
 export function gobiiTreeNodesReducer(state: State = initialState, action: gobiiTreeNodeAction.All): State {
 
@@ -22,12 +53,12 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
     switch (action.type) {
 
-        case gobiiTreeNodeAction.LOAD: {
+        case gobiiTreeNodeAction.LOAD_TREE_NODE: {
             const gobiigobiiTreeItemsPayload = action.payload;
 
             const newGobiigobiiTreeItems = gobiigobiiTreeItemsPayload.filter(newItem =>
                 state
-                    .gobiiTreeItems
+                    .gobiiTreeNodes
                     .filter(stateItem =>
                         stateItem.getItemType() != newItem.getItemType() &&
                         stateItem.getEntityType() != newItem.getEntityType() &&
@@ -39,11 +70,29 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
                 gobiiTreeNodesActive: state.gobiiTreeNodesActive,
-                gobiiTreeItems: [...state.gobiiTreeItems, ...newGobiigobiiTreeItems]
+                gobiiTreeNodes: [...state.gobiiTreeNodes, ...newGobiigobiiTreeItems]
             };
 
             break;
-        } // LOAD
+        } // LOAD_TREE_NODE
+
+
+        case gobiiTreeNodeAction.PLACE_TREE_NODE: {
+
+            const gobiiTreeNodePayload: GobiiTreeNode = action.payload;
+
+            // copy the existing
+            const newTreeNodes = state.gobiiTreeNodes.slice();
+            if (placeNodeInTree(gobiiTreeNodePayload, newTreeNodes)) {
+
+                returnVal = {
+                    gobiiExtractFilterType: state.gobiiExtractFilterType,
+                    gobiiTreeNodesActive: state.gobiiTreeNodesActive,
+                    gobiiTreeNodes: newTreeNodes
+                };
+            }
+            break;
+        } // LOAD_TREE_NODE
 
 
         case gobiiTreeNodeAction.ACTIVATE: {
@@ -52,7 +101,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
             const treeItemsToDeactivate = gobiigobiiTreeItemsPayload.filter(newItem =>
                 state
-                    .gobiiTreeItems
+                    .gobiiTreeNodes
                     .filter(stateItem =>
                         stateItem.getItemType() != newItem.getItemType() &&
                         stateItem.getEntityType() != newItem.getEntityType() &&
@@ -66,8 +115,8 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
             returnVal = {
                 gobiiExtractFilterType: state.gobiiExtractFilterType,
-                gobiiTreeNodesActive: gobiigobiiTreeItemsPayload.map( gti => gti.getId()),
-                gobiiTreeItems: [...treeItemsToDeactivate, ...gobiigobiiTreeItemsPayload]
+                gobiiTreeNodesActive: gobiigobiiTreeItemsPayload.map(gti => gti.getId()),
+                gobiiTreeNodes: [...treeItemsToDeactivate, ...gobiigobiiTreeItemsPayload]
             };
 
             break;
@@ -79,7 +128,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
             returnVal = {
                 gobiiExtractFilterType: action.payload,
                 gobiiTreeNodesActive: state.gobiiTreeNodesActive,
-                gobiiTreeItems: state.gobiiTreeItems
+                gobiiTreeNodes: state.gobiiTreeNodes
             };
 
         }
@@ -90,13 +139,13 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
 }
 
-export const getGobiiTreeItems = (state: State) => state.gobiiTreeItems;
+export const getGobiiTreeItems = (state: State) => state.gobiiTreeNodes;
 
-export const getGobiiTreeItemIds = (state: State) => state.gobiiTreeItems.map(gti => gti.getId());
+export const getGobiiTreeItemIds = (state: State) => state.gobiiTreeNodes.map(gti => gti.getId());
 
 export const getIdsOfActivated = (state: State) => state.gobiiTreeNodesActive;
 
-export const getExtractFilterType = (state: State ) => state.gobiiExtractFilterType;
+export const getExtractFilterType = (state: State) => state.gobiiExtractFilterType;
 
 export const getSelected = createSelector(getGobiiTreeItems, getIdsOfActivated, (gobiiTreeItems, selectedUniqueIds) => {
     return gobiiTreeItems.filter(gti => {
@@ -109,5 +158,5 @@ export const getAll = createSelector(getGobiiTreeItems, getGobiiTreeItemIds, (tr
 });
 
 export const getForSelectedFilter = createSelector(getGobiiTreeItems, getExtractFilterType, (treeItems, extractFilterType) => {
-    return treeItems.filter( ti => ti.getGobiiExtractFilterType() === extractFilterType );
+    return treeItems.filter(ti => ti.getGobiiExtractFilterType() === extractFilterType);
 });

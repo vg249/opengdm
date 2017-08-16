@@ -7,18 +7,22 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {Effect, Actions} from '@ngrx/effects';
 import {of} from 'rxjs/observable/of';
-import {TreeStructureService} from '../../services/core/tree-structure-service';
+
+import * as fileItemActions from '../actions/fileitem-action'
 import * as treeNodeActions from '../actions/treenode-action'
+import {TreeStructureService} from "../../services/core/tree-structure-service";
+import {GobiiTreeNode} from "../../model/GobiiTreeNode";
 
 @Injectable()
-export class TreeEffects {
+export class FileItemEffects {
     @Effect()
-    initTreeNodes$ = this.actions$
-        .ofType(treeNodeActions.INIT)
-        .map((action: treeNodeActions.InitAction) =>
-            new treeNodeActions.LoadTreeNodeAction(this.treeStructureService.getInitialTree())
+    loadFileItems$ = this.actions$
+        .ofType(fileItemActions.SELECT_FOR_EXTRACT)
+        .map((action: fileItemActions.SelectForExtractAction ) => {
+                let treeNode: GobiiTreeNode = this.treeStructureService.makeTreeNodeFromFileItem(action.payload);
+                return new treeNodeActions.PlaceTreeNodeAction(treeNode);
+            }
         );
-
 
     constructor(private actions$: Actions,
                 private treeStructureService: TreeStructureService,

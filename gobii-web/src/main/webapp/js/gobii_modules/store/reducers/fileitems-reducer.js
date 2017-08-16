@@ -22,7 +22,7 @@ System.register(["reselect", "../actions/fileitem-action"], function (exports_1,
                     fileItems: state.fileItems.concat(newGobiiFileItems)
                 };
                 break;
-            } // LOAD
+            } // LOAD_TREE_NODE
             // Technically, and according to the ngrx/store example app,
             // it should be possible for different actions to have a different
             // payload type, such that it's possible for a payload to be a single
@@ -32,12 +32,11 @@ System.register(["reselect", "../actions/fileitem-action"], function (exports_1,
             // For now in the interest of making progress I am using
             // an array type for all action payloads
             case gobiiFileItemAction.SELECT_FOR_EXTRACT: {
-                var gobiiFileItemPayload = action.payload;
-                var selectedUniqueItemIds = gobiiFileItemPayload
-                    .filter(function (selectedFileItem) {
-                    return state
-                        .fileItemUniqueIdsSelected
-                        .filter(function (selectedFileItemId) { return selectedFileItemId !== selectedFileItem.getFileItemUniqueId(); });
+                var gobiiFileItemPayload_1 = action.payload;
+                var selectedUniqueItemIds = state
+                    .fileItems
+                    .filter(function (fileItem) {
+                    return gobiiFileItemPayload_1.getFileItemUniqueId() !== fileItem.getFileItemUniqueId();
                 })
                     .map(function (selectedFileItem) { return selectedFileItem.getFileItemUniqueId(); });
                 returnVal = {
@@ -47,11 +46,11 @@ System.register(["reselect", "../actions/fileitem-action"], function (exports_1,
                 break;
             } // SELECT_FOR_EXTRACT
             case gobiiFileItemAction.DESELECT_FOR_EXTRACT: {
-                var gobiiFileItemPayload_1 = action.payload;
+                var gobiiFileItemPayload_2 = action.payload;
                 var newSelectedUniqueItemIds = state
                     .fileItemUniqueIdsSelected
                     .filter(function (selectedId) {
-                    return gobiiFileItemPayload_1.filter(function (deselectedItem) { return deselectedItem.getFileItemUniqueId() != selectedId; });
+                    return gobiiFileItemPayload_2.filter(function (deselectedItem) { return deselectedItem.getFileItemUniqueId() != selectedId; });
                 });
                 returnVal = {
                     fileItems: state.fileItems,

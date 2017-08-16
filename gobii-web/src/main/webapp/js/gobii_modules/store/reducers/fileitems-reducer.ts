@@ -45,7 +45,7 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             };
 
             break;
-        } // LOAD
+        } // LOAD_TREE_NODE
 
         // Technically, and according to the ngrx/store example app,
         // it should be possible for different actions to have a different
@@ -57,12 +57,11 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
         // an array type for all action payloads
         case gobiiFileItemAction.SELECT_FOR_EXTRACT: {
 
-            const gobiiFileItemPayload: GobiiFileItem[] = action.payload;
-            const selectedUniqueItemIds = gobiiFileItemPayload
-                .filter(selectedFileItem =>
-                    state
-                        .fileItemUniqueIdsSelected
-                        .filter(selectedFileItemId => selectedFileItemId !== selectedFileItem.getFileItemUniqueId()))
+            const gobiiFileItemPayload: GobiiFileItem = action.payload;
+            const selectedUniqueItemIds = state
+                .fileItems
+                .filter(fileItem =>
+                    gobiiFileItemPayload.getFileItemUniqueId() !== fileItem.getFileItemUniqueId())
                 .map(selectedFileItem => selectedFileItem.getFileItemUniqueId());
 
             returnVal = {

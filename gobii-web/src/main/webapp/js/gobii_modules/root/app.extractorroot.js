@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/type-extractor-sample-list", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-node", "../model/type-extract-format", "../model/file-model-tree-event", "../model/dto-header-status-message", "../model/name-id-request-params", "../model/file_name", "../views/entity-labels", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/name-id-label-type", "../model/type-status-level", "@ngrx/store", "../store/actions/treenode-action"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../model/extractor-instructions/data-set-extract", "../model/type-process", "../model/gobii-file-item", "../model/server-config", "../model/type-entity", "../model/name-id", "../model/type-gobii-file", "../model/extractor-instructions/dto-extractor-instruction-files", "../model/extractor-instructions/gobii-extractor-instruction", "../services/app/dto-request-item-extractor-submission", "../services/app/dto-request-item-serverconfigs", "../model/type-entity-filter", "../model/type-extractor-filter", "../model/type-extractor-sample-list", "../model/cv-filter-type", "../services/core/file-model-tree-service", "../model/file-model-node", "../model/type-extract-format", "../model/file-model-tree-event", "../model/dto-header-status-message", "../model/name-id-request-params", "../model/file_name", "../views/entity-labels", "../services/app/dto-request-item-contact", "../services/core/authentication.service", "../model/name-id-label-type", "../model/type-status-level", "@ngrx/store", "../store/actions/fileitem-action", "../store/actions/treenode-action"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, type_extractor_sample_list_1, cv_filter_type_1, file_model_tree_service_1, file_model_node_1, type_extract_format_1, file_model_tree_event_1, dto_header_status_message_1, name_id_request_params_1, file_name_1, entity_labels_1, dto_request_item_contact_1, authentication_service_1, name_id_label_type_1, type_status_level_1, store_1, treeNodeAction, ExtractorRoot;
+    var core_1, dto_request_service_1, data_set_extract_1, type_process_1, gobii_file_item_1, server_config_1, type_entity_1, name_id_1, type_gobii_file_1, dto_extractor_instruction_files_1, gobii_extractor_instruction_1, dto_request_item_extractor_submission_1, dto_request_item_serverconfigs_1, type_entity_filter_1, type_extractor_filter_1, type_extractor_sample_list_1, cv_filter_type_1, file_model_tree_service_1, file_model_node_1, type_extract_format_1, file_model_tree_event_1, dto_header_status_message_1, name_id_request_params_1, file_name_1, entity_labels_1, dto_request_item_contact_1, authentication_service_1, name_id_label_type_1, type_status_level_1, store_1, fileItemAction, treeNodeAction, ExtractorRoot;
     return {
         setters: [
             function (core_1_1) {
@@ -102,6 +102,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
             },
             function (store_1_1) {
                 store_1 = store_1_1;
+            },
+            function (fileItemAction_1) {
+                fileItemAction = fileItemAction_1;
             },
             function (treeNodeAction_1) {
                 treeNodeAction = treeNodeAction_1;
@@ -283,18 +286,23 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     var _this = this;
                     var foo = "foo";
                     this.store.dispatch(new treeNodeAction.SelectExtractType(arg));
+                    var jobId = file_name_1.FileName.makeUniqueFileId();
+                    this.store.dispatch(new fileItemAction.SelectForExtractAction(gobii_file_item_1.GobiiFileItem.build(arg, type_process_1.ProcessType.CREATE)
+                        .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)
+                        .setItemId(jobId)
+                        .setItemName(jobId)));
                     this._fileModelTreeService
                         .fileItemNotifications()
                         .subscribe(function (fileItem) {
                         if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
                             && fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                            var jobId = file_name_1.FileName.makeUniqueFileId();
+                            var jobId_1 = file_name_1.FileName.makeUniqueFileId();
                             _this._fileModelTreeService
                                 .put(gobii_file_item_1.GobiiFileItem
                                 .build(arg, type_process_1.ProcessType.CREATE)
                                 .setExtractorItemType(file_model_node_1.ExtractorItemType.JOB_ID)
-                                .setItemId(jobId)
-                                .setItemName(jobId))
+                                .setItemId(jobId_1)
+                                .setItemName(jobId_1))
                                 .subscribe(function (fmte) {
                                 _this._fileModelTreeService
                                     .getTreeState(_this.gobiiExtractFilterType)
@@ -517,7 +525,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                         var gobiiDataSetExtracts_1 = [];
                         var mapsetIds_1 = [];
                         var submitterContactid_1 = null;
-                        var jobId_1 = null;
+                        var jobId_2 = null;
                         var markerFileName_1 = null;
                         var sampleFileName_1 = null;
                         var sampleListType_1;
@@ -527,7 +535,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                                 return item.getExtractorItemType() === file_model_node_1.ExtractorItemType.JOB_ID;
                             });
                             if (fileItemJobId != null) {
-                                jobId_1 = fileItemJobId.getItemId();
+                                jobId_2 = fileItemJobId.getItemId();
                             }
                             // ******** MARKER FILE
                             var fileItemMarkerFile = fileItems.find(function (item) {
@@ -655,7 +663,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                             }
                         });
                         gobiiExtractorInstructions.push(new gobii_extractor_instruction_1.GobiiExtractorInstruction(gobiiDataSetExtracts_1, submitterContactid_1, null, mapsetIds_1));
-                        var fileName = jobId_1;
+                        var fileName = jobId_2;
                         var extractorInstructionFilesDTORequest = new dto_extractor_instruction_files_1.ExtractorInstructionFilesDTO(gobiiExtractorInstructions, fileName);
                         var extractorInstructionFilesDTOResponse_1 = null;
                         this._dtoRequestServiceExtractorFile.post(new dto_request_item_extractor_submission_1.DtoRequestItemExtractorSubmission(extractorInstructionFilesDTORequest))

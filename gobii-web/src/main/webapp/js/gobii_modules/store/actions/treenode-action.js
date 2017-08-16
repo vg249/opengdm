@@ -1,12 +1,13 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var INIT, LOAD, ACTIVATE, SELECT_EXTRACT_TYPE, InitAction, LoadAction, ActivateForExtractAction, SelectExtractType;
+    var INIT, LOAD_TREE_NODE, PLACE_TREE_NODE, ACTIVATE, SELECT_EXTRACT_TYPE, InitAction, LoadTreeNodeAction, PlaceTreeNodeAction, ActivateForExtractAction, SelectExtractType;
     return {
         setters: [],
         execute: function () {
             exports_1("INIT", INIT = '[GobiiTreeNode] Init');
-            exports_1("LOAD", LOAD = '[GobiiTreeNode] Load');
+            exports_1("LOAD_TREE_NODE", LOAD_TREE_NODE = '[GobiiTreeNode] Load Tree Nodes');
+            exports_1("PLACE_TREE_NODE", PLACE_TREE_NODE = '[GobiiTreeNode] Add Tree Node');
             exports_1("ACTIVATE", ACTIVATE = '[GobiiTreeNode] Activate');
             exports_1("SELECT_EXTRACT_TYPE", SELECT_EXTRACT_TYPE = '[GobiiTreeNode] Select Extract Type');
             InitAction = (function () {
@@ -23,14 +24,22 @@ System.register([], function (exports_1, context_1) {
              *
              * See Discriminated Unions: https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions
              */
-            LoadAction = (function () {
-                function LoadAction(payload) {
+            LoadTreeNodeAction = (function () {
+                function LoadTreeNodeAction(payload) {
                     this.payload = payload;
-                    this.type = LOAD;
+                    this.type = LOAD_TREE_NODE;
                 }
-                return LoadAction;
+                return LoadTreeNodeAction;
             }());
-            exports_1("LoadAction", LoadAction);
+            exports_1("LoadTreeNodeAction", LoadTreeNodeAction);
+            PlaceTreeNodeAction = (function () {
+                function PlaceTreeNodeAction(payload) {
+                    this.payload = payload;
+                    this.type = PLACE_TREE_NODE;
+                }
+                return PlaceTreeNodeAction;
+            }());
+            exports_1("PlaceTreeNodeAction", PlaceTreeNodeAction);
             ActivateForExtractAction = (function () {
                 function ActivateForExtractAction(payload) {
                     this.payload = payload;

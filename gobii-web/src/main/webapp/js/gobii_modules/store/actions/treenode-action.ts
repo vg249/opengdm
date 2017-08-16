@@ -3,7 +3,8 @@ import {GobiiTreeNode} from "../../model/GobiiTreeNode";
 import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 
 export const INIT = '[GobiiTreeNode] Init';
-export const LOAD = '[GobiiTreeNode] Load';
+export const LOAD_TREE_NODE = '[GobiiTreeNode] Load Tree Nodes';
+export const PLACE_TREE_NODE = '[GobiiTreeNode] Add Tree Node';
 export const ACTIVATE = '[GobiiTreeNode] Activate';
 export const SELECT_EXTRACT_TYPE = '[GobiiTreeNode] Select Extract Type';
 
@@ -22,13 +23,19 @@ export class InitAction implements Action {
  *
  * See Discriminated Unions: https://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions
  */
-export class LoadAction implements Action {
-    readonly type = LOAD;
+export class LoadTreeNodeAction implements Action {
+    readonly type = LOAD_TREE_NODE;
 
     constructor(public payload: GobiiTreeNode[]) {
     }
 }
 
+export class PlaceTreeNodeAction implements Action {
+    readonly type = PLACE_TREE_NODE;
+
+    constructor(public payload: GobiiTreeNode) {
+    }
+}
 
 export class ActivateForExtractAction implements Action {
     readonly type = ACTIVATE;
@@ -50,7 +57,8 @@ export class SelectExtractType implements Action {
  * so that reducers can easily compose action types
  */
 export type All
-    = LoadAction
+    = LoadTreeNodeAction
+    | PlaceTreeNodeAction
     | ActivateForExtractAction
     | SelectExtractType
     | InitAction;

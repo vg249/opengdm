@@ -4,9 +4,10 @@ import {CvFilterType} from "./cv-filter-type";
 import {ExtractorItemType} from "./file-model-node";
 import {Guid} from "./guid";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
+import {GobiiFileItem} from "./gobii-file-item";
 
 
-export enum ContainerType {NONE,TREE_NODE,ITEM_NODE}
+export enum ContainerType {NONE, STRUCTURE, DATA}
 
 export class GobiiTreeNode implements TreeNode {
 
@@ -83,7 +84,7 @@ export class GobiiTreeNode implements TreeNode {
 
 
 //UI properties
-    private gobiiExtractFilterType:GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
+    private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     public label: string;
     public data: any;
     public icon: any;
@@ -102,8 +103,8 @@ export class GobiiTreeNode implements TreeNode {
     private containerType: ContainerType = ContainerType.NONE;
 
 
-    setGobiiExtractFilterType(gobiiExtractFilterType :GobiiExtractFilterType ): GobiiTreeNode {
-        this.gobiiExtractFilterType = gobiiExtractFilterType ;
+    setGobiiExtractFilterType(gobiiExtractFilterType: GobiiExtractFilterType): GobiiTreeNode {
+        this.gobiiExtractFilterType = gobiiExtractFilterType;
         return this;
     }
 
@@ -125,7 +126,7 @@ export class GobiiTreeNode implements TreeNode {
         return this.cvFilterType;
     }
 
-    setCvFilterType(value: CvFilterType) : GobiiTreeNode {
+    setCvFilterType(value: CvFilterType): GobiiTreeNode {
         this.cvFilterType = value;
         return this;
     }
@@ -134,7 +135,7 @@ export class GobiiTreeNode implements TreeNode {
         return this.label;
     }
 
-    setLabel(value: string) : GobiiTreeNode {
+    setLabel(value: string): GobiiTreeNode {
         this.label = value;
         return this;
     }
@@ -143,7 +144,7 @@ export class GobiiTreeNode implements TreeNode {
         return this.data;
     }
 
-    setData(value: any) : GobiiTreeNode {
+    setData(value: any): GobiiTreeNode {
         this.data = value;
         return this;
     }
@@ -152,7 +153,7 @@ export class GobiiTreeNode implements TreeNode {
         return this.icon;
     }
 
-    setIcon(value: any) : GobiiTreeNode {
+    setIcon(value: any): GobiiTreeNode {
         this.icon = value;
         return this;
     }
@@ -161,7 +162,7 @@ export class GobiiTreeNode implements TreeNode {
         return this.expandedIcon;
     }
 
-    setExpandedIcon(value: any) : GobiiTreeNode {
+    setExpandedIcon(value: any): GobiiTreeNode {
         this.expandedIcon = value;
         return this;
     }
@@ -170,7 +171,7 @@ export class GobiiTreeNode implements TreeNode {
         return this.collapsedIcon;
     }
 
-    setCollapsedIcon(value: any) : GobiiTreeNode {
+    setCollapsedIcon(value: any): GobiiTreeNode {
         this.collapsedIcon = value;
         return this;
     }
@@ -179,7 +180,7 @@ export class GobiiTreeNode implements TreeNode {
         return this.children;
     }
 
-    setChildren(value: GobiiTreeNode[]) : GobiiTreeNode {
+    setChildren(value: GobiiTreeNode[]): GobiiTreeNode {
         this.children = value;
         return this;
     }
@@ -188,7 +189,7 @@ export class GobiiTreeNode implements TreeNode {
         return this.leaf;
     }
 
-    setLeaf(value: boolean) : GobiiTreeNode {
+    setLeaf(value: boolean): GobiiTreeNode {
         this.leaf = value;
         return this;
     }
@@ -197,7 +198,7 @@ export class GobiiTreeNode implements TreeNode {
         return this.expanded;
     }
 
-    setExpanded(value: boolean) : GobiiTreeNode {
+    setExpanded(value: boolean): GobiiTreeNode {
         this.expanded = value;
         return this;
     }
@@ -206,7 +207,7 @@ export class GobiiTreeNode implements TreeNode {
         return this.type;
     }
 
-    setType(value: string) : GobiiTreeNode {
+    setType(value: string): GobiiTreeNode {
         this.type = value;
         return this;
     }
@@ -215,7 +216,7 @@ export class GobiiTreeNode implements TreeNode {
         return this.partialSelected;
     }
 
-    setPartialSelected(value: boolean) : GobiiTreeNode {
+    setPartialSelected(value: boolean): GobiiTreeNode {
         this.partialSelected = value;
         return this;
     }
@@ -224,7 +225,7 @@ export class GobiiTreeNode implements TreeNode {
         return this.fileItemId;
     }
 
-    setFileItemId(value: string) : GobiiTreeNode {
+    setFileItemId(value: string): GobiiTreeNode {
         this.fileItemId = value;
         return this;
     }
@@ -233,13 +234,13 @@ export class GobiiTreeNode implements TreeNode {
         return this.required;
     }
 
-    setRequired(value: boolean) : GobiiTreeNode {
+    setRequired(value: boolean): GobiiTreeNode {
         this.required = value;
         return this;
     }
 
 
-    getContainerTYpe(): ContainerType {
+    getContainerType(): ContainerType {
         return this.containerType;
     }
 
