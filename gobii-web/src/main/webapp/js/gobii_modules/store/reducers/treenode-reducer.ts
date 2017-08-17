@@ -17,14 +17,15 @@ export const initialState: State = {
 };
 
 
-function placeNodeInTree(nodeToPlace: GobiiTreeNode, treeNodes: GobiiTreeNode[]): boolean {
+function placeNodeInTree(nodeToPlace: GobiiTreeNode, treeNodes: GobiiTreeNode[], gobiiExtractFilterType: GobiiExtractFilterType): boolean {
 
     let returnVal: boolean = false;
 
     for (let idx: number = 0; !returnVal && (idx < treeNodes.length); idx++) {
 
         let currentTreenode: GobiiTreeNode = treeNodes[idx];
-        if (currentTreenode.getItemType() === nodeToPlace.getItemType() &&
+        if (currentTreenode.getGobiiExtractFilterType() === gobiiExtractFilterType &&
+            currentTreenode.getItemType() === nodeToPlace.getItemType() &&
             currentTreenode.getEntityType() === nodeToPlace.getEntityType() &&
             currentTreenode.getEntitySubType() === nodeToPlace.getEntitySubType() &&
             currentTreenode.getCvFilterType() === nodeToPlace.getCvFilterType() &&
@@ -40,7 +41,7 @@ function placeNodeInTree(nodeToPlace: GobiiTreeNode, treeNodes: GobiiTreeNode[])
             returnVal = true;
 
         } else {
-            returnVal = placeNodeInTree(nodeToPlace, currentTreenode.getChildren());
+            returnVal = placeNodeInTree(nodeToPlace, currentTreenode.getChildren(), gobiiExtractFilterType);
         }
     }
 
@@ -83,7 +84,7 @@ export function gobiiTreeNodesReducer(state: State = initialState, action: gobii
 
             // copy the existing
             const newTreeNodes = state.gobiiTreeNodes.slice();
-            if (placeNodeInTree(gobiiTreeNodePayload, newTreeNodes)) {
+            if (placeNodeInTree(gobiiTreeNodePayload, newTreeNodes, state.gobiiExtractFilterType)) {
 
                 returnVal = {
                     gobiiExtractFilterType: state.gobiiExtractFilterType,

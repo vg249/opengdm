@@ -1,11 +1,12 @@
 System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTreeNode", "../../model/type-extractor-filter"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    function placeNodeInTree(nodeToPlace, treeNodes) {
+    function placeNodeInTree(nodeToPlace, treeNodes, gobiiExtractFilterType) {
         var returnVal = false;
         for (var idx = 0; !returnVal && (idx < treeNodes.length); idx++) {
             var currentTreenode = treeNodes[idx];
-            if (currentTreenode.getItemType() === nodeToPlace.getItemType() &&
+            if (currentTreenode.getGobiiExtractFilterType() === gobiiExtractFilterType &&
+                currentTreenode.getItemType() === nodeToPlace.getItemType() &&
                 currentTreenode.getEntityType() === nodeToPlace.getEntityType() &&
                 currentTreenode.getEntitySubType() === nodeToPlace.getEntitySubType() &&
                 currentTreenode.getCvFilterType() === nodeToPlace.getCvFilterType() &&
@@ -20,7 +21,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                 returnVal = true;
             }
             else {
-                returnVal = placeNodeInTree(nodeToPlace, currentTreenode.getChildren());
+                returnVal = placeNodeInTree(nodeToPlace, currentTreenode.getChildren(), gobiiExtractFilterType);
             }
         }
         return returnVal;
@@ -52,7 +53,7 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
                 var gobiiTreeNodePayload = action.payload;
                 // copy the existing
                 var newTreeNodes = state.gobiiTreeNodes.slice();
-                if (placeNodeInTree(gobiiTreeNodePayload, newTreeNodes)) {
+                if (placeNodeInTree(gobiiTreeNodePayload, newTreeNodes, state.gobiiExtractFilterType)) {
                     returnVal = {
                         gobiiExtractFilterType: state.gobiiExtractFilterType,
                         gobiiTreeNodesActive: state.gobiiTreeNodesActive,
