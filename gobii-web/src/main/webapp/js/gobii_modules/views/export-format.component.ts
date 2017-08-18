@@ -10,6 +10,9 @@ import {NameId} from "../model/name-id";
 import {DtoRequestService} from "../services/core/dto-request.service";
 import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {EntityType} from "../model/type-entity";
+import * as fromRoot from '../store/reducers';
+import * as fileItemAction from '../store/actions/fileitem-action';
+import {Store} from "@ngrx/store";
 
 
 @Component({
@@ -31,7 +34,8 @@ import {EntityType} from "../model/type-entity";
 
 export class ExportFormatComponent implements OnInit, OnChanges {
 
-    constructor(private _fileModelTreeService: FileModelTreeService) {
+    constructor(private _fileModelTreeService: FileModelTreeService,
+                private store: Store<fromRoot.State>) {
     } // ctor
 
     // private nameIdList: NameId[];
@@ -126,19 +130,24 @@ export class ExportFormatComponent implements OnInit, OnChanges {
         this.selectedExtractFormat = arg;
 
 
-        let extractFilterTypeFileItem: GobiiFileItem = GobiiFileItem
+        let formatItem: GobiiFileItem = GobiiFileItem
             .build(this.gobiiExtractFilterType, ProcessType.UPDATE)
             .setExtractorItemType(ExtractorItemType.EXPORT_FORMAT)
             .setItemId(GobiiExtractFormat[arg])
             .setItemName(GobiiExtractFormat[GobiiExtractFormat[arg]]);
 
-        this._fileModelTreeService.put(extractFilterTypeFileItem)
-            .subscribe(
-                null,
-                headerResponse => {
-                    this.handleResponseHeader(headerResponse)
-                });
 
+        this.store.dispatch(new fileItemAction.SelectForExtractAction(formatItem));
+
+
+
+        // this._fileModelTreeService.put(formatItem)
+        //     .subscribe(
+        //         null,
+        //         headerResponse => {
+        //             this.handleResponseHeader(headerResponse)
+        //         });
+        //
         //console.log("selected contact itemId:" + arg);
     }
 
