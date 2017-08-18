@@ -76,17 +76,48 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this.fileItemList = [];
                     this.notifyOnInit = false;
                     this.doTreeNotifications = true;
+                    // DtoRequestItemNameIds expects the value to be null if it's not set (not "UNKNOWN")
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.selectedFileItemId = null;
                     this.onNameIdSelected = new core_1.EventEmitter();
                     this.onError = new core_1.EventEmitter();
                     this.currentSelection = null;
                     this.differ = differs.find({}).create(null);
-                    this.fileItems$ = store.select(fromRoot.getAllFileItems);
+                    //      this.fileItems$ = store.select(fromRoot.getAllFileItems);
+                    //       this.fileItems$ = store.select(fromRoot.getMapsets);
                 } // ctor
                 // private notificationSent = false;
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
                     var _this = this;
+                    switch (this.nameIdRequestParams.getEntityType()) {
+                        case type_entity_1.EntityType.MarkerGroups:
+                            this.fileItems$ = this.store.select(fromRoot.getMarkerGroups);
+                            break;
+                        case type_entity_1.EntityType.Contacts:
+                            this.fileItems$ = this.store.select(fromRoot.getContacts);
+                            break;
+                        case type_entity_1.EntityType.Projects:
+                            this.fileItems$ = this.store.select(fromRoot.getProjects);
+                            break;
+                        case type_entity_1.EntityType.Experiments:
+                            this.fileItems$ = this.store.select(fromRoot.getExperiments);
+                            break;
+                        case type_entity_1.EntityType.DataSets:
+                            this.fileItems$ = this.store.select(fromRoot.getDatasets);
+                            break;
+                        case type_entity_1.EntityType.CvTerms:
+                            this.fileItems$ = this.store.select(fromRoot.getCvTerms);
+                            break;
+                        case type_entity_1.EntityType.Mapsets:
+                            this.fileItems$ = this.store.select(fromRoot.getMapsets);
+                            break;
+                        case type_entity_1.EntityType.Platforms:
+                            this.fileItems$ = this.store.select(fromRoot.getPlatforms);
+                            break;
+                        default:
+                            this.fileItems$ = this.store.select(fromRoot.getAllFileItems);
+                            break;
+                    }
                     var scope$ = this;
                     this._fileModelTreeService
                         .fileItemNotifications()
@@ -195,6 +226,11 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     var _this = this;
                     this.onNameIdSelected
                         .emit(new name_id_1.NameId(eventedfileItem.getItemId(), eventedfileItem.getItemName(), eventedfileItem.getEntityType()));
+                    // if (eventedfileItem.getItemId() != "0") {
+                    //     if (this.doTreeNotifications) {
+                    //         this.store.dispatch(new fileItemAction.SelectForExtractAction(eventedfileItem));
+                    //     }
+                    // }
                     if (eventedfileItem.getItemId() != "0") {
                         if (this.doTreeNotifications) {
                             this._fileModelTreeService.put(eventedfileItem)
@@ -267,7 +303,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                             'nameIdRequestParams',
                             'doTreeNotifications'],
                         outputs: ['onNameIdSelected', 'onError'],
-                        template: "<select [(ngModel)]=\"selectedFileItemId\" (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItemList\"\n                [value]=\"fileItem.getItemId()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
+                        template: "<select [(ngModel)]=\"selectedFileItemId\" (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getItemId()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         name_id_service_1.NameIdService,

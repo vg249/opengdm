@@ -123,8 +123,14 @@ export const getFileItems = createSelector(getFileItemsState, fromFileItems.getF
 export const getSelectedFileItems = createSelector(getFileItemsState, fromFileItems.getSelected);
 export const getSelectedUniqueIds = createSelector(getFileItemsState, fromFileItems.getSelectedUniqueIds);
 export const getUniqueIds = createSelector(getFileItemsState, fromFileItems.getUniqueIds);
-//
-
+export const getContacts =  createSelector(getFileItemsState, fromFileItems.getContacts);
+export const getProjects =  createSelector(getFileItemsState, fromFileItems.getProjects);
+export const getExperiments =  createSelector(getFileItemsState, fromFileItems.getExperiments);
+export const getDatasets =  createSelector(getFileItemsState, fromFileItems.getDatasets);
+export const getCvTerms =  createSelector(getFileItemsState, fromFileItems.getCvTerms);
+export const getMapsets =  createSelector(getFileItemsState, fromFileItems.getMapsets);
+export const getPlatforms =  createSelector(getFileItemsState, fromFileItems.getPlatforms);
+export const getMarkerGroups =  createSelector(getFileItemsState, fromFileItems.getMarkerGroups);
 
 
 export const getGobiiTreeNodesState = (state: State) => state.gobiiTreeNodes;

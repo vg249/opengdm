@@ -1,4 +1,4 @@
-System.register(["reselect", "../actions/fileitem-action"], function (exports_1, context_1) {
+System.register(["reselect", "../actions/fileitem-action", "../../model/file-model-node", "../../model/type-entity"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function fileItemsReducer(state, action) {
@@ -11,11 +11,12 @@ System.register(["reselect", "../actions/fileitem-action"], function (exports_1,
                     return state
                         .fileItems
                         .filter(function (stateItem) {
-                        return stateItem.getExtractorItemType() != newItem.getExtractorItemType() &&
-                            stateItem.getEntityType() != newItem.getEntityType() &&
-                            stateItem.getEntitySubType() != newItem.getEntitySubType() &&
-                            stateItem.getItemId() != newItem.getItemId();
-                    });
+                        return (stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
+                            stateItem.getEntityType() === newItem.getEntityType() &&
+                            stateItem.getEntitySubType() === newItem.getEntitySubType() &&
+                            stateItem.getCvFilterType() === newItem.getCvFilterType() &&
+                            stateItem.getItemId() === newItem.getItemId());
+                    }).length === 0;
                 });
                 returnVal = {
                     fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
@@ -62,7 +63,7 @@ System.register(["reselect", "../actions/fileitem-action"], function (exports_1,
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var reselect_1, gobiiFileItemAction, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getSelected, getAll;
+    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getSelected, getAll, getContacts, getProjects, getExperiments, getDatasets, getCvTerms, getMapsets, getPlatforms, getMarkerGroups;
     return {
         setters: [
             function (reselect_1_1) {
@@ -70,6 +71,12 @@ System.register(["reselect", "../actions/fileitem-action"], function (exports_1,
             },
             function (gobiiFileItemAction_1) {
                 gobiiFileItemAction = gobiiFileItemAction_1;
+            },
+            function (file_model_node_1_1) {
+                file_model_node_1 = file_model_node_1_1;
+            },
+            function (type_entity_1_1) {
+                type_entity_1 = type_entity_1_1;
             }
         ],
         execute: function () {
@@ -96,6 +103,65 @@ System.register(["reselect", "../actions/fileitem-action"], function (exports_1,
             }));
             exports_1("getAll", getAll = reselect_1.createSelector(getFileItems, getUniqueIds, function (entities, ids) {
                 return ids.map(function (id) { return entities[id]; });
+            }));
+            // ideally, the redux way of selecting data would be for the selection to be based
+            // on which entity is "selected" The problem is that we have controlls in which the
+            // entity type is parameterized -- it is not global state
+            exports_1("getContacts", getContacts = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                return fileItems.filter(function (e) {
+                    return e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                        && e.getEntityType() === type_entity_1.EntityType.Contacts;
+                })
+                    .map(function (fi) { return fi; });
+            }));
+            exports_1("getProjects", getProjects = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                return fileItems.filter(function (e) {
+                    return e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                        && e.getEntityType() === type_entity_1.EntityType.Projects;
+                })
+                    .map(function (fi) { return fi; });
+            }));
+            exports_1("getExperiments", getExperiments = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                return fileItems.filter(function (e) {
+                    return e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                        && e.getEntityType() === type_entity_1.EntityType.Experiments;
+                })
+                    .map(function (fi) { return fi; });
+            }));
+            exports_1("getDatasets", getDatasets = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                return fileItems.filter(function (e) {
+                    return e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                        && e.getEntityType() === type_entity_1.EntityType.DataSets;
+                })
+                    .map(function (fi) { return fi; });
+            }));
+            exports_1("getCvTerms", getCvTerms = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                return fileItems.filter(function (e) {
+                    return e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                        && e.getEntityType() === type_entity_1.EntityType.CvTerms;
+                })
+                    .map(function (fi) { return fi; });
+            }));
+            exports_1("getMapsets", getMapsets = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                return fileItems.filter(function (e) {
+                    return e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                        && e.getEntityType() === type_entity_1.EntityType.Mapsets;
+                })
+                    .map(function (fi) { return fi; });
+            }));
+            exports_1("getPlatforms", getPlatforms = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                return fileItems.filter(function (e) {
+                    return e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                        && e.getEntityType() === type_entity_1.EntityType.Platforms;
+                })
+                    .map(function (fi) { return fi; });
+            }));
+            exports_1("getMarkerGroups", getMarkerGroups = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                return fileItems.filter(function (e) {
+                    return e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                        && e.getEntityType() === type_entity_1.EntityType.MarkerGroups;
+                })
+                    .map(function (fi) { return fi; });
             }));
         }
     };

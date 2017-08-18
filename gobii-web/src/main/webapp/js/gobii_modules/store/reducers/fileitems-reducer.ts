@@ -1,6 +1,8 @@
 import {createSelector} from 'reselect';
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import * as gobiiFileItemAction from "../actions/fileitem-action";
+import {ExtractorItemType} from "../../model/file-model-node";
+import {EntityType} from "../../model/type-entity";
 
 
 /***
@@ -32,11 +34,14 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
                 state
                     .fileItems
                     .filter(stateItem =>
-                        stateItem.getExtractorItemType() != newItem.getExtractorItemType() &&
-                        stateItem.getEntityType() != newItem.getEntityType() &&
-                        stateItem.getEntitySubType() != newItem.getEntitySubType() &&
-                        stateItem.getItemId() != newItem.getItemId()
-                    )
+                        (
+                            stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
+                            stateItem.getEntityType() === newItem.getEntityType() &&
+                            stateItem.getEntitySubType() === newItem.getEntitySubType() &&
+                            stateItem.getCvFilterType() === newItem.getCvFilterType() &&
+                            stateItem.getItemId() === newItem.getItemId()
+                        )
+                    ).length === 0
             );
 
             returnVal = {
@@ -121,3 +126,79 @@ export const getSelected = createSelector(getFileItems, getSelectedUniqueIds, (f
 export const getAll = createSelector(getFileItems, getUniqueIds, (entities, ids) => {
     return ids.map(id => entities[id]);
 });
+
+// ideally, the redux way of selecting data would be for the selection to be based
+// on which entity is "selected" The problem is that we have controlls in which the
+// entity type is parameterized -- it is not global state
+
+
+export const getContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        && e.getEntityType() === EntityType.Contacts)
+        .map(fi => fi);
+});
+
+export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        && e.getEntityType() === EntityType.Projects)
+        .map(fi => fi);
+});
+
+export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        && e.getEntityType() === EntityType.Experiments)
+        .map(fi => fi);
+});
+
+export const getDatasets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        && e.getEntityType() === EntityType.DataSets)
+        .map(fi => fi);
+});
+
+export const getCvTerms = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        && e.getEntityType() === EntityType.CvTerms)
+        .map(fi => fi);
+});
+
+export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        && e.getEntityType() === EntityType.Mapsets)
+        .map(fi => fi);
+});
+
+export const getPlatforms = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        && e.getEntityType() === EntityType.Platforms)
+        .map(fi => fi);
+});
+
+
+export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        && e.getEntityType() === EntityType.MarkerGroups)
+        .map(fi => fi);
+});
+
+
+
+
+
+

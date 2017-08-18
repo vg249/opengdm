@@ -21,6 +21,7 @@ import {NameIdLabelType} from "../model/name-id-label-type";
 import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import * as fileAction from '../store/actions/fileitem-action';
+import * as treeNodeAction from '../store/actions/treenode-action';
 import {Observable} from "rxjs/Observable";
 
 
@@ -32,7 +33,7 @@ import {Observable} from "rxjs/Observable";
         'doTreeNotifications'],
     outputs: ['onNameIdSelected', 'onError'],
     template: `<select [(ngModel)]="selectedFileItemId" (change)="handleFileItemSelected($event)">
-        <option *ngFor="let fileItem of fileItemList"
+        <option *ngFor="let fileItem of fileItems$ | async"
                 [value]="fileItem.getItemId()">{{fileItem.getItemName()}}
         </option>
     </select>
@@ -40,12 +41,14 @@ import {Observable} from "rxjs/Observable";
 
 })
 
+
 export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     //private uniqueId:string;
 
     differ: any;
 
+    private nameIdRequestParams: NameIdRequestParams;
     fileItems$: Observable<GobiiFileItem[]>;
 
     constructor(private store: Store<fromRoot.State>,
@@ -55,7 +58,10 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
         this.differ = differs.find({}).create(null);
 
-        this.fileItems$ = store.select(fromRoot.getAllFileItems);
+        //      this.fileItems$ = store.select(fromRoot.getAllFileItems);
+//       this.fileItems$ = store.select(fromRoot.getMapsets);
+
+
 
     } // ctor
 
@@ -63,6 +69,52 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     ngOnInit(): any {
 
+        switch (this.nameIdRequestParams.getEntityType()) {
+
+            case EntityType.MarkerGroups:
+                this.fileItems$ = this.store.select(fromRoot.getMarkerGroups);
+                break;
+
+            case EntityType.Contacts:
+                this.fileItems$ = this.store.select(fromRoot.getContacts);
+                break;
+
+
+            case EntityType.Projects:
+                this.fileItems$ = this.store.select(fromRoot.getProjects);
+                break;
+
+
+            case EntityType.Experiments:
+                this.fileItems$ = this.store.select(fromRoot.getExperiments);
+                break;
+
+
+            case EntityType.DataSets:
+                this.fileItems$ = this.store.select(fromRoot.getDatasets);
+                break;
+
+
+            case EntityType.CvTerms:
+                this.fileItems$ = this.store.select(fromRoot.getCvTerms);
+                break;
+
+
+            case EntityType.Mapsets:
+                this.fileItems$ = this.store.select(fromRoot.getMapsets);
+                break;
+
+
+            case EntityType.Platforms:
+                this.fileItems$ = this.store.select(fromRoot.getPlatforms);
+                break;
+
+            default:
+                this.fileItems$ = this.store.select(fromRoot.getAllFileItems);
+                break;
+
+        }
+        
         let scope$ = this;
         this._fileModelTreeService
             .fileItemNotifications()
@@ -207,7 +259,6 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
     private doTreeNotifications: boolean = true;
     // DtoRequestItemNameIds expects the value to be null if it's not set (not "UNKNOWN")
 
-    private nameIdRequestParams: NameIdRequestParams;
 
     private gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
 
@@ -228,6 +279,12 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
             .emit(new NameId(eventedfileItem.getItemId(),
                 eventedfileItem.getItemName(),
                 eventedfileItem.getEntityType()));
+
+        // if (eventedfileItem.getItemId() != "0") {
+        //     if (this.doTreeNotifications) {
+        //         this.store.dispatch(new fileItemAction.SelectForExtractAction(eventedfileItem));
+        //     }
+        // }
 
         if (eventedfileItem.getItemId() != "0") {
             if (this.doTreeNotifications) {
