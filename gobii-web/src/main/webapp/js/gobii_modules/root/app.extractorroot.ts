@@ -436,19 +436,31 @@ export class ExtractorRoot implements OnInit {
                 if (contact && contact.contactId && contact.contactId > 0) {
 
                     //loggedInUser
-                    scope$._fileModelTreeService.put(
+                    this.store.dispatch(new fileItemAction.SelectForExtractAction(
                         GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
                             .setEntityType(EntityType.Contacts)
                             .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
                             .setCvFilterType(CvFilterType.UNKNOWN)
                             .setExtractorItemType(ExtractorItemType.ENTITY)
                             .setItemName(contact.email)
-                            .setItemId(contact.contactId.toLocaleString())).subscribe(
-                        null,
-                        headerStatusMessage => {
-                            this.handleHeaderStatusMessage(headerStatusMessage)
-                        }
-                    );
+                            .setItemId(contact.contactId.toLocaleString())
+                    ));
+
+
+                    // //loggedInUser
+                    // scope$._fileModelTreeService.put(
+                    //     GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
+                    //         .setEntityType(EntityType.Contacts)
+                    //         .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
+                    //         .setCvFilterType(CvFilterType.UNKNOWN)
+                    //         .setExtractorItemType(ExtractorItemType.ENTITY)
+                    //         .setItemName(contact.email)
+                    //         .setItemId(contact.contactId.toLocaleString())).subscribe(
+                    //     null,
+                    //     headerStatusMessage => {
+                    //         this.handleHeaderStatusMessage(headerStatusMessage)
+                    //     }
+                    // );
 
                 } else {
                     scope$.handleAddMessage("There is no contact associated with user " + this.loggedInUser);

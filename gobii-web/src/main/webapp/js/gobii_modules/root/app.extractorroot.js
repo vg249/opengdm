@@ -248,15 +248,27 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../mo
                     scope$._dtoRequestServiceContact.get(new dto_request_item_contact_1.DtoRequestItemContact(dto_request_item_contact_1.ContactSearchType.BY_USERNAME, this.loggedInUser)).subscribe(function (contact) {
                         if (contact && contact.contactId && contact.contactId > 0) {
                             //loggedInUser
-                            scope$._fileModelTreeService.put(gobii_file_item_1.GobiiFileItem.build(scope$.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
+                            _this.store.dispatch(new fileItemAction.SelectForExtractAction(gobii_file_item_1.GobiiFileItem.build(scope$.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                                 .setEntityType(type_entity_1.EntityType.Contacts)
                                 .setEntitySubType(type_entity_1.EntitySubType.CONTACT_SUBMITED_BY)
                                 .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
                                 .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
                                 .setItemName(contact.email)
-                                .setItemId(contact.contactId.toLocaleString())).subscribe(null, function (headerStatusMessage) {
-                                _this.handleHeaderStatusMessage(headerStatusMessage);
-                            });
+                                .setItemId(contact.contactId.toLocaleString())));
+                            // //loggedInUser
+                            // scope$._fileModelTreeService.put(
+                            //     GobiiFileItem.build(scope$.gobiiExtractFilterType, ProcessType.CREATE)
+                            //         .setEntityType(EntityType.Contacts)
+                            //         .setEntitySubType(EntitySubType.CONTACT_SUBMITED_BY)
+                            //         .setCvFilterType(CvFilterType.UNKNOWN)
+                            //         .setExtractorItemType(ExtractorItemType.ENTITY)
+                            //         .setItemName(contact.email)
+                            //         .setItemId(contact.contactId.toLocaleString())).subscribe(
+                            //     null,
+                            //     headerStatusMessage => {
+                            //         this.handleHeaderStatusMessage(headerStatusMessage)
+                            //     }
+                            // );
                         }
                         else {
                             scope$.handleAddMessage("There is no contact associated with user " + _this.loggedInUser);
