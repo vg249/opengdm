@@ -135,7 +135,8 @@ export const getAll = createSelector(getFileItems, getUniqueIds, (entities, ids)
 export const getContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
-        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
         && e.getEntityType() === EntityType.Contacts)
         .map(fi => fi);
 });
@@ -143,7 +144,8 @@ export const getContacts = createSelector(getFileItems, getUniqueIds, (fileItems
 export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
-        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
         && e.getEntityType() === EntityType.Projects)
         .map(fi => fi);
 });
@@ -151,7 +153,8 @@ export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems
 export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
-        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
         && e.getEntityType() === EntityType.Experiments)
         .map(fi => fi);
 });
@@ -159,7 +162,8 @@ export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileIt
 export const getDatasets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
-        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
         && e.getEntityType() === EntityType.DataSets)
         .map(fi => fi);
 });
@@ -167,7 +171,8 @@ export const getDatasets = createSelector(getFileItems, getUniqueIds, (fileItems
 export const getCvTerms = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
-        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
         && e.getEntityType() === EntityType.CvTerms)
         .map(fi => fi);
 });
@@ -175,7 +180,8 @@ export const getCvTerms = createSelector(getFileItems, getUniqueIds, (fileItems,
 export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
-        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
         && e.getEntityType() === EntityType.Mapsets)
         .map(fi => fi);
 });
@@ -183,7 +189,8 @@ export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems,
 export const getPlatforms = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
-        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
         && e.getEntityType() === EntityType.Platforms)
         .map(fi => fi);
 });
@@ -192,7 +199,8 @@ export const getPlatforms = createSelector(getFileItems, getUniqueIds, (fileItem
 export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
-        e.getExtractorItemType() === ExtractorItemType.ENTITY
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
         && e.getEntityType() === EntityType.MarkerGroups)
         .map(fi => fi);
 });

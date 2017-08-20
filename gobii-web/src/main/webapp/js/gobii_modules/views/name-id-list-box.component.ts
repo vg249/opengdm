@@ -280,22 +280,22 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                 eventedfileItem.getItemName(),
                 eventedfileItem.getEntityType()));
 
-        // if (eventedfileItem.getItemId() != "0") {
-        //     if (this.doTreeNotifications) {
-        //         this.store.dispatch(new fileItemAction.SelectForExtractAction(eventedfileItem));
-        //     }
-        // }
-
         if (eventedfileItem.getItemId() != "0") {
             if (this.doTreeNotifications) {
-                this._fileModelTreeService.put(eventedfileItem)
-                    .subscribe(
-                        null,
-                        headerResponse => {
-                            this.handleHeaderStatus(headerResponse)
-                        });
+                this.store.dispatch(new fileAction.SelectForExtractAction(eventedfileItem));
             }
         }
+
+        // if (eventedfileItem.getItemId() != "0") {
+        //     if (this.doTreeNotifications) {
+        //         this._fileModelTreeService.put(eventedfileItem)
+        //             .subscribe(
+        //                 null,
+        //                 headerResponse => {
+        //                     this.handleHeaderStatus(headerResponse)
+        //                 });
+        //     }
+        // }
 
     }
 

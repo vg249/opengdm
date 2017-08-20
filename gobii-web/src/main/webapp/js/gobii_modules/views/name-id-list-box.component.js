@@ -223,22 +223,23 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this.onError.emit(headerStatusMessage);
                 };
                 NameIdListBoxComponent.prototype.updateTreeService = function (eventedfileItem) {
-                    var _this = this;
                     this.onNameIdSelected
                         .emit(new name_id_1.NameId(eventedfileItem.getItemId(), eventedfileItem.getItemName(), eventedfileItem.getEntityType()));
-                    // if (eventedfileItem.getItemId() != "0") {
-                    //     if (this.doTreeNotifications) {
-                    //         this.store.dispatch(new fileItemAction.SelectForExtractAction(eventedfileItem));
-                    //     }
-                    // }
                     if (eventedfileItem.getItemId() != "0") {
                         if (this.doTreeNotifications) {
-                            this._fileModelTreeService.put(eventedfileItem)
-                                .subscribe(null, function (headerResponse) {
-                                _this.handleHeaderStatus(headerResponse);
-                            });
+                            this.store.dispatch(new fileAction.SelectForExtractAction(eventedfileItem));
                         }
                     }
+                    // if (eventedfileItem.getItemId() != "0") {
+                    //     if (this.doTreeNotifications) {
+                    //         this._fileModelTreeService.put(eventedfileItem)
+                    //             .subscribe(
+                    //                 null,
+                    //                 headerResponse => {
+                    //                     this.handleHeaderStatus(headerResponse)
+                    //                 });
+                    //     }
+                    // }
                 };
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
                     var _this = this;
