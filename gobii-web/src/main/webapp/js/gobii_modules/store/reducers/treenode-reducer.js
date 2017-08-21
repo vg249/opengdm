@@ -109,17 +109,43 @@ System.register(["reselect", "../actions/treenode-action", "../../model/GobiiTre
             exports_1("getGobiiTreeItemIds", getGobiiTreeItemIds = function (state) { return state.gobiiTreeNodes.map(function (gti) { return gti.getId(); }); });
             exports_1("getIdsOfActivated", getIdsOfActivated = function (state) { return state.gobiiTreeNodesActive; });
             exports_1("getExtractFilterType", getExtractFilterType = function (state) { return state.gobiiExtractFilterType; });
-            exports_1("getSelected", getSelected = reselect_1.createSelector(getGobiiTreeNodes, getIdsOfActivated, function (gobiiTreeNodes, selectedUniqueIds) {
-                // this needs to be done in a more filterish way. For now it works
+            exports_1("getSelected", getSelected = reselect_1.createSelector(getGobiiTreeNodes, getIdsOfActivated, getExtractFilterType, function (gobiiTreeNodes, selectedUniqueIds, getExtractFilterType) {
                 var returnVal = [];
-                gobiiTreeNodes.forEach(function (n) {
-                    selectedUniqueIds.forEach(function (i) {
-                        if (n.getId() === i)
-                            returnVal.push(n);
-                    });
+                gobiiTreeNodes
+                    .forEach(function find(gtn) {
+                    if (selectedUniqueIds.filter(function (id) { return id === gtn.getId(); }).length > 0) {
+                        returnVal.push(gtn);
+                    }
+                    gtn.getChildren().forEach(find);
                 });
                 return returnVal;
+                // this needs to be done in a more filterish way. For now it works
+                // let returnVal: GobiiTreeNode[] =
+                //     gobiiTreeNodes
+                //         .filter(gtn => gtn.getGobiiExtractFilterType() === getExtractFilterType)
+                //         .filter(function find(gtn) {
+                //             let returnVal: boolean = selectedUniqueIds.filter(id => id === gtn.getId()).length > 0;
+                //             if (!returnVal) {
+                //                 returnVal = ( gtn.getContainerType() != ContainerType.STRUCTURE )
+                //                     && (gtn.getChildren().filter(find).length > 0);
+                //             }
+                //
+                //             return returnVal;
+                //         });
+                //
+                // return returnVal;
             }));
+            //    let returnVal: GobiiTreeNode[] = [];
+            // gobiiTreeNodes
+            //     .filter(gtn => gtn.getGobiiExtractFilterType() === getExtractFilterType )
+            //     .forEach(n => {
+            //         selectedUniqueIds.forEach(i => {
+            //             if (n.getId() === i)
+            //                 returnVal.push(n);
+            //         })
+            //
+            //     }
+            // );
             exports_1("getAll", getAll = reselect_1.createSelector(getGobiiTreeNodes, getGobiiTreeItemIds, function (treeItems, ids) {
                 return ids.map(function (id) { return treeItems[id]; });
             }));
