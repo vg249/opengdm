@@ -24,7 +24,7 @@ export class LoadAction implements Action {
 export class DeSelectForExtractAction implements Action {
     readonly type = DESELECT_FOR_EXTRACT;
 
-    constructor(public payload: GobiiFileItem[]) {
+    constructor(public payload: GobiiFileItem) {
     }
 }
 

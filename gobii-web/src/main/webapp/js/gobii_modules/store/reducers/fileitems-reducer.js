@@ -51,7 +51,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 var newSelectedUniqueItemIds = state
                     .fileItemUniqueIdsSelected
                     .filter(function (selectedId) {
-                    return gobiiFileItemPayload_2.filter(function (deselectedItem) { return deselectedItem.getFileItemUniqueId() != selectedId; });
+                    return gobiiFileItemPayload_2.getFileItemUniqueId() != selectedId;
                 });
                 returnVal = {
                     fileItems: state.fileItems,
@@ -63,7 +63,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getSelected, getAll, getContacts, getProjects, getExperiments, getDatasets, getCvTerms, getMapsets, getPlatforms, getMarkerGroups;
+    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getSelected, getAll, getContacts, getProjects, getExperiments, getDatasets, getCvTerms, getMapsets, getPlatforms, getMarkerGroups, getSelectedDatasets;
     return {
         setters: [
             function (reselect_1_1) {
@@ -168,6 +168,15 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
                         || e.getExtractorItemType() === file_model_node_1.ExtractorItemType.LABEL)
                         && e.getEntityType() === type_entity_1.EntityType.MarkerGroups;
+                })
+                    .map(function (fi) { return fi; });
+            }));
+            /// **************** GET SELECTED PER ENTITY TYPE
+            exports_1("getSelectedDatasets", getSelectedDatasets = reselect_1.createSelector(getSelected, function (selectedFileItems) {
+                return selectedFileItems.filter(function (e) {
+                    return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                        || e.getExtractorItemType() === file_model_node_1.ExtractorItemType.LABEL)
+                        && e.getEntityType() === type_entity_1.EntityType.DataSets;
                 })
                     .map(function (fi) { return fi; });
             }));

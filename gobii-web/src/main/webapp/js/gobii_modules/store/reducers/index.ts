@@ -132,6 +132,9 @@ export const getMapsets =  createSelector(getFileItemsState, fromFileItems.getMa
 export const getPlatforms =  createSelector(getFileItemsState, fromFileItems.getPlatforms);
 export const getMarkerGroups =  createSelector(getFileItemsState, fromFileItems.getMarkerGroups);
 
+export const getSelectedDatasets =  createSelector(getFileItemsState, fromFileItems.getSelectedDatasets);
+
+
 
 export const getGobiiTreeNodesState = (state: State) => state.gobiiTreeNodes;
 export const getAllGobiiTreeNodes = createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getAll);

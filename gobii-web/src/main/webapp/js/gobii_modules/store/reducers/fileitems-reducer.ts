@@ -79,11 +79,11 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
         case gobiiFileItemAction.DESELECT_FOR_EXTRACT: {
 
-            const gobiiFileItemPayload: GobiiFileItem[] = action.payload;
+            const gobiiFileItemPayload: GobiiFileItem = action.payload;
             const newSelectedUniqueItemIds = state
                 .fileItemUniqueIdsSelected
                 .filter(selectedId =>
-                    gobiiFileItemPayload.filter(deselectedItem => deselectedItem.getFileItemUniqueId() != selectedId)
+                    gobiiFileItemPayload.getFileItemUniqueId() != selectedId
                 );
 
 
@@ -205,7 +205,15 @@ export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileI
         .map(fi => fi);
 });
 
+/// **************** GET SELECTED PER ENTITY TYPE
+export const getSelectedDatasets = createSelector(getSelected,  (selectedFileItems) => {
 
+    return selectedFileItems.filter(e =>
+        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
+            || e.getExtractorItemType() === ExtractorItemType.LABEL )
+        && e.getEntityType() === EntityType.DataSets)
+        .map(fi => fi);
+});
 
 
 

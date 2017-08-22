@@ -1,7 +1,7 @@
 System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-reducer", "./treenode-reducer"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var reselect_1, store_1, ngrx_store_freeze_1, store_2, fromFileItems, fromGobiiTreeNodes, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getContacts, getProjects, getExperiments, getDatasets, getCvTerms, getMapsets, getPlatforms, getMarkerGroups, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes;
+    var reselect_1, store_1, ngrx_store_freeze_1, store_2, fromFileItems, fromGobiiTreeNodes, reducers, developmentReducer, productionReducer, getFileItemsState, getAllFileItems, getFileItems, getSelectedFileItems, getSelectedUniqueIds, getUniqueIds, getContacts, getProjects, getExperiments, getDatasets, getCvTerms, getMapsets, getPlatforms, getMarkerGroups, getSelectedDatasets, getGobiiTreeNodesState, getAllGobiiTreeNodes, getGobiiTreeNodesForExtractFilter, getSelectedGobiiTreeNodes, getSelectedGobiiTreeNodeIds, getIdsOfActivatedGobiiTreeNodes;
     return {
         setters: [
             function (reselect_1_1) {
@@ -88,6 +88,7 @@ System.register(["reselect", "@ngrx/store", "ngrx-store-freeze", "./fileitems-re
             exports_1("getMapsets", getMapsets = reselect_1.createSelector(getFileItemsState, fromFileItems.getMapsets));
             exports_1("getPlatforms", getPlatforms = reselect_1.createSelector(getFileItemsState, fromFileItems.getPlatforms));
             exports_1("getMarkerGroups", getMarkerGroups = reselect_1.createSelector(getFileItemsState, fromFileItems.getMarkerGroups));
+            exports_1("getSelectedDatasets", getSelectedDatasets = reselect_1.createSelector(getFileItemsState, fromFileItems.getSelectedDatasets));
             exports_1("getGobiiTreeNodesState", getGobiiTreeNodesState = function (state) { return state.gobiiTreeNodes; });
             exports_1("getAllGobiiTreeNodes", getAllGobiiTreeNodes = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getAll));
             exports_1("getGobiiTreeNodesForExtractFilter", getGobiiTreeNodesForExtractFilter = reselect_1.createSelector(getGobiiTreeNodesState, fromGobiiTreeNodes.getForSelectedFilter));
