@@ -30,7 +30,6 @@
             <version>1.0.1-DEV</version>
         </dependency>
 
-
         <!-- Jackson JSON Processor -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -59,7 +58,6 @@
             <version>${commons-io-version}</version>
         </dependency>
 
-
         <!-- XML serialization -->
         <dependency>
             <groupId>org.simpleframework</groupId>
@@ -74,15 +72,12 @@
             <version>1.5.6</version>
         </dependency>
 
-
-
-            <!-- Java Mail API -->
-            <dependency>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
-                <version>1.4.3</version>
-            </dependency>
-
+        <!-- Java Mail API -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.3</version>
+        </dependency>
 
         <!-- Logging with SLF4J & LogBack -->
         <dependency>
@@ -114,49 +109,12 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>4.0.3.RELEASE</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>4.0.3.RELEASE</version>
-        </dependency>
-
-        <!-- Logging with SLF4J & LogBack -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -170,7 +128,6 @@
             <artifactId>javax.ws.rs-api</artifactId>
             <version>${javax.version}</version>
         </dependency>
-
 
     </dependencies>
 
