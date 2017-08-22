@@ -5,7 +5,6 @@ import {BrowserModule} from "@angular/platform-browser";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {ExportFormatComponent} from "../views/export-format.component";
 import {ProjectListBoxComponent} from "../views/project-list-box.component";
-import {DataSetCheckListBoxComponent} from "../views/dataset-checklist-box.component";
 import {StatusDisplayComponent} from "../views/status-display-box.component";
 import {CropsListBoxComponent} from "../views/crops-list-box.component";
 import {ExportTypeComponent} from "../views/export-type.component";
@@ -61,7 +60,6 @@ import {FileItemEffects} from "../store/effects/file-item-effects";
         LoginComponent,
         ExportFormatComponent,
         ProjectListBoxComponent,
-        DataSetCheckListBoxComponent,
         StatusDisplayComponent,
         CropsListBoxComponent,
         ExportTypeComponent,
