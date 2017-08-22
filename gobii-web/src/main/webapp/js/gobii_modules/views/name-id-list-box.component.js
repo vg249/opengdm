@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../model/type-entity", "../model/cv-filter-type", "../model/gobii-file-item", "../model/type-process", "../services/core/file-model-tree-service", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service", "../model/dto-header-status-message", "./entity-labels", "../model/type-event-origin", "../model/name-id-label-type", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../model/type-entity", "../model/cv-filter-type", "../model/gobii-file-item", "../model/type-process", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service", "../model/dto-header-status-message", "./entity-labels", "../model/type-event-origin", "../model/name-id-label-type", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, type_entity_1, cv_filter_type_1, gobii_file_item_1, type_process_1, file_model_tree_service_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, dto_header_status_message_1, entity_labels_1, type_event_origin_1, name_id_label_type_1, store_1, fromRoot, fileAction, NameIdListBoxComponent;
+    var core_1, name_id_1, type_entity_1, cv_filter_type_1, gobii_file_item_1, type_process_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, dto_header_status_message_1, entity_labels_1, type_event_origin_1, name_id_label_type_1, store_1, fromRoot, fileAction, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -30,9 +30,6 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
             },
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
-            },
-            function (file_model_tree_service_1_1) {
-                file_model_tree_service_1 = file_model_tree_service_1_1;
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
@@ -67,10 +64,11 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
         ],
         execute: function () {
             NameIdListBoxComponent = (function () {
-                function NameIdListBoxComponent(store, _nameIdService, _fileModelTreeService, differs) {
+                function NameIdListBoxComponent(store, _nameIdService, 
+                    //                private _fileModelTreeService: FileModelTreeService,
+                    differs) {
                     this.store = store;
                     this._nameIdService = _nameIdService;
-                    this._fileModelTreeService = _fileModelTreeService;
                     this.differs = differs;
                     // useg
                     this.fileItemList = [];
@@ -88,7 +86,6 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                 } // ctor
                 // private notificationSent = false;
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
-                    var _this = this;
                     switch (this.nameIdRequestParams.getEntityType()) {
                         case type_entity_1.EntityType.MarkerGroups:
                             this.fileItems$ = this.store.select(fromRoot.getMarkerGroups);
@@ -118,16 +115,17 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                             this.fileItems$ = this.store.select(fromRoot.getAllFileItems);
                             break;
                     }
-                    var scope$ = this;
-                    this._fileModelTreeService
-                        .fileItemNotifications()
-                        .subscribe(function (eventedFileItem) {
-                        if (_this.doTreeNotifications) {
-                            _this.updateSelectedItem(eventedFileItem);
-                        }
-                    }, function (responseHeader) {
-                        _this.handleHeaderStatus(responseHeader);
-                    });
+                    // let scope$ = this;
+                    // this._fileModelTreeService
+                    //     .fileItemNotifications()
+                    //     .subscribe(eventedFileItem => {
+                    //             if (this.doTreeNotifications) {
+                    //                 this.updateSelectedItem(eventedFileItem);
+                    //             }
+                    //         },
+                    //         responseHeader => {
+                    //             this.handleHeaderStatus(responseHeader);
+                    //         });
                 };
                 NameIdListBoxComponent.prototype.updateSelectedItem = function (eventedFileItem) {
                     var fileItems = this.fileItemList;
@@ -265,15 +263,18 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
                             //this.notificationSent = false;
                             this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
-                            var scope$_1 = this;
-                            this._fileModelTreeService
-                                .fileItemNotifications()
-                                .subscribe(function (fileItem) {
-                                if (fileItem.getProcessType() === type_process_1.ProcessType.NOTIFY
-                                    && fileItem.getExtractorItemType() === file_model_node_1.ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-                                    scope$_1.initializeFileItems();
-                                }
-                            });
+                            // let scope$ = this;
+                            // this._fileModelTreeService
+                            //     .fileItemNotifications()
+                            //     .subscribe(fileItem => {
+                            //         if (fileItem.getProcessType() === ProcessType.NOTIFY
+                            //             && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+                            //
+                            //             scope$.initializeFileItems();
+                            //
+                            //
+                            //         }
+                            //     });
                         } // if we have a new filter type
                     } // if filter type changed
                     if (changes['nameIdRequestParams']
@@ -308,7 +309,6 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         name_id_service_1.NameIdService,
-                        file_model_tree_service_1.FileModelTreeService,
                         core_1.KeyValueDiffers])
                 ], NameIdListBoxComponent);
                 return NameIdListBoxComponent;

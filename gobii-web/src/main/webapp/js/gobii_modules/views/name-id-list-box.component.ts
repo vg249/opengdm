@@ -53,7 +53,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     constructor(private store: Store<fromRoot.State>,
                 private _nameIdService: NameIdService,
-                private _fileModelTreeService: FileModelTreeService,
+//                private _fileModelTreeService: FileModelTreeService,
                 private differs: KeyValueDiffers) {
 
         this.differ = differs.find({}).create(null);
@@ -115,17 +115,17 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
         }
         
-        let scope$ = this;
-        this._fileModelTreeService
-            .fileItemNotifications()
-            .subscribe(eventedFileItem => {
-                    if (this.doTreeNotifications) {
-                        this.updateSelectedItem(eventedFileItem);
-                    }
-                },
-                responseHeader => {
-                    this.handleHeaderStatus(responseHeader);
-                });
+        // let scope$ = this;
+        // this._fileModelTreeService
+        //     .fileItemNotifications()
+        //     .subscribe(eventedFileItem => {
+        //             if (this.doTreeNotifications) {
+        //                 this.updateSelectedItem(eventedFileItem);
+        //             }
+        //         },
+        //         responseHeader => {
+        //             this.handleHeaderStatus(responseHeader);
+        //         });
     }
 
     private updateSelectedItem(eventedFileItem: GobiiFileItem) {
@@ -340,18 +340,18 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
                 this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
 
-                let scope$ = this;
-                this._fileModelTreeService
-                    .fileItemNotifications()
-                    .subscribe(fileItem => {
-                        if (fileItem.getProcessType() === ProcessType.NOTIFY
-                            && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
-
-                            scope$.initializeFileItems();
-
-
-                        }
-                    });
+                // let scope$ = this;
+                // this._fileModelTreeService
+                //     .fileItemNotifications()
+                //     .subscribe(fileItem => {
+                //         if (fileItem.getProcessType() === ProcessType.NOTIFY
+                //             && fileItem.getExtractorItemType() === ExtractorItemType.STATUS_DISPLAY_TREE_READY) {
+                //
+                //             scope$.initializeFileItems();
+                //
+                //
+                //         }
+                //     });
 
             } // if we have a new filter type
 
