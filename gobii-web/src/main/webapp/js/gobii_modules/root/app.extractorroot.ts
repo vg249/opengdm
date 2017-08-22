@@ -192,11 +192,17 @@ import * as treeNodeAction from '../store/actions/treenode-action';
                                     <BR>
                                     <BR>
                                     <label class="the-label">Data Sets</label><BR>
-                                    <dataset-checklist-box
-                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                            [experimentId]="selectedExperimentId"
-                                            (onAddStatusMessage)="handleHeaderStatusMessage($event)">
-                                    </dataset-checklist-box>
+                                    <checklist-box
+                                            [gobiiExtractFilterType] = "gobiiExtractFilterType"
+                                            [nameIdRequestParams] = "nameIdRequestParamsDataset"
+                                            [retainHistory] = "true"
+                                            (onError) = "handleHeaderStatusMessage($event)">
+                                    </checklist-box>                                   
+                                    <!--<dataset-checklist-box-->
+                                            <!--[gobiiExtractFilterType]="gobiiExtractFilterType"-->
+                                            <!--[experimentId]="selectedExperimentId"-->
+                                            <!--(onAddStatusMessage)="handleHeaderStatusMessage($event)">-->
+                                    <!--</dataset-checklist-box>-->
                                 </div>
                             </div> <!-- panel body -->
                         </div> <!-- panel primary -->
@@ -318,7 +324,7 @@ export class ExtractorRoot implements OnInit {
     public nameIdRequestParamsMapsets: NameIdRequestParams;
     public nameIdRequestParamsDatasetType: NameIdRequestParams;
     public nameIdRequestParamsPlatforms: NameIdRequestParams;
-
+    public nameIdRequestParamsDataset: NameIdRequestParams;
 
     // ************************************************************************
 
@@ -379,6 +385,13 @@ export class ExtractorRoot implements OnInit {
             .build("Platforms",
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Platforms);
+
+
+        this.nameIdRequestParamsDataset = NameIdRequestParams
+            .build("Datasets-by-experiment-id",
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.DataSets)
+            .setEntityFilter(EntityFilter.BYTYPEID);
 
     }
 
@@ -517,7 +530,7 @@ export class ExtractorRoot implements OnInit {
 
         let jobId: string = FileName.makeUniqueFileId();
         this.store.dispatch(new fileItemAction.SelectForExtractAction(
-            GobiiFileItem.build(arg,ProcessType.CREATE)
+            GobiiFileItem.build(arg, ProcessType.CREATE)
                 .setExtractorItemType(ExtractorItemType.JOB_ID)
                 .setItemId(jobId)
                 .setItemName(jobId)
@@ -682,6 +695,7 @@ export class ExtractorRoot implements OnInit {
 
     private handleExperimentSelected(arg: NameId) {
         this.selectedExperimentId = arg.id;
+        this.nameIdRequestParamsDataset.setEntityFilterValue(this.selectedExperimentId);
         this.selectedExperimentDetailId = arg.id;
         this.displayExperimentDetail = true;
 
