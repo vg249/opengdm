@@ -3,6 +3,8 @@ import {GobiiFileItem} from "../../model/gobii-file-item";
 import * as gobiiFileItemAction from "../actions/fileitem-action";
 import {ExtractorItemType} from "../../model/file-model-node";
 import {EntityType} from "../../model/type-entity";
+import {NameIdRequestParams} from "../../model/name-id-request-params";
+import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 
 
 /***
@@ -14,11 +16,13 @@ import {EntityType} from "../../model/type-entity";
 export interface State {
     fileItemUniqueIdsSelected: string[];
     fileItems: GobiiFileItem[] ;
+    filters: { [id: string]: NameIdRequestParams };
 };
 
 export const initialState: State = {
     fileItemUniqueIdsSelected: [],
     fileItems: [],
+    filters: {}
 };
 
 export function fileItemsReducer(state: State = initialState, action: gobiiFileItemAction.All): State {
@@ -46,7 +50,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             returnVal = {
                 fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
-                fileItems: [...state.fileItems, ...newGobiiFileItems]
+                fileItems: [...state.fileItems, ...newGobiiFileItems],
+                filters: {}
             };
 
             break;
@@ -71,7 +76,8 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             returnVal = {
                 fileItems: state.fileItems,
-                fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...selectedUniqueItemIds] // spread syntax
+                fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...selectedUniqueItemIds],
+                filters: {} // spread syntax
             };
 
             break;
@@ -89,7 +95,24 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             returnVal = {
                 fileItems: state.fileItems,
-                fileItemUniqueIdsSelected: newSelectedUniqueItemIds
+                fileItemUniqueIdsSelected: newSelectedUniqueItemIds,
+                filters: {}
+            };
+
+            break;
+        }
+
+        case gobiiFileItemAction.SET_ENTITY_FILTER: {
+
+            const nameIdRequestParamsPayload: NameIdRequestParams = action.payload.nameIdRequestParams;
+            let newFilterState = Object.assign({}, state.filters);
+            newFilterState[nameIdRequestParamsPayload.getQueryName()] = nameIdRequestParamsPayload;
+
+
+            returnVal = {
+                fileItems: state.fileItems,
+                fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
+                filters: newFilterState
             };
 
             break;
@@ -116,6 +139,8 @@ export const getFileItems = (state: State) => state.fileItems;
 export const getUniqueIds = (state: State) => state.fileItems.map(fileItem => fileItem.getFileItemUniqueId());
 
 export const getSelectedUniqueIds = (state: State) => state.fileItemUniqueIdsSelected;
+
+export const getFilters = (state: State) => state.filters;
 
 export const getSelected = createSelector(getFileItems, getSelectedUniqueIds, (fileItems, selectedUniqueIds) => {
     return fileItems.filter(fileItem => {
@@ -206,13 +231,21 @@ export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileI
 });
 
 /// **************** GET SELECTED PER ENTITY TYPE
-export const getSelectedDatasets = createSelector(getSelected,  (selectedFileItems) => {
+export const getDatasetsForSelectedExperiment = createSelector(getFileItems, getFilters, (fileItems, filters) => {
 
-    return selectedFileItems.filter(e =>
-        ( e.getExtractorItemType() === ExtractorItemType.ENTITY
-            || e.getExtractorItemType() === ExtractorItemType.LABEL )
-        && e.getEntityType() === EntityType.DataSets)
-        .map(fi => fi);
+    let returnVal: GobiiFileItem[] = [];
+
+    if (filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT]) {
+
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+            && ( e.getEntityType() === EntityType.DataSets )
+            && (e.getParentItemId() === filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT].getEntityFilterValue()))
+            .map(fi => fi);
+
+    }
+
+    return returnVal;
 });
 
 

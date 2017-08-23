@@ -132,7 +132,7 @@ export const getMapsets =  createSelector(getFileItemsState, fromFileItems.getMa
 export const getPlatforms =  createSelector(getFileItemsState, fromFileItems.getPlatforms);
 export const getMarkerGroups =  createSelector(getFileItemsState, fromFileItems.getMarkerGroups);
 
-export const getSelectedDatasets =  createSelector(getFileItemsState, fromFileItems.getSelectedDatasets);
+export const getDatasetsByExperiment =  createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment);
 
 
 

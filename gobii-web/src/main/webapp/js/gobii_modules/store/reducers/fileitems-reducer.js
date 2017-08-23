@@ -1,4 +1,4 @@
-System.register(["reselect", "../actions/fileitem-action", "../../model/file-model-node", "../../model/type-entity"], function (exports_1, context_1) {
+System.register(["reselect", "../actions/fileitem-action", "../../model/file-model-node", "../../model/type-entity", "../../model/type-nameid-filter-params"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function fileItemsReducer(state, action) {
@@ -20,7 +20,8 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 });
                 returnVal = {
                     fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
-                    fileItems: state.fileItems.concat(newGobiiFileItems)
+                    fileItems: state.fileItems.concat(newGobiiFileItems),
+                    filters: {}
                 };
                 break;
             } // LOAD_TREE_NODE
@@ -42,7 +43,8 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     .map(function (selectedFileItem) { return selectedFileItem.getFileItemUniqueId(); });
                 returnVal = {
                     fileItems: state.fileItems,
-                    fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected.concat(selectedUniqueItemIds) // spread syntax
+                    fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected.concat(selectedUniqueItemIds),
+                    filters: {} // spread syntax
                 };
                 break;
             } // SELECT_FOR_EXTRACT
@@ -55,7 +57,19 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 });
                 returnVal = {
                     fileItems: state.fileItems,
-                    fileItemUniqueIdsSelected: newSelectedUniqueItemIds
+                    fileItemUniqueIdsSelected: newSelectedUniqueItemIds,
+                    filters: {}
+                };
+                break;
+            }
+            case gobiiFileItemAction.SET_ENTITY_FILTER: {
+                var nameIdRequestParamsPayload = action.payload.nameIdRequestParams;
+                var newFilterState = Object.assign({}, state.filters);
+                newFilterState[nameIdRequestParamsPayload.getQueryName()] = nameIdRequestParamsPayload;
+                returnVal = {
+                    fileItems: state.fileItems,
+                    fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
+                    filters: newFilterState
                 };
                 break;
             } // switch()
@@ -63,7 +77,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getSelected, getAll, getContacts, getProjects, getExperiments, getDatasets, getCvTerms, getMapsets, getPlatforms, getMarkerGroups, getSelectedDatasets;
+    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getProjects, getExperiments, getDatasets, getCvTerms, getMapsets, getPlatforms, getMarkerGroups, getDatasetsForSelectedExperiment;
     return {
         setters: [
             function (reselect_1_1) {
@@ -77,6 +91,9 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             },
             function (type_entity_1_1) {
                 type_entity_1 = type_entity_1_1;
+            },
+            function (type_nameid_filter_params_1_1) {
+                type_nameid_filter_params_1 = type_nameid_filter_params_1_1;
             }
         ],
         execute: function () {
@@ -84,6 +101,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             exports_1("initialState", initialState = {
                 fileItemUniqueIdsSelected: [],
                 fileItems: [],
+                filters: {}
             });
             /**
              * Because the data structure is defined within the fileItemsReducer it is optimal to
@@ -96,6 +114,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             exports_1("getFileItems", getFileItems = function (state) { return state.fileItems; });
             exports_1("getUniqueIds", getUniqueIds = function (state) { return state.fileItems.map(function (fileItem) { return fileItem.getFileItemUniqueId(); }); });
             exports_1("getSelectedUniqueIds", getSelectedUniqueIds = function (state) { return state.fileItemUniqueIdsSelected; });
+            exports_1("getFilters", getFilters = function (state) { return state.filters; });
             exports_1("getSelected", getSelected = reselect_1.createSelector(getFileItems, getSelectedUniqueIds, function (fileItems, selectedUniqueIds) {
                 return fileItems.filter(function (fileItem) {
                     selectedUniqueIds.filter(function (uniqueId) { return fileItem.getFileItemUniqueId() === uniqueId; });
@@ -172,13 +191,17 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     .map(function (fi) { return fi; });
             }));
             /// **************** GET SELECTED PER ENTITY TYPE
-            exports_1("getSelectedDatasets", getSelectedDatasets = reselect_1.createSelector(getSelected, function (selectedFileItems) {
-                return selectedFileItems.filter(function (e) {
-                    return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
-                        || e.getExtractorItemType() === file_model_node_1.ExtractorItemType.LABEL)
-                        && e.getEntityType() === type_entity_1.EntityType.DataSets;
-                })
-                    .map(function (fi) { return fi; });
+            exports_1("getDatasetsForSelectedExperiment", getDatasetsForSelectedExperiment = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
+                var returnVal = [];
+                if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT]) {
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
+                            && (e.getEntityType() === type_entity_1.EntityType.DataSets)
+                            && (e.getParentItemId() === filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT].getEntityFilterValue());
+                    })
+                        .map(function (fi) { return fi; });
+                }
+                return returnVal;
             }));
         }
     };

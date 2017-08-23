@@ -1,9 +1,12 @@
 import {Action} from '@ngrx/store';
 import {GobiiFileItem} from "../../model/gobii-file-item";
+import {NameIdRequestParams} from "../../model/name-id-request-params";
+import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 
 export const LOAD = '[GobiiFileItem] Load';
 export const SELECT_FOR_EXTRACT = '[GobiiFileItem] Select';
 export const DESELECT_FOR_EXTRACT = '[GobiiFileItem] DeSelect';
+export const SET_ENTITY_FILTER = '[GobiiFileItem] SetEntityFilter';
 
 
 /**
@@ -35,6 +38,16 @@ export class SelectForExtractAction implements Action {
     }
 }
 
+export class SetEntityFilter implements Action {
+    readonly type = SET_ENTITY_FILTER;
+
+    constructor(public payload: {
+        gobiiExtractFilterType: GobiiExtractFilterType,
+        nameIdRequestParams: NameIdRequestParams
+    }) {
+    }
+}
+
 
 /**
  * Export a type alias of all actions in this action group
@@ -43,5 +56,6 @@ export class SelectForExtractAction implements Action {
 export type All
     = LoadAction
     | SelectForExtractAction
-    | DeSelectForExtractAction;
+    | DeSelectForExtractAction
+    | SetEntityFilter;
 

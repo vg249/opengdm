@@ -96,7 +96,6 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
             .build(NameIdFilterParamTypes.MARKER_GROUPS,
                 this.gobiiExtractFilterType,
                 EntityType.MarkerGroups);
-
     }
 
     public maxListItems: number = 200;

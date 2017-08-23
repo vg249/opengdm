@@ -28,7 +28,7 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
         ],
         execute: function () {
             GobiiFileItem = (function () {
-                function GobiiFileItem(_gobiiExtractFilterType, _processType, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _itemId, _itemName, _checked, _required, _gobiiEventOrigin) {
+                function GobiiFileItem(_gobiiExtractFilterType, _processType, _extractorItemType, _entityType, _entitySubType, _cvFilterType, _itemId, _itemName, _checked, _required, _gobiiEventOrigin, _parentItemId, _parentEntityType) {
                     this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     this._processType = _processType;
                     this._extractorItemType = _extractorItemType;
@@ -40,6 +40,8 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     this._checked = _checked;
                     this._required = _required;
                     this._gobiiEventOrigin = _gobiiEventOrigin;
+                    this._parentItemId = _parentItemId;
+                    this._parentEntityType = _parentEntityType;
                     this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     this._processType = _processType;
                     this._entityType = _entityType;
@@ -51,6 +53,8 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     this._checked = _checked;
                     this._required = _required;
                     this._gobiiEventOrigin = _gobiiEventOrigin;
+                    this._parentItemId = _parentItemId;
+                    this._parentEntityType = _parentEntityType;
                     this._fileItemUniqueId = guid_1.Guid.generateUUID();
                     if (this._cvFilterType === null) {
                         this._cvFilterType = cv_filter_type_1.CvFilterType.UNKNOWN;
@@ -69,7 +73,7 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                     }
                 }
                 GobiiFileItem.build = function (gobiiExtractFilterType, processType) {
-                    var returnVal = new GobiiFileItem(gobiiExtractFilterType, processType, file_model_node_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, null, null, null, type_event_origin_1.GobiiUIEventOrigin.UNKNOWN);
+                    var returnVal = new GobiiFileItem(gobiiExtractFilterType, processType, file_model_node_1.ExtractorItemType.UNKNOWN, type_entity_1.EntityType.UNKNOWN, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, null, null, null, null, type_event_origin_1.GobiiUIEventOrigin.UNKNOWN, null, type_entity_1.EntityType.UNKNOWN);
                     return returnVal;
                 };
                 GobiiFileItem.prototype.setFileItemUniqueId = function (fileItemUniqueId) {
@@ -184,6 +188,20 @@ System.register(["./type-process", "./guid", "./type-entity", "./cv-filter-type"
                 };
                 GobiiFileItem.prototype.setGobiiEventOrigin = function (value) {
                     this._gobiiEventOrigin = value;
+                    return this;
+                };
+                GobiiFileItem.prototype.getParentItemId = function () {
+                    return this._parentItemId;
+                };
+                GobiiFileItem.prototype.setParentItemId = function (parentIteIid) {
+                    this._parentItemId = parentIteIid;
+                    return this;
+                };
+                GobiiFileItem.prototype.getParentEntityType = function () {
+                    return this._parentEntityType;
+                };
+                GobiiFileItem.prototype.setParentEntityType = function (parentIteIid) {
+                    this._parentEntityType = parentIteIid;
                     return this;
                 };
                 return GobiiFileItem;

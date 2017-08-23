@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-process", "../model/gobii-file-item", "../model/type-extractor-filter", "../model/cv-filter-type", "../services/core/name-id-service", "../model/file-model-node", "../store/reducers", "../store/actions/fileitem-action", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-process", "../model/type-extractor-filter", "../services/core/name-id-service", "../store/reducers", "../store/actions/fileitem-action", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-process", "../model/gobii-file-
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_process_1, gobii_file_item_1, type_extractor_filter_1, cv_filter_type_1, name_id_service_1, file_model_node_1, fromRoot, fileAction, store_1, CheckListBoxComponent;
+    var core_1, type_process_1, type_extractor_filter_1, name_id_service_1, fromRoot, fileAction, store_1, CheckListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -19,20 +19,11 @@ System.register(["@angular/core", "../model/type-process", "../model/gobii-file-
             function (type_process_1_1) {
                 type_process_1 = type_process_1_1;
             },
-            function (gobii_file_item_1_1) {
-                gobii_file_item_1 = gobii_file_item_1_1;
-            },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
             },
-            function (cv_filter_type_1_1) {
-                cv_filter_type_1 = cv_filter_type_1_1;
-            },
             function (name_id_service_1_1) {
                 name_id_service_1 = name_id_service_1_1;
-            },
-            function (file_model_node_1_1) {
-                file_model_node_1 = file_model_node_1_1;
             },
             function (fromRoot_1) {
                 fromRoot = fromRoot_1;
@@ -55,7 +46,7 @@ System.register(["@angular/core", "../model/type-process", "../model/gobii-file-
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onError = new core_1.EventEmitter();
                     this.differ = differs.find({}).create(null);
-                    this.gobiiFileItems$ = this.store.select(fromRoot.getDatasets);
+                    this.gobiiFileItems$ = this.store.select(fromRoot.getDatasetsByExperiment);
                 } // ctor
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var itemToChange = arg;
@@ -76,28 +67,37 @@ System.register(["@angular/core", "../model/type-process", "../model/gobii-file-
                     this.onError.emit(headerStatusMessage);
                 };
                 CheckListBoxComponent.prototype.setList = function () {
-                    var _this = this;
-                    this._nameIdService.get(this.nameIdRequestParams)
-                        .subscribe(function (nameIds) {
-                        if (nameIds && (nameIds.length > 0)) {
-                            var fileItems_1 = [];
-                            nameIds.forEach(function (n) {
-                                var currentFileItem = gobii_file_item_1.GobiiFileItem.build(_this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                                    .setExtractorItemType(file_model_node_1.ExtractorItemType.ENTITY)
-                                    .setEntityType(_this.nameIdRequestParams.getEntityType())
-                                    .setCvFilterType(cv_filter_type_1.CvFilterType.UNKNOWN)
-                                    .setItemId(n.id)
-                                    .setItemName(n.name)
-                                    .setChecked(false)
-                                    .setRequired(false);
-                                fileItems_1.push(currentFileItem);
-                            });
-                            var loadAction = new fileAction.LoadAction(fileItems_1);
-                            _this.store.dispatch(loadAction);
-                        }
-                    }, function (responseHeader) {
-                        _this.handleHeaderStatus(responseHeader);
-                    });
+                    // this._nameIdService.get(this.nameIdRequestParams)
+                    //     .subscribe(nameIds => {
+                    //             if (nameIds && ( nameIds.length > 0 )) {
+                    //
+                    //                 let fileItems: GobiiFileItem[] = [];
+                    //
+                    //                 nameIds.forEach(n => {
+                    //                     let currentFileItem: GobiiFileItem =
+                    //                         GobiiFileItem.build(
+                    //                             this.gobiiExtractFilterType,
+                    //                             ProcessType.CREATE)
+                    //                             .setExtractorItemType(ExtractorItemType.ENTITY)
+                    //                             .setEntityType(this.nameIdRequestParams.getEntityType())
+                    //                             .setCvFilterType(CvFilterType.UNKNOWN)
+                    //                             .setItemId(n.id)
+                    //                             .setItemName(n.name)
+                    //                             .setChecked(false)
+                    //                             .setRequired(false);
+                    //
+                    //
+                    //                     fileItems.push(currentFileItem);
+                    //                 });
+                    //
+                    //                 let loadAction: fileAction.LoadAction = new fileAction.LoadAction(fileItems);
+                    //                 this.store.dispatch(loadAction)
+                    //
+                    //             }
+                    //         },
+                    //         responseHeader => {
+                    //             this.handleHeaderStatus(responseHeader);
+                    //         });
                 }; // setList()
                 CheckListBoxComponent.prototype.ngOnInit = function () {
                     // this._fileModelTreeService

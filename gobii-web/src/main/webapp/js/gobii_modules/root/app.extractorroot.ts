@@ -194,15 +194,15 @@ import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
                                     <BR>
                                     <label class="the-label">Data Sets</label><BR>
                                     <checklist-box
-                                            [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                                            [nameIdRequestParams] = "nameIdRequestParamsDataset"
-                                            [retainHistory] = "true"
-                                            (onError) = "handleHeaderStatusMessage($event)">
-                                    </checklist-box>                                   
+                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                            [nameIdRequestParams]="nameIdRequestParamsDataset"
+                                            [retainHistory]="true"
+                                            (onError)="handleHeaderStatusMessage($event)">
+                                    </checklist-box>
                                     <!--<dataset-checklist-box-->
-                                            <!--[gobiiExtractFilterType]="gobiiExtractFilterType"-->
-                                            <!--[experimentId]="selectedExperimentId"-->
-                                            <!--(onAddStatusMessage)="handleHeaderStatusMessage($event)">-->
+                                    <!--[gobiiExtractFilterType]="gobiiExtractFilterType"-->
+                                    <!--[experimentId]="selectedExperimentId"-->
+                                    <!--(onAddStatusMessage)="handleHeaderStatusMessage($event)">-->
                                     <!--</dataset-checklist-box>-->
                                 </div>
                             </div> <!-- panel body -->
@@ -698,6 +698,10 @@ export class ExtractorRoot implements OnInit {
     private handleExperimentSelected(arg: NameId) {
         this.selectedExperimentId = arg.id;
         this.nameIdRequestParamsDataset.setEntityFilterValue(this.selectedExperimentId);
+        this.store.dispatch(new fileItemAction.SetEntityFilter({
+            gobiiExtractFilterType: this.gobiiExtractFilterType,
+            nameIdRequestParams: this.nameIdRequestParamsDataset
+        }));
         this.selectedExperimentDetailId = arg.id;
         this.displayExperimentDetail = true;
 

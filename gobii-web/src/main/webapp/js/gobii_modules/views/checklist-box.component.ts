@@ -48,7 +48,7 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
         this.differ = differs.find({}).create(null);
 
 
-        this.gobiiFileItems$ = this.store.select(fromRoot.getDatasets);
+        this.gobiiFileItems$ = this.store.select(fromRoot.getDatasetsByExperiment);
 
     } // ctor
 
@@ -93,37 +93,37 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     public setList(): void {
 
-        this._nameIdService.get(this.nameIdRequestParams)
-            .subscribe(nameIds => {
-                    if (nameIds && ( nameIds.length > 0 )) {
-
-                        let fileItems: GobiiFileItem[] = [];
-
-                        nameIds.forEach(n => {
-                            let currentFileItem: GobiiFileItem =
-                                GobiiFileItem.build(
-                                    this.gobiiExtractFilterType,
-                                    ProcessType.CREATE)
-                                    .setExtractorItemType(ExtractorItemType.ENTITY)
-                                    .setEntityType(this.nameIdRequestParams.getEntityType())
-                                    .setCvFilterType(CvFilterType.UNKNOWN)
-                                    .setItemId(n.id)
-                                    .setItemName(n.name)
-                                    .setChecked(false)
-                                    .setRequired(false);
-
-
-                            fileItems.push(currentFileItem);
-                        });
-
-                        let loadAction: fileAction.LoadAction = new fileAction.LoadAction(fileItems);
-                        this.store.dispatch(loadAction)
-
-                    }
-                },
-                responseHeader => {
-                    this.handleHeaderStatus(responseHeader);
-                });
+        // this._nameIdService.get(this.nameIdRequestParams)
+        //     .subscribe(nameIds => {
+        //             if (nameIds && ( nameIds.length > 0 )) {
+        //
+        //                 let fileItems: GobiiFileItem[] = [];
+        //
+        //                 nameIds.forEach(n => {
+        //                     let currentFileItem: GobiiFileItem =
+        //                         GobiiFileItem.build(
+        //                             this.gobiiExtractFilterType,
+        //                             ProcessType.CREATE)
+        //                             .setExtractorItemType(ExtractorItemType.ENTITY)
+        //                             .setEntityType(this.nameIdRequestParams.getEntityType())
+        //                             .setCvFilterType(CvFilterType.UNKNOWN)
+        //                             .setItemId(n.id)
+        //                             .setItemName(n.name)
+        //                             .setChecked(false)
+        //                             .setRequired(false);
+        //
+        //
+        //                     fileItems.push(currentFileItem);
+        //                 });
+        //
+        //                 let loadAction: fileAction.LoadAction = new fileAction.LoadAction(fileItems);
+        //                 this.store.dispatch(loadAction)
+        //
+        //             }
+        //         },
+        //         responseHeader => {
+        //             this.handleHeaderStatus(responseHeader);
+        //         });
 
     } // setList()
 
