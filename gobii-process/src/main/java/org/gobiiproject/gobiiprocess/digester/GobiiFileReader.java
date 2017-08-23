@@ -374,6 +374,10 @@ public class GobiiFileReader {
 				intermediateFile.transform(MobileTransform.PGArray);
 			}
 
+			intermediateFile.returnFile(); // replace intermediateFile where it came from
+
+			//DONE WITH TRANSFORMS
+
 			if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME)) {
 				boolean valid=DigestMatrix.validatematrix(loaderInstructionMap.get(VARIANT_CALL_TABNAME), zero.getDatasetType().getName().toString());
 				if (!valid) {
@@ -388,7 +392,6 @@ public class GobiiFileReader {
 				sendQc = true;
 			}
 
-			intermediateFile.returnFile(); // replace intermediateFile where it came from
 		}
 
 		if(success){
