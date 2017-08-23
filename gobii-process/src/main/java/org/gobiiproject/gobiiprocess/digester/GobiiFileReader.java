@@ -389,7 +389,7 @@ public class GobiiFileReader {
 			if (qcCheck) {//QC - Subsection #2 of 3
 				qcExtractInstruction = createQCExtractInstruction(zero, crop);
 				setQCExtractPaths(inst, configuration, crop, instructionFile);
-				sendQc = true;
+				sendQc = success;
 			}
 
 		}
@@ -458,6 +458,7 @@ public class GobiiFileReader {
                 ErrorLogger.logInfo("Digester", "Successfully Uploaded files");
             } else {
                 ErrorLogger.logWarning("Digester", "Unsuccessfully Uploaded files");
+				sendQc=false;//Files failed = bad.
             }
         }//endif(success)
 		else{
@@ -475,7 +476,6 @@ public class GobiiFileReader {
 			ErrorLogger.logError("MailInterface","Error Sending Mail",e);
         }
         HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
-
     }
 
     private static void uploadToMonet(Integer dataSetId, GobiiCropConfig gobiiCropConfig, String errorPath, File variantFile, String markerFileLoc, String sampleFileLoc) {
