@@ -462,8 +462,11 @@ public class GobiiFileReader {
 		}
 
 		try{
+			GobiiFileType loadType=zero.getGobiiFile().getGobiiFileType();
+			String loadTypeName="";//No load type name if default
+			if(loadType!=GobiiFileType.GENERIC)loadTypeName=loadType.name();
 			pm.addPath("Error Log", logFile);
-			pm.setBody(jobName,zero.getGobiiFile().getGobiiFileType().name(),SimpleTimer.stop("FileRead"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+			pm.setBody(jobName,loadTypeName,SimpleTimer.stop("FileRead"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 			mailInterface.send(pm);
 		}catch(Exception e){
 			ErrorLogger.logError("MailInterface","Error Sending Mail",e);
