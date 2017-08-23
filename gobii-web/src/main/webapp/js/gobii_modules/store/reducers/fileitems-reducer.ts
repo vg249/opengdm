@@ -55,7 +55,38 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
             };
 
             break;
-        } // LOAD_TREE_NODE
+        } // LOAD
+
+        case gobiiFileItemAction.LOAD_FILTERED_ITEMS: {
+            const gobiiFileItemsPayload = action.payload.gobiiFileItems;
+            const nameIdRequestParamsPayload = action.payload.nameIdRequestParams;
+
+            const newGobiiFileItems = gobiiFileItemsPayload.filter(newItem =>
+                state
+                    .fileItems
+                    .filter(stateItem =>
+                        (
+                            stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
+                            stateItem.getEntityType() === newItem.getEntityType() &&
+                            stateItem.getEntitySubType() === newItem.getEntitySubType() &&
+                            stateItem.getCvFilterType() === newItem.getCvFilterType() &&
+                            stateItem.getItemId() === newItem.getItemId()
+                        )
+                    ).length === 0
+            );
+
+            let newFilterState = Object.assign({}, state.filters);
+            newFilterState[nameIdRequestParamsPayload.getQueryName()] = nameIdRequestParamsPayload;
+
+
+            returnVal = {
+                fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
+                fileItems: [...state.fileItems, ...newGobiiFileItems],
+                filters: newFilterState
+            };
+
+            break;
+        } // LOAD_FILTERED_ITEMS
 
         // Technically, and according to the ngrx/store example app,
         // it should be possible for different actions to have a different
@@ -237,10 +268,11 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
     if (filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT]) {
 
+        let experimentId:string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT].getEntityFilterValue();
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.DataSets )
-            && (e.getParentItemId() === filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT].getEntityFilterValue()))
+            && (e.getParentItemId() === experimentId ))
             .map(fi => fi);
 
     }

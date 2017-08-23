@@ -43,6 +43,7 @@ import * as fromRoot from '../store/reducers';
 import * as fileItemAction from '../store/actions/fileitem-action';
 import * as treeNodeAction from '../store/actions/treenode-action';
 import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
+import {FileItemService} from "../services/core/file-item-service";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -348,7 +349,8 @@ export class ExtractorRoot implements OnInit {
                 private _authenticationService: AuthenticationService,
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private _fileModelTreeService: FileModelTreeService,
-                private store: Store<fromRoot.State>) {
+                private store: Store<fromRoot.State>,
+                private fileItemService:FileItemService) {
 
 
         this.store.dispatch(new treeNodeAction.InitAction());
@@ -698,10 +700,12 @@ export class ExtractorRoot implements OnInit {
     private handleExperimentSelected(arg: NameId) {
         this.selectedExperimentId = arg.id;
         this.nameIdRequestParamsDataset.setEntityFilterValue(this.selectedExperimentId);
-        this.store.dispatch(new fileItemAction.SetEntityFilter({
-            gobiiExtractFilterType: this.gobiiExtractFilterType,
-            nameIdRequestParams: this.nameIdRequestParamsDataset
-        }));
+        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+            this.nameIdRequestParamsDataset)
+        // this.store.dispatch(new fileItemAction.SetEntityFilter({
+        //     gobiiExtractFilterType: this.gobiiExtractFilterType,
+        //     nameIdRequestParams: this.nameIdRequestParamsDataset
+        // }));
         this.selectedExperimentDetailId = arg.id;
         this.displayExperimentDetail = true;
 

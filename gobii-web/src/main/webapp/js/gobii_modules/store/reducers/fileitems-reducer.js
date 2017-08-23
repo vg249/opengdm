@@ -24,7 +24,30 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     filters: {}
                 };
                 break;
-            } // LOAD_TREE_NODE
+            } // LOAD
+            case gobiiFileItemAction.LOAD_FILTERED_ITEMS: {
+                var gobiiFileItemsPayload = action.payload.gobiiFileItems;
+                var nameIdRequestParamsPayload = action.payload.nameIdRequestParams;
+                var newGobiiFileItems = gobiiFileItemsPayload.filter(function (newItem) {
+                    return state
+                        .fileItems
+                        .filter(function (stateItem) {
+                        return (stateItem.getExtractorItemType() === newItem.getExtractorItemType() &&
+                            stateItem.getEntityType() === newItem.getEntityType() &&
+                            stateItem.getEntitySubType() === newItem.getEntitySubType() &&
+                            stateItem.getCvFilterType() === newItem.getCvFilterType() &&
+                            stateItem.getItemId() === newItem.getItemId());
+                    }).length === 0;
+                });
+                var newFilterState = Object.assign({}, state.filters);
+                newFilterState[nameIdRequestParamsPayload.getQueryName()] = nameIdRequestParamsPayload;
+                returnVal = {
+                    fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected,
+                    fileItems: state.fileItems.concat(newGobiiFileItems),
+                    filters: newFilterState
+                };
+                break;
+            } // LOAD
             // Technically, and according to the ngrx/store example app,
             // it should be possible for different actions to have a different
             // payload type, such that it's possible for a payload to be a single
@@ -194,10 +217,11 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             exports_1("getDatasetsForSelectedExperiment", getDatasetsForSelectedExperiment = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
                 if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT]) {
+                    var experimentId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT].getEntityFilterValue();
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.DataSets)
-                            && (e.getParentItemId() === filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT].getEntityFilterValue());
+                            && (e.getParentItemId() === experimentId_1);
                     })
                         .map(function (fi) { return fi; });
                 }

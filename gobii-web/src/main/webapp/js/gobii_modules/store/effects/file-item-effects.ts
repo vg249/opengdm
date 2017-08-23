@@ -29,58 +29,54 @@ export class FileItemEffects {
             }
         );
 
-    @Effect()
-    setEntityFilter$ = this.actions$
-        .ofType(fileItemActions.SET_ENTITY_FILTER)
-//        .map((action: fileItemActions.SetEntityFilter) => {
-        .switchMap((action: fileItemActions.SetEntityFilter)  => {
-
-            let payload = action.payload;
-
-            // return Observable.of( { }
-            // );
-
-            return Observable.create(observer => {
-
-
-                this.nameIdService.get(payload.nameIdRequestParams)
-                    .subscribe(nameIds => {
-                            if (nameIds && ( nameIds.length > 0 )) {
-
-
-                                nameIds.forEach(n => {
-                                    let currentFileItem: GobiiFileItem =
-                                        GobiiFileItem.build(
-                                            payload.gobiiExtractFilterType,
-                                            ProcessType.CREATE)
-                                            .setExtractorItemType(ExtractorItemType.ENTITY)
-                                            .setEntityType(payload.nameIdRequestParams.getEntityType())
-                                            .setCvFilterType(CvFilterType.UNKNOWN)
-                                            .setItemId(n.id)
-                                            .setItemName(n.name)
-                                            .setChecked(false)
-                                            .setRequired(false)
-                                            .setParentEntityType(payload.nameIdRequestParams.getRefTargetEntityType())
-                                            .setParentItemId(payload.nameIdRequestParams.getEntityFilterValue());
-
-                                    //fileItems.push(currentFileItem);
-                                    observer.next(currentFileItem);
-
-                                });
-
-                                //new fileItemActions.LoadAction(fileItems);
-                            }
-                        },
-                        responseHeader => {
-                            console.log(responseHeader);
-                        });
-
-            }).map( gfi => {
-                return new fileItemActions.LoadAction([gfi]);
-            })
-
-
-        }); //switch map
+    // @Effect()
+    // setEntityFilter$ = this.actions$
+    //     .ofType(fileItemActions.SET_ENTITY_FILTER)
+    //     .switchMap((action: fileItemActions.SetEntityFilter)  => {
+    //
+    //         let payload = action.payload;
+    //
+    //         return Observable.create(observer => {
+    //
+    //
+    //             this.nameIdService.get(payload.nameIdRequestParams)
+    //                 .subscribe(nameIds => {
+    //                         if (nameIds && ( nameIds.length > 0 )) {
+    //
+    //
+    //                             nameIds.forEach(n => {
+    //                                 let currentFileItem: GobiiFileItem =
+    //                                     GobiiFileItem.build(
+    //                                         payload.gobiiExtractFilterType,
+    //                                         ProcessType.CREATE)
+    //                                         .setExtractorItemType(ExtractorItemType.ENTITY)
+    //                                         .setEntityType(payload.nameIdRequestParams.getEntityType())
+    //                                         .setCvFilterType(CvFilterType.UNKNOWN)
+    //                                         .setItemId(n.id)
+    //                                         .setItemName(n.name)
+    //                                         .setChecked(false)
+    //                                         .setRequired(false)
+    //                                         .setParentEntityType(payload.nameIdRequestParams.getRefTargetEntityType())
+    //                                         .setParentItemId(payload.nameIdRequestParams.getEntityFilterValue());
+    //
+    //                                 //fileItems.push(currentFileItem);
+    //                                 observer.next(currentFileItem);
+    //
+    //                             });
+    //
+    //                             //new fileItemActions.LoadAction(fileItems);
+    //                         }
+    //                     },
+    //                     responseHeader => {
+    //                         console.log(responseHeader);
+    //                     });
+    //
+    //         }).map( gfi => {
+    //             return new fileItemActions.LoadAction([gfi]);
+    //         })
+    //
+    //
+    //     }); //switch map
 
 
     constructor(private actions$: Actions,

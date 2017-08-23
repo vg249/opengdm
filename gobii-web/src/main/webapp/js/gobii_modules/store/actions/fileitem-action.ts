@@ -7,6 +7,7 @@ export const LOAD = '[GobiiFileItem] Load';
 export const SELECT_FOR_EXTRACT = '[GobiiFileItem] Select';
 export const DESELECT_FOR_EXTRACT = '[GobiiFileItem] DeSelect';
 export const SET_ENTITY_FILTER = '[GobiiFileItem] SetEntityFilter';
+export const LOAD_FILTERED_ITEMS = '[GobiiFileItem] LoadFilteredItems';
 
 
 /**
@@ -23,6 +24,15 @@ export class LoadAction implements Action {
     }
 }
 
+export class LoadFilteredItemsAction implements Action {
+    readonly type = LOAD_FILTERED_ITEMS;
+
+    constructor(public payload: {
+        gobiiFileItems: GobiiFileItem[],
+        nameIdRequestParams: NameIdRequestParams
+    }) {
+    }
+}
 
 export class DeSelectForExtractAction implements Action {
     readonly type = DESELECT_FOR_EXTRACT;
@@ -55,6 +65,7 @@ export class SetEntityFilter implements Action {
  */
 export type All
     = LoadAction
+    | LoadFilteredItemsAction
     | SelectForExtractAction
     | DeSelectForExtractAction
     | SetEntityFilter;
