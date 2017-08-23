@@ -10,6 +10,7 @@ import {CvFilterType} from "../model/cv-filter-type";
 import {Header} from "../model/payload/header";
 import {NameIdRequestParams} from "../model/name-id-request-params";
 import {NameIdLabelType} from "../model/name-id-label-type";
+import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 
 @Component({
     selector: 'project-list-box',
@@ -70,7 +71,7 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
 
 
         this.nameIdRequestParamsProject = NameIdRequestParams
-            .build("Projects",
+            .build(NameIdFilterParamTypes.PROJECTS,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Projects)
             .setEntityFilter(EntityFilter.BYTYPEID)

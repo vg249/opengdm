@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../services/app/dto-request-item-project", "../model/type-extractor-filter", "../model/type-entity", "../model/type-entity-filter", "../model/name-id-request-params", "../model/name-id-label-type"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../services/app/dto-request-item-project", "../model/type-extractor-filter", "../model/type-entity", "../model/type-entity-filter", "../model/name-id-request-params", "../model/name-id-label-type", "../model/type-nameid-filter-params"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, dto_request_item_project_1, type_extractor_filter_1, type_entity_1, type_entity_filter_1, name_id_request_params_1, name_id_label_type_1, ProjectListBoxComponent;
+    var core_1, dto_request_service_1, dto_request_item_project_1, type_extractor_filter_1, type_entity_1, type_entity_filter_1, name_id_request_params_1, name_id_label_type_1, type_nameid_filter_params_1, ProjectListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -36,6 +36,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
             },
             function (name_id_label_type_1_1) {
                 name_id_label_type_1 = name_id_label_type_1_1;
+            },
+            function (type_nameid_filter_params_1_1) {
+                type_nameid_filter_params_1 = type_nameid_filter_params_1_1;
             }
         ],
         execute: function () {
@@ -47,7 +50,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     this.onAddHeaderStatus = new core_1.EventEmitter();
                     this.reinitProjectList = false;
                     this.nameIdRequestParamsProject = name_id_request_params_1.NameIdRequestParams
-                        .build("Projects", type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
+                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
                         .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID)
                         .setMameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN);
                 } // ctor

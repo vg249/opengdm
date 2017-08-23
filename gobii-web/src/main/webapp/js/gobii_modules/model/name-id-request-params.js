@@ -25,9 +25,10 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
              * Created by Phil on 3/9/2017.
              */
             NameIdRequestParams = (function () {
-                function NameIdRequestParams(_queryName, _entityType, _entityFilter, _entityFilterValue, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType) {
+                function NameIdRequestParams(_queryName, _entityType, _refTargetEntityType, _entityFilter, _entityFilterValue, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType) {
                     if (_queryName === void 0) { _queryName = null; }
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
+                    if (_refTargetEntityType === void 0) { _refTargetEntityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_entityFilter === void 0) { _entityFilter = type_entity_filter_1.EntityFilter.NONE; }
                     if (_entityFilterValue === void 0) { _entityFilterValue = null; }
                     if (_entitySubType === void 0) { _entitySubType = type_entity_1.EntitySubType.UNKNOWN; }
@@ -35,6 +36,7 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     if (_gobiiExtractFilterType === void 0) { _gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN; }
                     this._queryName = _queryName;
                     this._entityType = _entityType;
+                    this._refTargetEntityType = _refTargetEntityType;
                     this._entityFilter = _entityFilter;
                     this._entityFilterValue = _entityFilterValue;
                     this._entitySubType = _entitySubType;
@@ -43,13 +45,20 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     this._nameIdLabelType = _nameIdLabelType;
                 }
                 NameIdRequestParams.build = function (queryName, gobiiExtractFilterType, entityType) {
-                    return (new NameIdRequestParams(queryName, entityType, type_entity_filter_1.EntityFilter.NONE, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN));
+                    return (new NameIdRequestParams(queryName, entityType, type_entity_1.EntityType.UNKNOWN, type_entity_filter_1.EntityFilter.NONE, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN));
                 };
                 NameIdRequestParams.prototype.getEntityType = function () {
                     return this._entityType;
                 };
                 NameIdRequestParams.prototype.setEntityType = function (value) {
                     this._entityType = value;
+                    return this;
+                };
+                NameIdRequestParams.prototype.getRefTargetEntityType = function () {
+                    return this._refTargetEntityType;
+                };
+                NameIdRequestParams.prototype.setRefTargetEntityType = function (entityType) {
+                    this._refTargetEntityType = entityType;
                     return this;
                 };
                 NameIdRequestParams.prototype.getEntityFilter = function () {

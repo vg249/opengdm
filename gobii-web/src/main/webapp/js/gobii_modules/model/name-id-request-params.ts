@@ -11,6 +11,7 @@ export class NameIdRequestParams {
 
     private constructor(private _queryName: string = null,
                         private _entityType: EntityType = EntityType.UNKNOWN,
+                        private _refTargetEntityType: EntityType = EntityType.UNKNOWN,
                         private _entityFilter: EntityFilter = EntityFilter.NONE,
                         private _entityFilterValue: string = null,
                         private _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
@@ -25,6 +26,7 @@ export class NameIdRequestParams {
                         entityType: EntityType): NameIdRequestParams {
         return ( new NameIdRequestParams(queryName,
             entityType,
+            EntityType.UNKNOWN,
             EntityFilter.NONE,
             null,
             EntitySubType.UNKNOWN,
@@ -40,6 +42,15 @@ export class NameIdRequestParams {
 
     setEntityType(value: EntityType): NameIdRequestParams {
         this._entityType = value;
+        return this;
+    }
+
+    getRefTargetEntityType(): EntityType {
+        return this._refTargetEntityType;
+    }
+
+    setRefTargetEntityType(entityType:EntityType): NameIdRequestParams {
+        this._refTargetEntityType = entityType;
         return this;
     }
 

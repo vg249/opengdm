@@ -42,6 +42,7 @@ import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import * as fileItemAction from '../store/actions/fileitem-action';
 import * as treeNodeAction from '../store/actions/treenode-action';
+import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -354,19 +355,19 @@ export class ExtractorRoot implements OnInit {
 
 
         this.nameIdRequestParamsContactsPi = NameIdRequestParams
-            .build("Contact-PI",
+            .build(NameIdFilterParamTypes.CONTACT_PI,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Contacts)
             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
 
         this.nameIdRequestParamsExperiments = NameIdRequestParams
-            .build("Experiments",
+            .build(NameIdFilterParamTypes.EXPERIMENTS,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Experiments)
             .setEntityFilter(EntityFilter.BYTYPEID);
 
         this.nameIdRequestParamsDatasetType = NameIdRequestParams
-            .build("Cv-DataType",
+            .build(NameIdFilterParamTypes.CV_DATATYPE,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.CvTerms)
             .setCvFilterType(CvFilterType.DATASET_TYPE)
@@ -376,22 +377,23 @@ export class ExtractorRoot implements OnInit {
 
 
         this.nameIdRequestParamsMapsets = NameIdRequestParams
-            .build("Mapsets",
+            .build(NameIdFilterParamTypes.MAPSETS,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Mapsets)
             .setMameIdLabelType(NameIdLabelType.NO);
 
         this.nameIdRequestParamsPlatforms = NameIdRequestParams
-            .build("Platforms",
+            .build(NameIdFilterParamTypes.PLATFORMS,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Platforms);
 
 
         this.nameIdRequestParamsDataset = NameIdRequestParams
-            .build("Datasets-by-experiment-id",
+            .build(NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.DataSets)
-            .setEntityFilter(EntityFilter.BYTYPEID);
+            .setEntityFilter(EntityFilter.BYTYPEID)
+            .setRefTargetEntityType(EntityType.Experiments);
 
     }
 

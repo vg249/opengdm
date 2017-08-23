@@ -9,6 +9,7 @@ import {ExtractorItemType} from "../model/file-model-node";
 import {Labels} from "./entity-labels";
 import {NameIdRequestParams} from "../model/name-id-request-params";
 import {EntityType} from "../model/type-entity";
+import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 
 @Component({
     selector: 'sample-marker-box',
@@ -92,7 +93,7 @@ export class SampleMarkerBoxComponent implements OnInit, OnChanges {
     public constructor(private _fileModelTreeService: FileModelTreeService) {
 
         this.nameIdRequestParamsMarkerGroups= NameIdRequestParams
-            .build("Marker Groups",
+            .build(NameIdFilterParamTypes.MARKER_GROUPS,
                 this.gobiiExtractFilterType,
                 EntityType.MarkerGroups);
 
