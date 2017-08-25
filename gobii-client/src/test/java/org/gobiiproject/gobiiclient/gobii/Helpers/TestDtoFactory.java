@@ -376,4 +376,20 @@ public class TestDtoFactory {
         return returnVal;
 
     }
+
+    public static StatusDTO makePopulatedStatusDTO() throws Exception {
+
+        StatusDTO returnVal = new StatusDTO();
+
+        returnVal.setJobId(1);
+        returnVal.setDataset(1);
+        returnVal.setMessages("dummy");
+        returnVal.setProcessStatus(1);
+        returnVal.setLoadType(1);
+        returnVal.setExtractType(1);
+
+        return returnVal;
+
+
+    }
 }

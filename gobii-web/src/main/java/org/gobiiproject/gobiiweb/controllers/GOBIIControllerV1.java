@@ -3536,5 +3536,115 @@ public class GOBIIControllerV1 {
 
     }
 
+    /*** STATUS METHODS ***/
+
+    @RequestMapping(value = "/status", method = RequestMethod.POST)
+    @ResponseBody
+    public PayloadEnvelope<StatusDTO> createStatus(@RequestBody PayloadEnvelope<StatusDTO> payloadEnvelope,
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
+
+        PayloadEnvelope<StatusDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.OK, "Success");
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+
+    @RequestMapping(value = "/status", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<StatusDTO> getStatus(HttpServletRequest request,
+                                                HttpServletResponse response) {
+
+        PayloadEnvelope<StatusDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.OK, "Success");
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+    }
+
+    @RequestMapping(value = "/status/{statusId:[\\d]+}", method = RequestMethod.PUT)
+    @ResponseBody
+    public PayloadEnvelope<StatusDTO> replaceStatus(@RequestBody PayloadEnvelope<StatusDTO> payloadEnvelope,
+                                                            @PathVariable Integer statusId,
+                                                            HttpServletRequest request,
+                                                            HttpServletResponse response) {
+
+        PayloadEnvelope<StatusDTO> returnVal = new PayloadEnvelope<>();
+
+        try {
+
+            returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.OK, "Success");
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.OK,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
+
+    @RequestMapping(value = "/status/{statusId:[\\d]+}", method = RequestMethod.GET)
+    @ResponseBody
+    public PayloadEnvelope<StatusDTO> getStatusById(@PathVariable Integer statusId,
+                                                             HttpServletRequest request,
+                                                             HttpServletResponse response) {
+
+        PayloadEnvelope<StatusDTO> returnVal = new PayloadEnvelope<>();
+        try {
+
+            returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.OK, "Success");
+
+        } catch (GobiiException e) {
+            returnVal.getHeader().getStatus().addException(e);
+        } catch (Exception e) {
+            returnVal.getHeader().getStatus().addException(e);
+        }
+
+
+        ControllerUtils.setHeaderResponse(returnVal.getHeader(),
+                response,
+                HttpStatus.CREATED,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return (returnVal);
+
+    }
 
 }// GOBIIController
