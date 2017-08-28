@@ -17,6 +17,23 @@ public class StatusDTO extends DTOBase {
     public void setId(Integer id) { this.jobId = id; }
 
 
+    // The values must correspond to the CV term seed values, which 
+    // are also hard-coded 
+    public static final Integer CV_PROGRESSSTATUS_PENDING = 5;
+    public static final Integer CV_PROGRESSSTATUS_STARTED = 6;
+    public static final Integer CV_PROGRESSSTATUS_INPROGRESS = 7;
+    public static final Integer CV_PROGRESSSTATUS_COMPLETED = 8;
+    public static final Integer CV_PROGRESSSTATUS_FAILED = 9;
+
+    public static final Integer CV_LOADTYPE_MATRIX = 6;
+    public static final Integer CV_LOADTYPE_SAMPLE = 7;
+    public static final Integer CV_LOADTYPE_MARKER = 8;
+
+
+    public static final Integer CV_EXTRACTTYPE_HAPMAP = 6;
+    public static final Integer CV_EXTRACTTYPE_FLAPJACK = 7;
+    public static final Integer CV_EXTRACTTYPE_QTL = 8;
+
     private Integer jobId;
     private Integer processStatus;
     private String messages;
