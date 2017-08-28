@@ -42,7 +42,6 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     constructor(private store: Store<fromRoot.State>,
                 //                private _fileModelTreeService: FileModelTreeService,
-                private _nameIdService: NameIdService,
                 private differs: KeyValueDiffers) {
 
         this.differ = differs.find({}).create(null);
@@ -153,15 +152,15 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
         //             this.handleHeaderStatus(responseHeader);
         //         });
 
-        if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-            this.setList()
-        }
+        // if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
+        //     this.setList()
+        // }
     }
 
     private resetList() {
-        if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-            this.setList();
-        }
+        // if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
+        //     this.setList();
+        // }
     }
 
     ngOnChanges(changes: { [propName: string]: SimpleChange }) {

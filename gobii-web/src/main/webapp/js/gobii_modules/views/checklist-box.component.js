@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-process", "../model/type-extractor-filter", "../services/core/name-id-service", "../store/reducers", "../store/actions/fileitem-action", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-process", "../model/type-extractor-filter", "../store/reducers", "../store/actions/fileitem-action", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_process_1, type_extractor_filter_1, name_id_service_1, fromRoot, fileAction, store_1, CheckListBoxComponent;
+    var core_1, type_process_1, type_extractor_filter_1, fromRoot, fileAction, store_1, CheckListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -21,9 +21,6 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
-            },
-            function (name_id_service_1_1) {
-                name_id_service_1 = name_id_service_1_1;
             },
             function (fromRoot_1) {
                 fromRoot = fromRoot_1;
@@ -39,9 +36,8 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
             CheckListBoxComponent = (function () {
                 function CheckListBoxComponent(store, 
                     //                private _fileModelTreeService: FileModelTreeService,
-                    _nameIdService, differs) {
+                    differs) {
                     this.store = store;
-                    this._nameIdService = _nameIdService;
                     this.differs = differs;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onError = new core_1.EventEmitter();
@@ -122,14 +118,14 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
                     //         responseHeader => {
                     //             this.handleHeaderStatus(responseHeader);
                     //         });
-                    if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-                        this.setList();
-                    }
+                    // if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
+                    //     this.setList()
+                    // }
                 };
                 CheckListBoxComponent.prototype.resetList = function () {
-                    if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-                        this.setList();
-                    }
+                    // if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
+                    //     this.setList();
+                    // }
                 };
                 CheckListBoxComponent.prototype.ngOnChanges = function (changes) {
                     if (changes['gobiiExtractFilterType']
@@ -168,7 +164,6 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
                         template: "\n        <form>\n            <div style=\"overflow:auto; height: 80px; border: 1px solid #336699; padding-left: 5px\">\n                <div *ngFor=\"let gobiiFileItem of gobiiFileItems$ | async\"\n                     (click)=handleItemSelected($event)>\n                    <input type=\"checkbox\"\n                           (click)=handleItemChecked($event)\n                           [checked]=\"gobiiFileItem.getChecked()\"\n                           value={{gobiiFileItem.getItemId()}}\n                    name=\"{{gobiiFileItem.getItemName()}}\">&nbsp;{{gobiiFileItem.getItemName()}}\n                </div>\n            </div>\n        </form>" // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
-                        name_id_service_1.NameIdService,
                         core_1.KeyValueDiffers])
                 ], CheckListBoxComponent);
                 return CheckListBoxComponent;
