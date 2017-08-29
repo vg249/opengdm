@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../model/type-entity", "../model/cv-filter-type", "../model/gobii-file-item", "../model/type-process", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service", "../model/dto-header-status-message", "./entity-labels", "../model/name-id-label-type", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../model/type-entity", "../model/cv-filter-type", "../model/gobii-file-item", "../model/type-process", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service", "../model/dto-header-status-message", "./entity-labels", "../model/name-id-label-type", "@ngrx/store", "../store/actions/fileitem-action"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, type_entity_1, cv_filter_type_1, gobii_file_item_1, type_process_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, dto_header_status_message_1, entity_labels_1, name_id_label_type_1, store_1, fromRoot, fileAction, NameIdListBoxComponent;
+    var core_1, name_id_1, type_entity_1, cv_filter_type_1, gobii_file_item_1, type_process_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, dto_header_status_message_1, entity_labels_1, name_id_label_type_1, store_1, fileAction, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -52,9 +52,6 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
             function (store_1_1) {
                 store_1 = store_1_1;
             },
-            function (fromRoot_1) {
-                fromRoot = fromRoot_1;
-            },
             function (fileAction_1) {
                 fileAction = fileAction_1;
             }
@@ -83,35 +80,51 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                 } // ctor
                 // private notificationSent = false;
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
-                    switch (this.nameIdRequestParams.getEntityType()) {
-                        case type_entity_1.EntityType.MarkerGroups:
-                            this.fileItems$ = this.store.select(fromRoot.getMarkerGroups);
-                            break;
-                        case type_entity_1.EntityType.Contacts:
-                            this.fileItems$ = this.store.select(fromRoot.getContacts);
-                            break;
-                        case type_entity_1.EntityType.Projects:
-                            this.fileItems$ = this.store.select(fromRoot.getProjects);
-                            break;
-                        case type_entity_1.EntityType.Experiments:
-                            this.fileItems$ = this.store.select(fromRoot.getExperiments);
-                            break;
-                        case type_entity_1.EntityType.DataSets:
-                            this.fileItems$ = this.store.select(fromRoot.getDatasets);
-                            break;
-                        case type_entity_1.EntityType.CvTerms:
-                            this.fileItems$ = this.store.select(fromRoot.getCvTerms);
-                            break;
-                        case type_entity_1.EntityType.Mapsets:
-                            this.fileItems$ = this.store.select(fromRoot.getMapsets);
-                            break;
-                        case type_entity_1.EntityType.Platforms:
-                            this.fileItems$ = this.store.select(fromRoot.getPlatforms);
-                            break;
-                        default:
-                            this.fileItems$ = this.store.select(fromRoot.getAllFileItems);
-                            break;
-                    }
+                    // switch (this.nameIdRequestParams.getEntityType()) {
+                    //
+                    //     case EntityType.MarkerGroups:
+                    //         this.fileItems$ = this.store.select(fromRoot.getMarkerGroups);
+                    //         break;
+                    //
+                    //     case EntityType.Contacts:
+                    //         this.fileItems$ = this.store.select(fromRoot.getContacts);
+                    //         break;
+                    //
+                    //
+                    //     case EntityType.Projects:
+                    //         this.fileItems$ = this.store.select(fromRoot.getProjects);
+                    //         break;
+                    //
+                    //
+                    //     case EntityType.Experiments:
+                    //         this.fileItems$ = this.store.select(fromRoot.getExperiments);
+                    //         break;
+                    //
+                    //
+                    //     case EntityType.DataSets:
+                    //         this.fileItems$ = this.store.select(fromRoot.getDatasets);
+                    //         break;
+                    //
+                    //
+                    //     case EntityType.CvTerms:
+                    //         this.fileItems$ = this.store.select(fromRoot.getCvTerms);
+                    //         break;
+                    //
+                    //
+                    //     case EntityType.Mapsets:
+                    //         this.fileItems$ = this.store.select(fromRoot.getMapsets);
+                    //         break;
+                    //
+                    //
+                    //     case EntityType.Platforms:
+                    //         this.fileItems$ = this.store.select(fromRoot.getPlatforms);
+                    //         break;
+                    //
+                    //     default:
+                    //         this.fileItems$ = this.store.select(fromRoot.getAllFileItems);
+                    //         break;
+                    //
+                    // }
                     // let scope$ = this;
                     // this._fileModelTreeService
                     //     .fileItemNotifications()
@@ -241,6 +254,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
                     var _this = this;
                     var foo = "foo";
+                    this.store.dispatch(new fileAction.SelectByFileItemUniqueId(this.selectedFileItemId));
                     if (this.currentSelection.getItemId() !== "0") {
                         this.currentSelection.setProcessType(type_process_1.ProcessType.DELETE);
                         this.updateTreeService(this.currentSelection);
@@ -302,9 +316,10 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                         inputs: ['gobiiExtractFilterType',
                             'notifyOnInit',
                             'nameIdRequestParams',
-                            'doTreeNotifications'],
+                            'doTreeNotifications',
+                            'fileItems$'],
                         outputs: ['onNameIdSelected', 'onError'],
-                        template: "<select [(ngModel)]=\"selectedFileItemId\" (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getItemId()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
+                        template: "<select [(ngModel)]=\"selectedFileItemId\" (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         name_id_service_1.NameIdService,

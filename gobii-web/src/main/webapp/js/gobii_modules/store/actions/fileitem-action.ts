@@ -5,6 +5,7 @@ import {GobiiExtractFilterType} from "../../model/type-extractor-filter";
 
 export const LOAD = '[GobiiFileItem] Load';
 export const SELECT_FOR_EXTRACT = '[GobiiFileItem] Select';
+export const SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID = '[GobiiFileItem] Select File Item Id';
 export const DESELECT_FOR_EXTRACT = '[GobiiFileItem] DeSelect';
 export const SET_ENTITY_FILTER = '[GobiiFileItem] SetEntityFilter';
 export const LOAD_FILTERED_ITEMS = '[GobiiFileItem] LoadFilteredItems';
@@ -58,6 +59,12 @@ export class SetEntityFilter implements Action {
     }
 }
 
+export class SelectByFileItemUniqueId implements Action {
+    readonly type = SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID;
+
+    constructor(public payload: string) {
+    }
+}
 
 /**
  * Export a type alias of all actions in this action group
@@ -68,5 +75,6 @@ export type All
     | LoadFilteredItemsAction
     | SelectForExtractAction
     | DeSelectForExtractAction
-    | SetEntityFilter;
+    | SetEntityFilter
+    | SelectByFileItemUniqueId;
 

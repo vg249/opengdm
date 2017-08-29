@@ -47,7 +47,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     filters: newFilterState
                 };
                 break;
-            } // LOAD
+            } // LOAD_FILTERED_ITEMS
             // Technically, and according to the ngrx/store example app,
             // it should be possible for different actions to have a different
             // payload type, such that it's possible for a payload to be a single
@@ -95,12 +95,31 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     filters: newFilterState
                 };
                 break;
-            } // switch()
+            } //
+            case gobiiFileItemAction.SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID: {
+                var fileItemUniqueIdPayload_1 = action.payload;
+                var newUniqueId = [];
+                if (!state
+                    .fileItemUniqueIdsSelected
+                    .find(function (i) { return i === fileItemUniqueIdPayload_1; })) {
+                    if (state
+                        .fileItems
+                        .find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueIdPayload_1; })) {
+                        newUniqueId.push(fileItemUniqueIdPayload_1);
+                    }
+                }
+                returnVal = {
+                    fileItems: state.fileItems,
+                    fileItemUniqueIdsSelected: state.fileItemUniqueIdsSelected.concat(newUniqueId),
+                    filters: state.filters
+                };
+                break;
+            } //
         }
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getProjects, getExperiments, getDatasets, getCvTerms, getMapsets, getPlatforms, getMarkerGroups, getDatasetsForSelectedExperiment;
+    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getProjects, getExperiments, getDatasets, getCvTerms, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getDatasetsForSelectedExperiment;
     return {
         setters: [
             function (reselect_1_1) {
@@ -214,10 +233,19 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                     .map(function (fi) { return fi; });
             }));
             /// **************** GET SELECTED PER ENTITY TYPE
+            exports_1("getSelectedPiContacts", getSelectedPiContacts = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
+                return fileItems.filter(function (e) {
+                    return ids.find(function (id) { return id === e.getFileItemUniqueId(); })
+                        && e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
+                        && e.getEntityType() === type_entity_1.EntityType.Contacts
+                        && e.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
+                })
+                    .map(function (fi) { return fi; });
+            }));
             exports_1("getDatasetsForSelectedExperiment", getDatasetsForSelectedExperiment = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];
-                if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT]) {
-                    var experimentId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT].getEntityFilterValue();
+                if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
+                    var experimentId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].getEntityFilterValue();
                     returnVal = fileItems.filter(function (e) {
                         return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
                             && (e.getEntityType() === type_entity_1.EntityType.DataSets)

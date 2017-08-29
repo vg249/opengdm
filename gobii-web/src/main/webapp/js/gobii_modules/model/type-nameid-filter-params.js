@@ -18,7 +18,8 @@ System.register([], function (exports_1, context_1) {
                 NameIdFilterParamTypes.CV_DATATYPE = "Cv-DataType";
                 NameIdFilterParamTypes.MAPSETS = "Mapsets";
                 NameIdFilterParamTypes.PLATFORMS = "Platforms";
-                NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT = "Datasets-by-experiment";
+                NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT = "Datasets-by-experiment";
+                NameIdFilterParamTypes.PROJECTS_BY_CONTACT = "Projects-by-contact";
                 NameIdFilterParamTypes.PROJECTS = "Projects";
                 NameIdFilterParamTypes.MARKER_GROUPS = "Marker Groups";
                 return NameIdFilterParamTypes;

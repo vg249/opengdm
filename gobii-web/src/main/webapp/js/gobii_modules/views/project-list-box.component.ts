@@ -11,6 +11,14 @@ import {Header} from "../model/payload/header";
 import {NameIdRequestParams} from "../model/name-id-request-params";
 import {NameIdLabelType} from "../model/name-id-label-type";
 import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
+import {GobiiFileItem} from "../model/gobii-file-item";
+import {Observable} from "rxjs/Observable";
+import {FileItemService} from "../services/core/file-item-service";
+import {Store} from "@ngrx/store";
+import * as fromRoot from '../store/reducers';
+// import * as fileItemAction from '../store/actions/fileitem-action';
+// import * as treeNodeAction from '../store/actions/treenode-action';
+
 
 @Component({
     selector: 'project-list-box',
@@ -19,28 +27,30 @@ import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
         'reinitProjectList'],
     outputs: ['onProjectSelected',
         'onAddHeaderStatus'],
-    template: `<name-id-list-box
-                    [gobiiExtractFilterType] = "gobiiExtractFilterType"
-                    [notifyOnInit]="true"
-                    [doTreeNotifications] = "reinitProjectList"
-                    [nameIdRequestParams] = "nameIdRequestParamsProject"
-                    (onNameIdSelected) = "handleProjectSelected($event)"
-                    (onError) = "handleHeaderStatus($event)">
-                </name-id-list-box>
-		        
-                <div *ngIf="project">
-                    <BR>
-                     <fieldset class="form-group">
-                        <b>Name:</b> {{project.projectName}}<BR>
-                        <b>Description:</b> {{project.projectDescription}}<BR>
-                        <b>Principle Investigator:</b> {{primaryInvestigatorName}}
-                      </fieldset> 
-                </div>		        
-` // end template
+    template: `
+        <name-id-list-box
+                [fileItems$]="fileItemsProjects$"
+                [gobiiExtractFilterType]="gobiiExtractFilterType"
+                [notifyOnInit]="true"
+                [doTreeNotifications]="reinitProjectList"
+                [nameIdRequestParams]="nameIdRequestParamsProject"
+                (onNameIdSelected)="handleProjectSelected($event)"
+                (onError)="handleHeaderStatus($event)">
+        </name-id-list-box>
+
+        <div *ngIf="project">
+            <BR>
+            <fieldset class="form-group">
+                <b>Name:</b> {{project.projectName}}<BR>
+                <b>Description:</b> {{project.projectDescription}}<BR>
+                <b>Principle Investigator:</b> {{primaryInvestigatorName}}
+            </fieldset>
+        </div>
+    ` // end template
 
 })
 
-export class ProjectListBoxComponent implements OnInit,OnChanges {
+export class ProjectListBoxComponent implements OnInit, OnChanges {
 
     public gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN;
     // *** You cannot use an Enum directly as a template type parameter, so we need
@@ -55,6 +65,8 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
     public onProjectSelected: EventEmitter<string> = new EventEmitter();
     public onAddHeaderStatus: EventEmitter<Header> = new EventEmitter();
     public reinitProjectList: boolean = false;
+    public fileItemsProjects$: Observable<GobiiFileItem[]>;
+
 
     private handleProjectSelected(arg) {
         let selectedProjectId = arg.id;
@@ -67,16 +79,12 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
     }
 
 
-    constructor(private _dtoRequestServiceProject: DtoRequestService<Project>) {
+    constructor(private _dtoRequestServiceProject: DtoRequestService<Project>,
+                private store: Store<fromRoot.State>,
+                private fileItemService: FileItemService) {
 
 
-        this.nameIdRequestParamsProject = NameIdRequestParams
-            .build(NameIdFilterParamTypes.PROJECTS,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Projects)
-            .setEntityFilter(EntityFilter.BYTYPEID)
-            .setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
-
+        this.fileItemsProjects$ = this.store.select(fromRoot.getProjects);
 
     } // ctor
 
@@ -100,7 +108,14 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
 
     }
 
-    ngOnChanges(changes: {[propName: string]: SimpleChange}) {
+    ngOnChanges(changes: { [propName: string]: SimpleChange }) {
+
+        this.nameIdRequestParamsProject = NameIdRequestParams
+            .build(NameIdFilterParamTypes.PROJECTS,
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.Projects)
+            .setEntityFilter(EntityFilter.BYTYPEID)
+            .setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
 
         let foo: string = "foo";
 
@@ -114,10 +129,14 @@ export class ProjectListBoxComponent implements OnInit,OnChanges {
 
         if (changes['primaryInvestigatorId'] && changes['primaryInvestigatorId'].currentValue) {
             this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
+
             this.nameIdRequestParamsProject.setEntityFilterValue(this.primaryInvestigatorId);
+            this.nameIdRequestParamsProject.setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
+            // this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+            //     this.nameIdRequestParamsProject);
+
         }
 
-        this.nameIdRequestParamsProject.setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
 
     }
 }

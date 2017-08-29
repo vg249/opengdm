@@ -2,7 +2,7 @@ import {createSelector} from 'reselect';
 import {GobiiFileItem} from "../../model/gobii-file-item";
 import * as gobiiFileItemAction from "../actions/fileitem-action";
 import {ExtractorItemType} from "../../model/file-model-node";
-import {EntityType} from "../../model/type-entity";
+import {EntitySubType, EntityType} from "../../model/type-entity";
 import {NameIdRequestParams} from "../../model/name-id-request-params";
 import {NameIdFilterParamTypes} from "../../model/type-nameid-filter-params";
 
@@ -148,7 +148,34 @@ export function fileItemsReducer(state: State = initialState, action: gobiiFileI
 
             break;
 
-        } // switch()
+        } //
+
+        case gobiiFileItemAction.SELECT_FOR_EXTRACT_BY_FILE_ITEM_ID: {
+
+            const fileItemUniqueIdPayload: string = action.payload;
+
+            let newUniqueId: string[] = [];
+            if (!state
+                    .fileItemUniqueIdsSelected
+                    .find(i => i === fileItemUniqueIdPayload)) {
+                if (state
+                        .fileItems
+                        .find(fi => fi.getFileItemUniqueId() === fileItemUniqueIdPayload)) {
+                    newUniqueId.push(fileItemUniqueIdPayload);
+                }
+            }
+
+
+            returnVal = {
+                fileItems: state.fileItems,
+                fileItemUniqueIdsSelected: [...state.fileItemUniqueIdsSelected, ...newUniqueId],
+                filters: state.filters
+            };
+
+            break;
+
+        } //
+
 
     }
 
@@ -262,13 +289,24 @@ export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileI
 });
 
 /// **************** GET SELECTED PER ENTITY TYPE
+export const getSelectedPiContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
+
+    return fileItems.filter(e =>
+        ids.find(id => id === e.getFileItemUniqueId())
+        && e.getExtractorItemType() === ExtractorItemType.ENTITY
+        && e.getEntityType() === EntityType.Contacts
+        && e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+        .map(fi => fi);
+});
+
+
 export const getDatasetsForSelectedExperiment = createSelector(getFileItems, getFilters, (fileItems, filters) => {
 
     let returnVal: GobiiFileItem[] = [];
 
-    if (filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT]) {
+    if (filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT]) {
 
-        let experimentId:string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT].getEntityFilterValue();
+        let experimentId: string = filters[NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT].getEntityFilterValue();
         returnVal = fileItems.filter(e =>
             ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
             && ( e.getEntityType() === EntityType.DataSets )
@@ -279,6 +317,7 @@ export const getDatasetsForSelectedExperiment = createSelector(getFileItems, get
 
     return returnVal;
 });
+
 
 
 

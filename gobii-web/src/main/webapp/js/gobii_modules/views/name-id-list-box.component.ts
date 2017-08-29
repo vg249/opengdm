@@ -30,11 +30,12 @@ import {Observable} from "rxjs/Observable";
     inputs: ['gobiiExtractFilterType',
         'notifyOnInit',
         'nameIdRequestParams',
-        'doTreeNotifications'],
+        'doTreeNotifications',
+        'fileItems$'],
     outputs: ['onNameIdSelected', 'onError'],
     template: `<select [(ngModel)]="selectedFileItemId" (change)="handleFileItemSelected($event)">
         <option *ngFor="let fileItem of fileItems$ | async"
-                [value]="fileItem.getItemId()">{{fileItem.getItemName()}}
+                [value]="fileItem.getFileItemUniqueId()">{{fileItem.getItemName()}}
         </option>
     </select>
     ` // end template
@@ -53,7 +54,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     constructor(private store: Store<fromRoot.State>,
                 private _nameIdService: NameIdService,
-//                private _fileModelTreeService: FileModelTreeService,
+                //                private _fileModelTreeService: FileModelTreeService,
                 private differs: KeyValueDiffers) {
 
         this.differ = differs.find({}).create(null);
@@ -62,59 +63,58 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 //       this.fileItems$ = store.select(fromRoot.getMapsets);
 
 
-
     } // ctor
 
     // private notificationSent = false;
 
     ngOnInit(): any {
 
-        switch (this.nameIdRequestParams.getEntityType()) {
+        // switch (this.nameIdRequestParams.getEntityType()) {
+        //
+        //     case EntityType.MarkerGroups:
+        //         this.fileItems$ = this.store.select(fromRoot.getMarkerGroups);
+        //         break;
+        //
+        //     case EntityType.Contacts:
+        //         this.fileItems$ = this.store.select(fromRoot.getContacts);
+        //         break;
+        //
+        //
+        //     case EntityType.Projects:
+        //         this.fileItems$ = this.store.select(fromRoot.getProjects);
+        //         break;
+        //
+        //
+        //     case EntityType.Experiments:
+        //         this.fileItems$ = this.store.select(fromRoot.getExperiments);
+        //         break;
+        //
+        //
+        //     case EntityType.DataSets:
+        //         this.fileItems$ = this.store.select(fromRoot.getDatasets);
+        //         break;
+        //
+        //
+        //     case EntityType.CvTerms:
+        //         this.fileItems$ = this.store.select(fromRoot.getCvTerms);
+        //         break;
+        //
+        //
+        //     case EntityType.Mapsets:
+        //         this.fileItems$ = this.store.select(fromRoot.getMapsets);
+        //         break;
+        //
+        //
+        //     case EntityType.Platforms:
+        //         this.fileItems$ = this.store.select(fromRoot.getPlatforms);
+        //         break;
+        //
+        //     default:
+        //         this.fileItems$ = this.store.select(fromRoot.getAllFileItems);
+        //         break;
+        //
+        // }
 
-            case EntityType.MarkerGroups:
-                this.fileItems$ = this.store.select(fromRoot.getMarkerGroups);
-                break;
-
-            case EntityType.Contacts:
-                this.fileItems$ = this.store.select(fromRoot.getContacts);
-                break;
-
-
-            case EntityType.Projects:
-                this.fileItems$ = this.store.select(fromRoot.getProjects);
-                break;
-
-
-            case EntityType.Experiments:
-                this.fileItems$ = this.store.select(fromRoot.getExperiments);
-                break;
-
-
-            case EntityType.DataSets:
-                this.fileItems$ = this.store.select(fromRoot.getDatasets);
-                break;
-
-
-            case EntityType.CvTerms:
-                this.fileItems$ = this.store.select(fromRoot.getCvTerms);
-                break;
-
-
-            case EntityType.Mapsets:
-                this.fileItems$ = this.store.select(fromRoot.getMapsets);
-                break;
-
-
-            case EntityType.Platforms:
-                this.fileItems$ = this.store.select(fromRoot.getPlatforms);
-                break;
-
-            default:
-                this.fileItems$ = this.store.select(fromRoot.getAllFileItems);
-                break;
-
-        }
-        
         // let scope$ = this;
         // this._fileModelTreeService
         //     .fileItemNotifications()
@@ -302,9 +302,11 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     private currentSelection: GobiiFileItem = null;
 
-    private handleFileItemSelected(arg) {
+    public handleFileItemSelected(arg) {
 
         let foo: string = "foo";
+
+        this.store.dispatch(new fileAction.SelectByFileItemUniqueId(this.selectedFileItemId));
 
 
         if (this.currentSelection.getItemId() !== "0") {

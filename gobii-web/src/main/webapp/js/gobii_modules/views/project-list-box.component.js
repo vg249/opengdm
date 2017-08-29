@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../services/core/dto-request.service", "../services/app/dto-request-item-project", "../model/type-extractor-filter", "../model/type-entity", "../model/type-entity-filter", "../model/name-id-request-params", "../model/name-id-label-type", "../model/type-nameid-filter-params"], function (exports_1, context_1) {
+System.register(["@angular/core", "../services/core/dto-request.service", "../services/app/dto-request-item-project", "../model/type-extractor-filter", "../model/type-entity", "../model/type-entity-filter", "../model/name-id-request-params", "../model/name-id-label-type", "../model/type-nameid-filter-params", "../services/core/file-item-service", "@ngrx/store", "../store/reducers"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, dto_request_service_1, dto_request_item_project_1, type_extractor_filter_1, type_entity_1, type_entity_filter_1, name_id_request_params_1, name_id_label_type_1, type_nameid_filter_params_1, ProjectListBoxComponent;
+    var core_1, dto_request_service_1, dto_request_item_project_1, type_extractor_filter_1, type_entity_1, type_entity_filter_1, name_id_request_params_1, name_id_label_type_1, type_nameid_filter_params_1, file_item_service_1, store_1, fromRoot, ProjectListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -39,20 +39,28 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
             },
             function (type_nameid_filter_params_1_1) {
                 type_nameid_filter_params_1 = type_nameid_filter_params_1_1;
+            },
+            function (file_item_service_1_1) {
+                file_item_service_1 = file_item_service_1_1;
+            },
+            function (store_1_1) {
+                store_1 = store_1_1;
+            },
+            function (fromRoot_1) {
+                fromRoot = fromRoot_1;
             }
         ],
         execute: function () {
             ProjectListBoxComponent = (function () {
-                function ProjectListBoxComponent(_dtoRequestServiceProject) {
+                function ProjectListBoxComponent(_dtoRequestServiceProject, store, fileItemService) {
                     this._dtoRequestServiceProject = _dtoRequestServiceProject;
+                    this.store = store;
+                    this.fileItemService = fileItemService;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onProjectSelected = new core_1.EventEmitter();
                     this.onAddHeaderStatus = new core_1.EventEmitter();
                     this.reinitProjectList = false;
-                    this.nameIdRequestParamsProject = name_id_request_params_1.NameIdRequestParams
-                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
-                        .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID)
-                        .setMameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN);
+                    this.fileItemsProjects$ = this.store.select(fromRoot.getProjects);
                 } // ctor
                 ProjectListBoxComponent.prototype.handleProjectSelected = function (arg) {
                     var selectedProjectId = arg.id;
@@ -78,6 +86,10 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     var foo = "foo";
                 };
                 ProjectListBoxComponent.prototype.ngOnChanges = function (changes) {
+                    this.nameIdRequestParamsProject = name_id_request_params_1.NameIdRequestParams
+                        .build(type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS, type_extractor_filter_1.GobiiExtractFilterType.WHOLE_DATASET, type_entity_1.EntityType.Projects)
+                        .setEntityFilter(type_entity_filter_1.EntityFilter.BYTYPEID)
+                        .setMameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN);
                     var foo = "foo";
                     if (changes['gobiiExtractFilterType'] && changes['gobiiExtractFilterType'].currentValue) {
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
@@ -87,8 +99,9 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                     if (changes['primaryInvestigatorId'] && changes['primaryInvestigatorId'].currentValue) {
                         this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
                         this.nameIdRequestParamsProject.setEntityFilterValue(this.primaryInvestigatorId);
+                        this.nameIdRequestParamsProject.setMameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN);
+                        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsProject);
                     }
-                    this.nameIdRequestParamsProject.setMameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN);
                 };
                 ProjectListBoxComponent = __decorate([
                     core_1.Component({
@@ -98,9 +111,11 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                             'reinitProjectList'],
                         outputs: ['onProjectSelected',
                             'onAddHeaderStatus'],
-                        template: "<name-id-list-box\n                    [gobiiExtractFilterType] = \"gobiiExtractFilterType\"\n                    [notifyOnInit]=\"true\"\n                    [doTreeNotifications] = \"reinitProjectList\"\n                    [nameIdRequestParams] = \"nameIdRequestParamsProject\"\n                    (onNameIdSelected) = \"handleProjectSelected($event)\"\n                    (onError) = \"handleHeaderStatus($event)\">\n                </name-id-list-box>\n\t\t        \n                <div *ngIf=\"project\">\n                    <BR>\n                     <fieldset class=\"form-group\">\n                        <b>Name:</b> {{project.projectName}}<BR>\n                        <b>Description:</b> {{project.projectDescription}}<BR>\n                        <b>Principle Investigator:</b> {{primaryInvestigatorName}}\n                      </fieldset> \n                </div>\t\t        \n" // end template
+                        template: "\n        <name-id-list-box\n                [fileItems$]=\"fileItemsProjects$\"\n                [gobiiExtractFilterType]=\"gobiiExtractFilterType\"\n                [notifyOnInit]=\"true\"\n                [doTreeNotifications]=\"reinitProjectList\"\n                [nameIdRequestParams]=\"nameIdRequestParamsProject\"\n                (onNameIdSelected)=\"handleProjectSelected($event)\"\n                (onError)=\"handleHeaderStatus($event)\">\n        </name-id-list-box>\n\n        <div *ngIf=\"project\">\n            <BR>\n            <fieldset class=\"form-group\">\n                <b>Name:</b> {{project.projectName}}<BR>\n                <b>Description:</b> {{project.projectDescription}}<BR>\n                <b>Principle Investigator:</b> {{primaryInvestigatorName}}\n            </fieldset>\n        </div>\n    " // end template
                     }),
-                    __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService])
+                    __metadata("design:paramtypes", [dto_request_service_1.DtoRequestService,
+                        store_1.Store,
+                        file_item_service_1.FileItemService])
                 ], ProjectListBoxComponent);
                 return ProjectListBoxComponent;
             }());

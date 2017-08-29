@@ -60,7 +60,7 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     public gobiiFileItems$: Observable< GobiiFileItem[]>;
 
-    private handleItemChecked(arg) {
+    public handleItemChecked(arg) {
 
         let itemToChange: GobiiFileItem = arg;
 

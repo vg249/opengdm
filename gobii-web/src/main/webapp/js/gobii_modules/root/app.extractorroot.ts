@@ -44,6 +44,7 @@ import * as fileItemAction from '../store/actions/fileitem-action';
 import * as treeNodeAction from '../store/actions/treenode-action';
 import {NameIdFilterParamTypes} from "../model/type-nameid-filter-params";
 import {FileItemService} from "../services/core/file-item-service";
+import {Observable} from "rxjs/Observable";
 
 // import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
@@ -92,6 +93,7 @@ import {FileItemService} from "../services/core/file-item-service";
                                         <td style="vertical-align: top;">
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <name-id-list-box
+                                                    [fileItems$]="fileItemsMapsets$"
                                                     [gobiiExtractFilterType]="gobiiExtractFilterType"
                                                     [nameIdRequestParams]="nameIdRequestParamsMapsets"
                                                     (onError)="handleHeaderStatusMessage($event)">
@@ -128,6 +130,7 @@ import {FileItemService} from "../services/core/file-item-service";
                                 <div *ngIf="displaySelectorPi">
                                     <label class="the-label">Principle Investigator:</label><BR>
                                     <name-id-list-box
+                                            [fileItems$]="fileItemsContactsPI$"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [nameIdRequestParams]="nameIdRequestParamsContactsPi"
                                             [notifyOnInit]="!doPrincipleInvestigatorTreeNotifications"
@@ -154,6 +157,7 @@ import {FileItemService} from "../services/core/file-item-service";
                                     <BR>
                                     <label class="the-label">Dataset Types:</label><BR>
                                     <name-id-list-box
+                                            [fileItems$]="fileItemsDatasetTypes$"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [notifyOnInit]="false"
                                             [nameIdRequestParams]="nameIdRequestParamsDatasetType"
@@ -167,6 +171,7 @@ import {FileItemService} from "../services/core/file-item-service";
                                     <BR>
                                     <label class="the-label">Experiment:</label><BR>
                                     <name-id-list-box
+                                            [fileItems$]="fileItemsExperiments$"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [notifyOnInit]="true"
                                             [doTreeNotifications]="false"
@@ -330,6 +335,16 @@ export class ExtractorRoot implements OnInit {
 
     // ************************************************************************
 
+    fileItemsContactsPI$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getContacts);
+    fileItemsExperiments$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getExperiments);
+    fileItemsMapsets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getMapsets);
+    fileItemsDatasetTypes$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getCvTerms);
+    fileItemsPlatforms: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPlatforms);
+    fileItemsDatasets: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatasets);
+
+
+    // ************************************************************************
+
     public treeFileItemEvent: GobiiFileItem;
 //    private selectedExportTypeEvent:GobiiExtractFilterType;
     public datasetFileItemEvents: GobiiFileItem[] = [];
@@ -350,7 +365,7 @@ export class ExtractorRoot implements OnInit {
                 private _dtoRequestServiceServerConfigs: DtoRequestService<ServerConfig[]>,
                 private _fileModelTreeService: FileModelTreeService,
                 private store: Store<fromRoot.State>,
-                private fileItemService:FileItemService) {
+                private fileItemService: FileItemService) {
 
 
         this.store.dispatch(new treeNodeAction.InitAction());
@@ -391,7 +406,7 @@ export class ExtractorRoot implements OnInit {
 
 
         this.nameIdRequestParamsDataset = NameIdRequestParams
-            .build(NameIdFilterParamTypes.DATASETS_BY_EXPERIUMENT,
+            .build(NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.DataSets)
             .setEntityFilter(EntityFilter.BYTYPEID)
@@ -638,6 +653,24 @@ export class ExtractorRoot implements OnInit {
 
         this.initializeSubmissionContact();
 
+        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+            this.nameIdRequestParamsContactsPi);
+
+        // this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+        //     this.nameIdRequestParamsExperiments);
+
+        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+            this.nameIdRequestParamsMapsets);
+
+        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+            this.nameIdRequestParamsDatasetType);
+
+        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+            this.nameIdRequestParamsPlatforms);
+
+        // this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+        //     this.nameIdRequestParamsDataset);
+
         //changing modes will have nuked the submit as item in the tree, so we need to re-event (sic.) it:
 
 
@@ -650,6 +683,7 @@ export class ExtractorRoot implements OnInit {
 
     private handleContactForPiSelected(arg) {
         this.selectedContactIdForPi = arg.id;
+
         //console.log("selected contact itemId:" + arg);
     }
 
@@ -686,6 +720,8 @@ export class ExtractorRoot implements OnInit {
         this.displayExperimentDetail = false;
         this.displayDataSetDetail = false;
         this.nameIdRequestParamsExperiments.setEntityFilterValue(this.selectedProjectId);
+        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+            this.nameIdRequestParamsExperiments);
     }
 
 
