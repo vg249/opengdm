@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../model/type-entity", "../model/cv-filter-type", "../model/gobii-file-item", "../model/type-process", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service", "../model/dto-header-status-message", "./entity-labels", "../model/type-event-origin", "../model/name-id-label-type", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../model/type-entity", "../model/cv-filter-type", "../model/gobii-file-item", "../model/type-process", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service", "../model/dto-header-status-message", "./entity-labels", "../model/name-id-label-type", "@ngrx/store", "../store/reducers", "../store/actions/fileitem-action"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, type_entity_1, cv_filter_type_1, gobii_file_item_1, type_process_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, dto_header_status_message_1, entity_labels_1, type_event_origin_1, name_id_label_type_1, store_1, fromRoot, fileAction, NameIdListBoxComponent;
+    var core_1, name_id_1, type_entity_1, cv_filter_type_1, gobii_file_item_1, type_process_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, dto_header_status_message_1, entity_labels_1, name_id_label_type_1, store_1, fromRoot, fileAction, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -45,9 +45,6 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
             },
             function (entity_labels_1_1) {
                 entity_labels_1 = entity_labels_1_1;
-            },
-            function (type_event_origin_1_1) {
-                type_event_origin_1 = type_event_origin_1_1;
             },
             function (name_id_label_type_1_1) {
                 name_id_label_type_1 = name_id_label_type_1_1;
@@ -127,29 +124,31 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     //             this.handleHeaderStatus(responseHeader);
                     //         });
                 };
-                NameIdListBoxComponent.prototype.updateSelectedItem = function (eventedFileItem) {
-                    var fileItems = this.fileItemList;
-                    var foo = "foo";
-                    // we need to make sure that the evented item belongs to this control
-                    // however, the incoming event may have other properties that changed, so we
-                    // have to use the evented item
-                    if (this.fileItemList
-                        .find(function (fi) {
-                        return fi.getFileItemUniqueId()
-                            === eventedFileItem.getFileItemUniqueId();
-                    })) {
-                        if ((eventedFileItem.getGobiiEventOrigin() === type_event_origin_1.GobiiUIEventOrigin.CRITERIA_TREE)) {
-                            if (this.nameIdRequestParams.getMameIdLabelType() != name_id_label_type_1.NameIdLabelType.UNKNOWN &&
-                                (eventedFileItem.getProcessType() === type_process_1.ProcessType.DELETE)) {
-                                this.selectedFileItemId = "0";
-                            }
-                            else {
-                                this.selectedFileItemId = eventedFileItem.getItemId();
-                            }
-                            this.currentSelection = this.fileItemList[this.selectedFileItemId];
-                        }
-                    }
-                };
+                // private updateSelectedItem(eventedFileItem: GobiiFileItem) {
+                //
+                //     let fileItems: GobiiFileItem[] = this.fileItemList;
+                //     let foo: string = "foo";
+                //
+                //     // we need to make sure that the evented item belongs to this control
+                //     // however, the incoming event may have other properties that changed, so we
+                //     // have to use the evented item
+                //     if (this.fileItemList
+                //             .find(fi => {
+                //                 return fi.getFileItemUniqueId()
+                //                     === eventedFileItem.getFileItemUniqueId()
+                //             })) {
+                //
+                //         if ((eventedFileItem.getGobiiEventOrigin() === GobiiUIEventOrigin.CRITERIA_TREE)) {
+                //             if (this.nameIdRequestParams.getMameIdLabelType() != NameIdLabelType.UNKNOWN &&
+                //                 (eventedFileItem.getProcessType() === ProcessType.DELETE)) {
+                //                 this.selectedFileItemId = "0";
+                //             } else {
+                //                 this.selectedFileItemId = eventedFileItem.getItemId();
+                //             }
+                //             this.currentSelection = this.fileItemList[this.selectedFileItemId];
+                //         }
+                //     }
+                // }
                 NameIdListBoxComponent.prototype.makeFileItemFromNameId = function (nameId, extractorItemType) {
                     return gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
                         .setEntityType(this.nameIdRequestParams.getEntityType())

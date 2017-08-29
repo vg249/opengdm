@@ -15,6 +15,8 @@ import * as fileItemActions from '../../store/actions/fileitem-action'
 import * as fromRoot from '../../store/reducers';
 
 import {Store} from "@ngrx/store";
+import {NameIdLabelType} from "../../model/name-id-label-type";
+import {NameId} from "../../model/name-id";
 
 @Injectable()
 export class FileItemService {
@@ -51,6 +53,56 @@ export class FileItemService {
 
                             fileItems.push(currentFileItem);
                         });
+
+
+                        if (nameIdRequestParams.getMameIdLabelType() != NameIdLabelType.UNKNOWN) {
+
+                            let entityName: string = "";
+                            if (nameIdRequestParams.getCvFilterType() !== CvFilterType.UNKNOWN) {
+                                entityName += Labels.instance().cvFilterNodeLabels[nameIdRequestParams.getCvFilterType()];
+                            } else if (nameIdRequestParams.getEntitySubType() !== EntitySubType.UNKNOWN) {
+                                entityName += Labels.instance().entitySubtypeNodeLabels[nameIdRequestParams.getEntitySubType()];
+                            } else {
+                                entityName += Labels.instance().entityNodeLabels[nameIdRequestParams.getEntityType()];
+                            }
+
+                            let label: string = "";
+                            switch (nameIdRequestParams.getMameIdLabelType()) {
+
+                                case NameIdLabelType.SELECT_A:
+                                    label = "Select a " + entityName;
+                                    break;
+
+                                // we require that these entity labels all be in the singular
+                                case NameIdLabelType.ALL:
+                                    label = "All " + entityName + "s";
+                                    break;
+
+                                case NameIdLabelType.NO:
+                                    label = "No " + entityName;
+                                    break;
+
+                                default:
+                                    console.log(new HeaderStatusMessage("Unknown label type "
+                                        + NameIdLabelType[nameIdRequestParams.getMameIdLabelType()], null, null))
+                            }
+
+
+                            let labelFileItem: GobiiFileItem = GobiiFileItem
+                                .build(gobiiExtractFilterType, ProcessType.CREATE)
+                                .setEntityType(nameIdRequestParams.getEntityType())
+                                .setEntitySubType(nameIdRequestParams.getEntitySubType())
+                                .setCvFilterType(nameIdRequestParams.getCvFilterType())
+                                .setExtractorItemType(ExtractorItemType.LABEL)
+                                .setItemName(label)
+                                .setItemId("0")
+
+
+                            fileItems.unshift(labelFileItem);
+                            //.selectedFileItemId = "0";
+
+                        }
+
 
                         let loadAction: fileItemActions.LoadFilteredItemsAction = new fileItemActions.LoadFilteredItemsAction(
                             {

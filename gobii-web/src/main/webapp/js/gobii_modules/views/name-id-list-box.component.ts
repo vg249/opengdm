@@ -128,31 +128,31 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
         //         });
     }
 
-    private updateSelectedItem(eventedFileItem: GobiiFileItem) {
-
-        let fileItems: GobiiFileItem[] = this.fileItemList;
-        let foo: string = "foo";
-
-        // we need to make sure that the evented item belongs to this control
-        // however, the incoming event may have other properties that changed, so we
-        // have to use the evented item
-        if (this.fileItemList
-                .find(fi => {
-                    return fi.getFileItemUniqueId()
-                        === eventedFileItem.getFileItemUniqueId()
-                })) {
-
-            if ((eventedFileItem.getGobiiEventOrigin() === GobiiUIEventOrigin.CRITERIA_TREE)) {
-                if (this.nameIdRequestParams.getMameIdLabelType() != NameIdLabelType.UNKNOWN &&
-                    (eventedFileItem.getProcessType() === ProcessType.DELETE)) {
-                    this.selectedFileItemId = "0";
-                } else {
-                    this.selectedFileItemId = eventedFileItem.getItemId();
-                }
-                this.currentSelection = this.fileItemList[this.selectedFileItemId];
-            }
-        }
-    }
+    // private updateSelectedItem(eventedFileItem: GobiiFileItem) {
+    //
+    //     let fileItems: GobiiFileItem[] = this.fileItemList;
+    //     let foo: string = "foo";
+    //
+    //     // we need to make sure that the evented item belongs to this control
+    //     // however, the incoming event may have other properties that changed, so we
+    //     // have to use the evented item
+    //     if (this.fileItemList
+    //             .find(fi => {
+    //                 return fi.getFileItemUniqueId()
+    //                     === eventedFileItem.getFileItemUniqueId()
+    //             })) {
+    //
+    //         if ((eventedFileItem.getGobiiEventOrigin() === GobiiUIEventOrigin.CRITERIA_TREE)) {
+    //             if (this.nameIdRequestParams.getMameIdLabelType() != NameIdLabelType.UNKNOWN &&
+    //                 (eventedFileItem.getProcessType() === ProcessType.DELETE)) {
+    //                 this.selectedFileItemId = "0";
+    //             } else {
+    //                 this.selectedFileItemId = eventedFileItem.getItemId();
+    //             }
+    //             this.currentSelection = this.fileItemList[this.selectedFileItemId];
+    //         }
+    //     }
+    // }
 
     private makeFileItemFromNameId(nameId: NameId, extractorItemType: ExtractorItemType): GobiiFileItem {
 
