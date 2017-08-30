@@ -141,6 +141,9 @@ public class GOBIIControllerV1 {
     @Autowired
     private FilesService fileService = null;
 
+    @Autowired
+    private StatusService statusService = null;
+
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
     @ResponseBody
     public PayloadEnvelope<PingDTO> getPingResponse(@RequestBody PayloadEnvelope<PingDTO> pingDTOPayloadEnvelope) {
@@ -3547,7 +3550,18 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<StatusDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.OK, "Success");
+            PayloadReader<StatusDTO> payloadReader = new PayloadReader<>(StatusDTO.class);
+            StatusDTO statusDTOToCreate = payloadReader.extractSingleItem(payloadEnvelope);
+
+            StatusDTO statusDTONew = statusService.createStatus(statusDTOToCreate);
+
+            PayloadWriter<StatusDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    StatusDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
+                            GobiiServiceRequestId.URL_STATUS),
+                    statusDTONew);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3575,7 +3589,15 @@ public class GOBIIControllerV1 {
 
         try {
 
-            returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.OK, "Success");
+            List<StatusDTO> statusDTOs = statusService.getStatuses();
+
+            PayloadWriter<StatusDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    StatusDTO.class);
+
+            payloadWriter.writeList(returnVal,
+                    GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
+                            GobiiServiceRequestId.URL_STATUS),
+                    statusDTOs);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3602,7 +3624,18 @@ public class GOBIIControllerV1 {
 
         try {
 
-            returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.OK, "Success");
+            PayloadReader<StatusDTO> payloadReader = new PayloadReader<>(StatusDTO.class);
+            StatusDTO statusDTOToReplace = payloadReader.extractSingleItem(payloadEnvelope);
+
+            StatusDTO statusDTOReplaced = statusService.replaceStatus(statusId, statusDTOToReplace);
+
+            PayloadWriter<StatusDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    StatusDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
+                            GobiiServiceRequestId.URL_STATUS),
+                    statusDTOReplaced);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);
@@ -3629,7 +3662,15 @@ public class GOBIIControllerV1 {
         PayloadEnvelope<StatusDTO> returnVal = new PayloadEnvelope<>();
         try {
 
-            returnVal.getHeader().getStatus().addStatusMessage(GobiiStatusLevel.OK, "Success");
+            StatusDTO statusDTO = statusService.getStatusById(statusId);
+
+            PayloadWriter<StatusDTO> payloadWriter = new PayloadWriter<>(request, response,
+                    StatusDTO.class);
+
+            payloadWriter.writeSingleItemForDefaultId(returnVal,
+                    GobiiUriFactory.resourceByUriIdParam(request.getContextPath(),
+                            GobiiServiceRequestId.URL_STATUS),
+                    statusDTO);
 
         } catch (GobiiException e) {
             returnVal.getHeader().getStatus().addException(e);

@@ -384,9 +384,9 @@ public class TestDtoFactory {
         returnVal.setJobId(1);
         returnVal.setDataset(1);
         returnVal.setMessages("dummy");
-        returnVal.setProcessStatus(1);
-        returnVal.setLoadType(1);
-        returnVal.setExtractType(1);
+        returnVal.setProcessStatus(StatusDTO.CV_PROGRESSSTATUS_STARTED);
+        returnVal.setLoadType(StatusDTO.CV_LOADTYPE_SAMPLE);
+        returnVal.setExtractType(StatusDTO.CV_EXTRACTTYPE_HAPMAP);
 
         return returnVal;
 

@@ -67,7 +67,7 @@ public class StatusDTO extends DTOBase {
     public void setLoadType(Integer loadType) { this.loadType = loadType; }
 
     @GobiiEntityParam(paramName = "extractType")
-    public Integer getExtracType() { return extractType; }
+    public Integer getExtractType() { return extractType; }
 
     @GobiiEntityColumn(columnName = "extract_type")
     public void setExtractType(Integer extractType) { this.extractType = extractType; }

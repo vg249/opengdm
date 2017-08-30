@@ -331,6 +331,10 @@
     <bean id="dtoMapProtocol" class="org.gobiiproject.gobiidtomapping.impl.DtoMapProtocolImpl"/>
     <bean id="ProtocolService" class="org.gobiiproject.gobidomain.services.impl.ProtocolServiceImpl"/>
 
+
+    <!-- **** Status Beans *************************************** -->
+    <bean id="StatusService" class="org.gobiiproject.gobidomain.services.impl.StatusServiceImpl"/>
+
     <bean id="dtoListQueryColl"
           class="org.gobiiproject.gobiidao.resultset.core.listquery.DtoListQueryColl">
         <property name="listQueriesBySqlId">
