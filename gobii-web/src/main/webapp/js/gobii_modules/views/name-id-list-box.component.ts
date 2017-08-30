@@ -1,28 +1,15 @@
-import {Component, OnInit, EventEmitter, OnChanges, SimpleChange, DoCheck, KeyValueDiffers} from "@angular/core";
+import {Component, DoCheck, EventEmitter, KeyValueDiffers, OnChanges, OnInit, SimpleChange} from "@angular/core";
 import {NameId} from "../model/name-id";
-import {DtoRequestService} from "../services/core/dto-request.service";
-import {EntityType, EntitySubType} from "../model/type-entity";
-import {CvFilterType, CvFilters} from "../model/cv-filter-type";
-import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
-import {EntityFilter} from "../model/type-entity-filter";
 import {GobiiFileItem} from "../model/gobii-file-item";
-import {ProcessType} from "../model/type-process";
-import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
-import {Header} from "../model/payload/header";
-import {ExtractorItemType} from "../model/file-model-node";
-import {Guid} from "../model/guid";
 import {NameIdService} from "../services/core/name-id-service";
 import {NameIdRequestParams} from "../model/name-id-request-params";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
-import {Labels} from "./entity-labels";
-import {GobiiUIEventOrigin} from "../model/type-event-origin";
-import {NameIdLabelType} from "../model/name-id-label-type";
 import {Store} from "@ngrx/store";
 import * as fromRoot from '../store/reducers';
 import * as fileAction from '../store/actions/fileitem-action';
-import * as treeNodeAction from '../store/actions/treenode-action';
 import {Observable} from "rxjs/Observable";
+import {FileItemService} from "../services/core/file-item-service";
 
 
 @Component({
@@ -60,8 +47,11 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
     differ: any;
 
 
+
     constructor(private store: Store<fromRoot.State>,
                 private _nameIdService: NameIdService,
+                private fileItemService:FileItemService,
+
                 //                private _fileModelTreeService: FileModelTreeService,
                 private differs: KeyValueDiffers) {
 
@@ -88,14 +78,15 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     public handleFileItemSelected(arg) {
 
-        let currentFileItemUniqueId:string = arg.currentTarget;
+        let currentFileItemUniqueId:string = arg.currentTarget.value;
+        let selectedFileItem: GobiiFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
 
         this.store.dispatch(new fileAction.SelectByFileItemUniqueId(currentFileItemUniqueId));
 
-        // this.onNameIdSelected
-        //     .emit(new NameId(eventedfileItem.getItemId(),
-        //         eventedfileItem.getItemName(),
-        //         eventedfileItem.getEntityType()));
+        this.onNameIdSelected
+            .emit(new NameId(selectedFileItem.getItemId(),
+                selectedFileItem.getItemName(),
+                selectedFileItem.getEntityType()));
 
         // if (this.currentSelection.getItemId() !== "0") {
         //     this.currentSelection.setProcessType(ProcessType.DELETE);

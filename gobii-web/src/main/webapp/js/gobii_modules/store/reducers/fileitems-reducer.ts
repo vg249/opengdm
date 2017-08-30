@@ -340,6 +340,9 @@ export const getFirstMarkerGroup = createSelector(getCvTerms, (markergroups) => 
 
 
 
+/// ****************** SYNCHRONOUS METHODS
+
+
 /// **************** GET SELECTED PER ENTITY TYPE
 export const getSelectedPiContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 

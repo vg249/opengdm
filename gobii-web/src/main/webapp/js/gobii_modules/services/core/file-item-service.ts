@@ -120,6 +120,32 @@ export class FileItemService {
                 });
     }
 
+    // private getState(store: Store<fromRoot.State>): fromRoot.State {
+    //
+    //     let state: fromRoot.State = null;
+    //
+    //     store.take(1).subscribe(s => state = s);
+    //
+    //     return state;
+    // }
+
+    public getFIleItemForUniqueFileItemId(fileItemUniqueId: string): GobiiFileItem {
+
+        let returnVal: GobiiFileItem = null;
+
+
+        // this is technically synchronous, but since we are taking a state it should return
+        // immediately enough.
+        // it is also evil because it is directly accessing state. We should be going through the reducer;
+        // however, this is a very minimal use case. Do _not_ use state directly beyond this kind of a
+        // simple synchronous item retrieval.
+        this.store.take(1).subscribe(state => {
+            returnVal = state.fileItems.fileItems.find( fi => fi.getFileItemUniqueId() === fileItemUniqueId );
+        });
+
+
+        return returnVal;
+    }
 
     // public getFirst(nameIdRequestParams: NameIdRequestParams): GobiiFileItem {
     //

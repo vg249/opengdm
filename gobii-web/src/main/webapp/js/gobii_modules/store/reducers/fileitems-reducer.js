@@ -256,6 +256,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
             exports_1("getFirstMarkerGroup", getFirstMarkerGroup = reselect_1.createSelector(getCvTerms, function (markergroups) {
                 return markergroups[0];
             }));
+            /// ****************** SYNCHRONOUS METHODS
             /// **************** GET SELECTED PER ENTITY TYPE
             exports_1("getSelectedPiContacts", getSelectedPiContacts = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {

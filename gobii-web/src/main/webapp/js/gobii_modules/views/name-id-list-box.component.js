@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-extractor-filter", "../services/core/name-id-service", "@ngrx/store", "../store/actions/fileitem-action"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/name-id", "../model/type-extractor-filter", "../services/core/name-id-service", "@ngrx/store", "../store/actions/fileitem-action", "../services/core/file-item-service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,11 +10,14 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_extractor_filter_1, name_id_service_1, store_1, fileAction, NameIdListBoxComponent;
+    var core_1, name_id_1, type_extractor_filter_1, name_id_service_1, store_1, fileAction, file_item_service_1, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (name_id_1_1) {
+                name_id_1 = name_id_1_1;
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
@@ -27,15 +30,19 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
             },
             function (fileAction_1) {
                 fileAction = fileAction_1;
+            },
+            function (file_item_service_1_1) {
+                file_item_service_1 = file_item_service_1_1;
             }
         ],
         execute: function () {
             NameIdListBoxComponent = (function () {
-                function NameIdListBoxComponent(store, _nameIdService, 
+                function NameIdListBoxComponent(store, _nameIdService, fileItemService, 
                     //                private _fileModelTreeService: FileModelTreeService,
                     differs) {
                     this.store = store;
                     this._nameIdService = _nameIdService;
+                    this.fileItemService = fileItemService;
                     this.differs = differs;
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.notifyOnInit = false;
@@ -53,12 +60,11 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                     this.onError.emit(headerStatusMessage);
                 };
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
-                    var currentFileItemUniqueId = arg.currentTarget;
+                    var currentFileItemUniqueId = arg.currentTarget.value;
+                    var selectedFileItem = this.fileItemService.getFIleItemForUniqueFileItemId(currentFileItemUniqueId);
                     this.store.dispatch(new fileAction.SelectByFileItemUniqueId(currentFileItemUniqueId));
-                    // this.onNameIdSelected
-                    //     .emit(new NameId(eventedfileItem.getItemId(),
-                    //         eventedfileItem.getItemName(),
-                    //         eventedfileItem.getEntityType()));
+                    this.onNameIdSelected
+                        .emit(new name_id_1.NameId(selectedFileItem.getItemId(), selectedFileItem.getItemName(), selectedFileItem.getEntityType()));
                     // if (this.currentSelection.getItemId() !== "0") {
                     //     this.currentSelection.setProcessType(ProcessType.DELETE);
                     //     this.updateTreeService(this.currentSelection);
@@ -132,6 +138,7 @@ System.register(["@angular/core", "../model/type-extractor-filter", "../services
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         name_id_service_1.NameIdService,
+                        file_item_service_1.FileItemService,
                         core_1.KeyValueDiffers])
                 ], NameIdListBoxComponent);
                 return NameIdListBoxComponent;

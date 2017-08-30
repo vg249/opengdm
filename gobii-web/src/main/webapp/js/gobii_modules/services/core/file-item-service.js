@@ -124,6 +124,23 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                         console.log(responseHeader);
                     });
                 };
+                // private getState(store: Store<fromRoot.State>): fromRoot.State {
+                //
+                //     let state: fromRoot.State = null;
+                //
+                //     store.take(1).subscribe(s => state = s);
+                //
+                //     return state;
+                // }
+                FileItemService.prototype.getFIleItemForUniqueFileItemId = function (fileItemUniqueId) {
+                    var returnVal = null;
+                    // this is technically synchronous, but since we are taking a state it should return
+                    // immediately enough.
+                    this.store.take(1).subscribe(function (state) {
+                        returnVal = state.fileItems.fileItems.find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueId; });
+                    });
+                    return returnVal;
+                };
                 FileItemService = __decorate([
                     core_1.Injectable(),
                     __metadata("design:paramtypes", [name_id_service_1.NameIdService,
