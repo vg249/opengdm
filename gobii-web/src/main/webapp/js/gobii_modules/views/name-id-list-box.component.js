@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/name-id", "../model/type-entity", "../model/cv-filter-type", "../model/gobii-file-item", "../model/type-process", "../model/type-extractor-filter", "../model/file-model-node", "../services/core/name-id-service", "../model/dto-header-status-message", "./entity-labels", "../model/name-id-label-type", "@ngrx/store", "../store/actions/fileitem-action"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-extractor-filter", "../services/core/name-id-service", "@ngrx/store", "../store/actions/fileitem-action"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,44 +10,17 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, name_id_1, type_entity_1, cv_filter_type_1, gobii_file_item_1, type_process_1, type_extractor_filter_1, file_model_node_1, name_id_service_1, dto_header_status_message_1, entity_labels_1, name_id_label_type_1, store_1, fileAction, NameIdListBoxComponent;
+    var core_1, type_extractor_filter_1, name_id_service_1, store_1, fileAction, NameIdListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (name_id_1_1) {
-                name_id_1 = name_id_1_1;
-            },
-            function (type_entity_1_1) {
-                type_entity_1 = type_entity_1_1;
-            },
-            function (cv_filter_type_1_1) {
-                cv_filter_type_1 = cv_filter_type_1_1;
-            },
-            function (gobii_file_item_1_1) {
-                gobii_file_item_1 = gobii_file_item_1_1;
-            },
-            function (type_process_1_1) {
-                type_process_1 = type_process_1_1;
-            },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
             },
-            function (file_model_node_1_1) {
-                file_model_node_1 = file_model_node_1_1;
-            },
             function (name_id_service_1_1) {
                 name_id_service_1 = name_id_service_1_1;
-            },
-            function (dto_header_status_message_1_1) {
-                dto_header_status_message_1 = dto_header_status_message_1_1;
-            },
-            function (entity_labels_1_1) {
-                entity_labels_1 = entity_labels_1_1;
-            },
-            function (name_id_label_type_1_1) {
-                name_id_label_type_1 = name_id_label_type_1_1;
             },
             function (store_1_1) {
                 store_1 = store_1_1;
@@ -64,223 +37,51 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this.store = store;
                     this._nameIdService = _nameIdService;
                     this.differs = differs;
-                    // useg
-                    this.fileItemList = [];
+                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.notifyOnInit = false;
                     this.doTreeNotifications = true;
-                    // DtoRequestItemNameIds expects the value to be null if it's not set (not "UNKNOWN")
-                    this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
-                    this.selectedFileItemId = null;
                     this.onNameIdSelected = new core_1.EventEmitter();
                     this.onError = new core_1.EventEmitter();
-                    this.currentSelection = null;
                     this.differ = differs.find({}).create(null);
                     //      this.fileItems$ = store.select(fromRoot.getAllFileItems);
                     //       this.fileItems$ = store.select(fromRoot.getMapsets);
                 } // ctor
                 // private notificationSent = false;
                 NameIdListBoxComponent.prototype.ngOnInit = function () {
-                    // switch (this.nameIdRequestParams.getEntityType()) {
-                    //
-                    //     case EntityType.MarkerGroups:
-                    //         this.fileItems$ = this.store.select(fromRoot.getMarkerGroups);
-                    //         break;
-                    //
-                    //     case EntityType.Contacts:
-                    //         this.fileItems$ = this.store.select(fromRoot.getContacts);
-                    //         break;
-                    //
-                    //
-                    //     case EntityType.Projects:
-                    //         this.fileItems$ = this.store.select(fromRoot.getProjects);
-                    //         break;
-                    //
-                    //
-                    //     case EntityType.Experiments:
-                    //         this.fileItems$ = this.store.select(fromRoot.getExperiments);
-                    //         break;
-                    //
-                    //
-                    //     case EntityType.DataSets:
-                    //         this.fileItems$ = this.store.select(fromRoot.getDatasets);
-                    //         break;
-                    //
-                    //
-                    //     case EntityType.CvTerms:
-                    //         this.fileItems$ = this.store.select(fromRoot.getCvTerms);
-                    //         break;
-                    //
-                    //
-                    //     case EntityType.Mapsets:
-                    //         this.fileItems$ = this.store.select(fromRoot.getMapsets);
-                    //         break;
-                    //
-                    //
-                    //     case EntityType.Platforms:
-                    //         this.fileItems$ = this.store.select(fromRoot.getPlatforms);
-                    //         break;
-                    //
-                    //     default:
-                    //         this.fileItems$ = this.store.select(fromRoot.getAllFileItems);
-                    //         break;
-                    //
-                    // }
-                    // let scope$ = this;
-                    // this._fileModelTreeService
-                    //     .fileItemNotifications()
-                    //     .subscribe(eventedFileItem => {
-                    //             if (this.doTreeNotifications) {
-                    //                 this.updateSelectedItem(eventedFileItem);
-                    //             }
-                    //         },
-                    //         responseHeader => {
-                    //             this.handleHeaderStatus(responseHeader);
-                    //         });
-                };
-                // private updateSelectedItem(eventedFileItem: GobiiFileItem) {
-                //
-                //     let fileItems: GobiiFileItem[] = this.fileItemList;
-                //     let foo: string = "foo";
-                //
-                //     // we need to make sure that the evented item belongs to this control
-                //     // however, the incoming event may have other properties that changed, so we
-                //     // have to use the evented item
-                //     if (this.fileItemList
-                //             .find(fi => {
-                //                 return fi.getFileItemUniqueId()
-                //                     === eventedFileItem.getFileItemUniqueId()
-                //             })) {
-                //
-                //         if ((eventedFileItem.getGobiiEventOrigin() === GobiiUIEventOrigin.CRITERIA_TREE)) {
-                //             if (this.nameIdRequestParams.getMameIdLabelType() != NameIdLabelType.UNKNOWN &&
-                //                 (eventedFileItem.getProcessType() === ProcessType.DELETE)) {
-                //                 this.selectedFileItemId = "0";
-                //             } else {
-                //                 this.selectedFileItemId = eventedFileItem.getItemId();
-                //             }
-                //             this.currentSelection = this.fileItemList[this.selectedFileItemId];
-                //         }
-                //     }
-                // }
-                NameIdListBoxComponent.prototype.makeFileItemFromNameId = function (nameId, extractorItemType) {
-                    return gobii_file_item_1.GobiiFileItem.build(this.gobiiExtractFilterType, type_process_1.ProcessType.CREATE)
-                        .setEntityType(this.nameIdRequestParams.getEntityType())
-                        .setEntitySubType(this.nameIdRequestParams.getEntitySubType())
-                        .setCvFilterType(this.nameIdRequestParams.getCvFilterType())
-                        .setExtractorItemType(extractorItemType)
-                        .setItemName(nameId.name)
-                        .setItemId(nameId.id);
-                };
-                NameIdListBoxComponent.prototype.initializeFileItems = function () {
-                    var _this = this;
-                    var scope$ = this;
-                    this._nameIdService.get(this.nameIdRequestParams)
-                        .subscribe(function (nameIds) {
-                        _this.fileItemList = [];
-                        if (nameIds && (nameIds.length > 0)) {
-                            nameIds.forEach(function (ni) {
-                                scope$.fileItemList.push(_this.makeFileItemFromNameId(ni, file_model_node_1.ExtractorItemType.ENTITY));
-                            });
-                            if (_this.nameIdRequestParams.getMameIdLabelType() != name_id_label_type_1.NameIdLabelType.UNKNOWN) {
-                                var entityName = "";
-                                if (scope$.nameIdRequestParams.getCvFilterType() !== cv_filter_type_1.CvFilterType.UNKNOWN) {
-                                    entityName += entity_labels_1.Labels.instance().cvFilterNodeLabels[scope$.nameIdRequestParams.getCvFilterType()];
-                                }
-                                else if (scope$.nameIdRequestParams.getEntitySubType() !== type_entity_1.EntitySubType.UNKNOWN) {
-                                    entityName += entity_labels_1.Labels.instance().entitySubtypeNodeLabels[scope$.nameIdRequestParams.getEntitySubType()];
-                                }
-                                else {
-                                    entityName += entity_labels_1.Labels.instance().entityNodeLabels[scope$.nameIdRequestParams.getEntityType()];
-                                }
-                                var label = "";
-                                switch (_this.nameIdRequestParams.getMameIdLabelType()) {
-                                    case name_id_label_type_1.NameIdLabelType.SELECT_A:
-                                        label = "Select a " + entityName;
-                                        break;
-                                    // we require that these entity labels all be in the singular
-                                    case name_id_label_type_1.NameIdLabelType.ALL:
-                                        label = "All " + entityName + "s";
-                                        break;
-                                    case name_id_label_type_1.NameIdLabelType.NO:
-                                        label = "No " + entityName;
-                                        break;
-                                    default:
-                                        _this.handleHeaderStatus(new dto_header_status_message_1.HeaderStatusMessage("Unknown label type "
-                                            + name_id_label_type_1.NameIdLabelType[_this.nameIdRequestParams.getMameIdLabelType()], null, null));
-                                }
-                                var labelFileItem = _this.makeFileItemFromNameId(new name_id_1.NameId("0", label, _this.nameIdRequestParams.getEntityType()), file_model_node_1.ExtractorItemType.LABEL);
-                                scope$.fileItemList.unshift(labelFileItem);
-                                scope$.selectedFileItemId = "0";
-                            }
-                            else {
-                                scope$.selectedFileItemId = scope$.fileItemList[0].getItemId();
-                                //scope$.selectedFileItemId = "0";
-                            }
-                            scope$.currentSelection = scope$.fileItemList[0];
-                            if (_this.notifyOnInit
-                                && (_this.nameIdRequestParams.getMameIdLabelType() === name_id_label_type_1.NameIdLabelType.UNKNOWN)) {
-                                _this.updateTreeService(scope$.fileItemList[0]);
-                                //                            this.notificationSent = true;
-                            }
-                            var loadAction = new fileAction.LoadAction(scope$.fileItemList);
-                            _this.store.dispatch(loadAction);
-                        }
-                    }, function (responseHeader) {
-                        _this.handleHeaderStatus(responseHeader);
-                    });
                 };
                 NameIdListBoxComponent.prototype.handleHeaderStatus = function (headerStatusMessage) {
                     this.onError.emit(headerStatusMessage);
                 };
-                NameIdListBoxComponent.prototype.updateTreeService = function (eventedfileItem) {
-                    this.onNameIdSelected
-                        .emit(new name_id_1.NameId(eventedfileItem.getItemId(), eventedfileItem.getItemName(), eventedfileItem.getEntityType()));
-                    if (eventedfileItem.getItemId() != "0") {
-                        if (this.doTreeNotifications) {
-                            this.store.dispatch(new fileAction.SelectForExtractAction(eventedfileItem));
-                        }
-                    }
-                    // if (eventedfileItem.getItemId() != "0") {
-                    //     if (this.doTreeNotifications) {
-                    //         this._fileModelTreeService.put(eventedfileItem)
-                    //             .subscribe(
-                    //                 null,
-                    //                 headerResponse => {
-                    //                     this.handleHeaderStatus(headerResponse)
-                    //                 });
-                    //     }
-                    // }
-                };
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
-                    var _this = this;
-                    var selectedFileItemUniqueId = this.currentSelection.getItemId();
-                    this.store.dispatch(new fileAction.SelectByFileItemUniqueId(selectedFileItemUniqueId));
+                    var currentFileItemUniqueId = arg.currentTarget;
+                    this.store.dispatch(new fileAction.SelectByFileItemUniqueId(currentFileItemUniqueId));
                     // this.onNameIdSelected
                     //     .emit(new NameId(eventedfileItem.getItemId(),
                     //         eventedfileItem.getItemName(),
                     //         eventedfileItem.getEntityType()));
-                    if (this.currentSelection.getItemId() !== "0") {
-                        this.currentSelection.setProcessType(type_process_1.ProcessType.DELETE);
-                        this.updateTreeService(this.currentSelection);
-                    }
+                    // if (this.currentSelection.getItemId() !== "0") {
+                    //     this.currentSelection.setProcessType(ProcessType.DELETE);
+                    //     this.updateTreeService(this.currentSelection);
+                    // }
                     //        let gobiiFileItem: GobiiFileItem = this.fileItemList[arg.srcElement.selectedIndex]
-                    var gobiiFileItem = this.fileItemList.find(function (fi) {
-                        return fi.getItemId() === _this.selectedFileItemId;
-                    });
-                    if (gobiiFileItem.getItemId() != "0") {
-                        gobiiFileItem.setProcessType(type_process_1.ProcessType.UPDATE);
-                        this.updateTreeService(gobiiFileItem);
-                    }
-                    this.currentSelection = gobiiFileItem;
+                    //         let gobiiFileItem: GobiiFileItem = this.fileItemList.find(fi => {
+                    //             return fi.getItemId() === this.selectedFileItemId
+                    //         });
+                    //
+                    //         if (gobiiFileItem.getItemId() != "0") {
+                    //             gobiiFileItem.setProcessType(ProcessType.UPDATE);
+                    //             this.updateTreeService(gobiiFileItem);
+                    //         }
+                    //
+                    //         this.currentSelection = gobiiFileItem;
                 };
                 NameIdListBoxComponent.prototype.ngOnChanges = function (changes) {
-                    var _this = this;
                     if (changes['gobiiExtractFilterType']
                         && (changes['gobiiExtractFilterType'].currentValue != null)
                         && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
-                        this.fileItems$.subscribe(null, null, function () {
-                            _this.selectedFileItemId = _this.fileItems$[0].getFileItemUniqueId();
-                        });
+                        // this.fileItems$.subscribe(null, null, () => {
+                        //
+                        // });
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
                             //this.notificationSent = false;
                             this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
@@ -321,12 +122,11 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                 NameIdListBoxComponent = __decorate([
                     core_1.Component({
                         selector: 'name-id-list-box',
-                        inputs: ['gobiiExtractFilterType',
+                        inputs: ['fileItems$',
+                            'gobiiExtractFilterType',
                             'notifyOnInit',
                             'nameIdRequestParams',
-                            'doTreeNotifications',
-                            'fileItems$',
-                            'firstFileItem$'],
+                            'doTreeNotifications'],
                         outputs: ['onNameIdSelected', 'onError'],
                         template: "<select (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
                     }),
