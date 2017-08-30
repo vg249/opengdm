@@ -57,6 +57,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
                 //                private _fileModelTreeService: FileModelTreeService,
                 private differs: KeyValueDiffers) {
 
+
         this.differ = differs.find({}).create(null);
 
         //      this.fileItems$ = store.select(fromRoot.getAllFileItems);
@@ -68,6 +69,8 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
     // private notificationSent = false;
 
     ngOnInit(): any {
+
+
 
         // switch (this.nameIdRequestParams.getEntityType()) {
         //
@@ -332,9 +335,16 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     ngOnChanges(changes: { [propName: string]: SimpleChange }) {
 
+
         if (changes['gobiiExtractFilterType']
             && ( changes['gobiiExtractFilterType'].currentValue != null )
             && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
+
+            this.fileItems$.subscribe( null,null, () => {
+                this.selectedFileItemId = this.fileItems$[0].getFileItemUniqueId();
+            });
+
+
 
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
 
@@ -382,7 +392,7 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
         if (changes) {
             if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-                this.initializeFileItems();
+                //this.initializeFileItems();
             }
         }
     }

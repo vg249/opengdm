@@ -215,6 +215,7 @@ export const getAll = createSelector(getFileItems, getUniqueIds, (entities, ids)
 // entity type is parameterized -- it is not global state
 
 
+
 export const getContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -222,6 +223,11 @@ export const getContacts = createSelector(getFileItems, getUniqueIds, (fileItems
             || e.getExtractorItemType() === ExtractorItemType.LABEL )
         && e.getEntityType() === EntityType.Contacts)
         .map(fi => fi);
+});
+
+
+export const getFirstContact = createSelector(getContacts, (contacts) => {
+    return contacts[0];
 });
 
 export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
@@ -233,6 +239,13 @@ export const getProjects = createSelector(getFileItems, getUniqueIds, (fileItems
         .map(fi => fi);
 });
 
+export const getFirstProject = createSelector(getProjects, (projects) => {
+    return projects[0];
+});
+
+
+
+
 export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -241,6 +254,12 @@ export const getExperiments = createSelector(getFileItems, getUniqueIds, (fileIt
         && e.getEntityType() === EntityType.Experiments)
         .map(fi => fi);
 });
+
+export const getFirstExperiment = createSelector(getExperiments, (experiments) => {
+    return experiments[0];
+});
+
+
 
 export const getDatasets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
@@ -251,6 +270,13 @@ export const getDatasets = createSelector(getFileItems, getUniqueIds, (fileItems
         .map(fi => fi);
 });
 
+
+export const getFirstDataset = createSelector(getDatasets, (datasets) => {
+    return datasets[0];
+});
+
+
+
 export const getCvTerms = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -259,6 +285,12 @@ export const getCvTerms = createSelector(getFileItems, getUniqueIds, (fileItems,
         && e.getEntityType() === EntityType.CvTerms)
         .map(fi => fi);
 });
+
+export const getFirstCvTerm = createSelector(getCvTerms, (cvterms) => {
+    return cvterms[0];
+});
+
+
 
 export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
@@ -269,6 +301,14 @@ export const getMapsets = createSelector(getFileItems, getUniqueIds, (fileItems,
         .map(fi => fi);
 });
 
+
+export const getFirstmapset = createSelector(getMapsets, (mapsets) => {
+    return mapsets[0];
+});
+
+
+
+
 export const getPlatforms = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
 
     return fileItems.filter(e =>
@@ -277,6 +317,12 @@ export const getPlatforms = createSelector(getFileItems, getUniqueIds, (fileItem
         && e.getEntityType() === EntityType.Platforms)
         .map(fi => fi);
 });
+
+export const getFirstPlatform = createSelector(getCvTerms, (platforms) => {
+    return platforms[0];
+});
+
+
 
 
 export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {
@@ -287,6 +333,12 @@ export const getMarkerGroups = createSelector(getFileItems, getUniqueIds, (fileI
         && e.getEntityType() === EntityType.MarkerGroups)
         .map(fi => fi);
 });
+
+export const getFirstMarkerGroup = createSelector(getCvTerms, (markergroups) => {
+    return markergroups[0];
+});
+
+
 
 /// **************** GET SELECTED PER ENTITY TYPE
 export const getSelectedPiContacts = createSelector(getFileItems, getUniqueIds, (fileItems, ids) => {

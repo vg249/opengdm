@@ -270,9 +270,13 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     this.currentSelection = gobiiFileItem;
                 };
                 NameIdListBoxComponent.prototype.ngOnChanges = function (changes) {
+                    var _this = this;
                     if (changes['gobiiExtractFilterType']
                         && (changes['gobiiExtractFilterType'].currentValue != null)
                         && (changes['gobiiExtractFilterType'].currentValue != undefined)) {
+                        this.fileItems$.subscribe(null, null, function () {
+                            _this.selectedFileItemId = _this.fileItems$[0].getFileItemUniqueId();
+                        });
                         if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {
                             //this.notificationSent = false;
                             this.nameIdRequestParams.setGobiiExtractFilterType(this.gobiiExtractFilterType);
@@ -306,7 +310,7 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                     var changes = this.differ.diff(this.nameIdRequestParams);
                     if (changes) {
                         if (this._nameIdService.validateRequest(this.nameIdRequestParams)) {
-                            this.initializeFileItems();
+                            //this.initializeFileItems();
                         }
                     }
                 };

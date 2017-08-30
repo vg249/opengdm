@@ -1,7 +1,7 @@
-System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./name-id-label-type"], function (exports_1, context_1) {
+System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", "./type-extractor-filter", "./name-id-label-type", "./file-model-node"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var type_entity_filter_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, name_id_label_type_1, NameIdRequestParams;
+    var type_entity_filter_1, type_entity_1, cv_filter_type_1, type_extractor_filter_1, name_id_label_type_1, file_model_node_1, NameIdRequestParams;
     return {
         setters: [
             function (type_entity_filter_1_1) {
@@ -18,6 +18,9 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
             },
             function (name_id_label_type_1_1) {
                 name_id_label_type_1 = name_id_label_type_1_1;
+            },
+            function (file_model_node_1_1) {
+                file_model_node_1 = file_model_node_1_1;
             }
         ],
         execute: function () {
@@ -25,7 +28,7 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
              * Created by Phil on 3/9/2017.
              */
             NameIdRequestParams = (function () {
-                function NameIdRequestParams(_queryName, _entityType, _refTargetEntityType, _entityFilter, _entityFilterValue, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType) {
+                function NameIdRequestParams(_queryName, _entityType, _refTargetEntityType, _entityFilter, _entityFilterValue, _entitySubType, _cvFilterType, _gobiiExtractFilterType, _nameIdLabelType, _extractorItemType) {
                     if (_queryName === void 0) { _queryName = null; }
                     if (_entityType === void 0) { _entityType = type_entity_1.EntityType.UNKNOWN; }
                     if (_refTargetEntityType === void 0) { _refTargetEntityType = type_entity_1.EntityType.UNKNOWN; }
@@ -43,9 +46,10 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                     this._cvFilterType = _cvFilterType;
                     this._gobiiExtractFilterType = _gobiiExtractFilterType;
                     this._nameIdLabelType = _nameIdLabelType;
+                    this._extractorItemType = _extractorItemType;
                 }
                 NameIdRequestParams.build = function (queryName, gobiiExtractFilterType, entityType) {
-                    return (new NameIdRequestParams(queryName, entityType, type_entity_1.EntityType.UNKNOWN, type_entity_filter_1.EntityFilter.NONE, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN));
+                    return (new NameIdRequestParams(queryName, entityType, type_entity_1.EntityType.UNKNOWN, type_entity_filter_1.EntityFilter.NONE, null, type_entity_1.EntitySubType.UNKNOWN, cv_filter_type_1.CvFilterType.UNKNOWN, gobiiExtractFilterType, name_id_label_type_1.NameIdLabelType.UNKNOWN, file_model_node_1.ExtractorItemType.ENTITY));
                 };
                 NameIdRequestParams.prototype.getEntityType = function () {
                     return this._entityType;
@@ -105,6 +109,13 @@ System.register(["./type-entity-filter", "./type-entity", "./cv-filter-type", ".
                 };
                 NameIdRequestParams.prototype.getMameIdLabelType = function () {
                     return this._nameIdLabelType;
+                };
+                NameIdRequestParams.prototype.setExtractorItemType = function (extractorItemType) {
+                    this._extractorItemType = extractorItemType;
+                    return this;
+                };
+                NameIdRequestParams.prototype.getExtractorItemType = function () {
+                    return this._extractorItemType;
                 };
                 return NameIdRequestParams;
             }());

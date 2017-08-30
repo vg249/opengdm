@@ -100,7 +100,8 @@ System.register(["@angular/core", "../services/core/dto-request.service", "../se
                         this.primaryInvestigatorId = changes['primaryInvestigatorId'].currentValue;
                         this.nameIdRequestParamsProject.setEntityFilterValue(this.primaryInvestigatorId);
                         this.nameIdRequestParamsProject.setMameIdLabelType(this.reinitProjectList ? name_id_label_type_1.NameIdLabelType.ALL : name_id_label_type_1.NameIdLabelType.UNKNOWN);
-                        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType, this.nameIdRequestParamsProject);
+                        // this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+                        //     this.nameIdRequestParamsProject);
                     }
                 };
                 ProjectListBoxComponent = __decorate([

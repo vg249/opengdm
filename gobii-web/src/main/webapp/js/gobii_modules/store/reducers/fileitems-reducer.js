@@ -119,7 +119,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getProjects, getExperiments, getDatasets, getCvTerms, getMapsets, getPlatforms, getMarkerGroups, getSelectedPiContacts, getDatasetsForSelectedExperiment;
+    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getDatasetsForSelectedExperiment;
     return {
         setters: [
             function (reselect_1_1) {
@@ -176,6 +176,9 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 })
                     .map(function (fi) { return fi; });
             }));
+            exports_1("getFirstContact", getFirstContact = reselect_1.createSelector(getContacts, function (contacts) {
+                return contacts[0];
+            }));
             exports_1("getProjects", getProjects = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
@@ -183,6 +186,9 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                         && e.getEntityType() === type_entity_1.EntityType.Projects;
                 })
                     .map(function (fi) { return fi; });
+            }));
+            exports_1("getFirstProject", getFirstProject = reselect_1.createSelector(getProjects, function (projects) {
+                return projects[0];
             }));
             exports_1("getExperiments", getExperiments = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
@@ -192,6 +198,9 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 })
                     .map(function (fi) { return fi; });
             }));
+            exports_1("getFirstExperiment", getFirstExperiment = reselect_1.createSelector(getExperiments, function (experiments) {
+                return experiments[0];
+            }));
             exports_1("getDatasets", getDatasets = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
@@ -199,6 +208,9 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                         && e.getEntityType() === type_entity_1.EntityType.DataSets;
                 })
                     .map(function (fi) { return fi; });
+            }));
+            exports_1("getFirstDataset", getFirstDataset = reselect_1.createSelector(getDatasets, function (datasets) {
+                return datasets[0];
             }));
             exports_1("getCvTerms", getCvTerms = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
@@ -208,6 +220,9 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 })
                     .map(function (fi) { return fi; });
             }));
+            exports_1("getFirstCvTerm", getFirstCvTerm = reselect_1.createSelector(getCvTerms, function (cvterms) {
+                return cvterms[0];
+            }));
             exports_1("getMapsets", getMapsets = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
@@ -215,6 +230,9 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                         && e.getEntityType() === type_entity_1.EntityType.Mapsets;
                 })
                     .map(function (fi) { return fi; });
+            }));
+            exports_1("getFirstmapset", getFirstmapset = reselect_1.createSelector(getMapsets, function (mapsets) {
+                return mapsets[0];
             }));
             exports_1("getPlatforms", getPlatforms = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
@@ -224,6 +242,9 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                 })
                     .map(function (fi) { return fi; });
             }));
+            exports_1("getFirstPlatform", getFirstPlatform = reselect_1.createSelector(getCvTerms, function (platforms) {
+                return platforms[0];
+            }));
             exports_1("getMarkerGroups", getMarkerGroups = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {
                 return fileItems.filter(function (e) {
                     return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY
@@ -231,6 +252,9 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                         && e.getEntityType() === type_entity_1.EntityType.MarkerGroups;
                 })
                     .map(function (fi) { return fi; });
+            }));
+            exports_1("getFirstMarkerGroup", getFirstMarkerGroup = reselect_1.createSelector(getCvTerms, function (markergroups) {
+                return markergroups[0];
             }));
             /// **************** GET SELECTED PER ENTITY TYPE
             exports_1("getSelectedPiContacts", getSelectedPiContacts = reselect_1.createSelector(getFileItems, getUniqueIds, function (fileItems, ids) {

@@ -3,6 +3,7 @@ import {EntityType, EntitySubType} from "./type-entity";
 import {CvFilterType} from "./cv-filter-type";
 import {GobiiExtractFilterType} from "./type-extractor-filter";
 import {NameIdLabelType} from "./name-id-label-type";
+import {ExtractorItemType} from "./file-model-node";
 /**
  * Created by Phil on 3/9/2017.
  */
@@ -17,7 +18,8 @@ export class NameIdRequestParams {
                         private _entitySubType: EntitySubType = EntitySubType.UNKNOWN,
                         private _cvFilterType: CvFilterType = CvFilterType.UNKNOWN,
                         private _gobiiExtractFilterType: GobiiExtractFilterType = GobiiExtractFilterType.UNKNOWN,
-                        private _nameIdLabelType: NameIdLabelType) {
+                        private _nameIdLabelType: NameIdLabelType,
+                        private _extractorItemType: ExtractorItemType) {
 
     }
 
@@ -32,7 +34,8 @@ export class NameIdRequestParams {
             EntitySubType.UNKNOWN,
             CvFilterType.UNKNOWN,
             gobiiExtractFilterType,
-            NameIdLabelType.UNKNOWN));
+            NameIdLabelType.UNKNOWN,
+            ExtractorItemType.ENTITY));
     }
 
 
@@ -112,6 +115,15 @@ export class NameIdRequestParams {
 
     getMameIdLabelType():NameIdLabelType {
         return this._nameIdLabelType;
+    }
+
+    setExtractorItemType(extractorItemType:ExtractorItemType) {
+        this._extractorItemType = extractorItemType;
+        return this;
+    }
+
+    getExtractorItemType():ExtractorItemType {
+        return this._extractorItemType;
     }
 
 }

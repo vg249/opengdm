@@ -121,6 +121,8 @@ export const getFileItems = createSelector(getFileItemsState, fromFileItems.getF
 export const getSelectedFileItems = createSelector(getFileItemsState, fromFileItems.getSelected);
 export const getSelectedUniqueIds = createSelector(getFileItemsState, fromFileItems.getSelectedUniqueIds);
 export const getUniqueIds = createSelector(getFileItemsState, fromFileItems.getUniqueIds);
+
+
 export const getContacts = createSelector(getFileItemsState, fromFileItems.getContacts);
 export const getProjects = createSelector(getFileItemsState, fromFileItems.getProjects);
 export const getExperiments = createSelector(getFileItemsState, fromFileItems.getExperiments);
