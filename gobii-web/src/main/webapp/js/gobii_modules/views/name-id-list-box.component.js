@@ -253,8 +253,12 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                 };
                 NameIdListBoxComponent.prototype.handleFileItemSelected = function (arg) {
                     var _this = this;
-                    var foo = "foo";
-                    this.store.dispatch(new fileAction.SelectByFileItemUniqueId(this.selectedFileItemId));
+                    var selectedFileItemUniqueId = this.currentSelection.getItemId();
+                    this.store.dispatch(new fileAction.SelectByFileItemUniqueId(selectedFileItemUniqueId));
+                    // this.onNameIdSelected
+                    //     .emit(new NameId(eventedfileItem.getItemId(),
+                    //         eventedfileItem.getItemName(),
+                    //         eventedfileItem.getEntityType()));
                     if (this.currentSelection.getItemId() !== "0") {
                         this.currentSelection.setProcessType(type_process_1.ProcessType.DELETE);
                         this.updateTreeService(this.currentSelection);
@@ -321,9 +325,10 @@ System.register(["@angular/core", "../model/name-id", "../model/type-entity", ".
                             'notifyOnInit',
                             'nameIdRequestParams',
                             'doTreeNotifications',
-                            'fileItems$'],
+                            'fileItems$',
+                            'firstFileItem$'],
                         outputs: ['onNameIdSelected', 'onError'],
-                        template: "<select [(ngModel)]=\"selectedFileItemId\" (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
+                        template: "<select (change)=\"handleFileItemSelected($event)\">\n        <option *ngFor=\"let fileItem of fileItems$ | async\"\n                [value]=\"fileItem.getFileItemUniqueId()\">{{fileItem.getItemName()}}\n        </option>\n    </select>\n    " // end template
                     }),
                     __metadata("design:paramtypes", [store_1.Store,
                         name_id_service_1.NameIdService,

@@ -31,9 +31,10 @@ import {Observable} from "rxjs/Observable";
         'notifyOnInit',
         'nameIdRequestParams',
         'doTreeNotifications',
-        'fileItems$'],
+        'fileItems$',
+        'firstFileItem$'],
     outputs: ['onNameIdSelected', 'onError'],
-    template: `<select [(ngModel)]="selectedFileItemId" (change)="handleFileItemSelected($event)">
+    template: `<select (change)="handleFileItemSelected($event)">
         <option *ngFor="let fileItem of fileItems$ | async"
                 [value]="fileItem.getFileItemUniqueId()">{{fileItem.getItemName()}}
         </option>
@@ -307,10 +308,14 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
 
     public handleFileItemSelected(arg) {
 
-        let foo: string = "foo";
+        let selectedFileItemUniqueId:string = this.currentSelection.getItemId();
 
-        this.store.dispatch(new fileAction.SelectByFileItemUniqueId(this.selectedFileItemId));
+        this.store.dispatch(new fileAction.SelectByFileItemUniqueId(selectedFileItemUniqueId));
 
+        // this.onNameIdSelected
+        //     .emit(new NameId(eventedfileItem.getItemId(),
+        //         eventedfileItem.getItemName(),
+        //         eventedfileItem.getEntityType()));
 
         if (this.currentSelection.getItemId() !== "0") {
             this.currentSelection.setProcessType(ProcessType.DELETE);
@@ -340,10 +345,9 @@ export class NameIdListBoxComponent implements OnInit, OnChanges, DoCheck {
             && ( changes['gobiiExtractFilterType'].currentValue != null )
             && ( changes['gobiiExtractFilterType'].currentValue != undefined )) {
 
-            this.fileItems$.subscribe( null,null, () => {
+            this.fileItems$.subscribe(null, null, () => {
                 this.selectedFileItemId = this.fileItems$[0].getFileItemUniqueId();
             });
-
 
 
             if (changes['gobiiExtractFilterType'].currentValue != changes['gobiiExtractFilterType'].previousValue) {

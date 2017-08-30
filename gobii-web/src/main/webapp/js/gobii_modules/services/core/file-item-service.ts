@@ -120,4 +120,56 @@ export class FileItemService {
                 });
     }
 
+
+    // public getFirst(nameIdRequestParams: NameIdRequestParams): GobiiFileItem {
+    //
+    //     let returnVal:GobiiFileItem = null;
+    //
+    //     switch(nameIdRequestParams.getEntityType()) {
+    //
+    //             case EntityType.MarkerGroups:
+    //                 returnVal = this.store.select(fromRoot.getMarkerGroups);
+    //                 break;
+    //
+    //             case EntityType.Contacts:
+    //                 returnVal = this.store.select(fromRoot.getContacts);
+    //                 break;
+    //
+    //
+    //             case EntityType.Projects:
+    //                 returnVal = this.store.select(fromRoot.getProjects);
+    //                 break;
+    //
+    //
+    //             case EntityType.Experiments:
+    //                 returnVal = this.store.select(fromRoot.getExperiments);
+    //                 break;
+    //
+    //
+    //             case EntityType.DataSets:
+    //                 returnVal = this.store.select(fromRoot.getDatasets);
+    //                 break;
+    //
+    //
+    //             case EntityType.CvTerms:
+    //                 returnVal = this.store.select(fromRoot.getCvTerms);
+    //                 break;
+    //
+    //
+    //             case EntityType.Mapsets:
+    //                 returnVal = this.store.select(fromRoot.getMapsets);
+    //                 break;
+    //
+    //
+    //             case EntityType.Platforms:
+    //                 returnVal = this.store.select(fromRoot.getPlatforms);
+    //                 break;
+    //
+    //
+    //     } //switch
+    //
+    //     return returnVal;
+    //
+    //
+    // }
 }
