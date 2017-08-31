@@ -194,32 +194,26 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>${logback.version}</version>
         </dependency>
 
         <!--Hibernate-->
@@ -255,8 +249,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -469,7 +461,6 @@
                                         <include>font-awesome/fonts/**</include>
 
 
-
                                         <!-- ***** GROUP 2: angular bundle files-->
                                         <include>@angular/core/bundles/core.umd.js</include>
                                         <include>@angular/common/bundles/common.umd.js</include>
@@ -477,8 +468,11 @@
                                         <include>@angular/router/bundles/router.umd.js</include>
                                         <include>@angular/http/bundles/http.umd.js</include>
                                         <include>@angular/platform-browser/bundles/platform-browser.umd.js</include>
-                                        <include>@angular/platform-browser/bundles/platform-browser-animations.umd.js</include>
-                                        <include>@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js</include>
+                                        <include>@angular/platform-browser/bundles/platform-browser-animations.umd.js
+                                        </include>
+                                        <include>
+                                            @angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js
+                                        </include>
                                         <include>@angular/forms/bundles/forms.umd.js</include>
                                         <include>@angular/animations/bundles/animations.umd.js</include>
                                         <include>@angular/animations/bundles/animations-browser.umd.js</include>
