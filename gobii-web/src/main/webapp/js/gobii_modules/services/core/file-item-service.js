@@ -136,6 +136,9 @@ System.register(["@angular/core", "../../model/type-entity", "../../views/entity
                     var returnVal = null;
                     // this is technically synchronous, but since we are taking a state it should return
                     // immediately enough.
+                    // it is also evil because it is directly accessing state. We should be going through the reducer;
+                    // however, this is a very minimal use case. Do _not_ use state directly beyond this kind of a
+                    // simple synchronous item retrieval.
                     this.store.take(1).subscribe(function (state) {
                         returnVal = state.fileItems.fileItems.find(function (fi) { return fi.getFileItemUniqueId() === fileItemUniqueId; });
                     });

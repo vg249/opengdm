@@ -355,6 +355,43 @@ export const getSelectedPiContacts = createSelector(getFileItems, getUniqueIds, 
 });
 
 
+export const getProjectsForSelectedPi = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+
+    let returnVal: GobiiFileItem[] = [];
+
+    if (filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT]) {
+
+        let contactId: string = filters[NameIdFilterParamTypes.PROJECTS_BY_CONTACT].getEntityFilterValue();
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+            && ( e.getEntityType() === EntityType.Projects)
+            && ( e.getEntitySubType() === EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+            && (e.getParentItemId() === contactId ))
+            .map(fi => fi);
+    }
+
+    return returnVal;
+});
+
+
+export const getExperimentsForSelectedProject = createSelector(getFileItems, getFilters, (fileItems, filters) => {
+
+    let returnVal: GobiiFileItem[] = [];
+
+    if (filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT]) {
+
+        let projectId: string = filters[NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT].getEntityFilterValue();
+        returnVal = fileItems.filter(e =>
+            ( e.getExtractorItemType() === ExtractorItemType.ENTITY )
+            && ( e.getEntityType() === EntityType.Experiments)
+            && (e.getParentItemId() === projectId ))
+            .map(fi => fi);
+    }
+
+    return returnVal;
+});
+
+
 export const getDatasetsForSelectedExperiment = createSelector(getFileItems, getFilters, (fileItems, filters) => {
 
     let returnVal: GobiiFileItem[] = [];

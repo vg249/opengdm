@@ -16,6 +16,7 @@ import {Observable} from "rxjs/Observable";
 @Component({
     selector: 'checklist-box',
     inputs: ['gobiiExtractFilterType',
+        'gobiiFileItems$',
         'nameIdRequestParams',
         'retainHistory'],
     outputs: ['onError'],
@@ -47,7 +48,7 @@ export class CheckListBoxComponent implements OnInit, OnChanges, DoCheck {
         this.differ = differs.find({}).create(null);
 
 
-        this.gobiiFileItems$ = this.store.select(fromRoot.getDatasetsByExperiment);
+        //this.gobiiFileItems$ = this.store.select(fromRoot.getDatasetsByExperiment);
 
     } // ctor
 

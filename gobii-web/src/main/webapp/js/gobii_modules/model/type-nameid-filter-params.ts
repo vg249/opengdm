@@ -7,6 +7,7 @@ export class NameIdFilterParamTypes {
 
     public static CONTACT_PI: string = "Contact-PI";
     public static EXPERIMENTS: string = "Experiments";
+    public static EXPERIMENTS_BY_PROJECT: string = "Experiments-by-project";
     public static CV_DATATYPE: string = "Cv-DataType";
     public static MAPSETS: string = "Mapsets";
     public static PLATFORMS: string = "Platforms";

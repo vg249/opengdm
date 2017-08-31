@@ -15,6 +15,7 @@ System.register([], function (exports_1, context_1) {
                 }
                 NameIdFilterParamTypes.CONTACT_PI = "Contact-PI";
                 NameIdFilterParamTypes.EXPERIMENTS = "Experiments";
+                NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT = "Experiments-by-project";
                 NameIdFilterParamTypes.CV_DATATYPE = "Cv-DataType";
                 NameIdFilterParamTypes.MAPSETS = "Mapsets";
                 NameIdFilterParamTypes.PLATFORMS = "Platforms";

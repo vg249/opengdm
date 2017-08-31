@@ -5,26 +5,21 @@ import {GobiiDataSetExtract} from "../model/extractor-instructions/data-set-extr
 import {ProcessType} from "../model/type-process";
 import {GobiiFileItem} from "../model/gobii-file-item";
 import {ServerConfig} from "../model/server-config";
-import {EntityType, EntitySubType} from "../model/type-entity";
+import {EntitySubType, EntityType} from "../model/type-entity";
 import {NameId} from "../model/name-id";
 import {GobiiFileType} from "../model/type-gobii-file";
 import {ExtractorInstructionFilesDTO} from "../model/extractor-instructions/dto-extractor-instruction-files";
 import {GobiiExtractorInstruction} from "../model/extractor-instructions/gobii-extractor-instruction";
 import {DtoRequestItemExtractorSubmission} from "../services/app/dto-request-item-extractor-submission";
-import {DtoRequestItemNameIds} from "../services/app/dto-request-item-nameids";
 import {DtoRequestItemServerConfigs} from "../services/app/dto-request-item-serverconfigs";
 import {EntityFilter} from "../model/type-entity-filter";
-import {SampleMarkerList} from "../model/sample-marker-list";
 import {GobiiExtractFilterType} from "../model/type-extractor-filter";
 import {GobiiSampleListType} from "../model/type-extractor-sample-list";
 import {CvFilters, CvFilterType} from "../model/cv-filter-type";
 import {FileModelTreeService} from "../services/core/file-model-tree-service";
 import {ExtractorItemType} from "../model/file-model-node";
-import {DtoHeaderResponse} from "../model/dto-header-response";
 import {GobiiExtractFormat} from "../model/type-extract-format";
 import {FileModelState} from "../model/file-model-tree-event";
-import forEach = require("core-js/fn/array/for-each");
-import {platform} from "os";
 import {Header} from "../model/payload/header";
 import {HeaderStatusMessage} from "../model/dto-header-status-message";
 import {NameIdRequestParams} from "../model/name-id-request-params";
@@ -32,10 +27,8 @@ import {FileName} from "../model/file_name";
 import {Labels} from "../views/entity-labels";
 import {TreeStatusNotification} from "../model/tree-status-notification";
 import {Contact} from "../model/contact";
-import {DtoRequestItemContact, ContactSearchType} from "../services/app/dto-request-item-contact";
+import {ContactSearchType, DtoRequestItemContact} from "../services/app/dto-request-item-contact";
 import {AuthenticationService} from "../services/core/authentication.service";
-import {FileItem} from "ng2-file-upload";
-import {isNullOrUndefined} from "util";
 import {NameIdLabelType} from "../model/name-id-label-type";
 import {StatusLevel} from "../model/type-status-level";
 import {Store} from "@ngrx/store";
@@ -145,11 +138,15 @@ import {Observable} from "rxjs/Observable";
                                     <BR>
                                     <BR>
                                     <label class="the-label">Project:</label><BR>
-                                    <project-list-box [primaryInvestigatorId]="selectedContactIdForPi"
-                                                      [gobiiExtractFilterType]="gobiiExtractFilterType"
-                                                      [reinitProjectList]="reinitProjectList"
-                                                      (onProjectSelected)="handleProjectSelected($event)"
-                                                      (onAddHeaderStatus)="handleHeaderStatusMessage($event)"></project-list-box>
+                                    <name-id-list-box
+                                            [fileItems$]="fileItemsProjects$"
+                                            [gobiiExtractFilterType]="gobiiExtractFilterType"
+                                            [notifyOnInit]="true"
+                                            [doTreeNotifications]="reinitProjectList"
+                                            [nameIdRequestParams]="nameIdRequestParamsProject"
+                                            (onNameIdSelected)="handleProjectSelected($event)"
+                                            (onError)="handleHeaderStatusMessage($event)">
+                                    </name-id-list-box>
                                 </div>
 
                                 <div *ngIf="displaySelectorDataType">
@@ -200,6 +197,7 @@ import {Observable} from "rxjs/Observable";
                                     <BR>
                                     <label class="the-label">Data Sets</label><BR>
                                     <checklist-box
+                                            [gobiiFileItems$]="fileItemsDatasets$"
                                             [gobiiExtractFilterType]="gobiiExtractFilterType"
                                             [nameIdRequestParams]="nameIdRequestParamsDataset"
                                             [retainHistory]="true"
@@ -332,15 +330,19 @@ export class ExtractorRoot implements OnInit {
     public nameIdRequestParamsDatasetType: NameIdRequestParams;
     public nameIdRequestParamsPlatforms: NameIdRequestParams;
     public nameIdRequestParamsDataset: NameIdRequestParams;
-
+    public nameIdRequestParamsProject: NameIdRequestParams;
     // ************************************************************************
 
+    // unfiltered
     fileItemsContactsPI$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getContacts);
-    fileItemsExperiments$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getExperiments);
     fileItemsMapsets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getMapsets);
     fileItemsDatasetTypes$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getCvTerms);
     fileItemsPlatforms: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getPlatforms);
-    fileItemsDatasets: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatasets);
+
+    // filtered
+    fileItemsProjects$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getProjectsByPI);
+    fileItemsExperiments$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getExperimentsByProject);
+    fileItemsDatasets$: Observable<GobiiFileItem[]> = this.store.select(fromRoot.getDatasetsByExperiment);
 
 
     // ************************************************************************
@@ -371,17 +373,12 @@ export class ExtractorRoot implements OnInit {
         this.store.dispatch(new treeNodeAction.InitAction());
 
 
+        //unfiltered requests
         this.nameIdRequestParamsContactsPi = NameIdRequestParams
             .build(NameIdFilterParamTypes.CONTACT_PI,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Contacts)
             .setEntitySubType(EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR);
-
-        this.nameIdRequestParamsExperiments = NameIdRequestParams
-            .build(NameIdFilterParamTypes.EXPERIMENTS,
-                GobiiExtractFilterType.WHOLE_DATASET,
-                EntityType.Experiments)
-            .setEntityFilter(EntityFilter.BYTYPEID);
 
         this.nameIdRequestParamsDatasetType = NameIdRequestParams
             .build(NameIdFilterParamTypes.CV_DATATYPE,
@@ -404,14 +401,29 @@ export class ExtractorRoot implements OnInit {
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.Platforms);
 
+        //filtered requests
+        this.nameIdRequestParamsProject = NameIdRequestParams
+            .build(NameIdFilterParamTypes.PROJECTS_BY_CONTACT,
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.Projects)
+            .setEntityFilter(EntityFilter.BYTYPEID)
+            .setRefTargetEntityType(EntityType.Contacts)
+            .setMameIdLabelType(this.reinitProjectList ? NameIdLabelType.ALL : NameIdLabelType.UNKNOWN);
+
+        this.nameIdRequestParamsExperiments = NameIdRequestParams
+            .build(NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT,
+                GobiiExtractFilterType.WHOLE_DATASET,
+                EntityType.Experiments)
+            .setRefTargetEntityType(EntityType.Projects)
+            .setEntityFilter(EntityFilter.BYTYPEID);
 
         this.nameIdRequestParamsDataset = NameIdRequestParams
             .build(NameIdFilterParamTypes.DATASETS_BY_EXPERIMENT,
                 GobiiExtractFilterType.WHOLE_DATASET,
                 EntityType.DataSets)
+            .setRefTargetEntityType(EntityType.Experiments)
             .setEntityFilter(EntityFilter.BYTYPEID)
             .setRefTargetEntityType(EntityType.Experiments);
-
     }
 
 
@@ -684,6 +696,10 @@ export class ExtractorRoot implements OnInit {
     private handleContactForPiSelected(arg) {
         this.selectedContactIdForPi = arg.id;
 
+        this.nameIdRequestParamsProject.setEntityFilterValue(this.selectedContactIdForPi);
+        this.fileItemService.loadNameIdsToFileItems(this.gobiiExtractFilterType,
+            this.nameIdRequestParamsExperiments);
+
         //console.log("selected contact itemId:" + arg);
     }
 
@@ -715,7 +731,8 @@ export class ExtractorRoot implements OnInit {
 // ********************************************** PROJECT ID
     private selectedProjectId: string;
 
-    private handleProjectSelected(arg) {
+    public handleProjectSelected(arg) {
+
         this.selectedProjectId = arg;
         this.displayExperimentDetail = false;
         this.displayDataSetDetail = false;

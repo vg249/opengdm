@@ -148,6 +148,8 @@ export const getMarkerGroups = createSelector(getFileItemsState, fromFileItems.g
 export const getFirstMarkerGroup = createSelector(getFileItemsState, fromFileItems.getFirstMarkerGroup);
 
 
+export const getProjectsByPI = createSelector(getFileItemsState, fromFileItems.getProjectsForSelectedPi);
+export const getExperimentsByProject = createSelector(getFileItemsState, fromFileItems.getExperimentsForSelectedProject);
 export const getDatasetsByExperiment = createSelector(getFileItemsState, fromFileItems.getDatasetsForSelectedExperiment);
 export const getSelectedPiContacts = createSelector(getFileItemsState, fromFileItems.getSelectedPiContacts);
 

@@ -119,7 +119,7 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
         return returnVal;
     }
     exports_1("fileItemsReducer", fileItemsReducer);
-    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getDatasetsForSelectedExperiment;
+    var reselect_1, gobiiFileItemAction, file_model_node_1, type_entity_1, type_nameid_filter_params_1, initialState, getFileItems, getUniqueIds, getSelectedUniqueIds, getFilters, getSelected, getAll, getContacts, getFirstContact, getProjects, getFirstProject, getExperiments, getFirstExperiment, getDatasets, getFirstDataset, getCvTerms, getFirstCvTerm, getMapsets, getFirstmapset, getPlatforms, getFirstPlatform, getMarkerGroups, getFirstMarkerGroup, getSelectedPiContacts, getProjectsForSelectedPi, getExperimentsForSelectedProject, getDatasetsForSelectedExperiment;
     return {
         setters: [
             function (reselect_1_1) {
@@ -266,6 +266,33 @@ System.register(["reselect", "../actions/fileitem-action", "../../model/file-mod
                         && e.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR;
                 })
                     .map(function (fi) { return fi; });
+            }));
+            exports_1("getProjectsForSelectedPi", getProjectsForSelectedPi = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
+                var returnVal = [];
+                if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT]) {
+                    var contactId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.PROJECTS_BY_CONTACT].getEntityFilterValue();
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
+                            && (e.getEntityType() === type_entity_1.EntityType.Projects)
+                            && (e.getEntitySubType() === type_entity_1.EntitySubType.CONTACT_PRINCIPLE_INVESTIGATOR)
+                            && (e.getParentItemId() === contactId_1);
+                    })
+                        .map(function (fi) { return fi; });
+                }
+                return returnVal;
+            }));
+            exports_1("getExperimentsForSelectedProject", getExperimentsForSelectedProject = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
+                var returnVal = [];
+                if (filters[type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT]) {
+                    var projectId_1 = filters[type_nameid_filter_params_1.NameIdFilterParamTypes.EXPERIMENTS_BY_PROJECT].getEntityFilterValue();
+                    returnVal = fileItems.filter(function (e) {
+                        return (e.getExtractorItemType() === file_model_node_1.ExtractorItemType.ENTITY)
+                            && (e.getEntityType() === type_entity_1.EntityType.Experiments)
+                            && (e.getParentItemId() === projectId_1);
+                    })
+                        .map(function (fi) { return fi; });
+                }
+                return returnVal;
             }));
             exports_1("getDatasetsForSelectedExperiment", getDatasetsForSelectedExperiment = reselect_1.createSelector(getFileItems, getFilters, function (fileItems, filters) {
                 var returnVal = [];

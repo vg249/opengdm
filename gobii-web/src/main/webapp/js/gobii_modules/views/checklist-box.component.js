@@ -1,4 +1,4 @@
-System.register(["@angular/core", "../model/type-process", "../model/type-extractor-filter", "../store/reducers", "../store/actions/fileitem-action", "@ngrx/store"], function (exports_1, context_1) {
+System.register(["@angular/core", "../model/type-process", "../model/type-extractor-filter", "../store/actions/fileitem-action", "@ngrx/store"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,7 +10,7 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var __moduleName = context_1 && context_1.id;
-    var core_1, type_process_1, type_extractor_filter_1, fromRoot, fileAction, store_1, CheckListBoxComponent;
+    var core_1, type_process_1, type_extractor_filter_1, fileAction, store_1, CheckListBoxComponent;
     return {
         setters: [
             function (core_1_1) {
@@ -21,9 +21,6 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
             },
             function (type_extractor_filter_1_1) {
                 type_extractor_filter_1 = type_extractor_filter_1_1;
-            },
-            function (fromRoot_1) {
-                fromRoot = fromRoot_1;
             },
             function (fileAction_1) {
                 fileAction = fileAction_1;
@@ -42,7 +39,7 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
                     this.gobiiExtractFilterType = type_extractor_filter_1.GobiiExtractFilterType.UNKNOWN;
                     this.onError = new core_1.EventEmitter();
                     this.differ = differs.find({}).create(null);
-                    this.gobiiFileItems$ = this.store.select(fromRoot.getDatasetsByExperiment);
+                    //this.gobiiFileItems$ = this.store.select(fromRoot.getDatasetsByExperiment);
                 } // ctor
                 CheckListBoxComponent.prototype.handleItemChecked = function (arg) {
                     var itemToChange = arg;
@@ -158,6 +155,7 @@ System.register(["@angular/core", "../model/type-process", "../model/type-extrac
                     core_1.Component({
                         selector: 'checklist-box',
                         inputs: ['gobiiExtractFilterType',
+                            'gobiiFileItems$',
                             'nameIdRequestParams',
                             'retainHistory'],
                         outputs: ['onError'],
