@@ -374,6 +374,10 @@ public class GobiiFileReader {
 				intermediateFile.transform(MobileTransform.PGArray);
 			}
 
+			intermediateFile.returnFile(); // replace intermediateFile where it came from
+
+			//DONE WITH TRANSFORMS
+
 			if(loaderInstructionMap.containsKey(VARIANT_CALL_TABNAME)) {
 				boolean valid=DigestMatrix.validatematrix(loaderInstructionMap.get(VARIANT_CALL_TABNAME), zero.getDatasetType().getName().toString());
 				if (!valid) {
@@ -385,10 +389,9 @@ public class GobiiFileReader {
 			if (qcCheck) {//QC - Subsection #2 of 3
 				qcExtractInstruction = createQCExtractInstruction(zero, crop);
 				setQCExtractPaths(inst, configuration, crop, instructionFile);
-				sendQc = true;
+				sendQc = success;
 			}
 
-			intermediateFile.returnFile(); // replace intermediateFile where it came from
 		}
 
 		if(success){
@@ -455,6 +458,7 @@ public class GobiiFileReader {
                 ErrorLogger.logInfo("Digester", "Successfully Uploaded files");
             } else {
                 ErrorLogger.logWarning("Digester", "Unsuccessfully Uploaded files");
+				sendQc=false;//Files failed = bad.
             }
         }//endif(success)
 		else{
@@ -462,14 +466,16 @@ public class GobiiFileReader {
 		}
 
 		try{
+			GobiiFileType loadType=zero.getGobiiFile().getGobiiFileType();
+			String loadTypeName="";//No load type name if default
+			if(loadType!=GobiiFileType.GENERIC)loadTypeName=loadType.name();
 			pm.addPath("Error Log", logFile);
-			pm.setBody(jobName,zero.getGobiiFile().getGobiiFileType().name(),SimpleTimer.stop("FileRead"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
+			pm.setBody(jobName,loadTypeName,SimpleTimer.stop("FileRead"),ErrorLogger.getFirstErrorReason(),ErrorLogger.success(),ErrorLogger.getAllErrorStringsHTML());
 			mailInterface.send(pm);
 		}catch(Exception e){
 			ErrorLogger.logError("MailInterface","Error Sending Mail",e);
         }
         HelperFunctions.completeInstruction(instructionFile, configuration.getProcessingPath(crop, GobiiFileProcessDir.LOADER_DONE));
-
     }
 
     private static void uploadToMonet(Integer dataSetId, GobiiCropConfig gobiiCropConfig, String errorPath, File variantFile, String markerFileLoc, String sampleFileLoc) {

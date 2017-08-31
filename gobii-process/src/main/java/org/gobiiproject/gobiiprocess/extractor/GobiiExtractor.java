@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -276,6 +277,12 @@ public class GobiiExtractor {
 							if (markerListOverrideLocation != null)
 								markerListLocation = " -x " + markerListOverrideLocation;
 
+							String markerGroupTerm="";
+							if(extract.getMarkerGroups()!=null && !extract.getMarkerGroups().isEmpty()){
+								markerGroupTerm= " -G " + commaFormat(toIdList(extract.getMarkerGroups()));
+							}
+
+
 							//Actually call the thing
 							gobiiMDE = "python " + mdePath +
 									" -c " + HelperFunctions.getPostgresConnectionString(gobiiCropConfig) +
@@ -284,6 +291,7 @@ public class GobiiExtractor {
 									" -b " + mapsetFile +
 									" -s " + sampleFile +
 									" -p " + projectFile +
+									markerGroupTerm +
 									markerListLocation +
 									" --datasetType " + extract.getGobiiDatasetType().getId() +
 									mapIdTerm +
@@ -485,6 +493,25 @@ public class GobiiExtractor {
 							org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(e), null, false, null, configuration, inst.getContactEmail());
 				}
 		}
+	}
+
+
+	/**
+	 * Convert a list of gobiiFilePropNameIds to a list of IDs.
+	 * @return list of IDs
+	 */
+	private static List toIdList(List<GobiiFilePropNameId> propertyList) {
+		return subPropertyList(propertyList, GobiiFilePropNameId::getId);
+	}
+
+	/**
+	 * Converts a list of gobiiFilePropNameIds to something else
+	 * @param propertyList properties
+	 * @param func what to do
+	 * @return something? usually.
+	 */
+	private static List subPropertyList(List<GobiiFilePropNameId> propertyList,Function<GobiiFilePropNameId,Object> func){
+		return propertyList.stream().map(func).collect(Collectors.toList());
 	}
 
 	/***
