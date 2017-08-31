@@ -123,7 +123,6 @@ class HapmapTransformerHelper {
     static int writeMarkerAndGenoTypeInfo(HapmapScanners hapmapScanners, FileWriter fileWriter, List<String> markerHeaders, List<String> extendedMarkerHeaders, String[] newMarkerHeadersLine) throws IOException {
         int processedBothRowsNumber = 0;
         StringBuilder stringBuilderNewLine;
-        System.out.println("sup");
         MarkerAndExtendedMarkerIndex markerAndExtendedMarkerIndex = new MarkerAndExtendedMarkerIndex(markerHeaders, extendedMarkerHeaders);
 
         while (hapmapScanners.markerScanner.hasNextLine() && hapmapScanners.genotypeScanner.hasNextLine()) {
